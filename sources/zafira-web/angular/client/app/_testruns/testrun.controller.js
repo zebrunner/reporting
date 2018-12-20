@@ -1402,7 +1402,7 @@
                 templateUrl: 'app/_testruns/ci_helper_modal.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
-                clickOutsideToClose:true,
+                clickOutsideToClose:false,
                 fullscreen: true,
                 autoWrap: false,
                 locals: {
@@ -2163,7 +2163,156 @@
 
         $scope.ciOptions = {};
 
-        $scope.text = '';
+        $scope.editor = {
+            text: ''
+        };
+
+        $scope.testSuiteRunner = {};
+
+        $scope.testSuites = ['Test custom params creation', 'Test custom tags params creation', 'Test test custom params creation', 'Test custom test tags params creation',
+            'MMF', 'Test custom params creation', 'Test custom params creation', 'Test custom params creation', 'Test custom params creation', 'Test custom params creation',
+            'Test custom params creation', 'Test custom params creation', 'Test custom params creation', 'Test custom params creation', 'Test custom params creation', 'Test custom params creation',
+            'Test custom params creation', 'Test custom params creation', 'Test custom params creation', 'Test custom params creation', 'Test custom params creation', 'Test custom params creation'];
+
+        $scope.scmAccounts = [
+            {
+                avatarURL: 'https://avatars3.githubusercontent.com/u/20353034?s=40&v=4',
+                name: 'brutskov'
+            },
+            {
+                avatarURL: 'https://avatars3.githubusercontent.com/u/20353034?s=40&v=4',
+                name: 'organization'
+            },
+            {
+                avatarURL: 'https://avatars3.githubusercontent.com/u/20353034?s=40&v=4',
+                name: 'UA'
+            },
+            {
+                avatarURL: 'https://avatars3.githubusercontent.com/u/20353034?s=40&v=4',
+                name: 'Smule'
+            }
+        ];
+
+        $scope.editor.text = "[\n" +
+            "            {\n" +
+            "                name: 'Custom capabilities',\n" +
+            "                description: 'Set to NULL to run against Selenium Grid on Jenkin\\'s Slave else, select an option for Browserstack.'\n" +
+            "            },\n" +
+            "            {\n" +
+            "                name: 'Browser',\n" +
+            "                type: 'select',\n" +
+            "                value: ['chrome', 'firefox']\n" +
+            "            },\n" +
+            "            {\n" +
+            "                name: 'Branch',\n" +
+            "                type: 'select',\n" +
+            "                description: 'Select a GitHub Testing Repository Branch to run against',\n" +
+            "                value: ['master', 'stag']\n" +
+            "            },\n" +
+            "            {\n" +
+            "                name: 'Ci Run Id'\n" +
+            "            },\n" +
+            "            {\n" +
+            "                name: 'Build priority',\n" +
+            "                type: 'select',\n" +
+            "                value: ['hight', 'low']\n" +
+            "            },\n" +
+            "            {\n" +
+            "                name: 'Environement',\n" +
+            "                type: 'select',\n" +
+            "                description: 'Environment to test against.',\n" +
+            "                value: ['stage', 'Production'],\n" +
+            "                default: 'Production'\n" +
+            "            },\n" +
+            "            {\n" +
+            "                name: 'Fork',\n" +
+            "                type: 'checkbox',\n" +
+            "                description: 'Reuse forked repository for carina-demo project'\n" +
+            "            },\n" +
+            "            {\n" +
+            "                name: 'Debug',\n" +
+            "                type: 'checkbox',\n" +
+            "                description: 'Check to start tests in remote debug mode'\n" +
+            "            },\n" +
+            "            {\n" +
+            "                name: 'Auto Screenshot',\n" +
+            "                type: 'checkbox',\n" +
+            "                description: 'Generate screenshots automatically during the test'\n" +
+            "            },\n" +
+            "            {\n" +
+            "                name: 'Enable Video',\n" +
+            "                type: 'checkbox',\n" +
+            "                description: 'Enable video recording',\n" +
+            "                value: true\n" +
+            "            },\n" +
+            "            {\n" +
+            "                type: 'array',\n" +
+            "                value: ['brutskov@gmail.com']\n" +
+            "            }\n" +
+            "        ]";
+
+        var test = [
+            {
+                name: 'Custom capabilities',
+                description: 'Set to NULL to run against Selenium Grid on Jenkin\'s Slave else, select an option for Browserstack.'
+            },
+            {
+                name: 'Browser',
+                type: 'select',
+                value: ['chrome', 'firefox']
+            },
+            {
+                name: 'Branch',
+                type: 'select',
+                description: 'Select a GitHub Testing Repository Branch to run against',
+                value: ['master', 'stag']
+            },
+            {
+                name: 'Ci Run Id'
+            },
+            {
+                name: 'Build priority',
+                type: 'select',
+                value: ['hight', 'low']
+            },
+            {
+                name: 'Environement',
+                type: 'select',
+                description: 'Environment to test against.',
+                value: ['stage', 'Production'],
+                default: 'Production'
+            },
+            {
+                name: 'Fork',
+                type: 'checkbox',
+                description: 'Reuse forked repository for carina-demo project'
+            },
+            {
+                name: 'Debug',
+                type: 'checkbox',
+                description: 'Check to start tests in remote debug mode'
+            },
+            {
+                name: 'Auto Screenshot',
+                type: 'checkbox',
+                description: 'Generate screenshots automatically during the test'
+            },
+            {
+                name: 'Enable Video',
+                type: 'checkbox',
+                description: 'Enable video recording',
+                value: true
+            },
+            {
+                type: 'array',
+                value: ['brutskov@gmail.com']
+            }
+        ];
+
+        $scope.currentScm = {
+            name: $scope.scmAccounts[0].name
+        };
+
         $scope.jsonModel = {};
 
         $scope.aceOptions = {
@@ -2171,14 +2320,110 @@
             showGutter: false,
             theme:'eclipse',
             mode: 'json',
-            firstLineNumber: 5,
-            onLoad: function (editor) {
+            firstLineNumber: 5
+        };
 
+        $scope.onLoad = function(editor) {
+        };
+
+        $scope.onChange = function(editor) {
+        };
+
+        const BUILD_TYPES = {
+            text: {
+                description: {required: false},
+                value: {
+                    type: 'plain',
+                    required: false,
+                    defaultValue: ''
+                },
+                name: {required: false},
+                default: {required: false}
             },
-            onChange: function (editor) {
-
+            select: {
+                description: {required: false},
+                value: {
+                    type: 'array',
+                    required: true,
+                    defaultValue: 'no'
+                },
+                name: {required: false},
+                default: {required: false}
+            },
+            checkbox: {
+                description: {required: false},
+                value: {
+                    type: 'boolean',
+                    required: false,
+                    defaultValue: false
+                },
+                name: {required: false},
+                default: {required: false}
+            },
+            array: {
+                description: {required: false},
+                value: {
+                    type: 'array',
+                    required: false,
+                    defaultValue: []
+                },
+                name: {required: false}
             }
         };
+
+        $scope.cardNumber = 1;
+
+        $scope.applyBuilder = function() {
+            var jsonText = $scope.editor.text.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
+            jsonText = jsonText.replace(/\'/g, "\"");
+            $scope.jsonModel = JSON.parse(jsonText);
+            checkJson($scope.jsonModel);
+            $scope.cardNumber = 2;
+        };
+
+        $scope.build = function () {
+
+        };
+
+        // Validates json. Checks that all fields are valid and prefills if need
+        function checkJson(json) {
+            angular.forEach(json, function (options, key) {
+                if(options) {
+                    options.type = options.type && BUILD_TYPES[options.type] ? options.type : 'text';
+                }
+                angular.forEach(BUILD_TYPES[options.type], function (value, name) {
+                    var option = options[name];
+                    if(! value.required || (value.required && option !== undefined && option !== null)) {
+                        if(value.type) {
+                            if(! option && BUILD_TYPES[options.type].value.defaultValue !== 'no') {
+                                options[name] = BUILD_TYPES[options.type].value.defaultValue;
+                            }
+                            if(value.required && option !== undefined && option !== null) {
+                                var valid = false;
+                                switch (value.type) {
+                                    case 'plain':
+                                        valid = typeof option === 'string' || option instanceof String;
+                                        break;
+                                    case 'array':
+                                        valid = angular.isArray(option);
+                                        break;
+                                    case 'boolean':
+                                        valid = option === true || option === false;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                if (!valid) {
+                                    throw new Error('Invalid type of ' + name);
+                                }
+                            }
+                        }
+                    } else {
+                        throw new Error('Unable to recognize options.');
+                    }
+                });
+            });
+        }
 
         $scope.getElement = function(item) {
             var result;
@@ -2190,19 +2435,6 @@
                 result = 'input';
             }
             return result;
-        };
-
-        $scope.drawHTML = function() {
-            var jsonText = $scope.text.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
-            jsonText = jsonText.replace(/\'/g, "\"");
-            $scope.jsonModel = JSON.parse(jsonText);
-            angular.forEach($scope.jsonModel, function (value, key) {
-                if(! angular.isArray(value)) {
-                    $scope.ciOptions[key] = value;
-                } else if(value.length) {
-                    $scope.ciOptions[key] = value[0];
-                }
-            });
         };
 
         function getClientId() {

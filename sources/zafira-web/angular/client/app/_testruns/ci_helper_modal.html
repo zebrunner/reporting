@@ -10,21 +10,92 @@
             <div class="ci-runner-container_helper_choose_else">Choose Test Suite</div>
         </div>
         <div class="ci-runner-container_helper_section">
-            <div class="ci-runner-container_helper_section_item">MMF</div>
-            <div class="ci-runner-container_helper_section_item">Test custom params creation</div>
-            <div class="ci-runner-container_helper_section_item">Test custom paramsewededsdcsdcscsdsc creation sdcdcdcedcdsc</div>
-            <div class="ci-runner-container_helper_section_item">Test custom paramswedwsdcsdcsd creationedcedece dcdcsddscsdcsdcsd</div>
+            <div ng-repeat="testSuite in testSuites track by $index" class="ci-runner-container_helper_section_item">
+                <div class="ci-runner-container_helper_section_item_container">
+                    {{testSuite}}
+                    <i class="material-icons">edit</i>
+                </div>
+            </div>
         </div>
     </zf-modal-helper-container>
-    <zf-modal-content-container class="ci-runner-container_content">
-        <div class="ci-runner-container_content_title">
+    <zf-modal-content-container class="ci-runner-container_content" ng-if="cardNumber === 1">
+        <md-icon class="close-button" ng-click="cancel()" aria-label="Close dialog">close</md-icon>
+        <div>
             <zf-input-container>
-                <input ng-model="newModel" placeholder="Title"/>
+                <input ng-model="testSuiteRunner.name" placeholder="Title"/>
             </zf-input-container>
         </div>
         <div class="ci-runner-container_content_scm-connector">
-            <div>Select a Github repository</div>
-
+            <div class="ci-runner-container_content_scm-connector_title">Select a Github repository</div>
+            <div class="ci-runner-container_content_scm-connector_items">
+                <zf-input-container>
+                    <zf-radio-button ng-repeat="scm in scmAccounts track by $index" ng-model="currentScm.name" value="scm.name">
+                        <img ng-src="{{scm.avatarURL}}"/>
+                        {{scm.name}}
+                    </zf-radio-button>
+                </zf-input-container>
+            </div>
+        </div>
+        <div class="ci-runner-container_content_code" ng-cloak>
+            <div id="aceEditor" class="ci-runner-container_content_code_editor" ui-ace="{{aceOptions}}" ng-model="editor.text"></div>
+        </div>
+        <div class="ci-runner-container_content_actions">
+            <md-button class="md-raised btn-w-md md-primary" ng-click="applyBuilder();">
+                Save
+            </md-button>
+        </div>
+    </zf-modal-content-container>
+    <zf-modal-content-container class="ci-runner-container_content" ng-if="cardNumber === 2">
+        <md-icon class="close-button" ng-click="cancel()" aria-label="Close dialog">close</md-icon>
+        <div class="ci-runner-container_content_title">
+            {{testSuiteRunner.name}}
+        </div>
+        <div class="ci-runner-container_content_builder" ng-repeat="item in jsonModel track by $index">
+            <div class="ci-runner-container_content_builder_item" ng-if="item.type === 'text'">
+                <zf-input-container>
+                    <input ng-model="item.value" placeholder="{{item.name}}"/>
+                </zf-input-container>
+            </div>
+            <div class="ci-runner-container_content_builder_item" ng-if="item.type === 'select'">
+                <zf-input-container>
+                    <md-input-container>
+                        <label>{{item.name}}</label>
+                        <md-select ng-model="item.default">
+                            <md-option ng-repeat="val in item.value" ng-value="val">
+                                {{val}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                </zf-input-container>
+            </div>
+            <div class="ci-runner-container_content_builder_item" ng-if="item.type === 'checkbox'">
+                <zf-input-container>
+                    <md-checkbox ng-model="item.value" aria-label="checkbox">
+                        {{item.name}}
+                    </md-checkbox>
+                </zf-input-container>
+            </div>
+            <div class="ci-runner-container_content_builder_item item-array" ng-if="item.type === 'array'">
+                <zf-input-container>
+                    <md-chips ng-model="item.value"
+                              md-removable="true" placeholder="{{item.name}}">
+                        <md-chip-template>
+                            <strong>{{$chip}}</strong>
+                        </md-chip-template>
+                    </md-chips>
+                </zf-input-container>
+            </div>
+            <div class="ci-runner-container_content_builder_description zf-{{item.type}}">
+                {{item.description}}
+            </div>
+        </div>
+        <div class="ci-runner-container_content_actions">
+            <md-button class="md-raised btn-w-md md-primary" ng-click="applyBuilder();" ng-if="cardNumber === 1">
+                Save
+            </md-button>
+            <md-button class="md-raised btn-w-md md-primary" ng-click="build();" ng-if="cardNumber === 2">
+                Build
+            </md-button>
         </div>
     </zf-modal-content-container>
     <!--<div class="row">
