@@ -17,7 +17,7 @@ public class ProjectFilterMenu extends AbstractUIObject
 	@FindBy(xpath = ".//button[following-sibling::div[.//*[text() = 'Clear']]]")
 	private WebElement clearButton;
 
-	@FindBy(xpath = ".//button[following-sibling::div[.//*[text() = 'Create']]]")
+	@FindBy(xpath = ".//button[following-sibling::div[.//*[text() = 'New']]]")
 	private WebElement createButton;
 
 	@FindBy(xpath = ".//md-list-item[@name='projectName']//div[@class='md-list-item-text']")

@@ -2,7 +2,14 @@
     <form class="form-validation" name="dashboard_form" ng-submit="UtilService.untouchForm(dashboard_form)" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2 id="modalTitle">Dashboard settings</h2>
+                <h2 id="modalTitle">
+                    <span ng-if="isNew">
+                        New dashboard
+                    </span>
+                    <span ng-if="! isNew">
+                        Edit/delete dashboard
+                    </span>
+                </h2>
                 <span flex></span>
                 <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
                     <md-icon aria-label="Close dialog">close</md-icon>
