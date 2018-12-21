@@ -19,19 +19,19 @@
         return service;
 
         function getClientId() {
-            return $http.get(API_URL + '/api/scm/client_id').then(UtilService.handleSuccess, UtilService.handleError('Unable to get client id'));
+            return $http.get(API_URL + '/api/scm/github/client').then(UtilService.handleSuccess, UtilService.handleError('Unable to get client id'));
         }
 
         function getRepositories(id, org) {
-            return $http.get(API_URL + '/api/scm/repositories/' + id + '?org=' + org).then(UtilService.handleSuccess, UtilService.handleError('Unable to get client id'));
+            return $http.get(API_URL + '/api/scm/github/repositories/' + id + '?org=' + org).then(UtilService.handleSuccess, UtilService.handleError('Unable to get client id'));
         }
 
         function getOrganizations(id) {
-            return $http.get(API_URL + '/api/scm/organizations/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to get client id'));
+            return $http.get(API_URL + '/api/scm/github/organizations/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to get client id'));
         }
 
         function exchangeCode(code) {
-            return $http.get(API_URL + '/api/scm/authorized?code=' + code).then(UtilService.handleSuccess, UtilService.handleError('Unable to get client id'));
+            return $http.get(API_URL + '/api/scm/github/exchange?code=' + code).then(UtilService.handleSuccess, UtilService.handleError('Unable to get client id'));
         }
 
     }

@@ -17,6 +17,7 @@
 		<property name="mappingFiles">
 			<list>
 				<value>dozer/Filter-dozer-mapping.xml</value>
+				<value>dozer/Launcher-dozer-mapping.xml</value>
 				<value>dozer/TestSuite-dozer-mapping.xml</value>
 				<value>dozer/TestCase-dozer-mapping.xml</value>
 				<value>dozer/Test-dozer-mapping.xml</value>

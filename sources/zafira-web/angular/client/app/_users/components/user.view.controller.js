@@ -386,7 +386,7 @@
         $scope.group = group ? angular.copy(group) : {};
         $scope.blocks = {};
         $scope.roles = [];
-        $scope.group.users = [];
+        $scope.group.users = $scope.group.users || [];
         $scope.showGroups = false;
         $scope.getRoles = function() {
             GroupService.getRoles().then(function(rs) {

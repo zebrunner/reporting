@@ -134,6 +134,10 @@ $modal-white: #ffffff;
     border: none;
     letter-spacing: 0.1px;
     color: black;
+
+    &:active {
+        border: none;
+    }
 }
 
 // Controls

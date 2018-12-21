@@ -1,19 +1,19 @@
 <zf-modal class="ci-runner-container">
     <zf-modal-helper-container class="ci-runner-container_helper">
-        <div class="ci-runner-container_helper_title">Test runner</div>
+        <div class="ci-runner-container_helper_title">Launcher</div>
         <div class="ci-runner-container_helper_choose">
-            <button class="zf-button zf-chip-button">
+            <button ng-click="addTemplate();" class="zf-button zf-chip-button">
                 Add template
                 <i class="material-icons">add_circle</i>
             </button>
-            <div class="ci-runner-container_helper_choose_or">or</div>
-            <div class="ci-runner-container_helper_choose_else">Choose Test Suite</div>
+            <div ng-if="launchers.length" class="ci-runner-container_helper_choose_or">or</div>
+            <div ng-if="launchers.length" class="ci-runner-container_helper_choose_else">Choose Test Suite</div>
         </div>
-        <div class="ci-runner-container_helper_section">
-            <div ng-repeat="testSuite in testSuites track by $index" class="ci-runner-container_helper_section_item">
+        <div ng-if="launchers.length" class="ci-runner-container_helper_section">
+            <div ng-repeat="l in launchers track by l.id" class="ci-runner-container_helper_section_item">
                 <div class="ci-runner-container_helper_section_item_container">
-                    {{testSuite}}
-                    <i class="material-icons">edit</i>
+                    {{l.name}}
+                    <i ng-click="" class="material-icons">edit</i>
                 </div>
             </div>
         </div>
@@ -22,14 +22,14 @@
         <md-icon class="close-button" ng-click="cancel()" aria-label="Close dialog">close</md-icon>
         <div>
             <zf-input-container>
-                <input ng-model="testSuiteRunner.name" placeholder="Title"/>
+                <input ng-model="launcher.name" placeholder="Title" autofocus ng-required/>
             </zf-input-container>
         </div>
         <div class="ci-runner-container_content_scm-connector">
             <div class="ci-runner-container_content_scm-connector_title">Select a Github repository</div>
             <div class="ci-runner-container_content_scm-connector_items">
                 <zf-input-container>
-                    <zf-radio-button ng-repeat="scm in scmAccounts track by $index" ng-model="currentScm.name" value="scm.name">
+                    <zf-radio-button ng-repeat="scm in scmAccounts track by $index" ng-model="launcher.scmAccount.name" value="scm.name">
                         <img ng-src="{{scm.avatarURL}}"/>
                         {{scm.name}}
                     </zf-radio-button>
@@ -37,10 +37,11 @@
             </div>
         </div>
         <div class="ci-runner-container_content_code" ng-cloak>
-            <div id="aceEditor" class="ci-runner-container_content_code_editor" ui-ace="{{aceOptions}}" ng-model="editor.text"></div>
+            <div id="aceEditor" class="ci-runner-container_content_code_editor" ui-ace="{{aceOptions}}" ng-model="launcher.model"></div>
         </div>
         <div class="ci-runner-container_content_actions">
-            <md-button class="md-raised btn-w-md md-primary" ng-click="applyBuilder();">
+            <md-button class="md-raised btn-w-md md-primary" ng-click="applyBuilder(launcher);"
+                       ng-disabled="! launcher.model || ! launcher.model.isJsonValid(true) || ! launcher.name || ! launcher.scmAccount.name">
                 Save
             </md-button>
         </div>
@@ -48,7 +49,7 @@
     <zf-modal-content-container class="ci-runner-container_content" ng-if="cardNumber === 2">
         <md-icon class="close-button" ng-click="cancel()" aria-label="Close dialog">close</md-icon>
         <div class="ci-runner-container_content_title">
-            {{testSuiteRunner.name}}
+            {{launcher.name}}
         </div>
         <div class="ci-runner-container_content_builder" ng-repeat="item in jsonModel track by $index">
             <div class="ci-runner-container_content_builder_item" ng-if="item.type === 'text'">
@@ -96,6 +97,12 @@
             <md-button class="md-raised btn-w-md md-primary" ng-click="build();" ng-if="cardNumber === 2">
                 Build
             </md-button>
+        </div>
+    </zf-modal-content-container>
+    <zf-modal-content-container class="ci-runner-container_content" ng-if="cardNumber === 0">
+        <md-icon class="close-button" ng-click="cancel()" aria-label="Close dialog">close</md-icon>
+        <div class="ci-runner-container_content_title no-data">
+            <span ng-if="launchers.length">Choose</span><span ng-if="! launchers.length">Add</span> template
         </div>
     </zf-modal-content-container>
     <!--<div class="row">

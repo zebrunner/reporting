@@ -3,9 +3,9 @@
 
     angular
         .module('app.integrations')
-        .controller('IntegrationsController', ['$scope', '$rootScope', '$state', '$mdConstant', '$stateParams', '$mdDialog', 'UploadService', 'SettingsService', IntegrationsController])
+        .controller('IntegrationsController', ['$scope', '$rootScope', '$state', '$window', '$q', '$mdConstant', '$stateParams', '$mdDialog', 'UploadService', 'SettingsService', 'ScmService', IntegrationsController])
 
-    function IntegrationsController($scope, $rootScope, $state, $mdConstant, $stateParams, $mdDialog, UploadService, SettingsService) {
+    function IntegrationsController($scope, $rootScope, $state, $window, $q, $mdConstant, $stateParams, $mdDialog, UploadService, SettingsService, ScmService) {
 
         $scope.settingTools = [];
         $scope.enabledSettings = {};
@@ -255,6 +255,89 @@
             $scope.cancel = function() {
                 $mdDialog.cancel(toolName);
             };
+        }
+
+        $scope.repositories = [];
+        $scope.organizations = [];
+        $scope.scmAccount = {};
+
+        function getClientId() {
+            return $q(function (resolve, reject) {
+                ScmService.getClientId().then(function (rs) {
+                    if(rs.success) {
+                        resolve(rs.data);
+                    }
+                });
+            });
+        };
+
+        $scope.connectToGitHub = function() {
+            getClientId().then(function (clientId) {
+                var url = 'https://github.com/login?client_id=' + clientId + '&return_to=%2Flogin%2Foauth%2Fauthorize%3Fclient_id%3D' + clientId + '%26scope%3Drepo%252Cread%253Auser%252Cread%253Aorg';
+                var height = 650;
+                var width = 450;
+                var location = getCenterWindowLocation(height, width);
+                var gitHubPopUp = $window.open(url,'targetWindow', 'resizable=no, width=' + width + ', height=' + height + ', top=' + location.top + ', left=' + location.left);
+
+                gitHubPopUp.onbeforeunload = function (e) {
+                    var code = getCode(gitHubPopUp.location);
+                    initAccessToken(code).then(function (scmAccount) {
+                        $scope.scmAccount = scmAccount;
+                        $scope.getOrganizations();
+                    });
+                };
+
+                gitHubPopUp.onload = function (e) {
+                    debugger;
+                };
+
+                if (window.focus) {
+                    gitHubPopUp.focus();
+                }
+            });
+        };
+
+        $scope.getOrganizations = function() {
+            ScmService.getOrganizations($scope.scmAccount.id).then(function (rs) {
+                if(rs.success) {
+                    $scope.organizations = rs.data;
+                    $scope.getRepositories();
+                }
+            });
+        };
+
+        $scope.getRepositories = function() {
+            var organizationName = $scope.scmAccount.organizationName ? $scope.scmAccount.organizationName : '';
+            ScmService.getRepositories($scope.scmAccount.id, organizationName).then(function (rs) {
+                if(rs.success) {
+                    $scope.repositories = rs.data;
+                }
+            });
+        };
+
+        function getCode(location) {
+            var urlParams = new URLSearchParams(location.search);
+            return urlParams.get('code');
+        };
+
+        function initAccessToken(code) {
+            return $q(function (resolve, reject) {
+                ScmService.exchangeCode(code).then(function (rs) {
+                    if(rs.success) {
+                        resolve(rs.data);
+                    }
+                });
+            });
+        };
+
+        function getCenterWindowLocation(height, width) {
+            var dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
+            var dualScreenTop = window.screenTop !== undefined ? window.screenTop : window.screenY;
+            var w = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+            var h = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+            var left = ((w / 2) - (width / 2)) + dualScreenLeft;
+            var top = ((h / 2) - (height / 2)) + dualScreenTop;
+            return {'top': top, 'left': left};
         }
 
         (function init(){

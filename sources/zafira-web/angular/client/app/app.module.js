@@ -96,6 +96,19 @@
                 return args[n] ? args[n] : m;
             });
         };
+        String.prototype.isJsonValid = function(pretty) {
+            var json = this;
+            if(pretty) {
+                json = json.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
+                json = json.replace(/\'/g, "\"");
+            }
+            try {
+                JSON.parse(json);
+            } catch (e) {
+                return false;
+            }
+            return true;
+        };
 
         Array.prototype.indexOfField = function(fieldName, fieldValue) {
             var path = fieldName.split('.');

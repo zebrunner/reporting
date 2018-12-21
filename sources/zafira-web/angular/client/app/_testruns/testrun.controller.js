@@ -3,13 +3,13 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$mdToast', '$mdMenu', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', '$q', 'FilterService', 'ProjectService', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', 'TestRunsStorage', '$tableExpandUtil', 'ScmService', '$transitions', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$mdToast', '$mdMenu', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', '$q', 'FilterService', 'ProjectService', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', 'TestRunsStorage', '$tableExpandUtil', '$transitions', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $mdToast, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, ProjectService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET, TestRunsStorage, $tableExpandUtil, ScmService, $transitions) {
+    function TestRunListController($scope, $rootScope, $mdToast, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, ProjectService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET, TestRunsStorage, $tableExpandUtil, $transitions) {
 
         var VALUES_TO_STORE = ["predicate", "reverse", "fastSearch", "testRunId", "testRuns", "totalResults", "selectedTestRuns", "searchFormIsEmpty", "showRealTimeEvents", "projects", "showReset", "selectAll", "sc", "currentCriteria", "currentOperator", "currentValue", "subjectBuilder", "filters", "filter", "selectedFilterRange", "rabbitmq", "jira", "jenkins", "currentMode", "testRunInDebugMode", "debugHost", "debugPort", "selectedRange", "slackChannels", "isSlackAvailable", "filterBlockExpand", "collapseFilter", "testGroupDataToStore", "testGroups", "testGroupMode", "tr", "testsTagsOptions", "testsStatusesOptions"];
 
@@ -2159,7 +2159,7 @@
         })();
     }
 
-    function CiHelperController($scope, $rootScope, $q, $window, $mdDialog, ScmService) {
+    function CiHelperController($scope, $rootScope, $q, $window, $mdDialog, LauncherService) {
 
         $scope.ciOptions = {};
 
@@ -2373,8 +2373,8 @@
 
         $scope.cardNumber = 1;
 
-        $scope.applyBuilder = function() {
-            var jsonText = $scope.editor.text.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
+        $scope.applyBuilder = function(launcher) {
+            var jsonText = launcher.model.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
             jsonText = jsonText.replace(/\'/g, "\"");
             $scope.jsonModel = JSON.parse(jsonText);
             checkJson($scope.jsonModel);
@@ -2437,104 +2437,70 @@
             return result;
         };
 
-        function getClientId() {
+        $scope.addTemplate = function() {
+            $scope.cardNumber = 1;
+        };
+
+        $scope.launchers = [];
+        $scope.launcher = {};
+        $scope.launcher.scmAccount = {};
+        $scope.launcher.scmAccount.name = $scope.scmAccounts[0].name;
+
+        $scope.createLauncher = function (launcher) {
+            LauncherService.createLauncher(launcher).then(function (rs) {
+                if(rs.success) {
+                    $scope.launchers.push(rs.data);
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        function getLauncherById(id) {
             return $q(function (resolve, reject) {
-                ScmService.getClientId().then(function (rs) {
+                LauncherService.getLauncherById(id).then(function (rs) {
                     if(rs.success) {
                         resolve(rs.data);
+                    } else {
+                        alertify.error(rs.message);
+                        reject();
                     }
                 });
             });
         };
 
-        $scope.repositories = [];
-        $scope.organizations = [];
-        $scope.scmAccount = {};
-
-        $scope.connectToGitHub = function() {
-            getClientId().then(function (clientId) {
-                var url = 'https://github.com/login?client_id=' + clientId + '&return_to=%2Flogin%2Foauth%2Fauthorize%3Fclient_id%3D' + clientId + '%26scope%3Drepo%252Cread%253Auser%252Cread%253Aorg';
-                var height = 650;
-                var width = 450;
-                var location = getCenterWindowLocation(height, width);
-                var gitHubPopUp = $window.open(url,'targetWindow', 'resizable=no, width=' + width + ', height=' + height + ', top=' + location.top + ', left=' + location.left);
-
-                gitHubPopUp.onbeforeunload = function (e) {
-                    var code = getCode(gitHubPopUp.location);
-                    initAccessToken(code).then(function (scmAccount) {
-                        $scope.scmAccount = scmAccount;
-                        $scope.getOrganizations();
-                    });
-                };
-
-                gitHubPopUp.onload = function (e) {
-                    debugger;
-                };
-
-                if (window.focus) {
-                    gitHubPopUp.focus();
-                }
-            });
-        };
-
-        $scope.getOrganizations = function() {
-            ScmService.getOrganizations($scope.scmAccount.id).then(function (rs) {
-                if(rs.success) {
-                    $scope.organizations = rs.data;
-                    $scope.getRepositories();
-                }
-            });
-        };
-
-        $scope.getRepositories = function() {
-            var organizationName = $scope.scmAccount.organizationName ? $scope.scmAccount.organizationName : '';
-            ScmService.getRepositories($scope.scmAccount.id, organizationName).then(function (rs) {
-                if(rs.success) {
-                    $scope.repositories = rs.data;
-                }
-            });
-        };
-
-        function getCode(location) {
-            var urlParams = new URLSearchParams(location.search);
-            return urlParams.get('code');
-        };
-
-        function initAccessToken(code) {
+        function getAllLaunchers() {
             return $q(function (resolve, reject) {
-                ScmService.exchangeCode(code).then(function (rs) {
+                LauncherService.getAllLaunchers().then(function (rs) {
                     if(rs.success) {
                         resolve(rs.data);
+                    } else {
+                        alertify.error(rs.message);
+                        reject();
                     }
                 });
             });
         };
 
-        function getCenterWindowLocation(height, width) {
-            var dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
-            var dualScreenTop = window.screenTop !== undefined ? window.screenTop : window.screenY;
-            var w = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
-            var h = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
-            var left = ((w / 2) - (width / 2)) + dualScreenLeft;
-            var top = ((h / 2) - (height / 2)) + dualScreenTop;
-            return {'top': top, 'left': left};
-        }
+        $scope.updateLauncher = function(launcher, index) {
+            LauncherService.updateLauncher(launcher).then(function (rs) {
+                if(rs.success) {
+                    $scope.launchers.splice(index, 1, rs.data);
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
 
-        /*{
-            env: ["DEMO", "STAG"],
-            browser: ["chrome", "firefox"],
-            suite: null,
-            method: "execute",
-            rerun: false
-          }*/
-
-        /*env:
-            - demo
-            - stage
-        browser:
-            - chrome
-            - firefox
-        suite_name: null*/
+        $scope.deleteLauncherById = function(id, index) {
+            LauncherService.deleteLauncherById(id).then(function (rs) {
+                if(rs.success) {
+                    $scope.launchers.splice(index, 1);
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
 
         $scope.hide = function(testRun) {
             $mdDialog.hide(testRun);
@@ -2545,6 +2511,10 @@
         };
 
         (function initController() {
+            getAllLaunchers().then(function (launchers) {
+                $scope.launchers = launchers;
+                $scope.cardNumber = launchers.length ? 1 : 0;
+            });
         })();
     };
 

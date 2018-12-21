@@ -1358,11 +1358,6 @@ button#resetFilter {
   }
 }
 
-.ci_icon_container {
-    width: 100%;
-    text-align: end;
-}
-
 .filter-chip {
     button {
         border-radius: 50%;
@@ -2810,6 +2805,9 @@ $light-inprogress: #68c9fd;
             word-break: normal;
             color: black;
             width: 100%;
+            small {
+                color: #7f7f7f;
+            }
         }
 
         &_button {
@@ -2915,6 +2913,7 @@ $light-inprogress: #68c9fd;
     }
     &_content {
         overflow: auto;
+        position: relative;
         .close-button {
             position: absolute;
             right: 11px;
@@ -2927,10 +2926,29 @@ $light-inprogress: #68c9fd;
         }
 
         &_title {
-            font-weight: normal;
-            letter-spacing: 0.2px;
-            color: rgba(0, 0, 0, 0.5);
-            font-size: 20px;
+            &, > * {
+                font-weight: normal;
+                letter-spacing: 0.2px;
+                color: rgba(0, 0, 0, 0.5);
+                font-size: 20px;
+            }
+            &.no-data {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                margin: auto;
+
+                &, * {
+                    text-align: center;
+                    letter-spacing: 0.6px;
+                    font-weight: 300;
+                    font-size: 60px;
+                    color: rgba(0, 0, 0, 0.15);
+                }
+            }
             opacity: 0.5;
             height: 20px;
             line-height: 16px;
@@ -3032,17 +3050,6 @@ $light-inprogress: #68c9fd;
                 overflow: auto;
                 overflow-y: hidden;
                 position: relative;
-
-                /*&:before {
-                    content: '';
-                    display: block;
-                    position: absolute;
-                    height: 100%;
-                    width: 100%;
-                    top: 0;
-                    left: 0;
-                    background: black !important;
-                }*/
 
                 &_container {
                     &:before {

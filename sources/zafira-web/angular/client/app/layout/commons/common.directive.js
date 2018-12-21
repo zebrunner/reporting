@@ -6,7 +6,11 @@
         .directive('zfModalHelperContainer', zfModalHelperContainer)
         .directive('zfModalContentContainer', zfModalContentContainer)
         .directive('zfInputContainer', zfInputContainer)
-        .directive('zfRadioButton', zfRadioButton);
+        .directive('zfRadioButton', zfRadioButton)
+        .directive('zfSubHeader', zfSubHeader)
+        .directive('zfSubHeaderTitle', zfSubHeaderTitle)
+        .directive('zfSubHeaderOptions', zfSubHeaderOptions)
+        .directive('zfSubHeaderButton', zfSubHeaderButton);
 
     // autoWrap: false option is required
     function zfModal() {
@@ -47,30 +51,23 @@
     }
 
     function zfInputContainer() {
-
         return {
             restrict: 'E',
             replace: true,
             transclude: true,
             templateUrl: 'app/layout/commons/templates/input-container.template.html',
-            controller: ['$scope', '$element', '$location', '$compile', zfInputContainerController],
             link: function(scope, element, attrs, ngModel){
             }
         };
-
-        function zfInputContainerController($scope, $element, $location, $compile) {
-        }
     }
 
     function zfRadioButton() {
-
         return {
             restrict: 'E',
             replace: true,
             transclude: true,
             require: 'ngModel',
             templateUrl: 'app/layout/commons/templates/radio-button.template.html',
-            controller: ['$scope', '$element', '$location', '$compile', zfInputContainerController],
             scope: {
                 ngModel: '=ngModel',
                 value: '='
@@ -94,9 +91,45 @@
                 check();
             }
         };
+    }
 
-        function zfInputContainerController($scope, $element, $location, $compile) {
-        }
+    function zfSubHeader() {
+        return {
+            restrict: 'E',
+            replace: true,
+            transclude: true,
+            templateUrl: 'app/layout/commons/templates/sub-header.template.html'
+        };
+    }
+
+    function zfSubHeaderTitle() {
+        return {
+            restrict: 'E',
+            replace: true,
+            transclude: true,
+            template: '<div class="fixed-page-header-container_title" id="pageTitle" ng-transclude></div>'
+        };
+    }
+
+    function zfSubHeaderOptions() {
+        return {
+            restrict: 'E',
+            replace: true,
+            transclude: true,
+            template: '<div class="fixed-page-header-container_options" ng-transclude></div>'
+        };
+    }
+
+    function zfSubHeaderButton() {
+        return {
+            restrict: 'E',
+            replace: true,
+            transclude: true,
+            template: '<div class="fixed-page-header-container_button hide-phone" ng-transclude></div>',
+            scope: {
+                title: '=title'
+            }
+        };
     }
 
 })();

@@ -34,7 +34,7 @@ public class Permission extends AbstractEntity implements Comparable<Permission>
 
 	public enum Block
 	{
-		DASHBOARDS, TEST_RUNS, INVITATIONS, USERS, SETTINGS, MONITORS, PROJECTS, INTEGRATIONS
+		DASHBOARDS, TEST_RUNS, INVITATIONS, USERS, SETTINGS, MONITORS, PROJECTS, INTEGRATIONS, LAUNCHERS
 	}
 
 	public enum Name
@@ -48,7 +48,8 @@ public class Permission extends AbstractEntity implements Comparable<Permission>
 		MODIFY_SETTINGS, VIEW_SETTINGS,
 		MODIFY_MONITORS, VIEW_MONITORS,
 		MODIFY_PROJECTS,
-		MODIFY_INTEGRATIONS, VIEW_INTEGRATIONS
+		MODIFY_INTEGRATIONS, VIEW_INTEGRATIONS,
+		MODIFY_LAUNCHERS, VIEW_LAUNCHERS
 	}
 
 	public Name getName()
