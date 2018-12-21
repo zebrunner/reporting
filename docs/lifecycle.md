@@ -180,7 +180,6 @@ None
 ```json
 {
    "buildNumber": 0,
-   "driverMode": "METHOD_MODE",
    "jobId": 8,
    "startedBy": "HUMAN",
    "testSuiteId": 8
@@ -192,7 +191,6 @@ None
 |testSuiteId| int   | Unique test suite identifier  |
 |buildNumber| int   | Build number|
 |startedBy| String   | One of the values : "SCHEDULER", "UPSTREAM_JOB", "HUMAN" |
-|driverMode| String  | One of the values :  METHOD_MODE", "CLASS_MODE", "SUITE_MODE" |
 
 **Response**
 ```json
@@ -206,7 +204,6 @@ None
    "startedBy": "HUMAN",
    "knownIssue": false,
    "blocker": false,
-   "driverMode": "METHOD_MODE",
    "reviewed": false
  }
 ```
@@ -218,11 +215,9 @@ None
 |testSuiteId| int   | Unique test suite identifier |
 |buildNumber| int   | Build number |
 |blocker| bool   | Unexpected behavior that keeps you from performing all test case steps |
-|driverMode| String   | Optional value : "METHOD_MODE", "CLASS_MODE", "SUITE_MODE"|
 |knownIssue| bool   | Failing reason in ticket|
 |reviewed|bool| Shows whether a test has been reviewed |
 |status| String   | Test run status ("UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED", "QUEUED") |
-|driverMode| String   | One of the values :  METHOD_MODE", "CLASS_MODE", "SUITE_MODE"|
 
 ---
 
@@ -405,7 +400,6 @@ None
   "startedBy": "HUMAN",
   "knownIssue": true,
   "blocker": false,
-  "driverMode": "METHOD_MODE",
   "reviewed": false
 }
 ```
@@ -420,5 +414,4 @@ None
 |startedBy|String| One of the values : "SCHEDULER", "UPSTREAM_JOB", "HUMAN"|
 |knownIssue| bool   | Failing reason in ticket|
 |blocker| bool   |Unexpected behavior that keeps you from performing all test case steps |
-|driverMode| String   | One of the values :  METHOD_MODE", "CLASS_MODE", "SUITE_MODE"|
 |reviewed|bool| Shows whether a test has been reviewed|

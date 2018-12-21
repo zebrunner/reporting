@@ -20,7 +20,6 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.db.TestRun.Initiator;
 
 @JsonInclude(Include.NON_NULL)
@@ -48,8 +47,6 @@ public class TestRunType extends AbstractType
 	private ProjectType project;
 	private boolean knownIssue;
 	private boolean blocker;
-	private DriverMode driverMode;
-	
 	private boolean reviewed;
 
 	public boolean isReviewed() {
@@ -283,13 +280,4 @@ public class TestRunType extends AbstractType
 		this.blocker = blocker;
 	}
 
-	public DriverMode getDriverMode()
-	{
-		return driverMode;
-	}
-
-	public void setDriverMode(DriverMode driverMode)
-	{
-		this.driverMode = driverMode;
-	}
 }
