@@ -441,7 +441,7 @@ public class TestRunsAPIController extends AbstractController {
 		testRun.setComments(null);
 		testRun.setReviewed(false);
 		testRunService.updateTestRun(testRun);
-			if (!jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures)) {
+		if (!jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures)) {
 			throw new UnableToRebuildCIJobException();
 		}
 	}
