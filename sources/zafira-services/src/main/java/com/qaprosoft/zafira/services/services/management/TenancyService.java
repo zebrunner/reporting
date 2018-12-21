@@ -40,6 +40,11 @@ public class TenancyService {
         return tenancyMapper.getAllTenancies();
     }
 
+    @Transactional(readOnly = true)
+    public Tenancy getTenancyByName(String name) {
+        return tenancyMapper.getTenancyByName(name);
+    }
+
     public void iterateItems(Runnable runnable) {
         if(isMultitenant) {
             iterateItems(tenancy -> runnable.run());
