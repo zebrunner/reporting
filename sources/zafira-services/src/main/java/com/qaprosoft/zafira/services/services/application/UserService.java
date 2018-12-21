@@ -23,6 +23,7 @@ import javax.annotation.PostConstruct;
 import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.management.TenancyService;
+import com.qaprosoft.zafira.services.util.TenancyInitial;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jasypt.util.password.PasswordEncryptor;
@@ -44,7 +45,7 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 
 @Service
-public class UserService {
+public class UserService implements TenancyInitial {
     
     private static final Logger LOGGER = Logger.getLogger(UserService.class);
 
@@ -73,29 +74,32 @@ public class UserService {
     private TenancyService tenancyService;
 
     @PostConstruct
+    public void postConstruct() {
+        tenancyService.iterateItems(this::init);
+    }
+
+    @Override
     public void init() {
         if (!StringUtils.isBlank(adminUsername) && !StringUtils.isBlank(adminPassword)) {
-            tenancyService.iterateItems(() -> {
-                try {
-                    User user = getUserByUsername(adminUsername);
-                    if (user == null) {
-                        user = new User(adminUsername);
-                        user.setSource(INTERNAL);
-                        user.setStatus(Status.ACTIVE);
-                        user.setPassword(passwordEncryptor.encryptPassword(adminPassword));
-                        createUser(user);
+            try {
+                User user = getUserByUsername(adminUsername);
+                if (user == null) {
+                    user = new User(adminUsername);
+                    user.setSource(INTERNAL);
+                    user.setStatus(Status.ACTIVE);
+                    user.setPassword(passwordEncryptor.encryptPassword(adminPassword));
+                    createUser(user);
 
-                        Group group = groupService.getPrimaryGroupByRole(Role.ROLE_ADMIN);
-                        if (group != null) {
-                            addUserToGroup(user, group.getId());
-                            user.getGroups().add(group);
-                        }
-                        userPreferenceService.createDefaultUserPreferences(user.getId());
+                    Group group = groupService.getPrimaryGroupByRole(Role.ROLE_ADMIN);
+                    if (group != null) {
+                        addUserToGroup(user, group.getId());
+                        user.getGroups().add(group);
                     }
-                } catch (Exception e) {
-                    LOGGER.error("Unable to init admin: " + e.getMessage(), e);
+                    userPreferenceService.createDefaultUserPreferences(user.getId());
                 }
-            });
+            } catch (Exception e) {
+                LOGGER.error("Unable to init admin: " + e.getMessage(), e);
+            }
         }
     }
 

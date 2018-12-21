@@ -16,6 +16,13 @@
 		<include refid="getTenancy" />
 	</select>
 
+	<select id="getTenancyByName" resultMap="TenancyResultMap">
+		<include refid="getTenancy" />
+		<![CDATA[
+			WHERE NAME = #{name}
+		]]>
+	</select>
+
 	<resultMap type="com.qaprosoft.zafira.models.db.Tenancy" id="TenancyResultMap" autoMapping="false">
 		<result column="TENANCY_NAME" property="name" />
 	</resultMap>
