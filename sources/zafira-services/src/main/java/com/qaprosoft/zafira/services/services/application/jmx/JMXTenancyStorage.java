@@ -24,13 +24,14 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.management.TenancyService;
 import com.qaprosoft.zafira.services.services.application.jmx.context.AbstractContext;
+import com.qaprosoft.zafira.services.util.TenancyInitial;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
 @Component
-public class JMXTenancyStorage {
+public class JMXTenancyStorage implements TenancyInitial {
 
     @Autowired
     private TenancyService tenancyService;
@@ -41,11 +42,14 @@ public class JMXTenancyStorage {
     private static final Map<Setting.Tool, Map<String, ? extends AbstractContext>> tenancyEntity = new ConcurrentHashMap<>();
 
     @PostConstruct
+    public void post() {
+        tenancyService.iterateItems(this::init);
+    }
+
+    @Override
     public void init() {
-        tenancyService.iterateItems(() -> {
-            Arrays.stream(Setting.Tool.values()).forEach(tool -> {
-                settingsService.getServiceByTool(tool).init();
-            });
+        Arrays.stream(Setting.Tool.values()).forEach(tool -> {
+            settingsService.getServiceByTool(tool).init();
         });
     }
 
