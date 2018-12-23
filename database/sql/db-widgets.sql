@@ -1383,7 +1383,7 @@ BEGIN
             },
             "radius": [
                 "0%",
-                "85%"
+                "75%"
             ]
         }
     ]
@@ -1960,7 +1960,7 @@ BEGIN
 }';
 
 	monthly_platform_pass_rate_sql :=
-	'SELECT PLATFORM AS "PLATFORM",
+	'SELECT lower(PLATFORM) AS "PLATFORM",
       round (100.0 * sum( PASSED ) / sum(TOTAL), 0)::integer AS "PASSED",
       round (100.0 * sum( KNOWN_ISSUE ) / sum(TOTAL), 0)::integer AS "KNOWN ISSUE",
       round (100.0 * sum( QUEUED) / sum(TOTAL), 0)::integer AS "QUEUED",
@@ -1969,8 +1969,9 @@ BEGIN
       0 - round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED"
   FROM MONTHLY_VIEW
   WHERE PROJECT LIKE ANY (''{#{project}}'')
-  GROUP BY PLATFORM
-  ORDER BY PLATFORM';
+    AND lower(PLATFORM) <> 'n/a'
+  GROUP BY "PLATFORM"
+  ORDER BY "PLATFORM"';
 
 	monthly_platform_pass_rate_model :=
 	'{
@@ -2027,7 +2028,7 @@ BEGIN
         "ABORTED"
     ],
     "height": {
-        "dataItemValue": 100
+        "dataItemValue": 80
     },
     "series": [
         {
@@ -2072,7 +2073,7 @@ BEGIN
         },
         {
             "type": "bar",
-            "stack": "stack-queued",
+            "stack": "stack",
             "label": {
                 "normal": {
                     "show": true,
@@ -2250,7 +2251,8 @@ BEGIN
       sum( TOTAL ) AS "TOTAL"
   FROM WEEKLY_VIEW
   WHERE PROJECT LIKE ANY (''{#{project}}'')
-  GROUP BY "CREATED_AT"';
+  GROUP BY "CREATED_AT"
+  ORDER BY "CREATED_AT"';
 
 	weekly_test_results_model :=
 	'{
@@ -2400,7 +2402,7 @@ BEGIN
 }';
 
 	weekly_platform_pass_rate_sql :=
-	'SELECT PLATFORM AS "PLATFORM",
+	'lower(PLATFORM) AS "PLATFORM",
       round (100.0 * sum( PASSED ) / sum(TOTAL), 0)::integer AS "PASSED",
       round (100.0 * sum( KNOWN_ISSUE ) / sum(TOTAL), 0)::integer AS "KNOWN ISSUE",
       round (100.0 * sum( QUEUED) / sum(TOTAL), 0)::integer AS "QUEUED",
@@ -2409,8 +2411,9 @@ BEGIN
       0 - round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED"
   FROM WEEKLY_VIEW
   WHERE PROJECT LIKE ANY (''{#{project}}'')
-  GROUP BY PLATFORM
-  ORDER BY PLATFORM';
+    AND lower(PLATFORM) <> 'n/a'
+  GROUP BY "PLATFORM"
+  ORDER BY "PLATFORM"';
 
 	weekly_platform_pass_rate_model :=
 	'{
@@ -2467,7 +2470,7 @@ BEGIN
         "ABORTED"
     ],
     "height": {
-        "dataItemValue": 100
+        "dataItemValue": 80
     },
     "series": [
         {
@@ -2512,7 +2515,7 @@ BEGIN
         },
         {
             "type": "bar",
-            "stack": "stack-queued",
+            "stack": "stack",
             "label": {
                 "normal": {
                     "show": true,
@@ -2827,7 +2830,7 @@ BEGIN
         ''<a href="#{zafiraURL}/#!/dashboards/3?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER_USERNAME || ''</a>'' AS "OWNER",
         SUM(PASSED) AS "PASSED",
         SUM(FAILED) AS "FAILED",
-        SUM(KNOWN_ISSUE) AS "KNOWN ISSUE",
+        SUM(KNOWN_ISSUE) AS "DEFECT",
         SUM(SKIPPED) AS "SKIPPED",
         sum( QUEUED ) AS "QUEUED",
         SUM(TOTAL) AS "TOTAL"
@@ -2843,7 +2846,7 @@ BEGIN
           "OWNER",
           "PASSED",
           "FAILED",
-          "KNOWN ISSUE",
+          "DEFECT",
           "TOTAL"
       ]
   }';
@@ -2961,7 +2964,7 @@ BEGIN
         },
         {
             "type": "bar",
-            "stack": "stack-queued",
+            "stack": "stack",
             "label": {
                 "normal": {
                     "show": true,
