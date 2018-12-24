@@ -1969,7 +1969,7 @@ BEGIN
       0 - round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED"
   FROM MONTHLY_VIEW
   WHERE PROJECT LIKE ANY (''{#{project}}'')
-    AND lower(PLATFORM) <> 'n/a'
+    AND lower(PLATFORM) <> ''n/a''
   GROUP BY "PLATFORM"
   ORDER BY "PLATFORM"';
 
@@ -2411,7 +2411,7 @@ BEGIN
       0 - round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED"
   FROM WEEKLY_VIEW
   WHERE PROJECT LIKE ANY (''{#{project}}'')
-    AND lower(PLATFORM) <> 'n/a'
+    AND lower(PLATFORM) <> ''n/a''
   GROUP BY "PLATFORM"
   ORDER BY "PLATFORM"';
 
