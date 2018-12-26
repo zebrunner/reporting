@@ -62,7 +62,6 @@ import com.qaprosoft.zafira.config.CIConfig;
 import com.qaprosoft.zafira.config.CIConfig.BuildCasue;
 import com.qaprosoft.zafira.config.IConfigurator;
 import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.db.TestRun.Initiator;
 import com.qaprosoft.zafira.models.dto.JobType;
 import com.qaprosoft.zafira.models.dto.TestCaseType;
@@ -194,19 +193,18 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 					ZAFIRA_RERUN_FAILURES = false;
 				}
 				// Register new test run
-				DriverMode driverMode = configurator.getDriverMode();
-				
+
 				switch (ci.getCiBuildCause())
 				{
 					case UPSTREAMTRIGGER:
-						this.run = zc.registerTestRunUPSTREAM_JOB(suite.getId(), convertToXML(configurator.getConfiguration()), job.getId(), parentJob.getId(), ci, Initiator.UPSTREAM_JOB, JIRA_SUITE_ID, driverMode);
+						this.run = zc.registerTestRunUPSTREAM_JOB(suite.getId(), convertToXML(configurator.getConfiguration()), job.getId(), parentJob.getId(), ci, Initiator.UPSTREAM_JOB, JIRA_SUITE_ID);
 						break;
 					case TIMERTRIGGER:
 					case SCMTRIGGER:
-						this.run = zc.registerTestRunBySCHEDULER(suite.getId(), convertToXML(configurator.getConfiguration()), job.getId(), ci, Initiator.SCHEDULER, JIRA_SUITE_ID, driverMode);
+						this.run = zc.registerTestRunBySCHEDULER(suite.getId(), convertToXML(configurator.getConfiguration()), job.getId(), ci, Initiator.SCHEDULER, JIRA_SUITE_ID);
 						break;
 					case MANUALTRIGGER:
-						this.run = zc.registerTestRunByHUMAN(suite.getId(), user.getId(), convertToXML(configurator.getConfiguration()), job.getId(), ci, Initiator.HUMAN, JIRA_SUITE_ID, driverMode);
+						this.run = zc.registerTestRunByHUMAN(suite.getId(), user.getId(), convertToXML(configurator.getConfiguration()), job.getId(), ci, Initiator.HUMAN, JIRA_SUITE_ID);
 						break;
 					default:
 						throw new RuntimeException("Unable to register test run for zafira service: " + ZAFIRA_URL + " due to the misses build cause: '" + ci.getCiBuildCause() + "'");
