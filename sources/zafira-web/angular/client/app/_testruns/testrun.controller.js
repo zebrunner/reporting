@@ -460,7 +460,10 @@
             test.artifactsToShow = test.artifacts.filter(function (artifact) {
                 return ! artifact.name.toLowerCase().includes('live') && ! artifact.name.toLowerCase().includes('video');
             });
-
+            test.tags = test.tags.filter(function (tag) {
+                return tag.name != 'TESTRAIL_TESTCASE_UUID'
+                    && tag.name != 'QTEST_TESTCASE_UUID';
+            });
             var testRun = $scope.testRuns[test.testRunId];
             var testId = test.id;
             if (testRun == null) {
@@ -1601,9 +1604,7 @@
             var result = [];
             angular.forEach(tests, function (test, key, object) {
                 test.tags.forEach(function (tag) {
-                    if(result.indexOfField('value', tag.value) == -1
-                        && tag.name != 'TESTRAIL_TESTCASE_UUID'
-                        && tag.name != 'QTEST_TESTCASE_UUID') {
+                    if(result.indexOfField('value', tag.value) == -1) {
                         result.push(tag);
                     }
                 });
