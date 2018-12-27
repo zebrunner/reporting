@@ -1601,7 +1601,9 @@
             var result = [];
             angular.forEach(tests, function (test, key, object) {
                 test.tags.forEach(function (tag) {
-                    if(result.indexOfField('value', tag.value) == -1) {
+                    if(result.indexOfField('value', tag.value) == -1
+                        && tag.name != 'TESTRAIL_TESTCASE_UUID'
+                        && tag.name != 'QTEST_TESTCASE_UUID') {
                         result.push(tag);
                     }
                 });

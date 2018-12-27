@@ -212,10 +212,7 @@
 			ON
 				T.ID = TT.TEST_ID
 			LEFT JOIN
-				(
-					SELECT * FROM TAGS
-					WHERE TAGS.NAME <> 'TESTRAIL_TESTCASE_UUID' AND TAGS.NAME <> 'QTEST_TESTCASE_UUID'
-				  ) TG
+				TAGS TG
 			ON
 				TT.TAG_ID = TG.ID
         ]]>
