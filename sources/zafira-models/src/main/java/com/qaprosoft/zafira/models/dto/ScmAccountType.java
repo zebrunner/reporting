@@ -25,6 +25,8 @@ public class ScmAccountType extends AbstractType {
 
     private String organizationName;
     private String repositoryName;
+    private String avatarURL;
+    private String repositoryURL;
     private Long userId;
     private ScmAccount.Name name;
 
@@ -42,6 +44,22 @@ public class ScmAccountType extends AbstractType {
 
     public void setRepositoryName(String repositoryName) {
         this.repositoryName = repositoryName;
+    }
+
+    public String getAvatarURL() {
+        return avatarURL;
+    }
+
+    public void setAvatarURL(String avatarURL) {
+        this.avatarURL = avatarURL;
+    }
+
+    public String getRepositoryURL() {
+        return repositoryURL;
+    }
+
+    public void setRepositoryURL(String repositoryURL) {
+        this.repositoryURL = repositoryURL;
     }
 
     public Long getUserId() {

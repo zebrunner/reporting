@@ -15,20 +15,32 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherMapper;
 import com.qaprosoft.zafira.models.db.Launcher;
+import com.qaprosoft.zafira.models.db.ScmAccount;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.application.jmx.JenkinsService;
+import com.qaprosoft.zafira.services.services.application.scm.ScmAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class LauncherService {
 
     @Autowired
     private LauncherMapper launcherMapper;
+
+    @Autowired
+    private JenkinsService jenkinsService;
+
+    @Autowired
+    private ScmAccountService scmAccountService;
 
     @Transactional(rollbackFor = Exception.class)
     public Launcher createLauncher(Launcher launcher) throws ServiceException {
@@ -55,5 +67,19 @@ public class LauncherService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteLauncherById(Long id) throws ServiceException {
         launcherMapper.deleteLauncherById(id);
+    }
+
+    @SuppressWarnings("unchecked")
+    public void buildLauncherJob(Launcher launcher) throws IOException, ServiceException {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, String> args = mapper.readValue(launcher.getModel(), Map.class);
+        if(JenkinsService.checkArguments(args)) {
+            throw new ServiceException("Required arguments not found");
+        }
+        ScmAccount scmAccount = scmAccountService.getScmAccountById(launcher.getScmAccount().getId());
+        if(scmAccount == null) {
+            throw new ServiceException("Scm account does not exist.");
+        }
+
     }
 }

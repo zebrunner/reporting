@@ -1,37 +1,54 @@
 $modal-grey: #dfe3e5;
 $modal-white: #ffffff;
+$red: #d2333b;
 
-.zf-modal-container {
-    height: 680px !important;//69%;
-    width: 880px !important;//61%;
-    font-size: 0 !important;
+.zf-md-dialog-container {
+    height: 100% !important;
+    top: 0 !important;
+    overflow: auto !important;
+    display: block;
+    text-align: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    .zf-modal-container {
+        text-align: left !important;
+        display: inline-block !important;
+        height: auto;
+        max-height: none !important;
+        width: 880px !important;
+        font-size: 0 !important;
 
-    &_helper, &_content {
-        display: inline-block;
-        height: 100%;
-        font-size: 12px;
-        padding: 24px;
-        float: left;
-        @media (max-width: $screen-sm) {
-            width: 100% !important;
-            display: block;
+        .md-dialog-content > div {
+            display: flex;
         }
-    }
-    &_helper {
-        width: 34%;
-        background-color: $modal-white;
-    }
-    &_content {
-        width: 66%;
-        background-color: $modal-grey;
-        padding-top: 30px;
-    }
 
-    .md-dialog-content {
-        padding: 0;
-        height: 100%;
-        > * {
+        &_helper, &_content {
+            font-size: 12px;
+            padding: 32px 0 32px 24px;
+            @media (max-width: $screen-sm) {
+                width: 100% !important;
+                display: block;
+            }
+        }
+
+        &_helper {
+            width: 34%;
+            background-color: $modal-white;
+        }
+
+        &_content {
+            width: 66%;
+            background-color: $modal-grey;
+            padding: 30px 20px 24px 24px;
+        }
+
+        .md-dialog-content {
+            padding: 0;
             height: 100%;
+
+            > * {
+                height: 100%;
+            }
         }
     }
 }
@@ -39,6 +56,7 @@ $modal-white: #ffffff;
 
 // Inputs
 .zf-input-container {
+    font-size: 0;
     > input, > select, md-select {
         width: 272px;
         height: 34px;
@@ -86,6 +104,11 @@ $modal-white: #ffffff;
         &.md-checked .md-icon {
             background-color: black;
         }
+        .md-label {
+            font-weight: normal;
+            color: black;
+            font-size: 14px;
+        }
     }
 
     md-chips-wrap {
@@ -123,11 +146,31 @@ $modal-white: #ffffff;
             height: 24px;
         }
     }
+    label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: normal;
+        line-height: 12px;
+        margin-bottom: 12px;
+        color: #35393f;
+    }
 }
 
+.zf-label {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 3.71;
+    letter-spacing: 0.1px;
+    color: #7f7f7f;
+    padding-right: 24px;
+    position: relative;
+    left: 24px;
+}
 
 .zf-button {
     display: inline-block;
+    position: relative;
     width: 140px;
     font-size: 14px;
     font-weight: 500;
@@ -138,31 +181,70 @@ $modal-white: #ffffff;
     &:active {
         border: none;
     }
+
+    &.zf-warn {
+        color: $red;
+        background-color: rgba(31,36,42, 0.05);
+        float: left;
+    }
+
+    &.zf-chip-button {
+        width: 100% !important;
+        min-width: 148px !important;
+        height: 32px;
+        line-height: 32px;
+        border-radius: 16px;
+        letter-spacing: normal !important;
+        color: $modal-white;
+        background-color: $brand-light;
+        padding-left: 16px;
+        text-transform: uppercase;
+
+        i.material-icons {
+            position: absolute;
+            left: 8px;
+            top: 8px;
+            vertical-align: middle;
+            font-size: 16px;
+        }
+    }
+
+    &.zf-square {
+        width: 36px !important;
+        height: 36px !important;
+        line-height: 48px !important;
+        background-color: rgba(31,36,42, 0.4);
+        border-radius: 4px;
+        padding: 0;
+        i {
+            color: $modal-white;
+            font-size: 22px;
+        }
+    }
+
+    &.zf-button-close {
+        i.material-icons {
+            transform: rotate(-135deg);
+            transition: all linear .3s;
+        }
+    }
+    &.zf-button-close-revert {
+        i.material-icons {
+            transform: rotate(0deg);
+            transition: all linear .3s;
+            transform-origin: 49% 49%;
+        }
+    }
 }
 
 // Controls
-.zf-button.zf-chip-button {
-    width: 100% !important;
-    min-width: 138px !important;
-    height: 32px;
-    border-radius: 16px;
-    letter-spacing: 0.7px !important;
-    color: $modal-white;
-    background-color: $brand-light;
-
-    i.material-icons {
-        vertical-align: middle;
-        font-size: 16px;
-        padding: 0 5px;
-    }
-}
 
 .zf-radio-button {
     position: relative;
     display: inline-block;
-    width: 168px;
-    height: 54px;
-    margin-right: 8px;
+    width: 154px;
+    height: 36px;
+    margin: 0 8px 8px 0;
     input[type = 'radio'] {
         display: none;
     }
@@ -179,11 +261,11 @@ $modal-white: #ffffff;
             font-size: 13px;
             top: 50%;
             transform: translateY(-50%);
-            left: 12px;
+            left: 8px;
         }
         img {
-            max-width: 30px;
-            max-height: 30px;
+            max-width: 20px;
+            max-height: 20px;
             margin-right: 4px;
         }
 

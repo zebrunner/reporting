@@ -34,6 +34,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,5 +98,15 @@ public class LaunchersAPIController extends AbstractController {
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public void deleteLauncherById(@PathVariable(value = "id") Long id) throws ServiceException {
         launcherService.deleteLauncherById(id);
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Build job with launcher", nickname = "build", httpMethod = "POST")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
+    @RequestMapping(value = "{id}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void build(@RequestBody @Valid LauncherType launcherType) throws ServiceException, IOException {
+        launcherService.buildLauncherJob(mapper.map(launcherType, Launcher.class));
     }
 }

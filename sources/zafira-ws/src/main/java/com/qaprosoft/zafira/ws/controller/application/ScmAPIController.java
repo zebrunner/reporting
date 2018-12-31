@@ -105,6 +105,13 @@ public class ScmAPIController extends AbstractController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value="accounts", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody ScmAccountType updateScmAccount(@RequestBody @Valid ScmAccountType scmAccountType) throws ServiceException {
+        ScmAccount account = scmAccountService.getScmAccountById(scmAccountType.getId());
+        if(account == null) {
+            throw new ServiceException("Scm account with id " + scmAccountType.getId() + " does not exist.");
+        }
+        if(account.getUserId() == null || account.getUserId() <= 0) {
+            account.setUserId(getPrincipalId());
+        }
         return mapper.map(scmAccountService.updateScmAccount(mapper.map(scmAccountType, ScmAccount.class)), ScmAccountType.class);
     }
 

@@ -22,6 +22,7 @@ public class Repository implements Serializable {
     private static final long serialVersionUID = 5674477137924671883L;
 
     private String name;
+    private String url;
     private Boolean isPrivate;
 
     public Repository() {
@@ -37,6 +38,14 @@ public class Repository implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public Boolean getPrivate() {

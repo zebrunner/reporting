@@ -29,7 +29,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import com.qaprosoft.zafira.models.dto.JenkinsJobType;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -290,6 +292,16 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
             }
         }
         return params;
+    }
+
+    private static final String[] REQUIRED_ARGS = new String[] {"suite", "branch", "url"};
+
+    public static boolean checkArguments(Map<String, String> args) {
+        return Arrays.stream(REQUIRED_ARGS).filter(arg -> args.get(arg) == null).collect(Collectors.toList()).size() == 0;
+    }
+
+    public static void build(JenkinsJobType jenkinsJob) {
+
     }
 
     @Override

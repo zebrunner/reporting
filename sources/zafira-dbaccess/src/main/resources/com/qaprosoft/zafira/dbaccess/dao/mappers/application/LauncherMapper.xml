@@ -25,6 +25,8 @@
 				S.ACCESS_TOKEN AS SCM_ACCESS_TOKEN,
 				S.ORGANIZATION AS SCM_ORGANIOZATION,
 				S.REPO AS SCM_REPO,
+				S.AVATAR_URL AS SCM_AVATAR_URL,
+				S.REPOSITORY_URL AS SCM_REPOSITORY_URL,
 				S.USER_ID AS SCM_USER_ID,
 				S.MODIFIED_AT AS SCM_MODIFIED_AT,
 				S.CREATED_AT AS SCM_CREATED_AT,
@@ -62,7 +64,7 @@
             </if>
             <if test="null != model">
                 <![CDATA[
-                   MODEL = #{model}
+                   MODEL = #{model},
                 ]]>
             </if>
             <if test="null != scmAccount and null != scmAccount.id">

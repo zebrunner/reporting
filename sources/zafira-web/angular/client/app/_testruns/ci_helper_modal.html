@@ -3,18 +3,17 @@
         <div class="ci-runner-container_helper_title">Launcher</div>
         <div class="ci-runner-container_helper_choose">
             <button ng-click="addTemplate();" class="zf-button zf-chip-button">
-                Add template
                 <i class="material-icons">add_circle</i>
+                Add template
             </button>
-            <div ng-if="launchers.length" class="ci-runner-container_helper_choose_or">or</div>
-            <div ng-if="launchers.length" class="ci-runner-container_helper_choose_else">Choose Test Suite</div>
+            <div ng-if="launchers.length" class="ci-runner-container_helper_choose_or">or choose test suite</div>
         </div>
         <div ng-if="launchers.length" class="ci-runner-container_helper_section">
-            <div ng-repeat="l in launchers track by l.id" class="ci-runner-container_helper_section_item">
-                <div class="ci-runner-container_helper_section_item_container">
+            <div ng-repeat="l in launchers track by l.id" class="ci-runner-container_helper_section_item" ng-class="{'ci-runner-container_helper_section_item_selected': launcher.id === l.id}">
+                <div ng-click="chooseLauncher(l);" class="ci-runner-container_helper_section_item_container">
                     {{l.name}}
-                    <i ng-click="" class="material-icons">edit</i>
                 </div>
+                <i ng-click="editLauncher(l);" class="material-icons">edit</i>
             </div>
         </div>
     </zf-modal-helper-container>
@@ -22,26 +21,72 @@
         <md-icon class="close-button" ng-click="cancel()" aria-label="Close dialog">close</md-icon>
         <div>
             <zf-input-container>
-                <input ng-model="launcher.name" placeholder="Title" autofocus ng-required/>
+                <label>Set name for template</label>
+                <input ng-model="launcher.name" placeholder="Set name" autofocus ng-required/>
             </zf-input-container>
         </div>
         <div class="ci-runner-container_content_scm-connector">
-            <div class="ci-runner-container_content_scm-connector_title">Select a Github repository</div>
             <div class="ci-runner-container_content_scm-connector_items">
-                <zf-input-container>
-                    <zf-radio-button ng-repeat="scm in scmAccounts track by $index" ng-model="launcher.scmAccount.name" value="scm.name">
-                        <img ng-src="{{scm.avatarURL}}"/>
-                        {{scm.name}}
-                    </zf-radio-button>
+                <zf-input-container class="clearfix">
+                    <label>Add or select a Github repository</label>
+                    <div class="ci-runner-container_content_scm-connector_items_add" ng-style="{'padding-right': states.addGitRepo ? '8px' : '0'}">
+                        <button ng-click="addNewGithubRepo($event.target);" class="zf-button zf-square">
+                            <i class="material-icons">add</i>
+                        </button>
+                        <span ng-if="states.addGitRepo">
+                            <zf-input-container>
+                                <md-input-container>
+                                    <label>Organization</label>
+                                    <md-select ng-model="scmAccount.organization">
+                                        <md-option ng-repeat="organization in organizations track by $index" ng-value="organization">
+                                            {{organization.name}}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+                            </zf-input-container>
+                            <zf-input-container>
+                                <md-input-container>
+                                    <label>Repository</label>
+                                    <md-select ng-model="scmAccount.repository">
+                                        <md-option ng-repeat="repository in repositories track by $index" ng-value="repository">
+                                            {{repository.name}}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+                            </zf-input-container>
+                            <button class="md-add" md-no-ink ng-click="addScmAccount(scmAccount);" ng-disabled="">
+                                Add
+                            </button>
+                        </span>
+                    </div>
+                    <div class="ci-runner-container_content_scm-connector_items_content">
+                        <zf-radio-button ng-repeat="scm in scmAccounts track by $index" ng-model="launcher.scmAccountType" value="scm">
+                            <img ng-src="{{scm.avatarURL}}"/>
+                            {{scm.repositoryName}}
+                        </zf-radio-button>
+                    </div>
                 </zf-input-container>
             </div>
         </div>
         <div class="ci-runner-container_content_code" ng-cloak>
-            <div id="aceEditor" class="ci-runner-container_content_code_editor" ui-ace="{{aceOptions}}" ng-model="launcher.model"></div>
+            <zf-input-container>
+                <label>Paste code or choose a predefined one</label>
+                <div id="aceEditor" class="ci-runner-container_content_code_editor" ui-ace="{{aceOptions}}" ng-model="launcher.model"></div>
+                <md-input-container>
+                    <label>Platform</label>
+                    <md-select ng-change="mergeTemplate(DEFAULT_TEMPLATES.model.json);" ng-model="DEFAULT_TEMPLATES.model">
+                        <md-option value=""></md-option>
+                        <md-option ng-repeat="dt in DEFAULT_TEMPLATES.variants track by $index" ng-value="dt">{{dt.name}}</md-option>
+                    </md-select>
+                </md-input-container>
+            </zf-input-container>
         </div>
         <div class="ci-runner-container_content_actions">
-            <md-button class="md-raised btn-w-md md-primary" ng-click="applyBuilder(launcher);"
-                       ng-disabled="! launcher.model || ! launcher.model.isJsonValid(true) || ! launcher.name || ! launcher.scmAccount.name">
+            <button ng-really-click="deleteLauncher(launcher.id);" ng-really-message="Do you really want to delete the launcher?" class="zf-button zf-warn" ng-if="launcher && launcher.id">
+                Delete template
+            </button>
+            <md-button class="md-raised btn-w-md md-primary" ng-click="saveLauncher(launcher); applyBuilder(launcher);"
+                       ng-disabled="! launcher.model || ! launcher.model.isJsonValid(true) || ! launcher.name || ! launcher.scmAccountType.id">
                 Save
             </md-button>
         </div>
@@ -51,49 +96,38 @@
         <div class="ci-runner-container_content_title">
             {{launcher.name}}
         </div>
-        <div class="ci-runner-container_content_builder" ng-repeat="item in jsonModel track by $index">
-            <div class="ci-runner-container_content_builder_item" ng-if="item.type === 'text'">
+        <div class="ci-runner-container_content_builder" ng-repeat="(key, item) in jsonModel track by $index">
+            <div class="ci-runner-container_content_builder_item" ng-if="['string', 'int'].indexOf(getType(item)) !== -1">
                 <zf-input-container>
-                    <input ng-model="item.value" placeholder="{{item.name}}"/>
+                    <input ng-attr-type="{{getType(item) === 'int' ? 'number' : 'text'}}" ng-model="builtLauncher[key]" placeholder="{{key}}"/>
+                    <span class="zf-label">{{key}}</span>
                 </zf-input-container>
             </div>
-            <div class="ci-runner-container_content_builder_item" ng-if="item.type === 'select'">
+            <div class="ci-runner-container_content_builder_item" ng-if="getType(item) === 'array'">
                 <zf-input-container>
                     <md-input-container>
-                        <label>{{item.name}}</label>
-                        <md-select ng-model="item.default">
-                            <md-option ng-repeat="val in item.value" ng-value="val">
+                        <label>{{key}}</label>
+                        <md-select ng-model="builtLauncher[key]">
+                            <md-option ng-repeat="val in item" ng-value="val">
                                 {{val}}
                             </md-option>
                         </md-select>
                     </md-input-container>
+                    <span class="zf-label">{{key}}</span>
                 </zf-input-container>
             </div>
-            <div class="ci-runner-container_content_builder_item" ng-if="item.type === 'checkbox'">
+            <div class="ci-runner-container_content_builder_item" ng-if="getType(item) === 'boolean'">
                 <zf-input-container>
-                    <md-checkbox ng-model="item.value" aria-label="checkbox">
-                        {{item.name}}
+                    <md-checkbox ng-model="builtLauncher[key]" aria-label="checkbox">
+                        {{key}}
                     </md-checkbox>
                 </zf-input-container>
             </div>
-            <div class="ci-runner-container_content_builder_item item-array" ng-if="item.type === 'array'">
-                <zf-input-container>
-                    <md-chips ng-model="item.value"
-                              md-removable="true" placeholder="{{item.name}}">
-                        <md-chip-template>
-                            <strong>{{$chip}}</strong>
-                        </md-chip-template>
-                    </md-chips>
-                </zf-input-container>
-            </div>
-            <div class="ci-runner-container_content_builder_description zf-{{item.type}}">
+            <!--<div class="ci-runner-container_content_builder_description zf-{{item.type}}">
                 {{item.description}}
-            </div>
+            </div>-->
         </div>
         <div class="ci-runner-container_content_actions">
-            <md-button class="md-raised btn-w-md md-primary" ng-click="applyBuilder();" ng-if="cardNumber === 1">
-                Save
-            </md-button>
             <md-button class="md-raised btn-w-md md-primary" ng-click="build();" ng-if="cardNumber === 2">
                 Build
             </md-button>
@@ -105,80 +139,4 @@
             <span ng-if="launchers.length">Choose</span><span ng-if="! launchers.length">Add</span> template
         </div>
     </zf-modal-content-container>
-    <!--<div class="row">
-        <div class="col-lg-12">
-            <div layout="column" ng-cloak class="md-inline-form">
-                <div layout-padding>
-                    <form class="form-validation" name="scm_form" ng-cloak>
-                        <input type="button" ng-click="connectToGitHub();" value="Connect to GitHub"/>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div layout="column" ng-cloak class="md-inline-form ci-helper-container_select">
-                <div layout-padding>
-                    <form class="form-validation" name="scm_form" ng-cloak>
-                        <md-input-container ng-if="organizations.length">
-                            <md-select ng-change="getRepositories();" ng-model="scmAccount.organizationName">
-                                <md-option value=""><em>Yourself</em></md-option>
-                                <md-option ng-repeat="organization in organizations" ng-value="organization.name" class="ci-helper-container_select_option">
-                                    <img ng-src="{{organization.avatarURL}}"/>
-                                    {{organization.name}}
-                                </md-option>
-                            </md-select>
-                        </md-input-container>
-                        <md-input-container ng-if="repositories.length">
-                            <md-select ng-model="scmAccount.repositoryName">
-                                <md-option ng-repeat="repository in repositories" ng-value="repository.name" class="ci-helper-container_select_option">
-                                    <i ng-if="repository.private" class="material-icons">lock</i>
-                                    <i ng-if="! repository.private" class="material-icons">lock_open</i>
-                                    {{repository.name}}
-                                </md-option>
-                            </md-select>
-                        </md-input-container>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div layout="column" ng-cloak class="md-inline-form comment-modal-textarea-padding">
-                <div layout-padding>
-                    <form class="form-validation" name="editor_form" ng-cloak>
-                        <div ui-ace="{{aceOptions}}" ng-model="text"></div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row ci-helper-container_builder">
-        <div class="col-lg-12">
-            <div layout="column" ng-cloak class="md-inline-form comment-modal-textarea-padding">
-                <div layout-padding>
-                    <form class="form-validation" name="builder_form" ng-cloak>
-                        <div ng-repeat="(key, value) in jsonModel track by $index">
-                            <div ng-if="getElement(value) === 'select';">
-                                <label>{{key}}</label>
-                                <select ng-model="ciOptions[key]">
-                                    <option ng-repeat="val in value track by $index" value="{{val}}">{{val}}</option>
-                                </select>
-                            </div>
-                            <div ng-if="getElement(value) === 'checkbox';">
-                                <label>{{key}}</label>
-                                <input type="checkbox" name="checkbox" ng-model="ciOptions[key]"/>
-                            </div>
-                            <div ng-if="getElement(value) === 'input';">
-                                <label>{{key}}</label>
-                                <input type="text" name="input" ng-model="ciOptions[key]">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>-->
 </zf-modal>

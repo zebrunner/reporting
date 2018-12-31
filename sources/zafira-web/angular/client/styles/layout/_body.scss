@@ -2912,7 +2912,7 @@ $light-inprogress: #68c9fd;
         letter-spacing: 0.1px;
     }
     &_content {
-        overflow: auto;
+        overflow: hidden;
         position: relative;
         .close-button {
             position: absolute;
@@ -2955,28 +2955,94 @@ $light-inprogress: #68c9fd;
             margin-bottom: 27px;
         }
         &_scm-connector {
-            padding-top: 22px;
-            padding-bottom: 12px;
-            &_title {
-                color: #000;
-                font-size: 12px;
-                letter-spacing: normal;
-                padding-bottom: 12px;
-            }
+            padding-top: 35px;
             &_items {
-                padding-bottom: 12px;
+                > div > div {
+                    display: inline-block;
+                }
+                &_add {
+                    font-size: 0;
+                    margin-bottom: 16px;
+                    > span {
+                        font-size: 0;
+                    }
+                    .zf-input-container {
+                        display: inline-block;
+                        margin-right: 8px;
+                        md-select {
+                            width: 182px;
+                            height: 36px;
+                        }
+                    }
+                    button {
+                        &.md-add {
+                            width: 100px;
+                            min-width: 100px;
+                            height: 36px;
+                            background-color: #35393f;
+                            border-radius: 4px;
+                            color: #ffffff;
+                            font-size: 14px;
+                            font-weight: 500;
+                            letter-spacing: 0.2px;
+                            text-transform: uppercase;
+                            padding: 0;
+                            border: none;
+                            float: right;
+                        }
+                        &.zf-button {
+                            margin-right: 8px;
+                            float: left;
+                            clear: both;
+                        }
+                    }
+                }
+                &_content {
+                    width: calc(100% - 44px);
+                    float: right;
+                    font-size: 0;
+                }
             }
         }
         &_code {
-            padding-bottom: 40px;
+            padding-top: 28px;
+            padding-bottom: 60px;
             &_editor {
                 min-height: 300px;
             }
+            .zf-input-container {
+                position: relative;
+                md-input-container {
+                    position: absolute;
+                    top: 34px;
+                    right: 10px;
+                    md-select {
+                        width: 120px;
+                        height: 28px;
+                        background-color: #dee3e5;
+                        border: 0;
+                        border-radius: 4px;
+                        md-select-value {
+                            .md-text, span:not(.md-select-icon) {
+                                font-size: 12px;
+                                font-weight: normal;
+                                letter-spacing: 0.1px;
+                                color: #000000;
+                            }
+                        }
+                    }
+                }
+            }
         }
         &_actions {
+            min-height: 36px;
+            position: absolute;
+            left: 0;
+            bottom: 24px;
+            width: 100%;
+            padding: 0 20px 0 24px;
             button {
                 float: right;
-                width: 88px;
                 height: 36px;
                 min-width: 88px;
                 min-height: 36px;
@@ -3022,20 +3088,18 @@ $light-inprogress: #68c9fd;
             font-size: 20px;
             letter-spacing: 0.2px;
             height: 54px;
+            line-height: 0.8;
+            font-weight: normal;
         }
         &_choose {
             text-align: center;
-            padding-bottom: 8px;
+            padding: 0 66px 8px 42px;
             &_or {
                 padding: 18px 0 14px 0;
                 color: #7f7f7f;
             }
-            &_else {
-                color: #010101;
-            }
         }
         &_section {
-            border: 1px solid rgba(0, 0, 0, 0.5);
             border-radius: 4px;
             height: calc(100% - 156px);
             min-width: 200px;
@@ -3045,13 +3109,15 @@ $light-inprogress: #68c9fd;
             &_item {
                 height: 32px;
                 line-height: 32px;
-                padding-left: 16px;
                 color: #7f7f7f;
                 overflow: auto;
                 overflow-y: hidden;
                 position: relative;
+                padding-right: 10px;
 
                 &_container {
+                    position: relative;
+                    margin-right: 38px;
                     &:before {
                         content:'';
                         width:100%;
@@ -3059,14 +3125,14 @@ $light-inprogress: #68c9fd;
                         position:absolute;
                         left:0;
                         top:0;
-                        background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 80%, rgba(255,255,255,1) 90%);
+                        background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 90%, rgba(255,255,255,1) 100%);
                     }
                 }
 
                 i.material-icons {
                     font-size: 16px;
                     position: absolute;
-                    right: 8px;
+                    right: 18px;
                     top: 8px;
                     color: #35393f;
                     display: none;
@@ -3077,9 +3143,9 @@ $light-inprogress: #68c9fd;
                     }
                 }
 
-                &:hover {
+                &:hover, &_selected {
                     cursor: pointer;
-                    background-color: #f4f4f4;
+                    color: #35393f;
                 }
 
                 &:first-child {
@@ -3087,5 +3153,10 @@ $light-inprogress: #68c9fd;
                 }
             }
         }
+    }
+
+    .md-select-icon:after {
+        color: black;
+        font-size: 10px !important;
     }
 }
