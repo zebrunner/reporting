@@ -28,6 +28,7 @@ import java.util.Set;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.IClassListener;
 import org.testng.ISuite;
 import org.testng.ITestNGMethod;
 import org.testng.SuiteRunner;
@@ -103,7 +104,7 @@ public class ExcludeTestsForRerun
 							{
 								SuiteRunner suiteRunner = new SuiteRunner(new Configuration(), new XmlSuite(), "");
 								TestRunner testRunner = new TestRunner(new Configuration(), suiteRunner,
-										testNGMethod.getXmlTest(), false, null);
+										testNGMethod.getXmlTest(), false, null, new ArrayList<IClassListener>());
 								TestResult testResult = new TestResult(testNGMethod.getTestClass(),
 										testNGMethod.getInstance(), testNGMethod, null, 0, 0, testRunner);
 								if (testNamesNoRerun.contains(configurator.getTestName(testResult)) && ((Test) a).enabled())

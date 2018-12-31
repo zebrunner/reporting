@@ -31,7 +31,6 @@ public class TestRunTypeBuilder extends AbstractTypeBuilder<TestRunType>
 			setCiRunId(UUID.randomUUID().toString());
 			setStartedBy(TestRun.Initiator.HUMAN);
 			setUserId(userId);
-			setDriverMode(TestRun.DriverMode.METHOD_MODE);
 			setBuildNumber(0);
 		}
 	};

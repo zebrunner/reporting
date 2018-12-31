@@ -23,7 +23,6 @@ import com.qaprosoft.zafira.models.dto.TagType;
 import org.testng.ISuite;
 import org.testng.ITestResult;
 
-import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.dto.TestArtifactType;
 import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
 
@@ -53,8 +52,6 @@ public interface IConfigurator
 	List<String> getTestWorkItems(ITestResult test);
 	
 	int getRunCount(ITestResult test);
-	
-	DriverMode getDriverMode();
 	
 	Map<String, Long> getTestMetrics(ITestResult test);
 	

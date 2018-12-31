@@ -194,7 +194,8 @@ DELETE_TRIGGER_NAME := (TABLE_NAME || '_delete_trigger');
 
 ALTER TABLE zafira.tests DROP CONSTRAINT IF EXISTS fk_tests_test_runs1;
 ALTER TABLE zafira.test_work_items DROP CONSTRAINT IF EXISTS fk_test_work_items_tests1;
-ALTER TABLE zafira.test_artifacts DROP CONSTRAINT  IF EXISTS fk_test_artifacts_tests1;
+ALTER TABLE zafira.test_artifacts DROP CONSTRAINT IF EXISTS fk_test_artifacts_tests1;
+ALTER TABLE zafira.test_tags DROP CONSTRAINT IF EXISTS fk_tests_test_tags1;
 
 EXECUTE 'DROP TRIGGER IF EXISTS '||INSERT_TRIGGER_NAME||' ON '||TABLE_NAME||';';
 EXECUTE 'DROP TRIGGER IF EXISTS '||DELETE_TRIGGER_NAME||' ON '||TABLE_NAME||';';

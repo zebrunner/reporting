@@ -29,10 +29,6 @@
         <value>http://localhost:4444/wd/hub</value>
     </arg>
     <arg unique="false">
-        <key>driver_mode</key>
-        <value>method_mode</value>
-    </arg>
-    <arg unique="false">
         <key>max_driver_count</key>
         <value>3</value>
     </arg>
