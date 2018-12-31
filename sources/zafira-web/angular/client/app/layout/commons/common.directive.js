@@ -25,6 +25,10 @@
                 '       </md-dialog>',
             controller: ['$scope', '$element', '$location', '$compile', zfModalController],
             link: function(scope, element, attrs, ngModel){
+                var mdDialogContainerElement = element.closest('.md-dialog-container');
+                if(mdDialogContainerElement) {
+                    mdDialogContainerElement.addClass('zf-md-dialog-container');
+                }
             }
         };
 
@@ -75,7 +79,7 @@
             link: function(scope, element, attrs, ngModel){
 
                 scope.$watch('ngModel', function (newVal, oldVal) {
-                    if(oldVal && newVal && ! angular.equals(oldVal, newVal)) {
+                    if(newVal && ! angular.equals(oldVal, newVal)) {
                         check();
                     }
                 });
@@ -89,6 +93,10 @@
                     }
                 };
                 check();
+
+                scope.onChange = function () {
+
+                };
             }
         };
     }

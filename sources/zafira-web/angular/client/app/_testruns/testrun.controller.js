@@ -460,7 +460,10 @@
             test.artifactsToShow = test.artifacts.filter(function (artifact) {
                 return ! artifact.name.toLowerCase().includes('live') && ! artifact.name.toLowerCase().includes('video');
             });
-
+            test.tags = test.tags.filter(function (tag) {
+                return tag.name != 'TESTRAIL_TESTCASE_UUID'
+                    && tag.name != 'QTEST_TESTCASE_UUID';
+            });
             var testRun = $scope.testRuns[test.testRunId];
             var testId = test.id;
             if (testRun == null) {
@@ -2159,7 +2162,7 @@
         })();
     }
 
-    function CiHelperController($scope, $rootScope, $q, $window, $mdDialog, LauncherService) {
+    function CiHelperController($scope, $rootScope, $q, $window, $mdDialog, $timeout, LauncherService, ScmService) {
 
         $scope.ciOptions = {};
 
@@ -2167,151 +2170,8 @@
             text: ''
         };
 
-        $scope.testSuiteRunner = {};
-
-        $scope.testSuites = ['Test custom params creation', 'Test custom tags params creation', 'Test test custom params creation', 'Test custom test tags params creation',
-            'MMF', 'Test custom params creation', 'Test custom params creation', 'Test custom params creation', 'Test custom params creation', 'Test custom params creation',
-            'Test custom params creation', 'Test custom params creation', 'Test custom params creation', 'Test custom params creation', 'Test custom params creation', 'Test custom params creation',
-            'Test custom params creation', 'Test custom params creation', 'Test custom params creation', 'Test custom params creation', 'Test custom params creation', 'Test custom params creation'];
-
-        $scope.scmAccounts = [
-            {
-                avatarURL: 'https://avatars3.githubusercontent.com/u/20353034?s=40&v=4',
-                name: 'brutskov'
-            },
-            {
-                avatarURL: 'https://avatars3.githubusercontent.com/u/20353034?s=40&v=4',
-                name: 'organization'
-            },
-            {
-                avatarURL: 'https://avatars3.githubusercontent.com/u/20353034?s=40&v=4',
-                name: 'UA'
-            },
-            {
-                avatarURL: 'https://avatars3.githubusercontent.com/u/20353034?s=40&v=4',
-                name: 'Smule'
-            }
-        ];
-
-        $scope.editor.text = "[\n" +
-            "            {\n" +
-            "                name: 'Custom capabilities',\n" +
-            "                description: 'Set to NULL to run against Selenium Grid on Jenkin\\'s Slave else, select an option for Browserstack.'\n" +
-            "            },\n" +
-            "            {\n" +
-            "                name: 'Browser',\n" +
-            "                type: 'select',\n" +
-            "                value: ['chrome', 'firefox']\n" +
-            "            },\n" +
-            "            {\n" +
-            "                name: 'Branch',\n" +
-            "                type: 'select',\n" +
-            "                description: 'Select a GitHub Testing Repository Branch to run against',\n" +
-            "                value: ['master', 'stag']\n" +
-            "            },\n" +
-            "            {\n" +
-            "                name: 'Ci Run Id'\n" +
-            "            },\n" +
-            "            {\n" +
-            "                name: 'Build priority',\n" +
-            "                type: 'select',\n" +
-            "                value: ['hight', 'low']\n" +
-            "            },\n" +
-            "            {\n" +
-            "                name: 'Environement',\n" +
-            "                type: 'select',\n" +
-            "                description: 'Environment to test against.',\n" +
-            "                value: ['stage', 'Production'],\n" +
-            "                default: 'Production'\n" +
-            "            },\n" +
-            "            {\n" +
-            "                name: 'Fork',\n" +
-            "                type: 'checkbox',\n" +
-            "                description: 'Reuse forked repository for carina-demo project'\n" +
-            "            },\n" +
-            "            {\n" +
-            "                name: 'Debug',\n" +
-            "                type: 'checkbox',\n" +
-            "                description: 'Check to start tests in remote debug mode'\n" +
-            "            },\n" +
-            "            {\n" +
-            "                name: 'Auto Screenshot',\n" +
-            "                type: 'checkbox',\n" +
-            "                description: 'Generate screenshots automatically during the test'\n" +
-            "            },\n" +
-            "            {\n" +
-            "                name: 'Enable Video',\n" +
-            "                type: 'checkbox',\n" +
-            "                description: 'Enable video recording',\n" +
-            "                value: true\n" +
-            "            },\n" +
-            "            {\n" +
-            "                type: 'array',\n" +
-            "                value: ['brutskov@gmail.com']\n" +
-            "            }\n" +
-            "        ]";
-
-        var test = [
-            {
-                name: 'Custom capabilities',
-                description: 'Set to NULL to run against Selenium Grid on Jenkin\'s Slave else, select an option for Browserstack.'
-            },
-            {
-                name: 'Browser',
-                type: 'select',
-                value: ['chrome', 'firefox']
-            },
-            {
-                name: 'Branch',
-                type: 'select',
-                description: 'Select a GitHub Testing Repository Branch to run against',
-                value: ['master', 'stag']
-            },
-            {
-                name: 'Ci Run Id'
-            },
-            {
-                name: 'Build priority',
-                type: 'select',
-                value: ['hight', 'low']
-            },
-            {
-                name: 'Environement',
-                type: 'select',
-                description: 'Environment to test against.',
-                value: ['stage', 'Production'],
-                default: 'Production'
-            },
-            {
-                name: 'Fork',
-                type: 'checkbox',
-                description: 'Reuse forked repository for carina-demo project'
-            },
-            {
-                name: 'Debug',
-                type: 'checkbox',
-                description: 'Check to start tests in remote debug mode'
-            },
-            {
-                name: 'Auto Screenshot',
-                type: 'checkbox',
-                description: 'Generate screenshots automatically during the test'
-            },
-            {
-                name: 'Enable Video',
-                type: 'checkbox',
-                description: 'Enable video recording',
-                value: true
-            },
-            {
-                type: 'array',
-                value: ['brutskov@gmail.com']
-            }
-        ];
-
-        $scope.currentScm = {
-            name: $scope.scmAccounts[0].name
-        };
+        $scope.testSuites = [];
+        $scope.scmAccounts = [];
 
         $scope.jsonModel = {};
 
@@ -2323,61 +2183,106 @@
             firstLineNumber: 5
         };
 
+        /*{
+            browser: ["chrome", "firefox"],
+                environment: "DEMO",
+            enable_video: false,
+            thread_count: 3
+        }*/
+
         $scope.onLoad = function(editor) {
         };
 
         $scope.onChange = function(editor) {
         };
 
-        const BUILD_TYPES = {
-            text: {
-                description: {required: false},
-                value: {
-                    type: 'plain',
-                    required: false,
-                    defaultValue: ''
+        $scope.DEFAULT_TEMPLATES = {
+            model: {},
+            variants:[
+                {
+                    name: 'Web',
+                    json: {
+                        "browser": ["chrome", "firefox"],
+                        "enable_video": false,
+                        "thread_count": 4
+                    }
                 },
-                name: {required: false},
-                default: {required: false}
-            },
-            select: {
-                description: {required: false},
-                value: {
-                    type: 'array',
-                    required: true,
-                    defaultValue: 'no'
+                {
+                    name: 'Mobile',
+                    json: {
+
+                    }
                 },
-                name: {required: false},
-                default: {required: false}
-            },
-            checkbox: {
-                description: {required: false},
-                value: {
-                    type: 'boolean',
-                    required: false,
-                    defaultValue: false
-                },
-                name: {required: false},
-                default: {required: false}
-            },
-            array: {
-                description: {required: false},
-                value: {
-                    type: 'array',
-                    required: false,
-                    defaultValue: []
-                },
-                name: {required: false}
+                {
+                    name: 'API',
+                    json: {
+
+                    }
+                }
+            ]
+        };
+
+        var newGithubRepoCloseClass = 'zf-button-close';
+        var newGithubRepoRevertCloseClass = 'zf-button-close-revert';
+
+        $scope.states = {};
+        $scope.states.addGitRepo = false;
+
+        var onAddNewGithubRepoClose;
+
+        $scope.addNewGithubRepo = function(element) {
+            $scope.states.addGitRepo = ! $scope.states.addGitRepo;
+            if(element) {
+                addNewGithubRepoCssApply(element, $scope.states.addGitRepo);
+            }
+            if($scope.states.addGitRepo) {
+                $scope.connectToGitHub();
+            } else {
+                if(gitHubPopUp) {
+                    gitHubPopUp.close();
+                }
             }
         };
 
-        $scope.cardNumber = 1;
+        function addNewGithubRepoCssApply(element, isAdd) {
+            var el = angular.element(element).closest('button');
+            if(isAdd) {
+                el.addClass(newGithubRepoCloseClass);
+                onAddNewGithubRepoClose = function () {
+                    $scope.addNewGithubRepo(el);
+                }
+            } else {
+                el.removeClass(newGithubRepoCloseClass);
+                el.addClass(newGithubRepoRevertCloseClass);
+                onAddNewGithubRepoClose = undefined;
+                $timeout(function () {
+                    el.removeClass(newGithubRepoRevertCloseClass);
+                }, 500);
+            }
+        };
+
+        $scope.mergeTemplate = function (template) {
+            if(template) {
+                $scope.launcher.model = $scope.launcher.model && $scope.launcher.model.isJsonValid() ? $scope.launcher.model : "{}";
+                var json = $scope.launcher.model.toJson();
+                $scope.launcher.model = JSON.stringify(angular.merge(json, template), null, 2);
+            }
+        };
+
+        $scope.cardNumber = 0;
+
+        $scope.builtLauncher = {};
 
         $scope.applyBuilder = function(launcher) {
-            var jsonText = launcher.model.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
-            jsonText = jsonText.replace(/\'/g, "\"");
-            $scope.jsonModel = JSON.parse(jsonText);
-            checkJson($scope.jsonModel);
+            $scope.jsonModel = launcher.model.toJson();;
+            angular.forEach($scope.jsonModel, function (value, key) {
+                $scope.builtLauncher[key] = {};
+                if($scope.getType(value) === 'array' && value.length) {
+                    $scope.builtLauncher[key] = value[0];
+                } else {
+                    $scope.builtLauncher[key] = value;
+                }
+            });
             $scope.cardNumber = 2;
         };
 
@@ -2385,45 +2290,9 @@
 
         };
 
-        // Validates json. Checks that all fields are valid and prefills if need
-        function checkJson(json) {
-            angular.forEach(json, function (options, key) {
-                if(options) {
-                    options.type = options.type && BUILD_TYPES[options.type] ? options.type : 'text';
-                }
-                angular.forEach(BUILD_TYPES[options.type], function (value, name) {
-                    var option = options[name];
-                    if(! value.required || (value.required && option !== undefined && option !== null)) {
-                        if(value.type) {
-                            if(! option && BUILD_TYPES[options.type].value.defaultValue !== 'no') {
-                                options[name] = BUILD_TYPES[options.type].value.defaultValue;
-                            }
-                            if(value.required && option !== undefined && option !== null) {
-                                var valid = false;
-                                switch (value.type) {
-                                    case 'plain':
-                                        valid = typeof option === 'string' || option instanceof String;
-                                        break;
-                                    case 'array':
-                                        valid = angular.isArray(option);
-                                        break;
-                                    case 'boolean':
-                                        valid = option === true || option === false;
-                                        break;
-                                    default:
-                                        break;
-                                }
-                                if (!valid) {
-                                    throw new Error('Invalid type of ' + name);
-                                }
-                            }
-                        }
-                    } else {
-                        throw new Error('Unable to recognize options.');
-                    }
-                });
-            });
-        }
+        $scope.getType = function (value) {
+            return angular.isArray(value) ? 'array' : typeof value === "boolean" ? 'boolean' : typeof value === 'string' || value instanceof String ? 'string' : Number.isInteger(value) ? 'int' : 'none';
+        };
 
         $scope.getElement = function(item) {
             var result;
@@ -2439,21 +2308,59 @@
 
         $scope.addTemplate = function() {
             $scope.cardNumber = 1;
+            $scope.launcher = {};
         };
 
         $scope.launchers = [];
         $scope.launcher = {};
-        $scope.launcher.scmAccount = {};
-        $scope.launcher.scmAccount.name = $scope.scmAccounts[0].name;
+        $scope.launcher.scmAccountType = {};
 
-        $scope.createLauncher = function (launcher) {
-            LauncherService.createLauncher(launcher).then(function (rs) {
-                if(rs.success) {
-                    $scope.launchers.push(rs.data);
-                } else {
-                    alertify.error(rs.message);
-                }
-            });
+        $scope.editLauncher = function(launcher) {
+            $scope.launcher = angular.copy(launcher);
+            $scope.cardNumber = 1;
+        };
+
+        $scope.chooseLauncher = function(launcher) {
+            $scope.launcher = angular.copy(launcher);
+            $scope.applyBuilder(launcher);
+            $scope.cardNumber = 2;
+        };
+
+        $scope.saveLauncher = function (launcher) {
+            if(launcher.id) {
+                var index = $scope.launchers.indexOfField('id', launcher.id);
+                LauncherService.updateLauncher(launcher).then(function (rs) {
+                    if(rs.success) {
+                        $scope.launchers.splice(index, 1, rs.data);
+                    } else {
+                        alertify.error(rs.message);
+                    }
+                });
+            } else {
+                LauncherService.createLauncher(launcher).then(function (rs) {
+                    if (rs.success) {
+                        $scope.launchers.push(rs.data);
+                    } else {
+                        alertify.error(rs.message);
+                    }
+                });
+            }
+        };
+
+        $scope.deleteLauncher = function (id) {
+            if(id) {
+                var index = $scope.launchers.indexOfField('id', id);
+                LauncherService.deleteLauncherById(id).then(function (rs) {
+                    if (rs.success) {
+                        $scope.launchers.splice(index, 1);
+                        $scope.launcher = {};
+                        $scope.cardNumber = 0;
+                        alertify.success('Launcher was deleted');
+                    } else {
+                        alertify.error(rs.message);
+                    }
+                });
+            }
         };
 
         function getLauncherById(id) {
@@ -2502,6 +2409,107 @@
             });
         };
 
+        $scope.repositories = [];
+        $scope.organizations = [];
+        $scope.scmAccount = {};
+
+        function getClientId() {
+            return $q(function (resolve, reject) {
+                ScmService.getClientId().then(function (rs) {
+                    if(rs.success) {
+                        resolve(rs.data);
+                    }
+                });
+            });
+        };
+
+        var gitHubPopUp;
+
+        $scope.connectToGitHub = function() {
+            getClientId().then(function (clientId) {
+                var url = 'https://github.com/login?client_id=' + clientId + '&return_to=%2Flogin%2Foauth%2Fauthorize%3Fclient_id%3D' + clientId + '%26scope%3Drepo%252Cread%253Auser%252Cread%253Aorg';
+                var height = 650;
+                var width = 450;
+                var location = getCenterWindowLocation(height, width);
+                gitHubPopUp = $window.open(url,'targetWindow', 'resizable=no, width=' + width + ', height=' + height + ', top=' + location.top + ', left=' + location.left);
+
+                gitHubPopUp.onbeforeunload = function (e) {
+                    var code = getCode(gitHubPopUp.location);
+                    initAccessToken(code).then(function (scmAccount) {
+                        $scope.scmAccount = scmAccount;
+                        $scope.getOrganizations();
+                    });
+                };
+
+                gitHubPopUp.onload = function (e) {
+
+                };
+
+                if (window.focus) {
+                    gitHubPopUp.focus();
+                }
+            });
+        };
+
+        $scope.getOrganizations = function() {
+            ScmService.getOrganizations($scope.scmAccount.id).then(function (rs) {
+                if(rs.success) {
+                    $scope.organizations = rs.data;
+                    $scope.getRepositories();
+                }
+            });
+        };
+
+        $scope.getRepositories = function() {
+            var organizationName = $scope.scmAccount.organizationName ? $scope.scmAccount.organizationName : '';
+            ScmService.getRepositories($scope.scmAccount.id, organizationName).then(function (rs) {
+                if(rs.success) {
+                    $scope.repositories = rs.data;
+                }
+            });
+        };
+
+        $scope.addScmAccount = function (scmAccount) {
+            scmAccount.organizationName = scmAccount.organization.name;
+            scmAccount.repositoryName = scmAccount.repository.name;
+            scmAccount.avatarURL = scmAccount.organization.avatarURL;
+            ScmService.updateScmAccount(scmAccount).then(function (rs) {
+                if(rs.success) {
+                    $scope.scmAccounts.push(rs.data);
+                    if(onAddNewGithubRepoClose) {
+                        onAddNewGithubRepoClose();
+                    }
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        function getCode(location) {
+            var urlParams = new URLSearchParams(location.search);
+            return urlParams.get('code');
+        };
+
+        function initAccessToken(code) {
+            return $q(function (resolve, reject) {
+                ScmService.exchangeCode(code).then(function (rs) {
+                    if(rs.success) {
+                        resolve(rs.data);
+                    }
+                });
+            });
+        };
+
+        function getCenterWindowLocation(height, width) {
+            var dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
+            var dualScreenTop = window.screenTop !== undefined ? window.screenTop : window.screenY;
+            var w = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+            var h = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+            var left = ((w / 2) - (width / 2)) + dualScreenLeft;
+            var top = ((h / 2) - (height / 2)) + dualScreenTop;
+            return {'top': top, 'left': left};
+        }
+
         $scope.hide = function(testRun) {
             $mdDialog.hide(testRun);
         };
@@ -2513,7 +2521,13 @@
         (function initController() {
             getAllLaunchers().then(function (launchers) {
                 $scope.launchers = launchers;
-                $scope.cardNumber = launchers.length ? 1 : 0;
+            });
+            ScmService.getAllScmAccounts().then(function (rs) {
+                if(rs.success) {
+                    $scope.scmAccounts = rs.data;
+                } else {
+                    alertify.error(rs.message);
+                }
             });
         })();
     };

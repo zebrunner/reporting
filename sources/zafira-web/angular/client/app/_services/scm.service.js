@@ -11,16 +11,26 @@
 
         service.invitations = [];
 
+        service.updateScmAccount = updateScmAccount;
         service.getClientId = getClientId;
+        service.getAllScmAccounts = getAllScmAccounts;
         service.exchangeCode = exchangeCode;
         service.getRepositories = getRepositories;
         service.getOrganizations = getOrganizations;
 
         return service;
 
+        function updateScmAccount(scmAccount) {
+            return $http.put(API_URL + '/api/scm/accounts', scmAccount).then(UtilService.handleSuccess, UtilService.handleError('Unable to create scm account'));
+        };
+
         function getClientId() {
             return $http.get(API_URL + '/api/scm/github/client').then(UtilService.handleSuccess, UtilService.handleError('Unable to get client id'));
         }
+
+        function getAllScmAccounts() {
+            return $http.get(API_URL + '/api/scm/accounts').then(UtilService.handleSuccess, UtilService.handleError('Unable to get list of scm accounts'));
+        };
 
         function getRepositories(id, org) {
             return $http.get(API_URL + '/api/scm/github/repositories/' + id + '?org=' + org).then(UtilService.handleSuccess, UtilService.handleError('Unable to get client id'));

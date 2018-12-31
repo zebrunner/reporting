@@ -5,11 +5,13 @@
 
     <insert id="createScmAccount" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO SCM (ACCESS_TOKEN, ORGANIZATION, REPO, USER_ID, NAME)
+			INSERT INTO SCM (ACCESS_TOKEN, ORGANIZATION, REPO, AVATAR_URL, REPOSITORY_URL, USER_ID, NAME)
 			VALUES (
 				#{accessToken},
 				#{organizationName},
 			    #{repositoryName},
+			    #{avatarURL},
+			    #{repositoryURL},
 			    #{userId},
 			    #{name}
 			)
@@ -24,6 +26,8 @@
 				S.ACCESS_TOKEN AS SCM_ACCESS_TOKEN,
 				S.ORGANIZATION AS SCM_ORGANIOZATION,
 				S.REPO AS SCM_REPO,
+				S.AVATAR_URL AS SCM_AVATAR_URL,
+				S.REPOSITORY_URL AS SCM_REPOSITORY_URL,
 				S.USER_ID AS SCM_USER_ID,
 				S.MODIFIED_AT AS SCM_MODIFIED_AT,
 				S.CREATED_AT AS SCM_CREATED_AT
@@ -64,6 +68,21 @@
                    REPO = #{repositoryName},
 		        ]]>
             </if>
+            <if test="null != avatarURL">
+                <![CDATA[
+                   AVATAR_URL = #{avatarURL},
+		        ]]>
+            </if>
+            <if test="null != repositoryURL">
+                <![CDATA[
+                   REPOSITORY_URL = #{repositoryURL},
+		        ]]>
+            </if>
+            <if test="null != userId">
+                <![CDATA[
+                   USER_ID = #{userId},
+		        ]]>
+            </if>
         </set>
         <![CDATA[
 			WHERE
@@ -90,6 +109,8 @@
         <result column="SCM_ACCESS_TOKEN" property="accessToken" />
         <result column="SCM_ORGANIZATION" property="organizationName" />
         <result column="SCM_REPO" property="repositoryName" />
+        <result column="SCM_AVATAR_URL" property="avatarURL" />
+        <result column="SCM_REPOSITORY_URL" property="repositoryURL" />
         <result column="SCM_USER_ID" property="userId" />
         <result column="SCM_MODIFIED_AT" property="modifiedAt" />
         <result column="SCM_CREATED_AT" property="createdAt" />

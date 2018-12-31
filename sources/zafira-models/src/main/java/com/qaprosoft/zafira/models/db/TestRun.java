@@ -20,15 +20,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.qaprosoft.zafira.models.db.config.Argument;
-import com.qaprosoft.zafira.models.db.config.Configuration;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Seconds;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import org.springframework.util.StringUtils;
 
 @JsonInclude(Include.NON_NULL)
 public class TestRun extends AbstractEntity
@@ -40,11 +37,6 @@ public class TestRun extends AbstractEntity
 	public enum Initiator
 	{
 		SCHEDULER, UPSTREAM_JOB, HUMAN
-	}
-
-	public enum DriverMode
-	{
-		METHOD_MODE, CLASS_MODE, SUITE_MODE
 	}
 
 	private String ciRunId;
@@ -72,7 +64,6 @@ public class TestRun extends AbstractEntity
 	private Integer elapsed;
 	private Integer eta;
 	private String comments;
-	private DriverMode driverMode;
 	private TestConfig config;
 
 	private Integer passed;
@@ -443,16 +434,6 @@ public class TestRun extends AbstractEntity
 	public void setAppVersion(String appVersion)
 	{
 		this.appVersion = appVersion;
-	}
-
-	public DriverMode getDriverMode()
-	{
-		return driverMode;
-	}
-
-	public void setDriverMode(DriverMode driverMode)
-	{
-		this.driverMode = driverMode;
 	}
 
 	public TestConfig getConfig()

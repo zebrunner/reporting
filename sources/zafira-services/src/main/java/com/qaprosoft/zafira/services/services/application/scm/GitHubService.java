@@ -54,6 +54,7 @@ public class GitHubService implements IScmService {
         return person.listRepositories().asList().stream().map(repository -> {
             Repository repo = new Repository(repository.getName());
             repo.setPrivate(repository.isPrivate());
+            repo.setUrl(repository.getUrl().toString());
             return repo;
         }).collect(Collectors.toList());
     }
@@ -61,11 +62,15 @@ public class GitHubService implements IScmService {
     @Override
     public List<Organization> getOrganizations(String accessToken) throws IOException, ServiceException {
         GitHub gitHub = GitHub.connectUsingOAuth(accessToken);
-        return gitHub.getMyself().getAllOrganizations().stream().map(organization -> {
+        List<Organization> organizations = gitHub.getMyself().getAllOrganizations().stream().map(organization -> {
             Organization result = new Organization(organization.getLogin());
             result.setAvatarURL(organization.getAvatarUrl());
             return result;
         }).collect(Collectors.toList());
+        Organization myself = new Organization(gitHub.getMyself().getLogin());
+        myself.setAvatarURL(gitHub.getMyself().getAvatarUrl());
+        organizations.add(myself);
+        return organizations;
     }
 
     @Override

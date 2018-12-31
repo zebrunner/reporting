@@ -18,6 +18,14 @@
             <a>repositoryName</a>
             <b>repositoryName</b>
         </field>
+        <field>
+            <a>avatarURL</a>
+            <b>avatarURL</b>
+        </field>
+        <field>
+            <a>repositoryURL</a>
+            <b>repositoryURL</b>
+        </field>
     </mapping>
     <mapping type="one-way" wildcard="false">
         <class-a>com.qaprosoft.zafira.models.db.ScmAccount</class-a>
@@ -34,6 +42,14 @@
         <field>
             <a>repositoryName</a>
             <b>repositoryName</b>
+        </field>
+        <field>
+            <a>avatarURL</a>
+            <b>avatarURL</b>
+        </field>
+        <field>
+            <a>repositoryURL</a>
+            <b>repositoryURL</b>
         </field>
         <field>
             <a>userId</a>

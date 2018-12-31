@@ -87,7 +87,6 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 			setBlocker(true);
 			setPlatform("p1");
 			setEnv("e1");
-			setDriverMode(DriverMode.METHOD_MODE);
 		}
 	};
 

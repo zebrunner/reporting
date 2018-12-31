@@ -109,6 +109,11 @@
             }
             return true;
         };
+        String.prototype.toJson = function() {
+            var jsonText = this.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
+            jsonText = jsonText.replace(/\'/g, "\"");
+            return JSON.parse(jsonText);
+        };
 
         Array.prototype.indexOfField = function(fieldName, fieldValue) {
             var path = fieldName.split('.');
