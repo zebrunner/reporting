@@ -249,7 +249,7 @@
         "use strict";
         return {
             restrict: 'E',
-            template: '<span><span>{{ text.substring(0, limit + 1) }}</span><span ng-if="text.length > limit">{{ symbols }}</span></span>',
+            template: '<span class="zf-show-part"><span>{{ text.substring(0, limit + 1) }}</span><span ng-if="text.length > limit">{{ symbols }}</span></span>',
             replace: true,
             scope: {
                 text: '=',

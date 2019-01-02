@@ -42,7 +42,6 @@ public class ScmAccount extends AbstractEntity {
     public ScmAccount(String organizationName, String repositoryName) {
         this.organizationName = organizationName;
         this.repositoryName = repositoryName;
-        this.userId = userId;
     }
 
     public String getAccessToken() {
@@ -99,5 +98,15 @@ public class ScmAccount extends AbstractEntity {
 
     public void setName(Name name) {
         this.name = name;
+    }
+
+    @Override
+    public int hashCode() {
+        return (this.organizationName + this.repositoryURL).hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof ScmAccount && this.hashCode() == ((ScmAccount) obj).hashCode();
     }
 }

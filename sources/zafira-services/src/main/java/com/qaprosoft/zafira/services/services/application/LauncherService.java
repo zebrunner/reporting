@@ -15,10 +15,12 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherMapper;
 import com.qaprosoft.zafira.models.db.Launcher;
 import com.qaprosoft.zafira.models.db.ScmAccount;
+import com.qaprosoft.zafira.models.dto.JenkinsJobType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.jmx.JenkinsService;
 import com.qaprosoft.zafira.services.services.application.scm.ScmAccountService;
@@ -27,8 +29,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class LauncherService {
@@ -72,14 +77,21 @@ public class LauncherService {
     @SuppressWarnings("unchecked")
     public void buildLauncherJob(Launcher launcher) throws IOException, ServiceException {
         ObjectMapper mapper = new ObjectMapper();
-        Map<String, String> args = mapper.readValue(launcher.getModel(), Map.class);
-        if(JenkinsService.checkArguments(args)) {
+        Map<String, String> args = mapper.readValue(launcher.getModel(), new TypeReference<Map<String, String>>(){});
+        if(! JenkinsService.checkArguments(args)) {
             throw new ServiceException("Required arguments not found");
         }
         ScmAccount scmAccount = scmAccountService.getScmAccountById(launcher.getScmAccount().getId());
         if(scmAccount == null) {
             throw new ServiceException("Scm account does not exist.");
         }
-
+        JenkinsJobType jenkinsJobType = new JenkinsJobType(
+                args.get("suite"),
+                JenkinsService.buildURL(scmAccount.getRepositoryURL(), scmAccount.getAccessToken()),
+                scmAccount.getId(),
+                args.get("branch"));
+        Arrays.stream(JenkinsService.getRequiredArgs()).forEach(args::remove);
+        jenkinsJobType.setArgs(args);
+        jenkinsService.build(jenkinsJobType);
     }
 }

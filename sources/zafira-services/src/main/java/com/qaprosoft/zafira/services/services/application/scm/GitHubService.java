@@ -54,7 +54,7 @@ public class GitHubService implements IScmService {
         return person.listRepositories().asList().stream().map(repository -> {
             Repository repo = new Repository(repository.getName());
             repo.setPrivate(repository.isPrivate());
-            repo.setUrl(repository.getUrl().toString());
+            repo.setUrl(repository.getHtmlUrl().toString());
             return repo;
         }).collect(Collectors.toList());
     }

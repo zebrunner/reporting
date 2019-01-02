@@ -109,10 +109,11 @@ public class ScmAPIController extends AbstractController {
         if(account == null) {
             throw new ServiceException("Scm account with id " + scmAccountType.getId() + " does not exist.");
         }
+        ScmAccount currentAccount = mapper.map(scmAccountType, ScmAccount.class);
         if(account.getUserId() == null || account.getUserId() <= 0) {
-            account.setUserId(getPrincipalId());
+            currentAccount.setUserId(getPrincipalId());
         }
-        return mapper.map(scmAccountService.updateScmAccount(mapper.map(scmAccountType, ScmAccount.class)), ScmAccountType.class);
+        return mapper.map(scmAccountService.updateScmAccount(currentAccount), ScmAccountType.class);
     }
 
     @ResponseStatusDetails
@@ -165,6 +166,8 @@ public class ScmAPIController extends AbstractController {
         if(scmAccount == null) {
             throw new ForbiddenOperationException("Unable to list repositories");
         }
-        return gitHubService.getRepositories(this.scmAccountService.getScmAccountById(id).getAccessToken(), organizationName);
+        List<String> scmAccounts = scmAccountService.getAllScmAccounts().stream().map(ScmAccount::getRepositoryURL).collect(Collectors.toList());
+        return gitHubService.getRepositories(this.scmAccountService.getScmAccountById(id).getAccessToken(), organizationName)
+                .stream().filter(repository -> ! scmAccounts.contains(repository.getUrl())).collect(Collectors.toList());
     }
 }

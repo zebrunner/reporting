@@ -104,8 +104,7 @@ public class LaunchersAPIController extends AbstractController {
     @ApiOperation(value = "Build job with launcher", nickname = "build", httpMethod = "POST")
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
-    @RequestMapping(value = "{id}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "build", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public void build(@RequestBody @Valid LauncherType launcherType) throws ServiceException, IOException {
         launcherService.buildLauncherJob(mapper.map(launcherType, Launcher.class));
     }

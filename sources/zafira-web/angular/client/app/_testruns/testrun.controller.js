@@ -2273,8 +2273,8 @@
 
         $scope.builtLauncher = {};
 
-        $scope.applyBuilder = function(launcher) {
-            $scope.jsonModel = launcher.model.toJson();;
+        $scope.applyBuilder = function(launcher, isPhone) {
+            $scope.jsonModel = launcher.model.toJson();
             angular.forEach($scope.jsonModel, function (value, key) {
                 $scope.builtLauncher[key] = {};
                 if($scope.getType(value) === 'array' && value.length) {
@@ -2283,7 +2283,7 @@
                     $scope.builtLauncher[key] = value;
                 }
             });
-            $scope.cardNumber = 2;
+            $scope.cardNumber = isPhone ? 3 : 2;
         };
 
         $scope.build = function () {
@@ -2309,6 +2309,7 @@
         $scope.addTemplate = function() {
             $scope.cardNumber = 1;
             $scope.launcher = {};
+            $scope.DEFAULT_TEMPLATES.model = {};
         };
 
         $scope.launchers = [];
@@ -2320,10 +2321,21 @@
             $scope.cardNumber = 1;
         };
 
-        $scope.chooseLauncher = function(launcher) {
+        $scope.chooseLauncher = function(launcher, skipBuilderApply) {
             $scope.launcher = angular.copy(launcher);
-            $scope.applyBuilder(launcher);
-            $scope.cardNumber = 2;
+            $scope.DEFAULT_TEMPLATES.model = {};
+            if(! skipBuilderApply) {
+                $scope.applyBuilder(launcher);
+                $scope.cardNumber = 2;
+            }
+        };
+
+        $scope.chooseLauncherPhone = function(launcher) {
+            $scope.chooseLauncher(launcher, true);
+        };
+
+        $scope.navigateBack = function() {
+            $scope.cardNumber = 1;
         };
 
         $scope.saveLauncher = function (launcher) {
@@ -2339,6 +2351,7 @@
             } else {
                 LauncherService.createLauncher(launcher).then(function (rs) {
                     if (rs.success) {
+                        $scope.launcher = rs.data;
                         $scope.launchers.push(rs.data);
                     } else {
                         alertify.error(rs.message);
@@ -2361,19 +2374,6 @@
                     }
                 });
             }
-        };
-
-        function getLauncherById(id) {
-            return $q(function (resolve, reject) {
-                LauncherService.getLauncherById(id).then(function (rs) {
-                    if(rs.success) {
-                        resolve(rs.data);
-                    } else {
-                        alertify.error(rs.message);
-                        reject();
-                    }
-                });
-            });
         };
 
         function getAllLaunchers() {
@@ -2455,12 +2455,12 @@
             ScmService.getOrganizations($scope.scmAccount.id).then(function (rs) {
                 if(rs.success) {
                     $scope.organizations = rs.data;
-                    $scope.getRepositories();
                 }
             });
         };
 
         $scope.getRepositories = function() {
+            $scope.repositories = {};
             var organizationName = $scope.scmAccount.organizationName ? $scope.scmAccount.organizationName : '';
             ScmService.getRepositories($scope.scmAccount.id, organizationName).then(function (rs) {
                 if(rs.success) {
@@ -2471,11 +2471,13 @@
 
         $scope.addScmAccount = function (scmAccount) {
             scmAccount.organizationName = scmAccount.organization.name;
-            scmAccount.repositoryName = scmAccount.repository.name;
             scmAccount.avatarURL = scmAccount.organization.avatarURL;
+            scmAccount.repositoryName = scmAccount.repository.name;
+            scmAccount.repositoryURL = scmAccount.repository.url;
             ScmService.updateScmAccount(scmAccount).then(function (rs) {
                 if(rs.success) {
                     $scope.scmAccounts.push(rs.data);
+                    $scope.launcher.scmAccountType = rs.data;
                     if(onAddNewGithubRepoClose) {
                         onAddNewGithubRepoClose();
                     }
@@ -2510,6 +2512,17 @@
             return {'top': top, 'left': left};
         }
 
+        $scope.build = function(launcher) {
+            launcher.model = JSON.stringify($scope.builtLauncher, null, 2);
+            LauncherService.buildLauncher(launcher).then(function (rs) {
+                if(rs.success) {
+                    alertify.success("Job is in progress");
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
         $scope.hide = function(testRun) {
             $mdDialog.hide(testRun);
         };
@@ -2524,7 +2537,11 @@
             });
             ScmService.getAllScmAccounts().then(function (rs) {
                 if(rs.success) {
-                    $scope.scmAccounts = rs.data;
+                    if(rs.data && rs.data.length) {
+                        $scope.scmAccounts = rs.data.filter(function (scmAccount) {
+                            return scmAccount.repositoryURL;
+                        });
+                    }
                 } else {
                     alertify.error(rs.message);
                 }
