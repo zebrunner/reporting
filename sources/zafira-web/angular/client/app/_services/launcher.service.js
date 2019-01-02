@@ -14,6 +14,7 @@
         service.getAllLaunchers = getAllLaunchers;
         service.updateLauncher = updateLauncher;
         service.deleteLauncherById = deleteLauncherById;
+        service.buildLauncher = buildLauncher;
 
         return service;
 
@@ -35,6 +36,10 @@
 
         function deleteLauncherById(id) {
             return $http.delete(API_URL + '/api/launchers/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to delete launcher'));
+        }
+
+        function buildLauncher(launcher) {
+            return $http.post(API_URL + '/api/launchers/build', launcher).then(UtilService.handleSuccess, UtilService.handleError('Unable to build with launcher'));
         }
     }
 })();

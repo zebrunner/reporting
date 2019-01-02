@@ -133,9 +133,10 @@
             restrict: 'E',
             replace: true,
             transclude: true,
-            template: '<div class="fixed-page-header-container_button hide-phone" ng-transclude></div>',
+            template: '<div class="fixed-page-header-container_button" ng-class="{\'hide-phone\': hidePhone}" ng-transclude></div>',
             scope: {
-                title: '=title'
+                title: '=title',
+                hidePhone: '='
             }
         };
     }

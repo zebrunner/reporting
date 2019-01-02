@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -61,6 +60,8 @@ import com.qaprosoft.zafira.services.services.application.jmx.context.JenkinsCon
 public class JenkinsService implements IJMXService<JenkinsContext> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JenkinsService.class);
+
+    private static final String[] REQUIRED_ARGS = new String[] {"suite", "branch"};
 
     private final String FOLDER_REGEX = ".+job\\/.+\\/job.+";
 
@@ -294,14 +295,21 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
         return params;
     }
 
-    private static final String[] REQUIRED_ARGS = new String[] {"suite", "branch", "url"};
-
     public static boolean checkArguments(Map<String, String> args) {
         return Arrays.stream(REQUIRED_ARGS).filter(arg -> args.get(arg) == null).collect(Collectors.toList()).size() == 0;
     }
 
-    public static void build(JenkinsJobType jenkinsJob) {
+    public static String buildURL(String url, String token) {
+        String[] urlSlices = url.split("//");
+        return urlSlices[0] + "//" + token + ":" + urlSlices[1];
+    }
 
+    public void build(JenkinsJobType jenkinsJob) {
+
+    }
+
+    public static String[] getRequiredArgs() {
+        return REQUIRED_ARGS;
     }
 
     @Override

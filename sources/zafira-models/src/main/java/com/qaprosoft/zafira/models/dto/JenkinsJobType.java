@@ -15,27 +15,25 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Map;
 
 public class JenkinsJobType implements Serializable {
 
     private static final long serialVersionUID = 4812574658258748772L;
 
-    @NotEmpty(message = "{error.suite.required}")
     private String suite;
-
-    @NotNull(message = "{error.scm.account.id.required}")
-    @Min(value = 1, message = "{error.scm.account.id.invalid}")
+    private String url;
     private Long scmAccountId;
-
-    @NotEmpty(message = "{error.branch.required}")
     private String branch;
+    private Map<String, String> args;
 
-    private String[] args;
+    public JenkinsJobType(String suite, String url, Long scmAccountId, String branch) {
+        this.suite = suite;
+        this.url = url;
+        this.scmAccountId = scmAccountId;
+        this.branch = branch;
+    }
 
     public String getSuite() {
         return suite;
@@ -43,6 +41,14 @@ public class JenkinsJobType implements Serializable {
 
     public void setSuite(String suite) {
         this.suite = suite;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public Long getScmAccountId() {
@@ -61,11 +67,11 @@ public class JenkinsJobType implements Serializable {
         this.branch = branch;
     }
 
-    public String[] getArgs() {
+    public Map<String, String> getArgs() {
         return args;
     }
 
-    public void setArgs(String[] args) {
+    public void setArgs(Map<String, String> args) {
         this.args = args;
     }
 }

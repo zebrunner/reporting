@@ -10,13 +10,22 @@ $red: #d2333b;
     text-align: center;
     padding-top: 40px;
     padding-bottom: 40px;
+
+    @media(max-width: $screen-phone) {
+        padding: 0;
+    }
     .zf-modal-container {
         text-align: left !important;
         display: inline-block !important;
         height: auto;
+        min-height: auto;
         max-height: none !important;
         width: 880px !important;
         font-size: 0 !important;
+
+        @media(max-width: $screen-phone) {
+            height: 100%;
+        }
 
         .md-dialog-content > div {
             display: flex;
@@ -25,10 +34,6 @@ $red: #d2333b;
         &_helper, &_content {
             font-size: 12px;
             padding: 32px 0 32px 24px;
-            @media (max-width: $screen-sm) {
-                width: 100% !important;
-                display: block;
-            }
         }
 
         &_helper {
@@ -92,9 +97,11 @@ $red: #d2333b;
             }
         }
         &:not(.md-input-has-value) {
-            md-select-value {
-                > span {
-                    color: #bfbfbf;
+            md-select:not([disabled='disabled']):not([disabled='true']) {
+                md-select-value {
+                    > span {
+                        color: black;
+                    }
                 }
             }
         }
@@ -164,14 +171,17 @@ $red: #d2333b;
     letter-spacing: 0.1px;
     color: #7f7f7f;
     padding-right: 24px;
-    position: relative;
-    left: 24px;
+
+    @media (max-width: $screen-sm) {
+        height: 20px;
+        line-height: 14px;
+    }
 }
 
 .zf-button {
     display: inline-block;
     position: relative;
-    width: 140px;
+    min-width: 88px;
     font-size: 14px;
     font-weight: 500;
     border: none;
@@ -182,10 +192,15 @@ $red: #d2333b;
         border: none;
     }
 
-    &.zf-warn {
-        color: $red;
-        background-color: rgba(31,36,42, 0.05);
+    &.zf-info {
+        background-color: #e8e9e9;
         float: left;
+        color: $coal;
+    }
+
+    &.zf-warn {
+        color: $red !important;
+        background-color: rgba(31,36,42, 0.05) !important;
     }
 
     &.zf-chip-button {
@@ -288,6 +303,16 @@ $red: #d2333b;
     label {
         &:before {
             background-color: #b9bec1;
+        }
+    }
+}
+
+.zf-display-table {
+    display: table;
+    > div {
+        display: table-row;
+        > div {
+            display: table-cell;
         }
     }
 }
