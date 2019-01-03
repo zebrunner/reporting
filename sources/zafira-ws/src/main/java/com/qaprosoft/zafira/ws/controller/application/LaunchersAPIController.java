@@ -64,7 +64,7 @@ public class LaunchersAPIController extends AbstractController {
     @ApiOperation(value = "Get launcher by id", nickname = "getLauncherById", httpMethod = "GET", response = LauncherType.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @PreAuthorize("hasPermission('VIEW_LAUNCHERS')")
+    @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody LauncherType getLauncherById(@PathVariable(value = "id") Long id) throws ServiceException {
         return mapper.map(launcherService.getLauncherById(id), LauncherType.class);
@@ -74,7 +74,7 @@ public class LaunchersAPIController extends AbstractController {
     @ApiOperation(value = "Get all launchers", nickname = "getAllLaunchers", httpMethod = "GET", response = List.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @PreAuthorize("hasPermission('VIEW_LAUNCHERS')")
+    @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<LauncherType> getAllLaunchers() throws ServiceException {
         return launcherService.getAllLaunchers().stream().map(launcher -> mapper.map(launcher, LauncherType.class)).collect(Collectors.toList());

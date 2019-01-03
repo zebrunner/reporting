@@ -8,7 +8,7 @@
             <div></div>
         </zf-sub-header-options>
         <zf-sub-header-button>
-            <button ng-click="showCiHelperDialog($event);">
+            <button has-any-permission="['MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS']" ng-click="showCiHelperDialog($event);">
                 <md-icon class="material-icons">play_circle_outline</md-icon>
                 <span>Test launcher</span>
             </button>

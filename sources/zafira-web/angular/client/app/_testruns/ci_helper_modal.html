@@ -2,7 +2,7 @@
     <zf-modal-helper-container class="ci-runner-container_helper" ng-if="cardNumber !== 3">
         <div class="ci-runner-container_helper_title hide-phone">Launcher</div>
         <div class="ci-runner-container_helper_title show-phone">Choose template</div>
-        <div class="ci-runner-container_helper_choose hide-phone">
+        <div has-any-permission="['MODIFY_LAUNCHERS']" class="ci-runner-container_helper_choose hide-phone">
             <button ng-click="addTemplate();" class="zf-button zf-chip-button">
                 <i class="material-icons">add_circle</i>
                 Add template
@@ -17,7 +17,7 @@
                 <div ng-click="chooseLauncherPhone(l);" class="ci-runner-container_helper_section_item_container show-phone">
                     {{l.name}}
                 </div>
-                <i ng-click="editLauncher(l);" class="material-icons hide-phone">edit</i>
+                <i ng-click="editLauncher(l);" has-any-permission="['MODIFY_LAUNCHERS']" class="material-icons hide-phone">edit</i>
             </div>
         </div>
         <div class="ci-runner-container_content_actions">
