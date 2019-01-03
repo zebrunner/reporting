@@ -3165,6 +3165,8 @@ $light-inprogress: #68c9fd;
     }
     &_helper {
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
 
         @media(max-width: $screen-phone) {
             width: 100% !important;
@@ -3176,6 +3178,7 @@ $light-inprogress: #68c9fd;
             height: 54px;
             line-height: 0.8;
             font-weight: normal;
+            flex-grow: 0;
 
             @media(max-width: $screen-phone) {
                 position: absolute;
@@ -3190,6 +3193,7 @@ $light-inprogress: #68c9fd;
         &_choose {
             text-align: center;
             padding: 0 66px 8px 42px;
+            flex-grow: 0;
 
             @media (max-width: $screen-sm) {
                 padding: 0 8px 8px 0;
@@ -3201,14 +3205,14 @@ $light-inprogress: #68c9fd;
         }
         &_section {
             border-radius: 4px;
-            height: calc(75vh - 156px);
+            min-height: calc(75vh - 156px);
             min-width: 200px;
             max-height: calc(100% - 156px);
             overflow: scroll;
+            flex-grow: 1;
 
             @media(max-width: $screen-phone) {
-                max-height: none;
-                height: calc(100% - 68px);
+                max-height: calc(100% - 68px);
             }
             &::-webkit-scrollbar-thumb {
                 background-color: rgba(0, 0, 0, 0.15);
