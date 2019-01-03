@@ -3265,7 +3265,11 @@ $light-inprogress: #68c9fd;
                     right: 18px;
                     top: 8px;
                     color: #35393f;
-                    display: none;
+                }
+                &:not(:hover) {
+                    i.material-icons {
+                        display: none !important;
+                    }
                 }
                 &:hover {
                     i.material-icons {
