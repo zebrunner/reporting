@@ -82,7 +82,7 @@ public class TagsAPIController extends AbstractController
             switch (integrationTag){
                 case TESTRAIL_TESTCASE_UUID:
                     String testRailRunName = "%s. %s: %s";
-                    String.format(testRailRunName, testRun.getPlatform(), testRun.getTestSuite().getFileName(), testRun.getAppVersion());
+					testRailRunName = String.format(testRailRunName, testRun.getPlatform(), testRun.getTestSuite().getFileName(), testRun.getAppVersion());
                     integration.setTestRunName(testRailRunName);
                     configuration.getArg().forEach(arg -> {
                         if(arg.getKey().contains("testrail_assignee")){
