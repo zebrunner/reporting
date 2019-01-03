@@ -1,0 +1,23 @@
+<zf-modal class="widget-wizard">
+    <zf-modal-content-container class="widget-wizard_container">
+        <div class="widget-wizard_container_title">
+            <div class="widget-wizard_container_title_sub">Step 1</div>
+            <div class="widget-wizard_container_title_common">Choose template</div>
+        </div>
+        <div class="widget-wizard_container_elements">
+            <zf-radio-button class="widget-wizard_container_elements_item" ng-repeat="template in templates track by $index" ng-model="widget.template" value="template">
+                <div class="widget-wizard_container_elements_item_title"><show-part text="template.name" limit="50"></show-part></div>
+                <div class="widget-wizard_container_elements_item_description"><show-part text="template.description" limit="150"></show-part></div>
+            </zf-radio-button>
+        </div>
+    </zf-modal-content-container>
+    <zf-modal-helper-container class="widget-wizard_container-helper">
+
+        <div class="widget-wizard_container-helper_actions">
+            <md-button class="md-raised btn-w-md md-primary" ng-click="" ng-disabled="">
+                Next
+            </md-button>
+        </div>
+    </zf-modal-helper-container>
+    <md-icon class="close-button" ng-click="cancel()" aria-label="Close dialog">close</md-icon>
+</zf-modal>

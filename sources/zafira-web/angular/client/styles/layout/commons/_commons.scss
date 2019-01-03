@@ -34,6 +34,7 @@ $red: #d2333b;
         &_helper, &_content {
             font-size: 12px;
             padding: 32px 0 32px 24px;
+            position: relative;
         }
 
         &_helper {
@@ -55,6 +56,18 @@ $red: #d2333b;
                 height: 100%;
             }
         }
+    }
+
+    .close-button {
+        position: absolute;
+        right: 11px;
+        top: 11px;
+        height: 26px;
+        width: 26px;
+        font-size: 26px;
+        min-width: 14px;
+        min-height: 14px;
+        z-index: 1;
     }
 }
 
@@ -274,7 +287,7 @@ $red: #d2333b;
             line-height: 43px;
             font-weight: normal;
             letter-spacing: normal;
-            font-size: 13px;
+            font-size: 14px;
             top: 50%;
             transform: translateY(-50%);
             left: 8px;

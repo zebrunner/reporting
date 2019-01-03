@@ -1,0 +1,67 @@
+$standart-padding:      24px;
+$inner-padding:         16px;
+$wizard-dark-gray:      #7f7f7f;
+$wizard-white:          #ffffff;
+
+.widget-wizard {
+    &_container {
+        min-height: 576px !important;
+        padding: 34px 8px 34px 24px !important;
+
+        &_title {
+            padding-bottom: $standart-padding;
+            &_sub {
+                font-size: 14px;
+                letter-spacing: 0.14px;
+                color: $wizard-dark-gray;
+            }
+            &_common {
+                font-size: 20px;
+                letter-spacing: 0.2px;
+                color: black;
+            }
+        }
+        &_elements {
+            &_item {
+                width: 252px;
+                height: 164px;
+                margin: 0 $inner-padding $inner-padding 0;
+
+                &_title {
+                    margin-bottom: 12px;
+                }
+                &_description {
+                    font-size: 12px;
+                    letter-spacing: 0.12px;
+                }
+
+                label {
+                    &:before {
+                        background-color: $wizard-white;
+                    }
+                    div[ng-transclude] {
+                        transform: none;
+                        line-height: 14px;
+                        font-weight: 500;
+                        padding-right: $inner-padding;
+                        top: $inner-padding;
+                        left: $inner-padding;
+                    }
+                }
+            }
+        }
+    }
+    &_container-helper {
+
+        &_actions {
+            position: absolute;
+            bottom: $standart-padding;
+            right: $standart-padding;
+        }
+    }
+
+    button {
+        min-width: 88px;
+        border-radius: 4px;
+    }
+}

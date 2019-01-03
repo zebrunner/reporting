@@ -368,6 +368,26 @@
                 });
         };
 
+        $scope.showWidgetWizardDialog = function (event, widget, isNew, dashboard) {
+            $mdDialog.show({
+                controller: 'WidgetWizardController',
+                templateUrl: 'app/components/modals/widget-wizard/widget_wizard.html',
+                parent: angular.element(document.body),
+                clickOutsideToClose:false,
+                fullscreen: true,
+                autoWrap: false,
+                locals: {
+                    widget: widget,
+                    isNew: isNew,
+                    dashboard: dashboard,
+                    currentUserId: $scope.currentUserId
+                }
+            })
+                .then(function (rs) {
+                }, function () {
+                });
+        };
+
         $scope.showWidgetDialog = function (event, widget, isNew, dashboard) {
             $mdDialog.show({
                 controller: WidgetController,

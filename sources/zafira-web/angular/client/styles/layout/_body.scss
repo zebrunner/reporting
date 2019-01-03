@@ -2912,18 +2912,6 @@ $light-inprogress: #68c9fd;
         letter-spacing: 0.1px;
     }
 
-    .close-button {
-        position: absolute;
-        right: 11px;
-        top: 11px;
-        height: 26px;
-        width: 26px;
-        font-size: 26px;
-        min-width: 14px;
-        min-height: 14px;
-        z-index: 1;
-    }
-
     &_content {
         overflow: hidden;
         position: relative;
