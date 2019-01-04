@@ -14,7 +14,8 @@
             scope: {
                 options: '=options',
                 dataset: '=dataset',
-                withLegend: '=withLegend'
+                withLegend: '=withLegend',
+                forceWatch: '=forceWatch'
             },
             link: buildLinkFunc($window, $filter)
         };
@@ -82,7 +83,7 @@
             };
 
             scope.$watch('options', function (newVal, oldVal) {
-                if (angular.equals(newVal, oldVal)) return;
+                if (angular.equals(newVal, oldVal) && ! scope.forceWatch) return;
                 createChart(newVal);
             });
 

@@ -16,11 +16,14 @@
     </zf-modal-content-container>
     <zf-modal-helper-container class="widget-wizard_container-helper">
         <div class="widget-wizard_container-helper_picture">
-            <div class="widget-wizard_container-helper_picture_item">
-                <div id="chart" data-echarts dataset="widget.template.data.dataset" with-legend="widget.template.useLegend" data-options="widget.template.testModel" style="height: 149px;"></div>
+            <div class="widget-wizard_container-helper_picture_item" ng-if="widget.template.name">
+                <div id="chart" data-echarts dataset="widget.template.data.dataset" force-watch="true" with-legend="widget.template.useLegend" data-options="widget.template.testModel" style="height: 149px;"></div>
             </div>
-            <div class="widget-wizard_container-helper_picture_caption">
+            <div class="widget-wizard_container-helper_picture_caption" ng-if="widget.template.name">
                 {{widget.template.name}}
+            </div>
+            <div class="widget-wizard_container-helper_picture_empty-caption" ng-if="! widget.template.name">
+                Choose template
             </div>
         </div>
         <div class="widget-wizard_container-helper_actions">

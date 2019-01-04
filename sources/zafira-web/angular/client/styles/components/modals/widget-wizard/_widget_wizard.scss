@@ -121,6 +121,13 @@ $wizard-white:          #ffffff;
                 text-align: center;
                 color: rgba(0, 0, 0, 0.5);
             }
+            &_empty-caption {
+                color: rgba(0, 0, 0, 0.15);
+                letter-spacing: 0.6px;
+                font-weight: 300;
+                font-size: 20px;
+                text-align: center;
+            }
         }
         &_actions {
             position: absolute;
