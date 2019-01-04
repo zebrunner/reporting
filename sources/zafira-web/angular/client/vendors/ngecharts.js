@@ -63,6 +63,12 @@
                     }
                 }
 
+                if(! scope.withLegend) {
+                    opts.legend = {
+                        show: false
+                    };
+                }
+
                 axisFormatterApply(opts.xAxis);
                 axisFormatterApply(opts.yAxis);
                 tooltipFormatterApply(opts.tooltip);
@@ -78,10 +84,6 @@
             scope.$watch('options', function (newVal, oldVal) {
                 if (angular.equals(newVal, oldVal)) return;
                 createChart(newVal);
-            });
-
-            scope.$watch('data', function (newVal, oldVal) {
-                if (angular.equals(newVal, oldVal)) return;
             });
 
             function axisFormatterApply(axis) {

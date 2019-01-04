@@ -3,24 +3,33 @@ $inner-padding:         16px;
 $wizard-dark-gray:      #7f7f7f;
 $wizard-white:          #ffffff;
 
+.zf-md-dialog-container {
+    padding-top: 132px;
+}
+
 .widget-wizard {
     &_container {
         min-height: 576px !important;
+        height: 576px;
+        overflow-y: scroll;
         padding: 34px 8px 34px 24px !important;
 
         &_title {
             padding-bottom: $standart-padding;
+
             &_sub {
                 font-size: 14px;
                 letter-spacing: 0.14px;
                 color: $wizard-dark-gray;
             }
+
             &_common {
                 font-size: 20px;
                 letter-spacing: 0.2px;
                 color: black;
             }
         }
+
         &_elements {
             &_item {
                 width: 252px;
@@ -30,29 +39,89 @@ $wizard-white:          #ffffff;
                 &_title {
                     margin-bottom: 12px;
                 }
+
                 &_description {
                     font-size: 12px;
-                    letter-spacing: 0.12px;
+                    font-weight: normal;
+                    letter-spacing: 0.1px;
+                    line-height: 1.33;
+                    color: $wizard-dark-gray;
+                }
+
+                &_icon {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    padding: 0 0 $inner-padding $inner-padding;
+
+                    md-icon {
+                        width: 34px;
+                        height: 34px;
+                        color: rgba(0, 0, 0, 0.2);
+                    }
                 }
 
                 label {
                     &:before {
-                        background-color: $wizard-white;
+                        background-color: $wizard-white !important;
                     }
+
                     div[ng-transclude] {
                         transform: none;
                         line-height: 14px;
                         font-weight: 500;
-                        padding-right: $inner-padding;
-                        top: $inner-padding;
-                        left: $inner-padding;
+                        padding: $inner-padding;
+                        height: 100%;
+                        top: 0;
+                        left: 0;
+                    }
+                }
+
+                $parent: &;
+
+                &.zf-checked {
+                    label {
+                        &:before {
+                            border: 2px solid $brand-light;
+                        }
+                    }
+
+                    #{$parent}_description {
+                        color: black !important;
+                    }
+
+                    #{$parent}_icon {
+                        md-icon {
+                            color: $brand-light;
+                        }
                     }
                 }
             }
         }
     }
-    &_container-helper {
 
+    &_container-helper {
+        overflow-y: hidden;
+        padding: 0 26px;
+        display: flex;
+        align-items: center;
+        &_picture {
+            width: 228px;
+            min-height: 180px;
+
+            &_item {
+                height: 149px;
+                margin-bottom: 18px;
+            }
+            &_caption {
+                font-size: 12px;
+                font-weight: 500;
+                line-height: normal;
+                letter-spacing: normal;
+                text-align: center;
+                color: rgba(0, 0, 0, 0.5);
+            }
+        }
         &_actions {
             position: absolute;
             bottom: $standart-padding;
