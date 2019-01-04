@@ -81,6 +81,8 @@ echo zafira.rabbitmq.stomp.host=$ZAFIRA_RABBITMQ_STOMP_HOST >> $CATALINA_HOME/co
 echo zafira.rabbitmq.stomp.port=$ZAFIRA_RABBITMQ_STOMP_PORT >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.jwt.secret=$ZAFIRA_JWT_TOKEN >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.crypto_salt=$ZAFIRA_CRYPTO_SALT >> $CATALINA_HOME/conf/catalina.properties
+echo zafira.scm.github.client.id=$ZAFIRA_GITHUB_CLIENT_ID >> $CATALINA_HOME/conf/catalina.properties
+echo zafira.scm.github.client.secret=$ZAFIRA_GITHUB_CLIENT_SECRET >> $CATALINA_HOME/conf/catalina.properties
 # Shared folder for RSA keys usage
 echo shared.loader=/usr/local/tomcat/shared >> $CATALINA_HOME/conf/catalina.properties
 
