@@ -27,8 +27,9 @@ $red: #d2333b;
             height: 100%;
         }
 
-        .md-dialog-content > div {
+        .md-dialog-content > div[ng-transclude] {
             display: flex;
+            min-height: 576px;
         }
 
         &_helper, &_content {
