@@ -33,8 +33,7 @@ public class LauncherType extends AbstractType {
     @NotNull
     @Valid
     private ScmAccountType scmAccountType;
-    
-    @NotNull
+
     private String jobURL;
 
     public String getName() {

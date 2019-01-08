@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.qaprosoft.zafira.models.db.Job;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,8 +47,24 @@ public class LauncherService {
     @Autowired
     private ScmAccountService scmAccountService;
 
+    @Autowired
+    private JobsService jobsService;
+
     @Transactional(rollbackFor = Exception.class)
     public Launcher createLauncher(Launcher launcher) throws ServiceException {
+        if(jenkinsService.getContext() != null) {
+            String launcherJobName = jenkinsService.getContext().getLauncherJobName();
+            if (launcherJobName != null) {
+                Job job = jobsService.getJobByName(launcherJobName);
+                if(job == null) {
+                    job = jenkinsService.getJob(launcherJobName);
+                    if (job != null) {
+                        jobsService.createJob(job);
+                    }
+                }
+                launcher.setJob(job);
+            }
+        }
         launcherMapper.createLauncher(launcher);
         return launcher;
     }

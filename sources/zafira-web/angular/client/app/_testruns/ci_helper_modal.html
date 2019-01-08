@@ -138,9 +138,10 @@
             <md-button class="zf-button zf-info" ng-click="navigateBack();" ng-if="cardNumber === 3">
                 Back
             </md-button>
-            <md-button class="md-raised btn-w-md md-primary" ng-click="build(launcher);" ng-if="cardNumber === 2 || cardNumber === 3">
+            <md-button class="md-raised btn-w-md md-primary" ng-click="build(launcher);" ng-disabled="! launcher.jobURL" ng-if="cardNumber === 2 || cardNumber === 3">
                 Build
             </md-button>
+            <div ng-if="! launcher.jobURL" class="ci-runner-container_content_actions_error">Launcher job is not configured, contact admin.</div>
         </div>
     </zf-modal-content-container>
     <zf-modal-content-container class="ci-runner-container_content hide-phone" ng-if="cardNumber === 0">
