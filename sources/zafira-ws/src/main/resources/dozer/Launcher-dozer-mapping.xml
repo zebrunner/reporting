@@ -22,5 +22,9 @@
             <a>scmAccountType</a>
             <b>scmAccount</b>
         </field>
+        <field>
+            <a>jobURL</a>
+            <b>job.jobURL</b>
+        </field>
     </mapping>
 </mappings>

@@ -5,11 +5,29 @@
 
     <insert id="createLauncher" useGeneratedKeys="true" keyProperty="id">
         <![CDATA[
-			INSERT INTO LAUNCHERS (NAME, MODEL, SCM_ID)
+			INSERT INTO LAUNCHERS (
+			    NAME
+			    , MODEL
+			    , SCM_ID
+        ]]>
+			    <if test="null != job">
+                    <![CDATA[
+			          , JOB_ID
+                    ]]>
+			    </if>
+        <![CDATA[
+            )
 			VALUES (
 				#{name},
 				#{model},
 			    #{scmAccount.id}
+        ]]>
+                <if test="null != job">
+                    <![CDATA[
+			          , #{job.id}
+                    ]]>
+                </if>
+        <![CDATA[
 			)
         ]]>
     </insert>
@@ -20,6 +38,7 @@
 				L.ID AS LAUNCHER_ID,
 				L.NAME AS LAUNCHER_NAME,
 				L.MODEL AS LAUNCHER_MODEL,
+
 				S.ID AS SCM_ID,
 				S.NAME AS SCM_NAME,
 				S.ACCESS_TOKEN AS SCM_ACCESS_TOKEN,
@@ -30,6 +49,15 @@
 				S.USER_ID AS SCM_USER_ID,
 				S.MODIFIED_AT AS SCM_MODIFIED_AT,
 				S.CREATED_AT AS SCM_CREATED_AT,
+
+				J.ID AS JOB_ID,
+				J.USER_ID AS JOB_USER_ID,
+				J.NAME AS JOB_NAME,
+				J.JOB_URL AS JOB_JOB_URL,
+				J.JENKINS_HOST AS JOB_JENKINS_HOST,
+				J.MODIFIED_AT AS JOB_MODIFIED_AT,
+				J.CREATED_AT AS JOB_CREATED_AT,
+
 				L.CREATED_AT AS LAUNCHER_CREATED_AT,
 				L.MODIFIED_AT AS _MODIFIED_AT
 			FROM
@@ -38,6 +66,10 @@
                 SCM S
             ON
                 L.SCM_ID = S.ID
+            LEFT JOIN
+                JOBS J
+            ON
+                J.ID = L.JOB_ID
         ]]>
     </sql>
 
@@ -97,6 +129,8 @@
         <result column="LAUNCHER_CREATED_AT" property="createdAt"/>
         <association property="scmAccount" javaType="com.qaprosoft.zafira.models.db.ScmAccount"
                      resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.ScmAccountMapper.ScmAccountResultMap"/>
+        <association property="job" javaType="com.qaprosoft.zafira.models.db.Job"
+                     resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.JobMapper.JobResultMap"/>
     </resultMap>
 
 </mapper>

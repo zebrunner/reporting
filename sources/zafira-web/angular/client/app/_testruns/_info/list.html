@@ -93,8 +93,8 @@
                                                     </div>
                                                 </td>
                                                 <td ng-click="selectLogRow($event, $index);">{{ log.timestamp | date: 'HH:mm:ss'}}</td>
-                                                <td ng-click="selectLogRow($event, $index);">[{{ log.threadName }}] [{{ log.level}}]
-                                                    <show-more class="log_message" name="logMessage" element-id="log.timestamp" text="log.message" limit="255" ></show-more>
+                                                <td ng-click="selectLogRow($event, $index);">
+                                                    <show-more class="log_message" name="logMessage" element-id="log.timestamp" text-inline="{{'[' + log.threadName + '] [' + log.level + '] ' + log.message}}" limit="255" ></show-more>
                                                 </td>
                                                 <td ng-click="selectLogRow($event, $index);" class="settings-cell" style="padding: 0 !important;">
                                                     <md-menu ng-if="selectedLogRow == $index" class="pull-right">

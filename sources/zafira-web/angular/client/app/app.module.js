@@ -199,12 +199,13 @@
             restrict: 'AE',
             replace: true,
             scope: {
-                text: '=',
+                text: '=?',
+                textInline: '@?',
                 limit:'=',
                 elementId: '='
             },
 
-            template: '<div class="wrap"><div ng-show="largeText"> {{ text | limitTo :end :0 }}.... <a href="javascript:;" ng-click="showMore()" id="more{{ elementId }}" ng-show="isShowMore">Show&nbsp;more</a><a href="javascript:;" id="less{{ elementId }}" ng-click="showLess()" ng-hide="isShowMore">Show&nbsp;less </a></div><div ng-hide="largeText">{{ text }}</div></div> ',
+            template: '<div class="wrap"><div ng-show="largeText"> {{ textToEdit | limitTo :end :0 }}.... <a href="javascript:;" ng-click="showMore()" id="more{{ elementId }}" ng-show="isShowMore">Show&nbsp;more</a><a href="javascript:;" id="less{{ elementId }}" ng-click="showLess()" ng-hide="isShowMore">Show&nbsp;less </a></div><div ng-hide="largeText">{{ textToEdit }}</div></div> ',
 
             link: function(scope, iElement, iAttrs) {
 
@@ -218,13 +219,19 @@
                 var showMoreElementId = 'more' + scope.elementId;
                 var showLessElementId = 'less' + scope.elementId;
 
-                if (scope.text.length <= scope.limit) {
-                    scope.largeText = false;
-                }
+                scope.$watchGroup(['text', 'textInline'], function (newValues) {
+                    if(newValues[0] || newValues[1]) {
+                        scope.textToEdit = scope.text ? scope.text : scope.textInline;
+
+                        if (scope.textToEdit.length <= scope.limit) {
+                            scope.largeText = false;
+                        }
+                    }
+                });
 
                 scope.showMore = function() {
                     showMoreOffset = angular.element('#' + showMoreElementId).offset().top;
-                    scope.end = scope.text.length;
+                    scope.end = scope.textToEdit.length;
                     scope.isShowMore = false;
                 };
 

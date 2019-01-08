@@ -76,6 +76,7 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
         String url = null;
         String username = null;
         String passwordOrApiToken = null;
+        String launcherJobName = null;
 
         try {
             List<Setting> jenkinsSettings = settingsService.getSettingsByTool(JENKINS);
@@ -93,11 +94,14 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
                 case JENKINS_API_TOKEN_OR_PASSWORD:
                     passwordOrApiToken = setting.getValue();
                     break;
+                case JENKINS_LAUNCHER_JOB_NAME:
+                    launcherJobName = setting.getValue();
+                    break;
                 default:
                     break;
                 }
             }
-            init(url, username, passwordOrApiToken);
+            init(url, username, passwordOrApiToken, launcherJobName);
         } catch (Exception e) {
             LOGGER.error("Setting does not exist", e);
         }
@@ -107,11 +111,12 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
     @ManagedOperationParameters({
             @ManagedOperationParameter(name = "url", description = "Jenkins url"),
             @ManagedOperationParameter(name = "username", description = "Jenkins username"),
-            @ManagedOperationParameter(name = "passwordOrApiToken", description = "Jenkins passwordOrApiToken or api token") })
-    public void init(String url, String username, String passwordOrApiToken) {
+            @ManagedOperationParameter(name = "passwordOrApiToken", description = "Jenkins passwordOrApiToken or api token"),
+            @ManagedOperationParameter(name = "launcherJobName", description = "Jenkins launcher job name") })
+    public void init(String url, String username, String passwordOrApiToken, String launcherJobName) {
         try {
             if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(passwordOrApiToken)) {
-                putContext(JENKINS, new JenkinsContext(url, username, passwordOrApiToken));
+                putContext(JENKINS, new JenkinsContext(url, username, passwordOrApiToken, launcherJobName));
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize Jenkins integration: " + e.getMessage());
@@ -295,6 +300,19 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
         return params;
     }
 
+    public Job getJob(String jobName) {
+        Job job = null;
+        try {
+            JobWithDetails jobWithDetails = getServer().getJob(jobName);
+            if(jobWithDetails != null && jobWithDetails.getUrl() != null) {
+                job = new Job(jobName, jobWithDetails.getUrl());
+            }
+        } catch (IOException e) {
+            LOGGER.error("Unable to get job by name '" + jobName + "'. " + e.getMessage(), e);
+        }
+        return job;
+    }
+
     public static boolean checkArguments(Map<String, String> args) {
         return Arrays.stream(REQUIRED_ARGS).filter(arg -> args.get(arg) == null).collect(Collectors.toList()).size() == 0;
     }
@@ -320,5 +338,9 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
     @ManagedAttribute(description = "Get jenkins server")
     public JenkinsServer getServer() {
         return getContext(JENKINS) != null ? getContext(JENKINS).getJenkinsServer() : null;
+    }
+
+    public JenkinsContext getContext() {
+        return getContext(JENKINS);
     }
 }

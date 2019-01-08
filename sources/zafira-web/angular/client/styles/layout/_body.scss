@@ -3071,6 +3071,21 @@ $light-inprogress: #68c9fd;
                 padding: 16px;
                 background-color: #ffffff;
             }
+
+            &_error {
+                color: #F44336;
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 16px;
+                right: 0;
+                width: 50%;
+                height: 30%;
+                margin: auto;
+                line-height: 12px;
+                font-size: 12px;
+                text-align: right;
+            }
             button {
                 float: right;
                 height: 36px;

@@ -15,6 +15,16 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import com.qaprosoft.zafira.models.db.Job;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherMapper;
@@ -24,16 +34,6 @@ import com.qaprosoft.zafira.models.dto.JenkinsJobType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.jmx.JenkinsService;
 import com.qaprosoft.zafira.services.services.application.scm.ScmAccountService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class LauncherService {
@@ -47,8 +47,24 @@ public class LauncherService {
     @Autowired
     private ScmAccountService scmAccountService;
 
+    @Autowired
+    private JobsService jobsService;
+
     @Transactional(rollbackFor = Exception.class)
     public Launcher createLauncher(Launcher launcher) throws ServiceException {
+        if(jenkinsService.getContext() != null) {
+            String launcherJobName = jenkinsService.getContext().getLauncherJobName();
+            if (launcherJobName != null) {
+                Job job = jobsService.getJobByName(launcherJobName);
+                if(job == null) {
+                    job = jenkinsService.getJob(launcherJobName);
+                    if (job != null) {
+                        jobsService.createJob(job);
+                    }
+                }
+                launcher.setJob(job);
+            }
+        }
         launcherMapper.createLauncher(launcher);
         return launcher;
     }
@@ -74,7 +90,6 @@ public class LauncherService {
         launcherMapper.deleteLauncherById(id);
     }
 
-    @SuppressWarnings("unchecked")
     public void buildLauncherJob(Launcher launcher) throws IOException, ServiceException {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, String> args = mapper.readValue(launcher.getModel(), new TypeReference<Map<String, String>>(){});
@@ -83,7 +98,7 @@ public class LauncherService {
         }
         ScmAccount scmAccount = scmAccountService.getScmAccountById(launcher.getScmAccount().getId());
         if(scmAccount == null) {
-            throw new ServiceException("Scm account does not exist.");
+            throw new ServiceException("Scm account not found");
         }
         JenkinsJobType jenkinsJobType = new JenkinsJobType(
                 args.get("suite"),

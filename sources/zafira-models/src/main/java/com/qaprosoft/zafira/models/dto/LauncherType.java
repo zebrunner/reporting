@@ -34,6 +34,8 @@ public class LauncherType extends AbstractType {
     @Valid
     private ScmAccountType scmAccountType;
 
+    private String jobURL;
+
     public String getName() {
         return name;
     }
@@ -57,4 +59,12 @@ public class LauncherType extends AbstractType {
     public void setScmAccountType(ScmAccountType scmAccountType) {
         this.scmAccountType = scmAccountType;
     }
+
+	public String getJobURL() {
+		return jobURL;
+	}
+
+	public void setJobURL(String jobURL) {
+		this.jobURL = jobURL;
+	}
 }
