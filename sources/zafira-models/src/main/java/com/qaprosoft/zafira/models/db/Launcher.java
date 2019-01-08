@@ -15,35 +15,49 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
+/**
+ * Launcher is used to trigger CI job with arguments.
+ * 
+ * @author akhursevich
+ */
 public class Launcher extends AbstractEntity {
 
-    private static final long serialVersionUID = 7864420961256586573L;
+	private static final long serialVersionUID = 7864420961256586573L;
 
-    private String name;
-    private String model;
-    private ScmAccount scmAccount;
+	private String name;
+	private String model;
+	private ScmAccount scmAccount;
+	private Job job;
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getModel() {
-        return model;
-    }
+	public String getModel() {
+		return model;
+	}
 
-    public void setModel(String model) {
-        this.model = model;
-    }
+	public void setModel(String model) {
+		this.model = model;
+	}
 
-    public ScmAccount getScmAccount() {
-        return scmAccount;
-    }
+	public ScmAccount getScmAccount() {
+		return scmAccount;
+	}
 
-    public void setScmAccount(ScmAccount scmAccount) {
-        this.scmAccount = scmAccount;
-    }
+	public void setScmAccount(ScmAccount scmAccount) {
+		this.scmAccount = scmAccount;
+	}
+
+	public Job getJob() {
+		return job;
+	}
+
+	public void setJob(Job job) {
+		this.job = job;
+	}
 }
