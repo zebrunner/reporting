@@ -360,7 +360,6 @@ public class ZafiraLogAppender extends AppenderSkeleton
 	/**
 	 * Declares the exchange on RabbitMQ server according to properties set
 	 */
-	@SuppressWarnings("SynchronizeOnNonFinalField")
 	private void createExchange() throws IOException
 	{
 		if (this.channel != null && this.channel.isOpen())
