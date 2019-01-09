@@ -112,6 +112,6 @@ public class ScmAccount extends AbstractEntity {
     
     public String buildAuthorizedURL() {
     		String[] urlSlices = repositoryURL.split("//");
-        return urlSlices[0] + "//" + accessToken + ":" + urlSlices[1];
+        return urlSlices[0] + "//" + accessToken + "@" + urlSlices[1];
     }
 }

@@ -16,8 +16,10 @@
 package com.qaprosoft.zafira.services.services.application;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherMapper;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Launcher;
 import com.qaprosoft.zafira.models.db.ScmAccount;
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.jmx.JenkinsService;
 import com.qaprosoft.zafira.services.services.application.scm.ScmAccountService;
@@ -49,7 +52,7 @@ public class LauncherService {
     private JobsService jobsService;
 
     @Transactional(rollbackFor = Exception.class)
-    public Launcher createLauncher(Launcher launcher) throws ServiceException {
+    public Launcher createLauncher(Launcher launcher, User owner) throws ServiceException {
         if(jenkinsService.getContext() != null) {
             String launcherJobName = jenkinsService.getContext().getLauncherJobName();
             if (launcherJobName != null) {
@@ -57,6 +60,8 @@ public class LauncherService {
                 if(job == null) {
                     job = jenkinsService.getJob(launcherJobName);
                     if (job != null) {
+                        job.setJenkinsHost(jenkinsService.getContext().getJenkinsHost());
+                        job.setUser(owner);
                         jobsService.createJob(job);
                     }
                 }
@@ -101,8 +106,13 @@ public class LauncherService {
         Map<String, String> jobParameters = new ObjectMapper().readValue(launcher.getModel(), new TypeReference<Map<String, String>>(){});
         jobParameters.put("scmURL", scmAccount.buildAuthorizedURL());
         if(!jobParameters.containsKey("scmBranch")) {
-            jobParameters.put("scmBranch", "master");
+            jobParameters.put("scmBranch", "*/master");
         }
+        
+        String args = jobParameters.entrySet().stream().filter(param -> ! Arrays.asList(JenkinsService.getRequiredArgs()).contains(param.getKey()))
+                .map(param -> "-D" + param.getKey() + "=" + param.getValue()).collect(Collectors.joining(" "));
+        
+        jobParameters.put("args", args);
         
         if(!JenkinsService.checkArguments(jobParameters)) 
             throw new ServiceException("Required arguments not found");

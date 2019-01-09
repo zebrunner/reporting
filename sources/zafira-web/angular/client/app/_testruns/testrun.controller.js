@@ -2203,20 +2203,22 @@
                     name: 'Web',
                     json: {
                         "browser": ["chrome", "firefox"],
-                        "enable_video": false,
-                        "thread_count": 4
+                        "thread_count": 5,
+                        "scmBranch": "*/master"
                     }
                 },
                 {
                     name: 'Mobile',
                     json: {
-
+                        "thread_count": 5,
+                        "scmBranch": "*/master"
                     }
                 },
                 {
                     name: 'API',
                     json: {
-
+                        "thread_count": 5,
+                        "scmBranch": "*/master"
                     }
                 }
             ]
@@ -2517,6 +2519,7 @@
             LauncherService.buildLauncher(launcher).then(function (rs) {
                 if(rs.success) {
                     alertify.success("Job is in progress");
+                    $scope.hide();
                 } else {
                     alertify.error(rs.message);
                 }
