@@ -86,8 +86,8 @@ public class TagsAPIController extends AbstractController
                             integration.getCustomParams().put("assignee", arg.getValue());
                         } else if (arg.getKey().contains("testrail_milestone")){
                             integration.getCustomParams().put("milestone", arg.getValue());
-                        } else if (arg.getKey().contains("testrail_run_name") && !StringUtils.isEmpty(arg.getValue())){
-                            integration.setTestRunName(arg.getValue());
+                        } else if (arg.getKey().contains("testrail_run_name")){
+                            integration.getCustomParams().put("testrail_run_name", arg.getValue());
                         }
                     });
                     break;
