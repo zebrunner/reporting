@@ -13,42 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.db;
+package com.qaprosoft.zafira.models.dto;
 
-public class Attribute extends AbstractEntity
-{
-	private static final long serialVersionUID = 6708791122991478693L;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.Map;
 
-	private String key;
-	private String value;
-	
-	public Attribute()
-	{
-	}
+public class SQLExecuteType implements Serializable {
 
-	public Attribute(String key, String value)
-	{
-		this.key = key;
-		this.value = value;
-	}
+    private static final long serialVersionUID = 5765973760872185602L;
 
-	public String getKey()
-	{
-		return key;
-	}
+    @NotNull
+    @Min(1)
+    private Long templateId;
 
-	public void setKey(String key)
-	{
-		this.key = key;
-	}
+    private Map<String, Object> paramsConfig;
 
-	public String getValue()
-	{
-		return value;
-	}
+    public Long getTemplateId() {
+        return templateId;
+    }
 
-	public void setValue(String value)
-	{
-		this.value = value;
-	}
+    public void setTemplateId(Long templateId) {
+        this.templateId = templateId;
+    }
+
+    public Map<String, Object> getParamsConfig() {
+        return paramsConfig;
+    }
+
+    public void setParamsConfig(Map<String, Object> paramsConfig) {
+        this.paramsConfig = paramsConfig;
+    }
 }

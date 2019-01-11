@@ -29,6 +29,9 @@
         service.UpdateWidget = UpdateWidget;
         service.DeleteWidget = DeleteWidget;
         service.ExecuteWidgetSQL = ExecuteWidgetSQL;
+        service.ExecuteWidgetTemplateSQL = ExecuteWidgetTemplateSQL;
+
+        service.GetWidgetTemplates = GetWidgetTemplates;
 
         return service;
 
@@ -116,7 +119,16 @@
         }
 
         function ExecuteWidgetSQL(params, sqlAdapter) {
-        	return $httpMock.post(API_URL + '/api/widgets/sql' + params, sqlAdapter).then(UtilService.handleSuccess, UtilService.handleError('Unable to exequte SQL'));
+        	return $httpMock.post(API_URL + '/api/widgets/sql' + params, sqlAdapter).then(UtilService.handleSuccess, UtilService.handleError('Unable to execute SQL'));
+        }
+
+        function GetWidgetTemplates() {
+            return $httpMock.get(API_URL + '/api/widgets/templates').then(UtilService.handleSuccess, UtilService.handleError('Unable to load widget templates'));
+        };
+
+        function ExecuteWidgetTemplateSQL(sqlTemplateAdapter, queryParams) {
+            var url = UtilService.buildURL(API_URL + '/api/widgets/templates/sql', queryParams);
+            return $httpMock.post(url, sqlTemplateAdapter).then(UtilService.handleSuccess, UtilService.handleError('Unable to execute SQL'));
         }
     }
 })();

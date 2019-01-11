@@ -120,6 +120,11 @@ $red: #d2333b;
             }
         }
     }
+    *[ng-messages] {
+        position: absolute;
+        font-size: 12px;
+        color: $red;
+    }
     md-checkbox {
         margin: 0;
         &.md-checked .md-icon {

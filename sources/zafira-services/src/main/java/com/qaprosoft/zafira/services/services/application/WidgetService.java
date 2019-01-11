@@ -18,6 +18,7 @@ package com.qaprosoft.zafira.services.services.application;
 import java.util.List;
 import java.util.Map;
 
+import com.qaprosoft.zafira.dbaccess.utils.SQLTemplateAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,5 +70,11 @@ public class WidgetService
 	public List<Map<String, Object>> executeSQL(String sql) throws ServiceException
 	{
 		return widgetMapper.executeSQL(new SQLAdapter(sql));
+	}
+
+	@Transactional(readOnly = true)
+	public List<Map<String, Object>> executeSQL(String sql, Map<String, Object> params) throws ServiceException
+	{
+		return widgetMapper.executeSQLTemplate(new SQLTemplateAdapter(sql, params));
 	}
 }

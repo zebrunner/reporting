@@ -8,15 +8,22 @@
 			${sql}
 		]]>
 	</select>
+
+	<select id="executeSQLTemplate" parameterType="com.qaprosoft.zafira.dbaccess.utils.SQLTemplateAdapter" resultType="Hashmap">
+		<![CDATA[
+			${sql}
+		]]>
+	</select>
 	
 	<insert id="createWidget" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO WIDGETS (TITLE, SQL, MODEL, TYPE, REFRESHABLE)
+			INSERT INTO WIDGETS (TITLE, DESCRIPTION, PARAMS_CONFIG, LEGEND_CONFIG, WIDGET_TEMPLATE_ID, REFRESHABLE)
 			VALUES (
 				#{title},
-				#{sql},
-				#{model},
-				#{type},
+				#{description},
+				#{paramsConfig},
+				#{legendConfig},
+				#{widgetTemplate.id},
 				#{refreshable}
 			)
 		]]>
@@ -27,14 +34,34 @@
 			SELECT
 				W.ID AS WIDGET_ID,
 				W.TITLE AS WIDGET_TITLE,
-				W.SQL AS WIDGET_SQL,
-				W.MODEL AS WIDGET_MODEL,
-				W.TYPE AS WIDGET_TYPE,
+				W.DESCRIPTION AS WIDGET_DESCRIPTION,
+				W.PARAMS_CONFIG AS WIDGET_PARAMS_CONFIG,
+				W.LEGEND_CONFIG AS WIDGET_LEGEND_CONFIG,
+
+				WT.ID AS WIDGET_TEMPLATE_ID,
+				WT.NAME AS WIDGET_TEMPLATE_NAME,
+				WT.DESCRIPTION AS WIDGET_TEMPLATE_DESCRIPTION,
+				WT.TYPE AS WIDGET_TEMPLATE_TYPE,
+				WT.SQL AS WIDGET_TEMPLATE_SQL,
+				WT.CHART_CONFIG AS WIDGET_TEMPLATE_CHART_CONFIG,
+				WT.PARAMS_CONFIG AS WIDGET_TEMPLATE_PARAMS_CONFIG,
+				WT.LEGEND_CONFIG AS WIDGET_TEMPLATE_LEGEND_CONFIG,
+				WT.MODIFIED_AT AS WIDGET_TEMPLATE_MODIFIED_AT,
+				WT.CREATED_AT AS WIDGET_TEMPLATE_CREATED_AT,
+
 				W.REFRESHABLE AS WIDGET_REFRESHABLE,
 				W.MODIFIED_AT AS WIDGET_MODIFIED_AT,
-				W.CREATED_AT AS WIDGET_CREATED_AT
+				W.CREATED_AT AS WIDGET_CREATED_AT,
+
+				W.SQL AS WIDGET_SQL,
+				W.MODEL AS WIDGET_MODEL,
+				W.TYPE AS WIDGET_TYPE
 			FROM
 				WIDGETS W
+			LEFT JOIN
+				management.WIDGET_TEMPLATES WT
+			ON
+				W.WIDGET_TEMPLATE_ID = WT.ID
 		]]>
 	</sql>
 	
@@ -60,19 +87,19 @@
 		               TITLE = #{title},
 		            ]]>
 				</if>
-				<if test="null != sql">
-		            <![CDATA[
-		               SQL = #{sql},
+				<if test="null != description">
+					<![CDATA[
+		               DESCRIPTION = #{description},
 		            ]]>
 				</if>
-				<if test="null != model">
-		            <![CDATA[
-		               MODEL = #{model},
+				<if test="null != paramsConfig">
+					<![CDATA[
+		               PARAMS_CONFIG = #{paramsConfig},
 		            ]]>
 				</if>
-				<if test="null != type">
-		            <![CDATA[
-		               TYPE = #{type},
+				<if test="null != legendConfig">
+					<![CDATA[
+		               LEGEND_CONFIG = #{legendConfig},
 		            ]]>
 				</if>
 				<if test="null != refreshable">
@@ -104,17 +131,35 @@
 	<resultMap type="com.qaprosoft.zafira.models.db.Widget" id="WidgetResultMap" autoMapping="false">
 		<id column="WIDGET_ID" property="id" />
 		<result column="WIDGET_TITLE" property="title" />
+		<result column="WIDGET_DESCRIPTION" property="description" />
+		<result column="WIDGET_PARAMS_CONFIG" property="paramsConfig" />
+		<result column="WIDGET_LEGEND_CONFIG" property="legendConfig" />
+		<result column="WIDGET_REFRESHABLE" property="refreshable" />
+
 		<result column="WIDGET_SQL" property="sql" />
 		<result column="WIDGET_MODEL" property="model" />
 		<result column="WIDGET_TYPE" property="type" />
-		<result column="WIDGET_REFRESHABLE" property="refreshable" />
-		
 		<result column="DASHBOARD_WIDGET_SIZE" property="size" />
 		<result column="DASHBOARD_WIDGET_POSITION" property="position" />
 		<result column="DASHBOARD_WIDGET_LOCATION" property="location" />
 
 		<result column="WIDGET_MODIFIED_AT" property="modifiedAt" />
 		<result column="WIDGET_CREATED_AT" property="createdAt" />
+
+		<association property="widgetTemplate" javaType="com.qaprosoft.zafira.models.db.WidgetTemplate" resultMap="WidgetTemplateResultMap"/>
+	</resultMap>
+
+	<resultMap type="com.qaprosoft.zafira.models.db.WidgetTemplate" id="WidgetTemplateResultMap" autoMapping="false">
+		<id property="id" column="WIDGET_TEMPLATE_ID"/>
+		<result property="name" column="WIDGET_TEMPLATE_NAME"/>
+		<result property="description" column="WIDGET_TEMPLATE_DESCRIPTION"/>
+		<result property="type" column="WIDGET_TEMPLATE_TYPE"/>
+		<result property="sql" column="WIDGET_TEMPLATE_SQL"/>
+		<result property="chartConfig" column="WIDGET_TEMPLATE_CHART_CONFIG"/>
+		<result property="paramsConfig" column="WIDGET_TEMPLATE_PARAMS_CONFIG"/>
+		<result property="legendConfig" column="WIDGET_TEMPLATE_LEGEND_CONFIG"/>
+		<result property="modifiedAt" column="WIDGET_TEMPLATE_MODIFIED_AT"/>
+		<result property="createdAt" column="WIDGET_TEMPLATE_CREATED_AT"/>
 	</resultMap>
 
 </mapper>

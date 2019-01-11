@@ -1,23 +1,82 @@
+<form name="widget_form">
 <zf-modal class="widget-wizard">
     <zf-modal-content-container class="widget-wizard_container">
         <div class="widget-wizard_container_title">
-            <div class="widget-wizard_container_title_sub">Step 1</div>
-            <div class="widget-wizard_container_title_common">Choose template</div>
+            <div class="widget-wizard_container_title_sub">Step {{card.index}}</div>
+            <div class="widget-wizard_container_title_common">{{card.title}}</div>
         </div>
-        <div class="widget-wizard_container_elements">
-            <zf-radio-button class="widget-wizard_container_elements_item" ng-repeat="template in templates track by $index" on-change="onChange();" ng-model="widget.template" value="template">
-                <div class="widget-wizard_container_elements_item_title"><show-part text="template.name" limit="50"></show-part></div>
-                <div class="widget-wizard_container_elements_item_description"><show-part text="template.description" limit="150"></show-part></div>
-                <div class="widget-wizard_container_elements_item_icon">
-                    <md-icon md-svg-src="{{CHART_ICONS[template.type]}}"></md-icon>
+        <div class="widget-wizard_container_elements" ng-switch="card.index">
+            <div ng-switch-when="1">
+                <zf-radio-button class="widget-wizard_container_elements_item" ng-repeat="template in templates track by $index" on-change="onChange();" ng-model="widget.template" value="template">
+                    <div class="widget-wizard_container_elements_item_title"><show-part text="template.name" limit="50"></show-part></div>
+                    <div class="widget-wizard_container_elements_item_description"><show-part text="template.description" limit="150"></show-part></div>
+                    <div class="widget-wizard_container_elements_item_icon">
+                        <md-icon md-svg-src="{{CHART_ICONS[template.type]}}"></md-icon>
+                    </div>
+                </zf-radio-button>
+            </div>
+            <div class="zf-display-table" ng-switch-when="2">
+                <div class="widget-wizard_container_elements_input" ng-repeat="(paramName, paramValue) in widget.template.paramsConfigObject track by $index" ng-switch="paramValue.type">
+                    <div class="zf-label">{{paramName}}</div>
+                    <div ng-switch-default>
+                        <zf-input-container>
+                            <input ng-attr-type="{{paramValue.type === 'int' ? 'number' : 'text'}}" ng-model="widget.template.params[paramName]" placeholder="{{paramName}}" ng-change="onChange()"/>
+                        </zf-input-container>
+                    </div>
+                    <div ng-switch-when="array">
+                        <zf-input-container>
+                            <md-input-container>
+                                <label>{{paramName}}</label>
+                                <md-select ng-model="widget.template.params[paramName]" ng-change="onChange()">
+                                    <md-option ng-repeat="val in paramValue.values" ng-value="val">
+                                        {{val}}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                        </zf-input-container>
+                    </div>
                 </div>
-            </zf-radio-button>
+            </div>
+            <div ng-switch-when="3">
+                <div class="widget-wizard_container_elements_personal">
+                    <ng-form class="form-validation" name="info">
+                        <zf-input-container>
+                            <label>Set name for widget</label>
+                            <div class="zf-display-table">
+                                <div class="widget-wizard_container_elements_personal_item">
+                                    <div class="zf-label">Name</div>
+                                    <zf-input-container>
+                                        <input name="title" ng-model="widget.title" autofocus required/>
+                                        <div ng-messages="widget_form.info.title.$error" ng-if="widget_form.info.title.$dirty">
+                                            <div ng-message="required">Name required</div>
+                                        </div>
+                                    </zf-input-container>
+                                </div>
+                                <div class="widget-wizard_container_elements_personal_item">
+                                    <div class="zf-label">Description</div>
+                                    <div>
+                                        <zf-input-container>
+                                            <input name="description" ng-model="widget.description"/>
+                                        </zf-input-container>
+                                    </div>
+                                </div>
+                            </div>
+                        </zf-input-container>
+                    </ng-form>
+                </div>
+                <div class="widget-wizard_container_elements_additional">
+                    <zf-input-container>
+                        <label>Setting the legend</label>
+                        <md-checkbox ng-model="widget.template.legendConfigObject.legendItems[legendName]" ng-change="onLegendChange(legendName);" ng-repeat="legendName in widget.template.legendConfigObject.legend track by $index" aria-label="checkbox">{{legendName}}</md-checkbox>
+                    </zf-input-container>
+                </div>
+            </div>
         </div>
     </zf-modal-content-container>
     <zf-modal-helper-container class="widget-wizard_container-helper">
         <div class="widget-wizard_container-helper_picture">
             <div class="widget-wizard_container-helper_picture_item" ng-if="widget.template.name">
-                <div id="chart" data-echarts dataset="widget.template.data.dataset" force-watch="true" with-legend="widget.template.useLegend" data-options="widget.template.testModel" style="height: 149px;"></div>
+                <div id="chart" data-echarts dataset="widget.template.data.dataset" force-watch="true" with-legend="false" action="chartAction" config="echartConfig" data-options="widget.template.model" style="height: 149px;"></div>
             </div>
             <div class="widget-wizard_container-helper_picture_caption" ng-if="widget.template.name">
                 {{widget.template.name}}
@@ -27,10 +86,17 @@
             </div>
         </div>
         <div class="widget-wizard_container-helper_actions">
-            <md-button class="md-raised btn-w-md md-primary" ng-click="" ng-disabled="">
+            <md-button class="zf-button zf-info" ng-click="back();" ng-if="! isFirstCard()">
+                Back
+            </md-button>
+            <md-button class="md-raised btn-w-md md-primary pull-right" ng-click="next();" ng-if="! isLastCard()" ng-disabled="card.nextDisabled()">
                 Next
+            </md-button>
+            <md-button class="md-raised btn-w-md md-primary pull-right" ng-click="saveWidget();" ng-if="isLastCard()" ng-disabled="widget_form.info.$invalid">
+                Save
             </md-button>
         </div>
     </zf-modal-helper-container>
     <md-icon class="close-button" ng-click="cancel()" aria-label="Close dialog">close</md-icon>
 </zf-modal>
+</form>

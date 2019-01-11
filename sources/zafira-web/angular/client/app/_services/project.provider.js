@@ -7,7 +7,7 @@
 
     function ProjectProvider() {
 
-        this.$get = function($cookieStore) {
+        this.$get = function($cookieStore, UtilService) {
             return {
                 initProjects: function(sc) {
                     var projects = $cookieStore.get("projects");
@@ -40,6 +40,14 @@
                         projects.forEach(function (project) {
                             query = query + "projects=" + project.name + "&";
                         });
+                    }
+                    return query;
+                },
+                getProjectsQueryParamObject: function(sc) {
+                    var query = {};
+                    var projects = $cookieStore.get("projects");
+                    if(projects && projects.length) {
+                        query['projects'] = projects;
                     }
                     return query;
                 },

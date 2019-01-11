@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('UtilService', ['$rootScope', '$mdToast', '$timeout', '$q', UtilService])
+        .factory('UtilService', ['$rootScope', '$mdToast', '$timeout', '$q', '$httpParamSerializer', UtilService])
 
-    function UtilService($rootScope, $mdToast, $timeout, $q) {
+    function UtilService($rootScope, $mdToast, $timeout, $q, $httpParamSerializer) {
         var service = {};
 
         service.untouchForm = untouchForm;
@@ -17,6 +17,7 @@
         service.settingsAsMap = settingsAsMap;
         service.reconnectWebsocket = reconnectWebsocket;
         service.websocketConnected = websocketConnected;
+        service.buildURL = buildURL;
 
         service.validations = {
             username: [
@@ -247,6 +248,14 @@
             }
             form[inputName].$setValidity(ngMessage, result);
             return result;
+        };
+
+        function buildURL(url, queryParams) {
+            if(angular.isObject(queryParams)) {
+                var prefix = url.indexOf('?') !== -1 ? '&' : '?';
+                url += prefix + $httpParamSerializer(queryParams)
+            }
+            return url;
         };
     }
 })();

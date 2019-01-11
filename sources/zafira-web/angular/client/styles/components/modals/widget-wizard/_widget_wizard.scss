@@ -97,6 +97,52 @@ $wizard-white:          #ffffff;
                     }
                 }
             }
+
+            &_input {
+                margin-bottom: $inner-padding;
+                > * {
+                    padding-bottom: $inner-padding;
+                    vertical-align: middle;
+                }
+                .zf-label {
+                    text-transform: capitalize;
+                    line-height: 0;
+                    min-width: 151px;
+                    padding-right: 24px;
+                }
+            }
+
+            &_personal {
+                margin-bottom: 40px;
+                &_item {
+                    > * {
+                        padding-bottom: $inner-padding;
+                        vertical-align: middle;
+                    }
+                    .zf-label {
+                        line-height: 0;
+                        min-width: 151px;
+                        padding-right: 24px;
+                    }
+                }
+            }
+            &_additional {
+                .zf-input-container {
+                    > label {
+                        margin-bottom: 20px;
+                    }
+                    md-checkbox {
+                        margin-right: 64px;
+                        margin-bottom: $standart-padding;
+
+                        > *[ng-transclude] {
+                            font-size: 14px;
+                            font-weight: 500;
+                            margin-left: 32px;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -131,8 +177,10 @@ $wizard-white:          #ffffff;
         }
         &_actions {
             position: absolute;
-            bottom: $standart-padding;
-            right: $standart-padding;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 0 $inner-padding $inner-padding $inner-padding;
         }
     }
 

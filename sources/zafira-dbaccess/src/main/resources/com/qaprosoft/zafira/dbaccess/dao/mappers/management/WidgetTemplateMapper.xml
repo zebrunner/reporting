@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.management.WidgetTemplateMapper">
+
+	<sql id="getWidgetTemplate">
+		<![CDATA[
+			SELECT
+				WT.ID AS WIDGET_TEMPLATE_ID,
+				WT.NAME AS WIDGET_TEMPLATE_NAME,
+				WT.DESCRIPTION AS WIDGET_TEMPLATE_DESCRIPTION,
+				WT.TYPE AS WIDGET_TEMPLATE_TYPE,
+				WT.SQL AS WIDGET_TEMPLATE_SQL,
+				WT.CHART_CONFIG AS WIDGET_TEMPLATE_CHART_CONFIG,
+				WT.PARAMS_CONFIG AS WIDGET_TEMPLATE_PARAMS_CONFIG,
+				WT.LEGEND_CONFIG AS WIDGET_TEMPLATE_LEGEND_CONFIG,
+				WT.MODIFIED_AT AS WIDGET_TEMPLATE_MODIFIED_AT,
+				WT.CREATED_AT AS WIDGET_TEMPLATE_CREATED_AT
+			FROM
+				WIDGET_TEMPLATES WT
+		]]>
+	</sql>
+
+	<select id="getWidgetTemplateById" resultMap="WidgetTemplateResultMap">
+		<include refid="getWidgetTemplate" />
+		<![CDATA[
+			WHERE ID = #{id}
+		]]>
+	</select>
+
+	<select id="getWidgetTemplateByName" resultMap="WidgetTemplateResultMap">
+		<include refid="getWidgetTemplate" />
+		<![CDATA[
+			WHERE NAME = #{name}
+		]]>
+	</select>
+	
+	<select id="getAllWidgetTemplates" resultMap="WidgetTemplateResultMap">
+		<include refid="getWidgetTemplate" />
+	</select>
+
+	<resultMap type="com.qaprosoft.zafira.models.db.WidgetTemplate" id="WidgetTemplateResultMap" autoMapping="false">
+		<id property="id" column="WIDGET_TEMPLATE_ID"/>
+		<result property="name" column="WIDGET_TEMPLATE_NAME"/>
+		<result property="description" column="WIDGET_TEMPLATE_DESCRIPTION"/>
+		<result property="type" column="WIDGET_TEMPLATE_TYPE"/>
+		<result property="sql" column="WIDGET_TEMPLATE_SQL"/>
+		<result property="chartConfig" column="WIDGET_TEMPLATE_CHART_CONFIG"/>
+		<result property="paramsConfig" column="WIDGET_TEMPLATE_PARAMS_CONFIG"/>
+		<result property="legendConfig" column="WIDGET_TEMPLATE_LEGEND_CONFIG"/>
+		<result property="modifiedAt" column="WIDGET_TEMPLATE_MODIFIED_AT"/>
+		<result property="createdAt" column="WIDGET_TEMPLATE_CREATED_AT"/>
+	</resultMap>
+
+</mapper>

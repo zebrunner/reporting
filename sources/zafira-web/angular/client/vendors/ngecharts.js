@@ -15,7 +15,9 @@
                 options: '=options',
                 dataset: '=dataset',
                 withLegend: '=withLegend',
-                forceWatch: '=forceWatch'
+                forceWatch: '=forceWatch',
+                action: '=action',
+                config: '=config'
             },
             link: buildLinkFunc($window, $filter)
         };
@@ -80,12 +82,31 @@
                 angular.element($window).bind('resize', function(){
                     chart.resize();
                 });
+
+                if(scope.config) {
+                    angular.extend(scope.config, {
+                        clear: function () {
+                            if(chart && chart.clear) {
+                                chart.clear();
+                            }
+                        }
+                    });
+                }
             };
 
             scope.$watch('options', function (newVal, oldVal) {
                 if (angular.equals(newVal, oldVal) && ! scope.forceWatch) return;
                 createChart(newVal);
             });
+
+            if(scope.action) {
+                scope.$watchGroup(['action.name', 'action.type'], function (newVal, oldVal) {
+                    if (angular.equals(newVal, oldVal) && !scope.forceWatch) return;
+                    if (chart && chart.dispatchAction) {
+                        chart.dispatchAction({type: newVal[1], name: newVal[0]});
+                    }
+                });
+            }
 
             function axisFormatterApply(axis) {
                 if(axis && axis.axisLabel && axis.axisLabel.formatter) {

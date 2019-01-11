@@ -2286,10 +2286,6 @@
             $scope.cardNumber = isPhone ? 3 : 2;
         };
 
-        $scope.build = function () {
-
-        };
-
         $scope.getType = function (value) {
             return angular.isArray(value) ? 'array' : typeof value === "boolean" ? 'boolean' : typeof value === 'string' || value instanceof String ? 'string' : Number.isInteger(value) ? 'int' : 'none';
         };

@@ -13,42 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.db;
+package com.qaprosoft.zafira.dbaccess.utils;
 
-public class Attribute extends AbstractEntity
-{
-	private static final long serialVersionUID = 6708791122991478693L;
+import java.util.Map;
 
-	private String key;
-	private String value;
-	
-	public Attribute()
-	{
-	}
+public class SQLTemplateAdapter {
 
-	public Attribute(String key, String value)
-	{
-		this.key = key;
-		this.value = value;
-	}
+    private String sql;
+    private Map<String, Object> params;
 
-	public String getKey()
-	{
-		return key;
-	}
+    public SQLTemplateAdapter(String sql) {
+        this.sql = sql;
+    }
 
-	public void setKey(String key)
-	{
-		this.key = key;
-	}
+    public SQLTemplateAdapter(String sql, Map<String, Object> params) {
+        this.sql = sql;
+        this.params = params;
+    }
 
-	public String getValue()
-	{
-		return value;
-	}
+    public String getSql() {
+        return sql;
+    }
 
-	public void setValue(String value)
-	{
-		this.value = value;
-	}
+    public void setSql(String sql) {
+        this.sql = sql;
+    }
+
+    public Map<String, Object> getParams() {
+        return params;
+    }
+
+    public void setParams(Map<String, Object> params) {
+        this.params = params;
+    }
 }
