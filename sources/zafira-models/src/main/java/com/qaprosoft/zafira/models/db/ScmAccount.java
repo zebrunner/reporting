@@ -109,4 +109,9 @@ public class ScmAccount extends AbstractEntity {
     public boolean equals(Object obj) {
         return obj instanceof ScmAccount && this.hashCode() == ((ScmAccount) obj).hashCode();
     }
+    
+    public String buildAuthorizedURL() {
+    		String[] urlSlices = repositoryURL.split("//");
+        return urlSlices[0] + "//" + accessToken + "@" + urlSlices[1];
+    }
 }

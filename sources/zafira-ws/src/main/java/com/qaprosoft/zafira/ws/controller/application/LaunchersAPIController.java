@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.Launcher;
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.LauncherType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.LauncherService;
@@ -57,7 +58,8 @@ public class LaunchersAPIController extends AbstractController {
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody LauncherType createLauncher(@RequestBody @Valid LauncherType launcherType) throws ServiceException {
-        return mapper.map(launcherService.createLauncher(mapper.map(launcherType, Launcher.class)), LauncherType.class);
+        User owner = new User(getPrincipalId());
+        return mapper.map(launcherService.createLauncher(mapper.map(launcherType, Launcher.class), owner), LauncherType.class);
     }
 
     @ResponseStatusDetails

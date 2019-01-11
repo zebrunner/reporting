@@ -15,8 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.utils;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import com.qaprosoft.zafira.models.db.AbstractEntity;

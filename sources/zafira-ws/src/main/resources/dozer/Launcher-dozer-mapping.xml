@@ -23,8 +23,8 @@
             <b>scmAccount</b>
         </field>
         <field>
-            <a>jobURL</a>
-            <b>job.jobURL</b>
+            <a>job</a>
+            <b>job</b>
         </field>
     </mapping>
 </mappings>

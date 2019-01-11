@@ -17,8 +17,6 @@ package com.qaprosoft.zafira.models.db;
 
 public class IntegrationInfo {
 
-    private static final long serialVersionUID = -2354000459687721395L;
-
     private String tagValue;
     private String status;
     private String message;

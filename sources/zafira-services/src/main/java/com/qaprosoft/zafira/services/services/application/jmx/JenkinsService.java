@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.qaprosoft.zafira.models.dto.JenkinsJobType;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +60,7 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JenkinsService.class);
 
-    private static final String[] REQUIRED_ARGS = new String[] {"suite", "branch"};
+    private static final String[] REQUIRED_ARGS = new String[] {"scmURL", "scmBranch", "suite", "args"};
 
     private final String FOLDER_REGEX = ".+job\\/.+\\/job.+";
 
@@ -154,20 +153,15 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
         }
         return success;
     }
-
-    public boolean buildJob(Job ciJob, Integer buildNumber, Map<String, String> jobParameters,
-            boolean buildWithParameters) {
+    
+    public boolean buildJob(Job job, Map<String, String> jobParameters) {
         boolean success = false;
-        if (buildWithParameters) {
-            try {
-                JobWithDetails job = getJobWithDetails(ciJob);
-                QueueReference reference = job.build(jobParameters, true);
-                success = checkReference(reference);
-            } catch (Exception e) {
-                LOGGER.error("Unable to run Jenkins job:  " + e.getMessage());
-            }
-        } else {
-            success = rerunJob(ciJob, buildNumber, false);
+        try {
+            JobWithDetails ciJob = getJobWithDetails(job);
+            QueueReference reference = ciJob.build(jobParameters, true);
+            success = checkReference(reference);
+        } catch (Exception e) {
+            LOGGER.error("Unable to run Jenkins job:  " + e.getMessage());
         }
         return success;
     }
@@ -315,15 +309,6 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
 
     public static boolean checkArguments(Map<String, String> args) {
         return Arrays.stream(REQUIRED_ARGS).filter(arg -> args.get(arg) == null).collect(Collectors.toList()).size() == 0;
-    }
-
-    public static String buildURL(String url, String token) {
-        String[] urlSlices = url.split("//");
-        return urlSlices[0] + "//" + token + ":" + urlSlices[1];
-    }
-
-    public void build(JenkinsJobType jenkinsJob) {
-
     }
 
     public static String[] getRequiredArgs() {
