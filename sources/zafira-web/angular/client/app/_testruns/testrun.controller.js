@@ -2162,7 +2162,7 @@
         })();
     }
 
-    function CiHelperController($scope, $rootScope, $q, $window, $mdDialog, $timeout, LauncherService, ScmService) {
+    function CiHelperController($scope, $rootScope, $q, $window, $mdDialog, $timeout, $location, LauncherService, ScmService) {
 
         $scope.ciOptions = {};
 
@@ -2493,8 +2493,7 @@
         };
 
         function getCode(location) {
-            var urlParams = new URLSearchParams(location.search);
-            return urlParams.get('code');
+            return $location.search()['code'];
         };
 
         function initAccessToken(code) {
