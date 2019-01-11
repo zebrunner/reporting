@@ -2439,7 +2439,7 @@
                 gitHubPopUp = $window.open(url,'targetWindow', 'resizable=no, width=' + width + ', height=' + height + ', top=' + location.top + ', left=' + location.left);
 
                 gitHubPopUp.onbeforeunload = function (e) {
-                    var code = gitHubPopUp.location.href.split("code=")[1];
+                    var code = gitHubPopUp.location.code;
                     initAccessToken(code).then(function (scmAccount) {
                         $scope.scmAccount = scmAccount;
                         $scope.getOrganizations();

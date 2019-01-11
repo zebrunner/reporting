@@ -14,7 +14,7 @@
         (function init(){
             var code = getCode();
             if(code) {
-
+                $window.location.code = code;
                 $window.close();
             }
         })();
