@@ -2429,7 +2429,10 @@
 
         $scope.connectToGitHub = function() {
             getClientId().then(function (clientId) {
-                var url = 'https://github.com/login?client_id=' + clientId + '&return_to=%2Flogin%2Foauth%2Fauthorize%3Fclient_id%3D' + clientId + '%26scope%3Drepo%252Cread%253Auser%252Cread%253Aorg';
+                var host = $window.location.host;
+                var tenant = host.split('\.')[0];
+                var redirectURI = $window.location.protocol + "//" + host.replace(tenant, 'api') + "/github/callback/" + tenant;
+                var url = 'https://github.com/login?client_id=' + clientId + '&redirect_uri=' + redirectURI + '&scope=repo%252Cread%253Auser%252Cread%253Aorg';
                 var height = 650;
                 var width = 450;
                 var location = getCenterWindowLocation(height, width);
