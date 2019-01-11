@@ -8,8 +8,7 @@
     function ScmController($scope, $window, $location, $rootScope) {
 
         function getCode() {
-            var urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('code');
+            return $location.search()['code'];
         };
 
         (function init(){
