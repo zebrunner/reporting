@@ -3,9 +3,9 @@
 
     angular
         .module('app.dashboard')
-        .controller('DashboardController', ['$scope', '$rootScope', '$screenshot', '$q', '$timeout', '$interval', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', '$mdToast', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
+        .controller('DashboardController', ['$scope', '$rootScope', '$screenshot', '$q', '$timeout', '$interval', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', '$mdToast', '$widget', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
 
-    function DashboardController($scope, $rootScope, $screenshot, $q, $timeout, $interval, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
+    function DashboardController($scope, $rootScope, $screenshot, $q, $timeout, $interval, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, $mdToast, $widget, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
 
         $scope.currentUserId = $location.search().userId;
 
@@ -52,12 +52,31 @@
         };
 
         function loadWidget (dashboardName, widget, attributes, refresh) {
-            var sqlAdapter = {'sql': widget.sql, 'attributes': attributes};
-            if(!refresh){
-                $scope.isLoading = true;
+            var sqlAdapter, params;
+            var func;
+            if(! widget.widgetTemplate) {
+                sqlAdapter = {'sql': widget.sql, 'attributes': attributes};
+                if(!refresh){
+                    $scope.isLoading = true;
+                }
+                params = setQueryParams(dashboardName);
+                func = DashboardService.ExecuteWidgetSQL;
+            } else {
+                if(! widget.paramsConfigObject && ! widget.params) {
+                    var paramsConfig = $widget.build($scope.widget, dashboard, currentUserId);
+                    widget.paramsConfigObject = paramsConfig.paramsObject;
+                    widget.params = paramsConfig.params;
+                }
+
+                sqlAdapter = {
+                    "templateId": widget.id,
+                    "paramsConfig": widget.params
+                };
+
+                params = {'stackTraceRequired': false};
+                func = DashboardService.ExecuteWidgetTemplateSQL;
             }
-            var params = setQueryParams(dashboardName);
-            DashboardService.ExecuteWidgetSQL(params, sqlAdapter).then(function (rs) {
+            func(params, sqlAdapter).then(function (rs) {
                 if (rs.success) {
                     var data = rs.data;
                     for (var j = 0; j < data.length; j++) {

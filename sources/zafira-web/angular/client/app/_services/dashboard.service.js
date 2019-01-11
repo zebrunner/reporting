@@ -126,7 +126,7 @@
             return $httpMock.get(API_URL + '/api/widgets/templates').then(UtilService.handleSuccess, UtilService.handleError('Unable to load widget templates'));
         };
 
-        function ExecuteWidgetTemplateSQL(sqlTemplateAdapter, queryParams) {
+        function ExecuteWidgetTemplateSQL(queryParams, sqlTemplateAdapter) {
             var url = UtilService.buildURL(API_URL + '/api/widgets/templates/sql', queryParams);
             return $httpMock.post(url, sqlTemplateAdapter).then(UtilService.handleSuccess, UtilService.handleError('Unable to execute SQL'));
         }

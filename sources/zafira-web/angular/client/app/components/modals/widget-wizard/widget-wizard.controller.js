@@ -125,7 +125,7 @@
                 "paramsConfig": widget.params
             };
 
-            DashboardService.ExecuteWidgetTemplateSQL(sqlTemplateAdapter, getQueryParams(false)).then(function (rs) {
+            DashboardService.ExecuteWidgetTemplateSQL(getQueryParams(false), sqlTemplateAdapter).then(function (rs) {
                 if (rs.success) {
                     var data = rs.data;
                     var columns = {};
@@ -151,7 +151,7 @@
         };
 
         function getQueryParams(showStacktrace){
-            return {'stackTraceRequired': showStacktrace}
+            return {'stackTraceRequired': showStacktrace};
         };
 
         $scope.chartAction = {
