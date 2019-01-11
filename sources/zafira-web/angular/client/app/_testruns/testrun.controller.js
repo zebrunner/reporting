@@ -2162,7 +2162,7 @@
         })();
     }
 
-    function CiHelperController($scope, $rootScope, $q, $window, $mdDialog, $timeout, $location, LauncherService, ScmService) {
+    function CiHelperController($scope, $rootScope, $q, $window, $mdDialog, $timeout, LauncherService, ScmService) {
 
         $scope.ciOptions = {};
 
@@ -2439,7 +2439,7 @@
                 gitHubPopUp = $window.open(url,'targetWindow', 'resizable=no, width=' + width + ', height=' + height + ', top=' + location.top + ', left=' + location.left);
 
                 gitHubPopUp.onbeforeunload = function (e) {
-                    var code = getCode(gitHubPopUp.location);
+                    var code = gitHubPopUp.location.href.split("code=")[1];
                     initAccessToken(code).then(function (scmAccount) {
                         $scope.scmAccount = scmAccount;
                         $scope.getOrganizations();
@@ -2490,10 +2490,6 @@
                     alertify.error(rs.message);
                 }
             });
-        };
-
-        function getCode(location) {
-            return $location.search()['code'];
         };
 
         function initAccessToken(code) {
