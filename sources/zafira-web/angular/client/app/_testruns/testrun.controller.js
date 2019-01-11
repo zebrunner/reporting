@@ -2432,7 +2432,7 @@
                 var host = $window.location.host;
                 var tenant = host.split('\.')[0];
                 var redirectURI = $window.location.protocol + "//" + host.replace(tenant, 'api') + "/github/callback/" + tenant;
-                var url = 'https://github.com/login/oauth/authorize?client_id=' + clientId + '&redirect_uri=' + redirectURI + '&scope=read%3Auser%20repo%20read%3Aorg';
+                var url = 'https://github.com/login/oauth/authorize?client_id=' + clientId + '&redirect_uri=' + redirectURI + '&scope=user%20repo%20read%3Aorg';
                 var height = 650;
                 var width = 450;
                 var location = getCenterWindowLocation(height, width);
