@@ -2425,25 +2425,31 @@
         };
 
         var gitHubPopUp;
+        $scope.clientId = '';
 
         $scope.connectToGitHub = function() {
-            getClientId().then(function (clientId) {
+            if($scope.clientId) {
                 var host = $window.location.host;
                 var tenant = host.split('\.')[0];
+                //var redirectURI = 'http://zafira.qps.com:3000/#!/scm/callback?code=814cccc3eef78c6c840c';
                 var redirectURI = $window.location.protocol + "//" + host.replace(tenant, 'api') + "/github/callback/" + tenant;
-                var url = 'https://github.com/login/oauth/authorize?client_id=' + clientId + '&redirect_uri=' + redirectURI + '&scope=user%20repo%20read%3Aorg';
+                var url = 'https://github.com/login/oauth/authorize?client_id=' + $scope.clientId + '&redirect_uri=' + redirectURI + '&scope=user%20repo%20read%3Aorg';
                 var height = 650;
                 var width = 450;
                 var location = getCenterWindowLocation(height, width);
-                gitHubPopUp = $window.open(url,'targetWindow', 'resizable=no, width=' + width + ', height=' + height + ', top=' + location.top + ', left=' + location.left);
+                var gitHubPopUpProperties = 'toolbar=0,scrollbars=1,status=1,resizable=1,location=1,menuBar=0,width=' + width + ', height=' + height + ', top=' + location.top + ', left=' + location.left;
+                gitHubPopUp = $window.open(url, 'GithubAuth', gitHubPopUpProperties);
 
-                gitHubPopUp.onbeforeunload = function (e) {
+                gitHubPopUp.addEventListener("beforeunload", function (e) {
                     var code = gitHubPopUp.location.code;
-                    initAccessToken(code).then(function (scmAccount) {
-                        $scope.scmAccount = scmAccount;
-                        $scope.getOrganizations();
-                    });
-                };
+                    if (code) {
+                        initAccessToken(code).then(function (scmAccount) {
+                            $scope.scmAccount = scmAccount;
+                            $scope.getOrganizations();
+                        });
+                    }
+                    return null;
+                });
 
                 gitHubPopUp.onload = function (e) {
 
@@ -2452,7 +2458,7 @@
                 if (window.focus) {
                     gitHubPopUp.focus();
                 }
-            });
+            }
         };
 
         $scope.getOrganizations = function() {
@@ -2534,6 +2540,9 @@
         (function initController() {
             getAllLaunchers().then(function (launchers) {
                 $scope.launchers = launchers;
+            });
+            getClientId().then(function (clientId) {
+                $scope.clientId = clientId;
             });
             ScmService.getAllScmAccounts().then(function (rs) {
                 if(rs.success) {

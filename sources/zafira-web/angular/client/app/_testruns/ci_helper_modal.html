@@ -40,7 +40,7 @@
                 <zf-input-container class="clearfix">
                     <label>Add or select a Github repository</label>
                     <div class="ci-runner-container_content_scm-connector_items_add" ng-style="{'padding-right': states.addGitRepo ? '8px' : '0'}">
-                        <button ng-click="addNewGithubRepo($event.target);" class="zf-button zf-square">
+                        <button ng-click="addNewGithubRepo($event.target);" class="zf-button zf-square" ng-disabled="! clientId || ! clientId.length">
                             <i class="material-icons">add</i>
                         </button>
                         <span ng-if="states.addGitRepo">
