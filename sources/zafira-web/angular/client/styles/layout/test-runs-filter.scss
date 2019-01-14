@@ -1,0 +1,282 @@
+@import "../global/var";
+
+.p-tests-runs__section {
+    &._filters {
+        @media screen and (max-width: 599px) {
+            button#reset, 
+            button#applySearch,
+            button#createFilter,
+            button#updateFilter,
+            button#resetFilter,
+            button#deleteFilter {
+                border-radius: 4px;
+                box-shadow: none;
+                margin-right: 16px;
+                margin-left: 0;
+                font-size: 14px;
+            }
+            button#reset {
+                background-color: $fog-gray;
+                color: $dark-coal-new;
+            }
+            button#applySearch {
+                background-color: $medium-teal-bright-new;
+                color: #ffffff;
+            }
+        }
+        #filter .panel-body {      
+            @extend %chips-scrolling;
+            padding-bottom: 16px !important;
+            .manage-chip {
+                @media screen and (max-width: 599px) {
+                    box-shadow: 5px 0px 4px 1px rgba(255,255,255,1);
+                    z-index: 2;
+                    & md-chips.filter-chip md-chips-wrap.md-chips md-chip {
+                        background-color: $medium-teal-light-new !important;
+                        padding: 9px 20px 0 0  !important;
+                        margin: 0 5px 0 0 !important;
+                        color: white !important;
+                        width: 110px;
+                        &:hover {
+                            background-color: $medium-teal-new !important;
+                        }
+                        & div {
+                            top: 6px !important; 
+                            & md-icon {
+                                left: -4px !important;
+                                color: $medium-teal-light-new !important;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        #search {
+            .panel-body {
+                @media screen and (max-width: 599px) {
+                    padding: 0 !important;
+                }
+                @extend %chips-scrolling;
+            }
+            &-header {
+                &.filters-search-panel {
+                    margin-bottom: 0 !important;
+                }
+                .search {
+                    &-wrapper {
+                        @media screen and (max-width: 599px) {
+                            max-width: 48px;
+                            max-height: 48px;
+                            box-shadow: 9px 0px 20px -1px rgb(255, 255, 255);
+                            z-index: 2;
+                            & i {
+                                background-color: white;
+                                display: block;
+                                padding: 15px;
+                                color: rgba(0, 0, 0, 0.5) !important;
+                                font-size: 18px;
+                            }
+                        }
+                        &-row {
+                            @media screen and (max-width: 599px) {
+                                overflow: hidden;
+                                display: flex;
+                                align-items: center;
+                                border-bottom: 1px solid rgba(0,0,0,0.12);
+                            }
+                            @media screen and (max-width: 599px) {
+                                #search-input {
+                                    border-color: transparent !important;
+                                    padding-left: 0;
+                                    &::-webkit-input-placeholder {
+                                        font-style: italic;
+                                    }
+                                }
+                            }
+                            #filter {
+                                @media screen and (max-width: 599px) {
+                                    max-width: calc(100vw - 48px);
+                                }
+                                @media screen and (min-width: $breakpoint-mobile) {
+                                    min-width: 100%;
+                                }
+                                
+                            }
+                        }
+                    }
+                }
+            }
+            &-select {
+                width: 100%;
+                @media screen and (max-width: 599px) {
+                    position: absolute;
+                    z-index: 3;
+                    background-color: #fff;
+                    left: 0;
+                    top: 48px;
+                    border-top: 1px rgba(0, 0, 0, 0.10) solid;
+                    border-bottom-left-radius: 10px;
+                    border-bottom-right-radius: 10px;
+                    box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 0.2);
+                }
+                & .row-wrapper {
+                    @media screen and (min-width: 960px) {
+                        align-items: center
+                    }
+                }
+                .reviewed {
+                    @media screen and (max-width: 599px) {
+                        background-color: $dark-coal-light-new-op01 ;
+                        color: $dark-coal-light-new ;
+                        min-width: 36px;
+                        margin-right: 16px;
+                        border: none;
+                        &:hover {
+                            background-color: $dark-coal-light-new-op02;
+                        }
+                        &.label-primary{
+                            background-color: $green-new;
+                            color: #fff;
+                        }
+                    }
+                }
+                & #search-input {
+                    @extend %select;
+                    @media screen and (min-width: $breakpoint-mobile) {
+                        padding-right: 300px;
+                    }
+                }
+                & .search {
+                    &-fields {
+                        md-select {
+                            @extend %select;
+                        }
+                        padding: 0 16px;
+                        @media screen and (min-width: $breakpoint-mobile) {
+                            padding: 0;
+                        }
+                        & .searchable.select {
+                            @media screen and (max-width: 599px) {
+                                margin-bottom: 16px !important;
+                            }
+                        }
+                        &._main {
+                            @media screen and (max-width: 599px) {
+                                padding-top: 20px;
+                            }
+                        }
+                        &._additional {
+                            margin-bottom: 20px;
+                            @media screen and (min-width: $breakpoint-mobile) {
+                                margin-bottom: 0;
+                                padding: 0;
+                            }
+                            & md-input-container {
+                                @extend %select;
+                            }
+                            & .date-picker-container i {
+                                font-size: 20px;
+                            }
+                        }
+                    }
+                }
+                & .btn-check {
+                    @media screen and (max-width: 599px) {
+                        margin: 0;
+                        padding: 2px 16px;
+                        display: flex;
+                        justify-content: space-between;
+                        border-bottom: 1px rgba(0, 0, 0, 0.10) solid;
+                    }
+                    & button.btn {
+                        @extend %items;
+                        @media screen and (max-width: 599px) {
+                            width: 104px;
+                            color: white;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+%items {
+    @media screen and (max-width: 599px) {
+        max-height: 28px;
+        border-radius: 14px;
+        background-color: $dark-coal-light-new-op01 !important;
+        letter-spacing: 0.2px;
+        text-align: center;
+        font-size: 11px;
+        font-weight: 500;
+        line-height: 1;
+        border: none !important;
+        padding-top: 1px;
+        color: $dark-coal-light-new !important;
+        &:hover {
+            background-color: $dark-coal-light-new-op02 !important;
+        }
+        &.md-focused, &.active {
+            background-color: $dark-coal-light-new !important;
+            color: #ffffff !important;
+        }
+    }
+}
+
+%select {
+    @media screen and (max-width: 599px) {
+        border-radius: 5px;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        &:hover {
+            border-color: rgba(0, 0, 0, 0.3) !important;
+        }
+        & .md-select-placeholder, & .md-select-value {
+            color: rgba(0, 0, 0, 0.5) !important;
+        }
+    }
+}
+
+%chips-scrolling {
+    md-chips.filter-chip {
+        
+        @media screen and (min-width: $breakpoint-mobile) {
+            min-width: auto;
+        }
+        @media screen and (max-width: 599px) {
+            overflow-x: scroll;
+            -ms-overflow-style: none;
+            overflow: -moz-scrollbars-none;
+            &::-webkit-scrollbar { 
+                display: none;
+            }
+        }
+        md-chips-wrap.md-chips{
+            display: flex !important;
+            md-chip {
+                @extend %items;
+                @media screen and (max-width: 599px) {
+                    padding-top: 1px;
+                    margin-bottom: 0;
+                    &.md-focused {
+                        & i ,
+                        &:hover i {
+                            display: none !important;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+.background-dark {
+    @media screen and (max-width: 599px) {
+        position: absolute;
+        top: 220px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 2;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+}

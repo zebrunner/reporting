@@ -17,8 +17,8 @@
     });
 
     function TestsRunsFilterController(FilterService, DEFAULT_SC, TestRunService, $q, ProjectService,
-                                       testsRunsService, $cookieStore, UserService, $timeout,
-                                       $mdDateRangePicker) {
+                                       testsRunsService, $cookieStore, UserService, $timeout, $mdDateRangePicker,
+                                       mediaBreakpoints, windowWidthService) {
         const subjectName = 'TEST_RUN';
         const DEFAULT_FILTER_VALUE = {
             subject: {
@@ -44,14 +44,16 @@
         const SELECT_CRITERIAS = ['ENV', 'PLATFORM', 'PROJECT', 'STATUS'];
         const STATUSES = ['PASSED', 'FAILED', 'SKIPPED', 'ABORTED', 'IN_PROGRESS', 'QUEUED', 'UNKNOWN'];
         const vm = {
+            addNewFilterExpanded: false,
             currentCriteria: angular.copy(CURRENT_CRITERIA),
             currentOperator: angular.copy(CURRENT_OPERATOR),
             currentValue: angular.copy(CURRENT_VALUE),
             filter: angular.copy(DEFAULT_FILTER_VALUE),
             filters: [],
             filterBlockExpand: false,
-            fastSearch: {},
+            filterNewBlockExpand: false,
             fastSearchBlockExpand: false,
+            fastSearch: {},
             collapseFilter: false,
             isFilterActive: testsRunsService.isFilterActive,
             isSearchActive: testsRunsService.isSearchActive,
@@ -67,6 +69,8 @@
             },
             currentUser: UserService.getCurrentUser(),
             chipsCtrl: null,
+            mobileBreakpoint: mediaBreakpoints.mobile || 0,
+            windowWidthService: windowWidthService,
 
             matchMode: matchMode,
             onReset: onReset,
@@ -76,6 +80,7 @@
             updateFilter: updateFilter,
             deleteFilter: deleteFilter,
             clearAndOpenFilterBlock: clearAndOpenFilterBlock,
+            clearAndOpenNewFilterBlock: clearAndOpenNewFilterBlock,
             searchByFilter: searchByFilter,
             selectFilterForEdit: selectFilterForEdit,
             selectSearchType: selectSearchType,
@@ -322,6 +327,10 @@
         function clearAndOpenFilterBlock(value) {
             clearFilter();
             vm.collapseFilter = value;
+        }
+
+        function clearAndOpenNewFilterBlock(value) {
+            vm.collapseNewFilter = !vm.collapseNewFilter;
         }
 
         function clearFilterSlice() {
