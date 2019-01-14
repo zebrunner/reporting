@@ -2927,6 +2927,9 @@ $light-inprogress: #68c9fd;
     &_content {
         overflow: hidden;
         position: relative;
+        padding-left: calc(34% + 24px) !important;
+        width: 100% !important;
+        height: auto;
 
         @media(max-width: $screen-phone) {
             width: 100% !important;
@@ -2964,6 +2967,7 @@ $light-inprogress: #68c9fd;
                 right: 0;
                 width: 100%;
                 margin: auto;
+                padding-left: calc(34% + 24px);
 
                 &, * {
                     text-align: center;
@@ -2986,8 +2990,6 @@ $light-inprogress: #68c9fd;
                 &_add {
                     font-size: 0;
                     margin-bottom: 16px;
-                    display: flex;
-                    flex-direction: row;
                     > span {
                         font-size: 0;
                         display: flex;
@@ -3021,10 +3023,13 @@ $light-inprogress: #68c9fd;
                             letter-spacing: 0.2px;
                             text-transform: uppercase;
                             padding: 0;
+                            //float: right;
                             border: none;
                         }
                         &.zf-button {
                             margin-right: 8px;
+                            float: left;
+                            clear: both;
                         }
                     }
                 }
@@ -3115,7 +3120,6 @@ $light-inprogress: #68c9fd;
                 }
             }
             &_container {
-                //padding-bottom: 16px;
                 font-size: 0;
                 position: relative;
                 height: 50px;
@@ -3184,8 +3188,11 @@ $light-inprogress: #68c9fd;
     }
     &_helper {
         overflow: hidden;
-        display: flex;
-        flex-direction: column;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        height: 100%;
 
         @media(max-width: $screen-phone) {
             width: 100% !important;
@@ -3219,12 +3226,12 @@ $light-inprogress: #68c9fd;
             }
             &_or {
                 padding: 18px 0 14px 0;
-                color: #7f7f7f;
+                color: #000000;
             }
         }
         &_section {
             border-radius: 4px;
-            min-height: calc(75vh - 156px);
+            min-height: calc(100% - 156px);
             min-width: 200px;
             max-height: calc(100% - 156px);
             overflow: scroll;
@@ -3232,16 +3239,6 @@ $light-inprogress: #68c9fd;
 
             @media(max-width: $screen-phone) {
                 max-height: calc(100% - 68px);
-            }
-            &::-webkit-scrollbar-thumb {
-                background-color: rgba(0, 0, 0, 0.15);
-                border-radius: 4px;
-                box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
-                margin: 3px;
-            }
-            &::-webkit-scrollbar {
-                -webkit-appearance: none;
-                width: 6px;
             }
 
             &_item {

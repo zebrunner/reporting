@@ -20,7 +20,7 @@
                 <i ng-click="editLauncher(l);" has-any-permission="['MODIFY_LAUNCHERS']" class="material-icons hide-phone">edit</i>
             </div>
         </div>
-        <div class="ci-runner-container_content_actions">
+        <div class="ci-runner-container_content_actions show-phone">
             <md-button class="md-raised btn-w-md md-primary" ng-click="applyBuilder(launcher, true);"
                        ng-disabled="! launcher.id">
                 Next
@@ -28,7 +28,6 @@
         </div>
     </zf-modal-helper-container>
     <zf-modal-content-container class="ci-runner-container_content hide-phone" ng-if="cardNumber === 1">
-        <md-icon class="close-button" ng-click="cancel()" aria-label="Close dialog">close</md-icon>
         <div>
             <zf-input-container>
                 <label>Set name for template</label>
@@ -101,7 +100,6 @@
             </md-button>
         </div>
     </zf-modal-content-container>
-    <md-icon class="close-button" ng-click="cancel()" aria-label="Close dialog">close</md-icon>
     <zf-modal-content-container class="ci-runner-container_content" ng-if="cardNumber === 2 || cardNumber === 3">
         <div class="ci-runner-container_content_title">
             <show-part class="hide-phone" text="launcher.name" limit="40"></show-part>
@@ -146,9 +144,9 @@
         </div>
     </zf-modal-content-container>
     <zf-modal-content-container class="ci-runner-container_content hide-phone" ng-if="cardNumber === 0">
-        <md-icon class="close-button" ng-click="cancel()" aria-label="Close dialog">close</md-icon>
         <div class="ci-runner-container_content_title no-data">
             <span ng-if="launchers.length">Choose</span><span ng-if="! launchers.length">Add</span> template
         </div>
     </zf-modal-content-container>
+    <md-icon class="close-button" ng-click="cancel()" aria-label="Close dialog">close</md-icon>
 </zf-modal>
