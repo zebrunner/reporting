@@ -2272,24 +2272,23 @@
         };
 
         $scope.cardNumber = 0;
-
-        $scope.builtLauncher = {};
-
-        $scope.applyBuilder = function(launcher, isPhone) {
-            $scope.jsonModel = launcher.model.toJson();
-            angular.forEach($scope.jsonModel, function (value, key) {
-                $scope.builtLauncher[key] = {};
-                if($scope.getType(value) === 'array' && value.length) {
-                    $scope.builtLauncher[key] = value[0];
-                } else {
-                    $scope.builtLauncher[key] = value;
-                }
-            });
-            $scope.cardNumber = isPhone ? 3 : 2;
+        $scope.builtLauncher = {
+            model: {},
+            type: {}
         };
 
-        $scope.build = function () {
-
+        $scope.applyBuilder = function(launcher, isPhone) {
+            $scope.jsonModel = {};
+            $scope.builtLauncher = {model: {}, type: {}};
+            $scope.jsonModel = launcher.model.toJson();
+            angular.forEach($scope.jsonModel, function (value, key) {
+                //$scope.builtLauncher.model[key] = {};
+                var type = $scope.getType(value);
+                var val = type === 'array' && value.length ? value[0] : value;
+                $scope.builtLauncher.model[key] = val;
+                $scope.builtLauncher.type[key] = type;
+            });
+            $scope.cardNumber = isPhone ? 3 : 2;
         };
 
         $scope.getType = function (value) {
@@ -2513,7 +2512,7 @@
         }
 
         $scope.build = function(launcher) {
-            launcher.model = JSON.stringify($scope.builtLauncher, null, 2);
+            launcher.model = JSON.stringify($scope.builtLauncher.model, null, 2);
             LauncherService.buildLauncher(launcher).then(function (rs) {
                 if(rs.success) {
                     alertify.success("Job is in progress");

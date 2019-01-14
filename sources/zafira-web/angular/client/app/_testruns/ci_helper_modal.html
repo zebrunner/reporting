@@ -108,18 +108,19 @@
             <show-part class="show-phone" text="launcher.name" limit="20"></show-part>
         </div>
         <div class="ci-runner-container_content_builder zf-display-table">
-            <div class="ci-runner-container_content_builder_container builder-{{getType(item)}}" ng-repeat="(key, item) in jsonModel track by $index">
+            <div class="ci-runner-container_content_builder_container builder-{{builtLauncher.type[key]}}" ng-repeat="(key, item) in jsonModel track by $index">
                 <div class="zf-label">{{key}}</div>
-                <div class="ci-runner-container_content_builder_container_item" ng-if="['string', 'int'].indexOf(getType(item)) !== -1">
+                <div class="ci-runner-container_content_builder_container_item" ng-if="['string', 'int'].indexOf(builtLauncher.type[key]) !== -1">
                     <zf-input-container>
-                        <input ng-attr-type="{{getType(item) === 'int' ? 'number' : 'text'}}" ng-model="builtLauncher[key]" placeholder="{{key}}"/>
+                        <input type="number" ng-if="builtLauncher.type[key] === 'int'" ng-model="builtLauncher.model[key]" placeholder="{{key}}"/>
+                        <input type="text" ng-if="builtLauncher.type[key] !== 'int'" ng-model="builtLauncher.model[key]" placeholder="{{key}}"/>
                     </zf-input-container>
                 </div>
-                <div class="ci-runner-container_content_builder_container_item" ng-if="getType(item) === 'array'">
+                <div class="ci-runner-container_content_builder_container_item" ng-if="builtLauncher.type[key] === 'array'">
                     <zf-input-container>
                         <md-input-container>
                             <label>{{key}}</label>
-                            <md-select ng-model="builtLauncher[key]">
+                            <md-select ng-model="builtLauncher.model[key]">
                                 <md-option ng-repeat="val in item" ng-value="val">
                                     {{val}}
                                 </md-option>
@@ -127,9 +128,9 @@
                         </md-input-container>
                     </zf-input-container>
                 </div>
-                <div class="ci-runner-container_content_builder_container_item" ng-if="getType(item) === 'boolean'">
+                <div class="ci-runner-container_content_builder_container_item" ng-if="builtLauncher.type[key] === 'boolean'">
                     <zf-input-container>
-                        <md-checkbox ng-model="builtLauncher[key]" aria-label="checkbox"></md-checkbox>
+                        <md-checkbox ng-model="builtLauncher.model[key]" aria-label="checkbox"></md-checkbox>
                     </zf-input-container>
                 </div>
             </div>
