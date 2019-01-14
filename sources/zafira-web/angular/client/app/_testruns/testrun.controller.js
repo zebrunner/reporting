@@ -2183,13 +2183,6 @@
             firstLineNumber: 5
         };
 
-        /*{
-            browser: ["chrome", "firefox"],
-                environment: "DEMO",
-            enable_video: false,
-            thread_count: 3
-        }*/
-
         $scope.onLoad = function(editor) {
         };
 
@@ -2282,7 +2275,6 @@
             $scope.builtLauncher = {model: {}, type: {}};
             $scope.jsonModel = launcher.model.toJson();
             angular.forEach($scope.jsonModel, function (value, key) {
-                //$scope.builtLauncher.model[key] = {};
                 var type = $scope.getType(value);
                 var val = type === 'array' && value.length ? value[0] : value;
                 $scope.builtLauncher.model[key] = val;
@@ -2440,15 +2432,14 @@
                 var gitHubPopUpProperties = 'toolbar=0,scrollbars=1,status=1,resizable=1,location=1,menuBar=0,width=' + width + ', height=' + height + ', top=' + location.top + ', left=' + location.left;
                 gitHubPopUp = $window.open(url, 'GithubAuth', gitHubPopUpProperties);
 
-                gitHubPopUp.addEventListener("beforeunload", function (e) {
-                    var code = gitHubPopUp.location.code;
-                    if (code) {
-                        initAccessToken(code).then(function (scmAccount) {
-                            $scope.scmAccount = scmAccount;
-                            $scope.getOrganizations();
-                        });
+                var codeWatcher = $scope.$watch(function () {
+                    return localStorage.getItem('code');
+                }, function (code, oldVal) {
+                    if(code) {
+                        codeExchange(code);
+                        localStorage.removeItem('code');
+                        codeWatcher();
                     }
-                    return null;
                 });
 
                 gitHubPopUp.onload = function (e) {
@@ -2459,6 +2450,16 @@
                     gitHubPopUp.focus();
                 }
             }
+        };
+
+        function codeExchange(code) {
+            if (code) {
+                initAccessToken(code).then(function (scmAccount) {
+                    $scope.scmAccount = scmAccount;
+                    $scope.getOrganizations();
+                });
+            }
+            return null;
         };
 
         $scope.getOrganizations = function() {
