@@ -14,7 +14,7 @@
         (function init(){
             var code = getCode();
             if(code) {
-                $window.location.code = code;
+                localStorage.setItem("code", code);
                 $window.close();
             }
         })();

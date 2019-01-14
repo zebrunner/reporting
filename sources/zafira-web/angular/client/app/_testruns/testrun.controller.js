@@ -2183,13 +2183,6 @@
             firstLineNumber: 5
         };
 
-        /*{
-            browser: ["chrome", "firefox"],
-                environment: "DEMO",
-            enable_video: false,
-            thread_count: 3
-        }*/
-
         $scope.onLoad = function(editor) {
         };
 
@@ -2234,11 +2227,14 @@
 
         $scope.addNewGithubRepo = function(element) {
             $scope.states.addGitRepo = ! $scope.states.addGitRepo;
-            if(element) {
-                addNewGithubRepoCssApply(element, $scope.states.addGitRepo);
-            }
             if($scope.states.addGitRepo) {
-                $scope.connectToGitHub();
+                $scope.connectToGitHub().then(function () {
+                    if(element) {
+                        addNewGithubRepoCssApply(element, $scope.states.addGitRepo);
+                    }
+                }, function () {
+                    $scope.states.addGitRepo = false;
+                });
             } else {
                 if(gitHubPopUp) {
                     gitHubPopUp.close();
@@ -2282,7 +2278,6 @@
             $scope.builtLauncher = {model: {}, type: {}};
             $scope.jsonModel = launcher.model.toJson();
             angular.forEach($scope.jsonModel, function (value, key) {
-                //$scope.builtLauncher.model[key] = {};
                 var type = $scope.getType(value);
                 var val = type === 'array' && value.length ? value[0] : value;
                 $scope.builtLauncher.model[key] = val;
@@ -2314,8 +2309,11 @@
         };
 
         $scope.launchers = [];
-        $scope.launcher = {};
-        $scope.launcher.scmAccountType = {};
+
+        function clearLauncher() {
+            $scope.launcher = {};
+            $scope.launcher.scmAccountType = {};
+        };
 
         $scope.editLauncher = function(launcher) {
             $scope.launcher = angular.copy(launcher);
@@ -2377,6 +2375,11 @@
             }
         };
 
+        $scope.cancelLauncher = function () {
+            $scope.cardNumber = 0;
+            clearLauncher();
+        };
+
         function getAllLaunchers() {
             return $q(function (resolve, reject) {
                 LauncherService.getAllLaunchers().then(function (rs) {
@@ -2428,36 +2431,42 @@
         $scope.clientId = '';
 
         $scope.connectToGitHub = function() {
-            if($scope.clientId) {
-                var host = $window.location.host;
-                var tenant = host.split('\.')[0];
-                //var redirectURI = 'http://zafira.qps.com:3000/#!/scm/callback?code=814cccc3eef78c6c840c';
-                var redirectURI = $window.location.protocol + "//" + host.replace(tenant, 'api') + "/github/callback/" + tenant;
-                var url = 'https://github.com/login/oauth/authorize?client_id=' + $scope.clientId + '&redirect_uri=' + redirectURI + '&scope=user%20repo%20read%3Aorg';
-                var height = 650;
-                var width = 450;
-                var location = getCenterWindowLocation(height, width);
-                var gitHubPopUpProperties = 'toolbar=0,scrollbars=1,status=1,resizable=1,location=1,menuBar=0,width=' + width + ', height=' + height + ', top=' + location.top + ', left=' + location.left;
-                gitHubPopUp = $window.open(url, 'GithubAuth', gitHubPopUpProperties);
+            return $q(function (resolve, reject) {
+                if($scope.clientId) {
+                    var host = $window.location.host;
+                    var tenant = host.split('\.')[0];
+                    var redirectURI = $window.location.protocol + "//" + host.replace(tenant, 'api') + "/github/callback/" + tenant;
+                    var url = 'https://github.com/login/oauth/authorize?client_id=' + $scope.clientId + '&redirect_uri=' + redirectURI + '&scope=user%20repo%20read%3Aorg';
+                    var height = 650;
+                    var width = 450;
+                    var location = getCenterWindowLocation(height, width);
+                    var gitHubPopUpProperties = 'toolbar=0,scrollbars=1,status=1,resizable=1,location=1,menuBar=0,width=' + width + ', height=' + height + ', top=' + location.top + ', left=' + location.left;
+                    gitHubPopUp = $window.open(url, 'GithubAuth', gitHubPopUpProperties);
 
-                gitHubPopUp.addEventListener("beforeunload", function (e) {
-                    var code = gitHubPopUp.location.code;
-                    if (code) {
-                        initAccessToken(code).then(function (scmAccount) {
-                            $scope.scmAccount = scmAccount;
-                            $scope.getOrganizations();
-                        });
+                    var codeWatcher = $scope.$watch(function () {
+                        return localStorage.getItem('code');
+                    }, function (code, oldVal) {
+                        if(code) {
+                            resolve();
+                            codeExchange(code);
+                            localStorage.removeItem('code');
+                            codeWatcher();
+                        }
+                    });
+
+                    if (window.focus) {
+                        gitHubPopUp.focus();
                     }
-                    return null;
-                });
-
-                gitHubPopUp.onload = function (e) {
-
-                };
-
-                if (window.focus) {
-                    gitHubPopUp.focus();
                 }
+            });
+        };
+
+        function codeExchange(code) {
+            if (code) {
+                initAccessToken(code).then(function (scmAccount) {
+                    $scope.scmAccount = scmAccount;
+                    $scope.getOrganizations();
+                });
             }
         };
 
@@ -2538,6 +2547,7 @@
         };
 
         (function initController() {
+            clearLauncher();
             getAllLaunchers().then(function (launchers) {
                 $scope.launchers = launchers;
             });
