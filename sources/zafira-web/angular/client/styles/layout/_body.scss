@@ -2983,12 +2983,11 @@ $light-inprogress: #68c9fd;
         &_scm-connector {
             padding-top: 35px;
             &_items {
-                > div > div {
-                    display: inline-block;
-                }
                 &_add {
                     font-size: 0;
                     margin-bottom: 16px;
+                    display: flex;
+                    flex-direction: row;
                     > span {
                         font-size: 0;
                         display: flex;
@@ -2997,7 +2996,7 @@ $light-inprogress: #68c9fd;
                             display: inline-block;
 
                             > * {
-                                margin-top: 8px;
+                                margin-bottom: 8px;
                             }
                         }
                     }
@@ -3026,8 +3025,6 @@ $light-inprogress: #68c9fd;
                         }
                         &.zf-button {
                             margin-right: 8px;
-                            float: left;
-                            clear: both;
                         }
                     }
                 }
@@ -3118,9 +3115,15 @@ $light-inprogress: #68c9fd;
                 }
             }
             &_container {
-                padding-bottom: 16px;
+                //padding-bottom: 16px;
                 font-size: 0;
                 position: relative;
+                height: 50px;
+
+                > .zf-label {
+                    line-height: 36px !important;
+                    vertical-align: bottom;
+                }
 
                 @media (max-width: $screen-sm) {
                     &:not(.builder-boolean) {
@@ -3149,6 +3152,7 @@ $light-inprogress: #68c9fd;
 
                 &_item {
                     display: inline-block;
+                    vertical-align: bottom;
 
                     &.item-array {
                         width: 100%;
