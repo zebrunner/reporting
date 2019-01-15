@@ -55,7 +55,7 @@ md-table-container {
                     }
                 }
                 &_sorts {
-                    @extend %items;
+                    @extend %detailsItems;
                     padding: 3px 15px;
                     min-width: 90px;
                     margin-left: 17px;
@@ -118,7 +118,7 @@ md-table-container {
                                 display: flex;
                             }
                             md-chip {
-                                @extend %items;
+                                @extend %detailsItems;
                                 margin-top: 5px;
                                 margin-bottom: 5px;
                             }
@@ -202,7 +202,7 @@ md-table-container {
                     }
                 }
                 &_tags {
-                    @extend %items;
+                    @extend %detailsItems;
                     margin-top: 0;
                     margin-bottom: 5px;
                     @media(max-width: 599px) {
@@ -248,7 +248,7 @@ md-table-container {
 }
 
 
-%items {
+%detailsItems {
     max-height: 28px;
     border-radius: 14px !important;
     background-color: rgba(0, 0, 0, .15) !important;

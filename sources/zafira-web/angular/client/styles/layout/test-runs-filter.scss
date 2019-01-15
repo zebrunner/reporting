@@ -14,6 +14,7 @@
                 margin-right: 16px;
                 margin-left: 0;
                 font-size: 14px;
+                z-index: 3;
             }
             button#reset {
                 background-color: $fog-gray;
@@ -27,6 +28,7 @@
         #filter .panel-body {      
             @extend %chips-scrolling;
             padding-bottom: 16px !important;
+            position: relative;
             .manage-chip {
                 @media screen and (max-width: 599px) {
                     box-shadow: 5px 0px 4px 1px rgba(255,255,255,1);
@@ -96,6 +98,8 @@
                             #filter {
                                 @media screen and (max-width: 599px) {
                                     max-width: calc(100vw - 48px);
+                                    width: 100%;
+                                    padding: 10px 0;
                                 }
                                 @media screen and (min-width: $breakpoint-mobile) {
                                     min-width: 100%;
@@ -189,11 +193,9 @@
                         border-bottom: 1px rgba(0, 0, 0, 0.10) solid;
                     }
                     & button.btn {
-                        @extend %items;
-                        @media screen and (max-width: 599px) {
-                            width: 104px;
-                            color: white;
-                        }
+                        @extend %filterItems;
+                        width: 104px;
+                        color: white;
                     }
                 }
             }
@@ -201,7 +203,7 @@
     }
 }
 
-%items {
+%filterItems {
     @media screen and (max-width: 599px) {
         max-height: 28px;
         border-radius: 14px;
@@ -239,7 +241,6 @@
 
 %chips-scrolling {
     md-chips.filter-chip {
-        
         @media screen and (min-width: $breakpoint-mobile) {
             min-width: auto;
         }
@@ -254,7 +255,7 @@
         md-chips-wrap.md-chips{
             display: flex !important;
             md-chip {
-                @extend %items;
+                @extend %filterItems;
                 @media screen and (max-width: 599px) {
                     padding-top: 1px;
                     margin-bottom: 0;

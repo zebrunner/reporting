@@ -44,14 +44,12 @@
         const SELECT_CRITERIAS = ['ENV', 'PLATFORM', 'PROJECT', 'STATUS'];
         const STATUSES = ['PASSED', 'FAILED', 'SKIPPED', 'ABORTED', 'IN_PROGRESS', 'QUEUED', 'UNKNOWN'];
         const vm = {
-            addNewFilterExpanded: false,
             currentCriteria: angular.copy(CURRENT_CRITERIA),
             currentOperator: angular.copy(CURRENT_OPERATOR),
             currentValue: angular.copy(CURRENT_VALUE),
             filter: angular.copy(DEFAULT_FILTER_VALUE),
             filters: [],
             filterBlockExpand: false,
-            filterNewBlockExpand: false,
             fastSearchBlockExpand: false,
             fastSearch: {},
             collapseFilter: false,
@@ -329,7 +327,7 @@
             vm.collapseFilter = value;
         }
 
-        function clearAndOpenNewFilterBlock(value) {
+        function clearAndOpenNewFilterBlock() {
             vm.collapseNewFilter = !vm.collapseNewFilter;
         }
 
