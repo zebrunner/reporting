@@ -2162,7 +2162,7 @@
         })();
     }
 
-    function CiHelperController($scope, $rootScope, $q, $window, $mdDialog, $timeout, LauncherService, ScmService) {
+    function CiHelperController($scope, $rootScope, $q, $window, $mdDialog, $timeout, $interval, LauncherService, ScmService) {
 
         $scope.ciOptions = {};
 
@@ -2443,16 +2443,15 @@
                     var gitHubPopUpProperties = 'toolbar=0,scrollbars=1,status=1,resizable=1,location=1,menuBar=0,width=' + width + ', height=' + height + ', top=' + location.top + ', left=' + location.left;
                     gitHubPopUp = $window.open(url, 'GithubAuth', gitHubPopUpProperties);
 
-                    var codeWatcher = $scope.$watch(function () {
-                        return localStorage.getItem('code');
-                    }, function (code, oldVal) {
+                    var localStorageWatcher = $interval(function () {
+                        var code = localStorage.getItem('code');
                         if(code) {
                             resolve();
                             codeExchange(code);
                             localStorage.removeItem('code');
-                            codeWatcher();
+                            $interval.cancel(localStorageWatcher);
                         }
-                    });
+                    }, 200);
 
                     if (window.focus) {
                         gitHubPopUp.focus();
