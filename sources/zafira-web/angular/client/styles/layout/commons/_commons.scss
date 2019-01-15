@@ -167,6 +167,14 @@ $red: #d2333b;
         margin-bottom: 12px;
         color: #35393f;
     }
+
+    *[ng-messages] {
+        position: absolute;
+        color: red;
+        > * {
+            font-size: 12px !important;
+        }
+    }
 }
 
 .zf-label {
