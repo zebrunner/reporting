@@ -98,10 +98,10 @@
                 <button ng-really-click="deleteLauncher(launcher.id);" ng-really-message="Do you really want to delete the launcher?" class="zf-button zf-warn zf-info" ng-if="launcher && launcher.id">
                     Delete
                 </button>
-                <md-button class="md-raised btn-w-md md-primary" ng-click="saveLauncher(launcher); applyBuilder(launcher);"
-                           ng-disabled="! launcher.model || ! launcher.model.isJsonValid(true) || ! launcher.name || ! launcher.scmAccountType.id">
+                <md-button class="md-raised btn-w-md md-primary" ng-click="saveLauncher(launcher);">
                     Save
                 </md-button>
+                <div ng-if="launcher.errorMessage && launcher.errorMessage.length" class="ci-runner-container_content_actions_error">{{launcher.errorMessage}}</div>
             </div>
         </zf-modal-content-container>
         <zf-modal-content-container class="ci-runner-container_content" ng-if="cardNumber === 2 || cardNumber === 3">

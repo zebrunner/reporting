@@ -2339,25 +2339,54 @@
         };
 
         $scope.saveLauncher = function (launcher) {
-            if(launcher.id) {
-                var index = $scope.launchers.indexOfField('id', launcher.id);
-                LauncherService.updateLauncher(launcher).then(function (rs) {
-                    if(rs.success) {
-                        $scope.launchers.splice(index, 1, rs.data);
-                    } else {
-                        alertify.error(rs.message);
-                    }
-                });
-            } else {
-                LauncherService.createLauncher(launcher).then(function (rs) {
-                    if (rs.success) {
-                        $scope.launcher = rs.data;
-                        $scope.launchers.push(rs.data);
-                    } else {
-                        alertify.error(rs.message);
-                    }
-                });
+            launcher.errorMessage = buildError(launcher);
+            if(! launcher.errorMessage && !launcher.errorMessage.length) {
+                if (launcher.id) {
+                    var index = $scope.launchers.indexOfField('id', launcher.id);
+                    LauncherService.updateLauncher(launcher).then(function (rs) {
+                        if (rs.success) {
+                            $scope.launchers.splice(index, 1, rs.data);
+                        } else {
+                            alertify.error(rs.message);
+                        }
+                    });
+                } else {
+                    LauncherService.createLauncher(launcher).then(function (rs) {
+                        if (rs.success) {
+                            $scope.launcher = rs.data;
+                            $scope.launchers.push(rs.data);
+                        } else {
+                            alertify.error(rs.message);
+                        }
+                    });
+                }
+                $scope.applyBuilder(launcher);
             }
+        };
+
+        function buildError(launcher) {
+            var messages = [];
+            var errorMessage = '';
+            if(! launcher.model) {
+                messages.push('code');
+            }
+            if(! launcher.name) {
+                messages.push('name');
+            }
+            if(! launcher.scmAccountType || ! launcher.scmAccountType.id) {
+                messages.push('repository');
+            }
+            if(messages.length) {
+                errorMessage = 'Set ';
+                messages.forEach(function (message, index) {
+                    errorMessage += message
+                    errorMessage = index !== messages.length - 1 ? errorMessage + ', ' : errorMessage;
+                });
+                errorMessage += ' for template to save.';
+            } else if(! launcher.model.isJsonValid(true)) {
+                errorMessage = 'Code is not valid.';
+            }
+            return errorMessage;
         };
 
         $scope.deleteLauncher = function (id) {
