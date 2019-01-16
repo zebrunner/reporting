@@ -16,7 +16,7 @@
                 dataset: '=dataset',
                 withLegend: '=withLegend',
                 forceWatch: '=forceWatch',
-                action: '=action',
+                chartActions: '=chartActions',
                 config: '=config'
             },
             link: buildLinkFunc($window, $filter)
@@ -92,6 +92,15 @@
                         }
                     });
                 }
+
+                if(scope.chartActions) {
+                    scope.$watchCollection('chartActions', function (actions, oldVal) {
+                        if (! scope.chartActions || ! scope.chartActions.length) return;
+                        if (chart && chart.dispatchAction) {
+                            applyActions(scope.chartActions);
+                        }
+                    });
+                }
             };
 
             scope.$watch('options', function (newVal, oldVal) {
@@ -99,14 +108,12 @@
                 createChart(newVal);
             });
 
-            if(scope.action) {
-                scope.$watchGroup(['action.name', 'action.type'], function (newVal, oldVal) {
-                    if (angular.equals(newVal, oldVal) && !scope.forceWatch) return;
-                    if (chart && chart.dispatchAction) {
-                        chart.dispatchAction({type: newVal[1], name: newVal[0]});
-                    }
+            function applyActions(actions) {
+                actions.forEach(function (action, index) {
+                    chart.dispatchAction(action);
+                    delete actions[index];
                 });
-            }
+            };
 
             function axisFormatterApply(axis) {
                 if(axis && axis.axisLabel && axis.axisLabel.formatter) {

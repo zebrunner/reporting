@@ -98,6 +98,7 @@
         };
 
         $scope.onChange = function() {
+            $scope.widget.template.chartConfig = replaceFontSize($scope.widget.template.chartConfig);
             $scope.executeWidget($scope.widget.template, dashboard.attributes);
 
             $scope.echartConfig.previousTemplate = $scope.echartConfig.currentTemplate ?  $scope.echartConfig.currentTemplate : undefined;
@@ -106,6 +107,10 @@
                 $scope.echartConfig.clear();
             }
         };
+
+        function replaceFontSize(chartConfStr) {
+            return chartConfStr.replace(/.{1}fontSize.{1} *: *(\d+)/, '"fontSize": 6');
+        }
 
         $scope.echartConfig = {
             previousTemplate: undefined,
@@ -154,14 +159,10 @@
             return {'stackTraceRequired': showStacktrace};
         };
 
-        $scope.chartAction = {
-            type: 'legendToggleSelect',
-            name: ''
-        };
+        $scope.chartActions = [];
 
         $scope.onLegendChange = function (legendName) {
-            $scope.chartAction.name = legendName;
-            $scope.chartAction.type = $scope.widget.template.legendConfigObject.legendItems[legendName] ? 'legendSelect' : 'legendUnSelect';
+            $scope.chartActions.push({type: $scope.widget.template.legendConfigObject.legendItems[legendName] ? 'legendSelect' : 'legendUnSelect', name: legendName});
         };
 
         $scope.saveWidget = function () {
@@ -172,7 +173,7 @@
             DashboardService.CreateWidget($scope.widget).then(function (rs) {
                 if(rs.success) {
                     alertify.success('Widget was created');
-                    $scope.hide();
+                    $scope.hide('CREATE', rs.data);
                 } else {
                     alertify.error(rs.message);
                 }
@@ -195,9 +196,8 @@
             $scope.card = getPreviousCard();
         };
 
-        $scope.hide = function (rs, action) {
-            //rs.action = action;
-            $mdDialog.hide(rs);
+        $scope.hide = function (action, widget) {
+            $mdDialog.hide({"action": action, "widget": widget});
         };
 
         $scope.cancel = function () {

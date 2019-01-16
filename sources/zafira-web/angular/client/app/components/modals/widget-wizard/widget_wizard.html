@@ -76,7 +76,7 @@
     <zf-modal-helper-container class="widget-wizard_container-helper">
         <div class="widget-wizard_container-helper_picture">
             <div class="widget-wizard_container-helper_picture_item" ng-if="widget.template.name">
-                <div id="chart" data-echarts dataset="widget.template.data.dataset" force-watch="true" with-legend="false" action="chartAction" config="echartConfig" data-options="widget.template.model" style="height: 149px;"></div>
+                <div id="chart" data-echarts dataset="widget.template.data.dataset" force-watch="true" with-legend="false" chart-actions="chartActions" config="echartConfig" data-options="widget.template.model" style="height: 149px;"></div>
             </div>
             <div class="widget-wizard_container-helper_picture_caption" ng-if="widget.template.name">
                 {{widget.template.name}}

@@ -45,13 +45,13 @@
                 var currentWidget = dashboard.widgets[i];
                 currentWidget.location = jsonSafeParse(currentWidget.location);
                 if (!refresh || refresh && currentWidget.refreshable) {
-                    loadWidget(dashboard.title, currentWidget, dashboard.attributes, refresh);
+                    loadWidget(dashboard, currentWidget, dashboard.attributes, refresh);
                 }
             }
             angular.copy(dashboard.widgets, $scope.pristineWidgets);
         };
 
-        function loadWidget (dashboardName, widget, attributes, refresh) {
+        function loadWidget (dashboard, widget, attributes, refresh) {
             var sqlAdapter, params;
             var func;
             if(! widget.widgetTemplate) {
@@ -59,17 +59,20 @@
                 if(!refresh){
                     $scope.isLoading = true;
                 }
-                params = setQueryParams(dashboardName);
+                params = setQueryParams(dashboard.title);
                 func = DashboardService.ExecuteWidgetSQL;
             } else {
                 if(! widget.paramsConfigObject && ! widget.params) {
-                    var paramsConfig = $widget.build($scope.widget, dashboard, currentUserId);
+                    widget.template = widget.widgetTemplate;
+                    var paramsConfig = $widget.build(widget, dashboard, $scope.currentUserId);
+                    widget.legendConfigObject = JSON.parse(widget.legendConfig);
+                    applyLegend(widget);
                     widget.paramsConfigObject = paramsConfig.paramsObject;
                     widget.params = paramsConfig.params;
                 }
 
                 sqlAdapter = {
-                    "templateId": widget.id,
+                    "templateId": widget.widgetTemplate.id,
                     "paramsConfig": widget.params
                 };
 
@@ -85,7 +88,7 @@
                         }
                     }
                     if(!refresh){
-                        widget.model = jsonSafeParse(widget.model);
+                        widget.model = widget.widgetTemplate ? jsonSafeParse(widget.widgetTemplate.chartConfig) : jsonSafeParse(widget.model);
                     }
                     widget.data = {};
                     widget.data.dataset = data;
@@ -101,6 +104,13 @@
                 }
             });
         }
+
+        function applyLegend(widget) {
+            widget.chartActions = widget.chartActions || [];
+            angular.forEach(widget.legendConfigObject, function (value, legendName) {
+                widget.chartActions.push({type: value ? 'legendSelect' : 'legendUnSelect', name: legendName});
+            });
+        };
 
         function getNextEmptyGridArea(defaultLocation) {
             var gridstack = angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack');
@@ -403,6 +413,22 @@
                 }
             })
                 .then(function (rs) {
+                    console.log(rs.widget);
+                    switch(rs.action) {
+                        case 'CREATE':
+                            $scope.widgets.push(rs.widget);
+                            updateWidgetsToAdd();
+                            break;
+                        case 'UPDATE':
+                            $scope.widgets.splice($scope.widgets.indexOfField('id', rs.widget.id), 1, rs.widget);
+                            updateWidgetsToAdd();
+                            break;
+                        case 'DELETE':
+                            delete $scope.widgets[$scope.widgets.indexOfField('id', rs.widget.id)];
+                            break;
+                        default:
+                            break;
+                    }
                 }, function () {
                 });
         };

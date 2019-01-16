@@ -64,6 +64,8 @@ $wizard-white:          #ffffff;
                 label {
                     &:before {
                         background-color: $wizard-white !important;
+                        opacity: 1;
+                        border: none;
                     }
 
                     div[ng-transclude] {
@@ -75,6 +77,12 @@ $wizard-white:          #ffffff;
                         top: 0;
                         left: 0;
                     }
+
+                    &:hover {
+                        &:before {
+                            opacity: 1;
+                        }
+                    }
                 }
 
                 $parent: &;
@@ -83,6 +91,7 @@ $wizard-white:          #ffffff;
                     label {
                         &:before {
                             border: 2px solid $brand-light;
+                            opacity: 1;
                         }
                     }
 
@@ -173,6 +182,8 @@ $wizard-white:          #ffffff;
                 font-weight: 300;
                 font-size: 20px;
                 text-align: center;
+                line-height: 180px;
+                vertical-align: middle;
             }
         }
         &_actions {

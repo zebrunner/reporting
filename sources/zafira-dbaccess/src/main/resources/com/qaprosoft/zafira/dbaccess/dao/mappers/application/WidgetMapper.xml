@@ -17,13 +17,14 @@
 	
 	<insert id="createWidget" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO WIDGETS (TITLE, DESCRIPTION, PARAMS_CONFIG, LEGEND_CONFIG, WIDGET_TEMPLATE_ID, REFRESHABLE)
+			INSERT INTO WIDGETS (TITLE, DESCRIPTION, PARAMS_CONFIG, LEGEND_CONFIG, WIDGET_TEMPLATE_ID, TYPE, REFRESHABLE)
 			VALUES (
 				#{title},
 				#{description},
 				#{paramsConfig},
 				#{legendConfig},
 				#{widgetTemplate.id},
+				#{type},
 				#{refreshable}
 			)
 		]]>

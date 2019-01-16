@@ -91,6 +91,14 @@ public class WidgetsAPIController extends AbstractController
 	public @ResponseBody WidgetType createWidget(@RequestBody @Valid WidgetType widget,
 			@RequestHeader(value = "Project", required = false) String project) throws ServiceException
 	{
+		if(widget.getWidgetTemplate() != null) {
+			WidgetTemplate widgetTemplate = widgetTemplateService.getWidgetTemplateById(widget.getWidgetTemplate().getId());
+			if(widgetTemplate == null) {
+				throw new ServiceException("Unable to create chart. Template with id " + widget.getWidgetTemplate().getId() + " does not exist.");
+			}
+			widget.setWidgetTemplate(mapper.map(widgetTemplate, WidgetTemplateType.class));
+			widget.setType(widgetTemplate.getType().name());
+		}
 		return mapper.map(widgetService.createWidget(mapper.map(widget, Widget.class)), WidgetType.class);
 	}
 
@@ -232,7 +240,7 @@ public class WidgetsAPIController extends AbstractController
 		if(widgetTemplate == null) {
 			throw new ServiceException("Unable to execute SQL query.");
 		}
-		List<Map<String, Object>> resultList = null;
+		List<Map<String, Object>> resultList;
 		try {
 			resultList = widgetService.executeSQL(widgetTemplate.getSql(), sqlExecuteType.getParamsConfig());
 		} catch (Exception e) {
