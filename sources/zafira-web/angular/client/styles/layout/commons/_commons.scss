@@ -127,6 +127,10 @@ $red: #d2333b;
     }
     md-checkbox {
         margin: 0;
+        .md-container {
+            color: #1f242a;
+            opacity: 0.5;
+        }
         &.md-checked .md-icon {
             background-color: black;
         }
@@ -181,6 +185,14 @@ $red: #d2333b;
         margin-bottom: 12px;
         color: #35393f;
     }
+
+    *[ng-messages] {
+        position: absolute;
+        color: red;
+        > * {
+            font-size: 12px !important;
+        }
+    }
 }
 
 .zf-label {
@@ -207,26 +219,27 @@ $red: #d2333b;
     letter-spacing: 0.1px;
     color: black;
 
-    &:active {
-        border: none;
-    }
-
     &.zf-info {
-        background-color: #e8e9e9;
+        background-color: rgba(31,36,42, .07);
         float: left;
-        color: $coal;
+        color: black;
     }
 
     &.zf-warn {
         color: $red !important;
-        background-color: rgba(31,36,42, 0.05) !important;
+        //width: 128px;
+        background-color: rgba(31,36,42, .1) !important;
+
+        &:hover {
+            background-color: rgba(31,36,42, .2) !important;
+        }
     }
 
     &.zf-chip-button {
         width: 100% !important;
-        min-width: 148px !important;
+        min-width: 128px !important;
         height: 32px;
-        line-height: 32px;
+        line-height: 28px !important;
         border-radius: 16px;
         letter-spacing: normal !important;
         color: $modal-white;
@@ -251,6 +264,11 @@ $red: #d2333b;
         background-color: rgba(31,36,42, 0.4);
         border-radius: 4px;
         padding: 0;
+
+        &:hover {
+            background-color: rgba(31,36,42, 0.5);
+        }
+
         i {
             color: $modal-white;
             font-size: 22px;
@@ -313,8 +331,16 @@ $red: #d2333b;
             width: 100%;
             height: 100%;
             background-color: $modal-grey;
-            border: 1px solid #b9bec1;
+            border: 2px solid $coal;
+            opacity: 0.1;
             border-radius: 4px;
+        }
+
+        &:hover {
+            &:before {
+                background-color: $coal;
+                opacity: 0.1;
+            }
         }
     }
 }
@@ -322,7 +348,8 @@ $red: #d2333b;
 .zf-radio-button.zf-checked {
     label {
         &:before {
-            background-color: #b9bec1;
+            background-color: $coal;
+            opacity: 0.15;
         }
     }
 }

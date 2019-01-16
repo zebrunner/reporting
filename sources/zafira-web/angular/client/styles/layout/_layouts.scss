@@ -82,7 +82,7 @@ html {
 
         > .nav-container {
             //display: none;
-            z-index: 100; // should be highter than top header
+            z-index: $zindex-fixed; // should be highter than top header
             position: fixed;
             left: 0;
             top: $header_height;

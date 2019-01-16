@@ -904,3 +904,10 @@ $dl-horizontal-offset:        $component-offset-horizontal !default;
 $dl-horizontal-breakpoint:    $grid-float-breakpoint !default;
 //** Horizontal line color.
 $hr-border:                   $gray-lighter !default;
+
+
+$z-index-menu: 100 !default;
+$z-index-calendar-pane: 100 !default;
+$z-index-select: 90 !default;
+$zindex-modal-background: 79;
+$zindex-fixed: 78;

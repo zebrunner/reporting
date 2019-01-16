@@ -2162,7 +2162,7 @@
         })();
     }
 
-    function CiHelperController($scope, $rootScope, $q, $window, $mdDialog, $timeout, LauncherService, ScmService) {
+    function CiHelperController($scope, $rootScope, $q, $window, $mdDialog, $timeout, $interval, LauncherService, ScmService) {
 
         $scope.ciOptions = {};
 
@@ -2182,13 +2182,6 @@
             mode: 'json',
             firstLineNumber: 5
         };
-
-        /*{
-            browser: ["chrome", "firefox"],
-                environment: "DEMO",
-            enable_video: false,
-            thread_count: 3
-        }*/
 
         $scope.onLoad = function(editor) {
         };
@@ -2234,11 +2227,14 @@
 
         $scope.addNewGithubRepo = function(element) {
             $scope.states.addGitRepo = ! $scope.states.addGitRepo;
-            if(element) {
-                addNewGithubRepoCssApply(element, $scope.states.addGitRepo);
-            }
             if($scope.states.addGitRepo) {
-                $scope.connectToGitHub();
+                $scope.connectToGitHub().then(function () {
+                    if(element) {
+                        addNewGithubRepoCssApply(element, $scope.states.addGitRepo);
+                    }
+                }, function () {
+                    $scope.states.addGitRepo = false;
+                });
             } else {
                 if(gitHubPopUp) {
                     gitHubPopUp.close();
@@ -2252,6 +2248,7 @@
                 el.addClass(newGithubRepoCloseClass);
                 onAddNewGithubRepoClose = function () {
                     $scope.addNewGithubRepo(el);
+                    addNewGithubRepoCssApply(element, $scope.states.addGitRepo);
                 }
             } else {
                 el.removeClass(newGithubRepoCloseClass);
@@ -2272,18 +2269,20 @@
         };
 
         $scope.cardNumber = 0;
-
-        $scope.builtLauncher = {};
+        $scope.builtLauncher = {
+            model: {},
+            type: {}
+        };
 
         $scope.applyBuilder = function(launcher, isPhone) {
+            $scope.jsonModel = {};
+            $scope.builtLauncher = {model: {}, type: {}};
             $scope.jsonModel = launcher.model.toJson();
             angular.forEach($scope.jsonModel, function (value, key) {
-                $scope.builtLauncher[key] = {};
-                if($scope.getType(value) === 'array' && value.length) {
-                    $scope.builtLauncher[key] = value[0];
-                } else {
-                    $scope.builtLauncher[key] = value;
-                }
+                var type = $scope.getType(value);
+                var val = type === 'array' && value.length ? value[0] : value;
+                $scope.builtLauncher.model[key] = val;
+                $scope.builtLauncher.type[key] = type;
             });
             $scope.cardNumber = isPhone ? 3 : 2;
         };
@@ -2311,8 +2310,11 @@
         };
 
         $scope.launchers = [];
-        $scope.launcher = {};
-        $scope.launcher.scmAccountType = {};
+
+        function clearLauncher() {
+            $scope.launcher = {};
+            $scope.launcher.scmAccountType = {};
+        };
 
         $scope.editLauncher = function(launcher) {
             $scope.launcher = angular.copy(launcher);
@@ -2337,25 +2339,54 @@
         };
 
         $scope.saveLauncher = function (launcher) {
-            if(launcher.id) {
-                var index = $scope.launchers.indexOfField('id', launcher.id);
-                LauncherService.updateLauncher(launcher).then(function (rs) {
-                    if(rs.success) {
-                        $scope.launchers.splice(index, 1, rs.data);
-                    } else {
-                        alertify.error(rs.message);
-                    }
-                });
-            } else {
-                LauncherService.createLauncher(launcher).then(function (rs) {
-                    if (rs.success) {
-                        $scope.launcher = rs.data;
-                        $scope.launchers.push(rs.data);
-                    } else {
-                        alertify.error(rs.message);
-                    }
-                });
+            launcher.errorMessage = buildError(launcher);
+            if(! launcher.errorMessage && !launcher.errorMessage.length) {
+                if (launcher.id) {
+                    var index = $scope.launchers.indexOfField('id', launcher.id);
+                    LauncherService.updateLauncher(launcher).then(function (rs) {
+                        if (rs.success) {
+                            $scope.launchers.splice(index, 1, rs.data);
+                        } else {
+                            alertify.error(rs.message);
+                        }
+                    });
+                } else {
+                    LauncherService.createLauncher(launcher).then(function (rs) {
+                        if (rs.success) {
+                            $scope.launcher = rs.data;
+                            $scope.launchers.push(rs.data);
+                        } else {
+                            alertify.error(rs.message);
+                        }
+                    });
+                }
+                $scope.applyBuilder(launcher);
             }
+        };
+
+        function buildError(launcher) {
+            var messages = [];
+            var errorMessage = '';
+            if(! launcher.model) {
+                messages.push('code');
+            }
+            if(! launcher.name) {
+                messages.push('name');
+            }
+            if(! launcher.scmAccountType || ! launcher.scmAccountType.id) {
+                messages.push('repository');
+            }
+            if(messages.length) {
+                errorMessage = 'Set ';
+                messages.forEach(function (message, index) {
+                    errorMessage += message
+                    errorMessage = index !== messages.length - 1 ? errorMessage + ', ' : errorMessage;
+                });
+                errorMessage += ' for template to save.';
+            } else if(! launcher.model.isJsonValid(true)) {
+                errorMessage = 'Code is not valid.';
+            }
+            return errorMessage;
         };
 
         $scope.deleteLauncher = function (id) {
@@ -2372,6 +2403,11 @@
                     }
                 });
             }
+        };
+
+        $scope.cancelLauncher = function () {
+            $scope.cardNumber = 0;
+            clearLauncher();
         };
 
         function getAllLaunchers() {
@@ -2422,34 +2458,45 @@
         };
 
         var gitHubPopUp;
+        $scope.clientId = '';
 
         $scope.connectToGitHub = function() {
-            getClientId().then(function (clientId) {
-                var host = $window.location.host;
-                var tenant = host.split('\.')[0];
-                var redirectURI = $window.location.protocol + "//" + host.replace(tenant, 'api') + "/github/callback/" + tenant;
-                var url = 'https://github.com/login/oauth/authorize?client_id=' + clientId + '&redirect_uri=' + redirectURI + '&scope=repo%252Cread%253Auser%252Cread%253Aorg';
-                var height = 650;
-                var width = 450;
-                var location = getCenterWindowLocation(height, width);
-                gitHubPopUp = $window.open(url,'targetWindow', 'resizable=no, width=' + width + ', height=' + height + ', top=' + location.top + ', left=' + location.left);
+            return $q(function (resolve, reject) {
+                if($scope.clientId) {
+                    var host = $window.location.host;
+                    var tenant = host.split('\.')[0];
+                    var redirectURI = $window.location.protocol + "//" + host.replace(tenant, 'api') + "/github/callback/" + tenant;
+                    var url = 'https://github.com/login/oauth/authorize?client_id=' + $scope.clientId + '&scope=user%20repo%20readAorg&redirect_uri=' + redirectURI;
+                    var height = 650;
+                    var width = 450;
+                    var location = getCenterWindowLocation(height, width);
+                    var gitHubPopUpProperties = 'toolbar=0,scrollbars=1,status=1,resizable=1,location=1,menuBar=0,width=' + width + ', height=' + height + ', top=' + location.top + ', left=' + location.left;
+                    gitHubPopUp = $window.open(url, 'GithubAuth', gitHubPopUpProperties);
 
-                gitHubPopUp.onbeforeunload = function (e) {
-                    var code = getCode(gitHubPopUp.location);
-                    initAccessToken(code).then(function (scmAccount) {
-                        $scope.scmAccount = scmAccount;
-                        $scope.getOrganizations();
-                    });
-                };
+                    var localStorageWatcher = $interval(function () {
+                        var code = localStorage.getItem('code');
+                        if(code) {
+                            resolve();
+                            codeExchange(code);
+                            localStorage.removeItem('code');
+                            $interval.cancel(localStorageWatcher);
+                        }
+                    }, 200);
 
-                gitHubPopUp.onload = function (e) {
-
-                };
-
-                if (window.focus) {
-                    gitHubPopUp.focus();
+                    if (window.focus) {
+                        gitHubPopUp.focus();
+                    }
                 }
             });
+        };
+
+        function codeExchange(code) {
+            if (code) {
+                initAccessToken(code).then(function (scmAccount) {
+                    $scope.scmAccount = scmAccount;
+                    $scope.getOrganizations();
+                });
+            }
         };
 
         $scope.getOrganizations = function() {
@@ -2488,11 +2535,6 @@
             });
         };
 
-        function getCode(location) {
-            var urlParams = new URLSearchParams(location.search);
-            return urlParams.get('code');
-        };
-
         function initAccessToken(code) {
             return $q(function (resolve, reject) {
                 ScmService.exchangeCode(code).then(function (rs) {
@@ -2514,7 +2556,7 @@
         }
 
         $scope.build = function(launcher) {
-            launcher.model = JSON.stringify($scope.builtLauncher, null, 2);
+            launcher.model = JSON.stringify($scope.builtLauncher.model, null, 2);
             LauncherService.buildLauncher(launcher).then(function (rs) {
                 if(rs.success) {
                     alertify.success("Job is in progress");
@@ -2534,8 +2576,12 @@
         };
 
         (function initController() {
+            clearLauncher();
             getAllLaunchers().then(function (launchers) {
                 $scope.launchers = launchers;
+            });
+            getClientId().then(function (clientId) {
+                $scope.clientId = clientId;
             });
             ScmService.getAllScmAccounts().then(function (rs) {
                 if(rs.success) {

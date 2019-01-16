@@ -154,7 +154,7 @@ public class ScmAPIController extends AbstractController {
         if(scmAccount == null) {
             throw new ForbiddenOperationException("Unable to list organizations");
         }
-        return gitHubService.getOrganizations(this.scmAccountService.getScmAccountById(id).getAccessToken());
+        return gitHubService.getOrganizations(scmAccount.getAccessToken());
     }
 
     @ResponseStatusDetails

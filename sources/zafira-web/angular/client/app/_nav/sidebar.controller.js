@@ -122,49 +122,20 @@
             $state.reload();
         };
 
+        $scope.chooseProject = function(menu) {
+            $scope.selectedProjects = $scope.projects.filter(function (value) {
+                return value.selected;
+            });
+        };
+
         $scope.$on("$mdMenuClose", function(name, listener) {
-            body.removeClass('fixed-menu');
-            if(listener[0].id == 'projects-menu') {
-                $scope.selectedProjects = $scope.projects.filter(function (value) {
-                    return value.selected;
-                });
-                if((! ProjectProvider.getProjects() && $scope.selectedProjects) || ! ProjectProvider.getProjects().equalsByField($scope.selectedProjects, 'id')) {
+            var isProjectMenuClosing = listener.attr('id') === 'projects-menu';
+            if(isProjectMenuClosing) {
+                var projects = ProjectProvider.getProjects();
+                if(! angular.equals(projects, $scope.selectedProjects)) {
                     ProjectProvider.setProjects($scope.selectedProjects);
                     $state.reload();
                 }
-            }
-        });
-
-        var touchListener = false;
-        var menuToOpen;
-        var menus = [];
-        var body = angular.element('body');
-
-        function closeMenu(e) {
-            if(menus && menus.length) {
-                angular.forEach(menus, function (m) {
-                    var menu = angular.element(m).scope();
-                    var ariaOwns = menuToOpen.find('*[aria-owns]').attr('aria-owns');
-                    if(ariaOwns) {
-                        var menuExpand = angular.element('#' + ariaOwns);
-                        var isSliceOfMenu = menuExpand ? menuExpand.find(e.target).length > 0 : false;
-                        if (menu.$mdMenuIsOpen && !isSliceOfMenu) {
-                            menu.$mdMenu.close();
-                        }
-                    }
-                });
-            }
-        };
-
-        $scope.$on("$mdMenuOpen", function(name, listener) {
-
-            menus = angular.element('header md-menu *[aria-owns]');
-            menuToOpen = listener;
-            body.addClass('fixed-menu');
-
-            if(! touchListener) {
-                touchListener = angular.element('body').on('touchstart', closeMenu);
-                touchListener = angular.element('body').on('mousedown', closeMenu);
             }
         });
 
