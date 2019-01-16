@@ -32,10 +32,7 @@
                 <div>
                     <zf-input-container>
                         <label>Set name for template</label>
-                        <input ng-model="launcher.name" placeholder="Set name" autofocus required/>
-                        <!--<div ng-messages="launcher_form.info.$error" ng-if="launcher_form.info.$dirty">
-                            <div ng-message="required">Required</div>
-                        </div>-->
+                        <input ng-model="launcher.name" placeholder="Set name" autofocus/>
                     </zf-input-container>
                 </div>
                 <div class="ci-runner-container_content_scm-connector">
@@ -46,7 +43,7 @@
                                 <button ng-click="addNewGithubRepo($event.target);" class="zf-button zf-square" ng-disabled="! clientId || ! clientId.length">
                                     <i class="material-icons">add</i>
                                 </button>
-                                <span ng-if="scmAccount.id">
+                                <span ng-if="states.addGitRepo">
                                     <zf-input-container>
                                         <md-input-container>
                                             <label>Organization</label>
@@ -84,16 +81,13 @@
                 <div class="ci-runner-container_content_code" ng-cloak>
                     <zf-input-container>
                         <label>Paste code or choose a predefined one</label>
-                        <div id="aceEditor" name="aceEditor" required class="ci-runner-container_content_code_editor" ui-ace="{{aceOptions}}" ng-model="launcher.model"></div>
+                        <div id="aceEditor" required class="ci-runner-container_content_code_editor" ui-ace="{{aceOptions}}" ng-model="launcher.model"></div>
                         <md-input-container>
                             <label>Platform</label>
                             <md-select ng-change="mergeTemplate(DEFAULT_TEMPLATES.model.json);" ng-model="DEFAULT_TEMPLATES.model">
                                 <md-option ng-repeat="dt in DEFAULT_TEMPLATES.variants track by $index" ng-value="dt">{{dt.name}}</md-option>
                             </md-select>
                         </md-input-container>
-                        <div ng-messages="launcher_form.aceEditor.$error" ng-if="launcher_form.aceEditor.$dirty">
-                            <div ng-message="required">Required</div>
-                        </div>
                     </zf-input-container>
                 </div>
             </ng-form>

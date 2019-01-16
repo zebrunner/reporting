@@ -3095,14 +3095,20 @@ $light-inprogress: #68c9fd;
                 position: absolute;
                 top: 0;
                 bottom: 0;
-                left: 16px;
-                right: 0;
-                width: 50%;
+                left: 34%;
+                right: 8px;
                 height: 30%;
                 margin: auto;
                 line-height: 12px;
                 font-size: 12px;
                 text-align: right;
+                margin-right: 112px;
+                width: calc(66% - 224px);
+
+                @media(max-width: $screen-phone) {
+                    left: 0;
+                    width: calc(100% - 224px);
+                }
             }
             button {
                 float: right;
@@ -3112,8 +3118,8 @@ $light-inprogress: #68c9fd;
                 box-shadow: none !important;
                 border-radius: 4px;
 
-                &:not(:last-child) {
-                    margin-right: 16px;
+                &:not(:first-child) {
+                    margin-left: 8px;
                 }
             }
         }
@@ -3219,7 +3225,7 @@ $light-inprogress: #68c9fd;
 
         @media(max-width: $screen-phone) {
             width: 100% !important;
-            padding: 54px 0 0 0 !important;
+            padding: 0 !important;
         }
         &_title {
             font-size: 0;
@@ -3266,6 +3272,17 @@ $light-inprogress: #68c9fd;
                 flex-direction: column;
                 height: 56px;
             }
+
+            @media(max-width: $screen-phone) {
+                font-size: 18px;
+                letter-spacing: 0.2px;
+                padding-left: 16px;
+                font-weight: normal;
+                justify-content: center;
+                align-items: end;
+                height: 48px;
+                box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+            }
         }
         &_section {
             border-radius: 4px;
@@ -3278,6 +3295,7 @@ $light-inprogress: #68c9fd;
 
             @media(max-width: $screen-phone) {
                 min-height: calc(100% - 124px);
+                margin-top: 0;
             }
 
             &_item {
