@@ -2236,6 +2236,7 @@
                     $scope.states.addGitRepo = false;
                 });
             } else {
+                addNewGithubRepoCssApply(element, $scope.states.addGitRepo);
                 if(gitHubPopUp) {
                     gitHubPopUp.close();
                 }
