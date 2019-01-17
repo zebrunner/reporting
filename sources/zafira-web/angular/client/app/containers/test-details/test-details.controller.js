@@ -220,6 +220,9 @@
 
                 return !name.includes('live') && !name.includes('video');
             });
+            test.tags = test.tags.filter(function (tag) {
+                return tag.name !== 'TESTRAIL_TESTCASE_UUID' && tag.name !== 'QTEST_TESTCASE_UUID';
+            });
 
             vm.testRun.tests = vm.testRun.tests || {};
             vm.testRun.tests[test.id] = test;

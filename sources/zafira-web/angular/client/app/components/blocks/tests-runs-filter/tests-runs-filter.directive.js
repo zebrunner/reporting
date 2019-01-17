@@ -172,7 +172,8 @@
                     return vm.platforms;
                 } else {
                     alertify.error(rs.message);
-                    $q.reject(rs.message);
+
+                    return $q.reject(rs.message);
                 }
             });
         }
