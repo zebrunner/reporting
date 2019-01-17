@@ -61,7 +61,7 @@ services:
     environment:
       - ZAFIRA_USER=qpsdemo
       - ZAFIRA_PASS=qpsdemo
-      - ZAFIRA_RABBITMQ_ENABLED=false
+      - ZAFIRA_RABBITMQ_HOST=rabbitmq
     depends_on:
       - "db"
       - "rabbitmq"
