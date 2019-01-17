@@ -29,14 +29,14 @@
                             <div class="manage-chip" ng-click="$ctrl.clearAndOpenFilterBlock(true);">
                                 <md-chips class="filter-chip">
                                     <md-chip>
-                                        new filter
                                         <div>
                                             <md-icon class="material-icons">add</md-icon>
                                         </div>
+                                        <span>New filter<span>
                                     </md-chip>
                                 </md-chips>
                             </div>
-                            <md-chips class="filter-chip" ng-model="$ctrl.filters" md-removable="false" readonly="true">
+                            <md-chips class="filter-chip custom-filter" ng-model="$ctrl.filters" md-removable="false" readonly="true">
                                 <!--TODO: for what this empty disabled input-->
                                 <input disabled>
                                 <md-chip-template>
@@ -153,7 +153,7 @@
                                             <div ng-class="{'disable-layer': $ctrl.isSearchActive()}"></div>
                                             <div class="panel-body no-padding-t">
                                                 <div layout="row" layout-xs="column" ng-show="$ctrl.filterBlockExpand">
-                                                    <md-chips class="filter-chip" ng-model="$ctrl.filters" md-removable="false" readonly="true">
+                                                    <md-chips class="filter-chip custom-filter" ng-model="$ctrl.filters" md-removable="false" readonly="true">
                                                         <input disabled>
                                                         <md-chip-template>
                                                             <div style="display: inline-block;"
@@ -176,6 +176,7 @@
                                             placeholder="Search items"
                                             ng-model="$ctrl.fastSearch[$ctrl.getActiveSearchType()]"
                                             ng-change="$ctrl.onSearchChange()"
+                                            ng-show="$ctrl.collapseNewFilter"
                                             ng-model-options="{updateOn: 'blur'}"
                                             aria-label="Search items"
                                             aria-describedby="basic-addon2">

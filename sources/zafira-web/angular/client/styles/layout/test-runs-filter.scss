@@ -14,7 +14,7 @@
                 margin-right: 16px;
                 margin-left: 0;
                 font-size: 14px;
-                z-index: 3;
+                z-index: 4;
             }
             button#reset {
                 background-color: $fog-gray;
@@ -25,36 +25,34 @@
                 color: #ffffff;
             }
         }
-        #filter .panel-body {      
-            @extend %chips-scrolling;
+        #filter .panel-body {   
             padding-bottom: 16px !important;
-            position: relative;
+            position: relative;   
+            @extend %chips-scrolling;
             .manage-chip {
-                @media screen and (max-width: 599px) {
-                    box-shadow: 5px 0px 4px 1px rgba(255,255,255,1);
-                    z-index: 2;
-                    & md-chips.filter-chip md-chips-wrap.md-chips md-chip {
-                        background-color: $medium-teal-light-new !important;
-                        padding: 9px 20px 0 0  !important;
-                        margin: 0 5px 0 0 !important;
-                        color: white !important;
-                        width: 110px;
-                        &:hover {
-                            background-color: $medium-teal-new !important;
-                        }
-                        & div {
-                            top: 6px !important; 
-                            & md-icon {
-                                left: -4px !important;
-                                color: $medium-teal-light-new !important;
-                            }
+                & md-chips.filter-chip md-chips-wrap.md-chips md-chip {
+                    font-size: 13px;
+                    color: black !important;
+                    background-color: transparent !important;
+                    border: 1px solid black !important;
+                    margin: 0 5px 0 0 !important;
+                    max-width: 104px;
+                    padding: 0 2px 0 30px !important;
+                    & div {
+                        right: auto;  
+                        background-color: transparent;
+                        left: 13px !important;
+                        top: 5px;
+                        & md-icon {
+                            font-size: 15px;
                         }
                     }
-                }
+                } 
             }
         }
         #search {
             .panel-body {
+                padding: 18px 20px 14px 20px;
                 @media screen and (max-width: 599px) {
                     padding: 0 !important;
                 }
@@ -70,7 +68,7 @@
                             max-width: 48px;
                             max-height: 48px;
                             box-shadow: 9px 0px 20px -1px rgb(255, 255, 255);
-                            z-index: 2;
+                            z-index: 3;
                             & i {
                                 background-color: white;
                                 display: block;
@@ -98,6 +96,8 @@
                             #filter {
                                 @media screen and (max-width: 599px) {
                                     max-width: calc(100vw - 48px);
+                                    min-width: 80vw;
+                                    background-color: white;
                                     width: 100%;
                                     padding: 10px 0;
                                 }
@@ -114,7 +114,7 @@
                 width: 100%;
                 @media screen and (max-width: 599px) {
                     position: absolute;
-                    z-index: 3;
+                    z-index: 4;
                     background-color: #fff;
                     left: 0;
                     top: 48px;
@@ -129,19 +129,19 @@
                     }
                 }
                 .reviewed {
-                    @media screen and (max-width: 599px) {
-                        background-color: $dark-coal-light-new-op01 ;
-                        color: $dark-coal-light-new ;
-                        min-width: 36px;
+                    background-color: rgba(31, 36, 42, .1);
+                    color: #35393f ;
+                    min-width: 36px;
+                    border: none;
+                    @media (max-width: 599px) {
                         margin-right: 16px;
-                        border: none;
-                        &:hover {
-                            background-color: $dark-coal-light-new-op02;
-                        }
-                        &.label-primary{
-                            background-color: $green-new;
-                            color: #fff;
-                        }
+                    }
+                    &:hover {
+                        background-color: rgba(31, 36, 42, .2);
+                    }
+                    &.label-primary{
+                        background-color: $green-new;
+                        color: #fff;
                     }
                 }
                 & #search-input {
@@ -180,6 +180,7 @@
                             }
                             & .date-picker-container i {
                                 font-size: 20px;
+                                color: #000 !important;
                             }
                         }
                     }
@@ -193,9 +194,23 @@
                         border-bottom: 1px rgba(0, 0, 0, 0.10) solid;
                     }
                     & button.btn {
-                        @extend %filterItems;
-                        width: 104px;
-                        color: white;
+                        font-size: 10px;
+                        font-weight: bold;
+                        max-height: 28px;
+                        border-radius: 14px;
+                        background-color: transparent;
+                        border: 1px solid rgba(0,0,0, .25);
+                        box-shadow: none ;
+                        &:hover, &.active {
+                            background-color: transparent !important;
+                            color: #000 !important;
+                        }
+                        &.active {
+                            border: 1px solid #26a69a;
+                        }
+                        @media (max-width: 599px) {
+                            width: 104px;
+                        }
                     }
                 }
             }
@@ -203,44 +218,16 @@
     }
 }
 
-%filterItems {
-    @media screen and (max-width: 599px) {
-        max-height: 28px;
-        border-radius: 14px;
-        background-color: $dark-coal-light-new-op01 !important;
-        letter-spacing: 0.2px;
-        text-align: center;
-        font-size: 11px;
-        font-weight: 500;
-        line-height: 1;
-        border: none !important;
-        padding-top: 1px;
-        color: $dark-coal-light-new !important;
-        &:hover {
-            background-color: $dark-coal-light-new-op02 !important;
-        }
-        &.md-focused, &.active {
-            background-color: $dark-coal-light-new !important;
-            color: #ffffff !important;
-        }
-    }
-}
-
 %select {
-    @media screen and (max-width: 599px) {
-        border-radius: 5px;
-        border: 1px solid rgba(0, 0, 0, 0.15);
-        &:hover {
-            border-color: rgba(0, 0, 0, 0.3) !important;
-        }
-        & .md-select-placeholder, & .md-select-value {
-            color: rgba(0, 0, 0, 0.5) !important;
-        }
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    &:hover {
+        border-color: rgba(0, 0, 0, 0.35) !important;
     }
 }
 
 %chips-scrolling {
-    md-chips.filter-chip {
+    md-chips.filter-chip.custom-filter {
         @media screen and (min-width: $breakpoint-mobile) {
             min-width: auto;
         }
@@ -255,10 +242,23 @@
         md-chips-wrap.md-chips{
             display: flex !important;
             md-chip {
-                @extend %filterItems;
+                background-color: rgba(31, 36, 42, .4) !important;
+                font-size: 13px;
+                font-weight: 500;
+                letter-spacing: 0.1px;
+                border-radius: 16px;
+                color: #ffffff !important;
+                margin-bottom: 0;
+                max-height: 32px;
+                &.md-focused {
+                    background-color: rgba(31, 36, 42, 1) !important;
+                }
+                &:hover {
+                    background-color: rgba(31, 36, 42, .7) !important;
+                }
                 @media screen and (max-width: 599px) {
-                    padding-top: 1px;
-                    margin-bottom: 0;
+                    font-size: 11px;
+                    max-height: 28px;
                     &.md-focused {
                         & i ,
                         &:hover i {
@@ -277,7 +277,7 @@
         bottom: 0;
         left: 0;
         right: 0;
-        z-index: 2;
+        z-index: 3;
         background-color: rgba(0, 0, 0, 0.5);
     }
 }

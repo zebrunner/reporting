@@ -149,7 +149,6 @@ md-table-container {
     
         .test {
             display: flex;
-            width: calc(100vw - 100px);
             @media(max-width: 599px) {
                 flex-wrap: wrap;
                 padding: 4px 0 0;
@@ -214,7 +213,13 @@ md-table-container {
             & .text-center {
                 width: 30%;
                 @extend %noBorderPadding;
-                @media(max-width: 599px) {
+                @media (max-width: 1000px) {
+                    width: 20%;
+                }
+                @media (max-width: 874px) {
+                    width: auto;
+                }
+                @media (max-width: 599px) {
                     padding-bottom: 5px;
                     width: auto;
                     & .work-items .badge {
