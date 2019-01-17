@@ -36,6 +36,7 @@
         'TestRunsStorage',
         '$tableExpandUtil',
         'modalsService',
+        '$state',
         TestDetailsController]);
 
     // **************************************************************************
@@ -48,32 +49,27 @@
                                    SettingsService, ProjectProvider,
                                    ConfigService, SlackService, DownloadService,
                                    API_URL, DEFAULT_SC, OFFSET, TestRunsStorage,
-                                   $tableExpandUtil, modalsService) {
-        var testGroupDataToStore = {
+                                   $tableExpandUtil, modalsService, $state) {
+        const testGroupDataToStore = {
             statuses: [],
             tags: []
         };
-        var vm = {
+        let TENANT;
+        const vm = {
             currentMode: 'ONE',
             reverse: false,
             predicate: 'startTime',
-            sc: $location.search(), //TODO: change name
             tags: [],
             testGroups: null,
             testGroupMode: 'PLAIN',
             testRun: testRun,
             // mobileBreakpoint: mediaBreakpoints.mobile || 0,
             // windowWidthService: windowWidthService,
-            selectedRange: {
-                selectedTemplate: null,
-                selectedTemplateName: null,
-                dateStart: null,
-                dateEnd: null,
-                showTemplate: false,
-                fullscreen: false
-            },
             testsTagsOptions: {},
             testsStatusesOptions: {},
+            subscriptions: {},
+            zafiraWebsocket: null,
+            showRealTimeEvents: true,
 
             onStatusButtonClick: onStatusButtonClick,
             onTagSelect: onTagSelect,
@@ -82,6 +78,7 @@
             switchTestGroupMode: switchTestGroupMode,
             changeTestStatus: changeTestStatus,
             showDetailsDialog: showDetailsDialog,
+            goToTestDetails: goToTestDetails,
         };
 
         vm.$onInit = controlInit;
@@ -89,27 +86,16 @@
         return vm;
 
         function controlInit() {
+            TENANT = $rootScope.globals.auth.tenant;
             initTestGroups();
-            //TODO: Do we need init Websocket on this page?
+            initWebsocket();
             initTests();
             fillTestRunMetadata();
-            // $scope.populateSearchQuery();
-            // var loadFilterDataPromises = [];
-            // loadFilterDataPromises.push($scope.loadEnvironments());
-            // loadFilterDataPromises.push($scope.loadPlatforms());
-            // loadFilterDataPromises.push(loadProjects());
-            // $q.all(loadFilterDataPromises).then(function(values) {
-            //     loadSubjectBuilder();
-            // });
-            // $scope.loadSlackMappings();
-            // $scope.storeSlackAvailability();
-            // loadPublicFilters();
-            // $scope.$broadcast('controller-inited', 'TestRunListController'); //TODO: Check if need
         }
 
         function fillTestRunMetadata() {
             addBrowserVersion();
-            addTestRun();
+            initJobMetadata();
         }
 
         function addBrowserVersion() {
@@ -155,13 +141,11 @@
             };
         }
 
-        function addTestRun() { //TODO: refactor name
+        function initJobMetadata() {
             if (vm.testRun.job && vm.testRun.job.jobURL) {
-                vm.testRun.jenkinsURL = vm.testRun.job.jobURL + '/' + vm.testRun.buildNumber;
-                vm.testRun.UID = vm.testRun.testSuite.name + ' ' + vm.testRun.jenkinsURL;
+                !vm.testRun.jenkinsURL && (vm.testRun.jenkinsURL = vm.testRun.job.jobURL + '/' + vm.testRun.buildNumber);
+                !vm.testRun.UID && (vm.testRun.UID = vm.testRun.testSuite.name + ' ' + vm.testRun.jenkinsURL);
             }
-
-            vm.testRun.tests = null;
         }
 
         function initTests() {
@@ -169,34 +153,26 @@
 
             loadTests(vm.testRun.id)
                 .then(function () {
-                    vm.testGroups.group.common.data.all = vm.testRun.tests; //TODO: m? > it is empty at this moment
+                    vm.testGroups.group.common.data.all = vm.testRun.tests;
                     showTestsByTags(vm.testRun.tests);
                     showTestsByStatuses(vm.testRun.tests);
                     vm.testRun.tags = collectTags(vm.testRun.tests);
                 });
-            // $tableExpandUtil.expand('testRun_' + testRun.id, quick).then(function () {
-                vm.testRun.expand = true;
-                // vm.expandedTestRuns.push(vm.testRun.id);
-                // $scope.subscribtions[testRun.id] = $scope.subscribeTestsTopic(testRun.id);
-                // $scope.tr = testRun;
-            // });
+                vm.subscriptions[vm.testRun.id] = subscribeTestsTopic(vm.testRun.id);
         }
 
         function loadTests(testRunId) {
-            var defer = $q.defer();
-
-            // $scope.lastTestRunOpened = testRunId;
-            var params = {
+            const defer = $q.defer();
+            const params = {
                 'page': 1,
-                'pageSize': 100000, //TODO: return back (10000)
-                // 'pageSize': 100,
+                'pageSize': 100000,
                 'testRunId': testRunId
             };
 
-            TestService.searchTests(params) //TODO: in testRunId id undefined will be returned 10000 test
+            TestService.searchTests(params)
                 .then(function (rs) {
                     if (rs.success) {
-                        var data = rs.data.results || [];
+                        const data = rs.data.results || [];
 
                         data.forEach(function(test) {
                             addTest(test);
@@ -210,6 +186,14 @@
                 });
 
             return defer.promise;
+        }
+        
+        function goToTestDetails(testId) {
+            $state.go('tests/runs/info', {
+                testRun: vm.testRun,
+                testRunId: vm.testRun.id,
+                testId: testId
+            });
         }
 
         function addTest(test) {
@@ -233,10 +217,8 @@
                 addGroupingItem(test);
             }
 
-            // if ($scope.tr) { //TODO: check the meaning
-            //     $scope.onTagSelect(testGroupDataToStore.tags);
-            //     $scope.onStatusButtonClick(testGroupDataToStore.statuses);
-            // }
+            onTagSelect(testGroupDataToStore.tags);
+            onStatusButtonClick(testGroupDataToStore.statuses);
         }
 
         function collectTags(tests) {
@@ -323,8 +305,8 @@
                     angular.element('.page').addClass('groups-group-mode');
                     vm.testGroups.mode = 'package';
                     vm.testRun.tags = [
-                        {name: 'package', 'value': 'Package', 'default': true},
-                        {name: 'class', 'value': 'Class'}
+                        {name: 'package', value: 'Package', default: true},
+                        {name: 'class', value: 'Class'}
                     ];
                     groupTests(force);
 
@@ -343,13 +325,9 @@
             vm.reverse = false;
             vm.testGroups.predicate = 'startTime';
             vm.testGroups.reverse = false;
-
             if (vm.testGroupMode === 'GROUPS') {
                 vm.testGroups.mode = 'package';
             }
-
-            $scope.testGroupMode = 'PLAIN';
-            initTestGroups();
         }
 
         function onTestGroupingMode(funcPlain, funcGroups) {
@@ -398,7 +376,7 @@
             };
 
             onTestGroupingMode(fnPlain, fgGroups);
-            testGroupDataToStore.tags = angular.copy(chips); //TODO: do we need this?
+            testGroupDataToStore.tags = angular.copy(chips);
         }
 
         function onStatusButtonClick(statuses) {
@@ -468,6 +446,59 @@
             });
 
             return isNew;
+        }
+
+        function initWebsocket() {
+            const wsName = 'zafira';
+
+            vm.zafiraWebsocket = Stomp.over(new SockJS(API_URL + '/api/websockets'));
+            vm.zafiraWebsocket.debug = null;
+            vm.zafiraWebsocket.connect({withCredentials: false}, function () {
+                vm.subscriptions.statistics = subscribeStatisticsTopic();
+                UtilService.websocketConnected(wsName);
+            }, function () {
+                UtilService.reconnectWebsocket(wsName, vm.initWebsocket);
+            });
+        }
+
+        function getEventFromMessage(message) {
+            return JSON.parse(message.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
+        }
+
+        function checkStatisticEvent(event) {
+            return (vm.testRun.id !== event.testRunStatistics.testRunId);
+        }
+
+        function subscribeStatisticsTopic() {
+            return vm.zafiraWebsocket.subscribe('/topic/' + TENANT + '.statistics', function (data) {
+                const event = getEventFromMessage(data.body);
+
+                if (checkStatisticEvent(event)) {
+                    return;
+                }
+
+                vm.testRun.inProgress = event.testRunStatistics.inProgress;
+                vm.testRun.passed = event.testRunStatistics.passed;
+                vm.testRun.failed = event.testRunStatistics.failed;
+                vm.testRun.failedAsKnown = event.testRunStatistics.failedAsKnown;
+                vm.testRun.failedAsBlocker = event.testRunStatistics.failedAsBlocker;
+                vm.testRun.skipped = event.testRunStatistics.skipped;
+                vm.testRun.reviewed = event.testRunStatistics.reviewed;
+                vm.testRun.aborted = event.testRunStatistics.aborted;
+                vm.testRun.queued = event.testRunStatistics.queued;
+                $scope.$apply();
+            });
+        }
+
+        function subscribeTestsTopic() {
+            if (vm.zafiraWebsocket && vm.zafiraWebsocket.connected) {
+                return vm.zafiraWebsocket.subscribe('/topic/' + TENANT + '.testRuns.' + vm.testRun.id + '.tests', function (data) {
+                    const event = getEventFromMessage(data.body);
+
+                    addTest(event.test);
+                    $scope.$apply();
+                });
+            }
         }
     }
 

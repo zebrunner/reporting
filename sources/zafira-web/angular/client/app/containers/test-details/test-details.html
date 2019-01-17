@@ -27,7 +27,7 @@
                           <div name="sortElapsed" sort-item="{{$ctrl.testGroups.reverse}}" class="pointer col-sm-2" data-ng-click="$ctrl.testGroups.predicate = 'elapsed'; $ctrl.testGroups.reverse = !$ctrl.testGroups.reverse">Elapsed&nbsp;</div>
                         </div>
                         <div class="test-run-group_other-buttons">
-                          <button id="resetAllToggle" class="md-button md-ink-ripple" type="button" ng-click="$ctrl.resetTestsGrouping(); $ctrl.reverse = false; $ctrl.predicate = 'startTime';">
+                          <button id="resetAllToggle" class="md-button md-ink-ripple" type="button" ng-click="$ctrl.resetTestsGrouping();">
                             RESET
                           </button>
                         </div>
@@ -53,7 +53,7 @@
                     </div>
                   </th>
                 </tr>
-                <tr ng-attr-id="test_{{test.id}}" class="test" ng-repeat-end="ng-repeat-end" ng-if="test.show === true && test.showByStatus === true && $ctrl.testGroups.group[$ctrl.testGroups.mode].selectedName === packageName" md-swipe-left="$ctrl.changeTestStatus(test, 'FAILED');" md-swipe-right="$ctrl.changeTestStatus(test, 'PASSED');" data-ng-repeat="(id, test) in testGroupMode === 'PLAIN' ? $ctrl.testRun.tests : tests | orderObjectBy:$ctrl.testGroups.predicate:$ctrl.testGroups.reverse track by $index" ng-class="{'info {{::main.theme}}' : test.status === 'IN_PROGRESS', 'success {{::main.theme}}' : test.status === 'PASSED', 'danger {{::main.theme}}' : test.status === 'FAILED', 'warning {{::main.theme}}' : test.status === 'SKIPPED', 'aborted-test-bg' : test.status === 'ABORTED'}" data-ng-hide="$ctrl.testRun.status === 'IN_PROGRESS' && test.status === 'QUEUED'">
+                <tr ng-attr-id="test_{{test.id}}" class="test" ng-repeat-end="ng-repeat-end" ng-if="test.show && test.showByStatus && $ctrl.testGroups.group[$ctrl.testGroups.mode].selectedName === packageName" md-swipe-left="$ctrl.changeTestStatus(test, 'FAILED');" md-swipe-right="$ctrl.changeTestStatus(test, 'PASSED');" data-ng-repeat="(id, test) in $ctrl.testGroupMode === 'PLAIN' ? $ctrl.testRun.tests : tests | orderObjectBy:$ctrl.testGroups.predicate:$ctrl.testGroups.reverse track by $index" ng-class="{'info {{::main.theme}}' : test.status === 'IN_PROGRESS', 'success {{::main.theme}}' : test.status === 'PASSED', 'danger {{::main.theme}}' : test.status === 'FAILED', 'warning {{::main.theme}}' : test.status === 'SKIPPED', 'aborted-test-bg' : test.status === 'ABORTED'}" data-ng-hide="$ctrl.testRun.status === 'IN_PROGRESS' && test.status === 'QUEUED'">
                   <td class="test-info">
                     <b name="testName" class="test-info__name" data-ng-class="test.status === 'QUEUED' ? 'grey_font' : 'black_font'">{{test.name}}
                       <span data-ng-if="test.blocker" class="badge ng-binding bug-label-bg">BLOCKER</span></b>
@@ -120,7 +120,7 @@
                             </md-button>
                           </md-menu-item>
                           <md-menu-item>
-                            <md-button class="md-icon-button" ng-click="$ctrl.storescope(test.id);" ng-href="#!/tests/runs/{{ $ctrl.testRun.id }}/info/{{ test.id }}">
+                            <md-button class="md-icon-button" ng-click="$ctrl.goToTestDetails(test.id);">
                               <md-icon class="material-icons">remove_red_eye</md-icon>
                             </md-button>
                           </md-menu-item>

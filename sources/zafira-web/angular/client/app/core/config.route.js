@@ -161,7 +161,7 @@
                                 if ($stateParams.testRun) {
                                     return $q.resolve($stateParams.testRun);
                                 } else if ($stateParams.testRunId) {
-                                    var params = {
+                                    const params = {
                                         id: $stateParams.testRunId
                                     };
 
@@ -228,7 +228,7 @@
                         }
                     })
                     .state('tests/runs/info', {
-                        url: '/tests/runs/:id/info/:testId',
+                        url: '/tests/runs/:testRunId/info/:testId',
                         templateUrl: 'app/_testruns/_info/list.html',
                         data: {
                             requireLogin: true
