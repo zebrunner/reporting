@@ -134,7 +134,7 @@ public class AmazonService implements IJMXService<AmazonContext>, IURLGenerator 
     @Override
     public boolean isConnected() {
         try {
-            return getAmazonType().getAmazonS3().doesBucketExistV2(getAmazonType().getS3Bucket());
+            return getAmazonType() != null && getAmazonType().getAmazonS3() != null && getAmazonType().getAmazonS3().doesBucketExistV2(getAmazonType().getS3Bucket());
         } catch (Exception e) {
             return false;
         }
@@ -212,7 +212,7 @@ public class AmazonService implements IJMXService<AmazonContext>, IURLGenerator 
      */
     public SessionCredentials getTemporarySessionCredentials(int expiresIn) {
         SessionCredentials result = null;
-        if (getAmazonType().getAwsSecurityTokenService() != null) {
+        if (isConnected()) {
             GetSessionTokenRequest getSessionTokenRequest = new GetSessionTokenRequest();
             GetSessionTokenResult getSessionTokenResult;
             getSessionTokenRequest.setDurationSeconds(expiresIn);
