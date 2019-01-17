@@ -1,0 +1,52 @@
+<div class="page">
+    <md-fab-speed-dial id="main-fab" ng-if="$ctrl.getLengthOfSelectedTestRuns() > 0" md-direction="up" class="md-scale md-fab-bottom-right" has-any-permission="['MODIFY_TEST_RUNS', 'TEST_RUNS_CI']">
+        <md-fab-trigger>
+            <md-button id="mainFab" aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
+                <span class="fa fa-bars" aria-hidden="true"></span>
+            </md-button>
+        </md-fab-trigger>
+        <md-fab-actions>
+            <md-button id="compareTestRuns" aria-label="menu" class="md-fab md-raised md-fab-sm" ng-if="$ctrl.getLengthOfSelectedTestRuns() > 1 && $ctrl.areTestRunsFromOneSuite()" ng-click="$ctrl.showCompareDialog($event)">
+                <md-tooltip md-direction="top">Compare</md-tooltip>
+                <span class="fa fa-columns" aria-hidden="true"></span>
+            </md-button>
+            <md-button id="rerunTestRuns" data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to rerun multiple test runs?" data-ng-really-click="$ctrl.batchRerun()" has-any-permission="['TEST_RUNS_CI']">
+                <md-tooltip md-direction="top">Rerun</md-tooltip>
+                <span class="fa fa-undo" aria-hidden="true"></span>
+            </md-button>
+            <md-button id="deleteTestRuns" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to delete multiple test runs?" data-ng-really-click="$ctrl.batchDelete()" has-any-permission="['MODIFY_TEST_RUNS']">
+                <md-tooltip md-direction="top">Delete</md-tooltip>
+                <span class="fa fa-trash" aria-hidden="true"></span>
+            </md-button>
+            <md-button id="abortTestRuns" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to abort multiple test runs?" data-ng-really-click="$ctrl.abortSelectedTestRuns()" has-any-permission="['TEST_RUNS_CI']">
+                <md-tooltip md-direction="top">Abort selected test runs</md-tooltip>
+                <span class="fa fa-ban" aria-hidden="true"></span>
+            </md-button>
+            <md-button id="sendTestRunsAsEmail" aria-label="menu" class="md-fab md-raised md-fab-sm" ng-click="$ctrl.batchEmail($event)" data-ng-if="tools['EMAIL']">
+                <md-tooltip md-direction="top">Send as email</md-tooltip>
+                <span class="fa fa-envelope-o" aria-hidden="true"></span>
+            </md-button>
+        </md-fab-actions>
+    </md-fab-speed-dial>
+    <div class="p-tests-runs__section _title row ui-section col-md-2 no-padding no-margin">
+        <div class="fixed-search-column no-padding">
+            <h1 id="pageTitle" class="p-tests-runs__title  section-header pull-left">Test runs
+                <small id="itemsCount">({{$ctrl.totalResults}})</small>
+            </h1>
+        </div>
+    </div>
+    <tests-runs-filter on-filter-change="$ctrl.getTestRuns(1)"></tests-runs-filter>
+    <div class="p-tests-runs__section _content row ui-section no-margin">
+        <div class="col-md-12 no-padding">
+            <article class="article">
+                <md-card class="no-margin-h">
+                    <test-run-card test-run="testRun" ng-repeat="testRun in $ctrl.testRuns | orderObjectBy:'startedAt':true track by $index" single-mode="false" on-select="$ctrl.addToSelectedTestRuns(testRun)" on-delete="$ctrl.deleteSingleTestRun(testRun)"></test-run-card>
+                    <div ng-if="($ctrl.testRuns && !$ctrl.testRuns.length)">
+                        <div id="noData" class="text-center">No test runs</div>
+                    </div>
+                    <md-table-pagination id="pagination" zafira-background-theme="pagination" ng-if="!$ctrl.isTestRunsEmpty()" md-limit="$ctrl.pageSize" md-limit-options=false md-page="$ctrl.currentPage" md-total="{{$ctrl.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="$ctrl.getTestRuns"></md-table-pagination>
+                </md-card>
+            </article>
+        </div>
+    </div>
+</div>

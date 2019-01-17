@@ -1,0 +1,202 @@
+<div class="p-tests-runs__section _filters row ui-section no-margin">
+    <div ng-if="$ctrl.matchMode(['ANY'])" class="fixed-search-column col-md-10 no-padding">
+        <button ng-if="$ctrl.matchMode(['APPLY', 'SEARCH'])" id="reset" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="$ctrl.onReset();">
+            <b>RESET</b>
+        </button>
+        <button ng-if="$ctrl.matchMode(['SEARCH']);" id="applySearch" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" ng-click="$ctrl.onApply();">
+            <b>APPLY</b>
+        </button>
+        <button ng-if="$ctrl.matchMode(['CREATE'])" id="createFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" ng-click="$ctrl.createFilter();" data-ng-disabled="filter_form.$invalid">
+            <b>CREATE</b>
+        </button>
+        <button ng-if="$ctrl.matchMode(['UPDATE'])" id="updateFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" ng-click="$ctrl.updateFilter();" data-ng-disabled="filter_form.$invalid">
+            <b>SAVE</b>
+        </button>
+        <button ng-if="$ctrl.matchMode(['CREATE', 'UPDATE'])" id="resetFilter" class="md-button md-default md-ink-ripple pull-right" type="button" ng-click="$ctrl.clearAndOpenFilterBlock(false);">
+            <b>CANCEL</b>
+        </button>
+        <button ng-if="$ctrl.matchMode(['UPDATE'])" id="deleteFilter" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" data-ng-really-message="Do you really want to delete the filter?" data-ng-really-click="$ctrl.deleteFilter($ctrl.filter.id);">
+            <b>DELETE</b>
+        </button>
+    </div>
+    <div class="p-tests-runs__title search-filter-body col-md-12 no-padding">
+        <md-card md-table zafira-background-theme="table" class="no-margin-h _md">
+            <div id="filter" class="md-row">
+                <div ng-class="{'disable-layer': $ctrl.isSearchActive()}"></div>
+                <div class="panel-body no-padding-t">
+                    <div layout="row" layout-xs="column" ng-show="$ctrl.filterBlockExpand">
+                        <div class="manage-chip" ng-click="$ctrl.clearAndOpenFilterBlock(true);">
+                            <md-chips class="filter-chip">
+                                <md-chip>
+                                    add filter
+                                    <div>
+                                        <md-icon class="material-icons">add</md-icon>
+                                    </div>
+                                </md-chip>
+                            </md-chips>
+                        </div>
+                        <md-chips class="filter-chip" ng-model="$ctrl.filters" md-removable="false" readonly="true">
+                            <!--TODO: for what this empty disabled input-->
+                            <input disabled>
+                            <md-chip-template>
+                                <div style="display: inline-block;"
+                                     ng-init="$ctrl.chipsCtrl = $mdChipsCtrl"
+                                     ng-click="$ctrl.searchByFilter($chip, $index)">
+                                    <span>{{$chip.name}}</span>
+                                </div>
+                                <div is-owner="{{ $chip.userId }}" user="{{ $ctrl.currentUser }}" style="display: inline-block; vertical-align: sub;">
+                                    <i class="material-icons custom-chip-action show-icon-on-hover" ng-click="$ctrl.selectFilterForEdit($chip);">edit</i>
+                                </div>
+                            </md-chip-template>
+                        </md-chips>
+                    </div>
+                </div>
+            </div>
+            <div id="filter-editor" ng-show="$ctrl.collapseFilter && $ctrl.filterBlockExpand">
+                <div ng-class="{'disable-layer': $ctrl.isFilterActive()}"></div>
+                <div class="panel-body">
+                    <form class="form-validation no-padding" id="filterForm" name="filter_form" ng-cloak>
+                        <div class="filter-text" layout="row" layout-xs="column">
+                            <div class="filter-name" layout-xs="column">
+                                <input id="filterName" type="text" class="form-control" placeholder="Name" flex="none" ng-model="$ctrl.filter.name" required/>
+                            </div>
+                            <div class="flex-auto" layout-xs="column">
+                                <input id="filterDescription" type="text" class="form-control" placeholder="Description" ng-model="$ctrl.filter.description" required/>
+                            </div>
+                            <md-switch id="filterState" has-any-role="['ROLE_ADMIN']" ng-model="$ctrl.filter.publicAccess" class="md-primary" aria-label="public access">
+                                <span ng-if="$ctrl.filter.publicAccess">Public</span>
+                                <span ng-if="!$ctrl.filter.publicAccess">Private</span>
+                            </md-switch>
+                        </div>
+                    </form>
+                    <div layout="row" layout-xs="column">
+                        <div class="filter-select" layout-sm="column" layout-xs="column" flex="none">
+                            <div layout-sm="row" layout-xs="column">
+                                <md-input-container class="filter-input-container select">
+                                    <md-select id="filterCriteria" ng-change="$ctrl.onFilterSliceUpdate('CRITERIA');" ng-model="$ctrl.currentCriteria.value" name="criteria" placeholder="CRITERIA">
+                                        <md-option ng-value><em>None</em></md-option>
+                                        <md-option class="filter-option" ng-repeat="criteria in $ctrl.subjectBuilder.criterias | orderBy:'name'" ng-value="criteria">
+                                            {{ criteria.name.split('_').join(' ') | lowercase }}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+                                <md-input-container class="filter-input-container select">
+                                    <md-select id="filterOperator" ng-change="$ctrl.onFilterSliceUpdate('OPERATOR');" ng-disabled="!$ctrl.currentCriteria.value" ng-model="$ctrl.currentOperator.value" name="operator" placeholder="OPERATOR">
+                                        <md-option ng-value><em>None</em></md-option>
+                                        <md-option class="filter-option" ng-repeat="op in $ctrl.currentCriteria.value.operators" ng-value="op">
+                                            {{ op.split('_').join(' ') | lowercase }}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+                            </div>
+                            <div layout="row">
+                                <md-input-container class="filter-input-container select value-input" ng-if="$ctrl.currentCriteria.type.indexOf('SELECT') >= 0">
+                                    <md-select ng-change="$ctrl.onFilterSliceUpdate('VALUE');" ng-disabled="!$ctrl.currentOperator.value"
+                                               ng-model="$ctrl.currentValue.value.value" name="value" placeholder="Value">
+                                        <md-option ng-value><em>None</em></md-option>
+                                        <md-option class="filter-option" ng-repeat="value in $ctrl.currentCriteria.value.values" ng-value="value">
+                                            {{ value.split('_').join(' ') | lowercase }}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+                                <div ng-if="$ctrl.currentOperator.type.indexOf('DATE') >= 0 || (!$ctrl.currentCriteria.type.length && !$ctrl.currentOperator.type.length)" class="filter-input-container value-input">
+                                    <input type="text" class="form-control" placeholder="Value" ng-disabled="!$ctrl.currentOperator.value"
+                                           ng-change="$ctrl.onFilterSliceUpdate('VALUE');" ng-model="$ctrl.currentValue.value" ng-if="!$ctrl.currentCriteria.type.length && !$ctrl.currentOperator.type.length"/>
+                                    <div ng-if="$ctrl.currentOperator.type.indexOf('DATE') >= 0">
+                                        <md-input-container class="date-picker-container no-padding filter-date pull-left no-margin" flex="auto">
+                                            <span>{{$ctrl.currentValue.value | date : 'dd MMM'}}</span>
+                                            <i class="material-icons md-18 date-picker-icon">today</i>
+                                        </md-input-container>
+                                        <md-date-range selected-template="TD" ng-model="$ctrl.selectedFilterRange" one-panel="true" auto-confirm="true" show-template="false" md-on-select="selectedDates = $dates; $ctrl.onSelect($dates)"></md-date-range>
+                                    </div>
+                                </div>
+                                <button ng-class="{'default-gray': !$ctrl.currentOperator.value || (!$ctrl.currentValue.value && $ctrl.currentCriteria.type.indexOf('DATE') === -1) || (!$ctrl.currentValue.value && $ctrl.currentCriteria.type.indexOf('DATE') >= 0 && $ctrl.currentOperator.type.indexOf('DATE') >= 0)}" ng-disabled="!$ctrl.currentOperator.value || (!$ctrl.currentValue.value && $ctrl.currentCriteria.type.indexOf('DATE') === -1) || (!$ctrl.currentValue.value && $ctrl.currentCriteria.type.indexOf('DATE') >= 0 && $ctrl.currentOperator.type.indexOf('DATE') >= 0)" ng-click="$ctrl.addChip()" id="add-button" class="quadro-btn default-gray">+</button>
+                            </div>
+                        </div>
+                        <div layout-sm="row" layout-xs="column">
+                            <md-chips class="filter-chip filter-chip-scope" ng-model="$ctrl.filter.subject.criterias" readonly="false" md-on-add="$ctrl.changeChip($chip)">
+                                <input disabled>
+                                <md-chip-template>
+                                            <span>
+                                            <strong>{{$chip.name.split('_').join(' ') | lowercase}}</strong>
+                                            <span class="chip-operator">{{ $ctrl.SYMBOLS[$chip.operator] }}</span>
+                                            <span ng-if="$ctrl.DATE_CRITERIAS.indexOf($chip.name) === -1 || $ctrl.DATE_CRITERIAS_PICKER_OPERATORS.indexOf($chip.operator) === -1">'{{ $chip.value }}'</span>
+                                            <span ng-if="$ctrl.DATE_CRITERIAS.indexOf($chip.name) !== -1 && $ctrl.DATE_CRITERIAS_PICKER_OPERATORS.indexOf($chip.operator) !== -1">'{{ $chip.value | date : 'MMM dd yyyy' }}'</span>
+                                            </span>
+                                </md-chip-template>
+                                <button md-chip-remove class="md-primary filter-slice-chip-button">
+                                    <md-icon aria-label="Close dialog">close</md-icon>
+                                </button>
+                            </md-chips>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <md-divider></md-divider>
+            <div id="search" class="md-row">
+                <div ng-class="{'disable-layer': $ctrl.isFilterActive()}"></div>
+                <div class="panel-body">
+                    <div ng-show="$ctrl.fastSearchBlockExpand" layout="row" layout-md="column" layout-sm="column" layout-xs="column">
+                        <div id="search-container" flex="auto">
+                            <div layout="row" layout-xs="column">
+                                <input type="text"
+                                       id="search-input"
+                                       class="form-control pull-left"
+                                       placeholder="Search items"
+                                       ng-model="$ctrl.fastSearch[$ctrl.getActiveSearchType()]"
+                                       ng-change="$ctrl.onSearchChange()"
+                                       ng-model-options="{updateOn: 'blur'}"
+                                       aria-label="Search items"
+                                       aria-describedby="basic-addon2">
+                                <div class="btn-check" layout-xs="row">
+                                    <button type="button" ng-class="{'default-gray': $ctrl.fastSearch['testSuite'] && $ctrl.fastSearch['testSuite'].length !== 0, 'active': $ctrl.getActiveSearchType() === 'testSuite'}" ng-click="$ctrl.selectSearchType('testSuite')" class="btn btn-default">Test Suite</button>
+                                    <button type="button" ng-class="{'default-gray': $ctrl.fastSearch['executionURL'] && $ctrl.fastSearch['executionURL'].length !== 0, 'active': $ctrl.getActiveSearchType() === 'executionURL'}" ng-click="$ctrl.selectSearchType('executionURL')" class="btn btn-default">Job URL</button>
+                                    <button type="button" ng-class="{'default-gray': $ctrl.fastSearch['appVersion'] && $ctrl.fastSearch['appVersion'].length !== 0, 'active': $ctrl.getActiveSearchType() === 'appVersion'}" ng-click="$ctrl.selectSearchType('appVersion')" class="btn btn-default"> App Version</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="search-select" layout="row" layout-sm="column" layout-xs="column">
+                            <div layout="row" layout-xs="column">
+                                <div layout="row">
+                                    <button class="quadro-btn pull-left reviewed"
+                                            flex="nogrow"
+                                            data-ng-class="{'label-blank': !$ctrl.searchParams.reviewed, 'label-primary': !!$ctrl.searchParams.reviewed}"
+                                            ng-click="$ctrl.searchParams.reviewed = !$ctrl.searchParams.reviewed; $ctrl.onChangeSearchCriteria('reviewed')"
+                                            flex="nogrow">R
+                                        <md-tooltip md-direction="bottom">Reviewed</md-tooltip>
+                                    </button>
+                                    <md-input-container class="searchable select pull-left no-padding" flex="nogrow">
+                                        <md-select id="searchStatus" ng-change="$ctrl.onChangeSearchCriteria('status')" ng-model="$ctrl.searchParams.status" name="status" placeholder="Status">
+                                            <md-option value="" disabled>Status</md-option>
+                                            <md-option ng-repeat="status in ::$ctrl.statuses" ng-value="::status">{{ status }}</md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                </div>
+                                <md-input-container class="searchable select pull-left no-padding no-margin-l" flex="grow">
+                                    <md-select id="searchEnv" ng-change="$ctrl.onChangeSearchCriteria('environment')" ng-model="$ctrl.searchParams.environment" name="environment" placeholder="Environment">
+                                        <md-option value="" disabled>Environment</md-option>
+                                        <md-option ng-repeat="env in $ctrl.environments" ng-value="env">{{env}}</md-option>
+                                    </md-select>
+                                </md-input-container>
+                                <md-input-container class="searchable select selectPlatform pull-left" flex="grow">
+                                    <md-select id="searchPlatform" ng-change="$ctrl.onChangeSearchCriteria('platform')" ng-model="$ctrl.searchParams.platform" name="platform" placeholder="Platform">
+                                        <md-option value="" disabled>Platform</md-option>
+                                        <md-option ng-repeat="platform in $ctrl.platforms" ng-value="platform">{{platform}}</md-option>
+                                    </md-select>
+                                </md-input-container>
+                            </div>
+                            <div layout="row">
+                                <md-input-container class="date-picker-container pull-left" flex="grow">
+                                    <span data-ng-if="!$ctrl.selectedRange.dateStart && !$ctrl.selectedRange.dateEnd"></span>
+                                    <span data-ng-if="$ctrl.selectedRange.dateStart && $ctrl.selectedRange.dateEnd && !$ctrl.isEqualDate()">{{$ctrl.selectedRange.dateStart | date : 'dd MMM'}} - </span>
+                                    <span>{{$ctrl.selectedRange.dateEnd | date : 'dd MMM'}}</span>
+                                    <md-button id="searchCalendar" ng-click="$ctrl.openDatePicker($event, true)"><i class="material-icons md-18">today</i></md-button>
+                                </md-input-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </md-card>
+    </div>
+</div>
