@@ -64,9 +64,9 @@
         ]]>
     </select>
 
-    <select id="getIntegrationInfoByNameAndTestRunCiRunId" resultMap="IntegrationInfo">
+    <select id="getTestInfoByTagNameAndTestRunCiRunId" resultMap="TestInfo">
         <![CDATA[
-        SELECT TG.VALUE, T.STATUS, T.MESSAGE, WI.JIRA_ID
+        SELECT TG.VALUE, T.ID, T.STATUS, T.MESSAGE, WI.JIRA_ID
         FROM TAGS TG
         LEFT JOIN TEST_TAGS TT
             ON TG.ID = TT.TAG_ID
@@ -79,8 +79,8 @@
         LEFT JOIN WORK_ITEMS WI
             ON TWI.WORK_ITEM_ID = WI.ID
         WHERE
-                TG.NAME = #{name} AND TR.CI_RUN_ID = #{ciRunId}
-        GROUP BY TG.VALUE, T.STATUS, T.MESSAGE, WI.JIRA_ID
+            TG.NAME = #{tagName} AND TR.CI_RUN_ID = #{testRunCiRunId}
+        GROUP BY TG.VALUE, T.ID, T.STATUS, T.MESSAGE, WI.JIRA_ID
         ]]>
     </select>
 
@@ -154,8 +154,9 @@
         <result column="TAG_CREATED_AT" property="createdAt"/>
     </resultMap>
 
-    <resultMap type="com.qaprosoft.zafira.models.db.IntegrationInfo" id="IntegrationInfo" autoMapping="false">
+    <resultMap type="com.qaprosoft.zafira.models.db.TestInfo" id="TestInfo" autoMapping="false">
         <result column="VALUE" property="tagValue"/>
+        <result column="ID" property="id"/>
         <result column="STATUS" property="status"/>
         <result column="MESSAGE" property="message"/>
         <result column="JIRA_ID" property="defectId"/>
