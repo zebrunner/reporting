@@ -51,8 +51,8 @@ public class NavigationTest extends AbstractTest {
 
 		UserMenu userMenu = dashboardPage.getHeader().clickUserMenuButton();
 		Assert.assertTrue(userMenu.isElementPresent(userMenu.getUserProfileButton(), 2), "User profile button is not present");
-		Assert.assertTrue(userMenu.isElementPresent(userMenu.getUserPerformanceButton(), 2), "User performance button is not present");
-		Assert.assertTrue(userMenu.isElementPresent(userMenu.getIntegrationsButton(), 2), "Integrations button is not present");
+//		Assert.assertTrue(userMenu.isElementPresent(userMenu.getUserPerformanceButton(), 2), "User performance button is not present");
+//		Assert.assertTrue(userMenu.isElementPresent(userMenu.getIntegrationsButton(), 2), "Integrations button is not present");
 		Assert.assertTrue(userMenu.isElementPresent(userMenu.getLogoutButton(), 2), "Logout button is not present");
 
 		Assert.assertTrue(dashboardPage.isElementPresent(dashboardPage.getHeader().getZafiraLogo(), 2), "Invalid zafira logo text in header");
