@@ -23,6 +23,7 @@ import com.qaprosoft.zafira.models.dto.tag.IntegrationDataType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TagService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
+import com.qaprosoft.zafira.services.util.URLResolver;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.Api;
@@ -52,6 +53,9 @@ public class TagsAPIController extends AbstractController
     @Autowired
     private TestRunService testRunService;
 
+    @Autowired
+    private URLResolver urlResolver;
+
     @ResponseStatusDetails
     @ApiOperation(value = "Get integration info", nickname = "getTestIntegrationInfo", code = 200, httpMethod = "GET", response = IntegrationDataType.class)
     @ResponseStatus(HttpStatus.OK)
@@ -76,6 +80,7 @@ public class TagsAPIController extends AbstractController
             integrationData.setCreatedAfter(testRun.getCreatedAt());
             integrationData.setEnv(testRun.getEnv());
             integrationData.setTestRunId(testRun.getId().toString());
+            integrationData.setZafiraServiceUrl(urlResolver.buildWebURL());
 
             //ConfigXML parsing for TestRunName generation
             Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());

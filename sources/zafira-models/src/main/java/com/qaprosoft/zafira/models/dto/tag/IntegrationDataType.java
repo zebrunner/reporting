@@ -22,6 +22,7 @@ public class IntegrationDataType
     private Date startedAt;
     private Date finishedAt;
     private Map<String, String> customParams = new HashMap<>();
+    private String zafiraServiceUrl;
 
     public String getProjectId() {
         return projectId;
@@ -111,4 +112,13 @@ public class IntegrationDataType
         this.customParams = customParams;
     }
 
+    public String getZafiraServiceUrl()
+    {
+        return zafiraServiceUrl;
+    }
+
+    public void setZafiraServiceUrl(String zafiraServiceUrl)
+    {
+        this.zafiraServiceUrl = zafiraServiceUrl;
+    }
 }
