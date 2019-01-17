@@ -31,14 +31,14 @@ public class NavigationTest extends AbstractTest {
 		DashboardPage dashboardPage = dashboardTabMenu.clickDashboardByName("General");
 		Assert.assertTrue(dashboardPage.isOpened(), "Dashboard page is not opened");
 
-		TestCasePage testCasePage = dashboardPage.getNavbar().clickTestCasesTab();
-		Assert.assertTrue(testCasePage.isOpened(), "Test cases page not opened!");
+//		TestCasePage testCasePage = dashboardPage.getNavbar().clickTestCasesTab();
+//		Assert.assertTrue(testCasePage.isOpened(), "Test cases page not opened!");
 
 		UserPage userPage = dashboardPage.getNavbar().clickUsersTab();
 		Assert.assertTrue(userPage.isOpened(), "Test cases page not opened!");
 
-		MonitorPage monitorPage = dashboardPage.getNavbar().clickMonitorsTab();
-		Assert.assertTrue(monitorPage.isOpened(), "Test cases page not opened!");
+//		MonitorPage monitorPage = dashboardPage.getNavbar().clickMonitorsTab();
+//		Assert.assertTrue(monitorPage.isOpened(), "Test cases page not opened!");
 	}
 
 	@Test(groups = {"acceptance", "navigation"})

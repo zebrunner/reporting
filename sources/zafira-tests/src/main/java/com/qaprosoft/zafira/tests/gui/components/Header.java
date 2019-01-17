@@ -21,7 +21,7 @@ public class Header extends AbstractUIObject
 	@FindBy(xpath = "//div[preceding-sibling::header]/md-menu-content[.//*[text() = 'Clear']]")
 	private ProjectFilterMenu projectFilterMenu;
 
-	@FindBy(xpath = "//div[preceding-sibling::header]/md-menu-content[.//*[text() = 'My profile']]")
+	@FindBy(xpath = "//div[preceding-sibling::header]/md-menu-content[.//*[text() = 'Profile']]")
 	private UserMenu userMenu;
 
 	@FindBy(css = ".logo-icon img")
