@@ -1087,7 +1087,7 @@ public class  ZafiraClient
 			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
 			response.setStatus(clientRS.getStatus());
-			if (clientRS.getStatus() == 200)
+			if (clientRS.getStatus() == 200 && clientRS.hasEntity())
 			{
 				response.setObject(clientRS.getEntity(SessionCredentials.class));
 			}
