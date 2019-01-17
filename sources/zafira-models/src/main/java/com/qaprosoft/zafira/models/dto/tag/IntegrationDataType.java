@@ -1,7 +1,7 @@
 package com.qaprosoft.zafira.models.dto.tag;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.qaprosoft.zafira.models.db.IntegrationInfo;
+import com.qaprosoft.zafira.models.db.TestInfo;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -9,13 +9,15 @@ import java.util.List;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class IntegrationType {
+public class IntegrationDataType
+{
 
     private String projectId;
     private String suiteId;
-    private List<IntegrationInfo> integrationInfo;
+    private List<TestInfo> testInfo;
     private String testRunName;
-    private String platform;
+    private String testRunId;
+    private String env;
     private Date createdAfter;
     private Date startedAt;
     private Date finishedAt;
@@ -37,12 +39,12 @@ public class IntegrationType {
         this.suiteId = suiteId;
     }
 
-    public List<IntegrationInfo> getIntegrationInfo() {
-        return integrationInfo;
+    public List<TestInfo> getTestInfo() {
+        return testInfo;
     }
 
-    public void setIntegrationInfo(List<IntegrationInfo> integrationInfo) {
-        this.integrationInfo = integrationInfo;
+    public void setTestInfo(List<TestInfo> testInfo) {
+        this.testInfo = testInfo;
     }
 
     public String getTestRunName() {
@@ -53,14 +55,24 @@ public class IntegrationType {
         this.testRunName = testRunName;
     }
 
-    public String getPlatform()
+    public String getTestRunId()
     {
-        return platform;
+        return testRunId;
     }
 
-    public void setPlatform(String platform)
+    public void setTestRunId(String testRunId)
     {
-        this.platform = platform;
+        this.testRunId = testRunId;
+    }
+
+    public String getEnv()
+    {
+        return env;
+    }
+
+    public void setEnv(String env)
+    {
+        this.env = env;
     }
 
     public Date getCreatedAfter() {

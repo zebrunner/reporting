@@ -15,11 +15,10 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
-public class IntegrationInfo {
-
-    private static final long serialVersionUID = -2354000459687721395L;
-
+public class TestInfo
+{
     private String tagValue;
+    private String id;
     private String status;
     private String message;
     private String defectId;
@@ -30,6 +29,16 @@ public class IntegrationInfo {
 
     public void setTagValue(String tagValue) {
         this.tagValue = tagValue;
+    }
+
+    public String getId()
+    {
+        return id;
+    }
+
+    public void setId(String id)
+    {
+        this.id = id;
     }
 
     public String getStatus() {
