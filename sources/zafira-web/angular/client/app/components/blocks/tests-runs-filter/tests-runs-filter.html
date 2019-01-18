@@ -1,7 +1,7 @@
 <div>
     <div class="p-tests-runs__section _filters row ui-section no-margin">
-        <div ng-if="$ctrl.windowWidthService.windowWidth < $ctrl.mobileBreakpoint" class="fixed-search-column col-md-10 no-padding">
-            <div class="search-button"  role="button" ng-class="{'active': $ctrl.isSearchActive() && !$ctrl.collapseNewFilter}" ng-show="!$ctrl.isFilterActive()" ng-click="$ctrl.clearAndOpenNewFilterBlock()">
+        <div class="fixed-search-column col-md-12 no-padding">
+            <div ng-if="$ctrl.windowWidthService.windowWidth < $ctrl.mobileBreakpoint" class="search-button"  role="button" ng-class="{'active': $ctrl.isSearchActive() && !$ctrl.collapseNewFilter}" ng-show="!$ctrl.isFilterActive()" ng-click="$ctrl.clearAndOpenNewFilterBlock()">
                 <i class="material-icons">
                     search
                 </i>
@@ -27,7 +27,7 @@
         </div>
 
 
-        <div class="p-tests-runs__title search-filter-body col-md-12 no-padding">
+        <div class="search-filter-body col-md-12 no-padding">
             <md-card md-table zafira-background-theme="table" class="no-margin-h _md">
                 <div id="filter" class="md-row">
                     <div class="panel-body no-padding-t" ng-if="$ctrl.windowWidthService.windowWidth >= $ctrl.mobileBreakpoint">

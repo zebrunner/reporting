@@ -27,7 +27,11 @@
                     </div>
                 </span>
             </div>
-            <i class="material-icons back" ng-if="$ctrl.singleMode">keyboard_backspace</i>
+            <div ng-if="$ctrl.singleMode" name="testRunBack" class="test-run-card__cell _back">
+                <md-button name="testRunBackBtn" aria-label="Go back" class="md-icon-button" ng-click="$ctrl.onBackClick()">
+                    <md-icon class="material-icons">keyboard_backspace</md-icon>
+                </md-button>
+            </div>
             <div name="testRunInfo" class="test-run-card__cell _info">
                 <div class="test-run-card__title-wrapper">
                     <div class="test-run-card__title">
@@ -275,7 +279,7 @@
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>
-                <div class="info-button" ng-click="$ctrl.showDetails(true)">
+                <div class="info-button" ng-if="$ctrl.singleMode" ng-click="$ctrl.showDetails(true)">
                     <i class="material-icons">
                         error_outline
                     </i>

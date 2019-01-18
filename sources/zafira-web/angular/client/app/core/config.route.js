@@ -209,6 +209,9 @@
                         controller: 'TestsRunsController',
                         controllerAs: '$ctrl',
                         bindToController: true,
+                        params: {
+                            activeTestRunId: null
+                        },
                         data: {
                             requireLogin: true,
                             classes: 'p-tests-runs'
@@ -229,6 +232,11 @@
 
                                 return testsRunsService.fetchTestRuns(force);
                             }],
+                            activeTestRunId: ['$stateParams', '$q', function($stateParams, $q) { //TODO: use to implement highlighting opened tesRun
+                                const id = $stateParams.activeTestRunId ? $stateParams.activeTestRunId : undefined;
+
+                                return $q.resolve(id);
+                            }]
                         }
                     })
                     .state('tests/runs/info', {

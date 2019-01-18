@@ -50,6 +50,7 @@
                     checkFilePresence: checkFilePresence,
                     downloadApplication: downloadApplication,
                     goToTestRun: goToTestRun,
+                    onBackClick: onBackClick,
                 };
 
                 vm.$onInit = init;
@@ -112,6 +113,10 @@
 
                 function goToTestRun() {
                     $state.go('tests/run', {testRunId: vm.testRun.id, testRun: vm.testRun});
+                }
+
+                function onBackClick() {
+                    $state.go('tests/runs', {activeTestRunId: vm.testRun.id});
                 }
 
                 function copyLink() {
