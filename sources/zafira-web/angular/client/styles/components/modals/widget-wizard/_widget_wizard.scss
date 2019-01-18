@@ -8,10 +8,16 @@ $wizard-white:          #ffffff;
 }
 
 .widget-wizard {
+    > .md-dialog-content {
+        > *[ng-transclude] {
+            overflow: hidden !important;
+        }
+    }
     &_container {
         min-height: 576px !important;
+        min-width: 300px !important;
         height: 576px;
-        overflow-y: scroll;
+        overflow-y: auto !important;
         padding: 34px 8px 34px 24px !important;
 
         &_title {
@@ -157,17 +163,25 @@ $wizard-white:          #ffffff;
 
     &_container-helper {
         overflow-y: hidden;
-        padding: 0 26px;
+        padding-left: 0 !important;
         display: flex;
         align-items: center;
+        min-width: 240px;
         &_picture {
-            width: 228px;
+            width: 100%;//228px;
             min-height: 180px;
 
             &_item {
                 height: 149px;
                 margin-bottom: 18px;
-                padding: 20px;
+                //padding: 20px;
+
+                *[data-echarts] {
+                    margin: auto !important;
+                    > div {
+                        margin: auto !important;
+                    }
+                }
             }
             &_caption {
                 font-size: 12px;
