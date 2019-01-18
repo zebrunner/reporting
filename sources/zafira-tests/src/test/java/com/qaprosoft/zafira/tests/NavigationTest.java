@@ -31,14 +31,14 @@ public class NavigationTest extends AbstractTest {
 		DashboardPage dashboardPage = dashboardTabMenu.clickDashboardByName("General");
 		Assert.assertTrue(dashboardPage.isOpened(), "Dashboard page is not opened");
 
-		TestCasePage testCasePage = dashboardPage.getNavbar().clickTestCasesTab();
-		Assert.assertTrue(testCasePage.isOpened(), "Test cases page not opened!");
+//		TestCasePage testCasePage = dashboardPage.getNavbar().clickTestCasesTab();
+//		Assert.assertTrue(testCasePage.isOpened(), "Test cases page not opened!");
 
 		UserPage userPage = dashboardPage.getNavbar().clickUsersTab();
 		Assert.assertTrue(userPage.isOpened(), "Test cases page not opened!");
 
-		MonitorPage monitorPage = dashboardPage.getNavbar().clickMonitorsTab();
-		Assert.assertTrue(monitorPage.isOpened(), "Test cases page not opened!");
+//		MonitorPage monitorPage = dashboardPage.getNavbar().clickMonitorsTab();
+//		Assert.assertTrue(monitorPage.isOpened(), "Test cases page not opened!");
 	}
 
 	@Test(groups = {"acceptance", "navigation"})
@@ -51,8 +51,8 @@ public class NavigationTest extends AbstractTest {
 
 		UserMenu userMenu = dashboardPage.getHeader().clickUserMenuButton();
 		Assert.assertTrue(userMenu.isElementPresent(userMenu.getUserProfileButton(), 2), "User profile button is not present");
-		Assert.assertTrue(userMenu.isElementPresent(userMenu.getUserPerformanceButton(), 2), "User performance button is not present");
-		Assert.assertTrue(userMenu.isElementPresent(userMenu.getIntegrationsButton(), 2), "Integrations button is not present");
+//		Assert.assertTrue(userMenu.isElementPresent(userMenu.getUserPerformanceButton(), 2), "User performance button is not present");
+//		Assert.assertTrue(userMenu.isElementPresent(userMenu.getIntegrationsButton(), 2), "Integrations button is not present");
 		Assert.assertTrue(userMenu.isElementPresent(userMenu.getLogoutButton(), 2), "Logout button is not present");
 
 		Assert.assertTrue(dashboardPage.isElementPresent(dashboardPage.getHeader().getZafiraLogo(), 2), "Invalid zafira logo text in header");
@@ -61,9 +61,9 @@ public class NavigationTest extends AbstractTest {
 
 		dashboardPage.clickOutside();
 
-		TestCasePage testCasePage = dashboardPage.getNavbar().clickTestCasesTab();
-		dashboardPage.waitUntilPageIsLoaded();
-		Assert.assertTrue(testCasePage.isOpened(), "Test case page is not opened");
+//		TestCasePage testCasePage = dashboardPage.getNavbar().clickTestCasesTab();
+//		dashboardPage.waitUntilPageIsLoaded();
+//		Assert.assertTrue(testCasePage.isOpened(), "Test case page is not opened");
 
 		TestRunPage testRunPage = dashboardPage.getNavbar().goToTestRunPage();
 		dashboardPage.waitUntilPageIsLoaded();
@@ -72,10 +72,14 @@ public class NavigationTest extends AbstractTest {
 		UserPage userPage = dashboardPage.getNavbar().clickUsersTab();
 		dashboardPage.waitUntilPageIsLoaded();
 		Assert.assertTrue(userPage.isOpened(), "User page is not opened");
+		
+		IntegrationsPage integrationsPage = dashboardPage.getNavbar().clickIntegrationsTab();
+		integrationsPage.waitUntilPageIsLoaded();
+		Assert.assertTrue(integrationsPage.isOpened(), "Integrations page is not opened");
 
-		MonitorPage monitorPage = dashboardPage.getNavbar().clickMonitorsTab();
-		dashboardPage.waitUntilPageIsLoaded();
-		Assert.assertTrue(monitorPage.isOpened(), "Monitor page is not opened");
+//		MonitorPage monitorPage = dashboardPage.getNavbar().clickMonitorsTab();
+//		dashboardPage.waitUntilPageIsLoaded();
+//		Assert.assertTrue(monitorPage.isOpened(), "Monitor page is not opened");
 
 		dashboardPage.getHeader().getZafiraLogo().click();
 		dashboardPage.waitUntilPageIsLoaded();
@@ -103,11 +107,11 @@ public class NavigationTest extends AbstractTest {
 		UserProfilePage userProfilePage = dashboardPage.getHeader().goToUserProfilePage();
 		Assert.assertTrue(userProfilePage.isOpened(), "User profile page not opened");
 
-		IntegrationsPage integrationsPage = dashboardPage.getHeader().goToIntegrationsPage();
-		Assert.assertTrue(integrationsPage.isOpened(), "Integrations page not opened");
+//		IntegrationsPage integrationsPage = dashboardPage.getHeader().goToIntegrationsPage();
+//		Assert.assertTrue(integrationsPage.isOpened(), "Integrations page not opened");
 
-		UserPerformancePage userPerformancePage = dashboardPage.getHeader().goToUserPerformancePage();
-		Assert.assertTrue(userPerformancePage.isOpened(), "User performance page not opened");
+//		UserPerformancePage userPerformancePage = dashboardPage.getHeader().goToUserPerformancePage();
+//		Assert.assertTrue(userPerformancePage.isOpened(), "User performance page not opened");
 
 		LoginPage loginPage = dashboardPage.getHeader().logOut();
 		Assert.assertTrue(loginPage.isOpened(), "Login page not opened");

@@ -7,6 +7,7 @@ import org.openqa.selenium.support.FindBy;
 
 import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
 import com.qaprosoft.zafira.tests.gui.components.modals.CreateTestRunViewModalWindow;
+import com.qaprosoft.zafira.tests.gui.pages.IntegrationsPage;
 import com.qaprosoft.zafira.tests.gui.pages.MonitorPage;
 import com.qaprosoft.zafira.tests.gui.pages.TestCasePage;
 import com.qaprosoft.zafira.tests.gui.pages.TestRunPage;
@@ -36,6 +37,9 @@ public class Navbar extends AbstractUIObject
 
 	@FindBy(xpath = "//i[following-sibling::*[text() = 'Monitors']]")
 	private WebElement monitorsTab;
+	
+	@FindBy(xpath = "//i[following-sibling::*[text() = 'Integrations']]")
+	private WebElement integrationsTab;
 
 	@FindBy(xpath = "//*[contains(@class, 'menu-btn')]")
 	private WebElement mobileMenuButton;
@@ -121,6 +125,12 @@ public class Navbar extends AbstractUIObject
 	{
 		this.monitorsTab.click();
 		return new MonitorPage(driver);
+	}
+	
+	public IntegrationsPage clickIntegrationsTab()
+	{
+		this.integrationsTab.click();
+		return new IntegrationsPage(driver);
 	}
 
 	public DashboardTabMenu getDashboardTabMenu()
