@@ -3216,7 +3216,7 @@ $light-inprogress: #68c9fd;
     }
     &_helper {
         overflow: hidden;
-        position: absolute;
+        position: absolute !important;
         top: 0;
         left: 0;
         z-index: 1;
