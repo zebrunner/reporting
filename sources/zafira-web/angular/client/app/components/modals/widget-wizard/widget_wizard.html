@@ -7,7 +7,7 @@
         </div>
         <div class="widget-wizard_container_elements" ng-switch="card.index">
             <div ng-switch-when="1">
-                <zf-radio-button class="widget-wizard_container_elements_item" ng-repeat="template in templates track by $index" on-change="onChange();" ng-model="widget.template" value="template">
+                <zf-radio-button class="widget-wizard_container_elements_item" ng-repeat="template in templates track by $index" on-change="onChange();" ng-model="widget.widgetTemplate" value="template">
                     <div class="widget-wizard_container_elements_item_title"><show-part text="template.name" limit="50"></show-part></div>
                     <div class="widget-wizard_container_elements_item_description"><show-part text="template.description" limit="150"></show-part></div>
                     <div class="widget-wizard_container_elements_item_icon">
@@ -15,27 +15,37 @@
                     </div>
                 </zf-radio-button>
             </div>
-            <div class="zf-display-table" ng-switch-when="2">
-                <div class="widget-wizard_container_elements_input" ng-repeat="(paramName, paramValue) in widget.template.paramsConfigObject track by $index" ng-switch="paramValue.type">
-                    <div class="zf-label">{{paramName}}</div>
-                    <div ng-switch-default>
-                        <zf-input-container>
-                            <input ng-attr-type="{{paramValue.type === 'int' ? 'number' : 'text'}}" ng-model="widget.template.params[paramName]" placeholder="{{paramName}}" ng-change="onChange()"/>
-                        </zf-input-container>
+            <div ng-switch-when="2">
+                <ng-form class="zf-display-table" name="params">
+                    <div class="widget-wizard_container_elements_input" ng-repeat="(paramName, paramValue) in widgetBuilder.paramsConfigObject track by $index" ng-switch="paramValue.type">
+                        <div class="zf-label">{{paramName}}</div>
+                        <div ng-switch-default>
+                            <zf-input-container>
+                                <input ng-attr-type="{{paramValue.type === 'int' ? 'number' : 'text'}}" ng-attr-name="{{paramName}}" ng-model="paramValue.value" placeholder="{{paramName}}" ng-change="buildConfigs(widget_form.params)" ng-required="paramValue.required === true"/>
+                                <div ng-messages="widget_form.params[paramName].$error" ng-if="widget_form.params[paramName].$dirty">
+                                    <div ng-message="required">{{paramName}} required</div>
+                                </div>
+                            </zf-input-container>
+                        </div>
+                        <div ng-switch-when="array">
+                            <zf-input-container>
+                                <md-input-container>
+                                    <label>{{paramName}}</label>
+                                    <md-select ng-model="paramValue.value" ng-change="buildConfigs(widget_form.params)" ng-if="paramValue.multiple !== true" ng-required="paramValue.required === true">
+                                        <md-option ng-repeat="val in paramValue.values" ng-value="val">
+                                            {{val}}
+                                        </md-option>
+                                    </md-select>
+                                    <md-select ng-model="paramValue.value" ng-change="buildConfigs(widget_form.params)" ng-if="paramValue.multiple === true" ng-required="paramValue.required === true" multiple>
+                                        <md-option ng-repeat="val in paramValue.values" ng-value="val">
+                                            {{val}}
+                                        </md-option>
+                                    </md-select>
+                                </md-input-container>
+                            </zf-input-container>
+                        </div>
                     </div>
-                    <div ng-switch-when="array">
-                        <zf-input-container>
-                            <md-input-container>
-                                <label>{{paramName}}</label>
-                                <md-select ng-model="widget.template.params[paramName]" ng-change="onChange()">
-                                    <md-option ng-repeat="val in paramValue.values" ng-value="val">
-                                        {{val}}
-                                    </md-option>
-                                </md-select>
-                            </md-input-container>
-                        </zf-input-container>
-                    </div>
-                </div>
+                </ng-form>
             </div>
             <div ng-switch-when="3">
                 <div class="widget-wizard_container_elements_personal">
@@ -64,10 +74,10 @@
                         </zf-input-container>
                     </ng-form>
                 </div>
-                <div class="widget-wizard_container_elements_additional">
+                <div class="widget-wizard_container_elements_additional" ng-if="widgetBuilder.legendConfigObject.legend">
                     <zf-input-container>
                         <label>Setting the legend</label>
-                        <md-checkbox ng-model="widget.template.legendConfigObject.legendItems[legendName]" ng-change="onLegendChange(legendName);" ng-repeat="legendName in widget.template.legendConfigObject.legend track by $index" aria-label="checkbox">{{legendName}}</md-checkbox>
+                        <md-checkbox ng-model="widgetBuilder.legendConfigObject.legendItems[legendName]" ng-change="onLegendChange(legendName);" ng-repeat="legendName in widgetBuilder.legendConfigObject.legend track by $index" aria-label="checkbox">{{legendName}}</md-checkbox>
                     </zf-input-container>
                 </div>
             </div>
@@ -75,24 +85,27 @@
     </zf-modal-content-container>
     <zf-modal-helper-container class="widget-wizard_container-helper">
         <div class="widget-wizard_container-helper_picture">
-            <div class="widget-wizard_container-helper_picture_item" ng-if="widget.template.name">
-                <div id="chart" data-echarts dataset="widget.template.data.dataset" force-watch="true" with-legend="false" chart-actions="chartActions" config="echartConfig" data-options="widget.template.model" style="height: 149px;"></div>
+            <div class="widget-wizard_container-helper_picture_item" ng-if="widget.data.dataset">
+                <div id="chart" data-echarts dataset="widget.data.dataset" force-watch="true" with-legend="false" chart-actions="chartActions" config="echartConfig" data-options="widget.widgetTemplate.model" style="height: 149px;"></div>
             </div>
-            <div class="widget-wizard_container-helper_picture_caption" ng-if="widget.template.name">
-                {{widget.template.name}}
+            <div class="widget-wizard_container-helper_picture_caption" ng-if="widget.widgetTemplate.name">
+                {{widget.widgetTemplate.name}}
             </div>
-            <div class="widget-wizard_container-helper_picture_empty-caption" ng-if="! widget.template.name">
+            <div class="widget-wizard_container-helper_picture_empty-caption" ng-if="! widget.data.dataset">
                 Choose template
             </div>
         </div>
         <div class="widget-wizard_container-helper_actions">
-            <md-button class="zf-button zf-info" ng-click="back();" ng-if="! isFirstCard()">
+            <md-button class="zf-button zf-info" ng-click="back();" ng-if="! isFirstCard() && ! (widget.id && getCurrentCard() === 1)">
                 Back
             </md-button>
-            <md-button class="md-raised btn-w-md md-primary pull-right" ng-click="next();" ng-if="! isLastCard()" ng-disabled="card.nextDisabled()">
+            <md-button class="md-raised btn-w-md md-primary pull-right" ng-click="next();" ng-if="! isLastCard()" ng-disabled="card.nextDisabled(widget_form)">
                 Next
             </md-button>
-            <md-button class="md-raised btn-w-md md-primary pull-right" ng-click="saveWidget();" ng-if="isLastCard()" ng-disabled="widget_form.info.$invalid">
+            <md-button class="md-raised btn-w-md md-primary pull-right" ng-click="saveWidget();" ng-if="isLastCard() && ! widget.id" ng-disabled="widget_form.info.$invalid">
+                Save
+            </md-button>
+            <md-button class="md-raised btn-w-md md-primary pull-right" ng-click="updateWidget();" ng-if="isLastCard() && widget.id" ng-disabled="widget_form.info.$invalid">
                 Save
             </md-button>
         </div>

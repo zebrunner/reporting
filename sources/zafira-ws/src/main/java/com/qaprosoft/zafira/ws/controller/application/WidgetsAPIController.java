@@ -132,9 +132,17 @@ public class WidgetsAPIController extends AbstractController
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_WIDGETS')")
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Widget updateWidget(@RequestBody Widget widget) throws ServiceException
+	public @ResponseBody Widget updateWidget(@RequestBody WidgetType widget) throws ServiceException
 	{
-		return widgetService.updateWidget(widget);
+		if(widget.getWidgetTemplate() != null) {
+			WidgetTemplate widgetTemplate = widgetTemplateService.getWidgetTemplateById(widget.getWidgetTemplate().getId());
+			if(widgetTemplate == null) {
+				throw new ServiceException("Unable to update widget. Widget template does not exist");
+			}
+			widgetTemplateService.executeWidgetTemplateParamsSQLQueries(widgetTemplate);
+			widget.setWidgetTemplate(mapper.map(widgetTemplate, WidgetTemplateType.class));
+		}
+		return widgetService.updateWidget(mapper.map(widget, Widget.class));
 	}
 
 	@ResponseStatusDetails
@@ -242,7 +250,7 @@ public class WidgetsAPIController extends AbstractController
 		}
 		List<Map<String, Object>> resultList;
 		try {
-			resultList = widgetService.executeSQL(widgetTemplate.getSql(), sqlExecuteType.getParamsConfig());
+			resultList = widgetService.executeSQL(widgetTemplate.getSql(), sqlExecuteType.getParamsConfig(), true);
 		} catch (Exception e) {
 			if(stackTraceRequired) {
 				resultList = new ArrayList<>();

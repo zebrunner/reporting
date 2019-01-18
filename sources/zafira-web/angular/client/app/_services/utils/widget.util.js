@@ -7,61 +7,54 @@
 
     function WidgetUtilService($location, ProjectProvider) {
 
-        var dashboard;
-        var widget;
-        var userId;
-
         return {
             build: build,
-            buildLegend: buildLegend,
-            init: function(widget, dashboard, userId) {
-                this.dashboard = dashboard;
-                this.widget = widget;
-                this.userId = userId;
-
-                if(! widget) {
-                    throw new Error('Widget instance is null.');
-                }
-            }
+            buildLegend: buildLegend
         };
 
         function build(widget, dashboard, userId) {
-            var config = {
-                paramsObject: JSON.parse(widget.template.paramsConfig),
-                params: {}
-            };
+            var config = JSON.parse(widget.widgetTemplate.paramsConfig);
             var envParams = getENVParams(dashboard, userId);
-            angular.forEach(config.paramsObject, function (paramValue, paramName) {
-                var type = config.paramsObject[paramName].value ? getType(config.paramsObject[paramName].value) :
-                    config.paramsObject[paramName].values && config.paramsObject[paramName].values.length ? 'array' : undefined;
+            angular.forEach(config, function (paramValue, paramName) {
+                var type = config[paramName].value ? getType(config[paramName].value) :
+                    config[paramName].values && config[paramName].values.length ? 'array' : undefined;
                 var overrideWithEnvParams = !! envParams[paramName];
-                var value = type === 'array' ? config.paramsObject[paramName].values[0] : config.paramsObject[paramName].value;
+                var value;
+                if(widget.id && widget.paramsConfig && widget.paramsConfig.length) {
+                    var conf = JSON.parse(widget.paramsConfig);
+                    value = conf[paramName] ?  conf[paramName] :  type === 'array' ? config[paramName].multiple ? config[paramName].values : config[paramName].values[0] : config[paramName].value;
+                } else {
+                    value = type === 'array' ? config[paramName].multiple ? config[paramName].values : config[paramName].values[0] : config[paramName].value;
+                }
                 value = overrideWithEnvParams ?
-                    type === 'array' &&  config.paramsObject[paramName].values.indexOf(envParams[paramName]) !== -1 ?
+                    type === 'array' &&  config[paramName].values.indexOf(envParams[paramName]) !== -1 ?
                         getValueByType(envParams[paramName], getType(value))
                         : value
                     : value;
                 if(type) {
                     setParameter(config, paramName, value);
-                    config.paramsObject[paramName].type = type;
+                    config[paramName].type = type;
                 }
             });
             return config;
         };
 
         function buildLegend(widget) {
-            var legendConfig = JSON.parse(widget.template.legendConfig);
-            legendConfig.legendItems = {};
-            angular.forEach(legendConfig.legend, function (legendName) {
-                legendConfig.legendItems[legendName] = true;
-            });
+            var legendConfig = {};
+            if(widget.widgetTemplate.legendConfig) {
+                legendConfig.legend = JSON.parse(widget.widgetTemplate.legendConfig).legend;
+                legendConfig.legendItems = {};
+                var legendConfigObject = JSON.parse(widget.legendConfig);
+                angular.forEach(legendConfig.legend, function (legendName) {
+                    legendConfig.legendItems[legendName] = widget.id && legendConfigObject[legendName] !== undefined ? legendConfigObject[legendName] : true;
+                });
+            }
             return legendConfig;
         };
 
         function setParameter(config, key, value) {
-            config.paramsObject[key] = config.paramsObject[key] || {};
-            config.paramsObject[key].value = value;
-            config.params[key] = value;
+            config[key] = config[key] || {};
+            config[key].value = value;
         };
 
         // Get query params merged by hierarchy: cookies.projects -> dashboard.attributes -> dashboardName -> currentUserId -> queryParams

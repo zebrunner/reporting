@@ -3,11 +3,13 @@
 
     angular
         .module('app.dashboard')
-        .controller('DashboardController', ['$scope', '$rootScope', '$screenshot', '$q', '$timeout', '$interval', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', '$mdToast', '$widget', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
+        .controller('DashboardController', ['$scope', '$rootScope', '$screenshot', '$q', '$timeout', '$interval', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', '$mdToast', '$widget', '$mapper', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
 
-    function DashboardController($scope, $rootScope, $screenshot, $q, $timeout, $interval, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, $mdToast, $widget, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
+    function DashboardController($scope, $rootScope, $screenshot, $q, $timeout, $interval, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, $mdToast, $widget, $mapper, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
 
         $scope.currentUserId = $location.search().userId;
+
+        $scope.ECHART_TYPES = ['echart', 'PIE', 'LINE', 'BAR', 'TABLE', 'OTHER'];
 
         $scope.pristineWidgets = [];
 
@@ -62,18 +64,18 @@
                 params = setQueryParams(dashboard.title);
                 func = DashboardService.ExecuteWidgetSQL;
             } else {
-                if(! widget.paramsConfigObject && ! widget.params) {
-                    widget.template = widget.widgetTemplate;
-                    var paramsConfig = $widget.build(widget, dashboard, $scope.currentUserId);
-                    widget.legendConfigObject = JSON.parse(widget.legendConfig);
+                widget.builder = widget.builder || {};
+                if(! widget.builder.paramsConfigObject) {
+                    widget.builder.paramsConfigObject = $widget.build(widget, dashboard, $scope.currentUserId);
+                    widget.builder.legendConfigObject = JSON.parse(widget.legendConfig);
                     applyLegend(widget);
-                    widget.paramsConfigObject = paramsConfig.paramsObject;
-                    widget.params = paramsConfig.params;
                 }
 
                 sqlAdapter = {
                     "templateId": widget.widgetTemplate.id,
-                    "paramsConfig": widget.params
+                    "paramsConfig": $mapper.map(widget.builder.paramsConfigObject, function(value) {
+                        return value.value;
+                    })
                 };
 
                 params = {'stackTraceRequired': false};
@@ -107,7 +109,7 @@
 
         function applyLegend(widget) {
             widget.chartActions = widget.chartActions || [];
-            angular.forEach(widget.legendConfigObject, function (value, legendName) {
+            angular.forEach(widget.builder.legendConfigObject, function (value, legendName) {
                 widget.chartActions.push({type: value ? 'legendSelect' : 'legendUnSelect', name: legendName});
             });
         };
@@ -397,7 +399,15 @@
                 });
         };
 
-        $scope.showWidgetWizardDialog = function (event, widget, isNew, dashboard) {
+        $scope.showNeededWidgetModal = function(event, widget, isNew, dashboard) {
+            if($scope.ECHART_TYPES.indexOf(widget.type) !== -1 && widget.widgetTemplate) {
+                $scope.showWidgetWizardDialog(event, widget, dashboard);
+            } else {
+                $scope.showWidgetDialog(event, widget, isNew, dashboard);
+            }
+        };
+
+        $scope.showWidgetWizardDialog = function (event, widget, dashboard) {
             $mdDialog.show({
                 controller: 'WidgetWizardController',
                 templateUrl: 'app/components/modals/widget-wizard/widget_wizard.html',
@@ -407,20 +417,21 @@
                 autoWrap: false,
                 locals: {
                     widget: widget,
-                    isNew: isNew,
                     dashboard: dashboard,
                     currentUserId: $scope.currentUserId
                 }
             })
                 .then(function (rs) {
-                    console.log(rs.widget);
                     switch(rs.action) {
                         case 'CREATE':
                             $scope.widgets.push(rs.widget);
                             updateWidgetsToAdd();
                             break;
                         case 'UPDATE':
+                            var index = $scope.dashboard.widgets.indexOfField('id', rs.widget.id);
                             $scope.widgets.splice($scope.widgets.indexOfField('id', rs.widget.id), 1, rs.widget);
+                            $scope.dashboard.widgets.splice(index, 1, rs.widget);
+                            loadWidget(dashboard, $scope.dashboard.widgets[index], dashboard.attributes, false);
                             updateWidgetsToAdd();
                             break;
                         case 'DELETE':

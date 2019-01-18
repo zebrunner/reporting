@@ -26,7 +26,7 @@
     </zf-sub-header>
     <div id="dashboard_content" class="page page-dashboard">
         <md-fab-trigger id="main-fab" has-any-permission="['MODIFY_WIDGETS']" data-html2canvas-ignore>
-            <md-button id="createWidget" aria-label="menu" class="md-fab md-primary" data-ng-click="showWidgetWizardDialog($event, {model : '{}'}, true, dashboard);">
+            <md-button id="createWidget" aria-label="menu" class="md-fab md-primary" data-ng-click="showWidgetWizardDialog($event, {model : '{}'}, dashboard);">
                 <md-tooltip md-direction="top">New widget</md-tooltip>
                 <md-icon>add</md-icon>
             </md-button>
@@ -57,7 +57,7 @@
                                     send
                                     <md-tooltip md-direction="top">Send by email</md-tooltip>
                                 </i>
-                                <i class="material-icons widget-icon hide-phone" data-ng-click="showWidgetWizardDialog($event, widget, false, dashboard)" has-any-permission="['MODIFY_WIDGETS']">
+                                <i class="material-icons widget-icon hide-phone" data-ng-click="showNeededWidgetModal($event, widget, false, dashboard)" has-any-permission="['MODIFY_WIDGETS']">
                                     edit
                                     <md-tooltip md-direction="top">Edit widget</md-tooltip>
                                 </i>
@@ -75,7 +75,7 @@
                                             </md-button>
                                         </md-menu-item>
                                         <md-menu-item has-any-permission="['MODIFY_WIDGETS']">
-                                            <md-button data-ng-click="showWidgetWizardDialog($event, widget, false, dashboard);">
+                                            <md-button data-ng-click="showNeededWidgetModal($event, widget, false, dashboard);">
                                                 <md-icon class="material-icons">edit</md-icon>
                                                 Edit widget
                                             </md-button>
@@ -99,7 +99,7 @@
                              <div data-ng-if="widget.type == 'piechart'" class="pie-chart">
                                 <pie-chart data="widget.data.dataset" options="widget.model"></pie-chart>
                              </div>
-                            <div data-ng-if="['echart', 'PIE', 'LINE', 'BAR', 'TABLE', 'OTHER'].indexOf(widget.type) !== -1 && isJson(widget.model)">
+                            <div data-ng-if="ECHART_TYPES.indexOf(widget.type) !== -1 && isJson(widget.model)">
                                 <div data-echarts dataset="widget.data.dataset" with-legend="true" chart-actions="widget.chartActions" data-options="widget.model"></div>
                             </div>
                              <div data-ng-if="widget.type == 'table'" class="table-responsive">
@@ -151,7 +151,7 @@
                                             </md-button>
                                             <md-menu-content width="2">
                                                 <md-menu-item>
-                                                    <md-button data-ng-click="showWidgetDialog($event, widget, false, dashboard)">
+                                                    <md-button data-ng-click="showNeededWidgetModal($event, widget, false, dashboard)">
                                                         <md-icon class="material-icons">settings</md-icon>
                                                         Edit widget
                                                     </md-button>
@@ -186,7 +186,7 @@
                                                 </md-button>
                                                 <md-menu-content width="2">
                                                     <md-menu-item>
-                                                        <md-button data-ng-click="showWidgetDialog($event, widget, false, dashboard)">
+                                                        <md-button data-ng-click="showNeededWidgetModal($event, widget, false, dashboard)">
                                                             <md-icon class="material-icons">settings</md-icon>
                                                             Edit widget
                                                         </md-button>

@@ -7,18 +7,20 @@
         '$q',
         '$location',
         '$widget',
+        '$mapper',
         'DashboardService',
         'UtilService',
         'ProjectProvider',
         'widget',
-        'isNew',
         'dashboard',
         'currentUserId',
         WidgetWizardController]);
 
-    function WidgetWizardController($scope, $mdDialog, $q, $location, $widget, DashboardService, UtilService, ProjectProvider, widget, isNew, dashboard, currentUserId) {
+    function WidgetWizardController($scope, $mdDialog, $q, $location, $widget, $mapper, DashboardService, UtilService, ProjectProvider, widget, dashboard, currentUserId) {
 
         const CHART_ICONS_PATH = 'assets/images/';
+
+        const WIDGET_TYPE_FIELDS = ['id', 'title', 'description', 'paramsConfig', 'legendConfig', 'type', 'location', 'widgetTemplate.id'];
 
         const CARDS = {
             currentItem: 0,
@@ -26,11 +28,12 @@
                 {
                     index: 1,
                     title: 'Choose template',
-                    nextDisabled: function () {
-                        return ! $scope.widget.template.id;
+                    nextDisabled: function (form) {
+                        return ! $scope.widget.widgetTemplate;
+                    },
+                    onBackClick: function() {
                     },
                     onLoad: function () {
-                        $widget.init(widget, dashboard, currentUserId);
                         DashboardService.GetWidgetTemplates().then(function (rs) {
                             if(rs.success) {
                                 $scope.templates = rs.data;
@@ -43,51 +46,42 @@
                 {
                     index: 2,
                     title: 'Set parameters',
-                    nextDisabled: function () {},
-                    onLoad: function () {}
+                    nextDisabled: function (form) {
+                        return form.params.$invalid;
+                    },
+                    onBackClick: function() {
+                    },
+                    onLoad: function () {
+                        if(widget.id) {
+                            initLegendConfigObject();
+                        }
+                    }
                 },
                 {
                     index: 3,
                     title: 'Save',
-                    nextDisabled: function () {},
+                    nextDisabled: function (form) {
+                    },
                     onLoad: function () {
-                        $scope.widget.template.legendConfigObject = $widget.buildLegend($scope.widget);
+                        initLegendConfigObject();
                     }
                 }
             ]
         };
 
-        function initCard(card) {
-            $scope.card = card;
-            card.onLoad();
-        };
+        $scope.chartActions = [];
 
-        $scope.widget = {
-            template: {},
-            paramsConfig: {}
-        };
-
-        function getNextCard() {
-            if(! $scope.isLastCard()) {
-                CARDS.currentItem ++;
+        function initLegendConfigObject() {
+            $scope.widgetBuilder.legendConfigObject = $widget.buildLegend($scope.widget);
+            if($scope.widgetBuilder.legendConfigObject.legend) {
+                $scope.widgetBuilder.legendConfigObject.legend.forEach(function (legendName) {
+                    $scope.onLegendChange(legendName);
+                });
             }
-            return CARDS.items[CARDS.currentItem];
         };
 
-        $scope.isFirstCard = function () {
-            return CARDS.currentItem <= 0;
-        };
-
-        $scope.isLastCard = function () {
-            return CARDS.currentItem + 1 >= CARDS.items.length;
-        };
-
-        function getPreviousCard() {
-            if(! $scope.isFirstCard()) {
-                CARDS.currentItem --;
-            }
-            return CARDS.items[CARDS.currentItem];
-        };
+        $scope.widget = {};
+        $scope.widgetBuilder = {};
 
         $scope.CHART_ICONS = {
             PIE: CHART_ICONS_PATH + 'pie_chart.svg',
@@ -98,13 +92,20 @@
         };
 
         $scope.onChange = function() {
-            $scope.widget.template.chartConfig = replaceFontSize($scope.widget.template.chartConfig);
-            $scope.executeWidget($scope.widget.template, dashboard.attributes);
+            $scope.widgetBuilder = {};
+            $scope.buildConfigs()
+        };
 
-            $scope.echartConfig.previousTemplate = $scope.echartConfig.currentTemplate ?  $scope.echartConfig.currentTemplate : undefined;
-            $scope.echartConfig.currentTemplate = $scope.widget.template;
-            if($scope.echartConfig.clear && $scope.echartConfig.previousTemplate &&  $scope.echartConfig.previousTemplate.type !== $scope.echartConfig.currentTemplate.type) {
-                $scope.echartConfig.clear();
+        $scope.buildConfigs = function(form) {
+            if(! form || form.$valid) {
+                $scope.widget.widgetTemplate.chartConfig = replaceFontSize($scope.widget.widgetTemplate.chartConfig);
+                $scope.executeWidget($scope.widget, dashboard.attributes);
+
+                $scope.echartConfig.previousTemplate = $scope.echartConfig.currentTemplate ? $scope.echartConfig.currentTemplate : undefined;
+                $scope.echartConfig.currentTemplate = $scope.widget.widgetTemplate;
+                if ($scope.echartConfig.clear && $scope.echartConfig.previousTemplate && $scope.echartConfig.previousTemplate.type !== $scope.echartConfig.currentTemplate.type) {
+                    $scope.echartConfig.clear();
+                }
             }
         };
 
@@ -119,15 +120,15 @@
 
         $scope.executeWidget = function(widget, attributes, isTable) {
 
-            if(! widget.paramsConfigObject && ! widget.params) {
-                var paramsConfig = $widget.build($scope.widget, dashboard, currentUserId);
-                widget.paramsConfigObject = paramsConfig.paramsObject;
-                widget.params = paramsConfig.params;
+            if(! $scope.widgetBuilder.paramsConfigObject) {
+                $scope.widgetBuilder.paramsConfigObject = $widget.build($scope.widget, dashboard, currentUserId);
             }
 
             var sqlTemplateAdapter = {
-                "templateId": widget.id,
-                "paramsConfig": widget.params
+                "templateId": widget.widgetTemplate.id,
+                "paramsConfig": $mapper.map($scope.widgetBuilder.paramsConfigObject, function (value) {
+                    return value.value;
+                })
             };
 
             DashboardService.ExecuteWidgetTemplateSQL(getQueryParams(false), sqlTemplateAdapter).then(function (rs) {
@@ -144,7 +145,7 @@
                             }
                         }
                     }
-                    widget.model = isTable ? {"columns" : columns} : JSON.parse(widget.chartConfig);
+                    widget.widgetTemplate.model = isTable ? {"columns" : columns} : JSON.parse(widget.widgetTemplate.chartConfig);
                     widget.data = {
                         dataset: data
                     };
@@ -159,18 +160,13 @@
             return {'stackTraceRequired': showStacktrace};
         };
 
-        $scope.chartActions = [];
-
         $scope.onLegendChange = function (legendName) {
-            $scope.chartActions.push({type: $scope.widget.template.legendConfigObject.legendItems[legendName] ? 'legendSelect' : 'legendUnSelect', name: legendName});
+            $scope.chartActions.push({type: $scope.widgetBuilder.legendConfigObject.legendItems[legendName] ? 'legendSelect' : 'legendUnSelect', name: legendName});
         };
 
         $scope.saveWidget = function () {
-            $scope.widget.paramsConfig = JSON.stringify(mapObject($scope.widget.template.paramsConfigObject, 'value'), null, 2);
-            $scope.widget.legendConfig = JSON.stringify($scope.widget.template.legendConfigObject.legendItems, null, 2);
-            $scope.widget.widgetTemplate = {};
-            $scope.widget.widgetTemplate.id = $scope.widget.template.id;
-            DashboardService.CreateWidget($scope.widget).then(function (rs) {
+            var widgetType = prepareWidget();
+            DashboardService.CreateWidget(widgetType).then(function (rs) {
                 if(rs.success) {
                     alertify.success('Widget was created');
                     $scope.hide('CREATE', rs.data);
@@ -180,12 +176,30 @@
             });
         };
 
-        function mapObject(object, field) {
-            var result = {};
-            angular.forEach(object, function (value, key) {
-                result[key] = value[field];
+        $scope.updateWidget = function () {
+            var widgetType = prepareWidget();
+            Reflect.deleteProperty($scope.widget, "model");
+            DashboardService.UpdateWidget(widgetType).then(function (rs) {
+                if(rs.success) {
+                    alertify.success('Widget was updated');
+                    $scope.hide('UPDATE', rs.data);
+                } else {
+                    alertify.error(rs.message);
+                }
             });
-            return result;
+        };
+
+        function prepareWidget() {
+            $scope.widget.paramsConfig = JSON.stringify($mapper.map($scope.widgetBuilder.paramsConfigObject, function (value) {
+                return value.value;
+            }), null, 2);
+            if($scope.widgetBuilder.legendConfigObject && $scope.widgetBuilder.legendConfigObject.legendItems) {
+                $scope.widget.legendConfig = JSON.stringify($scope.widgetBuilder.legendConfigObject.legendItems, null, 2);
+            }
+            if(angular.isObject($scope.widget.location)) {
+                $scope.widget.location = JSON.stringify($scope.widget.location);
+            }
+            return $scope.widget;
         };
 
         $scope.next = function () {
@@ -194,6 +208,38 @@
 
         $scope.back = function () {
             $scope.card = getPreviousCard();
+            $scope.card.onBackClick();
+        };
+
+        function getNextCard() {
+            if(! $scope.isLastCard()) {
+                CARDS.currentItem ++;
+            }
+            return CARDS.items[CARDS.currentItem];
+        };
+
+        $scope.isFirstCard = function () {
+            return $scope.getCurrentCard() <= 0;
+        };
+
+        $scope.isLastCard = function () {
+            return $scope.getCurrentCard() + 1 >= CARDS.items.length;
+        };
+
+        $scope.getCurrentCard = function () {
+            return CARDS.currentItem;
+        };
+
+        function getPreviousCard() {
+            if(! $scope.isFirstCard()) {
+                CARDS.currentItem --;
+            }
+            return CARDS.items[CARDS.currentItem];
+        };
+
+        function initCard(card) {
+            $scope.card = card;
+            card.onLoad();
         };
 
         $scope.hide = function (action, widget) {
@@ -205,6 +251,11 @@
         };
 
         (function initController() {
+            if(widget.id) {
+                CARDS.currentItem = 1;
+                $scope.widget = angular.copy(widget);
+                $scope.onChange();
+            }
             initCard(CARDS.items[CARDS.currentItem]);
         })();
     }
@@ -230,5 +281,54 @@
     var varsdcsdc = {
         "legend": ["PASSED", "FAILED"]
     };
+
+    /*SELECT
+  SUM(TOTAL_HOURS) AS "MAN-HOURS",
+  CREATED_AT AS "CREATED_AT"
+FROM TOTAL_VIEW
+GROUP BY "CREATED_AT"
+HAVING SUM(TOTAL_HOURS) < 160
+ORDER BY "CREATED_AT"*/
+
+    /*SELECT
+    ${aggregateFunction}(TOTAL_HOURS) AS "MAN-HOURS",
+        ${groupBy} AS "${groupBy}"
+    FROM ${viewName}
+    GROUP BY "${groupBy}"
+    HAVING ${aggregateFunction}(TOTAL_HOURS) ${aggregateCondition} ${conditionValue}
+    ORDER BY "CREATED_AT"*/
+
+    var adscadscc = {
+        "aggregateFunction": {
+            "values": ["SUM", "MIN", "MAX", "AVG"]
+        },
+        "viewName": {
+            "values": ["TOTAL_VIEW", "MONTHLY_VIEW"]
+        },
+        "groupBy": {
+            "values": ["CREATED_AT", "MODIFIED_AT"]
+        },
+        "aggregateCondition": {
+            "values": ["<", ">"]
+        },
+        "conditionValue": {
+            "value": 160
+        }
+    }
+
+    /*SELECT
+    unnest(array[${statusArray}]) AS  "label",
+        unnest(array[${value}, 20, 15, ${value}, 15, 15]) AS "value"*/
+
+    var adxdac = {
+        "value": {
+            "values": [1000, "select id from test_runs"]
+        },
+        "statusArray": {
+            "values": ["PASSED", "FAILED", "SKIPPED", "KNOWN ISSUE", "ABORTED", "QUEUED"],
+            "multiple": true,
+            "required": true
+        }
+    }
 
 })();
