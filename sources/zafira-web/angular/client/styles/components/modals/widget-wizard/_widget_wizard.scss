@@ -10,7 +10,7 @@ $wizard-white:          #ffffff;
 .widget-wizard {
     > .md-dialog-content {
         > *[ng-transclude] {
-            overflow: hidden !important;
+            overflow-y: hidden !important;
         }
     }
     &_container {
@@ -213,5 +213,9 @@ $wizard-white:          #ffffff;
     button {
         min-width: 88px;
         border-radius: 4px;
+    }
+
+    @media(min-width: $screen-desktop) {
+        min-width: 864px;
     }
 }
