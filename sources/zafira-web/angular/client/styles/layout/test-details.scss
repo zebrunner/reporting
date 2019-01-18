@@ -55,7 +55,7 @@ md-table-container {
                     }
                 }
                 &_sorts {
-                    @extend %items;
+                    @extend %detailsItems;
                     padding: 3px 15px;
                     min-width: 90px;
                     margin-left: 17px;
@@ -118,7 +118,7 @@ md-table-container {
                                 display: flex;
                             }
                             md-chip {
-                                @extend %items;
+                                @extend %detailsItems;
                                 margin-top: 5px;
                                 margin-bottom: 5px;
                             }
@@ -149,7 +149,6 @@ md-table-container {
     
         .test {
             display: flex;
-            width: calc(100vw - 100px);
             @media(max-width: 599px) {
                 flex-wrap: wrap;
                 padding: 4px 0 0;
@@ -202,7 +201,7 @@ md-table-container {
                     }
                 }
                 &_tags {
-                    @extend %items;
+                    @extend %detailsItems;
                     margin-top: 0;
                     margin-bottom: 5px;
                     @media(max-width: 599px) {
@@ -214,7 +213,13 @@ md-table-container {
             & .text-center {
                 width: 30%;
                 @extend %noBorderPadding;
-                @media(max-width: 599px) {
+                @media (max-width: 1000px) {
+                    width: 20%;
+                }
+                @media (max-width: 874px) {
+                    width: auto;
+                }
+                @media (max-width: 599px) {
                     padding-bottom: 5px;
                     width: auto;
                     & .work-items .badge {
@@ -248,7 +253,7 @@ md-table-container {
 }
 
 
-%items {
+%detailsItems {
     max-height: 28px;
     border-radius: 14px !important;
     background-color: rgba(0, 0, 0, .15) !important;

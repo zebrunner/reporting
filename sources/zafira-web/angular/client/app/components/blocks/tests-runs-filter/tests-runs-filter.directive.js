@@ -17,8 +17,8 @@
     });
 
     function TestsRunsFilterController(FilterService, DEFAULT_SC, TestRunService, $q, ProjectService,
-                                       testsRunsService, $cookieStore, UserService, $timeout,
-                                       $mdDateRangePicker) {
+                                       testsRunsService, $cookieStore, UserService, $timeout, $mdDateRangePicker,
+                                       mediaBreakpoints, windowWidthService) {
         const subjectName = 'TEST_RUN';
         const DEFAULT_FILTER_VALUE = {
             subject: {
@@ -50,8 +50,8 @@
             filter: angular.copy(DEFAULT_FILTER_VALUE),
             filters: [],
             filterBlockExpand: false,
-            fastSearch: {},
             fastSearchBlockExpand: false,
+            fastSearch: {},
             collapseFilter: false,
             isFilterActive: testsRunsService.isFilterActive,
             isSearchActive: testsRunsService.isSearchActive,
@@ -67,6 +67,8 @@
             },
             currentUser: UserService.getCurrentUser(),
             chipsCtrl: null,
+            mobileBreakpoint: mediaBreakpoints.mobile || 0,
+            windowWidthService: windowWidthService,
 
             matchMode: matchMode,
             onReset: onReset,
@@ -76,6 +78,7 @@
             updateFilter: updateFilter,
             deleteFilter: deleteFilter,
             clearAndOpenFilterBlock: clearAndOpenFilterBlock,
+            clearAndOpenNewFilterBlock: clearAndOpenNewFilterBlock,
             searchByFilter: searchByFilter,
             selectFilterForEdit: selectFilterForEdit,
             selectSearchType: selectSearchType,
@@ -322,6 +325,10 @@
         function clearAndOpenFilterBlock(value) {
             clearFilter();
             vm.collapseFilter = value;
+        }
+
+        function clearAndOpenNewFilterBlock() {
+            vm.collapseNewFilter = !vm.collapseNewFilter;
         }
 
         function clearFilterSlice() {

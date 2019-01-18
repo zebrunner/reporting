@@ -2,7 +2,7 @@
 
 
 .test-run-card {
-    position: relative;
+    
     .p-test-details & {
         padding: 5px 20px;
         position: fixed;
@@ -42,8 +42,8 @@
             width: 60%;
             position: relative;
             @media(min-width: $breakpoint-mobile) and (max-width:  998px){
-            width: 100%;
-        }
+                width: 100%;
+            }
         }
         position: relative;
         background-color: #fff;
@@ -106,6 +106,7 @@
             width: 6%;
             min-width: 40px;
             font-size: 14px;
+            padding-right: 0;
             //width: 80px;
             md-checkbox {
                 margin-bottom: 0;
@@ -126,12 +127,16 @@
             min-width: 200px;
         }
         &._env {
+            justify-content: center;
             flex-grow: 1;
             width: 11%;
             min-width: 100px;
             // @media(min-width: 999px) and (max-width: 1120px){
             //     flex-grow: 0;
             // }
+            & .label {
+                font-weight: bold !important;
+            }
             @media(min-width: $breakpoint-mobile) and (max-width:  998px){
                 margin: 0 0 0 10px;
             }
@@ -142,6 +147,10 @@
             width: 11%;
             min-width: 40px;
             flex-wrap: wrap;
+            justify-content: center;
+            & .label {
+                font-weight: bold !important;
+            }
             @media(min-width: 999px) and (max-width: 1120px){
                 flex-grow: 0;
             }
@@ -157,7 +166,7 @@
         &._platform {
             .label {
                 color: $dark-coal-new;
-                background-color: $gray-bg-light-new;
+                background-color: rgba(31, 36, 42, .1);
                 display: inline-block;
                 vertical-align: middle;
                 font-size: 10px;
@@ -178,6 +187,7 @@
             justify-content: center;
             width: 11%;
             min-width: 100px;
+            font-weight: 500;
             @media(min-width: 701px) and (max-width: 998px){
                 flex-grow: 1;
             }
@@ -186,9 +196,13 @@
             }
         }
         &._statistics {
+            justify-content: center;
             flex-grow: 2;
             width: 15%;
             min-width: 140px;
+            @media (max-width: 599px) {
+                justify-content: flex-start;
+            }
             @media(min-width: 999px) and (max-width: 1120px){
                     flex-grow: 1;
             }
@@ -203,7 +217,8 @@
                 display: inline-flex;
                 min-width: 18px;
                 min-width: fit-content;
-                padding: 3px 5px;
+                padding: 5px;
+                min-width: 22px;
                 justify-content: center;
                 align-items: center;
                 text-align: center;
@@ -281,7 +296,7 @@
     }
 
     &__title {
-        font-weight: 500;
+        font-weight: bold;
         font-size: 14px;
         line-height: normal; 
         display: flex;
@@ -294,6 +309,7 @@
             }
         }
         &-additions {
+            margin-left: 5px;
             z-index: 2;
             display: flex;
             justify-content: center;
@@ -307,8 +323,9 @@
         z-index: 2;
         display: flex;
         flex-wrap: wrap;
+        font-weight: 500;
         &-name {
-            font-size: 14px;
+            font-size: 12px;
             margin-right: 5px;
         }
         &-file {
@@ -411,15 +428,25 @@
         @media (min-width: $breakpoint-mobile) {
             padding: 2px 0;
         }
+        .back {
+            margin-top: 3px;
+            cursor: pointer;
+            @media (max-width: 599px) {
+                margin-top: -3px;
+            }
+        }
     }
     
     &._single & {
+        &__clickable {
+            display: none;
+        }
         &__wrapper {
             min-height: 45px;
             height: auto;
             @media (min-width: $breakpoint-mobile) {
                 margin: 0 2px;
-                padding: 0 22px;
+                padding: 0 15px;
             }
         }
         &__row {
@@ -438,10 +465,12 @@
                 padding-right: 30px !important;
             }
         }
+        
         &__cell {
             border-top: 0;
             &._info {
                 padding: 0;
+                margin-left: 10px;
             }
             &._selection {
                 display: none;
@@ -478,6 +507,17 @@
 
     /* MOBILE LAYOUT */
     &._mobile & {
+        &__clickable {
+            position: absolute;
+            top: -10px;
+            bottom: -1px;
+            right: -12px;
+            left: -12px;
+            z-index: 1;
+            &:hover {
+                background-color: transparent;
+            }
+        }
         &__wrapper {
             padding: 10px 12px 5px;
             margin-bottom: 4px;
@@ -503,7 +543,9 @@
                     display: none;
                 }
             }
-            
+            &._top {
+                position: relative;
+            }
             &._bottom {
                 padding: 0;
                 & div {
@@ -532,6 +574,7 @@
                 }
             }
             &._actions {
+                z-index: 2;
                 width: 20px;
                 flex-direction: column;
                 justify-content: space-between;
@@ -619,7 +662,7 @@
     &._mobile._single & {
         &__wrapper {
             height: auto;
-            padding: 10px 12px 10px;
+            padding: 10px 12px 10px 0;
             margin-bottom: 0;
         }
         &__row {
@@ -651,6 +694,12 @@
             &._info {
                 padding: 0;
             }
+            &._actions {
+                .info-button {
+                    opacity: .5;
+                    transform: rotate(180deg);
+                }
+            }
         }
     }
     &._mobile._single._details & {
@@ -669,10 +718,11 @@
         }
         &__row {
             &._middle {
+                display: flex;
                 opacity: 1;
                 pointer-events: all;
-                z-index: 1;
-                position: static;
+                z-index: 2;
+                position: relative;
                 padding: 0;
                 & ._app-file {
                     padding: 0;
@@ -682,21 +732,6 @@
             &._bottom {
                 position: absolute;
                 opacity: 0;
-            }
-        }
-    }
-}
-.p-tests-runs {
-    @media screen and (max-width: $breakpoint-mobile) {
-        &__section {
-            md-card {
-                background: none;
-            }
-        }
-        & .page{
-            padding: 15px 0;
-            & md-card {
-                margin-bottom: 0;
             }
         }
     }

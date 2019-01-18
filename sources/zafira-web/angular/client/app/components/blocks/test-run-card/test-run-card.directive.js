@@ -85,8 +85,8 @@
                     vm.onSelect && vm.onSelect(vm.testRun);
                 }
 
-                function showDetails() {
-                    vm.singleWholeInfo = !vm.singleWholeInfo;
+                function showDetails(value) {
+                    vm.singleWholeInfo = value;
                 }
 
                 function initMenuRights() {
