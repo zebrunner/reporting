@@ -15,9 +15,10 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
-public class IntegrationInfo {
-
+public class TestInfo {
+	
     private String tagValue;
+    private String id;
     private String status;
     private String message;
     private String defectId;
@@ -28,6 +29,16 @@ public class IntegrationInfo {
 
     public void setTagValue(String tagValue) {
         this.tagValue = tagValue;
+    }
+
+    public String getId()
+    {
+        return id;
+    }
+
+    public void setId(String id)
+    {
+        this.id = id;
     }
 
     public String getStatus() {
