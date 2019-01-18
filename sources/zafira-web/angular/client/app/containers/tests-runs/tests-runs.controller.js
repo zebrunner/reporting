@@ -20,7 +20,7 @@
         '$rootScope',
         '$transitions',
         TestsRunsController]);
-
+        
     function TestsRunsController($cookieStore, $mdDialog, $timeout, $q, TestRunService, UtilService,
                                  UserService, SettingsService, ConfigService, resolvedTestRuns,
                                  testsRunsService, $scope, API_URL, $rootScope, $transitions) {
@@ -34,6 +34,7 @@
             zafiraWebsocket: null,
             subscriptions: {},
 
+            isSearchActive: testsRunsService.isSearchActive,
             isTestRunsEmpty: isTestRunsEmpty,
             getTestRuns: getTestRuns,
             getLengthOfSelectedTestRuns: getLengthOfSelectedTestRuns,

@@ -2,18 +2,59 @@
 
 .p-tests-runs__section {
     &._filters {
+        @at-root {
+            .p-tests-runs {
+                @media screen and (max-width: $breakpoint-mobile) {
+                    &__section {
+                        background-color: white;
+                        & .fixed-search-column {
+                            min-height: auto;
+                        }
+                        md-card {
+                            background: none;
+                        }
+                        &._content {
+                            background-color: transparent;
+                        }
+                        &._title {
+                            float: left;
+                        }
+                    }
+                    &__title{
+                        font-size: 18px;
+                        color: black;
+                        margin-top: 0;
+                        margin-bottom: 0;
+                        padding-top: 8px;
+                        padding-bottom: 8px;
+                    }
+                    & .page{
+                        padding: 15px 0;
+                        padding: 0;
+                        & md-card {
+                            margin-bottom: 0;
+                        }
+                    }
+                    #itemsCount {
+                        opacity: 0.5;
+                        font-size: 18px;
+                    }
+                }
+            }
+        }
         & .search-button {
-            position: absolute;
-            right: 0;
-            top: 60px;
+            position: relative;
             background-color: rgba(0, 0, 0, 0.2);
             border-radius: 8px;
             z-index: 3;
-            min-width: 32px;
-            min-height: 32px;
+            margin: 8px 16px 8px 0;
+            float: right;
+            height: 32px;
+            width: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 4;
             i {
                 font-size: 13px;
             }
@@ -206,8 +247,9 @@
                 }
                 & .btn-check {
                     @media screen and (max-width: 599px) {
-                        margin: 0;
-                        padding: 2px 16px;
+                        width: auto;
+                        margin: 0 14px;
+                        padding: 2px;
                         display: flex;
                         justify-content: space-between;
                         border-bottom: 1px rgba(0, 0, 0, 0.10) solid;
@@ -220,12 +262,14 @@
                         background-color: transparent;
                         border: 1px solid rgba(0,0,0, .25);
                         box-shadow: none ;
+                        color: #000;
                         &:hover, &.active {
-                            background-color: transparent !important;
+                            background-color: #d3e9e6 !important;
                             color: #000 !important;
                         }
                         &.active {
-                            border: 1px solid #26a69a;
+                            background-color: #d3e9e6;
+                            border: 1px solid #d3e9e6;
                         }
                         @media (max-width: 599px) {
                             width: 104px;

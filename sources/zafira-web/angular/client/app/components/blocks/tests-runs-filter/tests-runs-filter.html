@@ -1,6 +1,11 @@
 <div>
     <div class="p-tests-runs__section _filters row ui-section no-margin">
-        <div class="fixed-search-column col-md-10 no-padding">
+        <div ng-if="$ctrl.windowWidthService.windowWidth < $ctrl.mobileBreakpoint" class="fixed-search-column col-md-10 no-padding">
+            <div class="search-button"  role="button" ng-class="{'active': $ctrl.isSearchActive() && !$ctrl.collapseNewFilter}" ng-show="!$ctrl.isFilterActive()" ng-click="$ctrl.clearAndOpenNewFilterBlock()">
+                <i class="material-icons">
+                    search
+                </i>
+            </div>
             <button ng-if="$ctrl.matchMode(['APPLY', 'SEARCH'])" id="reset" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="$ctrl.onReset();">
                 <b>RESET</b>
             </button>
@@ -20,12 +25,9 @@
                 <b>DELETE</b>
             </button>
         </div>
-        <div class="search-button"  role="button" ng-class="{'active': $ctrl.isSearchActive() && !$ctrl.collapseNewFilter}" ng-show="!$ctrl.isFilterActive()" ng-if="$ctrl.windowWidthService.windowWidth < $ctrl.mobileBreakpoint" ng-click="$ctrl.clearAndOpenNewFilterBlock()">
-            <i class="material-icons">
-                search
-            </i>
-        </div>
-        <div class="search-filter-body col-md-12 no-padding">
+
+
+        <div class="p-tests-runs__title search-filter-body col-md-12 no-padding">
             <md-card md-table zafira-background-theme="table" class="no-margin-h _md">
                 <div id="filter" class="md-row">
                     <div class="panel-body no-padding-t" ng-if="$ctrl.windowWidthService.windowWidth >= $ctrl.mobileBreakpoint">

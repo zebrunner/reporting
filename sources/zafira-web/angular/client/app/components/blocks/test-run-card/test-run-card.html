@@ -195,7 +195,7 @@
                     </div>
                 </span>
             </div>
-            <i class="material-icons back" ng-if="$ctrl.singleMode">keyboard_backspace</i>
+            <i class="material-icons back" ng-if="$ctrl.singleMode && !$ctrl.singleWholeInfo">keyboard_backspace</i>
             <div name="testRunInfo" class="test-run-card__cell _info">
                 <div class="test-run-card__title">
                     {{$ctrl.testRun.testSuite.name}}
@@ -206,7 +206,6 @@
                 </div>
             </div>
             <div name="testRunInfo" class="test-run-card__cell _actions">
-                <!--  ng-click="$ctrl.showDetails()"  -->
                 <md-menu md-offset="0 {{$ctrl.currentOffset}}">
                     <md-button name="testRunSetting" aria-label="User settings" class="md-icon-button" ng-click="$ctrl.openMenu($event, $mdMenu)">
                         <md-icon class="material-icons">more_vert</md-icon>
@@ -276,59 +275,68 @@
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>
+                <div class="info-button" ng-click="$ctrl.showDetails(true)">
+                    <i class="material-icons">
+                        error_outline
+                    </i>
+                </div>
             </div>
         <div class="test-run-card__clickable" ng-click="$ctrl.goToTestRun()"></div>
         </div>
+        
         <div class="test-run-card__row _wrapper _middle">
-            <div class="test-run-card__row _app-file">
-                <div class="test-run-card__app-icon">
-                    <md-icon class="material-icons testrun-appversion-icon" data-ng-if="!$ctrl.testRun.appVersionValid && $ctrl.testRun.appVersion">insert_drive_file</md-icon>
-                    <md-icon class="material-icons testrun-appversion-icon" data-ng-if="$ctrl.testRun.appVersionValid && $ctrl.testRun.appVersion">file_download</md-icon>
-                </div>
-                <div class="test-run-card__app-name" ng-show="!$ctrl.testRun.appVersionValid" ng-mouseenter="$ctrl.checkFilePresence()">{{$ctrl.testRun.appVersion}}</div>
-                <div class="test-run-card__app-name" ng-show="$ctrl.testRun.appVersionValid" ng-click="$ctrl.downloadApplication()">{{$ctrl.testRun.appVersion}}</div>
-                <div class="test-run-card__app-icon _spinner">
-                    <md-progress-circular ng-show="$ctrl.testRun.appVersionLoading" md-mode="indeterminate"
-                        md-diameter="10px" style="display: inline-block" class="tests-loading-spinner"></md-progress-circular>
-                </div>
-            </div>
-            <div class="test-run-card__row _tags">
-                <div name="testRunEnv" class="test-run-card__cell _env">
-                    <span class="label label-default">{{$ctrl.testRun.env}}</span>
-                </div>
-                <div name="testRunPlatform" class="test-run-card__cell _platform no-padding browser-version_column"
-                    ng-if="$ctrl.testRun.platform || $ctrl.testRun.browserVersion">
-                    <span data-ng-if="$ctrl.testRun.platform !== ''" class="platform-icon {{$ctrl.testRun.platform | lowercase}}" />
-                    <span data-ng-if="$ctrl.testRun.platform === ''" class="platform-icon unknown"></span>
-                    <span data-ng-if="$ctrl.testRun.browserVersion" class="label label-default">{{$ctrl.testRun.browserVersion}}</span>
-                </div>
-            </div>
-            <div class="test-run-card__row _data">
-                <div name="testRunStatistics" class="test-run-card__cell _statistics">
-                    <span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="$ctrl.testRun.passed ? 'label-success' : 'label-success-empty'">{{$ctrl.testRun.passed}}</span>
-                    <span title="Failed | Known issues | Blockers" class="label arrowed arrowed-in-right label-danger-border"
-                        data-ng-class="$ctrl.testRun.failed ? 'label-danger' : 'label-danger-empty'">{{$ctrl.testRun.failed}}<span
-                            class="delimiter"> | </span>{{$ctrl.testRun.failedAsKnown}}<span class="delimiter"> |
-                        </span>{{$ctrl.testRun.failedAsBlocker}}</span>
-                    <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="$ctrl.testRun.skipped ? 'label-warning' : 'label-warning-empty'">{{$ctrl.testRun.skipped}}</span>
-                    <span title="Aborted" data-ng-if="$ctrl.testRun.aborted" class="label arrowed arrowed-in-right label-aborted-border"
-                        data-ng-class="$ctrl.testRun.aborted ? 'label-aborted-bg' : 'label-aborted-empty'">{{$ctrl.testRun.aborted}}</span>
-                    <span title="Queued" data-ng-if="$ctrl.testRun.queued" class="label arrowed arrowed-in-right label-default-empty label-default-border">{{$ctrl.testRun.queued}}</span>
-                    <span title="In Progress" data-ng-if="$ctrl.testRun.inProgress" class="label arrowed arrowed-in-right label-info-border"
-                        data-ng-class="$ctrl.testRun.inProgress ? 'label-info' : 'label-info-empty'">{{$ctrl.testRun.inProgress}}</span>
-                </div>
-                <div name="testRunStarted" class="test-run-card__cell _date">
-                    <div class="test-run-card__time _light">
-                        <i class="test-run-card__time-icon fa fa-clock-o" aria-hidden="true"></i> <time class="test-run-card__time-text"
-                            am-time-ago="$ctrl.testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
-                    </div>
-                    <div data-ng-if="$ctrl.testRun.elapsed && $ctrl.testRun.elapsed > 0" class="test-run-card__time _light">
-                        <i class="test-run-card__time-icon fa fa-clock-o" aria-hidden="true"></i>
-                        <timer class="test-run-card__time-text" max-time-unit="'minute'" autostart="false" countdown="$ctrl.testRun.elapsed"><span
-                                ng-show="minutes">{{minutes}} minute{{minutesS}}</span> <span ng-show="!minutes">{{seconds}}
-                                second{{secondsS}}</span></timer>
-                    </div>
-                </div>
+            <i class="material-icons back-to-simple" ng-if="$ctrl.singleMode && $ctrl.singleWholeInfo" ng-click="$ctrl.showDetails(false)">keyboard_return</i>
+            <div>
+                    <div class="test-run-card__row _app-file">
+                            <div class="test-run-card__app-icon">
+                                <md-icon class="material-icons testrun-appversion-icon" data-ng-if="!$ctrl.testRun.appVersionValid && $ctrl.testRun.appVersion">insert_drive_file</md-icon>
+                                <md-icon class="material-icons testrun-appversion-icon" data-ng-if="$ctrl.testRun.appVersionValid && $ctrl.testRun.appVersion">file_download</md-icon>
+                            </div>
+                            <div class="test-run-card__app-name" ng-show="!$ctrl.testRun.appVersionValid" ng-mouseenter="$ctrl.checkFilePresence()">{{$ctrl.testRun.appVersion}}</div>
+                            <div class="test-run-card__app-name" ng-show="$ctrl.testRun.appVersionValid" ng-click="$ctrl.downloadApplication()">{{$ctrl.testRun.appVersion}}</div>
+                            <div class="test-run-card__app-icon _spinner">
+                                <md-progress-circular ng-show="$ctrl.testRun.appVersionLoading" md-mode="indeterminate"
+                                    md-diameter="10px" style="display: inline-block" class="tests-loading-spinner"></md-progress-circular>
+                            </div>
+                        </div>
+                        <div class="test-run-card__row _tags">
+                            <div name="testRunEnv" class="test-run-card__cell _env">
+                                <span class="label label-default">{{$ctrl.testRun.env}}</span>
+                            </div>
+                            <div name="testRunPlatform" class="test-run-card__cell _platform no-padding browser-version_column"
+                                ng-if="$ctrl.testRun.platform || $ctrl.testRun.browserVersion">
+                                <span data-ng-if="$ctrl.testRun.platform !== ''" class="platform-icon {{$ctrl.testRun.platform | lowercase}}" />
+                                <span data-ng-if="$ctrl.testRun.platform === ''" class="platform-icon unknown"></span>
+                                <span data-ng-if="$ctrl.testRun.browserVersion" class="label label-default">{{$ctrl.testRun.browserVersion}}</span>
+                            </div>
+                        </div>
+                        <div class="test-run-card__row _data">
+                            <div name="testRunStatistics" class="test-run-card__cell _statistics">
+                                <span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="$ctrl.testRun.passed ? 'label-success' : 'label-success-empty'">{{$ctrl.testRun.passed}}</span>
+                                <span title="Failed | Known issues | Blockers" class="label arrowed arrowed-in-right label-danger-border"
+                                    data-ng-class="$ctrl.testRun.failed ? 'label-danger' : 'label-danger-empty'">{{$ctrl.testRun.failed}}<span
+                                        class="delimiter"> | </span>{{$ctrl.testRun.failedAsKnown}}<span class="delimiter"> |
+                                    </span>{{$ctrl.testRun.failedAsBlocker}}</span>
+                                <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="$ctrl.testRun.skipped ? 'label-warning' : 'label-warning-empty'">{{$ctrl.testRun.skipped}}</span>
+                                <span title="Aborted" data-ng-if="$ctrl.testRun.aborted" class="label arrowed arrowed-in-right label-aborted-border"
+                                    data-ng-class="$ctrl.testRun.aborted ? 'label-aborted-bg' : 'label-aborted-empty'">{{$ctrl.testRun.aborted}}</span>
+                                <span title="Queued" data-ng-if="$ctrl.testRun.queued" class="label arrowed arrowed-in-right label-default-empty label-default-border">{{$ctrl.testRun.queued}}</span>
+                                <span title="In Progress" data-ng-if="$ctrl.testRun.inProgress" class="label arrowed arrowed-in-right label-info-border"
+                                    data-ng-class="$ctrl.testRun.inProgress ? 'label-info' : 'label-info-empty'">{{$ctrl.testRun.inProgress}}</span>
+                            </div>
+                            <div name="testRunStarted" class="test-run-card__cell _date">
+                                <div class="test-run-card__time _light">
+                                    <i class="test-run-card__time-icon fa fa-clock-o" aria-hidden="true"></i> <time class="test-run-card__time-text"
+                                        am-time-ago="$ctrl.testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
+                                </div>
+                                <div data-ng-if="$ctrl.testRun.elapsed && $ctrl.testRun.elapsed > 0" class="test-run-card__time _light">
+                                    <i class="test-run-card__time-icon fa fa-clock-o" aria-hidden="true"></i>
+                                    <timer class="test-run-card__time-text" max-time-unit="'minute'" autostart="false" countdown="$ctrl.testRun.elapsed"><span
+                                            ng-show="minutes">{{minutes}} minute{{minutesS}}</span> <span ng-show="!minutes">{{seconds}}
+                                            second{{secondsS}}</span></timer>
+                                </div>
+                            </div>
+                        </div>
             </div>
         </div>
         <div class="test-run-card__row _bottom">
@@ -415,11 +423,5 @@
                 </md-menu>
             </div>
         </div>
-        <md-button aria-label="Show or hide tests" ng-click="$ctrl.showDetails()" md-ink-ripple="false"
-                   class="md-icon-button no-padding expand-button clear">
-            <i class="material-icons">
-                clear
-            </i>
-        </md-button>
     </div>
 </div>

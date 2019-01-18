@@ -2,43 +2,7 @@
 
 
 .test-run-card {
-    @at-root {
-        .p-tests-runs {
-            @media screen and (max-width: $breakpoint-mobile) {
-                &__section {
-                    background-color: white;
-                    & .fixed-search-column {
-                        min-height: auto;
-                    }
-                    md-card {
-                        background: none;
-                    }
-                    &._content {
-                        background-color: transparent;
-                    }
-                }
-                &__title{
-                    font-size: 18px;
-                    color: black;
-                    margin-top: 0;
-                    margin-bottom: 0;
-                    padding-top: 8px;
-                    padding-bottom: 8px;
-                }
-                & .page{
-                    padding: 15px 0;
-                    padding: 0;
-                    & md-card {
-                        margin-bottom: 0;
-                    }
-                }
-                #itemsCount {
-                    opacity: 0.5;
-                    font-size: 18px;
-                }
-            }
-        }
-    }
+    
     .p-test-details & {
         padding: 5px 20px;
         position: fixed;
@@ -698,7 +662,7 @@
     &._mobile._single & {
         &__wrapper {
             height: auto;
-            padding: 10px 12px 10px;
+            padding: 10px 12px 10px 0;
             margin-bottom: 0;
         }
         &__row {
@@ -730,6 +694,12 @@
             &._info {
                 padding: 0;
             }
+            &._actions {
+                .info-button {
+                    opacity: .5;
+                    transform: rotate(180deg);
+                }
+            }
         }
     }
     &._mobile._single._details & {
@@ -748,10 +718,11 @@
         }
         &__row {
             &._middle {
+                display: flex;
                 opacity: 1;
                 pointer-events: all;
-                z-index: 1;
-                position: static;
+                z-index: 2;
+                position: relative;
                 padding: 0;
                 & ._app-file {
                     padding: 0;
