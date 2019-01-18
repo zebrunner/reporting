@@ -20,11 +20,16 @@
                 <b>DELETE</b>
             </button>
         </div>
+        <div class="search-button"  role="button" ng-class="{'active': $ctrl.isSearchActive() && !$ctrl.collapseNewFilter}" ng-show="!$ctrl.isFilterActive()" ng-if="$ctrl.windowWidthService.windowWidth < $ctrl.mobileBreakpoint" ng-click="$ctrl.clearAndOpenNewFilterBlock()">
+            <i class="material-icons">
+                search
+            </i>
+        </div>
         <div class="search-filter-body col-md-12 no-padding">
             <md-card md-table zafira-background-theme="table" class="no-margin-h _md">
                 <div id="filter" class="md-row">
                     <div class="panel-body no-padding-t" ng-if="$ctrl.windowWidthService.windowWidth >= $ctrl.mobileBreakpoint">
-                            <div ng-class="{'disable-layer': $ctrl.isSearchActive()}" ng-if="$ctrl.windowWidthService.windowWidth >= $ctrl.mobileBreakpoint"></div>
+                        <div ng-class="{'disable-layer': $ctrl.isSearchActive()}" ng-if="$ctrl.windowWidthService.windowWidth >= $ctrl.mobileBreakpoint"></div>
                         <div layout="row" layout-xs="column" ng-show="$ctrl.filterBlockExpand">
                             <div class="manage-chip" ng-click="$ctrl.clearAndOpenFilterBlock(true);">
                                 <md-chips class="filter-chip">
@@ -144,14 +149,8 @@
                             <div ng-show="$ctrl.fastSearchBlockExpand" layout="row" layout-md="column" layout-sm="column" layout-xs="column">
                                 <div id="search-header" ng-if="$ctrl.windowWidthService.windowWidth < $ctrl.mobileBreakpoint" class="filters-search-panel" flex="auto">
                                     <div class="search-wrapper-row">
-                                        <div class="search-wrapper" role="button" ng-click="$ctrl.clearAndOpenNewFilterBlock(true)">
-                                            <i class="material-icons">
-                                                search
-                                            </i>
-                                        </div>
-                                        <div id="filter" ng-if="$ctrl.windowWidthService.windowWidth < $ctrl.mobileBreakpoint" ng-show="!$ctrl.collapseNewFilter" class="md-row">
-                                            <div ng-class="{'disable-layer': $ctrl.isSearchActive()}"></div>
-                                            <div class="panel-body no-padding-t">
+                                        <div id="filter"  ng-if="$ctrl.windowWidthService.windowWidth < $ctrl.mobileBreakpoint" ng-show="!$ctrl.collapseNewFilter" class="md-row">
+                                            <div class="panel-body no-padding-t" ng-show="!$ctrl.isSearchActive()">
                                                 <div layout="row" layout-xs="column" ng-show="$ctrl.filterBlockExpand">
                                                     <md-chips class="filter-chip custom-filter" ng-model="$ctrl.filters" md-removable="false" readonly="true">
                                                         <input disabled>
@@ -180,6 +179,11 @@
                                             ng-model-options="{updateOn: 'blur'}"
                                             aria-label="Search items"
                                             aria-describedby="basic-addon2">
+                                            <div class="search-wrapper" ng-show="$ctrl.collapseNewFilter" role="button" ng-if="$ctrl.windowWidthService.windowWidth < $ctrl.mobileBreakpoint" >
+                                                <i class="material-icons">
+                                                    search
+                                                </i>
+                                            </div>
                                     </div>
                                 </div>
                                 <div id="search-select" ng-show="$ctrl.collapseNewFilter || $ctrl.windowWidthService.windowWidth >= $ctrl.mobileBreakpoint" layout="row" layout-md="column" layout-sm="column" layout-xs="column">

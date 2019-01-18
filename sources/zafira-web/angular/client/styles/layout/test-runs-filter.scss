@@ -2,6 +2,28 @@
 
 .p-tests-runs__section {
     &._filters {
+        & .search-button {
+            position: absolute;
+            right: 0;
+            top: 60px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            z-index: 3;
+            min-width: 32px;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            i {
+                font-size: 13px;
+            }
+            &.active {
+                background-color: #4ba69a;
+                i {
+                    color: white;
+                }
+            }
+        }
         @media screen and (max-width: 599px) {
             button#reset, 
             button#applySearch,
@@ -65,14 +87,13 @@
                 .search {
                     &-wrapper {
                         @media screen and (max-width: 599px) {
-                            max-width: 48px;
-                            max-height: 48px;
-                            box-shadow: 9px 0px 20px -1px rgb(255, 255, 255);
+                            max-width: 36px;
+                            max-height: 36px;
                             z-index: 3;
+                            position: absolute;
                             & i {
-                                background-color: white;
                                 display: block;
-                                padding: 15px;
+                                padding: 15px 7px 10px 28px;
                                 color: rgba(0, 0, 0, 0.5) !important;
                                 font-size: 18px;
                             }
@@ -84,22 +105,21 @@
                                 align-items: center;
                                 border-bottom: 1px solid rgba(0,0,0,0.12);
                             }
-                            @media screen and (max-width: 599px) {
-                                #search-input {
-                                    border-color: transparent !important;
-                                    padding-left: 0;
-                                    &::-webkit-input-placeholder {
-                                        font-style: italic;
-                                    }
+                            #search-input {
+                                @extend %select; 
+                                padding-left: 37px;
+                                @media (max-width: 599px) {
+                                    margin: 16px 16px 4px 16px;
                                 }
                             }
                             #filter {
                                 @media screen and (max-width: 599px) {
-                                    max-width: calc(100vw - 48px);
-                                    min-width: 80vw;
+                                    min-width: 100vw;
                                     background-color: white;
                                     width: 100%;
-                                    padding: 10px 0;
+                                    & .filter-chip {
+                                        margin: 10px 0;
+                                    }
                                 }
                                 @media screen and (min-width: $breakpoint-mobile) {
                                     min-width: 100%;
@@ -117,8 +137,7 @@
                     z-index: 4;
                     background-color: #fff;
                     left: 0;
-                    top: 48px;
-                    border-top: 1px rgba(0, 0, 0, 0.10) solid;
+                    top: 54px;
                     border-bottom-left-radius: 10px;
                     border-bottom-right-radius: 10px;
                     box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -210,6 +229,7 @@
                         }
                         @media (max-width: 599px) {
                             width: 104px;
+                            margin-bottom: 14px;
                         }
                     }
                 }

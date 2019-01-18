@@ -27,6 +27,7 @@
                     </div>
                 </span>
             </div>
+            <i class="material-icons back" ng-if="$ctrl.singleMode">keyboard_backspace</i>
             <div name="testRunInfo" class="test-run-card__cell _info">
                 <div class="test-run-card__title-wrapper">
                     <div class="test-run-card__title">
@@ -194,6 +195,7 @@
                     </div>
                 </span>
             </div>
+            <i class="material-icons back" ng-if="$ctrl.singleMode">keyboard_backspace</i>
             <div name="testRunInfo" class="test-run-card__cell _info">
                 <div class="test-run-card__title">
                     {{$ctrl.testRun.testSuite.name}}
@@ -204,16 +206,7 @@
                 </div>
             </div>
             <div name="testRunInfo" class="test-run-card__cell _actions">
-                <md-button aria-label="Show or hide tests" ng-click="$ctrl.showDetails()" md-ink-ripple="false"
-                    class="md-icon-button no-padding expand-button">
-                    <i class="fa expand-icon" ng-class="$ctrl.testRun.expand ? 'fa-angle-double-up' : 'fa-angle-double-down'"
-                        aria-hidden="true">
-                        <img src="../../assets/images/outline-arrow_drop_down_circle-24px.svg" />
-                    </i>
-                    <i class="material-icons clear">
-                        clear
-                    </i>
-                </md-button>
+                <!--  ng-click="$ctrl.showDetails()"  -->
                 <md-menu md-offset="0 {{$ctrl.currentOffset}}">
                     <md-button name="testRunSetting" aria-label="User settings" class="md-icon-button" ng-click="$ctrl.openMenu($event, $mdMenu)">
                         <md-icon class="material-icons">more_vert</md-icon>

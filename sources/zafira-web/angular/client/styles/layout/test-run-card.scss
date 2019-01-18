@@ -142,6 +142,7 @@
             width: 6%;
             min-width: 40px;
             font-size: 14px;
+            padding-right: 0;
             //width: 80px;
             md-checkbox {
                 margin-bottom: 0;
@@ -344,6 +345,7 @@
             }
         }
         &-additions {
+            margin-left: 5px;
             z-index: 2;
             display: flex;
             justify-content: center;
@@ -462,6 +464,13 @@
         @media (min-width: $breakpoint-mobile) {
             padding: 2px 0;
         }
+        .back {
+            margin-top: 3px;
+            cursor: pointer;
+            @media (max-width: 599px) {
+                margin-top: -3px;
+            }
+        }
     }
     
     &._single & {
@@ -473,7 +482,7 @@
             height: auto;
             @media (min-width: $breakpoint-mobile) {
                 margin: 0 2px;
-                padding: 0 22px;
+                padding: 0 15px;
             }
         }
         &__row {
@@ -492,10 +501,12 @@
                 padding-right: 30px !important;
             }
         }
+        
         &__cell {
             border-top: 0;
             &._info {
                 padding: 0;
+                margin-left: 10px;
             }
             &._selection {
                 display: none;
