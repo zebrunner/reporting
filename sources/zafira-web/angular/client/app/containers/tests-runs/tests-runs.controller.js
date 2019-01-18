@@ -45,6 +45,7 @@
             batchEmail: batchEmail,
             addToSelectedTestRuns: addToSelectedTestRuns,
             deleteSingleTestRun: deleteSingleTestRun,
+            showCiHelperDialog: showCiHelperDialog,
         };
 
         vm.$onInit = init;
@@ -364,6 +365,18 @@
                     testsRunsService.clearDataCache();
                     onTransitionChange();
                 }
+            });
+        }
+
+        function showCiHelperDialog(event) {
+            $mdDialog.show({
+                controller: 'CiHelperController',
+                templateUrl: 'app/components/modals/ci-helper/ci-helper.html',
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose:false,
+                fullscreen: true,
+                autoWrap: false
             });
         }
     }

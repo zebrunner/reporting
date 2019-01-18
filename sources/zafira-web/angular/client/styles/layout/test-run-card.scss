@@ -702,24 +702,24 @@
     }
 }
 
-//the rule for sticky single test
-#content {
-    $content: &;
-    & ._single{
-        @at-root {
-            #{$content} {
-                overflow: visible;
-                & .page {
-                    padding: 0;
-                }
-                & .row {
-                    @media (min-width: $breakpoint-mobile) {
-                        padding: 0 20px;
+.p-tests-run-details {
+    //the rule for sticky single test
+    #content {
+        $content: &;
+        & ._single{
+            @at-root {
+                #{$content} {
+                    overflow: visible;
+                    & .page {
+                        padding: 0;
+                    }
+                    & .row {
+                        @media (min-width: $breakpoint-mobile) {
+                            padding: 0 20px;
+                        }
                     }
                 }
             }
         }
     }
 }
-
-

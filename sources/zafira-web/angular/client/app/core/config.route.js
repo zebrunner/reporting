@@ -154,7 +154,11 @@
                         templateUrl: 'app/containers/test-details/test-details.html',
                         store: true,
                         params: {
-                            testRun: null,
+                            testRun: null
+                        },
+                        data: {
+                            requireLogin: true,
+                            classes: 'p-tests-run-details'
                         },
                         resolve: {
                             testRun: ['$stateParams', '$q', '$state', 'TestRunService', function($stateParams, $q, $state, TestRunService) {
