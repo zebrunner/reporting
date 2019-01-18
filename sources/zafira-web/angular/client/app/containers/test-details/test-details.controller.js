@@ -91,6 +91,7 @@
             initWebsocket();
             initTests();
             fillTestRunMetadata();
+            bindEvents();
         }
 
         function fillTestRunMetadata() {
@@ -466,7 +467,7 @@
         }
 
         function checkStatisticEvent(event) {
-            return (vm.testRun.id !== event.testRunStatistics.testRunId);
+            return (vm.testRun.id !== +event.testRunStatistics.testRunId);
         }
 
         function subscribeStatisticsTopic() {
@@ -499,6 +500,17 @@
                     $scope.$apply();
                 });
             }
+        }
+
+        function bindEvents() {
+            $scope.$on('$destroy', function () {
+                if (vm.zafiraWebsocket && vm.zafiraWebsocket.connected) {
+                    vm.subscriptions.statistics && vm.subscriptions.statistics.unsubscribe();
+                    vm.subscriptions[vm.testRun.id] && vm.subscriptions[vm.testRun.id].unsubscribe();
+                    vm.zafiraWebsocket.disconnect();
+                    UtilService.websocketConnected('zafira');
+                }
+            });
         }
     }
 

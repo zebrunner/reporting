@@ -15,17 +15,24 @@
         'ConfigService',
         'resolvedTestRuns',
         'testsRunsService',
+        '$scope',
+        'API_URL',
+        '$rootScope',
+        '$transitions',
         TestsRunsController]);
 
     function TestsRunsController($cookieStore, $mdDialog, $timeout, $q, TestRunService, UtilService,
                                  UserService, SettingsService, ConfigService, resolvedTestRuns,
-                                 testsRunsService) {
+                                 testsRunsService, $scope, API_URL, $rootScope, $transitions) {
+        let TENANT;
         const vm = {
             testRuns: resolvedTestRuns.results || [],
             totalResults: resolvedTestRuns.totalResults || 0,
             pageSize: resolvedTestRuns.pageSize,
             currentPage: resolvedTestRuns.page,
             selectedTestRuns: {},
+            zafiraWebsocket: null,
+            subscriptions: {},
 
             isTestRunsEmpty: isTestRunsEmpty,
             getTestRuns: getTestRuns,
@@ -45,9 +52,12 @@
         return vm;
 
         function init() {
+            TENANT = $rootScope.globals.auth.tenant;
             loadSlackMappings();
             loadSlackAvailability();
             readStoredParams();
+            initWebsocket();
+            bindEvents();
         }
 
         function readStoredParams() {
@@ -63,8 +73,6 @@
         }
 
         function getTestRuns(page, pageSize) {
-            console.log('doing fetching...', page); //TODO: remove before merge on prod
-
             const projects = $cookieStore.get('projects');
 
             projects && projects.length && testsRunsService.setSearchParam('projects', projects);
@@ -146,11 +154,9 @@
             const rerunFailures = confirm('Would you like to rerun only failures, otherwise all the tests will be restarted?');
 
             // vm.selectAll = false;
-            for (const id in vm.testRuns) {
-                if (vm.testRuns[id].selected) {
-                    rebuild(vm.testRuns[id], rerunFailures);
-                }
-            }
+            vm.testRuns.forEach(function(testRun) {
+                testRun.selected && rebuild(testRun, rerunFailures);
+            });
         }
 
         function rebuild(testRun, rerunFailures) {
@@ -294,6 +300,70 @@
                 const messageData = rs.success ? {success: rs.success, id: id, message: 'Test run{0} {1} removed'} : {id: id, message: 'Unable to delete test run{0} {1}'};
 
                 UtilService.showDeleteMessage(messageData, [id], [], []);
+            });
+        }
+
+        function getEventFromMessage(message) {
+            return JSON.parse(message.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
+        }
+
+        function initWebsocket() {
+            const wsName = 'zafira';
+
+            vm.zafiraWebsocket = Stomp.over(new SockJS(API_URL + '/api/websockets'));
+            vm.zafiraWebsocket.debug = null;
+            vm.zafiraWebsocket.connect({withCredentials: false}, function () {
+                vm.subscriptions.statistics = subscribeStatisticsTopic();
+                UtilService.websocketConnected(wsName);
+            }, function () {
+                UtilService.reconnectWebsocket(wsName, vm.initWebsocket);
+            });
+        }
+
+        function subscribeStatisticsTopic() {
+            return vm.zafiraWebsocket.subscribe('/topic/' + TENANT + '.statistics', function (data) {
+                const event = getEventFromMessage(data.body);
+                let index = -1;
+
+                vm.testRuns.some(function(testRun, i) {
+                    if (testRun.id === +event.testRunStatistics.testRunId) {
+                        index = i;
+                    }
+                });
+
+                if (index !== -1) {
+                    vm.testRuns[index].inProgress = event.testRunStatistics.inProgress;
+                    vm.testRuns[index].passed = event.testRunStatistics.passed;
+                    vm.testRuns[index].failed = event.testRunStatistics.failed;
+                    vm.testRuns[index].failedAsKnown = event.testRunStatistics.failedAsKnown;
+                    vm.testRuns[index].failedAsBlocker = event.testRunStatistics.failedAsBlocker;
+                    vm.testRuns[index].skipped = event.testRunStatistics.skipped;
+                    vm.testRuns[index].reviewed = event.testRunStatistics.reviewed;
+                    vm.testRuns[index].aborted = event.testRunStatistics.aborted;
+                    vm.testRuns[index].queued = event.testRunStatistics.queued;
+                    $scope.$apply();
+                }
+
+
+            });
+        }
+
+        function bindEvents() {
+            $scope.$on('$destroy', function () {
+                if(vm.zafiraWebsocket && vm.zafiraWebsocket.connected) {
+                    vm.subscriptions.statistics && vm.subscriptions.statistics.unsubscribe();
+                    vm.zafiraWebsocket.disconnect();
+                    UtilService.websocketConnected('zafira');
+                }
+            });
+
+            const onTransitionChange = $transitions.onStart({}, function(trans) {
+                var toState = trans.to();
+
+                if (toState.name !== 'tests/run'){
+                    testsRunsService.clearDataCache();
+                    onTransitionChange();
+                }
             });
         }
     }
