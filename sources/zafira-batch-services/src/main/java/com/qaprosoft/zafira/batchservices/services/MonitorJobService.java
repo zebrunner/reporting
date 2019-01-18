@@ -15,14 +15,20 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.batchservices.services;
 
-import com.google.gson.Gson;
-import com.qaprosoft.zafira.batchservices.tasks.MonitorEmailNotificationTask;
-import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
-import com.qaprosoft.zafira.models.db.Monitor;
-import com.qaprosoft.zafira.models.push.events.MonitorEventMessage;
-import com.qaprosoft.zafira.services.services.application.MonitorService;
-import com.qaprosoft.zafira.services.services.management.TenancyService;
-import org.quartz.*;
+import static org.quartz.TriggerKey.triggerKey;
+
+import java.text.ParseException;
+import java.util.List;
+import java.util.Objects;
+
+import javax.annotation.PostConstruct;
+
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobKey;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.impl.triggers.CronTriggerImpl;
 import org.slf4j.Logger;
@@ -32,12 +38,13 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
-import javax.annotation.PostConstruct;
-import java.text.ParseException;
-import java.util.List;
-import java.util.Objects;
-
-import static org.quartz.TriggerKey.triggerKey;
+import com.google.gson.Gson;
+import com.qaprosoft.zafira.batchservices.tasks.MonitorEmailNotificationTask;
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
+import com.qaprosoft.zafira.models.db.Monitor;
+import com.qaprosoft.zafira.models.push.events.MonitorEventMessage;
+import com.qaprosoft.zafira.services.services.application.MonitorService;
+import com.qaprosoft.zafira.services.services.management.TenancyService;
 
 public class MonitorJobService
 {
@@ -45,7 +52,6 @@ public class MonitorJobService
 	private final static Logger LOGGER = LoggerFactory.getLogger(MonitorJobService.class);
 
 	private final static String JOB_GROUP_NAME = "monitorJobGroup";
-	private final static String TRIGGER_GROUP_NAME = "monitorTriggerGroup";
 
 	@Autowired
 	private SchedulerFactoryBean springScheduler;

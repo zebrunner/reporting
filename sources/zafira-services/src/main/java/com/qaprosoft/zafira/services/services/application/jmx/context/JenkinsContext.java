@@ -27,11 +27,15 @@ public class JenkinsContext extends AbstractContext {
     private static final Integer HTTP_TIMEOUT = 15;
 
     private JenkinsServer jenkinsServer;
+    private String launcherJobName;
+    private String jenkinsHost;
 
-    public JenkinsContext(String url, String username, String passwordOrApiToken) {
+    public JenkinsContext(String url, String username, String passwordOrApiToken, String launcherJobName) {
         try {
             JenkinsConfig config = new JenkinsConfig(username, passwordOrApiToken, HTTP_TIMEOUT);
             this.jenkinsServer = new JenkinsServer(new JenkinsClient(new URI(url), config));
+            this.launcherJobName = launcherJobName;
+            this.jenkinsHost = url;
         } catch (URISyntaxException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -43,5 +47,21 @@ public class JenkinsContext extends AbstractContext {
 
     public void setJenkinsServer(JenkinsServer jenkinsServer) {
         this.jenkinsServer = jenkinsServer;
+    }
+
+    public String getLauncherJobName() {
+        return launcherJobName;
+    }
+
+    public void setLauncherJobName(String launcherJobName) {
+        this.launcherJobName = launcherJobName;
+    }
+
+    public String getJenkinsHost() {
+        return jenkinsHost;
+    }
+
+    public void setJenkinsHost(String jenkinsHost) {
+        this.jenkinsHost = jenkinsHost;
     }
 }

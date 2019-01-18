@@ -20,7 +20,7 @@ public abstract class BasePage extends AbstractPage
 	@FindBy(css = "h2.section-header, #pageTitle")
 	private WebElement pageTitle;
 
-	@FindBy(xpath = "//*[contains(@class, 'section-header')]//small | //*[contains(@class, 'fixed-search-column')]//small")
+	@FindBy(xpath = "//*[contains(@class, 'section-header')]//small | //*[contains(@class, 'fixed-search-column')]//small | //*[contains(@class, 'fixed-page-header')]//small")
 	private WebElement pageItemsCount;
 
 	@FindBy(xpath = "//md-fab-trigger")

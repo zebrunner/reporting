@@ -15,8 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
-public class TestInfo
-{
+public class TestInfo {
+	
     private String tagValue;
     private String id;
     private String status;

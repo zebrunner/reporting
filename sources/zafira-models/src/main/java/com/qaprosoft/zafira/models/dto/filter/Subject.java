@@ -15,11 +15,11 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.models.dto.filter;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 public class Subject
 {

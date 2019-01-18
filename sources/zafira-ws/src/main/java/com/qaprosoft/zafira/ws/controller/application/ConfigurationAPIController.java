@@ -15,12 +15,10 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.qaprosoft.zafira.ws.controller.AbstractController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,6 +39,7 @@ import com.qaprosoft.zafira.services.services.application.VersionService;
 import com.qaprosoft.zafira.services.services.application.jmx.JenkinsService;
 import com.qaprosoft.zafira.services.services.application.jmx.JiraService;
 import com.qaprosoft.zafira.services.services.application.jmx.SlackService;
+import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;

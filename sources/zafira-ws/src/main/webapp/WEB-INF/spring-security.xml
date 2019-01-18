@@ -81,6 +81,8 @@
 		<security:intercept-url pattern="/api/slack/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/views/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/invitations/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/scm/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/launchers/**" access="isAuthenticated()" />
 		<!--  security:intercept-url pattern="/api/websockets/**" access="isAuthenticated()" /-->
 
 	</security:http>

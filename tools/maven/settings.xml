@@ -27,6 +27,9 @@
             <zafira.elasticsearch.url></zafira.elasticsearch.url>
             <zafira.elasticsearch.user></zafira.elasticsearch.user>
             <zafira.elasticsearch.pass></zafira.elasticsearch.pass>
+            
+            <zafira.scm.github.client.id></zafira.scm.github.client.id>
+            <zafira.scm.github.client.secret></zafira.scm.github.client.secret>
 
             <zafira.redis.host>localhost</zafira.redis.host>
             <zafira.redis.port>6379</zafira.redis.port>

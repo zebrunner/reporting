@@ -15,6 +15,7 @@ $gray:                   lighten($gray-base, 33.5%) !default; // #555
 $gray-light:             lighten($gray-base, 46.7%) !default; // #777 dark-gray
 $gray-lighter:           lighten($gray-base, 93.5%) !default; // #eee
 
+$brand-light:           #26a69a !default;
 $brand-primary:         #009688 !default; // Teal 500
 $brand-success:         #8BC34A !default; // Light Green 500
 $brand-info:            #00BCD4 !default; // Cyan 500
@@ -903,3 +904,10 @@ $dl-horizontal-offset:        $component-offset-horizontal !default;
 $dl-horizontal-breakpoint:    $grid-float-breakpoint !default;
 //** Horizontal line color.
 $hr-border:                   $gray-lighter !default;
+
+
+$z-index-menu: 100 !default;
+$z-index-calendar-pane: 100 !default;
+$z-index-select: 90 !default;
+$zindex-modal-background: 79;
+$zindex-fixed: 78;

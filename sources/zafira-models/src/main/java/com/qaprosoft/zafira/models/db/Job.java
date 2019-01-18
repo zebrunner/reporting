@@ -32,6 +32,11 @@ public class Job extends AbstractEntity
 	{
 	}
 
+	public Job(String name, String jobURL) {
+		this.name = name;
+		this.jobURL = jobURL;
+	}
+
 	public Job(String name, String jobURL, String jenkinsHost, User user)
 	{
 		this.name = name;

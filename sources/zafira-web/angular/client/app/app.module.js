@@ -10,6 +10,7 @@
         ,'app.auth'
         ,'app.dashboard'
         ,'app.user'
+        ,'app.scm'
         ,'app.testcase'
         ,'app.testrun'
         ,'app.testruninfo'
@@ -19,9 +20,11 @@
         ,'app.integrations'
         ,'app.certification'
         ,'app.sidebar'
+        ,'app.common'
         // 3rd party feature modules
         ,'ngImgCrop'
         ,'ngecharts'
+        ,'ui.ace'
         ,'elasticsearch'
         ,'md.data.table'
         ,'timer'
@@ -92,6 +95,24 @@
             return this.replace(/{(\d+)}/g, function(m,n){
                 return args[n] ? args[n] : m;
             });
+        };
+        String.prototype.isJsonValid = function(pretty) {
+            var json = this;
+            if(pretty) {
+                json = json.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
+                json = json.replace(/\'/g, "\"");
+            }
+            try {
+                JSON.parse(json);
+            } catch (e) {
+                return false;
+            }
+            return true;
+        };
+        String.prototype.toJson = function() {
+            var jsonText = this.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
+            jsonText = jsonText.replace(/\'/g, "\"");
+            return JSON.parse(jsonText);
         };
 
         Array.prototype.indexOfField = function(fieldName, fieldValue) {
@@ -235,7 +256,7 @@
         "use strict";
         return {
             restrict: 'E',
-            template: '<span><span>{{ text.substring(0, limit + 1) }}</span><span ng-if="text.length > limit">{{ symbols }}</span></span>',
+            template: '<span class="zf-show-part"><span>{{ text.substring(0, limit + 1) }}</span><span ng-if="text.length > limit">{{ symbols }}</span></span>',
             replace: true,
             scope: {
                 text: '=',

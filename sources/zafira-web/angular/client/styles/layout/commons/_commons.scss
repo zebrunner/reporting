@@ -1,0 +1,347 @@
+$modal-grey: #dfe3e5;
+$modal-white: #ffffff;
+$red: #d2333b;
+
+.zf-md-dialog-container {
+    height: 100% !important;
+    //top: 0 !important;
+    overflow: auto !important;
+    display: block;
+    text-align: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+
+    @media(max-width: $screen-phone) {
+        padding: 0;
+    }
+    .zf-modal-container {
+        text-align: left !important;
+        display: inline-block !important;
+        height: auto;
+        min-height: auto;
+        max-height: none !important;
+        width: 880px !important;
+        font-size: 0 !important;
+
+        @media(max-width: $screen-phone) {
+            height: 100%;
+        }
+
+        .md-dialog-content > div[ng-transclude] {
+            display: flex;
+            min-height: 576px;
+        }
+
+        &_helper, &_content {
+            font-size: 12px;
+            padding: 32px 0 32px 24px;
+        }
+
+        &_helper {
+            width: 34%;
+            background-color: $modal-white;
+        }
+
+        &_content {
+            width: 66%;
+            background-color: $modal-grey;
+            padding: 30px 20px 24px 24px;
+        }
+
+        .md-dialog-content {
+            padding: 0;
+            height: 100%;
+
+            > * {
+                height: 100%;
+            }
+        }
+    }
+}
+
+
+// Inputs
+.zf-input-container {
+    font-size: 0;
+    > input, > select, md-select {
+        width: 272px;
+        height: 34px;
+        border-radius: 4px;
+        background-color: $modal-white;
+        border: 1px solid $modal-white;
+        font-size: 14px;
+        padding: 11px;
+
+        &::placeholder {
+            color: rgba(0, 0, 0, 0.5);
+            opacity: 0.5;
+            font-weight: 500;
+        }
+    }
+    md-select {
+        padding: 0;
+        md-select-value {
+            border: none !important;
+        }
+    }
+    md-input-container {
+        margin: 0;
+        padding: 0;
+        &.md-input-has-value {
+            label {
+                display: none;
+            }
+        }
+        md-select-value {
+            > span {
+                padding: 10px;
+            }
+        }
+        &:not(.md-input-has-value) {
+            md-select:not([disabled='disabled']):not([disabled='true']) {
+                md-select-value {
+                    > span {
+                        color: black;
+                    }
+                }
+            }
+        }
+    }
+    md-checkbox {
+        margin: 0;
+        .md-container {
+            color: #1f242a;
+            opacity: 0.5;
+        }
+        &.md-checked .md-icon {
+            background-color: black;
+        }
+        .md-label {
+            font-weight: normal;
+            color: black;
+            font-size: 14px;
+        }
+    }
+
+    md-chips-wrap {
+        box-shadow: none !important;
+        padding: 0;
+        padding-bottom: 8px;
+        background-color: $modal-white;
+
+        > md-chip {
+            height: 24px;
+            border-radius: 12px;
+            margin-left: 8px;
+            margin-right: 0;
+
+            > .md-chip-content {
+                line-height: 24px;
+            }
+            > .md-chip-remove-container {
+                height: 24px;
+                button {
+                    height: 24px;
+                    width: 24px;
+                    md-icon {
+                        min-width: 16px;
+                        min-height: 16px;
+                        width: 16px;
+                        height: 16px;
+                    }
+                }
+            }
+        }
+
+        > .md-chip-input-container {
+            margin: 4px 0 0 8px !important;
+            height: 24px;
+        }
+    }
+    label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: normal;
+        line-height: 12px;
+        margin-bottom: 12px;
+        color: #35393f;
+    }
+
+    *[ng-messages] {
+        position: absolute;
+        color: red;
+        > * {
+            font-size: 12px !important;
+        }
+    }
+}
+
+.zf-label {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 3.71;
+    letter-spacing: 0.1px;
+    color: #7f7f7f;
+    padding-right: 24px;
+
+    @media (max-width: $screen-sm) {
+        height: 20px;
+        line-height: 14px;
+    }
+}
+
+.zf-button {
+    display: inline-block;
+    position: relative;
+    min-width: 88px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    letter-spacing: 0.1px;
+    color: black;
+
+    &.zf-info {
+        background-color: rgba(31,36,42, .07);
+        float: left;
+        color: black;
+    }
+
+    &.zf-warn {
+        color: $red !important;
+        //width: 128px;
+        background-color: rgba(31,36,42, .1) !important;
+
+        &:hover {
+            background-color: rgba(31,36,42, .2) !important;
+        }
+    }
+
+    &.zf-chip-button {
+        width: 100% !important;
+        min-width: 128px !important;
+        height: 32px;
+        line-height: 28px !important;
+        border-radius: 16px;
+        letter-spacing: normal !important;
+        color: $modal-white;
+        background-color: $brand-light;
+        padding-left: 16px;
+        text-transform: uppercase;
+
+        i.material-icons {
+            position: absolute;
+            left: 8px;
+            top: 8px;
+            vertical-align: middle;
+            font-size: 16px;
+        }
+    }
+
+    &.zf-square {
+        width: 36px !important;
+        min-width: 36px !important;
+        height: 36px !important;
+        line-height: 48px !important;
+        background-color: rgba(31,36,42, 0.4);
+        border-radius: 4px;
+        padding: 0;
+
+        &:hover {
+            background-color: rgba(31,36,42, 0.5);
+        }
+
+        i {
+            color: $modal-white;
+            font-size: 22px;
+        }
+    }
+
+    &.zf-button-close {
+        i.material-icons {
+            transform: rotate(-135deg);
+            transition: all linear .3s;
+        }
+    }
+    &.zf-button-close-revert {
+        i.material-icons {
+            transform: rotate(0deg);
+            transition: all linear .3s;
+            transform-origin: 49% 49%;
+        }
+    }
+}
+
+// Controls
+
+.zf-radio-button {
+    position: relative;
+    display: inline-block;
+    width: 154px;
+    height: 36px;
+    margin: 0 8px 8px 0;
+    input[type = 'radio'] {
+        display: none;
+    }
+    label {
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        position: relative;
+        > div {
+            position: absolute;
+            line-height: 43px;
+            font-weight: normal;
+            letter-spacing: normal;
+            font-size: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 8px;
+        }
+        img {
+            max-width: 20px;
+            max-height: 20px;
+            margin-right: 4px;
+        }
+
+        &:before {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: $modal-grey;
+            border: 2px solid $coal;
+            opacity: 0.1;
+            border-radius: 4px;
+        }
+
+        &:hover {
+            &:before {
+                background-color: $coal;
+                opacity: 0.1;
+            }
+        }
+    }
+}
+
+.zf-radio-button.zf-checked {
+    label {
+        &:before {
+            background-color: $coal;
+            opacity: 0.15;
+        }
+    }
+}
+
+.zf-display-table {
+    display: table;
+    > div {
+        display: table-row;
+        > div {
+            display: table-cell;
+        }
+    }
+}

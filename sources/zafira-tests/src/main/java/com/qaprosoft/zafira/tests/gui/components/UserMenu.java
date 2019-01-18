@@ -10,7 +10,7 @@ import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
 public class UserMenu extends AbstractUIObject
 {
 
-	private static final String CONTAINER_LOCATOR = "//div[preceding-sibling::header]/md-menu-content[.//*[text() = 'My profile']]";
+	private static final String CONTAINER_LOCATOR = "//div[preceding-sibling::header]/md-menu-content[.//*[text() = 'Profile']]";
 
 	@FindBy(xpath = CONTAINER_LOCATOR)
 	private WebElement container;

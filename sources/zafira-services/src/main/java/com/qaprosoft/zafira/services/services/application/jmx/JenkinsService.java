@@ -25,10 +25,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -60,6 +60,8 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JenkinsService.class);
 
+    private static final String[] REQUIRED_ARGS = new String[] {"scmURL", "scmBranch", "suite", "args"};
+
     private final String FOLDER_REGEX = ".+job\\/.+\\/job.+";
 
     @Autowired
@@ -73,6 +75,7 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
         String url = null;
         String username = null;
         String passwordOrApiToken = null;
+        String launcherJobName = null;
 
         try {
             List<Setting> jenkinsSettings = settingsService.getSettingsByTool(JENKINS);
@@ -90,11 +93,14 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
                 case JENKINS_API_TOKEN_OR_PASSWORD:
                     passwordOrApiToken = setting.getValue();
                     break;
+                case JENKINS_LAUNCHER_JOB_NAME:
+                    launcherJobName = setting.getValue();
+                    break;
                 default:
                     break;
                 }
             }
-            init(url, username, passwordOrApiToken);
+            init(url, username, passwordOrApiToken, launcherJobName);
         } catch (Exception e) {
             LOGGER.error("Setting does not exist", e);
         }
@@ -104,11 +110,12 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
     @ManagedOperationParameters({
             @ManagedOperationParameter(name = "url", description = "Jenkins url"),
             @ManagedOperationParameter(name = "username", description = "Jenkins username"),
-            @ManagedOperationParameter(name = "passwordOrApiToken", description = "Jenkins passwordOrApiToken or api token") })
-    public void init(String url, String username, String passwordOrApiToken) {
+            @ManagedOperationParameter(name = "passwordOrApiToken", description = "Jenkins passwordOrApiToken or api token"),
+            @ManagedOperationParameter(name = "launcherJobName", description = "Jenkins launcher job name") })
+    public void init(String url, String username, String passwordOrApiToken, String launcherJobName) {
         try {
             if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(passwordOrApiToken)) {
-                putContext(JENKINS, new JenkinsContext(url, username, passwordOrApiToken));
+                putContext(JENKINS, new JenkinsContext(url, username, passwordOrApiToken, launcherJobName));
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize Jenkins integration: " + e.getMessage());
@@ -146,20 +153,15 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
         }
         return success;
     }
-
-    public boolean buildJob(Job ciJob, Integer buildNumber, Map<String, String> jobParameters,
-            boolean buildWithParameters) {
+    
+    public boolean buildJob(Job job, Map<String, String> jobParameters) {
         boolean success = false;
-        if (buildWithParameters) {
-            try {
-                JobWithDetails job = getJobWithDetails(ciJob);
-                QueueReference reference = job.build(jobParameters, true);
-                success = checkReference(reference);
-            } catch (Exception e) {
-                LOGGER.error("Unable to run Jenkins job:  " + e.getMessage());
-            }
-        } else {
-            success = rerunJob(ciJob, buildNumber, false);
+        try {
+            JobWithDetails ciJob = getJobWithDetails(job);
+            QueueReference reference = ciJob.build(jobParameters, true);
+            success = checkReference(reference);
+        } catch (Exception e) {
+            LOGGER.error("Unable to run Jenkins job:  " + e.getMessage());
         }
         return success;
     }
@@ -292,6 +294,27 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
         return params;
     }
 
+    public Job getJob(String jobName) {
+        Job job = null;
+        try {
+            JobWithDetails jobWithDetails = getServer().getJob(jobName);
+            if(jobWithDetails != null && jobWithDetails.getUrl() != null) {
+                job = new Job(jobName, jobWithDetails.getUrl());
+            }
+        } catch (IOException e) {
+            LOGGER.error("Unable to get job by name '" + jobName + "'. " + e.getMessage(), e);
+        }
+        return job;
+    }
+
+    public static boolean checkArguments(Map<String, String> args) {
+        return Arrays.stream(REQUIRED_ARGS).filter(arg -> args.get(arg) == null).collect(Collectors.toList()).size() == 0;
+    }
+
+    public static String[] getRequiredArgs() {
+        return REQUIRED_ARGS;
+    }
+
     @Override
     public boolean isConnected() {
         return getServer() != null && getServer().isRunning();
@@ -300,5 +323,9 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
     @ManagedAttribute(description = "Get jenkins server")
     public JenkinsServer getServer() {
         return getContext(JENKINS) != null ? getContext(JENKINS).getJenkinsServer() : null;
+    }
+
+    public JenkinsContext getContext() {
+        return getContext(JENKINS);
     }
 }

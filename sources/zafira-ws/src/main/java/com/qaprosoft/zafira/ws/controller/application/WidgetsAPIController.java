@@ -24,7 +24,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -60,8 +59,6 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping("api/widgets")
 public class WidgetsAPIController extends AbstractController
 {
-	private static final Logger LOGGER = Logger.getLogger(WidgetsAPIController.class);
-
 	@Autowired
 	private URLResolver urlResolver;
 

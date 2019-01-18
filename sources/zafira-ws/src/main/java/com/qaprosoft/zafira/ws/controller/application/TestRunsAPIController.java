@@ -509,17 +509,22 @@ public class TestRunsAPIController extends AbstractController {
 	@ApiOperation(value = "Build test run", nickname = "buildTestRun", httpMethod = "POST")
 	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
 	@RequestMapping(value = "{id}/build", method = RequestMethod.POST)
-	public void buildTestRun(@PathVariable(value = "id") long id,
-			@RequestParam(value = "buildWithParameters", required = false, defaultValue = "true") boolean buildWithParameters,
-			@RequestBody Map<String, String> jobParameters) throws ServiceException {
+	public void buildTestRun(@PathVariable(value = "id") long id, @RequestParam(value = "buildWithParameters", required = false, defaultValue = "true") boolean buildWithParameters, @RequestBody Map<String, String> jobParameters) throws ServiceException {
+		
 		TestRun testRun = testRunService.getTestRunByIdFull(id);
-		if (testRun == null) {
-			throw new TestRunNotFoundException();
+		if (testRun == null) 
+			throw new TestRunNotFoundException("Unable to find test run by id");
+		
+		boolean success = false;
+		if(buildWithParameters) {
+			success = jenkinsService.buildJob(testRun.getJob(), jobParameters);
 		}
-
-		if (!jenkinsService.buildJob(testRun.getJob(), testRun.getBuildNumber(), jobParameters, buildWithParameters)) {
+		else {
+			success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), false);
+		}
+		
+		if (!success) 
 			throw new UnableToRebuildCIJobException();
-		}
 	}
 
 	@ResponseStatusDetails

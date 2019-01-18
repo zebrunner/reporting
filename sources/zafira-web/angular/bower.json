@@ -33,6 +33,7 @@
     "ng-img-crop": "ngImgCrop#^0.3.2",
     "elasticsearch": "^15.0.0",
     "jszip": "Stuk/jszip#^3.1.5",
+    "angular-ui-ace": "bower",
     "angular-ui-router": "^1.0.20",
     "angular-jwt": "^0.1.10"
   },

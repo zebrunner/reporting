@@ -181,7 +181,7 @@ public class UserProfilePageTest extends AbstractTest {
     public void changePasswordTest() {
 
         String tempPwd = "qqqqqqqqqqq";
-        String shortPwd = "qqq";
+//        String shortPwd = "qqq";
 
         String email = String.format("test+%s@test.test", RandomUtils.nextInt(0, 10000));
         String username = "username" + RandomStringUtils.randomAlphabetic(15);
@@ -264,7 +264,7 @@ public class UserProfilePageTest extends AbstractTest {
 
         String firstName = userProfilePage.getWebElementValue(userProfilePage.getFirstNameInput());
         String lastName = userProfilePage.getWebElementValue(userProfilePage.getLastNameInput());
-        String email = userProfilePage.getWebElementValue(userProfilePage.getEmailInput());
+//        String email = userProfilePage.getWebElementValue(userProfilePage.getEmailInput());
 
         //Check if username is disabled
         Assert.assertTrue(userProfilePage.isElementPresent
