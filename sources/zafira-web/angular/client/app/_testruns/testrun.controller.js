@@ -1399,7 +1399,7 @@
                 });
         };
 
-        $scope.showCiHelperDialog = function(testRun, event) {
+        $scope.showCiHelperDialog = function(event) {
             $mdDialog.show({
                 controller: CiHelperController,
                 templateUrl: 'app/_testruns/ci_helper_modal.html',
@@ -1409,7 +1409,6 @@
                 fullscreen: true,
                 autoWrap: false,
                 locals: {
-
                 }
             })
             .then(function(answer) {
