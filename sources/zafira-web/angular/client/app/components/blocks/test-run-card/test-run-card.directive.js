@@ -4,7 +4,7 @@
     angular.module('app.testRunCard').directive('testRunCard', function() {
         return {
             templateUrl: 'app/components/blocks/test-run-card/test-run-card.html',
-            controller: function TestRunCardController(mediaBreakpoints, windowWidthService,
+            controller: function TestRunCardController(windowWidthService,
                                                        testsRunsService, $rootScope, UtilService,
                                                        $state, $timeout, $mdDialog, $mdToast,
                                                        SlackService, TestRunService, UserService,
@@ -24,8 +24,7 @@
                     showNotifyInSlackOption: false,
                     showBuildNowOption: false,
                     showDeleteTestRunOption: false,
-                    mobileBreakpoint: mediaBreakpoints.mobile || 0,
-                    windowWidthService: windowWidthService,
+                    isMobile: windowWidthService.isMobile,
                     isSlackAvailable: false,
                     slackChannels: null,
                     currentOffset: $rootScope.currentOffset,

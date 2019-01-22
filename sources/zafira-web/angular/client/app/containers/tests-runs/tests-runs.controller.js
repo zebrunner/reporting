@@ -19,11 +19,13 @@
         'API_URL',
         '$rootScope',
         '$transitions',
+        'windowWidthService',
         TestsRunsController]);
         
     function TestsRunsController($cookieStore, $mdDialog, $timeout, $q, TestRunService, UtilService,
                                  UserService, SettingsService, ConfigService, resolvedTestRuns,
-                                 testsRunsService, $scope, API_URL, $rootScope, $transitions) {
+                                 testsRunsService, $scope, API_URL, $rootScope, $transitions,
+                                 windowWidthService) {
         let TENANT;
         const vm = {
             testRuns: resolvedTestRuns.results || [],
@@ -33,8 +35,10 @@
             selectedTestRuns: {},
             zafiraWebsocket: null,
             subscriptions: {},
-
+            isMobile: windowWidthService.isMobile,
+            isFilterActive: testsRunsService.isFilterActive,
             isSearchActive: testsRunsService.isSearchActive,
+
             isTestRunsEmpty: isTestRunsEmpty,
             getTestRuns: getTestRuns,
             getLengthOfSelectedTestRuns: getLengthOfSelectedTestRuns,
@@ -47,6 +51,8 @@
             addToSelectedTestRuns: addToSelectedTestRuns,
             deleteSingleTestRun: deleteSingleTestRun,
             showCiHelperDialog: showCiHelperDialog,
+            resetFilter: resetFilter,
+            displaySearch: displaySearch,
         };
 
         vm.$onInit = init;
@@ -60,6 +66,20 @@
             readStoredParams();
             initWebsocket();
             bindEvents();
+        }
+
+        function resetFilter() {
+            $rootScope.$broadcast('tr-filter-reset');
+        }
+
+        function applySearch() {
+            $rootScope.$broadcast('tr-filter-apply');
+        }
+        
+        function displaySearch() {
+            // !vm.isFilterActive() && $('.search-filter-body').toggleClass('_mobile-search-active');
+            !vm.isFilterActive() && $rootScope.$broadcast('tr-filter-open-search');
+            console.log(55665);
         }
 
         function readStoredParams() {
@@ -359,13 +379,13 @@
                 }
             });
 
-            const onTransitionChange = $transitions.onStart({}, function(trans) {
-                var toState = trans.to();
+            const onTransStartSubscription = $transitions.onStart({}, function(trans) {
+                const toState = trans.to();
 
                 if (toState.name !== 'tests/run'){
                     testsRunsService.clearDataCache();
-                    onTransitionChange();
                 }
+                onTransStartSubscription();
             });
         }
 

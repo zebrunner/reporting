@@ -18,7 +18,7 @@
 
     function TestsRunsFilterController(FilterService, DEFAULT_SC, TestRunService, $q, ProjectService,
                                        testsRunsService, $cookieStore, UserService, $timeout, $mdDateRangePicker,
-                                       mediaBreakpoints, windowWidthService) {
+                                       windowWidthService, $rootScope) {
         const subjectName = 'TEST_RUN';
         const DEFAULT_FILTER_VALUE = {
             subject: {
@@ -67,8 +67,8 @@
             },
             currentUser: UserService.getCurrentUser(),
             chipsCtrl: null,
-            mobileBreakpoint: mediaBreakpoints.mobile || 0,
-            windowWidthService: windowWidthService,
+            isMobile: windowWidthService.isMobile,
+            isMobileSearchActive: false,
 
             matchMode: matchMode,
             onReset: onReset,
@@ -86,6 +86,7 @@
             onSearchChange: onSearchChange,
             onChangeSearchCriteria: onChangeSearchCriteria,
             openDatePicker: openDatePicker,
+            toggleMobileSearch: toggleMobileSearch,
         };
 
         vm.$onInit = init;
@@ -110,6 +111,11 @@
                 });
             });
             readStoredParams();
+            if (vm.isMobile()) {
+                $rootScope.$on('tr-filter-reset', onReset);
+                $rootScope.$on('tr-filter-apply', onApply);
+                $rootScope.$on('tr-filter-open-search', toggleMobileSearch);
+            }
         }
 
         function readStoredParams() {
@@ -128,6 +134,10 @@
                     searchValue && (vm.fastSearch[type] = searchValue);
                 });
             }
+        }
+
+        function toggleMobileSearch() {
+            vm.isMobileSearchActive = !vm.isMobileSearchActive;
         }
 
         function loadFilters() {

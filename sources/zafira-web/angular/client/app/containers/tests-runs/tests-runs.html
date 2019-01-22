@@ -7,15 +7,30 @@
         <zf-sub-header-options>
             <div></div>
         </zf-sub-header-options>
+        <zf-sub-header-button ng-if="$ctrl.isMobile() && $ctrl.isFilterActive()">
+            <button ng-click="$ctrl.resetFilter();" class="fixed-page-header__btn _filter-reset md-button md-primary md-ink-ripple">
+                <span>reset</span>
+            </button>
+        </zf-sub-header-button>
+        <zf-sub-header-button ng-if="$ctrl.isMobile()"
+                              ng-hide="$ctrl.isFilterActive()">
+            <button ng-click="$ctrl.displaySearch();"
+                    class="fixed-page-header__btn _search"
+                    ng-class="{ '_active': $ctrl.isSearchActive() }">
+                <md-icon class="material-icons">search</md-icon>
+            </button>
+        </zf-sub-header-button>
         <zf-sub-header-button>
-            <button has-any-permission="['MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS']" ng-click="$ctrl.showCiHelperDialog($event);">
+            <button has-any-permission="['MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS']"
+                    class="fixed-page-header__btn _launcher"
+                    ng-click="$ctrl.showCiHelperDialog($event);">
                 <md-icon class="material-icons">play_circle_outline</md-icon>
                 <span>Test launcher</span>
             </button>
         </zf-sub-header-button>
     </zf-sub-header>
 
-    <div class="page">
+    <div class="page" ng-class="{ '_search-active': $ctrl.isSearchActive() }">
         <md-fab-speed-dial id="main-fab" ng-if="$ctrl.getLengthOfSelectedTestRuns() > 0" md-direction="up" class="md-scale md-fab-bottom-right" has-any-permission="['MODIFY_TEST_RUNS', 'TEST_RUNS_CI']">
             <md-fab-trigger>
                 <md-button id="mainFab" aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">

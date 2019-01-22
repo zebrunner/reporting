@@ -2818,8 +2818,8 @@ $light-inprogress: #68c9fd;
             > i {
                 color: $dark;
             }
-            > button {
-                border: none !important;
+             button {
+                border: 0;
                 float: right;
                 padding: 0 16px 0 6px;
                 height: 36px;
@@ -2831,17 +2831,52 @@ $light-inprogress: #68c9fd;
                 font-size: 14px;
                 font-weight: bold;
                 line-height: 36px;
+                @media(max-width: $screen-phone) {
+                    &.fixed-page-header__btn {
+                        background-color: #fff;
+                        border-radius: 8px;
+                        color: #52a49a;
+                        border: 1px solid transparent;
+                        width: 32px;
+                        height: 32px;
+                        line-height: 30px;
+                        padding: 0;
+                        .material-icons {
+                            color: currentColor;
+                        }
+                        &._launcher {
+                            background-color: #fff;
+                            border-radius: 8px;
+                            color: #52a49a;
+                            border-color: currentColor;
+                            padding: 0;
+                            span {
+                                display: none;
+                            }
+                        }
+                        &._search {
+                            background-color: rgba(#1f242a, .1);
+                            color: #000;
+                            &._active {
+                                background-color: #4ba69a;
+                                color: #fff;
+                                .material-icons {
+                                    color: currentColor;
+                                }
+                            }
+                        }
+                        &._filter-reset {
+                            color: #000;
+                            box-shadow: none;
+                            background-color: rgba(#1f242a, .1);
+                            text-align: center;
+                            padding: 0 6px;
+                        }
+                    }
+                }
                 > .material-icons {
                     font-size: 18px;
                     line-height: 23px;
-                }
-                @media(max-width: $screen-phone) {
-                    float: none;
-                    width: 36px;
-                    padding: 0;
-                    > span {
-                        display: none;
-                    }
                 }
 
                 &:hover {
@@ -2852,6 +2887,9 @@ $light-inprogress: #68c9fd;
                         color: black;
                     }
                 }
+            }
+            & + & {
+                margin-left: 10px;
             }
         }
 

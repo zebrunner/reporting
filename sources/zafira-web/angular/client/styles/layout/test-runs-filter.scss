@@ -2,46 +2,6 @@
 
 .p-tests-runs__section {
     &._filters {
-        @at-root {
-            .p-tests-runs {
-                @media screen and (max-width: $breakpoint-mobile) {
-                    &__section {
-                        background-color: white;
-                        & .fixed-search-column {
-                            min-height: auto;
-                        }
-                        md-card {
-                            background: none;
-                        }
-                        &._content {
-                            background-color: transparent;
-                        }
-                        &._title {
-                            float: left;
-                        }
-                    }
-                    &__title{
-                        font-size: 18px;
-                        color: black;
-                        margin-top: 0;
-                        margin-bottom: 0;
-                        padding-top: 8px;
-                        padding-bottom: 8px;
-                    }
-                    & .page{
-                        padding: 15px 0;
-                        padding: 0;
-                        & md-card {
-                            margin-bottom: 0;
-                        }
-                    }
-                    #itemsCount {
-                        opacity: 0.5;
-                        font-size: 18px;
-                    }
-                }
-            }
-        }
         & .search-button {
             position: relative;
             background-color: rgba(0, 0, 0, 0.2);
@@ -64,7 +24,7 @@
                 }
             }
         }
-        @media screen and (max-width: 599px) {
+        @media screen and (max-width: $breakpoint-mobile) {
             button#reset, 
             button#applySearch,
             button#createFilter,
@@ -88,7 +48,7 @@
             }
         }
         #filter .panel-body {   
-            padding-bottom: 16px !important;
+            //padding-bottom: 16px !important;
             position: relative;   
             @extend %chips-scrolling;
             .manage-chip {
@@ -115,7 +75,7 @@
         #search {
             .panel-body {
                 padding: 18px 20px 14px 20px;
-                @media screen and (max-width: 599px) {
+                @media screen and (max-width: $breakpoint-mobile) {
                     padding: 0 !important;
                 }
                 @extend %chips-scrolling;
@@ -126,20 +86,8 @@
                 }
                 .search {
                     &-wrapper {
-                        @media screen and (max-width: 599px) {
-                            max-width: 36px;
-                            max-height: 36px;
-                            z-index: 3;
-                            position: absolute;
-                            & i {
-                                display: block;
-                                padding: 15px 7px 10px 28px;
-                                color: rgba(0, 0, 0, 0.5) !important;
-                                font-size: 18px;
-                            }
-                        }
                         &-row {
-                            @media screen and (max-width: 599px) {
+                            @media screen and (max-width: $breakpoint-mobile) {
                                 overflow: hidden;
                                 display: flex;
                                 align-items: center;
@@ -148,12 +96,9 @@
                             #search-input {
                                 @extend %select; 
                                 padding-left: 37px;
-                                @media (max-width: 599px) {
-                                    margin: 16px 16px 4px 16px;
-                                }
                             }
                             #filter {
-                                @media screen and (max-width: 599px) {
+                                @media screen and (max-width: $breakpoint-mobile) {
                                     min-width: 100vw;
                                     background-color: white;
                                     width: 100%;
@@ -172,7 +117,7 @@
             }
             &-select {
                 width: 100%;
-                @media screen and (max-width: 599px) {
+                @media screen and (max-width: $breakpoint-mobile) {
                     position: absolute;
                     z-index: 4;
                     background-color: #fff;
@@ -190,9 +135,8 @@
                 .reviewed {
                     background-color: rgba(31, 36, 42, .1);
                     color: #35393f ;
-                    min-width: 36px;
                     border: none;
-                    @media (max-width: 599px) {
+                    @media (max-width: $breakpoint-mobile) {
                         margin-right: 16px;
                     }
                     &:hover {
@@ -219,12 +163,12 @@
                             padding: 0;
                         }
                         & .searchable.select {
-                            @media screen and (max-width: 599px) {
+                            @media screen and (max-width: $breakpoint-mobile) {
                                 margin-bottom: 16px !important;
                             }
                         }
                         &._main {
-                            @media screen and (max-width: 599px) {
+                            @media screen and (max-width: $breakpoint-mobile) {
                                 padding-top: 20px;
                             }
                         }
@@ -245,7 +189,7 @@
                     }
                 }
                 & .btn-check {
-                    @media screen and (max-width: 599px) {
+                    @media screen and (max-width: $breakpoint-mobile) {
                         width: auto;
                         margin: 0 14px;
                         padding: 2px;
@@ -254,14 +198,18 @@
                         border-bottom: 1px rgba(0, 0, 0, 0.10) solid;
                     }
                     & button.btn {
-                        font-size: 10px;
-                        font-weight: bold;
+                        font-size: 11px;
+                        font-weight: 500;
                         max-height: 28px;
                         border-radius: 14px;
                         background-color: transparent;
                         border: 1px solid rgba(0,0,0, .25);
                         box-shadow: none ;
                         color: #000;
+                        text-transform: uppercase;
+                        height: 28px;
+                        line-height: 26px;
+                        padding: 0 !important;
                         &:hover, &.active {
                             background-color: #d3e9e6 !important;
                             color: #000 !important;
@@ -270,7 +218,7 @@
                             background-color: #d3e9e6;
                             border: 1px solid #d3e9e6;
                         }
-                        @media (max-width: 599px) {
+                        @media (max-width: $breakpoint-mobile) {
                             width: 104px;
                             margin-bottom: 14px;
                         }
@@ -294,7 +242,7 @@
         @media screen and (min-width: $breakpoint-mobile) {
             min-width: auto;
         }
-        @media screen and (max-width: 599px) {
+        @media screen and (max-width: $breakpoint-mobile) {
             overflow-x: scroll;
             -ms-overflow-style: none;
             overflow: -moz-scrollbars-none;
@@ -319,7 +267,7 @@
                 &:hover {
                     background-color: rgba(31, 36, 42, .7) !important;
                 }
-                @media screen and (max-width: 599px) {
+                @media screen and (max-width: $breakpoint-mobile) {
                     font-size: 11px;
                     max-height: 28px;
                     &.md-focused {
@@ -333,14 +281,150 @@
         }
     }
 }
-.background-dark {
-    @media screen and (max-width: 599px) {
-        position: absolute;
-        top: 220px;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 3;
-        background-color: rgba(0, 0, 0, 0.5);
+
+.tests-runs-filter {
+    @media screen and (max-width: $breakpoint-mobile) {
+        &__filter-mobile {
+            background-color: #fff;
+            position: fixed;
+            top: 96px;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 5;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            height: 48px;
+            border: 1px solid rgba(#1f242a, .1);
+            border-right: 0;
+            border-left: 0;
+            &#filter-mobile .panel-body {
+                padding: 10px 12px !important;
+            }
+            md-chip {
+                font-weight: 500;
+                font-size: 11px;
+                max-height: 28px;
+                line-height: 28px;
+                border-radius: 28px;
+                &.md-focused {
+                    background-color: #35393f !important;
+                    & i ,
+                    &:hover i {
+                        display: none !important;
+                    }
+                }
+            }
+        }
+        &__search-mobile {
+            &,
+            &#search {
+                background-color: #fff;
+                position: fixed;
+                top: 96px;
+                left: 0;
+                right: 0;
+                width: 100%;
+                z-index: 5;
+
+                md-input-container {
+                    height: 40px !important;
+                    color: #000;
+                    letter-spacing: 0.3px;
+                }
+                #search-input {
+                    margin: 7px 16px;
+                }
+                #search-input,
+                button,
+                md-select {
+                    height: 40px;
+                }
+                .quadro-btn {
+                    width: 40px !important;
+                    height: 40px !important;
+                    min-width: 40px;
+                    border-radius: 4px;
+                }
+                .search-wrapper {
+                    top: 7px;
+                    left: 16px;
+                }
+            }
+            .search-wrapper {
+                max-width: 40px;
+                max-height: 40px;
+                z-index: 3;
+                position: absolute;
+                left: 16px;
+                top: 7px;
+                i {
+                    display: block;
+                    padding: 0;
+                    color: rgba(0, 0, 0, 0.5) !important;
+                    font-size: 18px;
+                    line-height: 40px;
+                    text-align: center;
+                    width: 40px;
+                    height: 40px;
+                }
+            }
+            .btn-check {
+                width: auto;
+                margin: 0 14px;
+                padding: 2px;
+                display: flex;
+                justify-content: space-between;
+                border-bottom: 1px rgba(0, 0, 0, 0.10) solid;
+                button.btn {
+                    font-size: 11px;
+                    font-weight: 500;
+                    max-height: 28px;
+                    border-radius: 14px;
+                    background-color: transparent;
+                    border: 1px solid rgba(0, 0, 0, .25);
+                    box-shadow: none;
+                    color: #000;
+                    text-transform: uppercase;
+                    height: 28px;
+                    line-height: 26px;
+                    padding: 0 !important;
+                    outline: none;
+                }
+            }
+        }
+        &__actions {
+            height: 48px;
+            background-color: #fff;
+            position: fixed;
+            top: 48px;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 5;
+            padding: 0 16px !important;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            flex-direction: row-reverse;
+            border: 1px solid rgba(#1f242a, .1);
+            border-right: 0;
+            border-left: 0;
+            border-top-color: #fff;
+            button {
+                margin: 0 !important;
+            }
+            button + button {
+                margin-right: 12px !important;
+            }
+        }
+        &__modal-bg {
+            position: fixed;
+            top: 48px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 3;
+            background-color: rgba(0, 0, 0, 0.25);
+        }
     }
 }
