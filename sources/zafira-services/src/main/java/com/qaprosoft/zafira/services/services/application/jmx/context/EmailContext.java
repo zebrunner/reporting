@@ -17,6 +17,7 @@ package com.qaprosoft.zafira.services.services.application.jmx.context;
 
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Properties;
 
@@ -29,19 +30,27 @@ public class EmailContext extends AbstractContext
     public EmailContext(String host, int port, String user, String fromAddress, String password)
     {
         this.javaMailSender = new JavaMailSenderImpl();
+
+        final String authValue;
+        if (!StringUtils.isBlank(user) && !StringUtils.isBlank(password)) {
+            authValue = "true";
+            ((JavaMailSenderImpl) this.javaMailSender).setUsername(user);
+            ((JavaMailSenderImpl) this.javaMailSender).setPassword(password);
+        } else {
+            authValue = "false";
+        }
+
         ((JavaMailSenderImpl) this.javaMailSender).setDefaultEncoding("UTF-8");
         ((JavaMailSenderImpl) this.javaMailSender).setJavaMailProperties(new Properties()
         {
             private static final long serialVersionUID = -7384945982042097581L;
             {
-                setProperty("mail.smtp.auth", "true");
+                setProperty("mail.smtp.auth", authValue);
                 setProperty("mail.smtp.starttls.enable", "true");
             }
         });
         ((JavaMailSenderImpl) this.javaMailSender).setHost(host);
         ((JavaMailSenderImpl) this.javaMailSender).setPort(port);
-        ((JavaMailSenderImpl) this.javaMailSender).setUsername(user);
-        ((JavaMailSenderImpl) this.javaMailSender).setPassword(password);
         this.fromAddress = fromAddress;
     }
 

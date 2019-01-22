@@ -89,7 +89,7 @@ public class AsynSendEmailTask implements Runnable, IJMXService<EmailContext> {
 
     public void init(String host, int port, String user, String fromAddress, String password) {
         try {
-            if (!StringUtils.isBlank(host) && !StringUtils.isBlank(user) && !StringUtils.isBlank(password) && port != 0) {
+            if (!StringUtils.isBlank(host) && port != 0) {
                 putContext(EMAIL, new EmailContext(host, port, user, fromAddress, password));
             }
         } catch (Exception e) {
