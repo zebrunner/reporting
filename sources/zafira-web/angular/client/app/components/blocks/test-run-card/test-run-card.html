@@ -140,13 +140,13 @@
                                 Export to HTML
                             </md-button>
                         </md-menu-item>
-                        <md-menu-item ng-if="showNotifyInSlackOption" has-any-permission="['MODIFY_TEST_RUNS']">
+                        <md-menu-item ng-if="$ctrl.showNotifyInSlackOption" has-any-permission="['MODIFY_TEST_RUNS']">
                             <md-button name="notifyInSlack" data-ng-click="$ctrl.notifyInSlack()">
                                 Notify in Slack
                             </md-button>
                         </md-menu-item>
                         <md-divider></md-divider>
-                        <md-menu-item ng-if="showBuildNowOption" has-any-permission="['TEST_RUNS_CI']">
+                        <md-menu-item ng-if="$ctrl.showBuildNowOption" has-any-permission="['TEST_RUNS_CI']">
                             <md-button name="buildNow" data-ng-click="$ctrl.buildNow($event)">
                                 Build now
                             </md-button>
@@ -256,13 +256,13 @@
                                 Export to HTML
                             </md-button>
                         </md-menu-item>
-                        <md-menu-item ng-if="showNotifyInSlackOption" has-any-permission="['MODIFY_TEST_RUNS']">
+                        <md-menu-item ng-if="$ctrl.showNotifyInSlackOption" has-any-permission="['MODIFY_TEST_RUNS']">
                             <md-button name="notifyInSlack" data-ng-click="$ctrl.notifyInSlack()">
                                 Notify in Slack
                             </md-button>
                         </md-menu-item>
                         <md-divider></md-divider>
-                        <md-menu-item ng-if="showBuildNowOption" has-any-permission="['TEST_RUNS_CI']">
+                        <md-menu-item ng-if="$ctrl.showBuildNowOption" has-any-permission="['TEST_RUNS_CI']">
                             <md-button name="buildNow" data-ng-click="$ctrl.buildNow($event)">
                                 Build now
                             </md-button>
@@ -411,13 +411,13 @@
                                 Export to HTML
                             </md-button>
                         </md-menu-item>
-                        <md-menu-item ng-if="showNotifyInSlackOption" has-any-permission="['MODIFY_TEST_RUNS']">
+                        <md-menu-item ng-if="$ctrl.showNotifyInSlackOption" has-any-permission="['MODIFY_TEST_RUNS']">
                             <md-button name="notifyInSlack" data-ng-click="$ctrl.notifyInSlack()">
                                 Notify in Slack
                             </md-button>
                         </md-menu-item>
                         <md-divider></md-divider>
-                        <md-menu-item ng-if="showBuildNowOption" has-any-permission="['TEST_RUNS_CI']">
+                        <md-menu-item ng-if="$ctrl.showBuildNowOption" has-any-permission="['TEST_RUNS_CI']">
                             <md-button name="buildNow" data-ng-click="$ctrl.buildNow($event)">
                                 Build now
                             </md-button>

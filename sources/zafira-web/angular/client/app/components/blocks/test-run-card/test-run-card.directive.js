@@ -242,7 +242,7 @@
                     }, 10000);
                 }
 
-                function notifyInSlack(testRun) {
+                function notifyInSlack() {
                     SlackService.triggerReviewNotif(vm.testRun.id);
                 }
 
