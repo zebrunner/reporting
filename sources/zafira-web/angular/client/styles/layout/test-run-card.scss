@@ -138,11 +138,12 @@
             }
             @media(min-width: $breakpoint-mobile) and (max-width:  998px){
                 margin: 0 0 0 10px;
+                justify-content: flex-start;
             }
             //width: 150px;
         }
         &._platform {
-            flex-grow: 1;
+            flex-grow: 2;
             width: 11%;
             min-width: 40px;
             flex-wrap: wrap;
@@ -184,16 +185,13 @@
             width: 11%;
             min-width: 100px;
             font-weight: 500;
-            @media(min-width: 701px) and (max-width: 998px){
-                flex-grow: 1;
-            }
-            @media(min-width: $breakpoint-mobile) and (max-width: 702px){
+            font-size: 12px;
+            @media(min-width: $breakpoint-mobile) and (max-width: 998px){
                 flex-grow: 2;
             }
         }
         &._statistics {
-            justify-content: center;
-            flex-grow: 2;
+            flex-grow: 1;
             width: 15%;
             min-width: 140px;
             @media (max-width: 599px) {
@@ -287,7 +285,6 @@
         }
         &._middle {
             border-top: 1px rgba(0, 0, 0, 0.12) solid;
-            padding-top: 5px;
         }
     }
 
@@ -322,13 +319,13 @@
         display: flex;
         flex-wrap: wrap;
         font-weight: 500;
+        align-items: flex-end;
         &-name {
             font-size: 12px;
             margin-right: 5px;
         }
         &-file {
             display: flex;
-            align-items: center;
         }
     }
 
@@ -347,12 +344,12 @@
             }
         }
         &-name {
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
+            max-width: 390px;
+            word-wrap: break-word;
             font-size: 12px;
             font-weight: 500;
             color: rgba(0, 0, 0, .5);
+            padding-top: 2px;
             //opacity: .5;
         }
     }
@@ -507,9 +504,6 @@
         }
 
         &__title {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
             .expand-button {
                 width: 20px !important;
                 height: 20px !important;
@@ -543,7 +537,7 @@
             }
         }
         &__wrapper {
-            padding: 10px 12px 5px;
+            padding: 15px 12px;
             margin-bottom: 4px;
             display: block;
             position: relative;
@@ -558,10 +552,12 @@
         &__row {
             &._data,
             &._tags {
-                padding: 6px 0;
+                & .test-run-card__cell {
+                    padding: 12px 0 0 0 !important;
+                }
             }
             &._app-file {
-                padding: 5px 0;
+                padding: 5px 0 0;
                 align-items: center;
                 .expand-button {
                     display: none;
@@ -572,9 +568,9 @@
             }
             &._bottom {
                 padding: 0;
-                //& div {
-                //    padding: 5px 0;
-                //}
+                & .test-run-card__state {
+                    margin: 12px 12px 0 0;
+                }
                 align-items: center;
                 .test-run-card__cell._menu {
                     display: none;
@@ -632,7 +628,7 @@
             }
             &._platform {
                 margin-right: 0;
-                margin-left: 10px;
+                margin-left: 12px;
                 flex: none;
                 width: auto;
                 .platform-icon {
@@ -640,18 +636,26 @@
                 }
             }
             &._date {
-                width: auto;
                 flex-direction: row;
                 margin-left: 12px;
                 align-items: center;
                 justify-content: flex-start;
+                flex-wrap: wrap;
             }
+        }
+        &__time{
+            margin-right: 12px;
+            margin-left: 0;
         }
 
         &__title {
             max-height: 36px; //TODO: clarify font-size and line-height
-            overflow: hidden;
             margin: 0 5px 0 0;
+        }
+        &__jenkins {
+            font-size: 14px;
+            line-height: 1;
+            margin-top: 9px;
         }
         &__time-text {
             margin-left: 0;
@@ -816,7 +820,7 @@
                 #{$content} {
                     overflow: visible;
                     & .page {
-                        padding: 0;
+                        padding: 0 !important;
                     }
                     & .row {
                         @media (min-width: $breakpoint-mobile) {

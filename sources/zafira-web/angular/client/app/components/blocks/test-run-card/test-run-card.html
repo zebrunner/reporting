@@ -313,7 +313,7 @@
                 </div>
             </div>
             <div class="test-run-card__row _tags">
-                <div name="testRunEnv" class="test-run-card__cell _env">
+                <div name="testRunEnv" class="test-run-card__cell _env" ng-if="$ctrl.testRun.env">
                     <span class="label label-default">{{$ctrl.testRun.env}}</span>
                 </div>
                 <div name="testRunPlatform" class="test-run-card__cell _platform no-padding browser-version_column"
