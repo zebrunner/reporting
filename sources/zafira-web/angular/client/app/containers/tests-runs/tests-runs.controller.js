@@ -184,7 +184,7 @@
 
         function rebuild(testRun, rerunFailures) {
             if (vm.jenkins.enabled) {
-                if (!rerunFailures) {//TODO: do we need this duplication?
+                if (!rerunFailures) {
                     rerunFailures = confirm('Would you like to rerun only failures, otherwise all the tests will be restarted?');
                 }
 
