@@ -216,7 +216,7 @@
                     {{$ctrl.testRun.testSuite.name}}
                     <md-tooltip md-direction="right">{{$ctrl.testRun.testSuite.fileName}}</md-tooltip>
                 </div>
-                <div class="test-run-card__jenkins" ng-if="$ctrl.testRun.job.name && $ctrl.testRun.job.name !== 'unavailable' && $ctrl.testRun.jenkinsURL">
+                <div class="test-run-card__jenkins">
                     <a href="{{$ctrl.testRun.jenkinsURL}}" target="_blank">{{$ctrl.testRun.job.name}}</a>
                 </div>
             </div>
