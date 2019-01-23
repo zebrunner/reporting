@@ -37,7 +37,8 @@ public class TestRunPageService extends AbstractPageService
 	{
 		TestRunTableRow testRunTableRow = getTestRunRowByIndex(index);
 		TestRunSettingMenu testRunSettingMenu = testRunTableRow.clickTestRunSettingMenu();
-		testRunPage.getMarkAsReviewedModalWindow().waitUntilElementToBeClickableWithBackdropMask(testRunPage.getMarkAsReviewedModalWindow().getMarkAsReviewedButton(), 1);
+		//testRunPage.getMarkAsReviewedModalWindow().waitUntilElementToBeClickableWithBackdropMask(testRunPage.getMarkAsReviewedModalWindow().getMarkAsReviewedButton(), 1);
+		pause(2);
 		testRunSettingMenu.clickMarkAsReviewedButton();
 		return testRunPage.getMarkAsReviewedModalWindow();
 	}
@@ -97,6 +98,7 @@ public class TestRunPageService extends AbstractPageService
 			testRunSearchBlock.clickReviewedCheckbox();
 		testRunSearchBlock.selectPlatform(platform);
 		testRunSearchBlock.typeAppVersion(appVersion);
+		testRunSearchBlock.clickOutside();
 		if(testRunSearchBlock.isElementPresent(testRunSearchBlock.getSearchButton(), 2)) {
 			testRunSearchBlock.clickSearchButton();
 			testRunPage.waitUntilPageIsLoaded();
@@ -110,9 +112,9 @@ public class TestRunPageService extends AbstractPageService
 		TestTable result;
 		if(! testRunPage.isElementPresent(testRunTableRow.getTestTable().getRootElement(), 1))
 		{
-			testRunPage.hoverOnElement(testRunTableRow.getRootElement());
-			testRunPage.waitUntilElementIsPresent(testRunTableRow.getExpandTestsIcon(), 1);
-			result = testRunTableRow.clickExpandTestsIcon();
+			//testRunPage.hoverOnElement(testRunTableRow.getRootElement());
+			//testRunPage.waitUntilElementIsPresent(testRunTableRow.getExpandTestsIcon(), 1);
+			result = testRunTableRow.expandRun();
 		} else
 		{
 			result = testRunTableRow.getTestTable();
