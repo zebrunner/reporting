@@ -48,7 +48,7 @@
             }
         }
         #filter .panel-body {   
-            //padding-bottom: 16px !important;
+            padding-bottom: 16px !important;
             position: relative;   
             @extend %chips-scrolling;
             .manage-chip {
@@ -74,7 +74,7 @@
         }
         #search {
             .panel-body {
-                padding: 18px 20px 14px 20px;
+                padding: 18px 20px 14px 20px !important;
                 @media screen and (max-width: $breakpoint-mobile) {
                     padding: 0 !important;
                 }
@@ -122,7 +122,7 @@
                     z-index: 4;
                     background-color: #fff;
                     left: 0;
-                    top: 54px;
+                    top: 63px;
                     border-bottom-left-radius: 10px;
                     border-bottom-right-radius: 10px;
                     box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -155,8 +155,14 @@
                 }
                 & .search {
                     &-fields {
-                        md-select {
+                        md-input-container {
                             @extend %select;
+                        }
+                        md-select {
+                            border: none;
+                        }
+                        md-select-value {
+                            padding: 0;
                         }
                         padding: 0 16px;
                         @media screen and (min-width: $breakpoint-mobile) {
@@ -169,7 +175,7 @@
                         }
                         &._main {
                             @media screen and (max-width: $breakpoint-mobile) {
-                                padding-top: 20px;
+                                padding-top: 15px;
                             }
                         }
                         &._additional {
@@ -209,13 +215,15 @@
                         text-transform: uppercase;
                         height: 28px;
                         line-height: 26px;
-                        padding: 0 10px !important;
+                        padding: 7px 14px !important;
+                        margin: 6px 3px;
+                        line-height: 1 !important;
                         &:hover, &.active {
                             background-color: #d3e9e6 !important;
                             color: #000 !important;
                         }
-                        &.active {
-                            background-color: #d3e9e6;
+                        &.active, &.default-gray {
+                            background-color: #d3e9e6 !important;
                             border: 1px solid #d3e9e6;
                         }
                         @media (max-width: $breakpoint-mobile) {
@@ -231,7 +239,10 @@
 
 %select {
     border-radius: 4px;
-    border: 1px solid rgba(0, 0, 0, 0.25);
+    border: 1px solid ;
+    height: 40px !important;
+    border-color: rgba(0, 0, 0, 0.25) !important;
+    font-size: 14px !important;
     &:hover {
         border-color: rgba(0, 0, 0, 0.35) !important;
     }
@@ -301,6 +312,9 @@
             border: 1px solid rgba(#1f242a, .1);
             border-right: 0;
             border-left: 0;
+            @media (min-width: 481px) { 
+                left: 60px; 
+            }
             &#filter-mobile .panel-body {
                 padding: 10px 12px !important;
             }
@@ -327,16 +341,17 @@
                 top: 96px;
                 left: 0;
                 right: 0;
-                width: 100%;
                 z-index: 5;
-
+                @media (min-width: 481px){ 
+                    left: 60px; 
+                }
                 md-input-container {
                     height: 40px !important;
                     color: #000;
                     letter-spacing: 0.3px;
                 }
                 #search-input {
-                    margin: 7px 16px;
+                    margin: 16px 12px 7px;
                 }
                 #search-input,
                 button,
@@ -350,7 +365,7 @@
                     border-radius: 4px;
                 }
                 .search-wrapper {
-                    top: 7px;
+                    top: 16px;
                     left: 16px;
                 }
             }
