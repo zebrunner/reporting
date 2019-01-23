@@ -5,7 +5,8 @@
         .factory('appConfig', [appConfig])
         .config(['$mdThemingProvider', mdConfig])
     // .constant('API_URL', 'http://localhost:8080/zafira-ws')//TODO: return back before release
-        .constant('API_URL', 'https://api.qaprosoft.farm/zafira-ws')
+        .constant('API_URL', 'https://api.qaprosoft.cloud/zafira-ws')
+        // .constant('API_URL', 'https://api.qaprosoft.farm/zafira-ws')
         .constant('OFFSET', new Date().getTimezoneOffset() * 60 * 1000)
         .constant('DEFAULT_SC', { 'page': 1, 'pageSize': 20, 'reviewed': null });
 

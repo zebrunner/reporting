@@ -209,7 +209,7 @@
                         text-transform: uppercase;
                         height: 28px;
                         line-height: 26px;
-                        padding: 0 !important;
+                        padding: 0 10px !important;
                         &:hover, &.active {
                             background-color: #d3e9e6 !important;
                             color: #000 !important;
@@ -219,7 +219,7 @@
                             border: 1px solid #d3e9e6;
                         }
                         @media (max-width: $breakpoint-mobile) {
-                            width: 104px;
+                            min-width: 85px;
                             margin-bottom: 14px;
                         }
                     }
@@ -283,6 +283,10 @@
 }
 
 .tests-runs-filter {
+    &__close-search-btn {
+        background-color: #fff;
+        border: 0;
+    }
     @media screen and (max-width: $breakpoint-mobile) {
         &__filter-mobile {
             background-color: #fff;

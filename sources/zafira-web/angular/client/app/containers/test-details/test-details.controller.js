@@ -456,6 +456,7 @@
             vm.zafiraWebsocket.debug = null;
             vm.zafiraWebsocket.connect({withCredentials: false}, function () {
                 vm.subscriptions.statistics = subscribeStatisticsTopic();
+                vm.subscriptions.testRun = subscribeTestRunsTopic();
                 UtilService.websocketConnected(wsName);
             }, function () {
                 UtilService.reconnectWebsocket(wsName, vm.initWebsocket);
@@ -491,6 +492,26 @@
             });
         }
 
+        function subscribeTestRunsTopic() {
+            return vm.zafiraWebsocket.subscribe('/topic/' + TENANT + '.testRuns', function (data) {
+                const event = getEventFromMessage(data.body);
+                let index = -1;
+                const testRun = angular.copy(event.testRun);
+
+                // if (vm.projects && vm.projects.length && vm.projects.indexOfField('id', event.testRun.project.id) === -1) { return; }
+                if (vm.testRun.id !== +testRun.id) { return; }
+
+                vm.testRuns[index].status = testRun.status;
+                vm.testRuns[index].reviewed = testRun.reviewed;
+                vm.testRuns[index].elapsed = testRun.elapsed;
+                vm.testRuns[index].platform = testRun.platform;
+                vm.testRuns[index].env = testRun.env;
+                vm.testRuns[index].comments = testRun.comments;
+                vm.testRuns[index].reviewed = testRun.reviewed;
+                $scope.$apply();
+            });
+        }
+
         function subscribeTestsTopic() {
             if (vm.zafiraWebsocket && vm.zafiraWebsocket.connected) {
                 return vm.zafiraWebsocket.subscribe('/topic/' + TENANT + '.testRuns.' + vm.testRun.id + '.tests', function (data) {
@@ -506,6 +527,7 @@
             $scope.$on('$destroy', function () {
                 if (vm.zafiraWebsocket && vm.zafiraWebsocket.connected) {
                     vm.subscriptions.statistics && vm.subscriptions.statistics.unsubscribe();
+                    vm.subscriptions.testRun && vm.subscriptions.testRun.unsubscribe();
                     vm.subscriptions[vm.testRun.id] && vm.subscriptions[vm.testRun.id].unsubscribe();
                     vm.zafiraWebsocket.disconnect();
                     UtilService.websocketConnected('zafira');

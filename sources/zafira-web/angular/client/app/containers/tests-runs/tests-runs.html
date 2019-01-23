@@ -65,7 +65,7 @@
             <div class="col-md-12 no-padding">
                 <article class="article">
                     <md-card class="no-margin-h">
-                        <test-run-card test-run="testRun" ng-repeat="testRun in $ctrl.testRuns | orderObjectBy:'startedAt':true track by $index" single-mode="false" on-select="$ctrl.addToSelectedTestRuns(testRun)" on-delete="$ctrl.deleteSingleTestRun(testRun)"></test-run-card>
+                        <test-run-card test-run="testRun" ng-repeat="testRun in $ctrl.testRuns | orderObjectBy:'startedAt':true track by testRun.id" single-mode="false" on-select="$ctrl.addToSelectedTestRuns(testRun)" on-delete="$ctrl.deleteSingleTestRun(testRun)"></test-run-card>
                         <div ng-if="($ctrl.testRuns && !$ctrl.testRuns.length)">
                             <div id="noData" class="text-center">No test runs</div>
                         </div>

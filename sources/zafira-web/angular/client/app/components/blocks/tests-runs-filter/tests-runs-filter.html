@@ -1,7 +1,11 @@
 <div class="p-tests-runs__section _filters-wrapper tests-runs-filter" ng-class="{ '_search-active': $ctrl.isMobileSearchActive }">
     <div class="p-tests-runs__section _filters row ui-section no-margin">
         <div class="fixed-search-column col-md-12 no-padding tests-runs-filter__actions" ng-hide="!$ctrl.isMobileSearchActive && $ctrl.isMobile()">
-            <button ng-if="$ctrl.isMobileSearchActive" id="closeMobileSearch" type="button" data-ng-click="$ctrl.toggleMobileSearch();">
+            <button ng-if="$ctrl.isMobileSearchActive"
+                    id="closeMobileSearch"
+                    type="button"
+                    class="tests-runs-filter__close-search-btn"
+                    data-ng-click="$ctrl.toggleMobileSearch();">
                 <md-icon class="material-icons">close</md-icon>
             </button>
             <button ng-if="$ctrl.matchMode(['APPLY', 'SEARCH'])" id="reset" class="filter-reset-btn md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="$ctrl.onReset();">

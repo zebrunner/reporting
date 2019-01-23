@@ -800,6 +800,10 @@
         display: flex;
         align-items: center;
     }
+
+    .comments-area {
+        overflow: hidden;
+    }
 }
 
 .p-tests-run-details {

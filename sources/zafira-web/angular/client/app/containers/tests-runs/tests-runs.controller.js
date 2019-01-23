@@ -38,6 +38,7 @@
             isMobile: windowWidthService.isMobile,
             isFilterActive: testsRunsService.isFilterActive,
             isSearchActive: testsRunsService.isSearchActive,
+            projects: null,
 
             isTestRunsEmpty: isTestRunsEmpty,
             getTestRuns: getTestRuns,
@@ -95,9 +96,9 @@
         }
 
         function getTestRuns(page, pageSize) {
-            const projects = $cookieStore.get('projects');
+            vm.projects = $cookieStore.get('projects');
 
-            projects && projects.length && testsRunsService.setSearchParam('projects', projects);
+            vm.projects && vm.projects.length && testsRunsService.setSearchParam('projects', vm.projects);
             if (page) {
                 testsRunsService.setSearchParam('page', page);
                 page !== vm.currentPage && (vm.currentPage = page);
@@ -183,7 +184,7 @@
 
         function rebuild(testRun, rerunFailures) {
             if (vm.jenkins.enabled) {
-                if (!rerunFailures) {//TODO: do we need this dublication?
+                if (!rerunFailures) {//TODO: do we need this duplication?
                     rerunFailures = confirm('Would you like to rerun only failures, otherwise all the tests will be restarted?');
                 }
 
@@ -336,9 +337,50 @@
             vm.zafiraWebsocket.debug = null;
             vm.zafiraWebsocket.connect({withCredentials: false}, function () {
                 vm.subscriptions.statistics = subscribeStatisticsTopic();
+                vm.subscriptions.testRuns = subscribeTestRunsTopic();
                 UtilService.websocketConnected(wsName);
             }, function () {
                 UtilService.reconnectWebsocket(wsName, vm.initWebsocket);
+            });
+        }
+
+        function subscribeTestRunsTopic() {
+            return vm.zafiraWebsocket.subscribe('/topic/' + TENANT + '.testRuns', function (data) {
+                const event = getEventFromMessage(data.body);
+                let index = -1;
+                const testRun = angular.copy(event.testRun);
+
+                if (vm.projects && vm.projects.length && vm.projects.indexOfField('id', testRun.project.id) === -1) { return; }
+
+                vm.testRuns.some(function(tr, i) {
+                    if (tr.id === +event.testRun.id) {
+                        index = i;
+                    }
+                });
+
+                //add new testRun to the top of the list or update fields if it is already in the list
+                if (index === -1) {
+                    // do no add new Test run if Search is active
+                    if (vm.isSearchActive()) { return; }
+
+                    testRun.jenkinsURL = testRun.job.jobURL + '/' + testRun.buildNumber;
+                    testRun.UID = testRun.testSuite.name + ' ' + testRun.jenkinsURL;
+                    testRun.tests = null;
+                    if (vm.testRuns.length === vm.pageSize) {
+                        vm.testRuns.splice(-1);
+                    }
+                    vm.testRuns = [testRun].concat(vm.testRuns);
+                } else {
+                    vm.testRuns[index].status = testRun.status;
+                    vm.testRuns[index].reviewed = testRun.reviewed;
+                    vm.testRuns[index].elapsed = testRun.elapsed;
+                    vm.testRuns[index].platform = testRun.platform;
+                    vm.testRuns[index].env = testRun.env;
+                    vm.testRuns[index].comments = testRun.comments;
+                    vm.testRuns[index].reviewed = testRun.reviewed;
+                    $scope.$apply();
+                }
+                $scope.$apply();
             });
         }
 
@@ -374,6 +416,7 @@
             $scope.$on('$destroy', function () {
                 if(vm.zafiraWebsocket && vm.zafiraWebsocket.connected) {
                     vm.subscriptions.statistics && vm.subscriptions.statistics.unsubscribe();
+                    vm.subscriptions.testRuns && vm.subscriptions.testRuns.unsubscribe();
                     vm.zafiraWebsocket.disconnect();
                     UtilService.websocketConnected('zafira');
                 }
