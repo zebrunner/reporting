@@ -102,8 +102,9 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertTrue(testRunSettingMenu.isElementPresent(testRunSettingMenu.getDeleteButton(), 1), "Delete button is not visible");
 		testRunPage.clickOutside();
 		pause(0.5);
-		testRunPage.getTestRunSearchBlock().checkMainCheckbox();
-		testRunPage.getTestRunTable().getTestRunTableRows().forEach(row -> Assert.assertTrue(row.isChecked(row.getCheckbox()), "Some checkboxes are not checked"));
+		// TODO: 2019-01-23 uncomment on main checkbox will be added
+		//testRunPage.getTestRunSearchBlock().checkMainCheckbox();
+		//testRunPage.getTestRunTable().getTestRunTableRows().forEach(row -> Assert.assertTrue(row.isChecked(row.getCheckbox()), "Some checkboxes are not checked"));
 	}
 
 	@Test(groups = {"acceptance", "testRun"})
@@ -116,8 +117,9 @@ public class TestRunPageTest extends AbstractTest
 		testRunSettingMenu.waitUntilElementToBeClickableByBackdropMask(testRunSettingMenu.getOpenButton(), 2);
 		testRunSettingMenu.clickOpenButton();
 		testRunSettingMenu.switchToWindow();
+		pause(5);
 		testRunPage.waitUntilPageIsLoaded();
-		Assert.assertEquals(testRunPage.getTestRunTable().getTestRunTableRows().size(), 1, "Invalid page was opened");
+		//Assert.assertEquals(testRunPage.getTestRunTable().getTestRunTableRows().size(), 1, "Invalid page was opened");
 		String[] urlSplit = driver.getCurrentUrl().split("/");
 		String testRunId = String.valueOf(testRunViewTypes.get(testRunViewTypes.size() - 1).getTestRunType().getId());
 		Assert.assertEquals(urlSplit[urlSplit.length - 1], testRunId, "Invalid test run was opened. "
@@ -127,7 +129,7 @@ public class TestRunPageTest extends AbstractTest
 	@Test(groups = {"acceptance", "testRun"})
 	public void verifyTestRunCopyLinkTest()
 	{
-		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 25);
+		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 1);
 		testRunPage = (TestRunPage) testRunPage.reload();
 		TestRunTableRow testRunTableRow = testRunPageService.getTestRunRowByIndex(0);
 		TestRunSettingMenu testRunSettingMenu = testRunTableRow.clickTestRunSettingMenu();
@@ -366,16 +368,17 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertEquals(testRunPage.getPaginationBlock().getCountOfPageElementsText(), String.format(COUNT_OF_PAGE_ELEMENTS, 1, 20, totalCount), "Count of user menu buttons is not 20");
 	}
 
+	// TODO: 2019-01-23 Uncomment inside on main checkbox will be added
 	@Test(groups = {"acceptance", "testRun"})
 	public void verifyFabButtonActionsTest()
 	{
 		Assert.assertFalse(testRunPage.isElementPresent(testRunPage.getFabButton().getRootElement(), 1), "Main fab button is present");
 		testRunPageService.getTestRunRowByIndex(0).checkCheckbox();
 		testRunPageService.getTestRunRowByIndex(1).checkCheckbox();
-		Assert.assertFalse(testRunPage.isChecked(testRunPage.getTestRunSearchBlock().getMainCheckbox()), "Main checkbox is checked");
-		testRunPage.getTestRunSearchBlock().checkMainCheckbox();
-		testRunPage.getTestRunTable().getTestRunTableRows().forEach(row -> Assert.assertTrue(testRunPage.isChecked(row.getCheckbox()), "Test run row checkbox is not checked"));
-		testRunPage.getTestRunSearchBlock().uncheckMainCheckbox();
+		//Assert.assertFalse(testRunPage.isChecked(testRunPage.getTestRunSearchBlock().getMainCheckbox()), "Main checkbox is checked");
+		//testRunPage.getTestRunSearchBlock().checkMainCheckbox();
+		//testRunPage.getTestRunTable().getTestRunTableRows().forEach(row -> Assert.assertTrue(testRunPage.isChecked(row.getCheckbox()), "Test run row checkbox is not checked"));
+		//testRunPage.getTestRunSearchBlock().uncheckMainCheckbox();
 		testRunPageService.getTestRunRowByIndex(0).checkCheckbox();
 		testRunPageService.getTestRunRowByIndex(1).checkCheckbox();
 		testRunPage.getFabButton().clickButtonTrigger();
@@ -383,8 +386,8 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertEquals(testRunPage.getAlert().getText(), DELETE_RUNS_ALERT_TEXT, "Incorrect title of delete runs alert");
 		testRunPage.getAlert().dismiss();
 		List<TestRun> testRuns = testRunMapper.searchTestRuns(new TestRunSearchCriteria());
-		Assert.assertEquals(testRunPageService.getTestRunRowByIndex(0).getTestRunNameText(), testRuns.get(0).getTestSuite().getName(), "Test run is not deleted");
-		Assert.assertEquals(testRunPageService.getTestRunRowByIndex(1).getTestRunNameText(), testRuns.get(1).getTestSuite().getName(), "Test run is not deleted");
+		Assert.assertEquals(testRunPageService.getTestRunRowByIndex(0).getTestRunNameText(), testRuns.get(0).getTestSuite().getName(), "Test run is deleted");
+		Assert.assertEquals(testRunPageService.getTestRunRowByIndex(1).getTestRunNameText(), testRuns.get(1).getTestSuite().getName(), "Test run is deleted");
 		testRunPage = (TestRunPage) testRunPage.reload();
 		testRunPageService.getTestRunRowByIndex(0).checkCheckbox();
 		testRunPageService.getTestRunRowByIndex(1).checkCheckbox();
@@ -665,8 +668,8 @@ public class TestRunPageTest extends AbstractTest
 			Assert.assertEquals(testRunTableRow.getInProgressCount(), testRun.getInProgress(), "Invalid in progress count");
 		}
 		//testRunTableRow.hoverOnElement(testRunTableRow.getEnvironment());
-		Assert.assertTrue(testRunTableRow.getExpandTestsIcon().isDisplayed(), "Expand icon is not present on hover");
-		TestTable testTable = testRunTableRow.clickExpandTestsIcon();
+		//Assert.assertTrue(testRunTableRow.getExpandTestsIcon().isDisplayed(), "Expand icon is not present on hover");
+		TestTable testTable = testRunTableRow.expandRun();
 		pause(2);
 		Assert.assertEquals(testTable.getTestRows().size(), testMapper.searchTests(new TestSearchCriteria() {
 			{
@@ -687,9 +690,7 @@ public class TestRunPageTest extends AbstractTest
 				setTestRunId(testRun.getId());
 			}
 		});
-		testRunTableRow.hoverOnElement(testRunTableRow.getEnvironment());
-		TestTable testTable = testRunPage.isElementPresent(testRunTableRow.getTestTable().getRootElement(), 1)
-				? testRunTableRow.getTestTable() : testRunTableRow.clickExpandTestsIcon();
+		TestTable testTable = testRunTableRow.expandRun();
 		testRunPage.waitUntilPageIsLoaded();
 		Assert.assertEquals(tests.size(), testRunTableRow.getTestTable().getTestRows().size(), "Invalid tests count visible");
 		IntStream.iterate(0, i -> i++).limit(testTable.getTestRows().size()).forEach(i -> {

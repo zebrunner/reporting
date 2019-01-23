@@ -101,6 +101,7 @@ public class TestRunSettingMenu extends AbstractMenu
 	public void clickBuildNowButton()
 	{
 		waitUntilElementToBeClickableWithBackdropMask(buildNowButton, 5);
+		pause(2);
 		buildNowButton.click();
 	}
 

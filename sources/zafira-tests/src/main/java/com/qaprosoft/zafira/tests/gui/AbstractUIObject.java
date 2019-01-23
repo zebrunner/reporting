@@ -263,6 +263,11 @@ public abstract class AbstractUIObject
 		executor.executeScript(String.format("$(document.elementFromPoint(%s, %s)).click();", x, y));
 	}
 
+	public void clickByCoordinates(WebElement element, int x, int y) {
+		Actions builder = new Actions(driver);
+		builder.moveToElement(element, x, y).click().build().perform();
+	}
+
 	public void pause(double timeout)
 	{
 		try
