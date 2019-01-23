@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('UtilService', ['$rootScope', '$mdToast', '$timeout', '$q', UtilService])
+        .factory('UtilService', ['$rootScope', '$mdToast', '$timeout', '$q', '$window', UtilService]);
 
-    function UtilService($rootScope, $mdToast, $timeout, $q) {
+    function UtilService($rootScope, $mdToast, $timeout, $q, $window) {
         var service = {};
 
         service.untouchForm = untouchForm;
@@ -17,6 +17,8 @@
         service.settingsAsMap = settingsAsMap;
         service.reconnectWebsocket = reconnectWebsocket;
         service.websocketConnected = websocketConnected;
+        service.setOffset = setOffset;
+        service.showDeleteMessage = showDeleteMessage;
 
         service.validations = {
             username: [
@@ -248,5 +250,67 @@
             form[inputName].$setValidity(ngMessage, result);
             return result;
         };
+
+        function setOffset(event) {
+            const bottomHeight = $window.innerHeight - event.target.clientHeight - event.clientY;
+
+            $rootScope.currentOffset = 0;
+            if (bottomHeight < 400) {
+                $rootScope.currentOffset = -250 + bottomHeight;
+            }
+        }
+
+        function buildMessage(keysToDelete, results, errors) {
+            const result = {};
+
+            if (keysToDelete.length === results.length + errors.length) {
+                if (results.length) {
+                    let message = results.length ? results[0].message : '';
+                    let ids = '';
+
+                    results.forEach(function(result, index) {
+                        ids = ids + '#' + result.id;
+                        if (index !== results.length - 1) {
+                            ids += ', ';
+                        }
+                    });
+                    message = message.format(results.length > 1 ? 's' : ' ', ids);
+                    result.message = message;
+                }
+                if (errors.length) {
+                    let errorIds = '';
+                    let errorMessage = errors.length ? errors[0].message : '';
+
+                    errors.forEach(function(result, index) {
+                        errorIds = errorIds + '#' + result.id;
+                        if (index !== errors.length - 1) {
+                            errorIds += ', ';
+                        }
+                    });
+                    errorMessage = errorMessage.format(errors.length > 1 ? 's' : ' ', errorIds);
+                    result.errorMessage = errorMessage;
+                }
+            }
+
+            return result;
+        }
+
+        function showDeleteMessage(rs, keysToDelete, results, errors) {
+            let message;
+
+            if (rs.success) {
+                results.push(rs);
+            } else {
+                errors.push(rs);
+            }
+
+            message = buildMessage(keysToDelete, results, errors);
+            if (message.message) {
+                alertify.success(message.message);
+            }
+            if(message.errorMessage) {
+                alertify.error(message.errorMessage);
+            }
+        }
     }
 })();
