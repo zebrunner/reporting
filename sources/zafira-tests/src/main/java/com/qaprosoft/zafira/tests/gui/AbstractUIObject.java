@@ -73,7 +73,7 @@ public abstract class AbstractUIObject
 		PageFactory.initElements(new UIElementDecorator(driver, elementLocatorFactory), this);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public boolean isElementPresent(By by, long seconds)
 	{
 		return innerTimeoutOperation(() -> {
@@ -99,7 +99,7 @@ public abstract class AbstractUIObject
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "unused", "rawtypes" })
 	public boolean isElementPresent(WebElement webElement, By by, long seconds)
 	{
 		String element = by == null ? "" : by.toString();
@@ -149,7 +149,7 @@ public abstract class AbstractUIObject
 		});
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public boolean waitUntilElementIsPresent(WebElement webElement, By by, long seconds)
 	{
 		return innerTimeoutOperation(() -> {
@@ -215,6 +215,7 @@ public abstract class AbstractUIObject
 		return isBackdropPresent(seconds) && isBackdropAnimateNotPresent(seconds) && waitUntilElementToBeClickable(webElement, seconds);
 	}
 
+	@SuppressWarnings("rawtypes")
 	private boolean innerTimeoutOperation(Supplier<Wait> operationSupplier)
 	{
 		boolean result;

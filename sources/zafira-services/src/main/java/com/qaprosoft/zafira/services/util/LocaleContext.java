@@ -35,6 +35,7 @@ public class LocaleContext {
         return getMessage(prefix + "." + key);
     }
 
+    @SuppressWarnings("rawtypes")
     public static String getMessage(Class classKey) {
         return getMessage("class", classKey.getSimpleName().toLowerCase());
     }

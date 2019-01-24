@@ -13,6 +13,7 @@ import org.openqa.selenium.support.pagefactory.ElementLocator;
 
 import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
 
+@SuppressWarnings("unused")
 public class UIObjectListHandler<T extends AbstractUIObject> implements InvocationHandler
 {
 

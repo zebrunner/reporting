@@ -38,7 +38,6 @@ public abstract class AbstractGoogleService
 	private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
 	private static final List<String> SCOPES = Arrays.asList(SheetsScopes.SPREADSHEETS, SheetsScopes.DRIVE);
-	private static final String CLIENT_SECRET_DIR = "./client_secret.json";
 
 	private static NetHttpTransport HTTP_TRANSPORT;
 

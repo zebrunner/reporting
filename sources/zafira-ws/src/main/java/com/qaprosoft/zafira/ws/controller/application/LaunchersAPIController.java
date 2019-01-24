@@ -15,29 +15,39 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import com.qaprosoft.zafira.models.db.Launcher;
-import com.qaprosoft.zafira.models.db.User;
-import com.qaprosoft.zafira.models.dto.LauncherType;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.application.LauncherService;
-import com.qaprosoft.zafira.ws.controller.AbstractController;
-import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-import javax.validation.Valid;
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.qaprosoft.zafira.models.db.Launcher;
+import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.dto.LauncherType;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.application.LauncherService;
+import com.qaprosoft.zafira.services.services.application.UserService;
+import com.qaprosoft.zafira.ws.controller.AbstractController;
+import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
 @Controller
 @Api(value = "Launchers API")
@@ -47,6 +57,9 @@ public class LaunchersAPIController extends AbstractController {
 
     @Autowired
     private LauncherService launcherService;
+    
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private Mapper mapper;
@@ -108,6 +121,6 @@ public class LaunchersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "build", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public void build(@RequestBody @Valid LauncherType launcherType) throws ServiceException, IOException {
-        launcherService.buildLauncherJob(mapper.map(launcherType, Launcher.class));
+        launcherService.buildLauncherJob(mapper.map(launcherType, Launcher.class), userService.getNotNullUserById(getPrincipalId()));
     }
 }

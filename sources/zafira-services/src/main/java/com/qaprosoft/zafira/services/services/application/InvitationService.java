@@ -78,6 +78,7 @@ public class InvitationService {
         return invitation;
     }
 
+    @SuppressWarnings("rawtypes")
     private CompletableFuture[] createInvitationsAsync(Long principalId, List<Invitation> results, Invitation... invitations) {
         return Arrays.stream(invitations).map(invitation -> CompletableFuture.supplyAsync(() -> {
             Invitation inv = null;

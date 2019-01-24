@@ -14,9 +14,11 @@ import com.qaprosoft.zafira.services.services.application.cache.ICacheableServic
 @Component(value = "testRunMockCacheableService")
 public class TestRunMockCacheableService implements ICacheableService<Long, TestRunStatistics>
 {
-
+	private static final long serialVersionUID = 7143490664308334480L;
+	
 	private final Map<Long, TestRunStatistics> statistics;
 
+	@SuppressWarnings("serial")
 	public TestRunMockCacheableService()
 	{
 		final int count = RandomUtils.nextInt(1, 50);

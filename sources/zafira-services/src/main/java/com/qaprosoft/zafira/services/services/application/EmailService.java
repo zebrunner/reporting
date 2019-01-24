@@ -58,7 +58,6 @@ public class EmailService
 	
 	private static final EmailValidator validator = EmailValidator.getInstance();
 
-	@SuppressWarnings("SynchronizeOnNonFinalField")
 	public String sendEmail(final IEmailMessage message, final String... emails) throws ServiceException
 	{
 

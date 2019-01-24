@@ -17,6 +17,7 @@ package com.qaprosoft.zafira.services.exceptions;
 
 import com.qaprosoft.zafira.services.util.LocaleContext;
 
+@SuppressWarnings("rawtypes")
 public class EntityAlreadyExistsException extends ServiceException {
 
     private static final long serialVersionUID = 5062713977366541469L;

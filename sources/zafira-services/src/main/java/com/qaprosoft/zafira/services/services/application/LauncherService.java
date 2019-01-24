@@ -22,12 +22,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherMapper;
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Launcher;
 import com.qaprosoft.zafira.models.db.ScmAccount;
@@ -35,6 +37,7 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.jmx.JenkinsService;
 import com.qaprosoft.zafira.services.services.application.scm.ScmAccountService;
+import com.qaprosoft.zafira.services.services.auth.JWTService;
 
 @Service
 public class LauncherService {
@@ -50,6 +53,12 @@ public class LauncherService {
 
     @Autowired
     private JobsService jobsService;
+    
+    @Autowired
+    private JWTService jwtService;
+    
+    @Value("${zafira.webservice.url}")
+    private String apiURL;
 
     @Transactional(rollbackFor = Exception.class)
     public Launcher createLauncher(Launcher launcher, User owner) throws ServiceException {
@@ -93,7 +102,7 @@ public class LauncherService {
         launcherMapper.deleteLauncherById(id);
     }
 
-    public void buildLauncherJob(Launcher launcher) throws IOException, ServiceException {
+    public void buildLauncherJob(Launcher launcher, User user) throws IOException, ServiceException {
         
         ScmAccount scmAccount = scmAccountService.getScmAccountById(launcher.getScmAccount().getId());
         if(scmAccount == null) 
@@ -108,6 +117,10 @@ public class LauncherService {
         if(!jobParameters.containsKey("scmBranch")) {
             jobParameters.put("scmBranch", "*/master");
         }
+        
+        jobParameters.put("zafira_enabled", "true");
+        jobParameters.put("zafira_service_url", apiURL.replace("api", TenancyContext.getTenantName()));
+        jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, TenancyContext.getTenantName()));
         
         String args = jobParameters.entrySet().stream().filter(param -> ! Arrays.asList(JenkinsService.getRequiredArgs()).contains(param.getKey()))
                 .map(param -> "-D" + param.getKey() + "=" + param.getValue()).collect(Collectors.joining(" "));

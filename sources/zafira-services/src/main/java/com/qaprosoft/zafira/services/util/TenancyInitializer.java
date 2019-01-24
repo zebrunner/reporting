@@ -46,7 +46,7 @@ public class TenancyInitializer {
     }
 
     /**
-     * Trigger to execute some task on tenancy exction
+     * Trigger to execute some task on tenancy creation
      * @param message - amqp message
      * @param tenancyInitial - task to execute
      */
