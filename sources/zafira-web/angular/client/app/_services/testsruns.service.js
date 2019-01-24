@@ -163,7 +163,7 @@
             delete _searchParams[name];
 
             if (Object.keys(DEFAULT_SC).length === Object.keys(_searchParams).length) {
-                resetFilteringState();
+                resetFilteringState(true);
             }
         }
 
@@ -187,9 +187,9 @@
             return _activeFilteringTool === 'search';
         }
 
-        function resetFilteringState() {
+        function resetFilteringState(keepSearchType) {
             deleteActiveFilteringTool();
-            resetActiveSearchType();
+            !keepSearchType && resetActiveSearchType();
             resetSearchParams();
             resetActiveFilter();
         }
