@@ -1,6 +1,6 @@
 set schema 'zafira';
  
-select check_version(104);
+select check_version(106);
 
 DROP TABLE IF EXISTS SCM ;
 
@@ -18,4 +18,4 @@ CREATE TABLE IF NOT EXISTS SCM (
   PRIMARY KEY (ID));
   CREATE TRIGGER update_timestamp_scm BEFORE INSERT OR UPDATE ON SCM FOR EACH ROW EXECUTE PROCEDURE update_timestamp();
 
-select add_version(104);
+select add_version(106);

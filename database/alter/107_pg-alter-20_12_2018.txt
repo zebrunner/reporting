@@ -1,6 +1,6 @@
 set schema 'zafira';
 
-select check_version(106);
+select check_version(107);
 
 DROP TABLE IF EXISTS LAUNCHERS ;
 
@@ -39,4 +39,4 @@ DO $$
 
 END$$;
 
-select add_version(106);
+select add_version(107);
