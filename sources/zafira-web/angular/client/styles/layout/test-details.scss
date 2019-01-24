@@ -57,6 +57,7 @@
                     }
                     &_sorts {
                         @extend %detailsItems;
+                        background-color: $dark-coal-light-new-op01;
                         padding: 3px 15px;
                         min-width: 90px;
                         margin-left: 17px;
@@ -117,6 +118,7 @@
                                 }
                                 md-chip {
                                     @extend %detailsItems;
+                                    background-color: $dark-coal-light-new-op01 !important;
                                     margin-top: 5px;
                                     margin-bottom: 5px;
                                 }
@@ -200,6 +202,7 @@
                     }
                     &_tags {
                         @extend %detailsItems;
+                        background-color: rgba(0, 0, 0, .15) !important;
                         margin-top: 0;
                         margin-bottom: 5px;
                         @media(max-width: 599px) {
@@ -250,15 +253,13 @@
 %detailsItems {
     max-height: 28px;
     border-radius: 14px !important;
-    background-color: rgba(0, 0, 0, .15) !important;
     letter-spacing: 0.2px;
     text-align: center;
     font-size: 11px;
     font-weight: 500;
     color: $dark-coal-light-new !important;
-
     &:hover {
-        background-color: $dark-coal-light-new-op02;
+        background-color: rgba(0, 0, 0, .35) !important;
     }
 
     &.md-focused,
