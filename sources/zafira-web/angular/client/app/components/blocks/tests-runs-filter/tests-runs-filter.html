@@ -30,7 +30,7 @@
 
         <div class="search-filter-body col-md-12 no-padding">
             <md-card md-table zafira-background-theme="table" class="no-margin-h _md">
-                <div id="filter" class="md-row">
+                <div id="filter" class="md-row" ng-class="{'non-empty-filters': $ctrl.filters.length && $ctrl.isMobile()}">
                     <div class="panel-body no-padding-t" ng-if="!$ctrl.isMobile()">
                         <div ng-class="{'disable-layer': $ctrl.isSearchActive()}" ng-if="!$ctrl.isMobile()"></div>
                         <div layout="row" layout-xs="column" ng-show="$ctrl.filterBlockExpand">
@@ -146,7 +146,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="filter-mobile"  ng-if="$ctrl.isMobile()" ng-hide="$ctrl.isMobileSearchActive || $ctrl.isSearchActive()" class="md-row tests-runs-filter__filter-mobile">
+                    <div id="filter-mobile"  ng-if="$ctrl.isMobile()" ng-hide="$ctrl.isMobileSearchActive || $ctrl.isSearchActive() || !$ctrl.filters.length" class="md-row tests-runs-filter__filter-mobile">
                         <div class="panel-body no-padding-t">
                             <div layout="row" layout-xs="column" ng-show="$ctrl.filterBlockExpand">
                                 <md-chips class="filter-chip custom-filter" ng-model="$ctrl.filters" md-removable="false" readonly="true">
