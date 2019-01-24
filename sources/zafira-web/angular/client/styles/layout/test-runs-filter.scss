@@ -47,29 +47,34 @@
                 color: #ffffff;
             }
         }
-        #filter .panel-body {   
-            padding-bottom: 16px !important;
-            position: relative;   
-            @extend %chips-scrolling;
-            .manage-chip {
-                & md-chips.filter-chip md-chips-wrap.md-chips md-chip {
-                    font-size: 13px;
-                    color: black !important;
-                    background-color: transparent !important;
-                    border: 1px solid black !important;
-                    margin: 0 5px 0 0 !important;
-                    max-width: 104px;
-                    padding: 0 2px 0 30px !important;
-                    & div {
-                        right: auto;  
-                        background-color: transparent;
-                        left: 13px !important;
-                        top: 5px;
-                        & md-icon {
-                            font-size: 15px;
+        #filter {
+            &.non-empty-filters {
+                padding-top: 48px;
+            }
+            & .panel-body {   
+                padding-bottom: 16px !important;
+                position: relative;   
+                @extend %chips-scrolling;
+                .manage-chip {
+                    & md-chips.filter-chip md-chips-wrap.md-chips md-chip {
+                        font-size: 13px;
+                        color: black !important;
+                        background-color: transparent !important;
+                        border: 1px solid black !important;
+                        margin: 0 5px 0 0 !important;
+                        max-width: 104px;
+                        padding: 0 2px 0 30px !important;
+                        & div {
+                            right: auto;  
+                            background-color: transparent;
+                            left: 13px !important;
+                            top: 5px;
+                            & md-icon {
+                                font-size: 15px;
+                            }
                         }
-                    }
-                } 
+                    } 
+                }
             }
         }
         #search {

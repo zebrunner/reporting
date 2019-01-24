@@ -84,25 +84,22 @@
                             &.SKIPPED {
                                 background-color: $yellow-light-new;
                                 border: 2px solid $yellow-light-new;
-                            }
+                            } 
                             &.PASSED {
-                                background-color: $green-light-new;
-                                border: 2px solid $green-light-new;
-                                opacity: .5;
+                                background-color: rgba($green-light-new, .5);
+                                border: 2px solid rgba($green-light-new, .1);
                             }
                             &.ABORTED {
-                                background-color: $gray-light-new;
-                                border: 2px solid $gray-light-new;
-                                opacity: .5;
+                                background-color: rgba($gray-light-new, .5);
+                                border: 2px solid rgba($gray-light-new, .1);
                             }
                             &.QUEUED {
-                                border: 2px solid $gray-light-new;
-                                opacity: .5;
+                                background-color: white;
+                                border: 2px solid rgba($gray-light-new, .5);
                             }
                             &.IN_PROGRESS {
-                                background-color: $blue-light-new;
-                                border: 2px solid $blue-light-new;
-                                opacity: .5;
+                                background-color: rgba($blue-light-new, .5);
+                                border: 2px solid rgba($blue-light-new, .1);
                             }
                         }
                     }
