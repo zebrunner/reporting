@@ -57,16 +57,11 @@ Zafira was initially designed to track automation progress of the tests written 
 
 1. Install [Docker](https://docs.docker.com/engine/installation/) ([Engine](https://docs.docker.com/engine/installation/), [Compose](https://docs.docker.com/compose/install/))
 2. Clone current repo and navigate to the repo root on your local machine
-3. Deploy Zafira using `docker-compose` within the same folder
+3. To start Zafira execute:
 
   ```
-  $ docker-compose up
+  $ ./start.sh
   ```
-To start Zafira in daemon mode, add '-d' argument:
-
-  ```
-  $ docker-compose up -d
-  ```  
 4. Open in your browser IP address of deployed enviroment at port `8080`
 
   ```
