@@ -396,7 +396,11 @@
 
             !activeFilteringTool && testsRunsService.setActiveFilteringTool('search');
             testsRunsService.getSearchTypes().forEach(function(type) {
-                vm.fastSearch[type] ? testsRunsService.setSearchParam(type, vm.fastSearch[type]) : testsRunsService.deleteSearchParam(type);
+                if (vm.fastSearch[type]) {
+                    testsRunsService.setSearchParam(type, vm.fastSearch[type]);
+                } else if (testsRunsService.getSearchParam(type)) {
+                    testsRunsService.deleteSearchParam(type);
+                }
             });
         }
 
