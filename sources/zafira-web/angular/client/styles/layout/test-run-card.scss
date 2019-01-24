@@ -106,7 +106,6 @@
             min-width: 40px;
             font-size: 14px;
             padding-right: 0;
-            //width: 80px;
             md-checkbox {
                 margin-bottom: 0;
             }
@@ -130,9 +129,6 @@
             flex-grow: 1;
             width: 11%;
             min-width: 100px;
-            // @media(min-width: 999px) and (max-width: 1120px){
-            //     flex-grow: 0;
-            // }
             & .label {
                 font-weight: bold !important;
             }
@@ -140,7 +136,6 @@
                 margin: 0 0 0 10px;
                 justify-content: flex-start;
             }
-            //width: 150px;
         }
         &._platform {
             flex-grow: 2;
@@ -203,9 +198,6 @@
             @media(min-width: $breakpoint-mobile) and (max-width: 998px){
                 flex-grow: 2;
             }
-            // @media(min-width: 998px) and (max-width: 1120px){
-            //     flex-grow: 0;
-            // }
             .label {
                 font-size: 10px;
                 display: inline-flex;
@@ -350,7 +342,6 @@
             font-weight: 500;
             color: rgba(0, 0, 0, .5);
             padding-top: 2px;
-            //opacity: .5;
         }
     }
 
@@ -567,10 +558,7 @@
                 position: relative;
             }
             &._bottom {
-                padding: 0;
-                & .test-run-card__state {
-                    margin: 12px 12px 0 0;
-                }
+                padding: 12px 0 0;
                 align-items: center;
                 .test-run-card__cell._menu {
                     display: none;
@@ -681,12 +669,10 @@
     }
 
     &._mobile._single & {
+        &__wrapper {
+            padding: 10px 12px 5px;
+        }
         &__row {
-            //&._app-file,
-            //&._data,
-            //&._tags {
-            //    padding: 3px 0;
-            //}
             .expand-button {
                 width: 20px !important;
                 height: 20px !important;
@@ -739,12 +725,6 @@
             }
         }
 
-        //&__back-btn {
-        //    margin: 0 auto;
-        //    &._close-info {
-        //        margin: 0 12px 0 0;
-        //    }
-        //}
         &__info-btn {
             padding: 0;
             height: 20px;
@@ -789,7 +769,6 @@
         &__row {
             &._top,
             &._bottom {
-                //position: absolute;
                 opacity: 0;
             }
             &._middle {
@@ -808,27 +787,5 @@
 
     .comments-area {
         overflow: hidden;
-    }
-}
-
-.p-tests-run-details {
-    //the rule for sticky single test
-    #content {
-        $content: &;
-        & ._single{
-            @at-root {
-                #{$content} {
-                    overflow: visible;
-                    & .page {
-                        padding: 0 !important;
-                    }
-                    & .row {
-                        @media (min-width: $breakpoint-mobile) {
-                            padding: 0 20px;
-                        }
-                    }
-                }
-            }
-        }
     }
 }

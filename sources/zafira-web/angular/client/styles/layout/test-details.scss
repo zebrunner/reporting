@@ -1,6 +1,12 @@
 @import "../global/var";
 
 .p-tests-run-details {
+    .page {
+        padding: 0;
+    }
+    .content-container {
+        overflow: visible !important;
+    }
     md-table-container {
         background-color: $gray-bg-light-new;
         .table {
@@ -246,9 +252,12 @@
             }
         }
     }
+    @media (min-width: $breakpoint-mobile) {
+        .ui-section {
+            padding: 0 20px;
+        }
+    }
 }
-
-
 
 %detailsItems {
     max-height: 28px;

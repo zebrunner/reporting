@@ -356,7 +356,7 @@
             </div>
         </div>
 
-        <div class="test-run-card__row _bottom">
+        <div class="test-run-card__row _bottom" ng-if="$ctrl.singleMode || $ctrl.testRun.comments || $ctrl.testRun.reviewed || $ctrl.testRun.blocker">
             <div data-ng-if="$ctrl.testRun.comments" class="test-run-card__state _comments">
                 <md-icon data-ng-click="$ctrl.showCommentsDialog($event)" aria-label="Comments" aria-hidden="true"
                          class="comments-area">comments</md-icon>
@@ -370,7 +370,6 @@
             </div>
             <div class="test-run-card__bottom-right-buttons" ng-if="$ctrl.singleMode">
                 <button class="test-run-card__info-btn"
-                        ng-if="$ctrl.singleMode"
                         ng-click="$ctrl.showDetails(true)">
                     <i class="material-icons">
                         error_outline
