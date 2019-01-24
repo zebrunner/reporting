@@ -1566,9 +1566,6 @@ md-chip md-chip-template.bg-primary {
     & .filter-select{
       max-width: 548px;
       margin-right: 16px;
-      .p-tests-runs__section._filters .search-filter-body & {
-          max-width: none;
-      }
     }
 
     .filter-text {
@@ -1729,12 +1726,6 @@ div[aria-selected='true'] span.ng-binding {
     color: $coal;
     font-size: 14.5px;
     font-weight: 500;
-
-    .p-tests-runs__section._filters-wrapper.tests-runs-filter & {
-        width: 40px !important;
-        height: 40px !important;
-    }
-
     &:hover{
       cursor: pointer;
     }

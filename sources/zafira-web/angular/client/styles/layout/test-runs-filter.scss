@@ -227,8 +227,8 @@
                             background-color: #d3e9e6 !important;
                             color: #000 !important;
                         }
-                        &.active, &.default-gray {
-                            background-color: #d3e9e6 !important;
+                        &.active, &.default-blue {
+                            background-color: #d3e9e6;
                             border: 1px solid #d3e9e6;
                         }
                         @media (max-width: $breakpoint-mobile) {
@@ -245,7 +245,7 @@
 %select {
     border-radius: 4px;
     border: 1px solid ;
-    height: 40px !important;
+    height: 40px;
     border-color: rgba(0, 0, 0, 0.25) !important;
     font-size: 14px !important;
     &:hover {
@@ -303,42 +303,14 @@
         background-color: #fff;
         border: 0;
     }
-    @media screen and (max-width: $breakpoint-mobile) {
-        &__filter-mobile {
-            background-color: #fff;
-            position: fixed;
-            top: 96px;
-            left: 0;
-            right: 0;
-            width: 100%;
-            z-index: 5;
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-            height: 48px;
-            border: 1px solid rgba(#1f242a, .1);
-            border-right: 0;
-            border-left: 0;
-            @media (min-width: 481px) { 
-                left: 60px; 
-            }
-            &#filter-mobile .panel-body {
-                padding: 10px 12px !important;
-            }
-            md-chip {
-                font-weight: 500;
-                font-size: 11px;
-                max-height: 28px;
-                line-height: 28px;
-                border-radius: 28px;
-                &.md-focused {
-                    background-color: #35393f !important;
-                    & i ,
-                    &:hover i {
-                        display: none !important;
-                    }
-                }
-            }
+    &__search {
+        .quadro-btn {
+            width: 40px !important;
+            height: 40px !important;
+            min-width: 40px;
+            border-radius: 4px;
         }
-        &__search-mobile {
+        &._mobile {
             &,
             &#search {
                 background-color: #fff;
@@ -363,12 +335,7 @@
                 md-select {
                     height: 40px;
                 }
-                .quadro-btn {
-                    width: 40px !important;
-                    height: 40px !important;
-                    min-width: 40px;
-                    border-radius: 4px;
-                }
+                
                 .search-wrapper {
                     top: 16px;
                     left: 16px;
@@ -413,6 +380,42 @@
                     line-height: 26px;
                     padding: 0 !important;
                     outline: none;
+                }
+            }
+        }
+    }
+    @media screen and (max-width: $breakpoint-mobile) {
+        &__filter-mobile {
+            background-color: #fff;
+            position: fixed;
+            top: 96px;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 5;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            height: 48px;
+            border: 1px solid rgba(#1f242a, .1);
+            border-right: 0;
+            border-left: 0;
+            @media (min-width: 481px) { 
+                left: 60px; 
+            }
+            &#filter-mobile .panel-body {
+                padding: 10px 12px !important;
+            }
+            md-chip {
+                font-weight: 500;
+                font-size: 11px;
+                max-height: 28px;
+                line-height: 28px;
+                border-radius: 28px;
+                &.md-focused {
+                    background-color: #35393f !important;
+                    & i ,
+                    &:hover i {
+                        display: none !important;
+                    }
                 }
             }
         }
