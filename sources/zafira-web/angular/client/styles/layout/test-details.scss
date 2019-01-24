@@ -176,9 +176,9 @@
                     }
                 }
                 &-info {
-                    flex-grow: 3;
+                    width: 50vw;
                     @media (max-width: 730px) {
-                        width: 55%;
+                        width: 40vw;
                     }
                     @media(max-width: 599px) {
                         width: 100%;
@@ -209,14 +209,8 @@
                     }
                 }
                 & .text-center {
-                    width: 30%;
+                    flex-grow: 1;
                     @extend %noBorderPadding;
-                    @media (max-width: 1000px) {
-                        width: 20%;
-                    }
-                    @media (max-width: 874px) {
-                        width: auto;
-                    }
                     @media (max-width: 599px) {
                         padding-bottom: 5px;
                         width: auto;
