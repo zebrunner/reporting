@@ -375,7 +375,7 @@
             testsRunsService.setActiveSearchType(type);
         }
 
-        function onChangeSearchCriteria(name) {
+        function onChangeSearchCriteria(name) {//TODO: refactor this fn and onSearchChange for "DRY"
             const activeFilteringTool = testsRunsService.getActiveFilteringTool();
 
             if (!name) { return; }

@@ -178,7 +178,7 @@
                                             placeholder="Search items"
                                             ng-model="$ctrl.fastSearch[$ctrl.getActiveSearchType()]"
                                             ng-change="$ctrl.onSearchChange()"
-                                            ng-model-options="{updateOn: 'blur'}"
+                                            ng-model-options="{debounce: 200}"
                                             aria-label="Search items"
                                             aria-describedby="basic-addon2">
                                             <div class="search-wrapper" role="button" ng-if="$ctrl.isMobile()" >
@@ -199,7 +199,7 @@
                                                     placeholder="Search items"
                                                     ng-model="$ctrl.fastSearch[$ctrl.getActiveSearchType()]"
                                                     ng-change="$ctrl.onSearchChange()"
-                                                    ng-model-options="{updateOn: 'blur'}"
+                                                    ng-model-options="{debounce: 200}"
                                                     aria-label="Search items"
                                                     aria-describedby="basic-addon2">
                                             <div class="btn-check" layout-xs="row">

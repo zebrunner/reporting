@@ -161,6 +161,10 @@
 
         function deleteSearchParam(name) {
             delete _searchParams[name];
+
+            if (Object.keys(DEFAULT_SC).length === Object.keys(_searchParams).length) {
+                resetFilteringState();
+            }
         }
 
         function setActiveFilteringTool(tool) {
@@ -206,7 +210,7 @@
             const params = sessionStorage.getItem('searchParams');
             const filteringTool = sessionStorage.getItem('activeFilteringTool');
 
-            params && (_searchParams = angular.fromJson(params));
+            params && (_searchParams = angular.fromJson(params)) && (_lastParams = _searchParams);
 
             if (filteringTool) {
                 setActiveFilteringTool(filteringTool);
