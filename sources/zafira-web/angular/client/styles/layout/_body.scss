@@ -1566,6 +1566,9 @@ md-chip md-chip-template.bg-primary {
     & .filter-select{
       max-width: 548px;
       margin-right: 16px;
+      .p-tests-runs__section._filters .search-filter-body & {
+          max-width: none;
+      }
     }
 
     .filter-text {
