@@ -56,7 +56,7 @@ public class TestRunSettingMenu extends AbstractMenu
 
 	public void clickCopyLinkButton()
 	{
-		waitUntilElementToBeClickableWithBackdropMask(copyLinkButton, 5);
+		pause(2);
 		copyLinkButton.click();
 	}
 

@@ -5,7 +5,10 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.RandomUtils;
 import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -134,14 +137,31 @@ public class TestRunPageTest extends AbstractTest
 		TestRunTableRow testRunTableRow = testRunPageService.getTestRunRowByIndex(0);
 		TestRunSettingMenu testRunSettingMenu = testRunTableRow.clickTestRunSettingMenu();
 		testRunSettingMenu.clickCopyLinkButton();
-		testRunPage.getTestRunSearchBlock().getAppVersionInput().click();
-		testRunPage.getTestRunSearchBlock().getAppVersionInput().sendKeys(Keys.CONTROL + "v");
-		String url = testRunPage.getWebElementValue(testRunPage.getTestRunSearchBlock().getAppVersionInput());
+		pause(5);
+		testRunPage.getTestRunSearchBlock().getCommonInput().click();
+		testRunPage.getTestRunSearchBlock().getCommonInput().clear();
+		testRunPage.getTestRunSearchBlock().getCommonInput().sendKeys("");
+		pause(2);
+		past(testRunPage.getTestRunSearchBlock().getCommonInput());
+		testRunPage.getTestRunSearchBlock().getCommonInput().sendKeys(Keys.chord(Keys.COMMAND, "v"));
+		pause(2);
+		pause(2);
+		String url = testRunPage.getWebElementValue(testRunPage.getTestRunSearchBlock().getCommonInput());
 		LOGGER.info("Coped url is " + url);
 		String[] urlSplit = url.split("/");
 		String testRunId = String.valueOf(testRunViewTypes.get(testRunViewTypes.size() - 1).getTestRunType().getId());
 		Assert.assertEquals(urlSplit[urlSplit.length - 1], testRunId, "Invalid test run was opened. "
 				+ "Current url: " + url + ", but test run id: " + testRunId);
+	}
+
+	private void past(WebElement element) {
+		Actions actions = new Actions(driver);
+		actions.click(element);
+		actions.keyDown(Keys.COMMAND);
+		pause(0.5);
+		actions.sendKeys("v");
+		pause(0.5);
+		actions.keyUp(Keys.COMMAND).perform();
 	}
 
 	@Test(groups = {"acceptance", "testRun"})

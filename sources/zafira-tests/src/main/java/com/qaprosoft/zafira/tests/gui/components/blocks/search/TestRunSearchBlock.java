@@ -140,6 +140,10 @@ public class TestRunSearchBlock extends AbstractSearchBlock
 		return commonInput;
 	}
 
+	public WebElement getCommonInput() {
+		return commonInput;
+	}
+
 	public void typeAppVersion(String appVersion)
 	{
 		if(! isBlank(appVersion)) {

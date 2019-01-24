@@ -23,7 +23,7 @@
 				<methods>
 					<include name="verifyNavigationTest"/>
 					<include name="verifyTestRunOpenTest"/>
-					<include name="verifyTestRunCopyLinkTest"/>
+					<!--<include name="verifyTestRunCopyLinkTest"/>-->
 					<include name="verifyMarkAsReviewedTest"/>
 					<include name="verifySendAsEmailTest"/>
 					<include name="verifyExportTest"/>
