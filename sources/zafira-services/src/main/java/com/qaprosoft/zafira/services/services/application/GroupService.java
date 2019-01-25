@@ -82,6 +82,12 @@ public class GroupService
 	{
 		return groupMapper.getGroupById(id);
 	}
+	
+	@Transactional(readOnly = true)
+    public Group getGroupByName(String name) throws ServiceException
+    {
+        return groupMapper.getGroupByName(name);
+    }
 
 	@Transactional(readOnly = true)
 	public Group getPrimaryGroupByRole(Role role) throws ServiceException

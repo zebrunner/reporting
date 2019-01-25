@@ -98,6 +98,14 @@
 		]]>
     </select>
     
+     <select id="getGroupByName" resultMap="GroupResultMap">
+        <include refid="getGroup" />
+        <![CDATA[
+        
+			WHERE G.NAME = #{name};
+		]]>
+    </select>
+    
     <select id="getPrimaryGroupByRole" resultMap="GroupResultMap">
         <![CDATA[
         	SELECT

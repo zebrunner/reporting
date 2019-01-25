@@ -11,6 +11,7 @@ ENV ZAFIRA_WS_URL=
 ENV ZAFIRA_WEB_URL=
 ENV ZAFIRA_USER=qpsdemo
 ENV ZAFIRA_PASS=qpsdemo
+ENV ZAFIRA_GROUP="Super admins"
 ENV ZAFIRA_JDBC_URL=jdbc:postgresql://localhost:5432/postgres
 ENV ZAFIRA_JDBC_USER=postgres
 ENV ZAFIRA_JDBC_PASS=postgres

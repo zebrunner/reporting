@@ -30,6 +30,8 @@ public interface GroupMapper
 	void addPermissionsToGroup(@Param("groupId") Long groupId, @Param("permissions") Set<Permission> permissions);
 
 	Group getGroupById(long id);
+	
+	Group getGroupByName(String name);
 
 	List<Group> getAllGroups();
 	

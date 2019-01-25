@@ -54,6 +54,9 @@ public class UserService implements TenancyInitial {
 
     @Value("${zafira.admin.password}")
     private String adminPassword;
+    
+    @Value("${zafira.admin.group}")
+    private String adminGroup;
 
     @Value("${zafira.multitenant}")
     private String isMultitenant;
@@ -90,11 +93,9 @@ public class UserService implements TenancyInitial {
                     user.setPassword(passwordEncryptor.encryptPassword(adminPassword));
                     createUser(user);
 
-                    Group group = groupService.getPrimaryGroupByRole(Role.ROLE_ADMIN);
-                    if (group != null) {
-                        addUserToGroup(user, group.getId());
-                        user.getGroups().add(group);
-                    }
+                    Group group = groupService.getGroupByName(adminGroup);
+                    addUserToGroup(user, group.getId());
+                    user.getGroups().add(group);
                     userPreferenceService.createDefaultUserPreferences(user.getId());
                 }
             } catch (Exception e) {
