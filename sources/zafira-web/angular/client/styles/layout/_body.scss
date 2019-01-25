@@ -1726,7 +1726,6 @@ div[aria-selected='true'] span.ng-binding {
     color: $coal;
     font-size: 14.5px;
     font-weight: 500;
-
     &:hover{
       cursor: pointer;
     }
@@ -2818,7 +2817,7 @@ $light-inprogress: #68c9fd;
             > i {
                 color: $dark;
             }
-             button {
+            button {
                 border: 0;
                 float: right;
                 padding: 0 16px 0 6px;
@@ -2831,7 +2830,7 @@ $light-inprogress: #68c9fd;
                 font-size: 14px;
                 font-weight: bold;
                 line-height: 36px;
-                @media(max-width: $screen-phone) {
+                @media(max-width: $breakpoint-mobile) {
                     &.fixed-page-header__btn {
                         background-color: #fff;
                         border-radius: 8px;

@@ -31,27 +31,16 @@
         &-left {
             width: 40%;
             min-width: 400px;
-            @media(min-width: $breakpoint-mobile) and (max-width:  998px){
-                position: relative;
-                width: 100%;
-                border-bottom: 1px rgba(0, 0, 0, 0.04) solid;
-            }
         }
         &-right {
             width: 60%;
             position: relative;
-            @media(min-width: $breakpoint-mobile) and (max-width:  998px){
-                width: 100%;
-            }
         }
         position: relative;
         background-color: #fff;
         border-left: 4px solid #777;
         min-height: 55px;
         display: flex;
-        @media(min-width: $breakpoint-mobile) and (max-width:  998px){
-            flex-direction: column;
-        }
         &.PASSED {
             border-left-color: $green-new;
         }
@@ -89,16 +78,6 @@
         border-top: 1px rgba(0, 0, 0, 0.12) solid;
         flex-shrink: 0;
         padding: 5px;
-        
-        &._env,
-        &._platform,
-        &._statistics,
-        &._date,
-        &._menu {
-            @media(min-width: $breakpoint-mobile) and (max-width:  998px){
-                border-top:none;
-            }
-        }
 
         &._selection {
             justify-content: center;
@@ -106,7 +85,6 @@
             min-width: 40px;
             font-size: 14px;
             padding-right: 0;
-            //width: 80px;
             md-checkbox {
                 margin-bottom: 0;
             }
@@ -130,27 +108,20 @@
             flex-grow: 1;
             width: 11%;
             min-width: 100px;
-            // @media(min-width: 999px) and (max-width: 1120px){
-            //     flex-grow: 0;
-            // }
             & .label {
                 font-weight: bold !important;
             }
-            @media(min-width: $breakpoint-mobile) and (max-width:  998px){
-                margin: 0 0 0 10px;
-            }
-            //width: 150px;
         }
         &._platform {
-            flex-grow: 1;
+            flex-grow: 2;
             width: 11%;
             min-width: 40px;
             flex-wrap: wrap;
             justify-content: center;
-            @media(min-width: 999px) and (max-width: 1120px){
+            @media(min-width: $breakpoint-mid-tablet + 1) and (max-width: 1120px){
                 flex-grow: 0;
             }
-            @media(min-width: $breakpoint-mobile) and (max-width: 630px){
+            @media(min-width: $breakpoint-mobile + 1) and (max-width: 630px){
                 flex-grow: 1;
             }
         }
@@ -184,30 +155,18 @@
             width: 11%;
             min-width: 100px;
             font-weight: 500;
-            @media(min-width: 701px) and (max-width: 998px){
-                flex-grow: 1;
-            }
-            @media(min-width: $breakpoint-mobile) and (max-width: 702px){
-                flex-grow: 2;
-            }
+            font-size: 12px;
         }
         &._statistics {
-            justify-content: center;
-            flex-grow: 2;
+            flex-grow: 1;
             width: 15%;
             min-width: 140px;
-            @media (max-width: 599px) {
+            @media (max-width: $breakpoint-mobile) {
                 justify-content: flex-start;
             }
-            @media(min-width: 999px) and (max-width: 1120px){
+            @media(min-width: $breakpoint-mid-tablet + 1) and (max-width: 1120px){
                     flex-grow: 1;
             }
-            @media(min-width: $breakpoint-mobile) and (max-width: 998px){
-                flex-grow: 2;
-            }
-            // @media(min-width: 998px) and (max-width: 1120px){
-            //     flex-grow: 0;
-            // }
             .label {
                 font-size: 10px;
                 display: inline-flex;
@@ -287,7 +246,6 @@
         }
         &._middle {
             border-top: 1px rgba(0, 0, 0, 0.12) solid;
-            padding-top: 5px;
         }
     }
 
@@ -302,9 +260,6 @@
         &-wrapper {
             display: flex;
             align-items: center;
-            @media(min-width: $breakpoint-mobile) and (max-width:  998px){
-                margin-right: 10px;
-            }
         }
         &-additions {
             margin-left: 5px;
@@ -322,13 +277,13 @@
         display: flex;
         flex-wrap: wrap;
         font-weight: 500;
+        align-items: flex-end;
         &-name {
             font-size: 12px;
             margin-right: 5px;
         }
         &-file {
             display: flex;
-            align-items: center;
         }
     }
 
@@ -347,13 +302,12 @@
             }
         }
         &-name {
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
+            max-width: 390px;
+            word-wrap: break-word;
             font-size: 12px;
             font-weight: 500;
             color: rgba(0, 0, 0, .5);
-            //opacity: .5;
+            padding-top: 2px;
         }
     }
 
@@ -423,7 +377,44 @@
             font-size: 24px;
         }
     }
+    @media(min-width: $breakpoint-mobile + 1) and (max-width:  $breakpoint-mid-tablet) {
+        &__wrapper {
+            &-left {
+                position: relative;
+                width: 100%;
+                border-bottom: 1px rgba(0, 0, 0, 0.04) solid;
+            }
+            &-right {
+                width: 100%;
+            }
+            flex-direction: column;
+        }
 
+        &__cell {
+            &._env,
+            &._platform,
+            &._statistics,
+            &._date,
+            &._menu {
+                border-top:none;
+            }
+            &._env {
+                margin: 0 0 0 10px;
+                justify-content: flex-start;
+            }            
+            &._date {
+                flex-grow: 2;
+            }
+            &._statistics {
+                flex-grow: 2;
+            }
+        }
+        &__title {
+            &-wrapper {
+                margin-right: 10px;
+            }
+        }
+    }
     @media screen and (max-width: $breakpoint-tablet) {
         &__cell {
             &._info {
@@ -444,13 +435,13 @@
         background-color: white;
         z-index: 2;
         box-shadow: 0 4px 8px 0 rgba(4, 0, 0, 0.2);
-        @media (min-width: $breakpoint-mobile) {
+        @media (min-width: $breakpoint-mobile + 1) {
             padding: 2px 0;
         }
         .back {
             margin-top: 3px;
             cursor: pointer;
-            @media (max-width: 599px) {
+            @media (max-width: $breakpoint-mobile) {
                 margin-top: -3px;
             }
         }
@@ -463,7 +454,7 @@
         &__wrapper {
             min-height: 45px;
             height: auto;
-            @media (min-width: $breakpoint-mobile) {
+            @media (min-width: $breakpoint-mobile + 1) {
                 margin: 0 2px;
                 padding: 0 15px;
             }
@@ -500,16 +491,13 @@
                 display: none;
             }
             &._env {
-                @media(min-width: $breakpoint-mobile) and (max-width:  998px){
+                @media(min-width: $breakpoint-mobile + 1) and (max-width:  $breakpoint-mid-tablet){
                     margin: 0;
                 }
             }
         }
 
         &__title {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
             .expand-button {
                 width: 20px !important;
                 height: 20px !important;
@@ -543,7 +531,7 @@
             }
         }
         &__wrapper {
-            padding: 10px 12px 5px;
+            padding: 15px 12px;
             margin-bottom: 4px;
             display: block;
             position: relative;
@@ -558,10 +546,12 @@
         &__row {
             &._data,
             &._tags {
-                padding: 6px 0;
+                & .test-run-card__cell {
+                    padding: 12px 0 0 0 !important;
+                }
             }
             &._app-file {
-                padding: 5px 0;
+                padding: 5px 0 0;
                 align-items: center;
                 .expand-button {
                     display: none;
@@ -571,10 +561,7 @@
                 position: relative;
             }
             &._bottom {
-                padding: 0;
-                //& div {
-                //    padding: 5px 0;
-                //}
+                padding: 12px 0 0;
                 align-items: center;
                 .test-run-card__cell._menu {
                     display: none;
@@ -632,7 +619,7 @@
             }
             &._platform {
                 margin-right: 0;
-                margin-left: 10px;
+                margin-left: 12px;
                 flex: none;
                 width: auto;
                 .platform-icon {
@@ -640,18 +627,26 @@
                 }
             }
             &._date {
-                width: auto;
                 flex-direction: row;
                 margin-left: 12px;
                 align-items: center;
                 justify-content: flex-start;
+                flex-wrap: wrap;
             }
+        }
+        &__time{
+            margin-right: 12px;
+            margin-left: 0;
         }
 
         &__title {
             max-height: 36px; //TODO: clarify font-size and line-height
-            overflow: hidden;
             margin: 0 5px 0 0;
+        }
+        &__jenkins {
+            font-size: 14px;
+            line-height: 1;
+            margin-top: 9px;
         }
         &__time-text {
             margin-left: 0;
@@ -677,12 +672,10 @@
     }
 
     &._mobile._single & {
+        &__wrapper {
+            padding: 10px 12px 5px;
+        }
         &__row {
-            //&._app-file,
-            //&._data,
-            //&._tags {
-            //    padding: 3px 0;
-            //}
             .expand-button {
                 width: 20px !important;
                 height: 20px !important;
@@ -735,12 +728,6 @@
             }
         }
 
-        //&__back-btn {
-        //    margin: 0 auto;
-        //    &._close-info {
-        //        margin: 0 12px 0 0;
-        //    }
-        //}
         &__info-btn {
             padding: 0;
             height: 20px;
@@ -785,7 +772,6 @@
         &__row {
             &._top,
             &._bottom {
-                //position: absolute;
                 opacity: 0;
             }
             &._middle {
@@ -804,27 +790,5 @@
 
     .comments-area {
         overflow: hidden;
-    }
-}
-
-.p-tests-run-details {
-    //the rule for sticky single test
-    #content {
-        $content: &;
-        & ._single{
-            @at-root {
-                #{$content} {
-                    overflow: visible;
-                    & .page {
-                        padding: 0;
-                    }
-                    & .row {
-                        @media (min-width: $breakpoint-mobile) {
-                            padding: 0 20px;
-                        }
-                    }
-                }
-            }
-        }
     }
 }

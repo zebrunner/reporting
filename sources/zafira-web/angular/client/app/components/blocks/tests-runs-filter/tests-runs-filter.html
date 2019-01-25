@@ -30,8 +30,8 @@
 
         <div class="search-filter-body col-md-12 no-padding">
             <md-card md-table zafira-background-theme="table" class="no-margin-h _md">
-                <div id="filter" class="md-row">
-                    <div class="panel-body no-padding-t" ng-if="!$ctrl.isMobile()">
+                <div id="filter" class="md-row tests-runs-filter__wrapper" ng-class="{'non-empty-filters': $ctrl.filters.length && $ctrl.isMobile() && !$ctrl.isSearchActive()}">
+                    <div class="md-row tests-runs-filter__wrapper-panel-body no-padding-t" ng-if="!$ctrl.isMobile()">
                         <div ng-class="{'disable-layer': $ctrl.isSearchActive()}" ng-if="!$ctrl.isMobile()"></div>
                         <div layout="row" layout-xs="column" ng-show="$ctrl.filterBlockExpand">
                             <div class="manage-chip" ng-click="$ctrl.clearAndOpenFilterBlock(true);">
@@ -146,8 +146,8 @@
                             </div>
                         </div>
                     </div>
-                    <div id="filter-mobile"  ng-if="$ctrl.isMobile()" ng-hide="$ctrl.isMobileSearchActive || $ctrl.isSearchActive()" class="md-row tests-runs-filter__filter-mobile">
-                        <div class="panel-body no-padding-t">
+                    <div id="filter-mobile"  ng-if="$ctrl.isMobile() && $ctrl.filters.length" ng-hide="$ctrl.isMobileSearchActive || $ctrl.isSearchActive()" class="md-row tests-runs-filter__filter-mobile">
+                        <div class="tests-runs-filter__wrapper-panel-body no-padding-t">
                             <div layout="row" layout-xs="column" ng-show="$ctrl.filterBlockExpand">
                                 <md-chips class="filter-chip custom-filter" ng-model="$ctrl.filters" md-removable="false" readonly="true">
                                     <md-chip-template>
@@ -165,11 +165,11 @@
                         </div>
                     </div>
                     <md-divider ng-if="!$ctrl.isMobile()"></md-divider>
-                    <div id="search" class="md-row" ng-hide="$ctrl.isMobile() && !$ctrl.isMobileSearchActive" ng-class="{ '_mobile': $ctrl.isMobile(), ' tests-runs-filter__search-mobile': $ctrl.isMobile()}">
-                        <div class="panel-body">
+                    <div id="search" class="md-row tests-runs-filter__search" ng-hide="$ctrl.isMobile() && !$ctrl.isMobileSearchActive" ng-class="{ '_mobile': $ctrl.isMobile() }">
+                        <div class="tests-runs-filter__search-panel-body">
                             <div ng-show="$ctrl.fastSearchBlockExpand" layout="row" layout-md="column" layout-sm="column" layout-xs="column">
-                                <div id="search-header" ng-if="$ctrl.isMobile()" class="filters-search-panel" flex="auto">
-                                    <div class="search-wrapper-row">
+                                <div id="search-header" ng-if="$ctrl.isMobile()" class="tests-runs-filter__search-panel" flex="auto">
+                                    <div class="tests-runs-filter__search-panel _row-wrapper">
 
                                         <div ng-class="{'disable-layer': $ctrl.isFilterActive()}"></div>
                                         <input type="text"
@@ -188,7 +188,7 @@
                                             </div>
                                     </div>
                                 </div>
-                                <div id="search-select" layout="row" layout-md="column" layout-sm="column" layout-xs="column">
+                                <div id="search-select" class="tests-runs-filter__search-select" layout="row" layout-md="column" layout-sm="column" layout-xs="column">
                                     <div ng-class="{'disable-layer': $ctrl.isFilterActive()}"></div>
                                     <div id="search-container" flex="auto">
                                         <div layout="row" layout-xs="column">
@@ -203,9 +203,9 @@
                                                     aria-label="Search items"
                                                     aria-describedby="basic-addon2">
                                             <div class="btn-check" layout-xs="row">
-                                                <button type="button" ng-class="{'default-gray': $ctrl.fastSearch['testSuite'] && $ctrl.fastSearch['testSuite'].length !== 0, 'active': $ctrl.getActiveSearchType() === 'testSuite'}" ng-click="$ctrl.selectSearchType('testSuite')" class="btn btn-default">Test Suite</button>
-                                                <button type="button" ng-class="{'default-gray': $ctrl.fastSearch['executionURL'] && $ctrl.fastSearch['executionURL'].length !== 0, 'active': $ctrl.getActiveSearchType() === 'executionURL'}" ng-click="$ctrl.selectSearchType('executionURL')" class="btn btn-default">Job URL</button>
-                                                <button type="button" ng-class="{'default-gray': $ctrl.fastSearch['appVersion'] && $ctrl.fastSearch['appVersion'].length !== 0, 'active': $ctrl.getActiveSearchType() === 'appVersion'}" ng-click="$ctrl.selectSearchType('appVersion')" class="btn btn-default"> App Version</button>
+                                                <button type="button" ng-class="{'default-blue': $ctrl.fastSearch['testSuite'] && $ctrl.fastSearch['testSuite'].length !== 0, 'active': $ctrl.getActiveSearchType() === 'testSuite'}" ng-click="$ctrl.selectSearchType('testSuite')" class="btn btn-default">Test Suite</button>
+                                                <button type="button" ng-class="{'default-blue': $ctrl.fastSearch['executionURL'] && $ctrl.fastSearch['executionURL'].length !== 0, 'active': $ctrl.getActiveSearchType() === 'executionURL'}" ng-click="$ctrl.selectSearchType('executionURL')" class="btn btn-default">Job URL</button>
+                                                <button type="button" ng-class="{'default-blue': $ctrl.fastSearch['appVersion'] && $ctrl.fastSearch['appVersion'].length !== 0, 'active': $ctrl.getActiveSearchType() === 'appVersion'}" ng-click="$ctrl.selectSearchType('appVersion')" class="btn btn-default"> App Version</button>
                                             </div>
                                         </div>
                                     </div>

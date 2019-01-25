@@ -72,7 +72,7 @@
         </div>
         <div class="test-run-card__wrapper-right">
             <div name="testRunEnv" class="test-run-card__cell _env">
-                <span class="label label-default">{{$ctrl.testRun.env}}</span>
+                <span class="label label-default" ng-if="$ctrl.testRun.env">{{$ctrl.testRun.env}}</span>
             </div>
             <div name="testRunPlatform" class="test-run-card__cell _platform">
                 <span data-ng-if="$ctrl.testRun.platform !== ''" class="platform-icon {{$ctrl.testRun.platform | lowercase}}" />
@@ -313,7 +313,7 @@
                 </div>
             </div>
             <div class="test-run-card__row _tags">
-                <div name="testRunEnv" class="test-run-card__cell _env">
+                <div name="testRunEnv" class="test-run-card__cell _env" ng-if="$ctrl.testRun.env">
                     <span class="label label-default">{{$ctrl.testRun.env}}</span>
                 </div>
                 <div name="testRunPlatform" class="test-run-card__cell _platform no-padding browser-version_column"
@@ -356,7 +356,7 @@
             </div>
         </div>
 
-        <div class="test-run-card__row _bottom">
+        <div class="test-run-card__row _bottom" ng-if="$ctrl.singleMode || $ctrl.testRun.comments || $ctrl.testRun.reviewed || $ctrl.testRun.blocker">
             <div data-ng-if="$ctrl.testRun.comments" class="test-run-card__state _comments">
                 <md-icon data-ng-click="$ctrl.showCommentsDialog($event)" aria-label="Comments" aria-hidden="true"
                          class="comments-area">comments</md-icon>
@@ -370,7 +370,6 @@
             </div>
             <div class="test-run-card__bottom-right-buttons" ng-if="$ctrl.singleMode">
                 <button class="test-run-card__info-btn"
-                        ng-if="$ctrl.singleMode"
                         ng-click="$ctrl.showDetails(true)">
                     <i class="material-icons">
                         error_outline
