@@ -18,6 +18,7 @@
             margin-left: 0;
             font-size: 14px;
             z-index: 4;
+            min-width: 80px;
         }
         button#reset {
             background-color: $fog-gray;
@@ -49,12 +50,16 @@
                     max-width: 104px;
                     padding: 0 2px 0 30px !important;
                     & div {
+                        width: auto;
+                        height: auto;
                         right: auto;  
                         background-color: transparent;
-                        left: 13px !important;
+                        left: 9px !important;
                         top: 5px;
                         & md-icon {
                             font-size: 15px;
+                            width: auto;
+                            height: auto;
                         }
                     }
                 } 
@@ -106,9 +111,13 @@
                     }
                     md-select {
                         border: none;
+                        margin-top: 2px;
                     }
                     md-select-value {
                         padding: 0;
+                        .md-select-icon:after {
+                            font-size: 15px !important;
+                        }
                     }
                     &._additional {
                         margin-bottom: 20px;
@@ -207,6 +216,7 @@
                 justify-content: space-between;
                 border-bottom: 1px rgba(0, 0, 0, 0.10) solid;
                 button.btn {
+                    width: calc(100% / 3 - 5px);
                     font-size: 11px;
                     font-weight: 500;
                     max-height: 28px;

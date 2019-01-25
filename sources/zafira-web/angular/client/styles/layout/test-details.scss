@@ -163,12 +163,6 @@
                 @media (max-width: 480px) {
                     width: 100vw;
                 }
-                @at-root {
-                    .md-open-menu-container md-menu-content {
-                        width: auto;
-                        min-width: auto;
-                    }
-                }
                 &.success {
                     & .test-info,
                     & .text-center,
@@ -256,6 +250,12 @@
         .ui-section {
             padding: 0 20px;
         }
+    }
+    .test-settings__menu-content {
+        md-menu-item, md-menu {
+            display: flex;
+            justify-content: center;
+        }   
     }
 }
 

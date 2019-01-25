@@ -9,22 +9,22 @@
                 <md-icon class="material-icons">close</md-icon>
             </button>
             <button ng-if="$ctrl.matchMode(['APPLY', 'SEARCH'])" id="reset" class="filter-reset-btn md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="$ctrl.onReset();">
-                <b>RESET</b>
+                <span>RESET</span>
             </button>
             <button ng-if="$ctrl.matchMode(['SEARCH']);" id="applySearch" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" ng-click="$ctrl.onApply();">
-                <b>APPLY</b>
+                <span>APPLY</span>
             </button>
             <button ng-if="$ctrl.matchMode(['CREATE'])" id="createFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" ng-click="$ctrl.createFilter();" data-ng-disabled="filter_form.$invalid">
-                <b>CREATE</b>
+                <span>CREATE</span>
             </button>
             <button ng-if="$ctrl.matchMode(['UPDATE'])" id="updateFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" ng-click="$ctrl.updateFilter();" data-ng-disabled="filter_form.$invalid">
-                <b>SAVE</b>
+                <span>SAVE</span>
             </button>
             <button ng-if="$ctrl.matchMode(['CREATE', 'UPDATE'])" id="resetFilter" class="md-button md-default md-ink-ripple pull-right" type="button" ng-click="$ctrl.clearAndOpenFilterBlock(false);">
-                <b>CANCEL</b>
+                <span>CANCEL</span>
             </button>
             <button ng-if="$ctrl.matchMode(['UPDATE'])" id="deleteFilter" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" data-ng-really-message="Do you really want to delete the filter?" data-ng-really-click="$ctrl.deleteFilter($ctrl.filter.id);">
-                <b>DELETE</b>
+                <span>DELETE</span>
             </button>
         </div>
 
@@ -40,7 +40,7 @@
                                         <div>
                                             <md-icon class="material-icons">add</md-icon>
                                         </div>
-                                        <span>New filter<span>
+                                        <span>Add filter<span>
                                     </md-chip>
                                 </md-chips>
                             </div>
