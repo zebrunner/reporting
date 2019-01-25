@@ -35,8 +35,8 @@
         &.non-empty-filters {
             padding-top: 48px;
         }
-        & .panel-body {   
-            padding-bottom: 16px !important;
+        &-panel-body {   
+            padding: 16px;
             position: relative;   
             @extend %chips-scrolling;
             .manage-chip {
@@ -169,7 +169,7 @@
                     left: 60px; 
                 }
                 .tests-runs-filter__search-panel-body {
-                  padding: 0 !important;
+                    padding: 0 !important;
                 }
                 md-input-container {
                     height: 40px !important;
@@ -263,6 +263,12 @@
             }
         }
         
+        &__wrapper{
+            &-panel-body {
+                padding: 10px 12px;
+            }
+        }
+
         &__search {
             &-panel {
                 &._row-wrapper {
@@ -399,7 +405,9 @@
                 letter-spacing: 0.1px;
                 border-radius: 16px;
                 color: #ffffff !important;
-                margin-bottom: 0;
+                margin-bottom: 0 !important;
+                margin-left: 0px;
+                margin-right: 8px;
                 max-height: 32px;
                 &.md-focused {
                     background-color: rgba(31, 36, 42, 1) !important;
