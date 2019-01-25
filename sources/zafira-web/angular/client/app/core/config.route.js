@@ -119,14 +119,16 @@
                         url: '/users/profile',
                         templateUrl: 'app/_users/profile.html',
                         data: {
-                            requireLogin: true
+                            requireLogin: true,
+                            classes: 'p-user-profile'
                         }
                     })
                     .state('users', {
                         url: '/users',
                         templateUrl: 'app/_users/list.html',
                         data: {
-                            requireLogin: true
+                            requireLogin: true,
+                            classes: 'p-users'
                         }
                     })
                     .state('scm/callback', {
@@ -273,7 +275,8 @@
                         url: '/integrations',
                         templateUrl: 'app/_integrations/list.html',
                         data: {
-                            requireLogin: true
+                            requireLogin: true,
+                            classes: 'p-integrations'
                         }
                     })
                     .state('certifications', {
