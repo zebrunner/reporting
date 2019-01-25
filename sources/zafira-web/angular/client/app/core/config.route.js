@@ -16,7 +16,7 @@
                             currentUser: null
                         },
                         resolve: {
-                            currentUser: ['$stateParams', '$q', 'UserService', '$state', ($stateParams, $q, UserService, $state) => {
+                            currentUser: ['$stateParams', '$q', 'UserService', '$state', ($stateParams, $q, UserService, $state) => {//TODO: use usual function instaed of arrow
                                 var currentUser = UserService.getCurrentUser();
 
                                 if (!currentUser) {
@@ -48,7 +48,7 @@
                             currentUser: null
                         },
                         resolve: {
-                            currentUser: ['$stateParams', '$q', 'UserService', '$state', ($stateParams, $q, UserService, $state) => {
+                            currentUser: ['$stateParams', '$q', 'UserService', '$state', ($stateParams, $q, UserService, $state) => {//TODO: remove unused $stateParams and use usual function instaed of arrow
                                 var currentUser = UserService.getCurrentUser();
 
                                 if (!currentUser) {
@@ -119,14 +119,16 @@
                         url: '/users/profile',
                         templateUrl: 'app/_users/profile.html',
                         data: {
-                            requireLogin: true
+                            requireLogin: true,
+                            classes: 'p-user-profile'
                         }
                     })
                     .state('users', {
                         url: '/users',
                         templateUrl: 'app/_users/list.html',
                         data: {
-                            requireLogin: true
+                            requireLogin: true,
+                            classes: 'p-users'
                         }
                     })
                     .state('scm/callback', {
@@ -148,23 +150,108 @@
                         }
                     })
                     .state('tests/run', {
-	                    url: '/tests/runs/:id',
+                        controller: 'TestDetailsController',
+                        controllerAs: '$ctrl',
+                        url: '/tests/runs/:testRunId',
+                        templateUrl: 'app/containers/test-details/test-details.html',
+                        store: true,
+                        params: {
+                            testRun: null
+                        },
+                        data: {
+                            requireLogin: true,
+                            classes: 'p-tests-run-details'
+                        },
+                        resolve: {
+                            testRun: ['$stateParams', '$q', '$state', 'TestRunService', function($stateParams, $q, $state, TestRunService) {
+                                if ($stateParams.testRun) {
+                                    return $q.resolve($stateParams.testRun);
+                                } else if ($stateParams.testRunId) {
+                                    const params = {
+                                        id: $stateParams.testRunId
+                                    };
+
+                                    return TestRunService.searchTestRuns(params)
+                                    .then(function(response) {
+                                        if (response.success && response.data.results && response.data.results[0]) {
+                                            return response.data.results[0];
+                                        } else {
+                                            return $q.reject({message: 'Can\'t get test run with ID=' + $stateParams.testRunId});
+                                        }
+                                    })
+                                    .catch(function(error) {
+                                        console.log(error); //TODO: show toaster notification
+                                        $state.go('tests/runs');
+                                    });
+                                } else {
+                                    $state.go('tests/runs');
+                                }
+                            }]
+                        }
+                    })
+                    .state('tests/run2', {//TODO: remove before release
+	                    url: '/tests/runs2/:id',
 	                    templateUrl: 'app/_testruns/list.html',
                         store: true,
                         data: {
                             requireLogin: true
                         }
 	                })
-                    .state('tests/runs', {
-                        url: '/tests/runs',
+                    .state('tests/runs2', {///TODO: remove before release
+                        url: '/tests/runs2',
                         templateUrl: 'app/_testruns/list.html',
                         store: true,
                         data: {
                             requireLogin: true
                         }
                     })
+                    .state('tests/runs', {
+                        url: '/tests/runs',
+                        templateUrl: 'app/containers/tests-runs/tests-runs.html',
+                        controller: 'TestsRunsController',
+                        controllerAs: '$ctrl',
+                        bindToController: true,
+                        params: {
+                            activeTestRunId: null
+                        },
+                        data: {
+                            requireLogin: true,
+                            classes: 'p-tests-runs'
+                        },
+                        resolve: {
+                            resolvedTestRuns: ['$state', 'testsRunsService', '$q', function($state, testsRunsService, $q) {
+                                const prevState = $state.current.name;
+                                let force = false;
+
+                                testsRunsService.resetFilteringState();
+                                // read saved search/filtering data only if we reload current page or returning from internal page
+                                if (!prevState || prevState === 'tests/run' || prevState === 'tests/runs') {
+                                    testsRunsService.readStoredParams();
+                                } else {
+                                    testsRunsService.deleteStoredParams();
+                                    force = true;
+                                }
+
+                                return testsRunsService.fetchTestRuns(force).catch(function(err) {
+                                    err && err.message && alertify.error(err.message);
+                                    //1st approach: if can't load with user/cached searchParams reset them and reload page
+                                    // if (!force) {
+                                    //     testsRunsService.deleteStoredParams();
+                                    //     $state.go('tests/runs', null, { reload: true });
+                                    // }
+                                    //2nd approach: if can't load with user/cached searchParams return empty data
+                                    return $q.resolve([]);
+                                });
+                            }],
+                            activeTestRunId: ['$stateParams', '$q', function($stateParams, $q) { //TODO: use to implement highlighting opened tesRun
+                                const id = $stateParams.activeTestRunId ? $stateParams.activeTestRunId : undefined;
+
+                                return $q.resolve(id);
+                            }]
+                        }
+                    })
                     .state('tests/runs/info', {
-                        url: '/tests/runs/:id/info/:testId',
+                        url: '/tests/runs/:testRunId/info/:testId',
                         templateUrl: 'app/_testruns/_info/list.html',
                         data: {
                             requireLogin: true
@@ -188,7 +275,8 @@
                         url: '/integrations',
                         templateUrl: 'app/_integrations/list.html',
                         data: {
-                            requireLogin: true
+                            requireLogin: true,
+                            classes: 'p-integrations'
                         }
                     })
                     .state('certifications', {

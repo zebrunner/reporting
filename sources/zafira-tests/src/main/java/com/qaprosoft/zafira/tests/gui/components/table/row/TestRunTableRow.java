@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.tests.gui.components.table.row;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,67 +13,70 @@ import com.qaprosoft.zafira.tests.gui.components.table.TestTable;
 public class TestRunTableRow extends AbstractRow
 {
 
-	@FindBy(xpath = "./td[1]//small")
+	private static final String TABLE_ROW_CELL_CLASS_NAME = "test-run-card__cell";
+	private static final String TABLE_ROW_CELL = ".//*[contains(@class, '" + TABLE_ROW_CELL_CLASS_NAME + "')]";
+
+	@FindBy(xpath = TABLE_ROW_CELL + "[1]/small")
 	private WebElement percentage;
 
-	@FindBy(xpath = "./td[1]//md-progress-circular")
+	@FindBy(xpath = TABLE_ROW_CELL + "[1]//md-progress-circular")
 	private WebElement progressCircularIcon;
 
-	@FindBy(xpath = "./td[1]//md-checkbox")
+	@FindBy(xpath = TABLE_ROW_CELL + "[1]//md-checkbox")
 	private WebElement checkbox;
 
-	@FindBy(xpath = "./td[2]//b")
+	@FindBy(className = "test-run-card__title")
 	private WebElement testRunName;
 
-	@FindBy(xpath = "./td[2]//md-icon")
+	@FindBy(className = "_comments")
 	private WebElement commentIcon;
 
-	@FindBy(xpath = "./td[2]//span[text() = 'R']")
+	@FindBy(className = "_reviewed")
 	private WebElement reviewedLabel;
 
-	@FindBy(xpath = "./td[2]//a")
+	@FindBy(css = ".test-run-card__job-name a")
 	private WebElement jobLink;
 
-	@FindBy(xpath = "./td[2]//small")
+	@FindBy(className = "test-run-card__app-name")
 	private WebElement appVersion;
 
-	@FindBy(xpath = "./td[3]//span")
+	@FindBy(css = "._env span")
 	private WebElement environment;
 
-	@FindBy(xpath = "./td[2]//i")
-	private WebElement expandTestsIcon;
+	@FindBy(className = ".test-run-card__clickable")
+	private WebElement openTestRunElement;
 
-	@FindBy(xpath = "//*[@id = 'test-run-background']//*[contains(@class, 'expand-button')]")
+	@FindBy(xpath = "//*[contains(@class, 'test-run-card__back-btn')]")
 	private WebElement closeTestsIcon;
 
-	@FindBy(xpath = "./td[4]//span")
+	@FindBy(css = "._platform span")
 	private WebElement platformIcon;
 
-	@FindBy(xpath = "./td[5]/span[1]")
+	@FindBy(css = "._statistics .label-success-border")
 	private WebElement passed;
 
-	@FindBy(xpath = "./td[5]/span[2]")
+	@FindBy(css = "._statistics .label-danger-border")
 	private WebElement failed;
 
-	@FindBy(xpath = "./td[5]/span[2]/span[1]")
+	@FindBy(css = "._statistics .label-danger-border")
 	private WebElement knownIssues;
 
-	@FindBy(xpath = "./td[5]/span[2]/span[2]")
+	@FindBy(css = "._statistics .label-danger-border")
 	private WebElement blockers;
 
-	@FindBy(xpath = "./td[5]/span[3]")
+	@FindBy(css = "._statistics .label-warning-border")
 	private WebElement skipped;
 
-	@FindBy(xpath = "./td[5]/span[4]")
+	@FindBy(css = "._statistics .label-info-border")
 	private WebElement inProgress;
 
-	@FindBy(xpath = "./td[6]//time")
+	@FindBy(css = "._date time")
 	private WebElement elapsedTime;
 
-	@FindBy(xpath = "./td[7]//md-menu")
+	@FindBy(css = "._menu md-menu")
 	private TestRunSettingMenu testRunSettingMenu;
 
-	@FindBy(xpath = "./following-sibling::tr[1]//table")
+	@FindBy(xpath = "//table")
 	private TestTable testTable;
 
 	public TestRunTableRow(WebDriver driver, SearchContext context)
@@ -173,7 +177,7 @@ public class TestRunTableRow extends AbstractRow
 
 	public String getAppVersionText()
 	{
-		return appVersion.getText().split("insert_drive_file")[1];
+		return appVersion.getText();
 	}
 
 	public WebElement getEnvironment()
@@ -186,23 +190,21 @@ public class TestRunTableRow extends AbstractRow
 		return environment.getText();
 	}
 
-	public WebElement getExpandTestsIcon()
-	{
-		return expandTestsIcon;
-	}
-
 	public WebElement getCloseTestsIcon() {
 		return closeTestsIcon;
 	}
 
-	public TestTable clickExpandTestsIcon()
+	public TestTable expandRun()
 	{
-		expandTestsIcon.click();
-		return testTable;
+		pause(2);
+		WebElement row = testRunName.findElement(By.xpath("./ancestor::*[contains(@class, 'test-run-card ')]"));
+		clickByCoordinates(row, 150, 5);
+		pause(2);
+		return new TestTable(driver, driver);
 	}
 
 	public TestTable clickCloseTestIcon() {
-		closeTestsIcon.click();
+		driver.findElement(By.className("test-run-card__back-btn")).click();
 		return testTable;
 	}
 
@@ -234,7 +236,7 @@ public class TestRunTableRow extends AbstractRow
 
 	public Integer getFailedCount()
 	{
-		return Integer.valueOf(failed.getText().split(" ")[0]);
+		return Integer.valueOf(failed.getText().split("\n\\|\n")[0]);
 	}
 
 	public WebElement getKnownIssues()
@@ -244,7 +246,7 @@ public class TestRunTableRow extends AbstractRow
 
 	public Integer getKnownIssuesCount()
 	{
-		return Integer.valueOf(knownIssues.getText().split("\\| ")[1]);
+		return Integer.valueOf(knownIssues.getText().split("\n\\|\n")[1]);
 	}
 
 	public WebElement getBlockers()
@@ -254,7 +256,7 @@ public class TestRunTableRow extends AbstractRow
 
 	public Integer getBlockersCount()
 	{
-		return Integer.valueOf(blockers.getText().split("\\| ")[1]);
+		return Integer.valueOf(blockers.getText().split("\n\\|\n")[2]);
 	}
 
 	public WebElement getSkipped()

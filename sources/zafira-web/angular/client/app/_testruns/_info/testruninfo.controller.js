@@ -3,10 +3,39 @@
 
     angular
         .module('app.testruninfo')
-        .controller('TestRunInfoController', ['$scope', '$rootScope', '$http', '$mdDialog', '$interval', '$log', '$filter', '$anchorScroll', '$location', '$timeout', '$window', '$q', 'ElasticsearchService', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', 'DownloadService', '$stateParams', 'OFFSET', 'API_URL', '$state', '$httpMock', 'TestRunsStorage', TestRunInfoController])
+        .controller('TestRunInfoController', [
+            '$scope',
+        '$rootScope',
+        '$http',
+        '$mdDialog',
+        '$interval',
+        '$log',
+        '$filter',
+        '$anchorScroll',
+        '$location',
+        '$timeout',
+        '$window',
+        '$q',
+        'ElasticsearchService',
+        'TestService',
+        'TestRunService',
+        'UtilService',
+        'ArtifactService',
+        'DownloadService',
+        '$stateParams',
+        'OFFSET',
+        'API_URL',
+        '$state',
+        '$httpMock',
+        'TestRunsStorage',
+        TestRunInfoController]);
 
     // **************************************************************************
-    function TestRunInfoController($scope, $rootScope, $http, $mdDialog, $interval, $log, $filter, $anchorScroll, $location, $timeout, $window, $q, ElasticsearchService, TestService, TestRunService, UtilService, ArtifactService, DownloadService, $stateParams, OFFSET, API_URL, $state, $httpMock, TestRunsStorage) {
+    function TestRunInfoController($scope, $rootScope, $http, $mdDialog, $interval, $log, $filter,
+                                   $anchorScroll, $location, $timeout, $window, $q,
+                                   ElasticsearchService, TestService, TestRunService, UtilService,
+                                   ArtifactService, DownloadService, $stateParams, OFFSET, API_URL,
+                                   $state, $httpMock, TestRunsStorage) {
 
         const TENANT = $rootScope.globals.auth.tenant;
 
@@ -24,9 +53,10 @@
         $scope.TestRunsStorage = TestRunsStorage;
 
         $scope.goToTestRuns = function () {
-            $httpMock.back();
-            var path = TestRunsStorage.getTestRunId() ? 'tests/run' : 'tests/runs';
-            $state.go(path, {id: TestRunsStorage.getTestRunId()});
+            $state.go('tests/run', {
+                testRunId: $scope.testRun.id,
+                testRun: $scope.testRun
+            });
         };
 
         var from = 0;

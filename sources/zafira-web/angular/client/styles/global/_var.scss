@@ -8,6 +8,43 @@ $bootstrap-sass-asset-helper: false !default;
 //
 //## Gray and brand colors for use across Bootstrap.
 
+$medium-teal-new:           #009688;
+$medium-teal-light-new:     #26a69a;
+$medium-teal-bright-new:    #4ba69a;
+$medium-teal-lighter-new:   #dff2f0;
+
+$dark-coal-new:             #1f242a;
+$dark-coal-light-new:       #35393f;
+
+$dark-coal-light-new-op01:       #e8e9e9;
+$dark-coal-light-new-op02:       #dededf;
+
+$green-new:                 #44c480;
+$green-light-new:           #61c8b3;
+
+$red-new:                   #eb4454;
+$red-light-new:             #e76a77;
+
+$yellow-new:                #ffc742;
+$yellow-light-new:          #fddb7a;
+
+$gray-new:                  #8e8e8e;
+$gray-light-new:            #a9a9a9;
+
+$blue-new:                  #4eade9;
+$blue-light-new:            #7fbae3;
+
+$purple-new:                #9f5487;
+
+$gray-bg-new:               #dfe3e5;
+$gray-bg-light-new:         #edf0f1;
+
+$pink-bg-new:               #f4c4c4;
+$pink-bg-light-new:         #f4e8e8;
+
+$green-bg-light-new:        #effbef;
+
+
 $gray-base:              #000 !default;
 $gray-darker:            lighten($gray-base, 13.5%) !default; // #222
 $gray-dark:              lighten($gray-base, 20%) !default;   // #333
@@ -353,6 +390,11 @@ $screen-xs-max:              ($screen-sm-min - 1) !default;
 $screen-sm-max:              ($screen-md-min - 1) !default;
 $screen-md-max:              ($screen-lg-min - 1) !default;
 
+$breakpoint-mobile-small: 480px;
+$breakpoint-mobile: 600px;
+$breakpoint-tablet: 1024px;
+
+$breakpoint-mid-tablet: 998px;
 
 //== Grid system
 //

@@ -397,26 +397,26 @@ button.red {
 }
 
 .platform-icon.safari {
-    background-position: -2px -24px;
+    background: url(../assets/images/_icons_platform/safari.svg) no-repeat;
 }
 
 .platform-icon.chrome {
-    background-position: -2px -114px;
+    background: url(../assets/images/_icons_platform/chrome.svg) no-repeat;
 }
 
 .platform-icon.firefox {
-    background-position: -2px -68px;
+    background: url(../assets/images/_icons_platform/firefox.svg) no-repeat;
 }
 .platform-icon.edge {
-    background-position: -2px -91px;
+    background: url(../assets/images/_icons_platform/edge.svg) no-repeat;
 }
 
 .platform-icon.xbox, .platform-icon.Xbox, .platform-icon.XBox  {
-    background-position: -24px -202px;
+    background: url(../assets/images/_icons_platform/xbox.svg) no-repeat;
 }
 
 .platform-icon.ps, .platform-icon.PS, .platform-icon.playstation {
-    background-position: -24px -300px;
+    background: url(../assets/images/_icons_platform/ps.svg) no-repeat;
 }
 
 .platform-icon.appletv {
@@ -428,15 +428,15 @@ button.red {
 }
 
 .platform-icon.iexplorer, .platform-icon.ie {
-    background-position: -2px -3px;
+    background: url(../assets/images/_icons_platform/ie.svg) no-repeat;
 }
 
 .platform-icon.android, .platform-icon.Android, .platform-icon.ANDROID {
-    background-position: -2px -207px;
+    background: url(../assets/images/_icons_platform/android.svg) no-repeat;
 }
 
 .platform-icon.ios, .platform-icon.IOS, .platform-icon.iOS {
-    background-position: -1px -248px;
+    background: url(../assets/images/_icons_platform/apple.svg) no-repeat;
 }
 
 .platform-icon.unknown {
@@ -1726,7 +1726,6 @@ div[aria-selected='true'] span.ng-binding {
     color: $coal;
     font-size: 14.5px;
     font-weight: 500;
-
     &:hover{
       cursor: pointer;
     }
@@ -2778,7 +2777,7 @@ $light-inprogress: #68c9fd;
     width: calc(100% - 60px);
     right: 0;
     background-color: white;
-    z-index: 1;
+    z-index: 4;
     box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
 
     @media(max-width: $screen-phone) {
@@ -2818,8 +2817,8 @@ $light-inprogress: #68c9fd;
             > i {
                 color: $dark;
             }
-            > button {
-                border: none !important;
+            button {
+                border: 0;
                 float: right;
                 padding: 0 16px 0 6px;
                 height: 36px;
@@ -2831,17 +2830,52 @@ $light-inprogress: #68c9fd;
                 font-size: 14px;
                 font-weight: bold;
                 line-height: 36px;
+                @media(max-width: $breakpoint-mobile) {
+                    &.fixed-page-header__btn {
+                        background-color: #fff;
+                        border-radius: 8px;
+                        color: #52a49a;
+                        border: 1px solid transparent;
+                        width: 32px;
+                        height: 32px;
+                        line-height: 30px;
+                        padding: 0;
+                        .material-icons {
+                            color: currentColor;
+                        }
+                        &._launcher {
+                            background-color: #fff;
+                            border-radius: 8px;
+                            color: #52a49a;
+                            border-color: currentColor;
+                            padding: 0;
+                            span {
+                                display: none;
+                            }
+                        }
+                        &._search {
+                            background-color: rgba(#1f242a, .1);
+                            color: #000;
+                            &._active {
+                                background-color: #4ba69a;
+                                color: #fff;
+                                .material-icons {
+                                    color: currentColor;
+                                }
+                            }
+                        }
+                        &._filter-reset {
+                            color: #000;
+                            box-shadow: none;
+                            background-color: rgba(#1f242a, .1);
+                            text-align: center;
+                            padding: 0 6px;
+                        }
+                    }
+                }
                 > .material-icons {
                     font-size: 18px;
                     line-height: 23px;
-                }
-                @media(max-width: $screen-phone) {
-                    float: none;
-                    width: 36px;
-                    padding: 0;
-                    > span {
-                        display: none;
-                    }
                 }
 
                 &:hover {
@@ -2852,6 +2886,9 @@ $light-inprogress: #68c9fd;
                         color: black;
                     }
                 }
+            }
+            & + & {
+                margin-left: 10px;
             }
         }
 

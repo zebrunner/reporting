@@ -1,0 +1,160 @@
+<form name="launcher_form">
+    <zf-modal class="ci-runner-container">
+        <zf-modal-helper-container class="ci-runner-container_helper" ng-if="cardNumber !== 3">
+            <div class="ci-runner-container_helper_title hide-phone">
+                <span>Launcher</span>
+                <button ng-click="addTemplate();" class="zf-button zf-chip-button">
+                    <i class="material-icons">add</i>
+                    Add template
+                </button>
+            </div>
+            <div class="ci-runner-container_helper_title show-phone">Choose template</div>
+            <div ng-if="launchers.length" class="ci-runner-container_helper_section">
+                <div ng-repeat="l in launchers | orderBy:'name' track by l.id" class="ci-runner-container_helper_section_item" ng-class="{'ci-runner-container_helper_section_item_selected': launcher.id === l.id}">
+                    <div ng-click="chooseLauncher(l);" class="ci-runner-container_helper_section_item_container hide-phone">
+                        {{l.name}}
+                    </div>
+                    <div ng-click="chooseLauncherPhone(l);" class="ci-runner-container_helper_section_item_container show-phone">
+                        {{l.name}}
+                    </div>
+                    <i ng-click="editLauncher(l);" has-any-permission="['MODIFY_LAUNCHERS']" class="material-icons hide-phone">edit</i>
+                </div>
+            </div>
+            <div class="ci-runner-container_content_actions show-phone">
+                <md-button class="md-raised btn-w-md md-primary" ng-click="applyBuilder(launcher, true);"
+                           ng-disabled="! launcher.id">
+                    Next
+                </md-button>
+            </div>
+        </zf-modal-helper-container>
+        <zf-modal-content-container class="ci-runner-container_content hide-phone" ng-if="cardNumber === 1">
+            <ng-form name="info">
+                <div>
+                    <zf-input-container>
+                        <label>Set name for template</label>
+                        <input ng-model="launcher.name" placeholder="Set name" autofocus/>
+                    </zf-input-container>
+                </div>
+                <div class="ci-runner-container_content_scm-connector">
+                    <div class="ci-runner-container_content_scm-connector_items">
+                        <zf-input-container class="clearfix">
+                            <label>Add or select a Github repository</label>
+                            <div class="ci-runner-container_content_scm-connector_items_add" ng-style="{'padding-right': states.addGitRepo ? '8px' : '0'}">
+                                <button ng-click="addNewGithubRepo($event.target);" class="zf-button zf-square" ng-disabled="! clientId || ! clientId.length">
+                                    <i class="material-icons">add</i>
+                                </button>
+                                <span ng-if="states.addGitRepo">
+                                    <zf-input-container>
+                                        <md-input-container>
+                                            <label>Organization</label>
+                                            <md-select ng-model="scmAccount.organization" ng-change="getRepositories();" ng-disabled="! organizations.length">
+                                                <md-option ng-repeat="organization in organizations track by $index" ng-value="organization">
+                                                    {{organization.name}}
+                                                </md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                    </zf-input-container>
+                                    <zf-input-container>
+                                        <md-input-container>
+                                            <label>Repository</label>
+                                            <md-select ng-model="scmAccount.repository" ng-disabled="! repositories.length">
+                                                <md-option ng-repeat="repository in repositories track by $index" ng-value="repository">
+                                                    {{repository.name}}
+                                                </md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                    </zf-input-container>
+                                    <button class="md-add" md-no-ink ng-click="addScmAccount(scmAccount);" ng-disabled="">
+                                        Add
+                                    </button>
+                                </span>
+                            </div>
+                            <div class="ci-runner-container_content_scm-connector_items_content">
+                                <zf-radio-button ng-repeat="scm in scmAccounts track by $index" ng-model="launcher.scmAccountType" value="scm">
+                                    <img ng-src="{{scm.avatarURL}}"/>
+                                    <show-part text="scm.repositoryName" limit="12"></show-part>
+                                </zf-radio-button>
+                            </div>
+                        </zf-input-container>
+                    </div>
+                </div>
+                <div class="ci-runner-container_content_code" ng-cloak>
+                    <zf-input-container>
+                        <label>Paste code or choose a predefined one</label>
+                        <div id="aceEditor" required class="ci-runner-container_content_code_editor" ui-ace="{{aceOptions}}" ng-model="launcher.model"></div>
+                        <md-input-container>
+                            <label>Platform</label>
+                            <md-select ng-change="mergeTemplate(DEFAULT_TEMPLATES.model.json);" ng-model="DEFAULT_TEMPLATES.model">
+                                <md-option ng-repeat="dt in DEFAULT_TEMPLATES.variants track by $index" ng-value="dt">{{dt.name}}</md-option>
+                            </md-select>
+                        </md-input-container>
+                    </zf-input-container>
+                </div>
+            </ng-form>
+            <div class="ci-runner-container_content_actions">
+                <button ng-click="cancelLauncher();" class="zf-button zf-info">
+                    Cancel
+                </button>
+                <button ng-really-click="deleteLauncher(launcher.id);" ng-really-message="Do you really want to delete the launcher?" class="zf-button zf-warn zf-info" ng-if="launcher && launcher.id">
+                    Delete
+                </button>
+                <md-button class="md-raised btn-w-md md-primary" ng-click="saveLauncher(launcher);">
+                    Save
+                </md-button>
+                <div ng-if="launcher.errorMessage && launcher.errorMessage.length" class="ci-runner-container_content_actions_error">{{launcher.errorMessage}}</div>
+            </div>
+        </zf-modal-content-container>
+        <zf-modal-content-container class="ci-runner-container_content" ng-if="cardNumber === 2 || cardNumber === 3">
+            <div class="ci-runner-container_content_title">
+                <show-part class="hide-phone" text="launcher.name" limit="40"></show-part>
+                <show-part class="show-phone" text="launcher.name" limit="20"></show-part>
+            </div>
+            <div class="ci-runner-container_content_builder zf-display-table">
+                <div class="ci-runner-container_content_builder_container builder-{{builtLauncher.type[key]}}" ng-repeat="(key, item) in jsonModel track by $index">
+                    <div class="zf-label">{{key}}</div>
+                    <div class="ci-runner-container_content_builder_container_item" ng-if="['string', 'int'].indexOf(builtLauncher.type[key]) !== -1">
+                        <zf-input-container>
+                            <input type="number" ng-if="builtLauncher.type[key] === 'int'" ng-model="builtLauncher.model[key]" placeholder="{{key}}"/>
+                            <input type="text" ng-if="builtLauncher.type[key] !== 'int'" ng-model="builtLauncher.model[key]" placeholder="{{key}}"/>
+                        </zf-input-container>
+                    </div>
+                    <div class="ci-runner-container_content_builder_container_item" ng-if="builtLauncher.type[key] === 'array'">
+                        <zf-input-container>
+                            <md-input-container>
+                                <label>{{key}}</label>
+                                <md-select ng-model="builtLauncher.model[key]">
+                                    <md-option ng-repeat="val in item" ng-value="val">
+                                        {{val}}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                        </zf-input-container>
+                    </div>
+                    <div class="ci-runner-container_content_builder_container_item" ng-if="builtLauncher.type[key] === 'boolean'">
+                        <zf-input-container>
+                            <md-checkbox ng-model="builtLauncher.model[key]" aria-label="checkbox"></md-checkbox>
+                        </zf-input-container>
+                    </div>
+                </div>
+            </div>
+            <div class="ci-runner-container_content_actions">
+                <button ng-click="cancelLauncher();" class="zf-button zf-info" ng-if="cardNumber === 2">
+                    Cancel
+                </button>
+                <md-button class="zf-button zf-info" ng-click="navigateBack();" ng-if="cardNumber === 3">
+                    Back
+                </md-button>
+                <md-button class="md-raised btn-w-md md-primary" ng-click="build(launcher);" ng-disabled="! launcher.job.jobURL" ng-if="cardNumber === 2 || cardNumber === 3">
+                    Launch
+                </md-button>
+                <div ng-if="! launcher.job.jobURL" class="ci-runner-container_content_actions_error">Launcher job is not configured, contact admin.</div>
+            </div>
+        </zf-modal-content-container>
+        <zf-modal-content-container class="ci-runner-container_content hide-phone" ng-if="cardNumber === 0">
+            <div class="ci-runner-container_content_title no-data">
+                <span ng-if="launchers.length">Choose</span><span ng-if="! launchers.length">Add</span> template
+            </div>
+        </zf-modal-content-container>
+        <md-icon class="close-button" ng-click="cancel()" aria-label="Close dialog">close</md-icon>
+    </zf-modal>
+</form>
