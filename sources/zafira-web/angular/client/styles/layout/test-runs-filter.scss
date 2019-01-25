@@ -139,13 +139,10 @@
                     padding: 7px 14px !important;
                     margin: 6px 3px;
                     line-height: 1 !important;
-                    &:hover, &.active {
-                        background-color: #d3e9e6 !important;
-                        color: #000 !important;
-                    }
-                    &.active, &.default-blue {
+                    &:hover, &.active, &.default-blue {
                         background-color: #d3e9e6 !important;
                         border: 1px solid #d3e9e6 !important;
+                        color: #000 !important;
                     }
                 }
             }
