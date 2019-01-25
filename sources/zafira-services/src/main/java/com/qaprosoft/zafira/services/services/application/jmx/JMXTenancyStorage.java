@@ -59,6 +59,7 @@ public class JMXTenancyStorage implements TenancyInitial {
             for(Setting setting : settingsService.getAllSettings()) {
                 if(setting.isValueForEncrypting() && !setting.isEncrypted()) {
                     setting.setValue(cryptoService.encrypt(setting.getValue()));
+                    setting.setEncrypted(true);
                     settingsService.updateSetting(setting);
                 }
             }
