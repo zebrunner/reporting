@@ -82,11 +82,17 @@
         &._selection {
             justify-content: center;
             width: 6%;
-            min-width: 40px;
+            min-width: 53px;
             font-size: 14px;
             padding-right: 0;
             md-checkbox {
                 margin-bottom: 0;
+                min-width: 18px;
+                min-height: 18px;
+                .md-container, .md-icon {
+                    width: 18px;
+                    height: 18px;
+                }
             }
             span {
                 z-index: 2;
@@ -578,10 +584,11 @@
                 display: none;
             }
             &._selection {
-                min-width: auto;
+                min-width: 18px;
+                width: 18px;
                 md-checkbox {
                     display: block;
-                    width: 20px;
+                    width: 18px;
                 }
             }
             &._actions {

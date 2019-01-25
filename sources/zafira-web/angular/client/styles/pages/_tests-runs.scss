@@ -1,6 +1,9 @@
 @import "../global/var";
 
 .p-tests-runs {
+    .fixed-page-header {
+        z-index: 5;
+    }
     &__section {
         #noData {
             padding: 15px;
