@@ -31,27 +31,16 @@
         &-left {
             width: 40%;
             min-width: 400px;
-            @media(min-width: $breakpoint-mobile) and (max-width:  998px){
-                position: relative;
-                width: 100%;
-                border-bottom: 1px rgba(0, 0, 0, 0.04) solid;
-            }
         }
         &-right {
             width: 60%;
             position: relative;
-            @media(min-width: $breakpoint-mobile) and (max-width:  998px){
-                width: 100%;
-            }
         }
         position: relative;
         background-color: #fff;
         border-left: 4px solid #777;
         min-height: 55px;
         display: flex;
-        @media(min-width: $breakpoint-mobile) and (max-width:  998px){
-            flex-direction: column;
-        }
         &.PASSED {
             border-left-color: $green-new;
         }
@@ -89,16 +78,6 @@
         border-top: 1px rgba(0, 0, 0, 0.12) solid;
         flex-shrink: 0;
         padding: 5px;
-        
-        &._env,
-        &._platform,
-        &._statistics,
-        &._date,
-        &._menu {
-            @media(min-width: $breakpoint-mobile) and (max-width:  998px){
-                border-top:none;
-            }
-        }
 
         &._selection {
             justify-content: center;
@@ -132,10 +111,6 @@
             & .label {
                 font-weight: bold !important;
             }
-            @media(min-width: $breakpoint-mobile) and (max-width:  998px){
-                margin: 0 0 0 10px;
-                justify-content: flex-start;
-            }
         }
         &._platform {
             flex-grow: 2;
@@ -143,10 +118,10 @@
             min-width: 40px;
             flex-wrap: wrap;
             justify-content: center;
-            @media(min-width: 999px) and (max-width: 1120px){
+            @media(min-width: $breakpoint-mid-tablet + 1) and (max-width: 1120px){
                 flex-grow: 0;
             }
-            @media(min-width: $breakpoint-mobile) and (max-width: 630px){
+            @media(min-width: $breakpoint-mobile + 1) and (max-width: 630px){
                 flex-grow: 1;
             }
         }
@@ -181,22 +156,16 @@
             min-width: 100px;
             font-weight: 500;
             font-size: 12px;
-            @media(min-width: $breakpoint-mobile) and (max-width: 998px){
-                flex-grow: 2;
-            }
         }
         &._statistics {
             flex-grow: 1;
             width: 15%;
             min-width: 140px;
-            @media (max-width: 599px) {
+            @media (max-width: $breakpoint-mobile) {
                 justify-content: flex-start;
             }
-            @media(min-width: 999px) and (max-width: 1120px){
+            @media(min-width: $breakpoint-mid-tablet + 1) and (max-width: 1120px){
                     flex-grow: 1;
-            }
-            @media(min-width: $breakpoint-mobile) and (max-width: 998px){
-                flex-grow: 2;
             }
             .label {
                 font-size: 10px;
@@ -291,9 +260,6 @@
         &-wrapper {
             display: flex;
             align-items: center;
-            @media(min-width: $breakpoint-mobile) and (max-width:  998px){
-                margin-right: 10px;
-            }
         }
         &-additions {
             margin-left: 5px;
@@ -411,7 +377,44 @@
             font-size: 24px;
         }
     }
+    @media(min-width: $breakpoint-mobile + 1) and (max-width:  $breakpoint-mid-tablet) {
+        &__wrapper {
+            &-left {
+                position: relative;
+                width: 100%;
+                border-bottom: 1px rgba(0, 0, 0, 0.04) solid;
+            }
+            &-right {
+                width: 100%;
+            }
+            flex-direction: column;
+        }
 
+        &__cell {
+            &._env,
+            &._platform,
+            &._statistics,
+            &._date,
+            &._menu {
+                border-top:none;
+            }
+            &._env {
+                margin: 0 0 0 10px;
+                justify-content: flex-start;
+            }            
+            &._date {
+                flex-grow: 2;
+            }
+            &._statistics {
+                flex-grow: 2;
+            }
+        }
+        &__title {
+            &-wrapper {
+                margin-right: 10px;
+            }
+        }
+    }
     @media screen and (max-width: $breakpoint-tablet) {
         &__cell {
             &._info {
@@ -432,13 +435,13 @@
         background-color: white;
         z-index: 2;
         box-shadow: 0 4px 8px 0 rgba(4, 0, 0, 0.2);
-        @media (min-width: $breakpoint-mobile) {
+        @media (min-width: $breakpoint-mobile + 1) {
             padding: 2px 0;
         }
         .back {
             margin-top: 3px;
             cursor: pointer;
-            @media (max-width: 599px) {
+            @media (max-width: $breakpoint-mobile) {
                 margin-top: -3px;
             }
         }
@@ -451,7 +454,7 @@
         &__wrapper {
             min-height: 45px;
             height: auto;
-            @media (min-width: $breakpoint-mobile) {
+            @media (min-width: $breakpoint-mobile + 1) {
                 margin: 0 2px;
                 padding: 0 15px;
             }
@@ -488,7 +491,7 @@
                 display: none;
             }
             &._env {
-                @media(min-width: $breakpoint-mobile) and (max-width:  998px){
+                @media(min-width: $breakpoint-mobile + 1) and (max-width:  $breakpoint-mid-tablet){
                     margin: 0;
                 }
             }

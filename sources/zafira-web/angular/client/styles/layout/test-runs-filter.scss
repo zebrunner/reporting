@@ -1,310 +1,155 @@
 @import "../global/var";
 
-.p-tests-runs__section {
-    &._filters {
-        & .search-button {
-            position: relative;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            margin: 8px 65px 8px 0;
-            float: right;
-            height: 32px;
-            width: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 5;
-            i {
-                font-size: 13px;
-            }
-            &.active {
-                background-color: #4ba69a;
-                i {
-                    color: white;
-                }
-            }
-        }
-        @media screen and (max-width: $breakpoint-mobile) {
-            button#reset, 
-            button#applySearch,
-            button#createFilter,
-            button#updateFilter,
-            button#resetFilter,
-            button#deleteFilter {
-                border-radius: 4px;
-                box-shadow: none;
-                margin-right: 16px;
-                margin-left: 0;
-                font-size: 14px;
-                z-index: 4;
-            }
-            button#reset {
-                background-color: $fog-gray;
-                color: $dark-coal-new;
-            }
-            button#applySearch {
-                background-color: $medium-teal-bright-new;
-                color: #ffffff;
-            }
-        }
-        #filter {
-            &.non-empty-filters {
-                padding-top: 48px;
-            }
-            & .panel-body {   
-                padding-bottom: 16px !important;
-                position: relative;   
-                @extend %chips-scrolling;
-                .manage-chip {
-                    & md-chips.filter-chip md-chips-wrap.md-chips md-chip {
-                        font-size: 13px;
-                        color: black !important;
-                        background-color: transparent !important;
-                        border: 1px solid black !important;
-                        margin: 0 5px 0 0 !important;
-                        max-width: 104px;
-                        padding: 0 2px 0 30px !important;
-                        & div {
-                            right: auto;  
-                            background-color: transparent;
-                            left: 13px !important;
-                            top: 5px;
-                            & md-icon {
-                                font-size: 15px;
-                            }
-                        }
-                    } 
-                }
-            }
-        }
-        #search {
-            .panel-body {
-                padding: 18px 20px 14px 20px !important;
-                @media screen and (max-width: $breakpoint-mobile) {
-                    padding: 0 !important;
-                }
-                @extend %chips-scrolling;
-            }
-            &-header {
-                &.filters-search-panel {
-                    margin-bottom: 0 !important;
-                }
-                .search {
-                    &-wrapper {
-                        &-row {
-                            @media screen and (max-width: $breakpoint-mobile) {
-                                overflow: hidden;
-                                display: flex;
-                                align-items: center;
-                                border-bottom: 1px solid rgba(0,0,0,0.12);
-                            }
-                            #search-input {
-                                @extend %select; 
-                                padding-left: 37px;
-                            }
-                            #filter {
-                                @media screen and (max-width: $breakpoint-mobile) {
-                                    min-width: 100vw;
-                                    background-color: white;
-                                    width: 100%;
-                                    & .filter-chip {
-                                        margin: 10px 0;
-                                    }
-                                }
-                                @media screen and (min-width: $breakpoint-mobile) {
-                                    min-width: 100%;
-                                }
-                                
-                            }
-                        }
-                    }
-                }
-            }
-            &-select {
-                width: 100%;
-                @media screen and (max-width: $breakpoint-mobile) {
-                    position: absolute;
-                    z-index: 4;
-                    background-color: #fff;
-                    left: 0;
-                    top: 63px;
-                    border-bottom-left-radius: 10px;
-                    border-bottom-right-radius: 10px;
-                    box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 0.2);
-                }
-                & .row-wrapper {
-                    @media screen and (min-width: 960px) {
-                        align-items: center
-                    }
-                }
-                .reviewed {
-                    background-color: rgba(31, 36, 42, .1);
-                    color: #35393f ;
-                    border: none;
-                    @media (max-width: $breakpoint-mobile) {
-                        margin-right: 16px;
-                    }
-                    &:hover {
-                        background-color: rgba(31, 36, 42, .2);
-                    }
-                    &.label-primary{
-                        background-color: $green-new;
-                        color: #fff;
-                    }
-                }
-                & #search-input {
-                    @extend %select;
-                    @media screen and (min-width: $breakpoint-mobile) {
-                        padding-right: 300px;
-                    }
-                }
-                & .search {
-                    &-fields {
-                        md-input-container {
-                            @extend %select;
-                        }
-                        md-select {
-                            border: none;
-                        }
-                        md-select-value {
-                            padding: 0;
-                        }
-                        padding: 0 16px;
-                        @media screen and (min-width: $breakpoint-mobile) {
-                            padding: 0;
-                        }
-                        & .searchable.select {
-                            @media screen and (max-width: $breakpoint-mobile) {
-                                margin-bottom: 16px !important;
-                            }
-                        }
-                        &._main {
-                            @media screen and (max-width: $breakpoint-mobile) {
-                                padding-top: 15px;
-                            }
-                        }
-                        &._additional {
-                            margin-bottom: 20px;
-                            @media screen and (min-width: $breakpoint-mobile) {
-                                margin-bottom: 0;
-                                padding: 0;
-                            }
-                            & md-input-container {
-                                @extend %select;
-                            }
-                            & .date-picker-container i {
-                                font-size: 20px;
-                                color: #000 !important;
-                            }
-                        }
-                    }
-                }
-                & .btn-check {
-                    @media screen and (max-width: $breakpoint-mobile) {
-                        width: auto;
-                        margin: 0 14px;
-                        padding: 2px;
-                        display: flex;
-                        justify-content: space-between;
-                        border-bottom: 1px rgba(0, 0, 0, 0.10) solid;
-                    }
-                    & button.btn {
-                        outline: none;
-                        font-size: 11px;
-                        font-weight: 500;
-                        max-height: 28px;
-                        border-radius: 14px;
-                        background-color: transparent;
-                        border: 1px solid rgba(0,0,0, .25);
-                        box-shadow: none ;
-                        color: #000;
-                        text-transform: uppercase;
-                        height: 28px;
-                        line-height: 26px;
-                        padding: 7px 14px !important;
-                        margin: 6px 3px;
-                        line-height: 1 !important;
-                        &:hover, &.active {
-                            background-color: #d3e9e6 !important;
-                            color: #000 !important;
-                        }
-                        &.active, &.default-blue {
-                            background-color: #d3e9e6;
-                            border: 1px solid #d3e9e6;
-                        }
-                        @media (max-width: $breakpoint-mobile) {
-                            min-width: 85px;
-                            margin-bottom: 14px;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-%select {
-    border-radius: 4px;
-    border: 1px solid ;
-    height: 40px;
-    border-color: rgba(0, 0, 0, 0.25) !important;
-    font-size: 14px !important;
-    &:hover {
-        border-color: rgba(0, 0, 0, 0.35) !important;
-    }
-}
-
-%chips-scrolling {
-    md-chips.filter-chip.custom-filter {
-        @media screen and (min-width: $breakpoint-mobile) {
-            min-width: auto;
-        }
-        @media screen and (max-width: $breakpoint-mobile) {
-            overflow-x: scroll;
-            -ms-overflow-style: none;
-            overflow: -moz-scrollbars-none;
-            &::-webkit-scrollbar { 
-                display: none;
-            }
-        }
-        md-chips-wrap.md-chips{
-            display: flex !important;
-            md-chip {
-                background-color: rgba(31, 36, 42, .4) !important;
-                font-size: 13px;
-                font-weight: 500;
-                letter-spacing: 0.1px;
-                border-radius: 16px;
-                color: #ffffff !important;
-                margin-bottom: 0;
-                max-height: 32px;
-                &.md-focused {
-                    background-color: rgba(31, 36, 42, 1) !important;
-                }
-                &:hover {
-                    background-color: rgba(31, 36, 42, .7) !important;
-                }
-                @media screen and (max-width: $breakpoint-mobile) {
-                    font-size: 11px;
-                    max-height: 28px;
-                    &.md-focused {
-                        & i ,
-                        &:hover i {
-                            display: none !important;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
 .tests-runs-filter {
     &__close-search-btn {
         background-color: #fff;
         border: 0;
     }
+    &__actions {
+        button#reset, 
+        button#applySearch,
+        button#createFilter,
+        button#updateFilter,
+        button#resetFilter,
+        button#deleteFilter {
+            border-radius: 4px;
+            box-shadow: none;
+            margin-right: 16px;
+            margin-left: 0;
+            font-size: 14px;
+            z-index: 4;
+        }
+        button#reset {
+            background-color: $fog-gray;
+            color: $dark-coal-new;
+            &:hover {
+                background-color: rgba($dark-coal-new, .3);
+            }
+        }
+        button#applySearch {
+            background-color: $medium-teal-bright-new;
+            color: #ffffff;
+        } 
+    }
+    &__wrapper {
+        &.non-empty-filters {
+            padding-top: 48px;
+        }
+        & .panel-body {   
+            padding-bottom: 16px !important;
+            position: relative;   
+            @extend %chips-scrolling;
+            .manage-chip {
+                & md-chips.filter-chip md-chips-wrap.md-chips md-chip {
+                    font-size: 13px;
+                    color: black !important;
+                    background-color: transparent !important;
+                    border: 1px solid black !important;
+                    margin: 0 5px 0 0 !important;
+                    max-width: 104px;
+                    padding: 0 2px 0 30px !important;
+                    & div {
+                        right: auto;  
+                        background-color: transparent;
+                        left: 13px !important;
+                        top: 5px;
+                        & md-icon {
+                            font-size: 15px;
+                        }
+                    }
+                } 
+            }
+        }
+    }
+
     &__search {
+        &-panel-body {
+            padding: 18px 20px 14px 20px;
+            @extend %chips-scrolling;
+        }
+        &-panel {
+            margin-bottom: 0 !important;
+            &._row-wrapper {
+                #search-input {
+                    @extend %select; 
+                    padding-left: 37px;
+                }
+            }
+        }
+        &-select {
+            width: 100%;
+            & .row-wrapper {
+                @media screen and (min-width: 960px) {
+                    align-items: center
+                }
+            }
+            .reviewed {
+                background-color: rgba(31, 36, 42, .1);
+                color: #35393f ;
+                border: none;
+                &:hover {
+                    background-color: rgba(31, 36, 42, .2);
+                }
+                &.label-primary{
+                    background-color: $green-new;
+                    color: #fff;
+                }
+            }
+            & #search-input {
+                @extend %select;
+            }
+            & .search {
+                &-fields {
+                    padding: 0 16px;
+                    md-input-container {
+                        @extend %select;
+                    }
+                    md-select {
+                        border: none;
+                    }
+                    md-select-value {
+                        padding: 0;
+                    }
+                    &._additional {
+                        margin-bottom: 20px;
+                        & md-input-container {
+                            @extend %select;
+                        }
+                        & .date-picker-container i {
+                            font-size: 20px;
+                            color: #000 !important;
+                        }
+                    }
+                }
+            }
+            & .btn-check {
+                & button.btn {
+                    outline: none;
+                    font-size: 11px;
+                    font-weight: 500;
+                    max-height: 28px;
+                    border-radius: 14px;
+                    background-color: transparent;
+                    border: 1px solid rgba(0,0,0, .25);
+                    box-shadow: none ;
+                    color: #000;
+                    text-transform: uppercase;
+                    height: 28px;
+                    line-height: 26px;
+                    padding: 7px 14px !important;
+                    margin: 6px 3px;
+                    line-height: 1 !important;
+                    &:hover, &.active {
+                        background-color: #d3e9e6 !important;
+                        color: #000 !important;
+                    }
+                    &.active, &.default-blue {
+                        background-color: #d3e9e6 !important;
+                        border: 1px solid #d3e9e6 !important;
+                    }
+                }
+            }
+        }
         .quadro-btn {
             width: 40px !important;
             height: 40px !important;
@@ -323,6 +168,9 @@
                 @media (min-width: 481px){ 
                     left: 60px; 
                 }
+                .tests-runs-filter__search-panel-body {
+                  padding: 0 !important;
+                }
                 md-input-container {
                     height: 40px !important;
                     color: #000;
@@ -331,12 +179,6 @@
                 #search-input {
                     margin: 16px 16px 7px;
                 }
-                #search-input,
-                button,
-                md-select {
-                    height: 40px;
-                }
-                
                 .search-wrapper {
                     top: 16px;
                     left: 16px;
@@ -420,6 +262,52 @@
                 }
             }
         }
+        
+        &__search {
+            &-panel {
+                &._row-wrapper {
+                    overflow: hidden;
+                    display: flex;
+                    align-items: center;
+                    border-bottom: 1px solid rgba(0,0,0,0.12);
+                }
+            }
+            &-select {
+                position: absolute;
+                z-index: 4;
+                background-color: #fff;
+                left: 0;
+                top: 63px;
+                border-bottom-left-radius: 10px;
+                border-bottom-right-radius: 10px;
+                box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 0.2);
+                .reviewed {
+                    margin-right: 16px;
+                }
+                & .search {
+                    &-fields {
+                        & .searchable.select {
+                            margin-bottom: 16px !important;
+                        }
+                        &._main {
+                            padding-top: 15px;
+                        }
+                    }
+                }
+                & .btn-check {
+                    width: auto;
+                    margin: 0 14px;
+                    padding: 2px;
+                    display: flex;
+                    justify-content: space-between;
+                    border-bottom: 1px rgba(0, 0, 0, 0.10) solid;
+                    & button.btn {
+                        min-width: 85px;
+                        margin-bottom: 14px;
+                    }
+                }
+            }
+        }
         &__actions {
             height: 48px;
             background-color: #fff;
@@ -455,4 +343,83 @@
             background-color: rgba(0, 0, 0, 0.25);
         }
     }
+
+    @media screen and (min-width: $breakpoint-mobile + 1) {
+        &__search {
+            &-select {
+                & #search-input {
+                    padding-right: 300px;
+                }
+                & .search {
+                    &-fields {
+                        padding: 0;
+                        &._additional {
+                            margin-bottom: 0;
+                            padding: 0;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
+
+%select {
+    border-radius: 4px;
+    border: 1px solid ;
+    border-color: rgba(0, 0, 0, 0.25) !important;
+    font-size: 14px !important;
+    #search & {
+        height: 40px !important;
+    }
+    &:hover {
+        border-color: rgba(0, 0, 0, 0.35) !important;
+    }
+}
+
+%chips-scrolling {
+    md-chips.filter-chip.custom-filter {
+        @media screen and (min-width: $breakpoint-mobile) {
+            min-width: auto;
+        }
+        @media screen and (max-width: $breakpoint-mobile) {
+            overflow-x: scroll;
+            -ms-overflow-style: none;
+            overflow: -moz-scrollbars-none;
+            &::-webkit-scrollbar { 
+                display: none;
+            }
+        }
+        md-chips-wrap.md-chips{
+            display: flex !important;
+            md-chip {
+                background-color: rgba(31, 36, 42, .4) !important;
+                font-size: 13px;
+                font-weight: 500;
+                letter-spacing: 0.1px;
+                border-radius: 16px;
+                color: #ffffff !important;
+                margin-bottom: 0;
+                max-height: 32px;
+                &.md-focused {
+                    background-color: rgba(31, 36, 42, 1) !important;
+                }
+                &:hover {
+                    background-color: rgba(31, 36, 42, .7) !important;
+                }
+                @media screen and (max-width: $breakpoint-mobile) {
+                    font-size: 11px;
+                    max-height: 28px;
+                    &.md-focused {
+                        & i ,
+                        &:hover i {
+                            display: none !important;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
