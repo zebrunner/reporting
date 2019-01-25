@@ -55,7 +55,7 @@ public class UserService implements TenancyInitial {
     @Value("${zafira.admin.password}")
     private String adminPassword;
     
-    @Value("${zafira.admin.group:Super admins}")
+    @Value("${zafira.admin.group}")
     private String adminGroup;
 
     @Value("${zafira.multitenant}")
