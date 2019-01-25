@@ -93,7 +93,6 @@
     <select id="getGroupById" resultMap="GroupResultMap">
         <include refid="getGroup" />
         <![CDATA[
-        
 			WHERE G.ID = #{id};
 		]]>
     </select>
@@ -101,7 +100,6 @@
      <select id="getGroupByName" resultMap="GroupResultMap">
         <include refid="getGroup" />
         <![CDATA[
-        
 			WHERE G.NAME = #{name};
 		]]>
     </select>
