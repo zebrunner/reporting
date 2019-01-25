@@ -55,6 +55,10 @@ public class JMXTenancyStorage implements TenancyInitial {
 
     @Override
     public void init() {
+        Arrays.stream(Setting.Tool.values()).forEach(tool -> {
+            settingsService.getServiceByTool(tool).init();
+        });
+        
         try {
             for(Setting setting : settingsService.getAllSettings()) {
                 if(setting.isValueForEncrypting() && !setting.isEncrypted()) {
@@ -66,9 +70,6 @@ public class JMXTenancyStorage implements TenancyInitial {
         } catch (Exception e) {
            LOGGER.error("Unable to encrypt value: " + e.getMessage(), e);
         }
-        Arrays.stream(Setting.Tool.values()).forEach(tool -> {
-            settingsService.getServiceByTool(tool).init();
-        });
     }
 
     @SuppressWarnings("unchecked")
