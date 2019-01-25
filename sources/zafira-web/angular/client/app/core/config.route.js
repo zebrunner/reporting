@@ -217,7 +217,7 @@
                             classes: 'p-tests-runs'
                         },
                         resolve: {
-                            resolvedTestRuns: ['$state', 'testsRunsService', function($state, testsRunsService) {
+                            resolvedTestRuns: ['$state', 'testsRunsService', '$q', function($state, testsRunsService, $q) {
                                 const prevState = $state.current.name;
                                 let force = false;
 
@@ -230,7 +230,16 @@
                                     force = true;
                                 }
 
-                                return testsRunsService.fetchTestRuns(force);
+                                return testsRunsService.fetchTestRuns(force).catch(function(err) {
+                                    err && err.message && alertify.error(err.message);
+                                    //1st approach: if can't load with user/cached searchParams reset them and reload page
+                                    // if (!force) {
+                                    //     testsRunsService.deleteStoredParams();
+                                    //     $state.go('tests/runs', null, { reload: true });
+                                    // }
+                                    //2nd approach: if can't load with user/cached searchParams return empty data
+                                    return $q.resolve([]);
+                                });
                             }],
                             activeTestRunId: ['$stateParams', '$q', function($stateParams, $q) { //TODO: use to implement highlighting opened tesRun
                                 const id = $stateParams.activeTestRunId ? $stateParams.activeTestRunId : undefined;

@@ -62,7 +62,7 @@
         function fetchTestRuns(force) {
             // by default return cached data if possible
             if (!force && _lastResult) {
-                return _lastResult;
+                return $q.resolve(_lastResult);
             }
 
             const filter = _activeFilterId ? '?filterId=' + _activeFilterId : undefined;
@@ -73,8 +73,8 @@
             _lastParams = angular.copy(_searchParams);
             _lastFilters = filter;
 
-            return TestRunService.searchTestRuns(_searchParams, filter).
-                then(function(rs) {
+            return TestRunService.searchTestRuns(_searchParams, filter)
+                .then(function(rs) {
                     if (rs.success) {
                         const data = rs.data;
 

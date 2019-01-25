@@ -73,14 +73,12 @@
             $rootScope.$broadcast('tr-filter-reset');
         }
 
-        function applySearch() {
-            $rootScope.$broadcast('tr-filter-apply');
-        }
+        // function applySearch() {
+        //     $rootScope.$broadcast('tr-filter-apply');
+        // }
         
         function displaySearch() {
-            // !vm.isFilterActive() && $('.search-filter-body').toggleClass('_mobile-search-active');
             !vm.isFilterActive() && $rootScope.$broadcast('tr-filter-open-search');
-            console.log(55665);
         }
 
         function readStoredParams() {
@@ -118,7 +116,9 @@
                 })
                 .catch(function(err) {
                     console.error(err.message);
-                    return $q.reject(err);
+                    alertify.error(err.message);
+
+                    return $q.resolve([]);
                 });
         }
 
@@ -353,7 +353,7 @@
                 if (vm.projects && vm.projects.length && vm.projects.indexOfField('id', testRun.project.id) === -1) { return; }
 
                 vm.testRuns.some(function(tr, i) {
-                    if (tr.id === +event.testRun.id) {
+                    if (tr.id === +testRun.id) {
                         index = i;
                     }
                 });
