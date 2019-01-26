@@ -93,7 +93,7 @@ public class UserService implements TenancyInitial {
                     user.setPassword(passwordEncryptor.encryptPassword(adminPassword));
                     createUser(user);
 
-                    Group group = groupService.getGroupByName(adminGroup);
+                    Group group = groupService.getPrimaryGroupByRole(Role.ROLE_ADMIN);//groupService.getGroupByName(adminGroup);
                     addUserToGroup(user, group.getId());
                     user.getGroups().add(group);
                     userPreferenceService.createDefaultUserPreferences(user.getId());
