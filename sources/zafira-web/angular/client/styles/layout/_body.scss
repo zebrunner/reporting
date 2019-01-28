@@ -2811,7 +2811,7 @@ $light-inprogress: #68c9fd;
 
         &_button {
             width: 175px;
-            @media(max-width: $screen-phone) {
+            @media(max-width: $breakpoint-mobile) {
                 width: 36px;
             }
             > i {
