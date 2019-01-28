@@ -183,7 +183,7 @@
                     })
                     .then(undefined, function(links) {
                         if (links && links.length) {
-                            showToastWithLinks();
+                            showToastWithLinks(links);
                         }
                     });
                 }

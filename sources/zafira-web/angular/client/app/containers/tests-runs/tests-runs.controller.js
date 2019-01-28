@@ -340,7 +340,7 @@
                 vm.subscriptions.testRuns = subscribeTestRunsTopic();
                 UtilService.websocketConnected(wsName);
             }, function () {
-                UtilService.reconnectWebsocket(wsName, vm.initWebsocket);
+                UtilService.reconnectWebsocket(wsName, initWebsocket);
             });
         }
 

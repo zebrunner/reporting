@@ -2,9 +2,9 @@
     'use strict';
 
     angular
-        .module('app.testruninfo')
-        .controller('TestRunInfoController', [
-            '$scope',
+    .module('app.testruninfo')
+    .controller('TestRunInfoController', [
+        '$scope',
         '$rootScope',
         '$http',
         '$mdDialog',
@@ -475,8 +475,8 @@
 
         $scope.showGalleryDialog = function (event, url) {
             $mdDialog.show({
-                controller: GalleryController,
-                templateUrl: 'app/_testruns/_info/gallery_modal.html',
+                controller: 'GalleryController',
+                templateUrl: 'app/components/modals/gallery/gallery.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,
@@ -488,9 +488,9 @@
                     thumbs: $scope.thumbs
                 }
             })
-                .then(function(answer) {
-                }, function() {
-                });
+            .then(function(answer) {
+            }, function() {
+            });
         };
 
         /**************** Websockets **************/
@@ -525,7 +525,7 @@
                     });
                 }
             }, function () {
-                UtilService.reconnectWebsocket(testsWebsocketName, initTestsWebSocket());
+                UtilService.reconnectWebsocket(testsWebsocketName, initTestsWebSocket);
             });
             UtilService.websocketConnected(testsWebsocketName);
         };
