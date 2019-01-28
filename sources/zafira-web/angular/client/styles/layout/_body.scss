@@ -2810,15 +2810,11 @@ $light-inprogress: #68c9fd;
         }
 
         &_button {
-            width: 175px;
-            @media(max-width: $breakpoint-mobile) {
-                width: 36px;
-            }
+            width: auto;
             > i {
                 color: $dark;
             }
             button {
-                border: 0;
                 float: right;
                 padding: 0 16px 0 6px;
                 height: 36px;
@@ -2830,6 +2826,37 @@ $light-inprogress: #68c9fd;
                 font-size: 14px;
                 font-weight: bold;
                 line-height: 36px;
+                &._launcher, &._styled-button {
+                    padding: 6px 15px 6px 10px;
+                    height: 32px;
+                    border-radius: 16px;
+                    border: 2px solid #26a69a;
+                    background-color: white;
+                    font-size: 13px;
+                    font-weight: 500;
+                    transition: none;
+                    text-transform: none;
+                    line-height: 1;
+                    color: #26a69a;
+                    > .material-icons {
+                        color: #26a69a;
+                        font-size: 15px;
+                        line-height: 15px;
+                        height: 15px;
+                        width: 15px;
+                        min-height: 15px;
+                        min-width: 15px;
+                        margin: 0 4px 2px 0;
+                    }
+                    &:hover {
+                        border-color: #1C7971 !important; 
+                        color: #1C7971;
+                        background-color: white;
+                        > .material-icons {
+                            color: #1C7971;
+                        }
+                    }
+                }
                 @media(max-width: $breakpoint-mobile) {
                     &.fixed-page-header__btn {
                         background-color: #fff;
@@ -2846,9 +2873,13 @@ $light-inprogress: #68c9fd;
                         &._launcher {
                             background-color: #fff;
                             border-radius: 8px;
-                            color: #52a49a;
+                            color: #26a69a;
+                            border: 2px solid #26a69a;
                             border-color: currentColor;
                             padding: 0;
+                            > .material-icons {
+                                margin: 0 0 3px 0;
+                            }
                             span {
                                 display: none;
                             }
@@ -2883,7 +2914,7 @@ $light-inprogress: #68c9fd;
 
                     color: black;
                     > .material-icons {
-                        color: black;
+                        color: #1C7971;
                     }
                 }
             }
