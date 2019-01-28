@@ -67,6 +67,12 @@
         }
     }
 
+    &__editor {
+        md-switch .md-label {
+            min-width: 45px;
+        }
+    }
+
     &__search {
         &-panel-body {
             padding: 18px 20px 14px 20px;
@@ -110,7 +116,7 @@
                         @extend %select;
                     }
                     md-select{
-                        border: none;
+                        border: none; 
                         margin-top: 2px;
                     }
                     md-select-value {
