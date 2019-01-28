@@ -105,6 +105,7 @@
                               <md-button name="testArtifacts" aria-label="Test artifacts" class="md-icon-button" ng-click="$mdMenu.open($event);">
                                 <md-icon class="material-icons">attachment</md-icon>
                               </md-button>
+                              <span>attachment</span>
                               <md-menu-content>
                                 <md-menu-item ng-repeat="artifact in test.artifactsToShow">
                                   <md-button href="{{artifact.link}}" class="artifact-button" target="blank" name="artifact">{{artifact.name}}</md-button>
