@@ -201,13 +201,16 @@
                         }
                     }
                     &_tags {
-                        @extend %detailsItems;
-                        background-color: rgba(0, 0, 0, .15) !important;
-                        margin-top: 0;
-                        margin-bottom: 5px;
+                        background-color: transparent;
                         @media(max-width: 599px) {
                             margin-top: 10px;
                             margin-left: 0 !important;
+                        }
+                        &_tag {
+                            @extend %detailsItems;
+                            background-color: #00000026 !important;
+                            margin-right: 4px;
+                            padding: 4px 8px;
                         }
                     }
                 }
