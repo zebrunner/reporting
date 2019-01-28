@@ -239,7 +239,7 @@
                                         </div>
                                         <div layout="row" class="search-fields _additional">
                                             <md-input-container class="date-picker-container pull-left" flex="grow">
-                                                <span data-ng-if="!$ctrl.selectedRange.dateStart && !$ctrl.selectedRange.dateEnd"></span>
+                                                <span data-ng-if="!$ctrl.selectedRange.dateStart && !$ctrl.selectedRange.dateEnd">Date</span>
                                                 <span data-ng-if="$ctrl.selectedRange.dateStart && $ctrl.selectedRange.dateEnd && !$ctrl.isEqualDate()">{{$ctrl.selectedRange.dateStart | date : 'dd MMM'}} - </span>
                                                 <span>{{$ctrl.selectedRange.dateEnd | date : 'dd MMM'}}</span>
                                                 <md-button id="searchCalendar" ng-click="$ctrl.openDatePicker($event, true)">

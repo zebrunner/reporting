@@ -109,7 +109,7 @@
                     md-input-container {
                         @extend %select;
                     }
-                    md-select {
+                    md-select{
                         border: none;
                         margin-top: 2px;
                     }
@@ -123,6 +123,7 @@
                         margin-bottom: 20px;
                         & md-input-container {
                             @extend %select;
+                            padding-top: 2px !important;
                         }
                         & .date-picker-container i {
                             font-size: 20px;
