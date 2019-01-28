@@ -28,8 +28,9 @@
                 <div layout layout-sm="column">
                     <md-input-container style="float: right; margin-top: 0" flex>
                         <span>Hidden</span>
-                        <md-switch style="margin-top: 0" class="md-primary" ng-model="dashboard.hidden" ng-change="!dashboard.hidden" data-ng-if="isNew" ng-required aria-label="integr-switch"></md-switch>
-                        <md-switch style="margin-top: 0" class="md-primary" ng-model="dashboard.hidden" ng-change="!dashboard.hidden" data-ng-if="!isNew" ng-required aria-label="integr-switch"></md-switch>
+                        <div class="layout">
+                            <md-switch style="margin-top: 0" class="md-primary" ng-model="dashboard.hidden" ng-change="!dashboard.hidden" ng-required aria-label="integr-switch"></md-switch>
+                        </div>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">

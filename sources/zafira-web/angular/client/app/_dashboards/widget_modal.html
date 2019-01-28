@@ -77,7 +77,9 @@
                 <div layout layout-sm="column" data-ng-if="'sql' != widget.type">
                 <md-input-container style="float: right; margin-top: 0" flex>
                     <span>Refreshable</span>
-                    <md-switch style="margin-top: 0" class="md-primary" ng-model="widget.refreshable" ng-required aria-label="integr-switch"></md-switch>
+                    <div class="layout">
+                        <md-switch style="margin-top: 0" class="md-primary" ng-model="widget.refreshable" ng-required aria-label="integr-switch"></md-switch>
+                    </div>
                 </md-input-container>
                 </div>
             </div>
