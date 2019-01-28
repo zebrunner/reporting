@@ -212,6 +212,8 @@
             }, []);
 
             $q.all(promises).finally(function() {
+                vm.selectedTestRuns = {};
+                testsRunsService.clearDataCache();
                 //load previous page if was selected all tests and it was a last but not single page
                 if (keysToDelete.length === vm.testRuns.length  && vm.currentPage === Math.ceil(vm.totalResults / vm.pageSize) && vm.currentPage !== 1) {
                     getTestRuns(vm.currentPage - 1);
@@ -307,6 +309,8 @@
 
                     UtilService.showDeleteMessage(messageData, [id], [], []);
                     if (rs.success) {
+                        vm.selectedTestRuns = {};
+                        testsRunsService.clearDataCache();
                         //if it was last item on the page try to load previous page
                         if (vm.testRuns.length === 1 && vm.currentPage !== 1) {
                             getTestRuns(vm.currentPage - 1);
