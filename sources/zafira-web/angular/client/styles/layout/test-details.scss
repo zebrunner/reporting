@@ -165,14 +165,14 @@
                 }
                 &.success {
                     & .test-info,
-                    & .text-center,
+                    & .test-label,
                     & .test-settings {
                         background-color: $green-bg-light-new;
                     }
                 }
                 &.danger {
                     & .test-info,
-                    & .text-center,
+                    & .test-label,
                     & .test-settings {
                         background-color: $pink-bg-light-new;
                     }
@@ -189,9 +189,13 @@
                     }
                     &__wrapper {
                         display: flex;
+                        flex-wrap: wrap;
                         @media(max-width: 599px) {
                             display: block;
                             margin-top: 5px;
+                        }
+                        .light_text {
+                            margin-right: 4px;
                         }
                     }
                     & .result_error.FAILED {
@@ -202,6 +206,8 @@
                     }
                     &_tags {
                         background-color: transparent;
+                        padding-left: 0;
+                        margin-left: 0;
                         @media(max-width: 599px) {
                             margin-top: 10px;
                             margin-left: 0 !important;
@@ -209,19 +215,19 @@
                         &_tag {
                             @extend %detailsItems;
                             background-color: #00000026 !important;
-                            margin-right: 4px;
+                            margin: 0 4px 4px 0;
                             padding: 4px 8px;
                         }
                     }
                 }
-                & .text-center {
+                & .test-label {
                     flex-grow: 1;
+                    text-align: center;
                     @extend %noBorderPadding;
                     @media (max-width: 599px) {
                         padding-bottom: 5px;
                         width: auto;
-                        display: flex;
-                        justify-content: flex-start;
+                        text-align: left;
                         & .work-items .badge {
                             margin-top: 7px;
                         }

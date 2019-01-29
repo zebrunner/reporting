@@ -86,7 +86,7 @@
                       </div>
                     </div>
                   </td>
-                  <td class="text-center">
+                  <td class="test-label">
                     <span data-ng-repeat="issue in test.workItems" class="work-items">
                       <a name="taskTicket" href="{{jira.url + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type === 'TASK'" class="badge ng-binding clearfix task-label-bg">{{issue.jiraId}}</a>
                       <a name="bugTicket" href="{{jira.url + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type === 'BUG'" class="badge ng-binding clearfix bug-label-bg" alt="{{issue.description}}" title="{{issue.description}}">{{issue.jiraId}}</a>
