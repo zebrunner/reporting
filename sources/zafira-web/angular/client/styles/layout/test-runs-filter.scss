@@ -136,6 +136,9 @@
                         & md-input-container {
                             @extend %select;
                             padding-top: 2px !important;
+                            .md-button {
+                                height: 38px;
+                            }
                         }
                         & .date-picker-container i {
                             font-size: 20px;
