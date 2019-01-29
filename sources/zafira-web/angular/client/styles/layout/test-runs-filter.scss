@@ -225,14 +225,15 @@
                 }
             }
             .btn-check {
-                width: auto;
+                position: relative;
                 margin: 0 14px;
                 padding: 2px;
                 display: flex;
+                flex-grow: 1;
                 justify-content: space-between;
                 border-bottom: 1px rgba(0, 0, 0, 0.10) solid;
                 button.btn {
-                    width: calc(100% / 3 - 5px);
+                    flex-grow: 1;
                     font-size: 11px;
                     font-weight: 500;
                     max-height: 28px;
@@ -408,7 +409,7 @@
 
 %chips-scrolling {
     md-chips.filter-chip.custom-filter {
-        @media screen and (min-width: $breakpoint-mobile) {
+        @media screen and (min-width: $breakpoint-mobile + 1) {
             min-width: auto;
         }
         @media screen and (max-width: $breakpoint-mobile) {
