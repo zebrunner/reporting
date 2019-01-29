@@ -68,8 +68,14 @@
     }
 
     &__editor {
-        md-switch .md-label {
-            min-width: 45px;
+        &-text {
+            vertical-align: top;
+            padding-bottom: 16px;
+            &-state{
+                padding-left: 9px;
+                margin: 0;
+                min-width: 100px;
+            }
         }
     }
 
