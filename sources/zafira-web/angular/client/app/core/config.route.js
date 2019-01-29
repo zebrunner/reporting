@@ -189,22 +189,6 @@
                             }]
                         }
                     })
-                    .state('tests/run2', {//TODO: remove before release
-	                    url: '/tests/runs2/:id',
-	                    templateUrl: 'app/_testruns/list.html',
-                        store: true,
-                        data: {
-                            requireLogin: true
-                        }
-	                })
-                    .state('tests/runs2', {///TODO: remove before release
-                        url: '/tests/runs2',
-                        templateUrl: 'app/_testruns/list.html',
-                        store: true,
-                        data: {
-                            requireLogin: true
-                        }
-                    })
                     .state('tests/runs', {
                         url: '/tests/runs',
                         templateUrl: 'app/containers/tests-runs/tests-runs.html',
@@ -252,7 +236,8 @@
                     })
                     .state('tests/runs/info', {
                         url: '/tests/runs/:testRunId/info/:testId',
-                        templateUrl: 'app/_testruns/_info/list.html',
+                        templateUrl: 'app/containers/test-run-info/test-run-info.html',
+                        controller: 'TestRunInfoController',
                         data: {
                             requireLogin: true
                         }

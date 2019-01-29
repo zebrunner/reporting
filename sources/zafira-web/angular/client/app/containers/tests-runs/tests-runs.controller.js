@@ -289,7 +289,7 @@
             });
         }
 
-        function addToSelectedTestRuns(testRun) { //TODO: why do we use object here enstaed of array?
+        function addToSelectedTestRuns(testRun) { //TODO: why do we use object instead of array here?
             $timeout(function () {
                 if (testRun.selected) {
                     vm.selectedTestRuns[testRun.id] = testRun;
@@ -344,7 +344,7 @@
                 vm.subscriptions.testRuns = subscribeTestRunsTopic();
                 UtilService.websocketConnected(wsName);
             }, function () {
-                UtilService.reconnectWebsocket(wsName, vm.initWebsocket);
+                UtilService.reconnectWebsocket(wsName, initWebsocket);
             });
         }
 
@@ -367,22 +367,18 @@
                     // do no add new Test run if Search is active
                     if (vm.isSearchActive()) { return; }
 
-                    testRun.jenkinsURL = testRun.job.jobURL + '/' + testRun.buildNumber;
-                    testRun.UID = testRun.testSuite.name + ' ' + testRun.jenkinsURL;
-                    testRun.tests = null;
-                    if (vm.testRuns.length === vm.pageSize) {
-                        vm.testRuns.splice(-1);
-                    }
-                    vm.testRuns = [testRun].concat(vm.testRuns);
+                    vm.testRuns = testsRunsService.addNewTestRun(testRun);
                 } else {
-                    vm.testRuns[index].status = testRun.status;
-                    vm.testRuns[index].reviewed = testRun.reviewed;
-                    vm.testRuns[index].elapsed = testRun.elapsed;
-                    vm.testRuns[index].platform = testRun.platform;
-                    vm.testRuns[index].env = testRun.env;
-                    vm.testRuns[index].comments = testRun.comments;
-                    vm.testRuns[index].reviewed = testRun.reviewed;
-                    $scope.$apply();
+                    const data = {
+                        status: testRun.status,
+                        reviewed: testRun.reviewed,
+                        elapsed: testRun.elapsed,
+                        platform: testRun.platform,
+                        env: testRun.env,
+                        comments: testRun.comments,
+                    };
+
+                    vm.testRuns = testsRunsService.updateTestRun(index, data);
                 }
                 $scope.$apply();
             });
@@ -400,15 +396,19 @@
                 });
 
                 if (index !== -1) {
-                    vm.testRuns[index].inProgress = event.testRunStatistics.inProgress;
-                    vm.testRuns[index].passed = event.testRunStatistics.passed;
-                    vm.testRuns[index].failed = event.testRunStatistics.failed;
-                    vm.testRuns[index].failedAsKnown = event.testRunStatistics.failedAsKnown;
-                    vm.testRuns[index].failedAsBlocker = event.testRunStatistics.failedAsBlocker;
-                    vm.testRuns[index].skipped = event.testRunStatistics.skipped;
-                    vm.testRuns[index].reviewed = event.testRunStatistics.reviewed;
-                    vm.testRuns[index].aborted = event.testRunStatistics.aborted;
-                    vm.testRuns[index].queued = event.testRunStatistics.queued;
+                    const data = {
+                        inProgress: event.testRunStatistics.inProgress,
+                        passed: event.testRunStatistics.passed,
+                        failed: event.testRunStatistics.failed,
+                        failedAsKnown: event.testRunStatistics.failedAsKnown,
+                        failedAsBlocker: event.testRunStatistics.failedAsBlocker,
+                        skipped: event.testRunStatistics.skipped,
+                        reviewed: event.testRunStatistics.reviewed,
+                        aborted: event.testRunStatistics.aborted,
+                        queued: event.testRunStatistics.queued,
+                    };
+
+                    vm.testRuns = testsRunsService.updateTestRun(index, data);
                     $scope.$apply();
                 }
 

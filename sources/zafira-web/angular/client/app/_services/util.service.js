@@ -183,24 +183,12 @@
                 hideDelay: 0,
                 position: 'bottom right',
                 scope: $rootScope,
-                preserveScope: true,
-                controller  : function ($rootScope, $mdToast) {
-                    $rootScope.reconnect = function() {
-                        angular.forEach($rootScope.disconnectedWebsockets.websockets, function (websocket, name) {
-                            tryToReconnect(name);
-                        });
-                        $rootScope.closeToast();
-                    };
-
-                    $rootScope.closeToast = function() {
-                        $rootScope.disconnectedWebsockets.toastOpened = false;
-                        $mdToast
-                            .hide()
-                            .then(function() {
-                            });
-                    };
+                locals: {
+                    reconnect: tryToReconnect
                 },
-                templateUrl : 'app/_testruns/websocket-reconnect_toast.html'
+                preserveScope: true,
+                controller: 'WebsocketReconnectController',
+                templateUrl: 'app/components/toasts/websocket-reconnect/websocket-reconnect.html'
             });
         };
 

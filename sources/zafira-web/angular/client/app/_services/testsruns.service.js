@@ -53,6 +53,8 @@
             isSlackAvailabilityFetched: isSlackAvailabilityFetched,
             fetchSlackAvailability: fetchSlackAvailability,
             clearDataCache: clearDataCache,
+            addNewTestRun: addNewTestRun,
+            updateTestRun: updateTestRun,
         };
 
         function getSearchTypes() {
@@ -286,6 +288,32 @@
             });
 
             return defer.promise;
+        }
+
+        function addNewTestRun(testRun) {
+            addBrowserVersion(testRun);
+            addJob(testRun);
+            testRun.tests = null;
+
+            if (_lastResult.results.length === _searchParams.pageSize) {
+                _lastResult.results.splice(-1);
+            }
+            _lastResult.results = [testRun].concat(_lastResult.results);
+
+            return _lastResult.results;
+        }
+
+        function updateTestRun(index, data) {
+            const testRun = _lastResult.results[index];
+
+            data = data || {};
+            if (testRun) {
+                Object.keys(data).forEach(function(key) {
+                    testRun[key] = data[key];
+                });
+            }
+
+            return _lastResult.results;
         }
 
         function clearDataCache() {

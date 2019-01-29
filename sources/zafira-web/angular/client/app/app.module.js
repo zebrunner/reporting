@@ -12,7 +12,6 @@
         ,'app.user'
         ,'app.scm'
         ,'app.testcase'
-        ,'app.testrun' //TODO: remove before release and old component
         ,'app.testruninfo'
         ,'app.testsRuns'
         ,'app.testDetails'
@@ -46,16 +45,16 @@
         $httpProvider.defaults.useXDomain = true;
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
-        var $window = $(window);
-
-        $window.scroll(onScroll);
-        $window.resize(onResize);
-
-        function onScroll() {
-        };
-
-        function onResize() {
-        };
+        // var $window = $(window);
+        //
+        // $window.scroll(onScroll);
+        // $window.resize(onResize);
+        //
+        // function onScroll() {
+        // };
+        //
+        // function onResize() {
+        // };
 
         Array.prototype.indexOfId = function(id) {
             for (var i = 0; i < this.length; i++)
