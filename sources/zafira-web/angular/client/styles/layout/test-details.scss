@@ -209,6 +209,7 @@
                         background-color: transparent;
                         padding-left: 0;
                         margin-left: 0;
+                        min-height: 25px;
                         @media(max-width: $breakpoint-mobile) {
                             margin-top: 10px;
                             margin-left: 0 !important;
@@ -216,7 +217,7 @@
                         &_tag {
                             @extend %detailsItems;
                             background-color: #00000026 !important;
-                            margin: 0 4px 4px 0;
+                            margin: 0 4px 0 0;
                             padding: 4px 8px;
                         }
                     }
