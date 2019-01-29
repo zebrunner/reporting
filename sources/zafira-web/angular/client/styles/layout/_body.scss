@@ -2810,85 +2810,68 @@ $light-inprogress: #68c9fd;
         }
 
         &_button {
-            width: auto;
             > i {
                 color: $dark;
             }
             button {
                 float: right;
                 padding: 0 16px 0 6px;
-                height: 36px;
-                border-radius: 3px;
-                background-color: rgba(38, 166, 154, 0.1);
-                transition: background-color 0.15s linear;
+                height: 32px;
                 color: $dark-light;
-                text-transform: uppercase;
-                font-size: 14px;
-                font-weight: bold;
-                line-height: 36px;
-                &._launcher, &._styled-button {
-                    padding: 6px 15px 6px 10px;
-                    height: 32px;
-                    border-radius: 16px;
-                    border: 2px solid #26a69a;
+                font-size: 13px;
+                font-weight: 500;
+                line-height: 1;
+                padding: 6px 15px 6px 10px;
+                color: $medium-teal-light-new;
+                border-radius: 16px;
+                border: 2px solid $medium-teal-light-new;
+                background-color: white;
+                .material-icons {
+                    color: $medium-teal-light-new;
+                    font-size: 15px;
+                    line-height: 15px;
+                    height: 15px;
+                    width: 15px;
+                    min-height: 15px;
+                    min-width: 15px;
+                    margin: 0 4px 2px 0;
+                }
+                &:hover {
+                    border-color: $medium-teal-light-new-hover; 
+                    color: $medium-teal-light-new-hover;
                     background-color: white;
-                    font-size: 13px;
-                    font-weight: 500;
-                    transition: none;
-                    text-transform: none;
-                    line-height: 1;
-                    color: #26a69a;
-                    > .material-icons {
-                        color: #26a69a;
-                        font-size: 15px;
-                        line-height: 15px;
-                        height: 15px;
-                        width: 15px;
-                        min-height: 15px;
-                        min-width: 15px;
-                        margin: 0 4px 2px 0;
-                    }
-                    &:hover {
-                        border-color: #1C7971 !important; 
-                        color: #1C7971;
-                        background-color: white;
-                        > .material-icons {
-                            color: #1C7971;
-                        }
+                    .material-icons {
+                        color: $medium-teal-light-new-hover;
                     }
                 }
                 @media(max-width: $breakpoint-mobile) {
-                    &.fixed-page-header__btn {
-                        background-color: #fff;
-                        border-radius: 8px;
-                        color: #52a49a;
-                        border: 1px solid transparent;
-                        width: 32px;
-                        height: 32px;
-                        line-height: 30px;
-                        padding: 0;
-                        .material-icons {
-                            color: currentColor;
+                    &.fixed-page-header__btn{
+                        &._launcher, &._search {
+                            border-radius: 8px;
+                            width: 32px;
+                            height: 32px;
+                            padding: 0;
+                            .material-icons {
+                                margin: 0;
+                            }
                         }
                         &._launcher {
-                            background-color: #fff;
-                            border-radius: 8px;
-                            color: #26a69a;
-                            border: 2px solid #26a69a;
-                            border-color: currentColor;
-                            padding: 0;
-                            > .material-icons {
-                                margin: 0 0 3px 0;
-                            }
                             span {
                                 display: none;
                             }
                         }
                         &._search {
+                            border: 1px solid transparent;
                             background-color: rgba(#1f242a, .1);
                             color: #000;
+                            .material-icons {
+                                color: currentColor;
+                            }
+                            &:hover {
+                                border: 1px solid transparent;
+                            }
                             &._active {
-                                background-color: #4ba69a;
+                                background-color: $medium-teal-bright-new;
                                 color: #fff;
                                 .material-icons {
                                     color: currentColor;
@@ -2902,19 +2885,6 @@ $light-inprogress: #68c9fd;
                             text-align: center;
                             padding: 0 6px;
                         }
-                    }
-                }
-                > .material-icons {
-                    font-size: 18px;
-                    line-height: 23px;
-                }
-
-                &:hover {
-                    background-color: rgba(38, 166, 154, 0.35);
-
-                    color: black;
-                    > .material-icons {
-                        color: #1C7971;
                     }
                 }
             }
