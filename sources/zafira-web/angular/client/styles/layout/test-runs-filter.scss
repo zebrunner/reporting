@@ -67,6 +67,18 @@
         }
     }
 
+    &__editor {
+        &-text {
+            vertical-align: top;
+            padding-bottom: 16px;
+            &-state{
+                padding-left: 9px;
+                margin: 0;
+                min-width: 100px;
+            }
+        }
+    }
+
     &__search {
         &-panel-body {
             padding: 18px 20px 14px 20px;
@@ -109,8 +121,8 @@
                     md-input-container {
                         @extend %select;
                     }
-                    md-select {
-                        border: none;
+                    md-select{
+                        border: none; 
                         margin-top: 2px;
                     }
                     md-select-value {
@@ -123,6 +135,10 @@
                         margin-bottom: 20px;
                         & md-input-container {
                             @extend %select;
+                            padding-top: 2px !important;
+                            .md-button {
+                                height: 38px;
+                            }
                         }
                         & .date-picker-container i {
                             font-size: 20px;
@@ -209,14 +225,15 @@
                 }
             }
             .btn-check {
-                width: auto;
+                position: relative;
                 margin: 0 14px;
                 padding: 2px;
                 display: flex;
+                flex-grow: 1;
                 justify-content: space-between;
                 border-bottom: 1px rgba(0, 0, 0, 0.10) solid;
                 button.btn {
-                    width: calc(100% / 3 - 5px);
+                    flex-grow: 1;
                     font-size: 11px;
                     font-weight: 500;
                     max-height: 28px;
@@ -392,7 +409,7 @@
 
 %chips-scrolling {
     md-chips.filter-chip.custom-filter {
-        @media screen and (min-width: $breakpoint-mobile) {
+        @media screen and (min-width: $breakpoint-mobile + 1) {
             min-width: auto;
         }
         @media screen and (max-width: $breakpoint-mobile) {

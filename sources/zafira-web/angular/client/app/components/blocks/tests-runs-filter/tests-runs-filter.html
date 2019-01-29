@@ -1,7 +1,7 @@
 <div class="p-tests-runs__section _filters-wrapper tests-runs-filter" ng-class="{ '_search-active': $ctrl.isMobileSearchActive }">
     <div class="p-tests-runs__section _filters row ui-section no-margin">
         <div class="fixed-search-column col-md-12 no-padding tests-runs-filter__actions" ng-hide="!$ctrl.isMobileSearchActive && $ctrl.isMobile()">
-            <button ng-if="$ctrl.isMobileSearchActive"
+            <button ng-if="$ctrl.isMobileSearchActive && $ctrl.isMobile()"
                     id="closeMobileSearch"
                     type="button"
                     class="tests-runs-filter__close-search-btn"
@@ -40,7 +40,7 @@
                                         <div>
                                             <md-icon class="material-icons">add</md-icon>
                                         </div>
-                                        <span>New filter<span>
+                                        <span>New filter</span>
                                     </md-chip>
                                 </md-chips>
                             </div>
@@ -60,18 +60,18 @@
                             </md-chips>
                         </div>
                     </div>
-                    <div id="filter-editor" ng-if=" !$ctrl.isMobile()" ng-show="$ctrl.collapseFilter && $ctrl.filterBlockExpand">
+                    <div id="filter-editor" class="tests-runs-filter__editor" ng-if=" !$ctrl.isMobile()" ng-show="$ctrl.collapseFilter && $ctrl.filterBlockExpand">
                         <div ng-class="{'disable-layer': $ctrl.isSearchActive()}"></div>
                         <div class="panel-body">
                             <form class="form-validation no-padding" id="filterForm" name="filter_form" ng-cloak>
-                                <div class="filter-text" layout="row" layout-xs="column">
+                                <div class="tests-runs-filter__editor-text" layout="row" layout-xs="column">
                                     <div class="filter-name" layout-xs="column">
                                         <input id="filterName" type="text" class="form-control" placeholder="Name" flex="none" ng-model="$ctrl.filter.name" required/>
                                     </div>
                                     <div class="flex-auto" layout-xs="column">
                                         <input id="filterDescription" type="text" class="form-control" placeholder="Description" ng-model="$ctrl.filter.description" required/>
                                     </div>
-                                    <md-switch id="filterState" has-any-role="['ROLE_ADMIN']" ng-model="$ctrl.filter.publicAccess" class="md-primary" aria-label="public access">
+                                    <md-switch id="filterState" class="tests-runs-filter__editor-text-state"has-any-role="['ROLE_ADMIN']" ng-model="$ctrl.filter.publicAccess" class="md-primary" aria-label="public access">
                                         <span ng-if="$ctrl.filter.publicAccess">Public</span>
                                         <span ng-if="!$ctrl.filter.publicAccess">Private</span>
                                     </md-switch>
@@ -170,7 +170,6 @@
                             <div ng-show="$ctrl.fastSearchBlockExpand" layout="row" layout-md="column" layout-sm="column" layout-xs="column">
                                 <div id="search-header" ng-if="$ctrl.isMobile()" class="tests-runs-filter__search-panel" flex="auto">
                                     <div class="tests-runs-filter__search-panel _row-wrapper">
-
                                         <div ng-class="{'disable-layer': $ctrl.isFilterActive()}"></div>
                                         <input type="text"
                                             id="search-input"
@@ -239,7 +238,7 @@
                                         </div>
                                         <div layout="row" class="search-fields _additional">
                                             <md-input-container class="date-picker-container pull-left" flex="grow">
-                                                <span data-ng-if="!$ctrl.selectedRange.dateStart && !$ctrl.selectedRange.dateEnd"></span>
+                                                <span data-ng-if="!$ctrl.selectedRange.dateStart && !$ctrl.selectedRange.dateEnd">Date</span>
                                                 <span data-ng-if="$ctrl.selectedRange.dateStart && $ctrl.selectedRange.dateEnd && !$ctrl.isEqualDate()">{{$ctrl.selectedRange.dateStart | date : 'dd MMM'}} - </span>
                                                 <span>{{$ctrl.selectedRange.dateEnd | date : 'dd MMM'}}</span>
                                                 <md-button id="searchCalendar" ng-click="$ctrl.openDatePicker($event, true)">
