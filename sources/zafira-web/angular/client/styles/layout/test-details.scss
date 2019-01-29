@@ -14,7 +14,7 @@
             .sort-new.test-run-group-column.md-column.ng-isolate-scope {
                 padding: 0 24px !important;
                 background-color: white;
-                @media(max-width: 599px) {
+                @media(max-width: $breakpoint-mobile) {
                     padding: 0 10px !important;
                 }
                 .test-run-group {
@@ -25,7 +25,7 @@
                         align-items: center;
                         &._left {
                             flex-grow: 1;
-                            @media(max-width: 599px) {
+                            @media(max-width: $breakpoint-mobile) {
                                 overflow-x: scroll;
                             }
                         }
@@ -50,7 +50,7 @@
                         @media (max-width: 998px) {
                             margin-right: 10px;
                         }
-                        @media(max-width: 599px) {
+                        @media(max-width: $breakpoint-mobile) {
                             display: none;
                         }
                         button {
@@ -67,7 +67,7 @@
                         padding: 3px 15px;
                         min-width: 90px;
                         margin-left: 17px;
-                        @media(max-width: 599px) {
+                        @media(max-width: $breakpoint-mobile) {
                             padding: 3px 0;
                             min-width: auto;
                             & .pointer {
@@ -113,13 +113,13 @@
                     &_tags {
                         min-width: 260px;
                         width: auto;
-                        @media(max-width: 599px) {
+                        @media(max-width: $breakpoint-mobile) {
                             display: flex;
                             max-width: calc(100vw - 20px);
                         }
                         md-chips {
                             md-chips-wrap.md-chips {
-                                @media(max-width: 599px) {
+                                @media(max-width: $breakpoint-mobile) {
                                     display: flex;
                                 }
                                 md-chip {
@@ -138,7 +138,7 @@
                         min-width: auto !important;
                         width: auto !important;
                         margin-left: 40px;
-                        @media (max-width: 998px) {
+                        @media (max-width: $breakpoint-mid-tablet) {
                             margin-left: 10px;
                         }
                         & #resetAllToggle {
@@ -155,7 +155,7 @@
         
             .test {
                 display: flex;
-                @media(max-width: 599px) {
+                @media(max-width: $breakpoint-mobile) {
                     flex-wrap: wrap;
                     padding: 4px 0 0;
                     width: calc(100vw - 60px);
@@ -182,7 +182,7 @@
                     @media (max-width: 730px) {
                         width: 40vw;
                     }
-                    @media(max-width: 599px) {
+                    @media(max-width: $breakpoint-mobile) {
                         width: 100%;
                         border-top: 0 !important;
                         padding-bottom: 0 !important;
@@ -190,7 +190,7 @@
                     &__wrapper {
                         display: flex;
                         flex-wrap: wrap;
-                        @media(max-width: 599px) {
+                        @media(max-width: $breakpoint-mobile) {
                             display: block;
                             margin-top: 5px;
                         }
@@ -208,7 +208,7 @@
                         background-color: transparent;
                         padding-left: 0;
                         margin-left: 0;
-                        @media(max-width: 599px) {
+                        @media(max-width: $breakpoint-mobile) {
                             margin-top: 10px;
                             margin-left: 0 !important;
                         }
@@ -224,7 +224,7 @@
                     flex-grow: 1;
                     text-align: center;
                     @extend %noBorderPadding;
-                    @media (max-width: 599px) {
+                    @media (max-width: $breakpoint-mobile) {
                         padding-bottom: 5px;
                         width: auto;
                         text-align: left;
@@ -234,17 +234,17 @@
                     }
                 }
                 &-settings {
-                    @media(max-width: 599px) {
+                    @media(max-width: $breakpoint-mobile) {
                         flex-grow: 1;
                     }
                     @extend %noBorderPadding;
                     &__button {
-                        @media(max-width: 599px) {
+                        @media(max-width: $breakpoint-mobile) {
                             display: none;
                         }
                     }
                     &__menu {
-                        @media(min-width: $breakpoint-mobile) {
+                        @media(min-width: $breakpoint-mobile + 1) {
                             display: none;
                         }
                         button.md-icon-button.md-button.md-ink-ripple {
@@ -257,7 +257,7 @@
             }
         }
     }
-    @media (min-width: $breakpoint-mobile) {
+    @media (min-width: $breakpoint-mobile + 1) {
         .ui-section {
             padding: 0 20px;
         }
@@ -291,7 +291,7 @@
 }
 
 %noBorderPadding {
-    @media(max-width: 599px) {
+    @media(max-width: $breakpoint-mobile) {
         border-top: 0 !important;
         padding-top: 0 !important;
         padding-bottom: 0 !important;
