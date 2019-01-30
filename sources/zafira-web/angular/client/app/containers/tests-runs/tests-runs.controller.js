@@ -20,12 +20,13 @@
         '$rootScope',
         '$transitions',
         'windowWidthService',
+        'activeTestRunId',
         TestsRunsController]);
         
     function TestsRunsController($cookieStore, $mdDialog, $timeout, $q, TestRunService, UtilService,
                                  UserService, SettingsService, ConfigService, resolvedTestRuns,
                                  testsRunsService, $scope, API_URL, $rootScope, $transitions,
-                                 windowWidthService) {
+                                 windowWidthService, activeTestRunId) {
         let TENANT;
         const vm = {
             testRuns: resolvedTestRuns.results || [],
@@ -39,6 +40,7 @@
             isFilterActive: testsRunsService.isFilterActive,
             isSearchActive: testsRunsService.isSearchActive,
             projects: null,
+            activeTestRunId: activeTestRunId,
 
             isTestRunsEmpty: isTestRunsEmpty,
             getTestRuns: getTestRuns,
@@ -67,6 +69,7 @@
             readStoredParams();
             initWebsocket();
             bindEvents();
+            activeTestRunId && highlightTestRun();
         }
 
         function resetFilter() {
@@ -76,6 +79,32 @@
         // function applySearch() {
         //     $rootScope.$broadcast('tr-filter-apply');
         // }
+
+        function highlightTestRun() {
+            const activeTestRun = getTestRunById(activeTestRunId);
+
+            if (activeTestRun) {
+                $timeout(function() {
+                    //Scroll to the element if it out of the viewport
+                    const el = document.getElementById('testRun_' + activeTestRunId);
+
+                    //scroll to the element
+                    if (!isElementInViewport(el)) {
+                        const headerOffset = vm.isMobile() && !vm.isSearchActive() ? 144 : 96;
+                        const elOffsetTop = $(el).offset().top;
+
+                        $('html,body').animate({ scrollTop: elOffsetTop - headerOffset }, 'slow', function() {
+                            activeTestRun.highlighting = true;
+                        });
+                    } else {
+                        activeTestRun.highlighting = true;
+                    }
+                    $timeout(function() {
+                        delete activeTestRun.highlighting;
+                    }, 4000); //4000 - highlighting animation duration in CSS
+                }, 500); // wait for content is rendered (maybe need to be increased if scroll position is incorrect)
+            }
+        }
         
         function displaySearch() {
             !vm.isFilterActive() && $rootScope.$broadcast('tr-filter-open-search');
@@ -351,16 +380,10 @@
         function subscribeTestRunsTopic() {
             return vm.zafiraWebsocket.subscribe('/topic/' + TENANT + '.testRuns', function (data) {
                 const event = getEventFromMessage(data.body);
-                let index = -1;
                 const testRun = angular.copy(event.testRun);
+                const index = getTestRunIndexById(+testRun.id);
 
                 if (vm.projects && vm.projects.length && vm.projects.indexOfField('id', testRun.project.id) === -1) { return; }
-
-                vm.testRuns.some(function(tr, i) {
-                    if (tr.id === +testRun.id) {
-                        index = i;
-                    }
-                });
 
                 //add new testRun to the top of the list or update fields if it is already in the list
                 if (index === -1) {
@@ -387,13 +410,7 @@
         function subscribeStatisticsTopic() {
             return vm.zafiraWebsocket.subscribe('/topic/' + TENANT + '.statistics', function (data) {
                 const event = getEventFromMessage(data.body);
-                let index = -1;
-
-                vm.testRuns.some(function(testRun, i) {
-                    if (testRun.id === +event.testRunStatistics.testRunId) {
-                        index = i;
-                    }
-                });
+                const index = getTestRunIndexById(+event.testRunStatistics.testRunId);
 
                 if (index !== -1) {
                     const data = {
@@ -446,6 +463,36 @@
                 fullscreen: true,
                 autoWrap: false
             });
+        }
+
+        function getTestRunIndexById(id) {
+            let index = -1;
+
+            vm.testRuns.some(function(testRun, i) {
+                return testRun.id === id && (index = i) && true;
+            });
+
+            return index;
+        }
+
+        function getTestRunById(id) {
+            let testRun;
+            const index = getTestRunIndexById(id);
+
+            index !== -1 && (testRun = vm.testRuns[index]);
+
+            return testRun;
+        }
+
+        function isElementInViewport(el) {
+            const rect = el.getBoundingClientRect();
+
+            return (
+                rect.top >= 0 &&
+                rect.left >= 0 &&
+                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+                rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+            );
         }
     }
 })();
