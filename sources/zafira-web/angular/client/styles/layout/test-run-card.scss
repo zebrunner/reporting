@@ -22,6 +22,9 @@
         &:hover {
             background-color: rgba(0,0,0,.05);
         }
+        &._highlighting {
+            animation: change-color 3s ease-in-out 1;
+        }
     }
     &__wrapper {
         &-left,
@@ -527,7 +530,7 @@
     &._mobile & {
         &__clickable {
             position: absolute;
-            top: -10px;
+            top: -15px;
             bottom: -1px;
             right: -12px;
             left: -12px;
@@ -798,4 +801,10 @@
     .comments-area {
         overflow: hidden;
     }
+}
+
+@keyframes change-color {
+    0% { background-color: inherit; }
+    25% { background-color: rgba(0,0,0,.05); }
+    100% { background-color: inherit; }
 }

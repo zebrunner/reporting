@@ -68,7 +68,7 @@
                     </div>
                 </div>
             </div>
-            <div class="test-run-card__clickable" ng-click="$ctrl.goToTestRun()"></div>
+            <div class="test-run-card__clickable" ng-class="{ '_highlighting': $ctrl.testRun.highlighting }" ng-click="$ctrl.goToTestRun()"></div>
         </div>
         <div class="test-run-card__wrapper-right">
             <div name="testRunEnv" class="test-run-card__cell _env">
@@ -291,7 +291,7 @@
                     </md-menu-content>
                 </md-menu>
             </div>
-            <div class="test-run-card__clickable" ng-click="$ctrl.goToTestRun()"></div>
+            <div class="test-run-card__clickable" ng-class="{ '_highlighting': $ctrl.testRun.highlighting }" ng-click="$ctrl.goToTestRun()"></div>
         </div>
 
         <div class="test-run-card__row _wrapper _middle" ng-hide="$ctrl.singleMode && !$ctrl.singleWholeInfo">
