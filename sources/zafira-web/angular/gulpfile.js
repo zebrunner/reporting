@@ -126,10 +126,18 @@ gulp.task('copy', ['sass-min'], function() {
 gulp.task('optimize', ['inject', 'sass-min'], function() {
     log('Optimizing the js, css, html');
 
+    const jsFilter = $.filter('**/*.js', {restore: true});
+
     return gulp
         .src(config.index)
         .pipe($.plumber({errorHandler: swallowError}))
         .pipe($.useref())
+        .pipe(jsFilter)
+        .pipe($.babel({
+            presets: ['@babel/env'],
+            plugins: ['angularjs-annotate', '@babel/transform-runtime']
+        }))
+        .pipe(jsFilter.restore)
         // .pipe($.if('scripts/app.js', $.uglify()))
         .pipe(gulp.dest( config.dist ));
 
