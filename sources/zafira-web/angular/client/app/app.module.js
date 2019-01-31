@@ -1,44 +1,45 @@
 (function () {
     'use strict';
 
-    angular.module('app', [
+    const ngModule = angular.module('app', [
         // Core modules
-         'app.core'
+         'app.core',
         // Custom Feature modules
-        ,'app.page'
-        ,'app.services'
-        ,'app.auth'
-        ,'app.dashboard'
-        ,'app.user'
-        ,'app.scm'
-        ,'app.testcase'
-        ,'app.testruninfo'
-        ,'app.testsRuns'
-        ,'app.testDetails'
-        ,'app.view'
-        ,'app.settings'
-        ,'app.monitors'
-        ,'app.integrations'
-        ,'app.certification'
-        ,'app.sidebar'
-        ,'app.common'
-        ,'app.testRunCard'
-        ,'app.testsRunsFilter'
+        'app.page',
+        'app.services',
+        'app.auth',
+        'app.dashboard',
+        'app.user',
+        'app.scm',
+        'app.testcase',
+        'app.testruninfo',
+        'app.testsRuns',
+        'app.testDetails',
+        'app.view',
+        'app.settings',
+        'app.monitors',
+        'app.integrations',
+        'app.certification',
+        'app.sidebar',
+        'app.common',
+        'app.testRunCard',
+        'app.testsRunsFilter',
         // 3rd party feature modules
-        ,'ngImgCrop'
-        ,'ngecharts'
-        ,'ui.ace'
-        ,'elasticsearch'
-        ,'md.data.table'
-        ,'timer'
-        ,'n3-line-chart'
-        ,'n3-pie-chart'
-        ,'ngSanitize'
-        ,'chieffancypants.loadingBar'
-        ,'textAngular'
-        ,'gridstack-angular'
-        ,'ngMaterialDateRangePicker'
-        ,'angular-jwt'
+        'ngImgCrop',
+        'ngecharts',
+        'ui.ace',
+        'elasticsearch',
+        require('angular-material-data-table'),
+        require('angular-validation-match'),
+        'timer',
+        'n3-line-chart',
+        'n3-pie-chart',
+        'ngSanitize',
+        'chieffancypants.loadingBar',
+        'textAngular',
+        'gridstack-angular',
+        'ngMaterialDateRangePicker',
+        'angular-jwt',
     ])
     .config(['$httpProvider', '$anchorScrollProvider', function($httpProvider, $anchorScrollProvider) {
         $anchorScrollProvider.disableAutoScrolling();
@@ -1172,3 +1173,24 @@
             }
       ])
 })();
+
+//Modules
+require('./_auth/auth.module');
+require('./_certifications/certification.module');
+require('./_dashboards/dashboard.module');
+require('./_integrations/integrations.module');
+require('./_nav/sidebar.module');
+require('./_monitors/monitors.module');
+require('./_testcases/testcase.module');
+require('./_settings/settings.module');
+require('./_users/user.module');
+require('./_views/view.module');
+require('./_scm/scm.module');
+require('./core/core.module');
+require('./layout/layout.module');
+require('./page/page.module');
+require('./layout/commons/common.module');
+require('./containers/containers');
+
+//Services
+require('./_services/services.module');

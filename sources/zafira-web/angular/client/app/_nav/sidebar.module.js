@@ -4,3 +4,5 @@
     angular.module('app.sidebar', []);
 
 })();
+
+require('./sidebar.controller');

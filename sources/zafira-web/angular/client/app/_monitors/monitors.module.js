@@ -4,3 +4,5 @@
     angular.module('app.monitors', []);
 
 })();
+
+require('./monitors.controller');

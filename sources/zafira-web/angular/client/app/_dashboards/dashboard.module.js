@@ -3,4 +3,6 @@
 
     angular.module('app.dashboard', []);
 
-})(); 
+})();
+
+require('./dashboard.controller');

@@ -70,6 +70,13 @@
             initWebsocket();
             bindEvents();
             activeTestRunId && highlightTestRun();
+
+            const testFn = () => {
+                console.log('testFN');
+            };
+
+            testFn();
+            console.log(testFn);
         }
 
         function resetFilter() {

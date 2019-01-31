@@ -4,3 +4,5 @@
     angular.module('app.scm', []);
 
 })();
+
+require('./scm.controller');

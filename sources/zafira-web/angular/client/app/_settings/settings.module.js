@@ -3,4 +3,6 @@
 
     angular.module('app.settings', []);
 
-})(); 
+})();
+
+require('./settings.controller');

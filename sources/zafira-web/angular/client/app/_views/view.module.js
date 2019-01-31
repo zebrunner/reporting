@@ -4,3 +4,5 @@
     angular.module('app.view', []);
 
 })();
+
+require('./view.controller');

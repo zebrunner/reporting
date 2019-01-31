@@ -135,7 +135,7 @@ gulp.task('optimize', ['inject', 'sass-min'], function() {
         .pipe(jsFilter)
         .pipe($.babel({
             presets: ['@babel/env'],
-            plugins: ['angularjs-annotate', '@babel/transform-runtime']
+            plugins: ['angularjs-annotate']
         }))
         .pipe(jsFilter.restore)
         // .pipe($.if('scripts/app.js', $.uglify()))
@@ -143,6 +143,30 @@ gulp.task('optimize', ['inject', 'sass-min'], function() {
 
 });
 
+gulp.task('dev-build', ['inject', 'sass', 'copy'], function() {
+    log('Optimizing the js, css, html');
+
+    const jsFilter = $.filter('**/*.js', {restore: true});
+
+    gulp
+        .src(config.index)
+        .pipe($.plumber({errorHandler: swallowError}))
+        .pipe($.useref())
+        .pipe(jsFilter)
+        .pipe($.babel({
+            presets: ['@babel/env'],
+            plugins: ['angularjs-annotate']
+        }))
+        .pipe(jsFilter.restore)
+        // .pipe($.if('scripts/app.js', $.uglify()))
+        .pipe(gulp.dest( config.dist ));
+
+    startBrowserSync('dev-serve');
+});
+
+// gulp.task('serve', ['inject', 'sass'], function() {
+//     startBrowserSync('serve');
+// });
 
 gulp.task('serve', ['inject', 'sass'], function() {
     startBrowserSync('serve');
@@ -211,6 +235,10 @@ function startBrowserSync(opt) {
     switch(opt) {
         case 'dist':
             log('Serving dist app');
+            serveDistApp();
+            break;
+        case 'dev-serve':
+            log('Serving dev dist app');
             serveDistApp();
             break;
         case 'docs':
