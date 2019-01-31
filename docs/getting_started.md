@@ -1,7 +1,7 @@
 # Getting started
 
 #### Prerequesties
-The easiest way to deploy Zafira it to use [Docker](https://docs.docker.com/). You will find all the details for installation of [Docker Engine](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/) in oficial documentation. Docker allows to install Zafira on Linux, Mac or Windows. Make sure that you have allocated at least 2 CPUs and 4Gb or RAM for Docker operations.
+The easiest way to deploy Zafira is to use [Docker](https://docs.docker.com/). You will find all the details for installation of [Docker Engine](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/) in official documentation. Docker allows to install Zafira on Linux, Mac or Windows. Make sure that you have allocated at least 2 CPUs and 4Gb or RAM for Docker operations.
 
 <p align="center">
   <img width="650px" height="550px" src="../img/docker.png">
