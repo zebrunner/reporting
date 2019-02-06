@@ -476,7 +476,8 @@
         $scope.showGalleryDialog = function (event, url) {
             $mdDialog.show({
                 controller: 'GalleryController',
-                templateUrl: 'app/components/modals/gallery/gallery.html',
+                // templateUrl: 'app/components/modals/gallery/gallery.html',
+                template: require('../../components/modals/gallery/gallery.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,

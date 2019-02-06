@@ -59,7 +59,8 @@
             restrict: 'E',
             replace: true,
             transclude: true,
-            templateUrl: 'app/layout/commons/templates/input-container.template.html',
+            // templateUrl: 'app/layout/commons/templates/input-container.template.html',
+            template: require('./templates/input-container.template.html'),
             link: function(scope, element, attrs, ngModel){
             }
         };
@@ -71,7 +72,8 @@
             replace: true,
             transclude: true,
             require: 'ngModel',
-            templateUrl: 'app/layout/commons/templates/radio-button.template.html',
+            // templateUrl: 'app/layout/commons/templates/radio-button.template.html',
+            template: require('./templates/radio-button.template.html'),
             scope: {
                 ngModel: '=ngModel',
                 value: '='
@@ -106,7 +108,8 @@
             restrict: 'E',
             replace: true,
             transclude: true,
-            templateUrl: 'app/layout/commons/templates/sub-header.template.html'
+            // templateUrl: 'app/layout/commons/templates/sub-header.template.html'
+            template: require('./templates/sub-header.template.html')
         };
     }
 

@@ -2,13 +2,13 @@
     'use strict';
 
     angular
-        .module('app.sidebar')
-        .controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$q', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'UserService', 'DashboardService', 'AuthService', 'SettingsService', 'UploadService', SidebarController])
+    .module('app.appSidebar')
+    .controller('AppSidebarController', ['$scope', '$rootScope', '$cookies', '$q', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'UserService', 'DashboardService', 'AuthService', 'SettingsService', 'UploadService', AppSidebarController])
 
     // **************************************************************************
-    function SidebarController($scope, $rootScope, $cookies, $q, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService, SettingsService, UploadService) {
+    function AppSidebarController($scope, $rootScope, $cookies, $q, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService, SettingsService, UploadService) {
 
-    	$scope.DashboardService = DashboardService;
+        $scope.DashboardService = DashboardService;
 
         $scope.selectedProjects = ProjectProvider.getProjects();
         $scope.version = null;
@@ -20,7 +20,7 @@
         var FILE_LOGO_TYPE = "COMMON";
 
         $scope.hasHiddenDashboardPermission = function(){
-        	return AuthService.UserHasAnyPermission(["VIEW_HIDDEN_DASHBOARDS"]);
+            return AuthService.UserHasAnyPermission(["VIEW_HIDDEN_DASHBOARDS"]);
         };
 
         $scope.loadProjects = function(){
@@ -38,7 +38,7 @@
                 }
                 else
                 {
-                	alertify.error("Unable to load projects");
+                    alertify.error("Unable to load projects");
                 }
             });
         };
@@ -62,7 +62,7 @@
         $scope.loadViews = function () {
             $scope.viewsLoaded = false;
             getViews().then(function (response) {
-               $scope.viewsLoaded = true;
+                $scope.viewsLoaded = true;
             });
         };
 
@@ -143,22 +143,22 @@
             $mdDialog.show({
                 controller: ProjectController,
                 // templateUrl: 'app/_nav/project_modal.html',
-                template: require('./project_modal.html'),
+                template: require('../../../_nav/project_modal.html'), //TODO: move to separate component
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,
                 fullscreen: true
             })
-                .then(function(answer) {
-                }, function() {
-                });
+            .then(function(answer) {
+            }, function() {
+            });
         };
 
         $scope.showViewDialog = function(event, view) {
             $mdDialog.show({
                 controller: ViewController,
                 // templateUrl: 'app/_nav/view_modal.html',
-                template: require('./view_modal.html'),
+                template: require('../../../_nav/view_modal.html'), //TODO: move to separate component
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,
@@ -167,16 +167,16 @@
                     view: view
                 }
             })
-                .then(function(answer) {
-                }, function() {
-                });
+            .then(function(answer) {
+            }, function() {
+            });
         };
 
         $scope.showUploadImageDialog = function($event) {
             $mdDialog.show({
                 controller: FileUploadController,
                 // templateUrl: 'app/_users/upload_image_modal.html',
-                template: require('../_users/upload_image_modal.html'),
+                template: require('../../../_users/upload_image_modal.html'), //TODO: move to separate component
                 parent: angular.element(document.body),
                 targetEvent: $event,
                 clickOutsideToClose:true,
@@ -184,9 +184,9 @@
                 scope: $scope,
                 preserveScope: true
             })
-                .then(function(answer) {
-                }, function() {
-                });
+            .then(function(answer) {
+            }, function() {
+            });
         };
 
         // ***** Modals Controllers *****
@@ -292,16 +292,16 @@
                     {
                         $rootScope.companyLogo.value = rs.data.url;
                         SettingsService.editSetting($rootScope.companyLogo)
-                            .then(function (prs) {
-                                if(prs.success)
-                                {
-                                   $rootScope.companyLogo.value += '?' + (new Date()).getTime();
-                                    alertify.success("Photo was uploaded");
-                                    $scope.hide();
-                                } else {
-                                    alertify.error(prs.message);
-                                }
-                            });
+                        .then(function (prs) {
+                            if(prs.success)
+                            {
+                                $rootScope.companyLogo.value += '?' + (new Date()).getTime();
+                                alertify.success("Photo was uploaded");
+                                $scope.hide();
+                            } else {
+                                alertify.error(prs.message);
+                            }
+                        });
                     }
                     else
                     {

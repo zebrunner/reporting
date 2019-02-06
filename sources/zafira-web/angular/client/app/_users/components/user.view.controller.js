@@ -194,7 +194,8 @@
                         $mdDialog.cancel(false);
                     };
                 },
-                templateUrl: 'app/_users/components/users/create_modal.html',
+                // templateUrl: 'app/_users/components/users/create_modal.html',
+                template: require('./users/create_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,
@@ -216,7 +217,8 @@
         $scope.showGroupDialog = function(event, group) {
             $mdDialog.show({
                 controller: GroupController,
-                templateUrl: 'app/_users/components/groups/group_modal.html',
+                // templateUrl: 'app/_users/components/groups/group_modal.html',
+                template: require('./groups/group_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,
@@ -275,7 +277,8 @@
         $scope.showInviteUsersDialog = function(event) {
             $mdDialog.show({
                 controller: InviteController,
-                templateUrl: 'app/_users/components/invites/invite_modal.html',
+                // templateUrl: 'app/_users/components/invites/invite_modal.html',
+                template: require('./invites/invite_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:false,

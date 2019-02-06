@@ -411,7 +411,8 @@
 
             modalsService.openModal({
                 controller: 'TestDetailsModalController',
-                templateUrl: 'app/components/modals/test-details/test-details.html',
+                // templateUrl: 'app/components/modals/test-details/test-details.html',
+                template: require('../../components/modals/test-details/test-details.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
                 locals: {

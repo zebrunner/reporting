@@ -70,7 +70,8 @@
                         $mdDialog.cancel(false);
                     };
                 },
-                templateUrl: 'app/_settings/settings_modal.html',
+                // templateUrl: 'app/_settings/settings_modal.html',
+                template: require('./settings_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,

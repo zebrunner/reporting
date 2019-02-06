@@ -29,29 +29,29 @@
 
         <!-- Needs images, font... therefore can not be part of main.css -->
         <link rel="icon" href="favicon.ico" type="image/x-icon" />
-        <link rel="stylesheet" href="styles/loader.css">
-        <link rel="stylesheet" href="styles/loading-bar.css">
-        <link rel="stylesheet" href="vendors/material-design-icons/iconfont/material-icons.css" rel="stylesheet" >
-        <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
+        <!--<link rel="stylesheet" href="styles/loader.css">-->
+        <!--<link rel="stylesheet" href="styles/loading-bar.css">-->
+        <!--<link rel="stylesheet" href="vendors/material-design-icons/iconfont/material-icons.css" rel="stylesheet" >-->
+        <!--<link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">-->
         <!-- end Needs images -->
 
 
         <!-- build:css({.tmp,client}) styles/main.css -->
-        <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css">
-        <link rel="stylesheet" href="bower_components/alertify-js/build/css/alertify.min.css">
-        <link rel="stylesheet" href="bower_components/gridstack/dist/gridstack.min.css">
-        <link rel="stylesheet" href="bower_components/gridstack/dist/gridstack-extra.min.css">
-        <link rel="stylesheet" href="bower_components/ng-img-crop/compile/unminified/ng-img-crop.css">
-        <link rel="stylesheet" href="vendors/md-date-range-picker.css">
+        <!--<link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css">-->
+        <!--<link rel="stylesheet" href="bower_components/alertify-js/build/css/alertify.min.css">-->
+        <!--<link rel="stylesheet" href="bower_components/gridstack/dist/gridstack.min.css">-->
+        <!--<link rel="stylesheet" href="bower_components/gridstack/dist/gridstack-extra.min.css">-->
+        <!--<link rel="stylesheet" href="bower_components/ng-img-crop/compile/unminified/ng-img-crop.css">-->
+        <!--<link rel="stylesheet" href="vendors/md-date-range-picker.css">-->
         <!--<link rel="stylesheet" href="bower_components/push.js/bin/push.min.js">-->
-        <link rel="stylesheet" href="styles/bootstrap.css">
-        <link rel="stylesheet" href="styles/ui.css">
-        <link rel="stylesheet" href="styles/app.css">
-        <link rel="stylesheet" href="styles/LineChart.min.css">
-        <link rel="stylesheet" href="styles/textAngular.css">
-        <link rel="stylesheet" href="styles/vs.css">
-        <link rel="stylesheet" href="styles/custom.css">
-        <link rel="stylesheet" href="styles/figure.css">
+        <!--<link rel="stylesheet" href="styles/bootstrap.css">-->
+        <!--<link rel="stylesheet" href="styles/ui.css">-->
+        <!--<link rel="stylesheet" href="styles/app.css">-->
+        <!--<link rel="stylesheet" href="styles/LineChart.min.css">-->
+        <!--<link rel="stylesheet" href="styles/textAngular.css">-->
+        <!--<link rel="stylesheet" href="styles/vs.css">-->
+        <!--<link rel="stylesheet" href="styles/custom.css">-->
+        <!--<link rel="stylesheet" href="styles/figure.css">-->
         <!-- endbuild -->
 
     </head>
@@ -84,10 +84,10 @@
                  }"></header>
 
     <div class="main-container" data-ng-class="{ 'app-nav-horizontal': main.menu === 'horizontal' }">
-        <aside data-ng-include=" 'app/layout/sidebar.html' " id="nav-container" class="nav-container ng-scope nav-vertical bg-dark" data-ng-class="{ 'nav-fixed': main.fixedSidebar,
-                                    'nav-vertical': main.menu === 'vertical'}">
-        </aside>
-
+        <!--<aside data-ng-include=" 'app/layout/sidebar.html' " id="nav-container" class="nav-container ng-scope nav-vertical bg-dark" data-ng-class="{ 'nav-fixed': main.fixedSidebar,-->
+                                    <!--'nav-vertical': main.menu === 'vertical'}">-->
+        <!--</aside>-->
+        <app-sidebar ng-class="{ 'nav-fixed': main.fixedSidebar, 'nav-vertical': main.menu === 'vertical' }"></app-sidebar>
         <div id="content" class="content-container">
             <section data-ui-view ng-class="{'{{main.pageTransition.class}}': isAnimated()}" class="view-container" ng-class="{ 'dark-container zaf-dark': darkThemes.indexOf(main.skin) >= 0,
                              'bg-page-grey zaf-light': darkThemes.indexOf(main.skin) === -1}"></section>

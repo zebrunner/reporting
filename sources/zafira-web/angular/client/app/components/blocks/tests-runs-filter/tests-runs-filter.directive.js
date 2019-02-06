@@ -4,7 +4,8 @@
     angular.module('app.testsRunsFilter')
     .directive('testsRunsFilter', function() {
         return {
-            templateUrl: 'app/components/blocks/tests-runs-filter/tests-runs-filter.html',
+            // templateUrl: 'app/components/blocks/tests-runs-filter/tests-runs-filter.html',
+            template: require('./tests-runs-filter.html'),
             controller: TestsRunsFilterController,
             scope: {
                 onFilterChange: '&'

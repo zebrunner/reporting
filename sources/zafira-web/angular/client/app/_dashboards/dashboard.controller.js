@@ -212,7 +212,8 @@
                             });
                     };
                 },
-                templateUrl : 'app/_dashboards/widget-placement_toast.html'
+                // templateUrl : 'app/_dashboards/widget-placement_toast.html'
+                template : require('./widget-placement_toast.html')
             });
         };
 
@@ -318,7 +319,8 @@
         $scope.showDashboardWidgetDialog = function (event, widget, isNew) {
             $mdDialog.show({
                 controller: DashboardWidgetController,
-                templateUrl: 'app/_dashboards/dashboard_widget_modal.html',
+                // templateUrl: 'app/_dashboards/dashboard_widget_modal.html',
+                template: require('./dashboard_widget_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose: true,
@@ -337,7 +339,8 @@
         $scope.showDashboardDialog = function (event, dashboard, isNew) {
             $mdDialog.show({
                 controller: DashboardSettingsController,
-                templateUrl: 'app/_dashboards/dashboard_modal.html',
+                // templateUrl: 'app/_dashboards/dashboard_modal.html',
+                template: require('./dashboard_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose: true,
@@ -371,7 +374,8 @@
         $scope.showWidgetDialog = function (event, widget, isNew, dashboard) {
             $mdDialog.show({
                 controller: WidgetController,
-                templateUrl: 'app/_dashboards/widget_modal.html',
+                // templateUrl: 'app/_dashboards/widget_modal.html',
+                template: require('./widget_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose: true,
@@ -406,7 +410,8 @@
         $scope.showEmailDialog = function (event, widgetId) {
             $mdDialog.show({
                 controller: EmailController,
-                templateUrl: 'app/_dashboards/email_modal.html',
+                // templateUrl: 'app/_dashboards/email_modal.html',
+                template: require('./email_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose: true,

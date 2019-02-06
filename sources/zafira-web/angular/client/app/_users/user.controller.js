@@ -198,7 +198,8 @@
         $scope.showUploadImageDialog = function ($event, user) {
             $mdDialog.show({
                 controller: FileUploadController,
-                templateUrl: 'app/_users/upload_image_modal.html',
+                // templateUrl: 'app/_users/upload_image_modal.html',
+                template: require('./upload_image_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: $event,
                 clickOutsideToClose: true,

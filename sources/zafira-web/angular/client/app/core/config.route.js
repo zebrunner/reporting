@@ -8,7 +8,8 @@
                 $stateProvider
 	                .state('dashboard', {
 	                    url: '/dashboards/:id',
-	                    templateUrl: 'app/_dashboards/list.html',
+	                    // templateUrl: 'app/_dashboards/list.html',
+	                    template: require('../_dashboards/list.html'),
                         data: {
                             requireLogin: true
                         },
@@ -40,7 +41,8 @@
 	                })
 	                .state('dashboards', {
 	                    url: '/dashboards',
-	                    templateUrl: 'app/_dashboards/list.html',
+	                    // templateUrl: 'app/_dashboards/list.html',
+	                    template: require('../_dashboards/list.html'),
                         data: {
                             requireLogin: true
                         },
@@ -64,14 +66,16 @@
 	                })
                     .state('views', {
                         url: '/views/:id',
-                        templateUrl: 'app/_views/list.html',
+                        // templateUrl: 'app/_views/list.html',
+                        template: require('../_views/list.html'),
                         data: {
                             requireLogin: true
                         }
                     })
                     .state('signin', {
                         url: '/signin',
-                        templateUrl: 'app/_auth/signin.html',
+                        // templateUrl: 'app/_auth/signin.html',
+                        template: require('../_auth/signin.html'),
                         params: {
                             referrer: null,
                             referrerParams: null
@@ -83,7 +87,8 @@
                     })
                     .state('signup', {
                         url: '/signup',
-                        templateUrl: 'app/_auth/signup.html',
+                        // templateUrl: 'app/_auth/signup.html',
+                        template: require('../_auth/signup.html'),
                         data: {
                             onlyGuests: true,
                             classes: 'body-wide body-auth'
@@ -101,7 +106,8 @@
                     })
                     .state('forgotPassword', {
                         url: '/password/forgot',
-                        templateUrl: 'app/_auth/forgot-password.html',
+                        // templateUrl: 'app/_auth/forgot-password.html',
+                        template: require('../_auth/forgot-password.html'),
                         data: {
                             onlyGuests: true,
                             classes: 'body-wide body-auth'
@@ -109,7 +115,8 @@
                     })
                     .state('resetPassword', {
                         url: '/password/reset',
-                        templateUrl: 'app/_auth/reset-password.html',
+                        // templateUrl: 'app/_auth/reset-password.html',
+                        template: require('../_auth/reset-password.html'),
                         data: {
                             onlyGuests: true,
                             classes: 'body-wide body-auth'
@@ -117,7 +124,8 @@
                     })
                     .state('users/profile', {
                         url: '/users/profile',
-                        templateUrl: 'app/_users/profile.html',
+                        // templateUrl: 'app/_users/profile.html',
+                        template: require('../_users/profile.html'),
                         data: {
                             requireLogin: true,
                             classes: 'p-user-profile'
@@ -125,7 +133,8 @@
                     })
                     .state('users', {
                         url: '/users',
-                        templateUrl: 'app/_users/list.html',
+                        // templateUrl: 'app/_users/list.html',
+                        template: require('../_users/list.html'),
                         data: {
                             requireLogin: true,
                             classes: 'p-users'
@@ -133,18 +142,21 @@
                     })
                     .state('scm/callback', {
                         url: '/scm/callback',
-                        templateUrl: 'app/_scm/list.html'
+                        // templateUrl: 'app/_scm/list.html'
+                        template: require('../_scm/list.html')
                     })
                     .state('tests/cases', {
                         url: '/tests/cases',
-                        templateUrl: 'app/_testcases/list.html',
+                        // templateUrl: 'app/_testcases/list.html',
+                        template: require('../_testcases/list.html'),
                         data: {
                             requireLogin: true
                         }
                     })
                     .state('tests/cases/metrics', {
                         url: '/tests/cases/:id/metrics',
-                        templateUrl: 'app/_testcases/metrics/list.html',
+                        // templateUrl: 'app/_testcases/metrics/list.html',
+                        template: require('../_testcases/metrics/list.html'),
                         data: {
                             requireLogin: true
                         }
@@ -153,7 +165,8 @@
                         controller: 'TestDetailsController',
                         controllerAs: '$ctrl',
                         url: '/tests/runs/:testRunId',
-                        templateUrl: 'app/containers/test-details/test-details.html',
+                        // templateUrl: 'app/containers/test-details/test-details.html',
+                        template: require('../containers/test-details/test-details.html'),
                         store: true,
                         params: {
                             testRun: null
@@ -191,7 +204,8 @@
                     })
                     .state('tests/runs', {
                         url: '/tests/runs',
-                        templateUrl: 'app/containers/tests-runs/tests-runs.html',
+                        // templateUrl: 'app/containers/tests-runs/tests-runs.html',
+                        template: require('../containers/tests-runs/tests-runs.html'),
                         controller: 'TestsRunsController',
                         controllerAs: '$ctrl',
                         bindToController: true,
@@ -236,7 +250,8 @@
                     })
                     .state('tests/runs/info', {
                         url: '/tests/runs/:testRunId/info/:testId',
-                        templateUrl: 'app/containers/test-run-info/test-run-info.html',
+                        // templateUrl: 'app/containers/test-run-info/test-run-info.html',
+                        template: require('../containers/test-run-info/test-run-info.html'),
                         controller: 'TestRunInfoController',
                         data: {
                             requireLogin: true
@@ -244,21 +259,24 @@
                     })
                     .state('settings', {
                         url: '/settings',
-                        templateUrl: 'app/_settings/list.html',
+                        // templateUrl: 'app/_settings/list.html',
+                        template: require('../_settings/list.html'),
                         data: {
                             requireLogin: true
                         }
                     })
                     .state('monitors', {
                         url: '/monitors',
-                        templateUrl: 'app/_monitors/list.html',
+                        // templateUrl: 'app/_monitors/list.html',
+                        template: require('../_monitors/list.html'),
                         data: {
                             requireLogin: true
                         }
                     })
                     .state('integrations', {
                         url: '/integrations',
-                        templateUrl: 'app/_integrations/list.html',
+                        // templateUrl: 'app/_integrations/list.html',
+                        template: require('../_integrations/list.html'),
                         data: {
                             requireLogin: true,
                             classes: 'p-integrations'
@@ -266,21 +284,24 @@
                     })
                     .state('certifications', {
                         url: '/certification',
-                        templateUrl: 'app/_certifications/list.html',
+                        // templateUrl: 'app/_certifications/list.html',
+                        template: require('../_certifications/list.html'),
                         data: {
                             requireLogin: true
                         }
                     })
                     .state('404', {
                         url: '/404',
-                        templateUrl: 'app/page/404.html',
+                        // templateUrl: 'app/page/404.html',
+                        template: require('../page/404.html'),
                         data: {
                             classes: 'body-wide body-err'
                         }
                     })
                     .state('500', {
                         url: '/500',
-                        templateUrl: 'app/page/500.html',
+                        // templateUrl: 'app/page/500.html',
+                        template: require('../page/500.html'),
                         data: {
                             classes: 'body-wide body-err'
                         }

@@ -70,13 +70,6 @@
             initWebsocket();
             bindEvents();
             activeTestRunId && highlightTestRun();
-
-            const testFn = () => {
-                console.log('testFN');
-            };
-
-            testFn();
-            console.log(testFn);
         }
 
         function resetFilter() {
@@ -198,7 +191,8 @@
         function showCompareDialog(event) {
             $mdDialog.show({
                 controller: 'CompareController',
-                templateUrl: 'app/components/modals/compare/compare.html',
+                // templateUrl: 'app/components/modals/compare/compare.html',
+                template: require('../../components/modals/compare/compare.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,
@@ -314,7 +308,8 @@
         function showEmailDialog(testRuns, event) {
             $mdDialog.show({
                 controller: 'EmailController',
-                templateUrl: 'app/components/modals/email/email.html',
+                // templateUrl: 'app/components/modals/email/email.html',
+                template: require('../../components/modals/email/email.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,
@@ -463,7 +458,8 @@
         function showCiHelperDialog(event) {
             $mdDialog.show({
                 controller: 'CiHelperController',
-                templateUrl: 'app/components/modals/ci-helper/ci-helper.html',
+                // templateUrl: 'app/components/modals/ci-helper/ci-helper.html',
+                template: require('../../components/modals/ci-helper/ci-helper.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:false,

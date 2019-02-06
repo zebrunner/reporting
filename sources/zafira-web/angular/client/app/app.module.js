@@ -20,7 +20,8 @@
         'app.monitors',
         'app.integrations',
         'app.certification',
-        'app.sidebar',
+        // 'app.sidebar',
+        'app.appSidebar',
         'app.common',
         'app.testRunCard',
         'app.testsRunsFilter',
@@ -1172,25 +1173,27 @@
                 });
             }
       ])
-})();
-
-//Modules
-require('./_auth/auth.module');
-require('./_certifications/certification.module');
-require('./_dashboards/dashboard.module');
-require('./_integrations/integrations.module');
-require('./_nav/sidebar.module');
-require('./_monitors/monitors.module');
-require('./_testcases/testcase.module');
-require('./_settings/settings.module');
-require('./_users/user.module');
-require('./_views/view.module');
-require('./_scm/scm.module');
-require('./core/core.module');
-require('./layout/layout.module');
-require('./page/page.module');
-require('./layout/commons/common.module');
-require('./containers/containers');
 
 //Services
-require('./_services/services.module');
+    require('./_services/services.module');
+//Modules
+    require('./_auth/auth.module');
+    require('./_certifications/certification.module');
+    require('./_dashboards/dashboard.module');
+    require('./_integrations/integrations.module');
+    require('./_nav/sidebar.module');
+    require('./_monitors/monitors.module');
+    require('./_testcases/testcase.module');
+    require('./_settings/settings.module');
+    require('./_users/user.module');
+    require('./_views/view.module');
+    require('./_scm/scm.module');
+    require('./core/core.module');
+    require('./layout/layout.module');
+    require('./page/page.module');
+    require('./layout/commons/common.module');
+    require('./containers/containers');
+    require('./components/components');
+})();
+
+

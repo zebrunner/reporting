@@ -16,34 +16,43 @@ module.exports = merge(common, {
     watch: true,
     module: {
         rules: [
+            // {
+            //     test: /\.scss|sass$/,
+            //     use: [
+            //         { loader: 'sass'},
+            //         {
+            //             loader: 'css',
+            //             options: {
+            //                 sourceMap: true
+            //             }
+            //         },
+            //         { loader: 'stylus' }
+            //     ],
+            //     exclude: [/app\/app\.styl$/],
+            // },
+            // {
+            //     test: /\.styl$/,
+            //     use: [
+            //         { loader: 'sass'},
+            //         {
+            //             loader: 'css',
+            //             options: {
+            //                 sourceMap: true
+            //             }
+            //         },
+            //         { loader: 'stylus' }
+            //     ],
+            //     include: [/app\/app\.styl$/]
+            // },
             {
-                test: /\.scss|sass$/,
+                test: /\.(sa|sc|c)ss$/,
                 use: [
-                    { loader: 'sass'},
-                    {
-                        loader: 'css',
-                        options: {
-                            sourceMap: true
-                        }
-                    },
-                    { loader: 'stylus' }
+                    'style',
+                    'css',
+                    'postcss',
+                    'sass',
                 ],
-                exclude: [/app\/app\.styl$/],
-            },
-            {
-                test: /\.styl$/,
-                use: [
-                    { loader: 'sass'},
-                    {
-                        loader: 'css',
-                        options: {
-                            sourceMap: true
-                        }
-                    },
-                    { loader: 'stylus' }
-                ],
-                include: [/app\/app\.styl$/]
-            },
+            }
         ]
     }
 });

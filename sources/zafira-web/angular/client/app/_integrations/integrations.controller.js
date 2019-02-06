@@ -217,7 +217,8 @@
         $scope.showUploadFileDialog = function ($event, toolName, settingName) {
             $mdDialog.show({
                 controller: FileUploadController,
-                templateUrl: 'app/_integrations/file_modal.html',
+                // templateUrl: 'app/_integrations/file_modal.html',
+                template: require('./file_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: $event,
                 clickOutsideToClose: true,

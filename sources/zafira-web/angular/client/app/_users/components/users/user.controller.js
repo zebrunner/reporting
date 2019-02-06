@@ -46,7 +46,8 @@
                         $mdDialog.cancel(false);
                     };
                 },
-                templateUrl: 'app/_users/components/users/password_modal.html',
+                // templateUrl: 'app/_users/components/users/password_modal.html',
+                template: require('./password_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: $event,
                 clickOutsideToClose:true,
@@ -96,7 +97,8 @@
                         $mdDialog.cancel(status);
                     };
                 },
-                templateUrl: 'app/_users/components/users/edit_modal.html',
+                // templateUrl: 'app/_users/components/users/edit_modal.html',
+                template: require('./edit_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,

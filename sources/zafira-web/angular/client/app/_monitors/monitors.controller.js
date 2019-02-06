@@ -262,7 +262,8 @@
                         $mdDialog.cancel(false);
                     };
                 },
-                templateUrl: 'app/_monitors/monitors_modal.html',
+                // templateUrl: 'app/_monitors/monitors_modal.html',
+                template: require('./monitors_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: $event,
                 clickOutsideToClose:true,

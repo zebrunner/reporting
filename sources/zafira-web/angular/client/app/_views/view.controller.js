@@ -225,7 +225,8 @@
         $scope.showJobsViewDialog = function(event, jobView) {
             $mdDialog.show({
                 controller: JobsViewController,
-                templateUrl: 'app/_views/jobs_view_modal.html',
+                // templateUrl: 'app/_views/jobs_view_modal.html',
+                template: require('./jobs_view_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,
