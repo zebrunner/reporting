@@ -3,41 +3,7 @@
 
     angular
     .module('app.testDetails')
-    .controller('TestDetailsController', [
-        'testRun',
-        '$scope',
-        '$rootScope',
-        '$mdToast',
-        '$mdMenu',
-        '$location',
-        '$window',
-        '$cookieStore',
-        '$mdDialog',
-        '$mdConstant',
-        '$interval',
-        '$timeout',
-        '$stateParams',
-        '$mdDateRangePicker',
-        '$q',
-        'FilterService',
-        'ProjectService',
-        'TestService',
-        'TestRunService',
-        'UtilService',
-        'UserService',
-        'SettingsService',
-        'ProjectProvider',
-        'ConfigService',
-        'SlackService',
-        'DownloadService',
-        'API_URL',
-        'DEFAULT_SC',
-        'OFFSET',
-        'TestRunsStorage',
-        '$tableExpandUtil',
-        'modalsService',
-        '$state',
-        TestDetailsController]);
+    .controller('TestDetailsController', TestDetailsController);
 
     // **************************************************************************
     function TestDetailsController(testRun, $scope, $rootScope, $mdToast,
@@ -50,6 +16,8 @@
                                    ConfigService, SlackService, DownloadService,
                                    API_URL, DEFAULT_SC, OFFSET, TestRunsStorage,
                                    $tableExpandUtil, modalsService, $state) {
+        'ngInject';
+
         const testGroupDataToStore = {
             statuses: [],
             tags: []
@@ -411,7 +379,6 @@
 
             modalsService.openModal({
                 controller: 'TestDetailsModalController',
-                // templateUrl: 'app/components/modals/test-details/test-details.html',
                 template: require('../../components/modals/test-details/test-details.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,

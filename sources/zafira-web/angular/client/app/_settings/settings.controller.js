@@ -3,9 +3,10 @@
 
     angular
         .module('app.settings')
-        .controller('SettingsController', ['$scope', '$rootScope', '$state', '$mdConstant', '$stateParams', '$mdDialog', 'SettingsService', SettingsController])
+        .controller('SettingsController', SettingsController);
 
     function SettingsController($scope, $rootScope, $state, $mdConstant, $stateParams, $mdDialog, SettingsService) {
+        'ngInject';
 
     	$scope.settings = [];
         $scope.toolName = null;
@@ -13,6 +14,7 @@
     	$scope.showSettingsDialog = function(event, setting) {
             $mdDialog.show({
                 controller: function ($scope, $mdDialog) {
+                    'ngInject';
 
                 	$scope.setting = {};
 
@@ -70,7 +72,6 @@
                         $mdDialog.cancel(false);
                     };
                 },
-                // templateUrl: 'app/_settings/settings_modal.html',
                 template: require('./settings_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,

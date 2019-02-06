@@ -1,18 +1,10 @@
 (function () {
     'use strict';
 
-    angular.module('app').controller('GalleryController', [
-        '$scope',
-        '$mdDialog',
-        '$q',
-        'DownloadService',
-        'url',
-        'ciRunId',
-        'test',
-        'thumbs',
-        GalleryController]);
+    angular.module('app').controller('GalleryController', GalleryController);
 
     function GalleryController($scope, $mdDialog, $q, DownloadService, url, ciRunId, test, thumbs) {
+        'ngInject';
 
         $scope.thumbs = Object.values(thumbs).sort(compareByIndex);
 

@@ -2,10 +2,9 @@
     'use strict';
 
     angular.module('app.user')
-        .controller('InviteControlsController', ['$scope', InviteControlsController]);
+        .controller('InviteControlsController', InviteControlsController);
 
-    function InviteControlsController($scope) {
-
-
-    };
+    function InviteControlsController() {
+        'ngInject';
+    }
 })();

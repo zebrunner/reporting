@@ -14,6 +14,8 @@
 
     // autoWrap: false option is required
     function zfModal() {
+        'ngInject';
+
         return {
             restrict: 'E',
             replace: true,
@@ -23,7 +25,7 @@
     '                           <div zafira-background-theme="modal" ng-transclude></div>\n' +
                 '           </div>\n' +
                 '       </md-dialog>',
-            controller: ['$scope', '$element', '$location', '$compile', zfModalController],
+            controller: zfModalController,
             link: function(scope, element, attrs, ngModel){
                 var mdDialogContainerElement = element.closest('.md-dialog-container');
                 if(mdDialogContainerElement) {
@@ -32,11 +34,14 @@
             }
         };
 
-        function zfModalController($scope, $element, $location, $compile) {
+        function zfModalController() {
+            'ngInject';
         }
     }
 
     function zfModalHelperContainer() {
+        'ngInject';
+
         return {
             restrict: 'E',
             replace: true,
@@ -46,6 +51,8 @@
     }
 
     function zfModalContentContainer() {
+        'ngInject';
+
         return {
             restrict: 'E',
             replace: true,
@@ -55,11 +62,12 @@
     }
 
     function zfInputContainer() {
+        'ngInject';
+
         return {
             restrict: 'E',
             replace: true,
             transclude: true,
-            // templateUrl: 'app/layout/commons/templates/input-container.template.html',
             template: require('./templates/input-container.template.html'),
             link: function(scope, element, attrs, ngModel){
             }
@@ -67,12 +75,13 @@
     }
 
     function zfRadioButton() {
+        'ngInject';
+
         return {
             restrict: 'E',
             replace: true,
             transclude: true,
             require: 'ngModel',
-            // templateUrl: 'app/layout/commons/templates/radio-button.template.html',
             template: require('./templates/radio-button.template.html'),
             scope: {
                 ngModel: '=ngModel',
@@ -104,16 +113,19 @@
     }
 
     function zfSubHeader() {
+        'ngInject';
+
         return {
             restrict: 'E',
             replace: true,
             transclude: true,
-            // templateUrl: 'app/layout/commons/templates/sub-header.template.html'
             template: require('./templates/sub-header.template.html')
         };
     }
 
     function zfSubHeaderTitle() {
+        'ngInject';
+
         return {
             restrict: 'E',
             replace: true,
@@ -123,6 +135,8 @@
     }
 
     function zfSubHeaderOptions() {
+        'ngInject';
+
         return {
             restrict: 'E',
             replace: true,
@@ -132,6 +146,8 @@
     }
 
     function zfSubHeaderButton() {
+        'ngInject';
+
         return {
             restrict: 'E',
             replace: true,

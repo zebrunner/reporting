@@ -2,10 +2,12 @@
     'use strict';
 
     angular.module('app.user')
-        .controller('UserViewController', ['$scope', '$rootScope', '$location', '$mdDateRangePicker', '$state', '$mdDialog', 'UserService', 'GroupService', 'PermissionService', 'InvitationService', 'AuthService', 'UtilService', UserViewController]);
+        .controller('UserViewController', UserViewController);
 
     // **************************************************************************
-    function UserViewController($scope, $rootScope, $location, $mdDateRangePicker, $state, $mdDialog, UserService, GroupService, PermissionService, InvitationService, AuthService, UtilService) {
+    function UserViewController($scope, $rootScope, $location, $mdDateRangePicker, $state, $mdDialog, UserService,
+                                GroupService, PermissionService, InvitationService, AuthService, UtilService) {
+        'ngInject';
 
         var COMPONENTS_ROOT = 'app/_users/components/';
 
@@ -16,9 +18,10 @@
             {
                 name: 'Users',
                 countFunc: undefined,
-                template: COMPONENTS_ROOT + 'users/user.table.html',
-                controls: COMPONENTS_ROOT + 'users/user.controls.html',
-                fabControls: COMPONENTS_ROOT + 'users/user.fab.controls.html',
+                // template: COMPONENTS_ROOT + 'users/user.table.html',
+                template: require('./users/user.table.html'),
+                controls: require('./users/user.controls.html'),
+                fabControls: require('./users/user.fab.controls.html'),
                 fabControlsCount: 1,
                 show: function () {
                     return AuthService.UserHasAnyPermission(['MODIFY_USERS', 'VIEW_USERS']);
@@ -173,6 +176,8 @@
         $scope.showCreateUserDialog = function(event, index) {
             $mdDialog.show({
                 controller: function ($scope, $mdDialog, UtilService) {
+                    'ngInject';
+
                     $scope.UtilService = UtilService;
                     $scope.createUser = function() {
                         UserService.createOrUpdateUser($scope.user).then(function(rs) {
@@ -194,7 +199,6 @@
                         $mdDialog.cancel(false);
                     };
                 },
-                // templateUrl: 'app/_users/components/users/create_modal.html',
                 template: require('./users/create_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
@@ -217,7 +221,6 @@
         $scope.showGroupDialog = function(event, group) {
             $mdDialog.show({
                 controller: GroupController,
-                // templateUrl: 'app/_users/components/groups/group_modal.html',
                 template: require('./groups/group_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
@@ -277,7 +280,6 @@
         $scope.showInviteUsersDialog = function(event) {
             $mdDialog.show({
                 controller: InviteController,
-                // templateUrl: 'app/_users/components/invites/invite_modal.html',
                 template: require('./invites/invite_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
@@ -305,6 +307,7 @@
 
     // **************************************************************************
     function InviteController($scope, $mdDialog, InvitationService, UtilService, groups, isLDAPConnected) {
+        'ngInject';
 
         $scope.isLDAPConnected = isLDAPConnected;
 
@@ -385,6 +388,8 @@
 
     // **************************************************************************
     function GroupController($scope, $mdDialog, UserService, GroupService, PermissionService, UtilService, group) {
+        'ngInject';
+
         $scope.UtilService = UtilService;
         $scope.group = group ? angular.copy(group) : {};
         $scope.blocks = {};

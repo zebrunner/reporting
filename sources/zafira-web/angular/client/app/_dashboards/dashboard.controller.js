@@ -3,9 +3,12 @@
 
     angular
         .module('app.dashboard')
-        .controller('DashboardController', ['$scope', '$rootScope', '$screenshot', '$q', '$timeout', '$interval', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', '$mdToast', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
+        .controller('DashboardController', DashboardController);
 
-    function DashboardController($scope, $rootScope, $screenshot, $q, $timeout, $interval, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
+    function DashboardController($scope, $rootScope, $screenshot, $q, $timeout, $interval, $cookies, $location, $state,
+                                 $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService,
+                                 UserService, AuthService, ProjectProvider) {
+        'ngInject';
 
         $scope.currentUserId = $location.search().userId;
 
@@ -212,7 +215,6 @@
                             });
                     };
                 },
-                // templateUrl : 'app/_dashboards/widget-placement_toast.html'
                 template : require('./widget-placement_toast.html')
             });
         };
@@ -319,7 +321,6 @@
         $scope.showDashboardWidgetDialog = function (event, widget, isNew) {
             $mdDialog.show({
                 controller: DashboardWidgetController,
-                // templateUrl: 'app/_dashboards/dashboard_widget_modal.html',
                 template: require('./dashboard_widget_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
@@ -339,7 +340,6 @@
         $scope.showDashboardDialog = function (event, dashboard, isNew) {
             $mdDialog.show({
                 controller: DashboardSettingsController,
-                // templateUrl: 'app/_dashboards/dashboard_modal.html',
                 template: require('./dashboard_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
@@ -374,7 +374,6 @@
         $scope.showWidgetDialog = function (event, widget, isNew, dashboard) {
             $mdDialog.show({
                 controller: WidgetController,
-                // templateUrl: 'app/_dashboards/widget_modal.html',
                 template: require('./widget_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
@@ -410,7 +409,6 @@
         $scope.showEmailDialog = function (event, widgetId) {
             $mdDialog.show({
                 controller: EmailController,
-                // templateUrl: 'app/_dashboards/email_modal.html',
                 template: require('./email_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
@@ -580,6 +578,7 @@
 
     // **************************************************************************
     function DashboardWidgetController($scope, $mdDialog, DashboardService, widget, dashboardId, isNew) {
+        'ngInject';
 
         $scope.isNew = isNew;
         $scope.widget = widget;
@@ -643,6 +642,7 @@
     }
 
     function DashboardSettingsController($scope, $mdDialog, $location, DashboardService, dashboard, isNew) {
+        'ngInject';
 
         $scope.isNew = isNew;
         $scope.dashboard = angular.copy(dashboard);
@@ -747,6 +747,8 @@
     }
 
     function WidgetController($scope, $rootScope, $mdDialog, DashboardService, ProjectProvider, widget, isNew, dashboard, currentUserId) {
+        'ngInject';
+
         $scope.widget = {};
         $scope.dashboard = {};
         $scope.isNew = angular.copy(isNew);
@@ -921,6 +923,7 @@
     }
 
     function EmailController($scope, $rootScope, $q, $screenshot, $mdDialog, $mdConstant, DashboardService, UserService, ProjectProvider, widgetId) {
+        'ngInject';
 
         var TYPE = widgetId ? 'WIDGET' : 'DASHBOARD';
 

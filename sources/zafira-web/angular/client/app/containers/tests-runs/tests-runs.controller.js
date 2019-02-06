@@ -3,30 +3,14 @@
 
     angular
     .module('app.testsRuns')
-    .controller('TestsRunsController', [
-        '$cookieStore',
-        '$mdDialog',
-        '$timeout',
-        '$q',
-        'TestRunService',
-        'UtilService',
-        'UserService',
-        'SettingsService',
-        'ConfigService',
-        'resolvedTestRuns',
-        'testsRunsService',
-        '$scope',
-        'API_URL',
-        '$rootScope',
-        '$transitions',
-        'windowWidthService',
-        'activeTestRunId',
-        TestsRunsController]);
+    .controller('TestsRunsController', TestsRunsController);
         
     function TestsRunsController($cookieStore, $mdDialog, $timeout, $q, TestRunService, UtilService,
                                  UserService, SettingsService, ConfigService, resolvedTestRuns,
                                  testsRunsService, $scope, API_URL, $rootScope, $transitions,
                                  windowWidthService, activeTestRunId) {
+        'ngInject';
+
         let TENANT;
         const vm = {
             testRuns: resolvedTestRuns.results || [],
@@ -191,7 +175,6 @@
         function showCompareDialog(event) {
             $mdDialog.show({
                 controller: 'CompareController',
-                // templateUrl: 'app/components/modals/compare/compare.html',
                 template: require('../../components/modals/compare/compare.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
@@ -308,7 +291,6 @@
         function showEmailDialog(testRuns, event) {
             $mdDialog.show({
                 controller: 'EmailController',
-                // templateUrl: 'app/components/modals/email/email.html',
                 template: require('../../components/modals/email/email.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
@@ -458,7 +440,6 @@
         function showCiHelperDialog(event) {
             $mdDialog.show({
                 controller: 'CiHelperController',
-                // templateUrl: 'app/components/modals/ci-helper/ci-helper.html',
                 template: require('../../components/modals/ci-helper/ci-helper.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,

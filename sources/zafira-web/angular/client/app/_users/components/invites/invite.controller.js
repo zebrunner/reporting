@@ -2,10 +2,11 @@
     'use strict';
 
     angular.module('app.user')
-        .controller('InviteListController', ['$scope', 'InvitationService', '$location', InviteListController]);
+        .controller('InviteListController', InviteListController);
 
     // **************************************************************************
     function InviteListController($scope, InvitationService, $location) {
+        'ngInject';
 
         $scope.invitations = InvitationService.invitations;
         $scope.sc = {};

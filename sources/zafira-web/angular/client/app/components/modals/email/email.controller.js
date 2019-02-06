@@ -1,16 +1,11 @@
 (function () {
     'use strict';
 
-    angular.module('app').controller('EmailController', [
-        '$scope',
-        '$mdDialog',
-        '$mdConstant',
-        'UserService',
-        'TestRunService',
-        'testRuns',
-        EmailController]);
+    angular.module('app').controller('EmailController', EmailController);
 
     function EmailController($scope, $mdDialog, $mdConstant, UserService, TestRunService, testRuns) {
+        'ngInject';
+
         $scope.email = {};
         $scope.email.recipients = [];
         $scope.users = [];

@@ -1,14 +1,11 @@
 (function () {
     'use strict';
 
-    angular.module('app').controller('BuildNowController', [
-        '$scope',
-        '$mdDialog',
-        'TestRunService',
-        'testRun',
-        BuildNowController]);
+    angular.module('app').controller('BuildNowController', BuildNowController);
 
     function BuildNowController($scope, $mdDialog, TestRunService, testRun) {
+        'ngInject';
+
         $scope.title = testRun.testSuite.name;
         $scope.textRequired = false;
 

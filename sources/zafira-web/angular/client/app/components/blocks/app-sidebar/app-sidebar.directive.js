@@ -8,16 +8,9 @@
         return {
             template: require('./app-sidebar.html'),
             controller: 'AppSidebarController',
-            // scope: {
-            //     singleMode: '=',
-            //     testRun: '=',
-            //     onSelect: '&',
-            //     onDelete: '&'
-            // },
             controllerAs: '$ctrl',
             restrict: 'E',
             replace: true,
-            // bindToController: true
         };
     });
 })();

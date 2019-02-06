@@ -3,6 +3,5 @@
 
     angular.module('app.certification', []);
 
+    require('./certification.controller');
 })();
-
-require('./certification.controller');

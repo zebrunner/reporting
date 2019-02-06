@@ -3,6 +3,5 @@
 
     angular.module('app.sidebar', []);
 
+    require('./sidebar.controller');
 })();
-
-require('./sidebar.controller');

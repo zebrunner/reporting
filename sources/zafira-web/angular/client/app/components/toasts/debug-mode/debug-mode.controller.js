@@ -1,12 +1,11 @@
 (function () {
     'use strict';
 
-    angular.module('app').controller('DebugModeController', [
-        '$scope',
-        '$mdToast',
-        DebugModeController]);
+    angular.module('app').controller('DebugModeController', DebugModeController);
 
     function DebugModeController($scope, $mdToast) {
+        'ngInject';
+
         const vm = {
             debugPort: null,
             debugHost: null,

@@ -20,8 +20,8 @@
         'app.monitors',
         'app.integrations',
         'app.certification',
-        // 'app.sidebar',
         'app.appSidebar',
+        'app.appHeader',
         'app.common',
         'app.testRunCard',
         'app.testsRunsFilter',
@@ -366,14 +366,16 @@
                 };
 
                 $scope.$watch("main.skin",function(newValue,oldValue) {
-                    if(! newValue && !oldValue) {
-                        newValue = $rootScope.main.skin;
-                        oldValue = $rootScope.main.skin;
-                    } else if($rootScope.main) {
-                        $rootScope.main.skin = newValue;
-                        $rootScope.main.isDark = darkThemes.indexOf(newValue) >= 0;
-                        $scope.main.theme = $rootScope.main.isDark ? 'dark' : '';
-                        $scope.main.default = $rootScope.main.isDark ? 'default' : 'default';
+                    if ($rootScope.main) {
+                        if(!newValue && !oldValue) {
+                            newValue = $rootScope.main.skin;
+                            oldValue = $rootScope.main.skin;
+                        } else {
+                            $rootScope.main.skin = newValue;
+                            $rootScope.main.isDark = darkThemes.indexOf(newValue) >= 0;
+                            $scope.main.theme = $rootScope.main.isDark ? 'dark' : '';
+                            $scope.main.default = $rootScope.main.isDark ? 'default' : 'default';
+                        }
                     }
                     iElement[0].classList.remove(getTheme(oldValue));
                     addTheme(newValue);
@@ -410,6 +412,7 @@
             }
         };
     }).directive('formErrorValidation', function($q, $timeout, $compile) {
+        'ngInject';
         "use strict";
         return {
             require: 'ngModel',
@@ -542,6 +545,7 @@
             }
         };
     }]).directive('fieldError', function($q, $timeout, $compile) {
+        'ngInject';
         "use strict";
         return {
             require: 'ngModel',
@@ -1062,6 +1066,7 @@
         };
     }])
     .directive('windowWidth', function ($window, windowWidthService) {
+        'ngInject';
         "use strict";
 
         return {

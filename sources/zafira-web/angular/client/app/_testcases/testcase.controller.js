@@ -3,11 +3,12 @@
 
     angular
         .module('app.testcase')
-        .controller('TestCaseListController', ['$scope', '$rootScope', '$location', '$mdDateRangePicker', 'TestService', 'TestCaseService', 'UtilService', 'ProjectProvider', TestCaseListController])
-        .controller('MetricController', ['$scope', '$stateParams', '$q', 'TestCaseService', MetricController])
+        .controller('TestCaseListController', TestCaseListController)
+        .controller('MetricController', MetricController);
 
        // **************************************************************************
     function TestCaseListController($scope, $rootScope, $location, $mdDateRangePicker, TestService, TestCaseService, UtilService, ProjectProvider) {
+        'ngInject';
 
     	var DEFAULT_SC = {page : 1, pageSize : 20};
 
@@ -139,6 +140,7 @@
 	}
 
     function MetricController($scope, $stateParams, $q, TestCaseService) {
+        'ngInject';
 
         $scope.metrics = {};
 

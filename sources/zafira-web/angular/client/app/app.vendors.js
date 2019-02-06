@@ -1,4 +1,5 @@
 window.jQuery = window.$ = require('jquery');
+require('lodash');
 require('angular');
 require('angular-aria');
 require('angular-animate');
@@ -35,9 +36,38 @@ require('../vendors/novnc.min');
 // require('../vendors/textAngularSetup');
 require('textangular/dist/textAngular-sanitize.min');
 require('textangular');
+require('../bower_components/jquery-ui/jquery-ui.min');
+require('gridstack');
+require('@epelc/gridstack-angular/dist/gridstack-angular');
 
 window.alertify = require('../bower_components/alertify-js/build/alertify.min');
 
 //TODO: check if uses
 require('../vendors/loading-bar'); //If uses it can be installed via npm
+
+require('../bower_components/elasticsearch/elasticsearch.angular.min');
+require('angular-translate');
+require('angular-translate-loader-static-files');
+require('angular-material');
+require('angular-scroll');
+require('../bower_components/jquery.slimscroll/jquery.slimscroll.min');
+window.echarts = require('echarts');
+require('../vendors/ngecharts');
+require('../bower_components/ng-img-crop/compile/minified/ng-img-crop');
+require('../bower_components/ace-builds/src-min-noconflict/ace');
+require('../bower_components/angular-ui-ace/ui-ace.min');
+require('../bower_components/jszip/dist/jszip.min');
+// require('../vendors/html2canvas.min');
+require('html2canvas');
+require('../vendors/md-date-range-picker');
+// require('../vendors/highlight.pack').initHighlightingOnLoad();
+// require('highlight.js');
+
+
+import hljs from 'highlight.js/lib/highlight';
+import javascript from 'highlight.js/lib/languages/javascript';
+import json from 'highlight.js/lib/languages/json';
+hljs.registerLanguage('javascript', javascript);
+hljs.registerLanguage('json', json);
+window.hljs = hljs;
 

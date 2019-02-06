@@ -3,9 +3,11 @@
 
     angular
         .module('app.auth')
-        .controller('AuthController', ['$scope', '$rootScope', '$location', '$state', '$cookies', '$templateCache', 'AuthService', 'UserService', 'UtilService', 'InvitationService', AuthController])
+        .controller('AuthController', AuthController);
 
-    function AuthController($scope, $rootScope, $location, $state, $cookies, $templateCache, AuthService, UserService, UtilService, InvitationService) {
+    function AuthController($scope, $rootScope, $location, $state, $cookies, $templateCache, AuthService, UserService,
+                            UtilService, InvitationService) {
+        'ngInject';
 
         $scope.UtilService = UtilService;
 

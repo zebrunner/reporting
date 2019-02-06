@@ -2,10 +2,12 @@
     'use strict';
 
     angular.module('app.page')
-    .controller('invoiceCtrl', ['$scope', '$window', invoiceCtrl])
-    .controller('authCtrl', ['$scope', '$window', '$location', authCtrl]);
+    .controller('invoiceCtrl', invoiceCtrl)
+    .controller('authCtrl', authCtrl);
 
     function invoiceCtrl($scope, $window) {
+        'ngInject';
+
         var printContents, originalContents, popupWin;
         
         $scope.printInvoice = function() {
@@ -19,6 +21,8 @@
     }
 
     function authCtrl($scope, $window, $location) {
+        'ngInject';
+
         $scope.login = function() {
             $location.url('/')
         }

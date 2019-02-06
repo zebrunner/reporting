@@ -2,10 +2,12 @@
     'use strict';
 
     angular.module('app.user')
-        .controller('UserListController', ['$scope', '$controller', '$rootScope', '$location', '$mdDateRangePicker', '$state', '$mdDialog', 'UserService', 'GroupService', 'PermissionService', 'UtilService', 'DashboardService', UserListController]);
+        .controller('UserListController', UserListController);
 
     // **************************************************************************
-    function UserListController($scope, $controller, $rootScope, $location, $mdDateRangePicker, $state, $mdDialog, UserService, GroupService, UtilService, DashboardService) {
+    function UserListController($scope, $controller, $rootScope, $location, $mdDateRangePicker, $state, $mdDialog,
+                                UserService, GroupService, UtilService, DashboardService) {
+        'ngInject';
 
         $scope.UtilService = UtilService;
         $scope.DashboardService = DashboardService;
@@ -20,6 +22,8 @@
         $scope.showChangePasswordDialog = function($event, user) {
             $mdDialog.show({
                 controller: function ($scope, $mdDialog, UtilService) {
+                    'ngInject';
+
                     $scope.UtilService = UtilService;
                     $scope.user = user;
                     $scope.changePassword = {'userId' : user.id};
@@ -46,7 +50,6 @@
                         $mdDialog.cancel(false);
                     };
                 },
-                // templateUrl: 'app/_users/components/users/password_modal.html',
                 template: require('./password_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: $event,
@@ -65,6 +68,8 @@
         $scope.showEditProfileDialog = function(event, user, index) {
             $mdDialog.show({
                 controller: function ($scope, $mdDialog, UtilService) {
+                    'ngInject';
+
                     $scope.UtilService = UtilService;
                     $scope.user = angular.copy(user);
                     $scope.updateStatus = function(user, status, index) {
@@ -97,7 +102,6 @@
                         $mdDialog.cancel(status);
                     };
                 },
-                // templateUrl: 'app/_users/components/users/edit_modal.html',
                 template: require('./edit_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,

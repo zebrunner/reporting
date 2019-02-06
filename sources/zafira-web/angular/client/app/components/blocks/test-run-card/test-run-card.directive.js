@@ -3,13 +3,14 @@
 
     angular.module('app.testRunCard').directive('testRunCard', function() {
         return {
-            // templateUrl: 'app/components/blocks/test-run-card/test-run-card.html',
             template: require('./test-run-card.html'),
             controller: function TestRunCardController(windowWidthService,
                                                        testsRunsService, $rootScope, UtilService,
                                                        $state, $timeout, $mdDialog, $mdToast,
                                                        SlackService, TestRunService, UserService,
                                                        $interval, DownloadService) {
+                'ngInject';
+
                 const local = {
                     currentUser: UserService.getCurrentUser(),
                     testRunInDebugMode: null,
@@ -140,7 +141,6 @@
                 function showCommentsDialog(event) {
                     $mdDialog.show({
                         controller: 'CommentsController',
-                        // templateUrl: 'app/components/modals/comments/comments.html',
                         template: require('../../modals/comments/comments.html'),
                         parent: angular.element(document.body),
                         targetEvent: event,
@@ -160,7 +160,6 @@
                 function showEmailDialog(testRuns, event) {
                     $mdDialog.show({
                         controller: 'EmailController',
-                        // templateUrl: 'app/components/modals/email/email.html',
                         template: require('../../modals/email/email.html'),
                         parent: angular.element(document.body),
                         targetEvent: event,
@@ -175,7 +174,6 @@
                 function showCreateSpreadsheetDialog(testRuns, event) {
                     $mdDialog.show({
                         controller: 'SpreadsheetController',
-                        // templateUrl: 'app/components/modals/spreadsheet/spreadsheet.html',
                         template: require('../../modals/spreadsheet/spreadsheet.html'),
                         parent: angular.element(document.body),
                         targetEvent: event,
@@ -200,6 +198,8 @@
                             links: links
                         },
                         controller: function ToastWithLinksController($mdToast, links) {
+                            'ngInject';
+
                             return {
                                 links: links,
 
@@ -261,7 +261,6 @@
                 function showRerunDialog(event) {
                     $mdDialog.show({
                         controller: 'TestRunRerunController',
-                        // templateUrl: 'app/components/modals/rerun/rerun.html',
                         template: require('../../modals/rerun/rerun.html'),
                         parent: angular.element(document.body),
                         targetEvent: event,
@@ -364,7 +363,6 @@
                         controller : 'DebugModeController',
                         controllerAs: '$ctrl',
                         bindToController: true,
-                        // templateUrl : 'app/components/toasts/debug-mode/debug-mode.html'
                         template : require('../../toasts/debug-mode/debug-mode.html')
                     });
                 }
@@ -407,7 +405,6 @@
                 function showBuildNowDialog(event) {
                     $mdDialog.show({
                         controller: 'BuildNowController',
-                        // templateUrl: 'app/components/modals/build-now/build-now.html',
                         template: require('../../modals/build-now/build-now.html'),
                         parent: angular.element(document.body),
                         targetEvent: event,

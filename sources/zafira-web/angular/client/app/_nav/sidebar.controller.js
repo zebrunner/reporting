@@ -3,10 +3,13 @@
 
     angular
         .module('app.sidebar')
-        .controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$q', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'UserService', 'DashboardService', 'AuthService', 'SettingsService', 'UploadService', SidebarController])
+        .controller('SidebarController', SidebarController);
 
     // **************************************************************************
-    function SidebarController($scope, $rootScope, $cookies, $q, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService, SettingsService, UploadService) {
+    function SidebarController($scope, $rootScope, $cookies, $q, $mdDialog, $state, ViewService, ConfigService,
+                               ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService,
+                               SettingsService, UploadService) {
+        'ngInject';
 
     	$scope.DashboardService = DashboardService;
 
@@ -142,7 +145,6 @@
         $scope.showProjectDialog = function(event) {
             $mdDialog.show({
                 controller: ProjectController,
-                // templateUrl: 'app/_nav/project_modal.html',
                 template: require('./project_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
@@ -157,7 +159,6 @@
         $scope.showViewDialog = function(event, view) {
             $mdDialog.show({
                 controller: ViewController,
-                // templateUrl: 'app/_nav/view_modal.html',
                 template: require('./view_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
@@ -175,7 +176,6 @@
         $scope.showUploadImageDialog = function($event) {
             $mdDialog.show({
                 controller: FileUploadController,
-                // templateUrl: 'app/_users/upload_image_modal.html',
                 template: require('../_users/upload_image_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: $event,
@@ -191,6 +191,8 @@
 
         // ***** Modals Controllers *****
         function ProjectController($scope, $mdDialog) {
+            'ngInject';
+
             $scope.project = {};
             $scope.createProject = function(project){
                 ProjectService.createProject(project).then(function(rs) {
@@ -216,6 +218,8 @@
         }
 
         function ViewController($scope, $mdDialog, view) {
+            'ngInject';
+
             $scope.view = {};
             if(view)
             {
@@ -286,6 +290,8 @@
         }
 
         function FileUploadController($scope, $mdDialog) {
+            'ngInject';
+
             $scope.uploadImage = function (multipartFile) {
                 UploadService.upload(multipartFile, FILE_LOGO_TYPE).then(function (rs) {
                     if(rs.success)

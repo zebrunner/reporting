@@ -4,8 +4,6 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-console.log(__dirname);
-
 module.exports = {
     devtool: 'source-map',
     node: {
@@ -14,7 +12,6 @@ module.exports = {
     context: path.join(__dirname, '../client/app'),
     entry: {
         vendors: './app.vendors.js',
-        ui: './app.ui.js',
         app: './app.module.js',
         'vendors-styles': '../styles/vendors.scss',
         'main-styles': '../styles/main.scss',
@@ -45,7 +42,7 @@ module.exports = {
                 loader: 'babel',
                 options: {
                     presets: ['@babel/preset-env'],
-                    plugins: ['@babel/plugin-proposal-object-rest-spread', '@babel/transform-runtime', 'angularjs-annotate']
+                    plugins: ['@babel/plugin-proposal-object-rest-spread', '@babel/transform-runtime', ["angularjs-annotate", { "explicitOnly" : true}]]
                 }
             },
             // {
@@ -121,7 +118,7 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: '../index.html',
-            chunks: ['vendors', 'ui', 'app', 'vendors-styles', 'main-styles'],
+            chunks: ['vendors', 'app', 'vendors-styles', 'main-styles'],
             chunksSortMode: 'manual'
         })
     ],

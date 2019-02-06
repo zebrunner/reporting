@@ -3,6 +3,5 @@
 
     angular.module('app.integrations', []);
 
+    require('./integrations.controller');
 })();
-
-require('./integrations.controller');

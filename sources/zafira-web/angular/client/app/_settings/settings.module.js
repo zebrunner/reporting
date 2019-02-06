@@ -3,6 +3,5 @@
 
     angular.module('app.settings', []);
 
+    require('./settings.controller');
 })();
-
-require('./settings.controller');

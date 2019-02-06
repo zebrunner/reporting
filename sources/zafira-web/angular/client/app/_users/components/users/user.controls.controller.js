@@ -1,14 +1,10 @@
 (function () {
     'use strict';
 
-    angular.module('app.user').controller('UserControlsController', ['$scope', UserControlsController]);
+    angular.module('app.user').controller('UserControlsController', UserControlsController);
 
     // **************************************************************************
-    function UserControlsController($scope) {
-
-
-
-        (function initController() {
-        })();
-    };
+    function UserControlsController() {
+        'ngInject';
+    }
 })();

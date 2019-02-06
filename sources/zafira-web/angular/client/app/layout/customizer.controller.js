@@ -1,10 +1,9 @@
 (function () {
     angular.module('app.layout')
-        .controller('CustomizerCtrl', ['$scope', '$rootScope', CustomizerCtrl]);
+        .controller('CustomizerCtrl', CustomizerCtrl);
 
     function CustomizerCtrl ($scope, $rootScope) {
+        'ngInject';
         $rootScope.main = {};
-
     }
-
 })();

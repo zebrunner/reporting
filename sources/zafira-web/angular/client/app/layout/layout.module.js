@@ -5,7 +5,7 @@
 
 })();
 
-require('./customizer.controller');
+// require('./customizer.controller');
 require('./layout.diretive');
 require('./loader');
 require('./sidebar.directive');

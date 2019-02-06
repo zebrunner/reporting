@@ -247,12 +247,14 @@
     function highlightActive() {
         var directive = {
             restrict: 'A',
-            controller: [ '$scope', '$element', '$attrs', '$location', highlightActiveCtrl]
+            controller: highlightActiveCtrl
         };
 
         return directive;
 
         function highlightActiveCtrl($scope, $element, $attrs, $location) {
+            'ngInject';
+
             var highlightActive, links, path;
 
             links = $element.find('a');

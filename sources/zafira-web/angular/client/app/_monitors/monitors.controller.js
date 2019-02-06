@@ -3,9 +3,11 @@
 
     angular
         .module('app.monitors')
-        .controller('MonitorsController', ['$scope', '$q', '$rootScope', '$state', '$mdConstant', '$stateParams', '$mdDialog', 'MonitorsService', 'UserService', MonitorsController])
+        .controller('MonitorsController', MonitorsController);
 
-    function MonitorsController($scope, $q, $rootScope, $state, $mdConstant, $stateParams, $mdDialog, MonitorsService, UserService) {
+    function MonitorsController($scope, $q, $rootScope, $state, $mdConstant, $stateParams, $mdDialog, MonitorsService,
+                                UserService) {
+        'ngInject';
 
         $scope.monitors = [];
 
@@ -178,6 +180,7 @@
         $scope.openMonitorDialog = function ($event, monitor) {
             $mdDialog.show({
                 controller: function ($scope, $mdDialog, monitor) {
+                    'ngInject';
 
                     if(!monitor) {
                         $scope.monitor = {};
@@ -262,7 +265,6 @@
                         $mdDialog.cancel(false);
                     };
                 },
-                // templateUrl: 'app/_monitors/monitors_modal.html',
                 template: require('./monitors_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: $event,

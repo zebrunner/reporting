@@ -4,12 +4,12 @@
 @import "../bower_components/font-awesome/css/font-awesome.min.css";
 @import "../bower_components/angular-material/angular-material.min.css";
 @import "../bower_components/alertify-js/build/css/alertify.min.css"; //TODO: check if we can import from npm
-@import "../bower_components/gridstack/dist/gridstack.min.css";
-@import "../bower_components/gridstack/dist/gridstack-extra.min.css";
+@import "../../node_modules/gridstack/dist/gridstack.min.css";
+@import "../../node_modules/gridstack/dist/gridstack-extra.min.css";
 @import "../bower_components/ng-img-crop/compile/unminified/ng-img-crop.css";
 @import "../../node_modules/textangular/dist/textAngular.css"; //TODO: check if not the same as file in current folder
 @import "../vendors/md-date-range-picker.css";
 @import "LineChart.min.css";
 @import "textAngular.css";
-@import "vs.css";
+@import "../../node_modules/highlight.js/styles/vs.css";
 @import "custom.css";

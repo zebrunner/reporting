@@ -188,7 +188,6 @@
                 },
                 preserveScope: true,
                 controller: 'WebsocketReconnectController',
-                // templateUrl: 'app/components/toasts/websocket-reconnect/websocket-reconnect.html'
                 template: require('../components/toasts/websocket-reconnect/websocket-reconnect.html')
             });
         };

@@ -3,10 +3,12 @@
 
     angular
         .module('app.user')
-        .controller('UserProfileController', ['$scope', '$rootScope', '$mdDialog', '$timeout', '$location', '$state', 'UserService', 'DashboardService', 'UtilService', 'AuthService', 'UploadService', UserProfileController])
+        .controller('UserProfileController', UserProfileController);
 
     // **************************************************************************
-    function UserProfileController($scope, $rootScope, $mdDialog, $timeout, $location, $state, UserService, DashboardService, UtilService, AuthService, UploadService) {
+    function UserProfileController($scope, $rootScope, $mdDialog, $timeout, $location, $state, UserService,
+                                   DashboardService, UtilService, AuthService, UploadService) {
+        'ngInject';
 
         $scope.UtilService = UtilService;
 
@@ -198,7 +200,6 @@
         $scope.showUploadImageDialog = function ($event, user) {
             $mdDialog.show({
                 controller: FileUploadController,
-                // templateUrl: 'app/_users/upload_image_modal.html',
                 template: require('./upload_image_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: $event,
@@ -217,6 +218,8 @@
         };
 
         function FileUploadController($scope, $mdDialog, user) {
+            'ngInject';
+
             $scope.user = user;
             $scope.uploadImage = function (multipartFile) {
                 UploadService.upload(multipartFile, FILE_USERS_TYPE).then(function (rs) {

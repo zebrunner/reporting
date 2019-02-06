@@ -2,10 +2,12 @@
     'use strict';
 
     angular.module('app.user')
-        .controller('GroupListController', ['$scope', '$rootScope', '$location', '$mdDateRangePicker', '$state', '$mdDialog', 'UserService', 'GroupService', 'PermissionService', 'UtilService', GroupListController]);
+        .controller('GroupListController', GroupListController);
 
     // **************************************************************************
-    function GroupListController($scope, $rootScope, $location, $mdDateRangePicker, $state, $mdDialog, UserService, GroupService, PermissionService, UtilService) {
+    function GroupListController($scope, $rootScope, $location, $mdDateRangePicker, $state, $mdDialog, UserService,
+                                 GroupService, PermissionService, UtilService) {
+        'ngInject';
 
         $scope.groups = GroupService.groups;
 

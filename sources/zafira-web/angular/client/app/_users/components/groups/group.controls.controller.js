@@ -1,10 +1,9 @@
 (function () {
     'use strict';
 
-    angular.module('app.user').controller('GroupControlsController', ['$scope', GroupControlsController]);
+    angular.module('app.user').controller('GroupControlsController', GroupControlsController);
 
-    function GroupControlsController($scope) {
-
-
-    };
+    function GroupControlsController() {
+        'ngInject';
+    }
 })();

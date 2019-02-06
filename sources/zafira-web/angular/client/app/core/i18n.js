@@ -2,7 +2,7 @@
 
     angular.module('app.i18n', ['pascalprecht.translate'])
         .config(['$translateProvider', i18nConfig])
-        .controller('LangCtrl', ['$scope', '$translate', LangCtrl]);
+        .controller('LangCtrl', LangCtrl);
 
     // English, Español, 日本語, 中文, Deutsch, français, Italiano, Portugal, Русский язык, 한국어
     // Note: Used on Header, Sidebar, Footer, Dashboard
@@ -33,6 +33,8 @@
     }
 
     function LangCtrl($scope, $translate) {
+        'ngInject';
+
         $scope.activeLang = 'english';
         $scope.setLang = setLang;
 

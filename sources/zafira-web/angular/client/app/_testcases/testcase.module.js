@@ -3,6 +3,5 @@
 
     angular.module('app.testcase', []);
 
+    require('./testcase.controller');
 })();
-
-require('./testcase.controller');

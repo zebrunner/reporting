@@ -20,10 +20,9 @@
         ,'angularMoment'
     ]);
 
+    require('./app.config');
+    require('./app.controller');
+    require('./config.lazyload');
+    require('./config.route');
+    require('./i18n');
 })();
-
-require('./app.config');
-require('./app.controller');
-require('./config.lazyload');
-require('./config.route');
-require('./i18n');

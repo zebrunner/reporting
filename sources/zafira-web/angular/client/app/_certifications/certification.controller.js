@@ -3,9 +3,10 @@
 
     angular
         .module('app.certification')
-        .controller('CertificationController', ['$scope', '$rootScope', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', 'CertificationService', CertificationController])
+        .controller('CertificationController', CertificationController);
 
     function CertificationController($scope, $rootScope, $cookies, $location, $state, $http, $mdConstant, $stateParams, CertificationService) {
+        'ngInject';
     	
     	$scope.certificationDetails = null;
 	

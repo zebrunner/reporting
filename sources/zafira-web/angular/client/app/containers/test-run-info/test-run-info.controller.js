@@ -3,32 +3,7 @@
 
     angular
     .module('app.testruninfo')
-    .controller('TestRunInfoController', [
-        '$scope',
-        '$rootScope',
-        '$http',
-        '$mdDialog',
-        '$interval',
-        '$log',
-        '$filter',
-        '$anchorScroll',
-        '$location',
-        '$timeout',
-        '$window',
-        '$q',
-        'ElasticsearchService',
-        'TestService',
-        'TestRunService',
-        'UtilService',
-        'ArtifactService',
-        'DownloadService',
-        '$stateParams',
-        'OFFSET',
-        'API_URL',
-        '$state',
-        '$httpMock',
-        'TestRunsStorage',
-        TestRunInfoController]);
+    .controller('TestRunInfoController', TestRunInfoController);
 
     // **************************************************************************
     function TestRunInfoController($scope, $rootScope, $http, $mdDialog, $interval, $log, $filter,
@@ -36,6 +11,7 @@
                                    ElasticsearchService, TestService, TestRunService, UtilService,
                                    ArtifactService, DownloadService, $stateParams, OFFSET, API_URL,
                                    $state, $httpMock, TestRunsStorage) {
+        'ngInject';
 
         const TENANT = $rootScope.globals.auth.tenant;
 
@@ -476,7 +452,6 @@
         $scope.showGalleryDialog = function (event, url) {
             $mdDialog.show({
                 controller: 'GalleryController',
-                // templateUrl: 'app/components/modals/gallery/gallery.html',
                 template: require('../../components/modals/gallery/gallery.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,

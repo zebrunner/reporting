@@ -3,10 +3,12 @@
 
     angular
         .module('app.user')
-        .controller('ViewController', ['$scope', '$location', '$state', '$mdDialog', '$stateParams', 'UtilService', 'ConfigService', 'TestRunService', 'JobService', 'ViewService', 'TestService', 'API_URL', ViewController])
+        .controller('ViewController', ViewController);
 
     // **************************************************************************
-    function ViewController($scope, $location, $state, $mdDialog, $stateParams, UtilService, ConfigService, TestRunService, JobService, ViewService, TestService, API_URL) {
+    function ViewController($scope, $location, $state, $mdDialog, $stateParams, UtilService, ConfigService,
+                            TestRunService, JobService, ViewService, TestService, API_URL) {
+        'ngInject';
 
         $scope.view = {};
         $scope.jobs = [];
@@ -225,7 +227,6 @@
         $scope.showJobsViewDialog = function(event, jobView) {
             $mdDialog.show({
                 controller: JobsViewController,
-                // templateUrl: 'app/_views/jobs_view_modal.html',
                 template: require('./jobs_view_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
@@ -329,6 +330,7 @@
 
     // **************************************************************************
     function JobsViewController($scope, $mdDialog, $state, $stateParams, JobService, viewId, jobs, existingJobView) {
+        'ngInject';
 
         $scope.edit = existingJobView != null;
 

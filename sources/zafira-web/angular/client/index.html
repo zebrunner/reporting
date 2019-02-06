@@ -79,21 +79,16 @@
         </div>
     </div>
 
-    <header data-ng-include=" 'app/layout/header.html' " id="header" class="header-container bg-white" data-ng-class="{ 'header-fixed': main.fixedHeader,
-                                  'bg-white': ['11','12','13','14','15','16','21'].indexOf(main.skin) >= 0
-                 }"></header>
+    <app-header main-data="main" ng-class="{ 'header-fixed': main.fixedHeader, 'bg-white': ['11','12','13','14','15','16','21'].indexOf(main.skin) >= 0 }"></app-header>
 
     <div class="main-container" data-ng-class="{ 'app-nav-horizontal': main.menu === 'horizontal' }">
-        <!--<aside data-ng-include=" 'app/layout/sidebar.html' " id="nav-container" class="nav-container ng-scope nav-vertical bg-dark" data-ng-class="{ 'nav-fixed': main.fixedSidebar,-->
-                                    <!--'nav-vertical': main.menu === 'vertical'}">-->
-        <!--</aside>-->
         <app-sidebar ng-class="{ 'nav-fixed': main.fixedSidebar, 'nav-vertical': main.menu === 'vertical' }"></app-sidebar>
         <div id="content" class="content-container">
             <section data-ui-view ng-class="{'{{main.pageTransition.class}}': isAnimated()}" class="view-container" ng-class="{ 'dark-container zaf-dark': darkThemes.indexOf(main.skin) >= 0,
                              'bg-page-grey zaf-light': darkThemes.indexOf(main.skin) === -1}"></section>
         </div>
 
-        <aside data-ng-include=" 'app/layout/customizer.html' "></aside>
+        <!--<aside data-ng-include=" 'app/layout/customizer.html' "></aside>-->
     </div>
 
 

@@ -1,19 +1,10 @@
 (function () {
     'use strict';
 
-    angular.module('app').controller('CiHelperController', [
-        '$scope',
-        '$rootScope',
-        '$q',
-        '$window',
-        '$mdDialog',
-        '$timeout',
-        '$interval',
-        'LauncherService',
-        'ScmService',
-        CiHelperController]);
+    angular.module('app').controller('CiHelperController', CiHelperController);
 
     function CiHelperController($scope, $rootScope, $q, $window, $mdDialog, $timeout, $interval, LauncherService, ScmService) {
+        'ngInject';
 
         $scope.ciOptions = {};
 

@@ -3,9 +3,10 @@
 
     angular
         .module('app.scm')
-        .controller('ScmController', ['$scope', '$window', '$location', '$rootScope', ScmController])
+        .controller('ScmController', ScmController);
 
     function ScmController($scope, $window, $location, $rootScope) {
+        'ngInject';
 
         function getCode() {
             return $location.search()['code'];

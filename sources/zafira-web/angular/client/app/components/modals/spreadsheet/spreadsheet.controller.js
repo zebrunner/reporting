@@ -1,16 +1,10 @@
 (function () {
     'use strict';
 
-    angular.module('app').controller('SpreadsheetController', [
-        '$scope',
-        '$mdDialog',
-        '$mdConstant',
-        'UserService',
-        'TestRunService',
-        'testRuns',
-        SpreadsheetController]);
+    angular.module('app').controller('SpreadsheetController', SpreadsheetController);
 
     function SpreadsheetController($scope, $mdDialog, $mdConstant, UserService, TestRunService, testRuns) {
+        'ngInject';
 
         $scope.recipients = [];
         $scope.users = [];
