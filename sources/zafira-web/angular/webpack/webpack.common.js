@@ -1,8 +1,10 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const WebpackStrip = require('webpack-strip'); // TODO: production only
 
 module.exports = {
     devtool: 'source-map',
@@ -26,7 +28,7 @@ module.exports = {
         modules: [
             path.join(__dirname, '../client/app'),
             path.join(__dirname, '../client/assets'),
-            path.join(__dirname, '../client/bower_components'),
+            // path.join(__dirname, '../client/bower_components'),
             path.join(__dirname, '../node_modules')
         ],
         alias: {
@@ -38,12 +40,18 @@ module.exports = {
         rules: [
             {
                 test: /\.m?js$/,
-                exclude: [/node_modules|bower_components/],
-                loader: 'babel',
-                options: {
-                    presets: ['@babel/preset-env'],
-                    plugins: ['@babel/plugin-proposal-object-rest-spread', '@babel/transform-runtime', ["angularjs-annotate", { "explicitOnly" : true}]]
-                }
+                exclude: [/node_modules/],
+                use: [
+                    {
+                        loader: 'babel',
+                        options: {
+                            presets: ['@babel/preset-env'],
+                            plugins: ['@babel/plugin-proposal-object-rest-spread', '@babel/transform-runtime', ['angularjs-annotate', { 'explicitOnly' : true}]]
+                        }
+                    },
+                    WebpackStrip.loader('debug', 'debug', 'console.log') // TODO: production only
+                ]
+
             },
             // {
             //     test: /\.css$/,
@@ -55,14 +63,14 @@ module.exports = {
              { //TODO: add hash if production; TODO: compressing
                 test: /\.(otf|ttf|eot|png|jpg|woff2?|svg)$/,
                 loader: 'file',
-                options: {
-                    name: '[path][name].[ext]',
-                    outputPath: (url, resourcePath, context) => {
-                        // console.log(url, resourcePath, context);
-
-                        return url[0] === '_' ? url.substring(1) : url;
-                    }
-                },
+                // options: {
+                //     name: '[path][name].[ext]',
+                //     outputPath: (url, resourcePath, context) => {
+                //         // console.log(url, resourcePath, context);
+                //
+                //         return url[0] === '_' ? url.substring(1) : url;
+                //     }
+                // },
                 //  options: {
                 //      name(file) {
                 //          if (process.env.NODE_ENV === 'development') {
@@ -118,9 +126,12 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: '../index.html',
-            chunks: ['vendors', 'app', 'vendors-styles', 'main-styles'],
-            chunksSortMode: 'manual'
-        })
+            favicon: '../favicon.ico',
+            chunks: ['vendors-styles', 'main-styles', 'vendors', 'app'],
+            chunksSortMode: 'manual',
+            showErrors: true
+        }),
+        new webpack.ProgressPlugin()
     ],
     stats: {
         colors: true,

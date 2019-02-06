@@ -25,6 +25,8 @@
         'app.common',
         'app.testRunCard',
         'app.testsRunsFilter',
+        'app.copyright',
+        'app.robo',
         // 3rd party feature modules
         'ngImgCrop',
         'ngecharts',

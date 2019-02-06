@@ -1,15 +1,14 @@
 @import "loader";
 @import "loading-bar.css";
 @import "../vendors/material-design-icons/iconfont/material-icons.css";
-@import "../../node_modules/font-awesome/css/font-awesome.min.css";
-@import "../../node_modules/angular-material/angular-material.min.css";
-@import "../../node_modules/alertifyjs/build/css/alertify.min.css";
-@import "../../node_modules/gridstack/dist/gridstack.min.css";
-@import "../../node_modules/gridstack/dist/gridstack-extra.min.css";
-@import "../../node_modules/ng-img-crop/compile/minified/ng-img-crop.css";
-@import "../../node_modules/textangular/dist/textAngular.css"; //TODO: check if not the same as file in current folder
+@import "~font-awesome/css/font-awesome.min.css";
+@import "~angular-material/angular-material.min.css";
+@import "~alertifyjs/build/css/alertify.min.css";
+@import "~gridstack/dist/gridstack.min.css";
+@import "~gridstack/dist/gridstack-extra.min.css";
+@import "~ng-img-crop/compile/minified/ng-img-crop.css";
+@import "~textangular/dist/textAngular.css"; //TODO: check if not the same as file in current folder
 @import "../vendors/md-date-range-picker.css";
 @import "LineChart.min.css";
 @import "textAngular.css";
-@import "../../node_modules/highlight.js/styles/vs.css";
-@import "custom.css";
+@import "~highlight.js/styles/vs.css";
