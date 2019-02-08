@@ -270,10 +270,14 @@
             align-items: center;
             padding: 0;
             .md-button {
-                min-width: 40px;
-            }
-            span {
-                padding-left: 16px;
+                width: 100%;
+                display: flex;
+                span {
+                    padding-left: 16px;
+                    color: rgba(0,0,0,0.87);
+                    font-weight: normal;
+                    text-transform: none;
+                }
             }
         }   
     }

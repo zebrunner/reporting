@@ -102,9 +102,8 @@
                           <md-menu-item data-ng-show="test.artifactsToShow.length">
                             <md-menu>
                               <md-button name="testArtifacts" aria-label="Test artifacts" class="md-icon-button" ng-click="$mdMenu.open($event);">
-                                <md-icon class="material-icons">attachment</md-icon>
+                                <md-icon class="material-icons">attachment</md-icon><span>attachment</span>
                               </md-button>
-                              <span>attachment</span>
                               <md-menu-content>
                                 <md-menu-item ng-repeat="artifact in test.artifactsToShow">
                                   <md-button href="{{artifact.link}}" class="artifact-button" target="blank" name="artifact">{{artifact.name}}</md-button>
@@ -114,15 +113,13 @@
                           </md-menu-item>
                           <md-menu-item>
                             <md-button name="testDetails" aria-label="Test details" class="md-icon-button" ng-click="$ctrl.showDetailsDialog(test, $event);">
-                              <md-icon class="material-icons">bug_report</md-icon>
+                              <md-icon class="material-icons">bug_report</md-icon><span>details</span>
                             </md-button>
-                            <span>details</span>
                           </md-menu-item>
                           <md-menu-item>
                             <md-button class="md-icon-button" ng-click="$ctrl.goToTestDetails(test.id);">
-                              <md-icon class="material-icons">remove_red_eye</md-icon>
+                              <md-icon class="material-icons">remove_red_eye</md-icon><span>overview</span>
                             </md-button>
-                            <span>overview</span>
                           </md-menu-item>
                         </md-menu-content>
                       </md-menu>
