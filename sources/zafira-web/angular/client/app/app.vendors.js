@@ -13,6 +13,9 @@ require('angular-jwt');
 // require('moment');
 require('../vendors/moment.min');
 require('angular-moment');
+require('angular-translate');
+require('angular-translate-loader-static-files');
+require('angular-material');
 require('oclazyload');
 
 require('../vendors/sockjs-1.1.2.min.js');
@@ -36,33 +39,30 @@ require('../vendors/novnc.min');
 // require('../vendors/textAngularSetup');
 require('textangular/dist/textAngular-sanitize.min');
 require('textangular');
-require('../bower_components/jquery-ui/jquery-ui.min');
+// require('../bower_components/jquery-ui/jquery-ui.min');
+require('jquery-ui/ui/widget');
 require('gridstack');
 require('@epelc/gridstack-angular/dist/gridstack-angular');
 
-window.alertify = require('../bower_components/alertify-js/build/alertify.min');
+window.alertify = require('alertifyjs/build/alertify.min');
 
 //TODO: check if uses
 require('../vendors/loading-bar'); //If uses it can be installed via npm
 
-require('../bower_components/elasticsearch/elasticsearch.angular.min');
-require('angular-translate');
-require('angular-translate-loader-static-files');
-require('angular-material');
+require('elasticsearch-browser/elasticsearch.angular.min');
 require('angular-scroll');
-require('../bower_components/jquery.slimscroll/jquery.slimscroll.min');
+// require('../bower_components/jquery.slimscroll/jquery.slimscroll.min');
+require('jquery-slimscroll');
 window.echarts = require('echarts');
 require('../vendors/ngecharts');
-require('../bower_components/ng-img-crop/compile/minified/ng-img-crop');
-require('../bower_components/ace-builds/src-min-noconflict/ace');
-require('../bower_components/angular-ui-ace/ui-ace.min');
-require('../bower_components/jszip/dist/jszip.min');
+require('ng-img-crop/compile/minified/ng-img-crop');
+require('ace-builds/src-min-noconflict/ace');
+// require('../bower_components/angular-ui-ace/ui-ace.min');
+require('angular-ui-ace');
+require('jszip/dist/jszip.min');
 // require('../vendors/html2canvas.min');
 require('html2canvas');
 require('../vendors/md-date-range-picker');
-// require('../vendors/highlight.pack').initHighlightingOnLoad();
-// require('highlight.js');
-
 
 import hljs from 'highlight.js/lib/highlight';
 import javascript from 'highlight.js/lib/languages/javascript';

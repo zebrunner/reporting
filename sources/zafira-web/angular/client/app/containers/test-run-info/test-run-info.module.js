@@ -3,4 +3,5 @@
 
     angular.module('app.testruninfo', []);
 
+    require('./test-run-info.controller');
 })();
