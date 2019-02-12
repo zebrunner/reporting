@@ -14,7 +14,7 @@
         'app.testcase',
         'app.testruninfo',
         // 'app.testsRuns',
-        'app.testDetails',
+        // 'app.testDetails',
         'app.view',
         'app.settings',
         'app.monitors',

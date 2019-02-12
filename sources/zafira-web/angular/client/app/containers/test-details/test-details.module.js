@@ -1,7 +1,6 @@
-(function () {
-    'use strict';
+import angular from 'angular';
+import testDetailsComponent from './test-details.component';
 
-    angular.module('app.testDetails', []);
+export const testDetailsModule = angular.module('app.testDetails', [])
+.component({ testDetailsComponent });
 
-    require('./test-details.controller');
-})();

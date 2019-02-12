@@ -152,10 +152,8 @@
                         }
                     })
                     .state('tests/run', {
-                        controller: 'TestDetailsController',
-                        controllerAs: '$ctrl',
                         url: '/tests/runs/:testRunId',
-                        template: require('../containers/test-details/test-details.html'),
+                        component: 'testDetailsComponent',
                         store: true,
                         params: {
                             testRun: null
@@ -166,6 +164,8 @@
                         },
                         resolve: {
                             testRun: ['$stateParams', '$q', '$state', 'TestRunService', function($stateParams, $q, $state, TestRunService) {
+                                'ngInject';
+
                                 if ($stateParams.testRun) {
                                     return $q.resolve($stateParams.testRun);
                                 } else if ($stateParams.testRunId) {
@@ -189,6 +189,15 @@
                                     $state.go('tests/runs');
                                 }
                             }]
+                        },
+                        lazyLoad: ($transition$) => {
+                            const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
+
+                            return import(/* webpackChunkName: "test-details" */ '../containers/test-details/test-details.module.js')
+                            .then(mod => $ocLazyLoad.load(mod.testDetailsModule))
+                            .catch(err => {
+                                throw new Error('Ooops, something went wrong, ' + err);
+                            });
                         }
                     })
                     .state('tests/runs', {
