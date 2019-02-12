@@ -193,10 +193,7 @@
                     })
                     .state('tests/runs', {
                         url: '/tests/runs',
-                        template: require('../containers/tests-runs/tests-runs.html'),
-                        controller: 'TestsRunsController',
-                        controllerAs: '$ctrl',
-                        bindToController: true,
+                        component: 'testsRunsComponent',
                         params: {
                             activeTestRunId: null
                         },
@@ -206,6 +203,8 @@
                         },
                         resolve: {
                             resolvedTestRuns: ['$state', 'testsRunsService', '$q', function($state, testsRunsService, $q) {
+                                'ngInject';
+
                                 const prevState = $state.current.name;
                                 let force = false;
 
@@ -230,10 +229,21 @@
                                 });
                             }],
                             activeTestRunId: ['$stateParams', '$q', function($stateParams, $q) { //TODO: use to implement highlighting opened tesRun
+                                'ngInject';
+
                                 const id = $stateParams.activeTestRunId ? $stateParams.activeTestRunId : undefined;
 
                                 return $q.resolve(id);
                             }]
+                        },
+                        lazyLoad: ($transition$) => {
+                            const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
+
+                            return import(/* webpackChunkName: "tests-runs" */ '../containers/tests-runs/tests-runs.module.js')
+                                .then(mod => $ocLazyLoad.load(mod.testsRunsModule))
+                                .catch(err => {
+                                    throw new Error('Ooops, something went wrong, ' + err);
+                                });
                         }
                     })
                     .state('tests/runs/info', {

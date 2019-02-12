@@ -20,9 +20,9 @@ module.exports = {
     },
     output: {
         // filename: '[name]-' + version + '.js',
-        filename: '[name].js',
+        filename: '[name].build.js',
         path: path.join(__dirname, '../dist'),
-        chunkFilename: '[id].chunk.js'
+        chunkFilename: '[name].lazy-chunk.js'
     },
     resolve: {
         modules: [
@@ -46,7 +46,12 @@ module.exports = {
                         loader: 'babel',
                         options: {
                             presets: ['@babel/preset-env'],
-                            plugins: ['@babel/plugin-proposal-object-rest-spread', '@babel/transform-runtime', ['angularjs-annotate', { 'explicitOnly' : true}]]
+                            plugins: [
+                                '@babel/plugin-proposal-object-rest-spread',
+                                '@babel/transform-runtime',
+                                ['angularjs-annotate', { 'explicitOnly' : true}],
+                                '@babel/plugin-syntax-dynamic-import'
+                            ]
                         }
                     },
                     WebpackStrip.loader('debug', 'debug', 'console.log') // TODO: production only

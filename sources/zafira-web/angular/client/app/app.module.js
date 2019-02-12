@@ -13,7 +13,7 @@
         'app.scm',
         'app.testcase',
         'app.testruninfo',
-        'app.testsRuns',
+        // 'app.testsRuns',
         'app.testDetails',
         'app.view',
         'app.settings',
@@ -43,6 +43,7 @@
         'gridstack-angular',
         'ngMaterialDateRangePicker',
         'angular-jwt',
+        'oc.lazyLoad',
     ])
     .config(['$httpProvider', '$anchorScrollProvider', function($httpProvider, $anchorScrollProvider) {
         $anchorScrollProvider.disableAutoScrolling();
@@ -1179,7 +1180,7 @@
                     $document.scrollTo(0, 0);
                 });
             }
-      ])
+      ]);
 
 //Services
     require('./_services/services.module');
