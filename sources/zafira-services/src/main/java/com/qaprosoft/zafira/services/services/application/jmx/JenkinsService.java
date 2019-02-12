@@ -248,7 +248,9 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
             String[] jobUrl = ciJob.getJobURL().split("job/");
             String folderName = String.join("", Arrays.copyOfRange(jobUrl, 1, jobUrl.length - 1));
             folderName = StringUtils.chop(folderName);
-            Optional<FolderJob> folder = getServer().getFolderJob(getServer().getJob(folderName));
+
+            com.offbytwo.jenkins.model.Job jenkinsJob = getServer().getJob(folderName);
+            Optional<FolderJob> folder = getServer().getFolderJob(jenkinsJob);
             job = getServer().getJob(folder.get(), ciJob.getName());
         } else {
             job = getServer().getJob(ciJob.getName());
