@@ -242,11 +242,16 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
         return result;
     }
 
+
     private JobWithDetails getJobWithDetails(Job ciJob) throws IOException {
         JobWithDetails job;
         if (ciJob.getJobURL().matches(FOLDER_REGEX)) {
-//            Optional<FolderJob> folder = getServer().getFolderJob();
-            job = new com.offbytwo.jenkins.model.Job(ciJob.getName(), ciJob.getJobURL()).details();
+            String jobUrl = ciJob.getJobURL();
+            String folderUrl = jobUrl.substring(0, jobUrl.lastIndexOf("/job/"));
+            String[] folderNameValues = jobUrl.split("/job/");
+            String folderName = folderNameValues[folderNameValues.length - 2];
+            Optional<FolderJob> folder = getServer().getFolderJob(new com.offbytwo.jenkins.model.Job(folderName, folderUrl));
+            job = getServer().getJob(folder.get(), ciJob.getName());
         } else {
             job = getServer().getJob(ciJob.getName());
         }
