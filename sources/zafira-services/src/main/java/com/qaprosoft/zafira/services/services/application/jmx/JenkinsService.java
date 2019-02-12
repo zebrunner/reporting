@@ -31,6 +31,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.client.HttpResponseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -241,16 +242,10 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
         return result;
     }
 
-
     private JobWithDetails getJobWithDetails(Job ciJob) throws IOException {
         JobWithDetails job;
         if (ciJob.getJobURL().matches(FOLDER_REGEX)) {
-            String[] jobUrl = ciJob.getJobURL().split("job/");
-            String folderName = String.join("", Arrays.copyOfRange(jobUrl, 1, jobUrl.length - 1));
-            folderName = StringUtils.chop(folderName);
-
-            com.offbytwo.jenkins.model.Job jenkinsJob = getServer().getJob(folderName);
-            Optional<FolderJob> folder = getServer().getFolderJob(jenkinsJob);
+            Optional<FolderJob> folder = getServer().getFolderJob(new com.offbytwo.jenkins.model.Job(ciJob.getName(), ciJob.getJobURL()));
             job = getServer().getJob(folder.get(), ciJob.getName());
         } else {
             job = getServer().getJob(ciJob.getName());
