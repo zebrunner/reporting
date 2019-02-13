@@ -133,24 +133,54 @@
                     classes: 'p-users'
                 }
             })
+            // For github redirection
+            // TODO: Should be only for guests?
             .state('scm/callback', {
                 url: '/scm/callback',
-                template: require('../_scm/list.html')
-            })
-            .state('tests/cases', {
-                url: '/tests/cases',
-                template: require('../_testcases/list.html'),
-                data: {
-                    requireLogin: true
+                component: 'scmComponent',
+                lazyLoad: ($transition$) => {
+                    const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
+
+                    return import(/* webpackChunkName: "scm" */ '../_scm/scm.module.js')
+                    .then(mod => $ocLazyLoad.load(mod.scmModule))
+                    .catch(err => {
+                        throw new Error('Can\'t load scm module, ' + err);
+                    });
                 }
             })
-            .state('tests/cases/metrics', {
-                url: '/tests/cases/:id/metrics',
-                template: require('../_testcases/metrics/list.html'),
-                data: {
-                    requireLogin: true
-                }
-            })
+            // TODO: link to this state is commented, so we can comment this state to reduce app build size
+            // .state('tests/cases', {
+            //     url: '/tests/cases',
+            //     component: 'testcaseComponent',
+            //     data: {
+            //         requireLogin: true
+            //     },
+            //     lazyLoad: ($transition$) => {
+            //         const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
+            //
+            //         return import(/* webpackChunkName: "testcase" */ '../_testcases/testcase.module.js')
+            //         .then(mod => $ocLazyLoad.load(mod.testcaseModule))
+            //         .catch(err => {
+            //             throw new Error('Can\'t load testcase module, ' + err);
+            //         });
+            //     }
+            // })
+            // .state('tests/cases/metrics', {
+            //     url: '/tests/cases/:id/metrics',
+            //     component: 'testcaseMetricsComponent',
+            //     data: {
+            //         requireLogin: true
+            //     },
+            //     lazyLoad: ($transition$) => {
+            //         const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
+            //
+            //         return import(/* webpackChunkName: "testcase" */ '../_testcases/testcase.module.js')
+            //         .then(mod => $ocLazyLoad.load(mod.testcaseModule))
+            //         .catch(err => {
+            //             throw new Error('Can\'t load testcase module, ' + err);
+            //         });
+            //     }
+            // })
             .state('tests/run', {
                 url: '/tests/runs/:testRunId',
                 component: 'testDetailsComponent',
@@ -321,7 +351,7 @@
                     });
                 }
             })
-            // TODO: looks like old one, check if we cn remove state and related code
+            // TODO: looks like old one, check if we can remove state and related code
             // .state('certifications', {
             //     url: '/certification',
             //     component: 'certificationComponent',

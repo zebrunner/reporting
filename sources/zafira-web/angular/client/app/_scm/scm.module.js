@@ -1,7 +1,4 @@
-(function () {
-    'use strict';
+import angular from 'angular';
+import scmComponent from './scm.component';
 
-    angular.module('app.scm', []);
-
-    require('./scm.controller');
-})();
+export const scmModule = angular.module('app.scm', []).component({ scmComponent });

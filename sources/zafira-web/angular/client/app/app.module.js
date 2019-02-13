@@ -10,8 +10,6 @@
         'app.auth',
         'app.dashboard',
         'app.user',
-        'app.scm',
-        'app.testcase',
         'app.view',
         'app.appSidebar',
         'app.appHeader',
@@ -1181,10 +1179,8 @@
     require('./_auth/auth.module');
     require('./_dashboards/dashboard.module');
     require('./_nav/sidebar.module');
-    require('./_testcases/testcase.module');
     require('./_users/user.module');
     require('./_views/view.module');
-    require('./_scm/scm.module');
     require('./core/core.module');
     require('./layout/layout.module');
     require('./page/page.module');
