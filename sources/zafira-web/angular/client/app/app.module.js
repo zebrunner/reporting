@@ -12,9 +12,7 @@
         'app.user',
         'app.scm',
         'app.testcase',
-        'app.testruninfo',
         'app.view',
-        'app.monitors',
         'app.appSidebar',
         'app.appHeader',
         'app.common',
@@ -1183,7 +1181,6 @@
     require('./_auth/auth.module');
     require('./_dashboards/dashboard.module');
     require('./_nav/sidebar.module');
-    require('./_monitors/monitors.module');
     require('./_testcases/testcase.module');
     require('./_users/user.module');
     require('./_views/view.module');
@@ -1192,7 +1189,6 @@
     require('./layout/layout.module');
     require('./page/page.module');
     require('./layout/commons/common.module');
-    require('./containers/containers');
     require('./components/components');
 })();
 

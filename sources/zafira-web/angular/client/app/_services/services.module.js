@@ -23,7 +23,6 @@ require('./invitation.service');
 require('./job.service');
 require('./launcher.service');
 require('./modals.service');
-require('./monitor.service');
 require('./permission.service');
 require('./project.provider');
 require('./project.service');

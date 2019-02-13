@@ -54,7 +54,7 @@ module.exports = {
                             ]
                         }
                     },
-                    WebpackStrip.loader('debug', 'debug', 'console.log') // TODO: production only
+                    // WebpackStrip.loader('debug', 'debugger', 'console.log') // TODO: production only
                 ]
 
             },

@@ -257,10 +257,18 @@
             })
             .state('tests/runs/info', {
                 url: '/tests/runs/:testRunId/info/:testId',
-                template: require('../containers/test-run-info/test-run-info.html'),
-                controller: 'TestRunInfoController',
+                component: 'testRunInfoComponent',
                 data: {
                     requireLogin: true
+                },
+                lazyLoad: ($transition$) => {
+                    const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
+
+                    return import(/* webpackChunkName: "testRunInfo" */ '../containers/test-run-info/test-run-info.module.js')
+                    .then(mod => $ocLazyLoad.load(mod.testRunInfoModule))
+                    .catch(err => {
+                        throw new Error('Can\'t load testRunInfo module, ' + err);
+                    });
                 }
             })
             .state('settings', {
@@ -279,13 +287,23 @@
                     });
                 }
             })
-            .state('monitors', {
-                url: '/monitors',
-                template: require('../_monitors/list.html'),
-                data: {
-                    requireLogin: true
-                }
-            })
+            // TODO: link to this state is commented, so we can comment this state to reduce app build size
+            // .state('monitors', {
+            //     url: '/monitors',
+            //     component: 'monitorsComponent',
+            //     data: {
+            //         requireLogin: true
+            //     },
+            //     lazyLoad: ($transition$) => {
+            //         const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
+            //
+            //         return import(/* webpackChunkName: "monitors" */ '../_monitors/monitors.module.js')
+            //         .then(mod => $ocLazyLoad.load(mod.monitorsModule))
+            //         .catch(err => {
+            //             throw new Error('Can\'t load monitorsModule module, ' + err);
+            //         });
+            //     }
+            // })
             .state('integrations', {
                 url: '/integrations',
                 component: 'integrationsComponent',
@@ -296,7 +314,7 @@
                 lazyLoad: ($transition$) => {
                     const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
 
-                    return import(/* webpackChunkName: "certification" */ '../_integrations/integrations.module.js')
+                    return import(/* webpackChunkName: "integrations" */ '../_integrations/integrations.module.js')
                     .then(mod => $ocLazyLoad.load(mod.integrationsModule))
                     .catch(err => {
                         throw new Error('Can\'t load integrationsModule module, ' + err);
@@ -320,20 +338,20 @@
             //         });
             //     }
             // })
-                .state('404', {
-                    url: '/404',
-                    template: require('../page/404.html'),
-                    data: {
-                        classes: 'body-wide body-err'
-                    }
-                })
-                .state('500', {
-                url: '/500',
-                template: require('../page/500.html'),
+            .state('404', {
+                url: '/404',
+                template: require('../page/404.html'),
                 data: {
                     classes: 'body-wide body-err'
                 }
-            });
+            })
+            .state('500', {
+            url: '/500',
+            template: require('../page/500.html'),
+            data: {
+                classes: 'body-wide body-err'
+            }
+        });
 
             $urlRouterProvider
             .when('/', '/dashboards')

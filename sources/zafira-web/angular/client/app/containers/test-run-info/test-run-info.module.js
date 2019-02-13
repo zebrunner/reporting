@@ -1,7 +1,4 @@
-(function () {
-    'use strict';
+import angular from 'angular';
+import testRunInfoComponent from './test-run-info.component';
 
-    angular.module('app.testruninfo', []);
-
-    require('./test-run-info.controller');
-})();
+export const testRunInfoModule = angular.module('app.testRunInfo', []).component({ testRunInfoComponent });
