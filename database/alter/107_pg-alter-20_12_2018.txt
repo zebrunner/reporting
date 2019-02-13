@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS LAUNCHERS (
 --   BEGIN
 --
 --     SELECT ID
---            INTO GROUP_ID
+--     INTO GROUP_ID
 --     FROM GROUPS
 --     WHERE LOWER(NAME) = 'super admins';
 --
