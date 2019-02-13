@@ -288,10 +288,19 @@
             })
             .state('integrations', {
                 url: '/integrations',
-                template: require('../_integrations/list.html'),
+                component: 'integrationsComponent',
                 data: {
                     requireLogin: true,
                     classes: 'p-integrations'
+                },
+                lazyLoad: ($transition$) => {
+                    const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
+
+                    return import(/* webpackChunkName: "certification" */ '../_integrations/integrations.module.js')
+                    .then(mod => $ocLazyLoad.load(mod.integrationsModule))
+                    .catch(err => {
+                        throw new Error('Can\'t load integrationsModule module, ' + err);
+                    });
                 }
             })
             // TODO: looks like old one, check if we cn remove state and related code

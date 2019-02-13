@@ -1,7 +1,4 @@
-(function () {
-    'use strict';
+import angular from 'angular';
+import integrationsComponent from './integrations.component';
 
-    angular.module('app.integrations', []);
-
-    require('./integrations.controller');
-})();
+export const integrationsModule = angular.module('app.integrations', []).component({ integrationsComponent });

@@ -1,11 +1,4 @@
-(function () {
-    'use strict';
-
-    angular
-        .module('app.integrations')
-        .controller('IntegrationsController', IntegrationsController);
-
-    function IntegrationsController($scope, $rootScope, $state, $mdConstant, $stateParams, $mdDialog, UploadService, SettingsService) {
+const integrationsController = function integrationsController($scope, $rootScope, $state, $mdConstant, $stateParams, $mdDialog, UploadService, SettingsService) {
         'ngInject';
 
         $scope.settingTools = [];
@@ -273,5 +266,6 @@
                 });
             }
         })();
-    }
-})();
+    };
+
+export default integrationsController;

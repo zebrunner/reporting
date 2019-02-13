@@ -15,7 +15,6 @@
         'app.testruninfo',
         'app.view',
         'app.monitors',
-        'app.integrations',
         'app.appSidebar',
         'app.appHeader',
         'app.common',
@@ -1183,7 +1182,6 @@
 //Modules
     require('./_auth/auth.module');
     require('./_dashboards/dashboard.module');
-    require('./_integrations/integrations.module');
     require('./_nav/sidebar.module');
     require('./_monitors/monitors.module');
     require('./_testcases/testcase.module');
