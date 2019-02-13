@@ -13,13 +13,9 @@
         'app.scm',
         'app.testcase',
         'app.testruninfo',
-        // 'app.testsRuns',
-        // 'app.testDetails',
         'app.view',
-        'app.settings',
         'app.monitors',
         'app.integrations',
-        'app.certification',
         'app.appSidebar',
         'app.appHeader',
         'app.common',
@@ -1186,13 +1182,11 @@
     require('./_services/services.module');
 //Modules
     require('./_auth/auth.module');
-    require('./_certifications/certification.module');
     require('./_dashboards/dashboard.module');
     require('./_integrations/integrations.module');
     require('./_nav/sidebar.module');
     require('./_monitors/monitors.module');
     require('./_testcases/testcase.module');
-    require('./_settings/settings.module');
     require('./_users/user.module');
     require('./_views/view.module');
     require('./_scm/scm.module');

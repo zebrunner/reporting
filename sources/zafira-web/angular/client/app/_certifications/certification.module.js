@@ -1,7 +1,5 @@
-(function () {
-    'use strict';
+import angular from 'angular';
+import certificationComponent from './certification.component';
 
-    angular.module('app.certification', []);
-
-    require('./certification.controller');
-})();
+export const certificationModule = angular.module('app.certification', [])
+    .component({ certificationComponent });
