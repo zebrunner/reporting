@@ -18,15 +18,6 @@
                 value: SettingProvider.getCompanyLogoURl() || ''
             };
 
-            $rootScope.footerSlice = {
-                robo: {
-                    url: 'app/_auth/robo-footer.html'
-                },
-                copyright: {
-                    url: 'app/_auth/copyright-footer.html'
-                }
-            };
-
             var UNANIMATED_STATES = ['signin', 'signup', 'forgotPassword', 'resetPassword'];
 
             $scope.isAnimated = function() {

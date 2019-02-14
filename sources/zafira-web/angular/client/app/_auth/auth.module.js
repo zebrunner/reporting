@@ -1,9 +1,17 @@
-(function () {
-    'use strict';
+import angular from 'angular';
+import signupComponent from './signup.component';
+import signinComponent from './signin.component';
+import forgotPasswordComponent from './forgot-password.component';
+import resetPasswordComponent from './reset-password.component';
 
-    angular.module('app.auth', []);
+require('./robo/robo.module');
+require('./copyright/copyright.module');
 
-
-    require('./auth.controller');
-    require('./auth.intercepter');
-})();
+export const authModule = angular.module('app.auth', [
+    'app.robo',
+    'app.copyright',
+    ])
+    .component({ signupComponent })
+    .component({ signinComponent })
+    .component({ resetPasswordComponent })
+    .component({ forgotPasswordComponent });

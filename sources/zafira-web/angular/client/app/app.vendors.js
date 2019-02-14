@@ -60,7 +60,7 @@ require('ace-builds/src-min-noconflict/ace');
 require('angular-ui-ace');
 require('jszip/dist/jszip.min');
 // require('../vendors/html2canvas.min');
-require('html2canvas');
+window.html2canvas = require('html2canvas');
 require('../vendors/md-date-range-picker');
 
 import hljs from 'highlight.js/lib/highlight';

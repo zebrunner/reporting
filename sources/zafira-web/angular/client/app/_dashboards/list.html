@@ -1,4 +1,4 @@
-<div data-ng-controller="DashboardController">
+<div>
     <zf-sub-header>
         <zf-sub-header-title>{{dashboard.title}}</zf-sub-header-title>
         <zf-sub-header-options>
@@ -11,14 +11,14 @@
                     dashboard
                     <md-tooltip md-direction="bottom">Widget placement</md-tooltip>
                 </i>
-                <i class="material-icons" has-any-permission="['MODIFY_DASHBOARDS']" ng-click="showDashboardDialog($event, dashboard, false);">
+                <i class="material-icons" has-any-permission="['MODIFY_DASHBOARDS']" ng-click="showDashboardSettingsModal($event, dashboard, false);">
                     settings
                     <md-tooltip md-direction="bottom">Edit dashboard</md-tooltip>
                 </i>
             </div>
         </zf-sub-header-options>
         <zf-sub-header-button hide-phone="true">
-            <button has-any-permission="['MODIFY_DASHBOARDS']" class="fixed-page-header__btn _dashboard" ng-click="showDashboardDialog($event, {}, true);">
+            <button has-any-permission="['MODIFY_DASHBOARDS']" class="fixed-page-header__btn _dashboard" ng-click="showDashboardSettingsModal($event, {}, true);">
                 <md-icon class="material-icons">add</md-icon>
                 <span>New dashboard</span>
             </button>
@@ -68,7 +68,7 @@
                                 <md-menu class="show-phone">
                                     <i  data-ng-click="$mdMenu.open($event);" class="material-icons widget-icon">more_vert</i>
                                     <md-menu-content width="2">
-                                        <md-menu-item data-ng-if="tools['EMAIL']">
+                                        <md-menu-item data-ng-if="true || tools['EMAIL']">
                                             <md-button data-ng-click="showEmailDialog($event, widget.id);">
                                                 <md-icon class="material-icons">send</md-icon>
                                                 Send by email

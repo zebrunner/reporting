@@ -1,7 +1,5 @@
-(function () {
-    'use strict';
+import angular from 'angular';
+import dashboardComponent from './dashboard.component';
 
-    angular.module('app.dashboard', []);
-
-    require('./dashboard.controller');
-})();
+export const dashboardModule = angular.module('app.dashboard', [])
+    .component({ dashboardComponent });

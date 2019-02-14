@@ -2,13 +2,13 @@
     'use strict';
 
     angular.module('app')
-    .config(['$stateProvider', '$urlRouterProvider', '$httpProvider', '$ocLazyLoadProvider',
-        function($stateProvider, $urlRouterProvider, $httpProvider, $ocLazyLoadProvider) {
+        .config(function($stateProvider, $urlRouterProvider) {
+            'ngInject';
 
             $stateProvider
             .state('dashboard', {
                 url: '/dashboards/:id',
-                template: require('../_dashboards/list.html'),
+                component: 'dashboardComponent',
                 data: {
                     requireLogin: true
                 },
@@ -16,18 +16,20 @@
                     currentUser: null
                 },
                 resolve: {
-                    currentUser: ['$stateParams', '$q', 'UserService', '$state', ($stateParams, $q, UserService, $state) => {//TODO: use usual function instaed of arrow
-                        var currentUser = UserService.getCurrentUser();
+                    currentUser: ($stateParams, $q, UserService, $state) => {
+                        'ngInject';
+
+                        const currentUser = UserService.getCurrentUser();
 
                         if (!currentUser) {
                             return UserService.initCurrentUser()
-                            .then(function(user) {
-                                if (!$stateParams.id) {
-                                    $state.go('dashboard', {id: user.defaultDashboardId}, {notify: false});
-                                }
+                                .then(function(user) {
+                                    if (!$stateParams.id) {
+                                        $state.go('dashboard', {id: user.defaultDashboardId}, {notify: false});
+                                    }
 
-                                return $q.resolve(user);
-                            });
+                                    return $q.resolve(user);
+                                });
                         } else {
                             if (!$stateParams.id) {
                                 $state.go('dashboard', {id: currentUser.defaultDashboardId}, {notify: false});
@@ -35,12 +37,21 @@
 
                             return $q.resolve(currentUser);
                         }
-                    },]
+                    }
+                },
+                lazyLoad: ($transition$) => {
+                    const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
+
+                    return import(/* webpackChunkName: "dashboard" */ '../_dashboards/dashboard.module.js')
+                        .then(mod => $ocLazyLoad.load(mod.dashboardModule))
+                        .catch(err => {
+                            throw new Error('Can\'t load dashboard module, ' + err);
+                        });
                 }
             })
             .state('dashboards', {
                 url: '/dashboards',
-                template: require('../_dashboards/list.html'),
+                component: 'dashboardComponent',
                 data: {
                     requireLogin: true
                 },
@@ -48,18 +59,29 @@
                     currentUser: null
                 },
                 resolve: {
-                    currentUser: ['$stateParams', '$q', 'UserService', '$state', ($stateParams, $q, UserService, $state) => {//TODO: remove unused $stateParams and use usual function instaed of arrow
-                        var currentUser = UserService.getCurrentUser();
+                    currentUser: ($stateParams, $q, UserService, $state) => {
+                        'ngInject';
+
+                        const currentUser = UserService.getCurrentUser();
 
                         if (!currentUser) {
                             return UserService.initCurrentUser()
-                            .then(function(user) {
-                                $state.go('dashboard', {id: user.defaultDashboardId});
-                            });
+                                .then(function(user) {
+                                    $state.go('dashboard', {id: user.defaultDashboardId});
+                                });
                         } else {
                             $state.go('dashboard', {id: currentUser.defaultDashboardId});
                         }
-                    },]
+                    }
+                },
+                lazyLoad: ($transition$) => {
+                    const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
+
+                    return import(/* webpackChunkName: "dashboard" */ '../_dashboards/dashboard.module.js')
+                        .then(mod => $ocLazyLoad.load(mod.dashboardModule))
+                        .catch(err => {
+                            throw new Error('Can\'t load dashboard module, ' + err);
+                        });
                 }
             })
             .state('views', {
@@ -71,7 +93,7 @@
             })
             .state('signin', {
                 url: '/signin',
-                template: require('../_auth/signin.html'),
+                component: 'signinComponent',
                 params: {
                     referrer: null,
                     referrerParams: null
@@ -79,14 +101,32 @@
                 data: {
                     onlyGuests: true,
                     classes: 'body-wide body-auth'
+                },
+                lazyLoad: ($transition$) => {
+                    const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
+
+                    return import(/* webpackChunkName: "auth" */ '../_auth/auth.module.js')
+                        .then(mod => $ocLazyLoad.load(mod.authModule))
+                        .catch(err => {
+                            throw new Error('Can\'t load auth module, ' + err);
+                        });
                 }
             })
             .state('signup', {
                 url: '/signup',
-                template: require('../_auth/signup.html'),
+                component: 'signupComponent',
                 data: {
                     onlyGuests: true,
                     classes: 'body-wide body-auth'
+                },
+                lazyLoad: ($transition$) => {
+                    const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
+
+                    return import(/* webpackChunkName: "auth" */ '../_auth/auth.module.js')
+                        .then(mod => $ocLazyLoad.load(mod.authModule))
+                        .catch(err => {
+                            throw new Error('Can\'t load auth module, ' + err);
+                        });
                 }
             })
             .state('logout', {
@@ -103,10 +143,19 @@
             })
             .state('forgotPassword', {
                 url: '/password/forgot',
-                template: require('../_auth/forgot-password.html'),
+                component: 'forgotPasswordComponent',
                 data: {
                     onlyGuests: true,
                     classes: 'body-wide body-auth'
+                },
+                lazyLoad: ($transition$) => {
+                    const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
+
+                    return import(/* webpackChunkName: "auth" */ '../_auth/auth.module.js')
+                        .then(mod => $ocLazyLoad.load(mod.authModule))
+                        .catch(err => {
+                            throw new Error('Can\'t load auth module, ' + err);
+                        });
                 }
             })
             .state('resetPassword', {
@@ -115,6 +164,15 @@
                 data: {
                     onlyGuests: true,
                     classes: 'body-wide body-auth'
+                },
+                lazyLoad: ($transition$) => {
+                    const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
+
+                    return import(/* webpackChunkName: "auth" */ '../_auth/auth.module.js')
+                        .then(mod => $ocLazyLoad.load(mod.authModule))
+                        .catch(err => {
+                            throw new Error('Can\'t load auth module, ' + err);
+                        });
                 }
             })
             .state('users/profile', {
@@ -142,10 +200,10 @@
                     const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
 
                     return import(/* webpackChunkName: "scm" */ '../_scm/scm.module.js')
-                    .then(mod => $ocLazyLoad.load(mod.scmModule))
-                    .catch(err => {
-                        throw new Error('Can\'t load scm module, ' + err);
-                    });
+                        .then(mod => $ocLazyLoad.load(mod.scmModule))
+                        .catch(err => {
+                            throw new Error('Can\'t load scm module, ' + err);
+                        });
                 }
             })
             // TODO: link to this state is commented, so we can comment this state to reduce app build size
@@ -159,10 +217,10 @@
             //         const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
             //
             //         return import(/* webpackChunkName: "testcase" */ '../_testcases/testcase.module.js')
-            //         .then(mod => $ocLazyLoad.load(mod.testcaseModule))
-            //         .catch(err => {
-            //             throw new Error('Can\'t load testcase module, ' + err);
-            //         });
+            //             .then(mod => $ocLazyLoad.load(mod.testcaseModule))
+            //             .catch(err => {
+            //                 throw new Error('Can\'t load testcase module, ' + err);
+            //             });
             //     }
             // })
             // .state('tests/cases/metrics', {
@@ -175,10 +233,10 @@
             //         const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
             //
             //         return import(/* webpackChunkName: "testcase" */ '../_testcases/testcase.module.js')
-            //         .then(mod => $ocLazyLoad.load(mod.testcaseModule))
-            //         .catch(err => {
-            //             throw new Error('Can\'t load testcase module, ' + err);
-            //         });
+            //             .then(mod => $ocLazyLoad.load(mod.testcaseModule))
+            //             .catch(err => {
+            //                 throw new Error('Can\'t load testcase module, ' + err);
+            //             });
             //     }
             // })
             .state('tests/run', {
@@ -193,7 +251,7 @@
                     classes: 'p-tests-run-details'
                 },
                 resolve: {
-                    testRun: ['$stateParams', '$q', '$state', 'TestRunService', function($stateParams, $q, $state, TestRunService) {
+                    testRun: function($stateParams, $q, $state, TestRunService) {
                         'ngInject';
 
                         if ($stateParams.testRun) {
@@ -218,16 +276,16 @@
                         } else {
                             $state.go('tests/runs');
                         }
-                    }]
+                    }
                 },
                 lazyLoad: ($transition$) => {
                     const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
 
                     return import(/* webpackChunkName: "test-details" */ '../containers/test-details/test-details.module.js')
-                    .then(mod => $ocLazyLoad.load(mod.testDetailsModule))
-                    .catch(err => {
-                        throw new Error('Can\'t load testDetails module, ' + err);
-                    });
+                        .then(mod => $ocLazyLoad.load(mod.testDetailsModule))
+                        .catch(err => {
+                            throw new Error('Can\'t load testDetails module, ' + err);
+                        });
                 }
             })
             .state('tests/runs', {
@@ -241,7 +299,7 @@
                     classes: 'p-tests-runs'
                 },
                 resolve: {
-                    resolvedTestRuns: ['$state', 'testsRunsService', '$q', function($state, testsRunsService, $q) {
+                    resolvedTestRuns: function($state, testsRunsService, $q) {
                         'ngInject';
 
                         const prevState = $state.current.name;
@@ -266,23 +324,23 @@
                             //2nd approach: if can't load with user/cached searchParams return empty data
                             return $q.resolve([]);
                         });
-                    }],
-                    activeTestRunId: ['$stateParams', '$q', function($stateParams, $q) { //TODO: use to implement highlighting opened tesRun
+                    },
+                    activeTestRunId: function($stateParams, $q) { //TODO: use to implement highlighting opened tesRun
                         'ngInject';
 
                         const id = $stateParams.activeTestRunId ? $stateParams.activeTestRunId : undefined;
 
                         return $q.resolve(id);
-                    }]
+                    }
                 },
                 lazyLoad: ($transition$) => {
                     const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
 
                     return import(/* webpackChunkName: "tests-runs" */ '../containers/tests-runs/tests-runs.module.js')
-                    .then(mod => $ocLazyLoad.load(mod.testsRunsModule))
-                    .catch(err => {
-                        throw new Error('Can\'t load testsRuns module, ' + err);
-                    });
+                        .then(mod => $ocLazyLoad.load(mod.testsRunsModule))
+                        .catch(err => {
+                            throw new Error('Can\'t load testsRuns module, ' + err);
+                        });
                 }
             })
             .state('tests/runs/info', {
@@ -295,10 +353,10 @@
                     const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
 
                     return import(/* webpackChunkName: "testRunInfo" */ '../containers/test-run-info/test-run-info.module.js')
-                    .then(mod => $ocLazyLoad.load(mod.testRunInfoModule))
-                    .catch(err => {
-                        throw new Error('Can\'t load testRunInfo module, ' + err);
-                    });
+                        .then(mod => $ocLazyLoad.load(mod.testRunInfoModule))
+                        .catch(err => {
+                            throw new Error('Can\'t load testRunInfo module, ' + err);
+                        });
                 }
             })
             .state('settings', {
@@ -311,10 +369,10 @@
                     const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
 
                     return import(/* webpackChunkName: "settings" */ '../_settings/settings.module.js')
-                    .then(mod => $ocLazyLoad.load(mod.settingsModule))
-                    .catch(err => {
-                        throw new Error('Can\'t load settings module, ' + err);
-                    });
+                        .then(mod => $ocLazyLoad.load(mod.settingsModule))
+                        .catch(err => {
+                            throw new Error('Can\'t load settings module, ' + err);
+                        });
                 }
             })
             // TODO: link to this state is commented, so we can comment this state to reduce app build size
@@ -328,10 +386,10 @@
             //         const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
             //
             //         return import(/* webpackChunkName: "monitors" */ '../_monitors/monitors.module.js')
-            //         .then(mod => $ocLazyLoad.load(mod.monitorsModule))
-            //         .catch(err => {
-            //             throw new Error('Can\'t load monitorsModule module, ' + err);
-            //         });
+            //             .then(mod => $ocLazyLoad.load(mod.monitorsModule))
+            //             .catch(err => {
+            //                 throw new Error('Can\'t load monitorsModule module, ' + err);
+            //             });
             //     }
             // })
             .state('integrations', {
@@ -345,10 +403,10 @@
                     const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
 
                     return import(/* webpackChunkName: "integrations" */ '../_integrations/integrations.module.js')
-                    .then(mod => $ocLazyLoad.load(mod.integrationsModule))
-                    .catch(err => {
-                        throw new Error('Can\'t load integrationsModule module, ' + err);
-                    });
+                        .then(mod => $ocLazyLoad.load(mod.integrationsModule))
+                        .catch(err => {
+                            throw new Error('Can\'t load integrationsModule module, ' + err);
+                        });
                 }
             })
             // TODO: looks like old one, check if we can remove state and related code
@@ -362,10 +420,10 @@
             //         const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
             //
             //         return import(/* webpackChunkName: "certification" */ '../_certifications/certification.module.js')
-            //         .then(mod => $ocLazyLoad.load(mod.certificationModule))
-            //         .catch(err => {
-            //             throw new Error('Can\'t load certificationModule module, ' + err);
-            //         });
+            //             .then(mod => $ocLazyLoad.load(mod.certificationModule))
+            //             .catch(err => {
+            //                 throw new Error('Can\'t load certificationModule module, ' + err);
+            //             });
             //     }
             // })
             .state('404', {
@@ -376,18 +434,17 @@
                 }
             })
             .state('500', {
-            url: '/500',
-            template: require('../page/500.html'),
-            data: {
-                classes: 'body-wide body-err'
-            }
-        });
+                url: '/500',
+                template: require('../page/500.html'),
+                data: {
+                    classes: 'body-wide body-err'
+                }
+            });
 
             $urlRouterProvider
-            .when('/', '/dashboards')
-            .when('', '/dashboards')
-            .otherwise('/404');
+                .when('/', '/dashboards')
+                .when('', '/dashboards')
+                .otherwise('/404');
 
-        }
-    ]);
+        });
 })();

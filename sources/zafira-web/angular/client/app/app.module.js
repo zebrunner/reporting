@@ -7,8 +7,6 @@
         // Custom Feature modules
         'app.page',
         'app.services',
-        'app.auth',
-        'app.dashboard',
         'app.user',
         'app.view',
         'app.appSidebar',
@@ -16,8 +14,6 @@
         'app.common',
         'app.testRunCard',
         'app.testsRunsFilter',
-        'app.copyright',
-        'app.robo',
         // 3rd party feature modules
         'ngImgCrop',
         'ngecharts',
@@ -1176,8 +1172,6 @@
 //Services
     require('./_services/services.module');
 //Modules
-    require('./_auth/auth.module');
-    require('./_dashboards/dashboard.module');
     require('./_nav/sidebar.module');
     require('./_users/user.module');
     require('./_views/view.module');

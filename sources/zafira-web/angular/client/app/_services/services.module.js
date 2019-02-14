@@ -5,6 +5,7 @@
 
 })();
 
+require('./auth.intercepter');
 require('./utils/HttpMockResolver');
 require('./utils/screenshot.util');
 require('./utils/TableExpandUtil');
