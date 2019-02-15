@@ -169,7 +169,7 @@
                                                                                 <label>Jira ID</label>
                                                                                 <input id="issueJiraId"
                                                                                        type="text"
-                                                                                       ng-pattern="/^(\w+-[0-9]+|\d+)$/"
+                                                                                       ng-pattern="/^([A-z0-9]+-[0-9]+|\d+)$/"
                                                                                        class="form-control validation"
                                                                                        data-ng-model="newIssue.jiraId"
                                                                                        data-ng-change="initIssueSearch()" required placeholder="{{ isConnectedToJira ? 'Connected' : 'Not connected'}} to JIRA"/>
@@ -298,7 +298,7 @@
                                                                                 <label>Jira ID</label>
                                                                                 <input id="taskJiraId"
                                                                                        type="text"
-                                                                                       ng-pattern="/^(\w+-[0-9]+|\d+)$/"
+                                                                                       ng-pattern="/^([A-z0-9]+-[0-9]+|\d+)$/"
                                                                                        class="form-control validation"
                                                                                        data-ng-model="newTask.jiraId"
                                                                                        data-ng-change="initTaskSearch()" required
