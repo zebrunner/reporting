@@ -17,7 +17,6 @@ require('./certification.service');
 require('./config.service');
 require('./dashboard.service');
 require('./download.service');
-require('./elasticsearch.service');
 require('./filter.service');
 require('./group.service');
 require('./invitation.service');

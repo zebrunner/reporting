@@ -1,6 +1,6 @@
 const testRunInfoController = function testRunInfoController($scope, $rootScope, $http, $mdDialog, $interval, $log, $filter,
                                    $anchorScroll, $location, $timeout, $window, $q,
-                                   ElasticsearchService, TestService, TestRunService, UtilService,
+                                   elasticsearchService, TestService, TestRunService, UtilService,
                                    ArtifactService, DownloadService, $stateParams, OFFSET, API_URL,
                                    $state, $httpMock, TestRunsStorage) {
     'ngInject';
@@ -121,7 +121,7 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
 
     function getLogsFromElasticsearch(from, page, size) {
         return $q(function (resolve, reject) {
-            ElasticsearchService.search(ELASTICSEARCH_INDEX, SEARCH_CRITERIA, from, page, size, $scope.test.startTime).then(function (rs) {
+            elasticsearchService.search(ELASTICSEARCH_INDEX, SEARCH_CRITERIA, from, page, size, $scope.test.startTime).then(function (rs) {
                 resolve(rs.map(function (r) {
                     return r._source;
                 }));
@@ -131,7 +131,7 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
 
     function tryToGetLogsHistoryFromElasticsearch(logGetter) {
         return $q(function (resolve, reject) {
-            ElasticsearchService.count(ELASTICSEARCH_INDEX, SEARCH_CRITERIA, $scope.test.startTime).then(function (count) {
+            elasticsearchService.count(ELASTICSEARCH_INDEX, SEARCH_CRITERIA, $scope.test.startTime).then(function (count) {
                 if(logGetter.accessFunc ? logGetter.accessFunc.call(this, count) : true) {
                     var size = logGetter.getSizeFunc.call(this, count);
                     collectElasticsearchLogs(logGetter.from, logGetter.pageCount, size, count, resolve);
@@ -471,9 +471,10 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
             if($scope.testsWebsocket.connected) {
                 $scope.testsWebsocket.subscribe("/topic/" + TENANT + ".testRuns." + testRun.id + ".tests", function (data) {
                     var test = $scope.getEventFromMessage(data.body).test;
-                    if(test.id == $scope.test.id) {
 
-                        if(test.status == 'IN_PROGRESS') {
+                    if($scope.test && test.id === $scope.test.id) {
+
+                        if(test.status === 'IN_PROGRESS') {
                             addDrivers(getArtifactsByPartName(test, LIVE_DEMO_ARTIFACT_NAME));
                             driversCount = $scope.drivers.length;
                         } else {
@@ -481,7 +482,7 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
                             $scope.fullScreen(true);
                             setMode('record');
                             var videoArtifacts = getArtifactsByPartName(test, 'video', 'live') || [];
-                            if(videoArtifacts.length == driversCount) {
+                            if(videoArtifacts.length === driversCount) {
                                 addDrivers(videoArtifacts);
                                 postModeConstruct(test);
                             }
@@ -660,20 +661,19 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
     };
 
     (function init() {
-        getTestRun($stateParams.id).then(function (rs) {
+        getTestRun($stateParams.testRunId).then(function (rs) {
             $scope.testRun = rs;
             initTestsWebSocket($scope.testRun);
             getTest(rs.id).then(function (testsRs) {
-                const testId = $stateParams.testId;
+                const testId = parseInt($stateParams.testId, 10);
 
+                $scope.testRun.tests = testsRs;
                 $scope.test = testsRs.find(({ id }) => id === testId);
-
                 if ($scope.test) {
-                    $scope.testRun.tests = testsRs;
                     SEARCH_CRITERIA = {'correlation-id': $scope.testRun.ciRunId + '_' + $scope.test.ciTestId};
                     ELASTICSEARCH_INDEX = buildIndex();
 
-                    setMode($scope.test.status == 'IN_PROGRESS' ? 'live' : 'record');
+                    setMode($scope.test.status === 'IN_PROGRESS' ? 'live' : 'record');
                     $scope.MODE.initFunc.call(this, $scope.test);
                 }
             });

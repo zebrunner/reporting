@@ -18,7 +18,6 @@
         'ngImgCrop',
         'ngecharts',
         'ui.ace',
-        'elasticsearch',
         require('angular-material-data-table'),
         require('angular-validation-match'),
         'timer',

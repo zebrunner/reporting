@@ -47,8 +47,6 @@ window.alertify = require('alertifyjs/build/alertify.min');
 
 //TODO: check if uses
 require('../vendors/loading-bar'); //If uses it can be installed via npm
-
-require('elasticsearch-browser/elasticsearch.angular.min');
 require('angular-scroll');
 // require('../bower_components/jquery.slimscroll/jquery.slimscroll.min');
 require('jquery-slimscroll');
@@ -59,8 +57,6 @@ require('ace-builds/src-min-noconflict/ace');
 // require('../bower_components/angular-ui-ace/ui-ace.min');
 require('angular-ui-ace');
 require('jszip/dist/jszip.min');
-// require('../vendors/html2canvas.min');
-window.html2canvas = require('html2canvas');
 require('../vendors/md-date-range-picker');
 
 import hljs from 'highlight.js/lib/highlight';

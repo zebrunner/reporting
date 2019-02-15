@@ -5,7 +5,7 @@
         .controller('AppCtrl', AppCtrl); // overall control
 	    function AppCtrl($scope, $rootScope, $templateCache, $state, httpBuffer, $location, $window, $cookies, $document,
                          $http, $q, appConfig, AuthService, UserService, DashboardService, SettingsService,
-                         ConfigService, AuthIntercepter, UtilService, ElasticsearchService, SettingProvider) {
+                         ConfigService, AuthIntercepter, UtilService, SettingProvider) {
             'ngInject';
 
 	        $scope.pageTransitionOpts = appConfig.pageTransitionOpts;

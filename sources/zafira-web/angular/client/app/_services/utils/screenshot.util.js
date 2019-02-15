@@ -1,4 +1,6 @@
-(function () {
+import html2canvas from 'html2canvas';
+
+(function (html2canvas) {
     'use strict';
 
     angular
@@ -72,4 +74,4 @@
         }
 
     }
-})();
+})(html2canvas);
