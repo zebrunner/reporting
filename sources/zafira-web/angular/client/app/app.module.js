@@ -26,7 +26,6 @@
         'ngSanitize',
         'chieffancypants.loadingBar',
         'textAngular',
-        'gridstack-angular',
         'ngMaterialDateRangePicker',
         'angular-jwt',
         'oc.lazyLoad',

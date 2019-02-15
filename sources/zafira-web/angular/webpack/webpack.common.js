@@ -138,6 +138,11 @@ module.exports = {
         }),
         new webpack.ProgressPlugin()
     ],
+    optimization: {
+        runtimeChunk: {
+            name: 'vendors'
+        }
+    },
     stats: {
         colors: true,
         // modules: true,

@@ -40,8 +40,6 @@ require('textangular/dist/textAngular-sanitize.min');
 require('textangular');
 // require('../bower_components/jquery-ui/jquery-ui.min');
 require('jquery-ui/ui/widget');
-require('gridstack');
-require('@epelc/gridstack-angular/dist/gridstack-angular');
 
 window.alertify = require('alertifyjs/build/alertify.min');
 
