@@ -298,7 +298,7 @@
                                                                                 <label>Jira ID</label>
                                                                                 <input id="taskJiraId"
                                                                                        type="text"
-                                                                                       ng-pattern="/^([A-z]+-[0-9]+|\d+)$/"
+                                                                                       ng-pattern="/^([A-z0-9]+-[0-9]+|\d+)$/"
                                                                                        class="form-control validation"
                                                                                        data-ng-model="newTask.jiraId"
                                                                                        data-ng-change="initTaskSearch()" required
