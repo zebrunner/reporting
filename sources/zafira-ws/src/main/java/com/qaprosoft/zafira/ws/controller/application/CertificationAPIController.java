@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
+import com.qaprosoft.zafira.services.services.application.CertificationService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,14 +27,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.dto.CertificationType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TestConfigService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
-import com.qaprosoft.zafira.services.services.application.jmx.amazon.AmazonService;
 
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -46,10 +45,10 @@ public class CertificationAPIController extends AbstractController
 	private TestRunService testRunService;
 	
 	@Autowired
-	private AmazonService amazonService;
-	
-	@Autowired
 	private TestConfigService testConfigService;
+
+	@Autowired
+	private CertificationService certificationService;
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(path="details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -67,16 +66,18 @@ public class CertificationAPIController extends AbstractController
 					platform.append(" ").append(arg.getValue());
 				}
 			}
+
+			certification = certificationService.insertIntoCertification(certification, testRun.getId(), platform.toString());
 			
-			for(S3ObjectSummary file : amazonService.listFiles(String.valueOf(testRun.getId()) + "/"))
+			/*for(S3ObjectSummary file : amazonService.listFiles(testRun.getId() + "/"))
 			{
 				if(!file.getKey().endsWith("/"))
 				{
 					certification.addScreenshot(amazonService.getComment(file.getKey()), platform.toString(), amazonService.getPublicLink(file));
 				}
-			}
+			}*/
 		}
 	
-		return certification;		
+		return certification;
 	}
 }

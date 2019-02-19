@@ -118,6 +118,7 @@
         <google-drive-version>v3-rev118-1.18.0-rc</google-drive-version>
         <reactor.version>2.0.8.RELEASE</reactor.version>
         <netty-all.version>4.1.28.Final</netty-all.version>
+        <es.version>6.6.0</es.version>
     </properties>
     <modules>
         <module>zafira-conf</module>
@@ -672,6 +673,16 @@
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
                 <version>${netty-all.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.elasticsearch</groupId>
+                <artifactId>elasticsearch</artifactId>
+                <version>${es.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.elasticsearch.client</groupId>
+                <artifactId>elasticsearch-rest-high-level-client</artifactId>
+                <version>${es.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
