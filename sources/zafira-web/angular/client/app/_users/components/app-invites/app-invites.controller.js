@@ -1,30 +1,18 @@
 (function () {
     'use strict';
 
-    angular.module('app.user')
-        .controller('InviteListController', InviteListController);
+    angular.module('app.appInvites')
+        .controller('AppInvitesController', AppInvitesController);
 
     // **************************************************************************
-    function InviteListController($scope, InvitationService, $location) {
+    function AppInvitesController($scope, InvitationService, $location) {
         'ngInject';
 
-        $scope.invitations = InvitationService.invitations;
         $scope.sc = {};
 
         $scope.today = new Date().getTime();
-
         $scope.tabs[$scope.tabs.indexOfField('name', 'Invitations')].countFunc = function() {
             return $scope.invitations ? $scope.invitations.length : 0;
-        };
-
-        $scope.getAllInvitations = function () {
-            InvitationService.getAllInvitations().then(function (rs) {
-                if(rs.success) {
-                    $scope.invitations.push.apply($scope.invitations, rs.data);
-                } else {
-                    alertify.error(rs.message);
-                }
-            });
         };
 
         $scope.takeOff = function (invite, index) {
@@ -57,6 +45,16 @@
             $location.search('email', invite.email);
             $scope.search(1);
             $scope.switchTab(userTab, userTabIndex);
+        };
+
+        $scope.getAllInvitations = function () {
+            InvitationService.getAllInvitations().then(function (rs) {
+                if(rs.success) {
+                    $scope.invitations.push.apply($scope.invitations, rs.data);
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
         };
 
         (function initController() {

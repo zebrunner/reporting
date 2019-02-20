@@ -8,8 +8,12 @@
         'app.page',
         'app.services',
         'app.user',
+        'app.users',
         'app.view',
         'app.appSidebar',
+        'app.appUsers',
+        'app.appGroup',
+        'app.appInvites',
         'app.appHeader',
         'app.common',
         'app.testRunCard',
@@ -1171,7 +1175,9 @@
     require('./_services/services.module');
 //Modules
     require('./_nav/sidebar.module');
+    require('./_users/components/users.module');
     require('./_users/user.module');
+    require('./_users/user');
     require('./_views/view.module');
     require('./core/core.module');
     require('./layout/layout.module');

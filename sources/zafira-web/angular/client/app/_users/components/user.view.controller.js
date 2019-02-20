@@ -1,27 +1,13 @@
-(function () {
-    'use strict';
-
-    angular.module('app.user')
-        .controller('UserViewController', UserViewController);
-
-    // **************************************************************************
-    function UserViewController($scope, $rootScope, $location, $mdDateRangePicker, $state, $mdDialog, UserService,
-                                GroupService, PermissionService, InvitationService, AuthService, UtilService) {
+const UserViewController = function UserViewController($scope, $rootScope, $location, $state, $mdDialog, UserService,
+        GroupService, InvitationService, AuthService) {
         'ngInject';
 
-        var COMPONENTS_ROOT = 'app/_users/components/';
-
-        GroupService.groups = [];
-        InvitationService.invitations = [];
+        $scope.groups = GroupService.groups;
 
         $scope.tabs = [
             {
                 name: 'Users',
                 countFunc: undefined,
-                // template: COMPONENTS_ROOT + 'users/user.table.html',
-                template: require('./users/user.table.html'),
-                controls: require('./users/user.controls.html'),
-                fabControls: require('./users/user.fab.controls.html'),
                 fabControlsCount: 1,
                 show: function () {
                     return AuthService.UserHasAnyPermission(['MODIFY_USERS', 'VIEW_USERS']);
@@ -30,8 +16,6 @@
             {
                 name: 'Groups',
                 countFunc: undefined,
-                template: COMPONENTS_ROOT + 'groups/group.table.html',
-                fabControls: COMPONENTS_ROOT + 'groups/group.fab.controls.html',
                 fabControlsCount: 1,
                 show: function () {
                     return AuthService.UserHasAnyPermission(['MODIFY_USER_GROUPS']);
@@ -40,11 +24,9 @@
             {
                 name: 'Invitations',
                 countFunc: undefined,
-                template: COMPONENTS_ROOT + 'invites/invite.table.html',
-                controls: COMPONENTS_ROOT + 'invites/invite.controls.html',
-                fabControls: COMPONENTS_ROOT + 'invites/invite.fab.controls.html',
                 fabControlsCount: 1,
                 show: function () {
+                    $scope.tools = $rootScope.tools;
                     return AuthService.UserHasAnyRole(['ROLE_ADMIN']) && AuthService.UserHasAnyPermission(['INVITE_USERS', 'MODIFY_INVITATIONS']);
                 }
             }
@@ -56,161 +38,105 @@
         };
 
         $scope.activeTab = $scope.tabs[0];
-
-        var DEFAULT_SC = {page : 1, pageSize : 20};
+        var DEFAULT_SC = {
+            page: 1, pageSize: 20, selectedRange : {
+                selectedTemplate: null,
+                selectedTemplateName: null,
+                dateStart: null,
+                dateEnd: null,
+                showTemplate: false,
+                fullscreen: false
+            }
+        };
         $scope.sc = angular.copy(DEFAULT_SC);
+
 
         $scope.search = function (page) {
             $scope.sc.date = null;
             $scope.sc.toDate = null;
             $scope.sc.fromDate = null;
 
-            if(page)
-            {
+            if (page) {
                 $scope.sc.page = page;
             }
 
-            if ($scope.selectedRange.dateStart && $scope.selectedRange.dateEnd) {
-                if(!$scope.isEqualDate()){
-                    $scope.sc.fromDate = $scope.selectedRange.dateStart;
-                    $scope.sc.toDate = $scope.selectedRange.dateEnd;
+            if ($scope.sc.selectedRange.dateStart && $scope.sc.selectedRange.dateEnd) {
+                if (!$scope.isEqualDate()) {
+                    $scope.sc.fromDate = $scope.sc.selectedRange.dateStart;
+                    $scope.sc.toDate = $scope.sc.selectedRange.dateEnd;
                 }
                 else {
-                    $scope.sc.date = $scope.selectedRange.dateStart;
+                    $scope.sc.date = $scope.sc.selectedRange.dateStart;
                 }
             }
 
             var requestVariables = $location.search();
-            if(requestVariables) {
-                for(var key in requestVariables) {
-                    if(key && requestVariables[key]) {
+            if (requestVariables) {
+                for (var key in requestVariables) {
+                    if (key && requestVariables[key]) {
                         $scope.sc[key] = requestVariables[key];
                     }
                 }
             }
 
-            UserService.searchUsers($scope.sc).then(function(rs) {
-                if(rs.success)
-                {
+            UserService.searchUsers($scope.sc).then(function (rs) {
+                if (rs.success) {
                     $scope.sr = rs.data;
                 }
-                else
-                {
+                else {
                     alertify.error(rs.message);
                 }
             });
         };
 
-        $scope.isEqualDate = function() {
-            if($scope.selectedRange.dateStart && $scope.selectedRange.dateEnd){
-                return $scope.selectedRange.dateStart.getTime() === $scope.selectedRange.dateEnd.getTime();
+        $scope.isEqualDate = function () {
+            if ($scope.sc.selectedRange.dateStart && $scope.sc.selectedRange.dateEnd) {
+                return $scope.sc.selectedRange.dateStart.getTime() === $scope.sc.selectedRange.dateEnd.getTime();
             }
         };
 
         $scope.reset = function () {
-            $scope.selectedRange.dateStart = null;
-            $scope.selectedRange.dateEnd = null;
             $scope.sc = angular.copy(DEFAULT_SC);
             $location.url($location.path());
             $scope.search();
         };
 
-        $scope.isDateChosen = true;
-        $scope.isDateBetween = false;
 
-        $scope.changePeriod = function () {
-            if ($scope.sc.period == "between") {
-                $scope.isDateChosen = true;
-                $scope.isDateBetween = true;
-            }
-            else if ($scope.sc.period == "before" || $scope.sc.period == "after" || $scope.sc.period == "") {
-                $scope.isDateChosen = true;
-                $scope.isDateBetween = false;
-            }
-            else {
-                $scope.isDateChosen = false;
-                $scope.isDateBetween = false;
-            }
-        };
-
-        /**
-         DataRangePicker functionality
-         */
-
-        var tmpToday = new Date();
-        $scope.selectedRange = {
-            selectedTemplate: null,
-            selectedTemplateName: null,
-            dateStart: null,
-            dateEnd: null,
-            showTemplate: false,
-            fullscreen: false
-        };
-
-        $scope.onSelect = function(scope) {
-            console.log($scope.selectedRange.selectedTemplateName);
-            return $scope.selectedRange.selectedTemplateName;
-        };
-
-        $scope.pick = function($event, showTemplate) {
-            $scope.selectedRange.showTemplate = showTemplate;
-            $mdDateRangePicker.show({
-                targetEvent: $event,
-                model: $scope.selectedRange
-            }).then(function(result) {
-                if (result) $scope.selectedRange = result;
-            })
-        };
-
-        $scope.clear = function() {
-            $scope.selectedRange.selectedTemplate = null;
-            $scope.selectedRange.selectedTemplateName = null;
-            $scope.selectedRange.dateStart = null;
-            $scope.selectedRange.dateEnd = null;
-        };
-
-        $scope.isFuture = function($date) {
-            return $date.getTime() < new Date().getTime();
-        };
-
-        $scope.showCreateUserDialog = function(event, index) {
+        $scope.showCreateUserDialog = function (event) {
             $mdDialog.show({
                 controller: function ($scope, $mdDialog, UtilService) {
                     'ngInject';
 
                     $scope.UtilService = UtilService;
-                    $scope.createUser = function() {
-                        UserService.createOrUpdateUser($scope.user).then(function(rs) {
-                            if(rs.success)
-                            {
+                    $scope.createUser = function () {
+                        UserService.createOrUpdateUser($scope.user).then(function (rs) {
+                            if (rs.success) {
                                 $scope.hide();
                                 alertify.success('User created');
                             }
-                            else
-                            {
+                            else {
                                 alertify.error(rs.message);
                             }
                         });
                     };
-                    $scope.hide = function() {
+                    $scope.hide = function () {
                         $mdDialog.hide(true);
                     };
-                    $scope.cancel = function() {
+                    $scope.cancel = function () {
                         $mdDialog.cancel(false);
                     };
                 },
-                template: require('./users/create_modal.html'),
+                template: require('./app-users/modals/create_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
-                clickOutsideToClose:true,
+                clickOutsideToClose: true,
                 fullscreen: true
             })
-                .then(function(answer) {
-                    if(answer)
-                    {
+                .then(function (answer) {
+                    if (answer) {
                         $state.reload();
                     }
-                }, function() {
+                }, function () {
                 });
         };
 
@@ -218,23 +144,24 @@
 
         $scope.groups = GroupService.groups;
 
-        $scope.showGroupDialog = function(event, group) {
+        $scope.showGroupDialog = function (event, group) {
             $mdDialog.show({
                 controller: GroupController,
-                template: require('./groups/group_modal.html'),
+                template: require('./app-group/modals/group_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
-                clickOutsideToClose:true,
+                clickOutsideToClose: true,
                 fullscreen: true,
+                bindToController: true,
                 locals: {
                     group: group
                 }
             })
-                .then(function() {
-                }, function(group) {
-                    if(group) {
+                .then(function () {
+                }, function (group) {
+                    if (group) {
                         var index = $scope.groups.indexOfField('id', group.id);
-                        if(index >= 0) {
+                        if (index >= 0) {
                             $scope.groups.splice(index, 1, group);
                         } else {
                             $scope.groups.push(group);
@@ -243,18 +170,60 @@
                 });
         };
 
-        $scope.usersSearchCriteria = {};
-        $scope.querySearch = querySearch;
-
-        function querySearch (criteria, group) {
-            $scope.usersSearchCriteria.username = criteria;
-            return UserService.searchUsersWithQuery($scope.usersSearchCriteria).then(function(rs) {
+        $scope.deleteGroup = function(group) {
+            GroupService.deleteGroup(group.id).then(function(rs) {
                 if(rs.success)
                 {
-                    return rs.data.results.filter(searchFilter(group));
+                    $scope.groups.splice($scope.groups.indexOfField('id', group.id), 1);
+                    $scope.count --;
+                    alertify.success('Group "' + group.name + '" was deleted');
                 }
                 else
                 {
+                    if(rs.error && rs.error.data && rs.error.data.error && rs.error.data.error.code == 403 && rs.error.data.error.message) {
+                        alertify.error(rs.error.data.error.message);
+                    } else {
+                        alertify.error(rs.message);
+                    }
+                }
+            });
+        };
+
+        $scope.addUserToGroup = function(user, group) {
+            UserService.addUserToGroup(user, group.id).then(function(rs) {
+                if(rs.success)
+                {
+                    alertify.success('User "' + user.username + '" was added to group "' + group.name + '"');
+                }
+                else
+                {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+        $scope.deleteUserFromGroup = function(user, group) {
+            UserService.deleteUserFromGroup(user.id, group.id).then(function(rs) {
+                if(rs.success)
+                {
+                    alertify.success('User "' + user.username + '" was deleted from group "' + group.name + '"');
+                }
+                else
+                {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        $scope.usersSearchCriteria = {};
+        $scope.querySearch = querySearch;
+
+        function querySearch(criteria, group) {
+            $scope.usersSearchCriteria.username = criteria;
+            return UserService.searchUsersWithQuery($scope.usersSearchCriteria).then(function (rs) {
+                if (rs.success) {
+                    return rs.data.results.filter(searchFilter(group));
+                }
+                else {
                     alertify.error(rs.message);
                 }
             }).finally(function (rs) {
@@ -264,8 +233,8 @@
         function searchFilter(group) {
             return function filterFn(user) {
                 var users = group.users;
-                for(var i = 0; i < users.length; i++) {
-                    if(users[i].id == user.id) {
+                for (var i = 0; i < users.length; i++) {
+                    if (users[i].id == user.id) {
                         return false;
                     }
                 }
@@ -277,22 +246,23 @@
 
         $scope.invitations = InvitationService.invitations;
 
-        $scope.showInviteUsersDialog = function(event) {
+        $scope.showInviteUsersDialog = function (event) {
             $mdDialog.show({
                 controller: InviteController,
-                template: require('./invites/invite_modal.html'),
+                template: require('./app-invites/modals/invite_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
-                clickOutsideToClose:false,
+                clickOutsideToClose: false,
                 fullscreen: true,
                 locals: {
                     groups: GroupService.groups,
                     isLDAPConnected: $rootScope.tools['LDAP']
                 }
             })
-                .then(function(invitations) {
-                }, function(invitations) {
-                    if(invitations) {
+                .then(function (invitations) {
+                }, function (invitations) {
+                    console.log(invitations);
+                    if (invitations) {
                         invitations.forEach(function (invite) {
                             $scope.invitations.push(invite);
                         });
@@ -323,21 +293,21 @@
         var chipCtrl;
         var startedEmail;
 
-        $scope.setMdChipsCtrl = function(mdChipCtrl) {
+        $scope.setMdChipsCtrl = function (mdChipCtrl) {
             chipCtrl = mdChipCtrl;
         };
 
-        $scope.invite = function(emails, form) {
-            if(chipCtrl.chipBuffer) {
+        $scope.invite = function (emails, form) {
+            if (chipCtrl.chipBuffer) {
                 startedEmail = chipCtrl.chipBuffer;
             }
-            if(emails && emails.length > 0) {
+            if (emails && emails.length > 0) {
                 $scope.tryInvite = true;
                 InvitationService.invite(toInvite(emails, $scope.userGroup, $scope.source)).then(function (rs) {
                     if (rs.success) {
                         var message = emails.length > 1 ? "Invitations were sent." : "Invitation was sent.";
                         alertify.success(message);
-                        if(! startedEmail) {
+                        if (!startedEmail) {
                             $scope.cancel(rs.data);
                         } else {
                             $scope.emails = [];
@@ -355,16 +325,17 @@
                 });
             }
         };
-
+        
         function toInvite(emails, groupId, source) {
             return {
                 invitationTypes: emails.map(function (email) {
-                                return {'email': email, 'groupId': groupId, 'source': source && $scope.SOURCES.indexOf(source) >= 0 ? source : 'INTERNAL'};
-                            })};
+                    return { 'email': email, 'groupId': groupId, 'source': source && $scope.SOURCES.indexOf(source) >= 0 ? source : 'INTERNAL' };
+                })
+            };
         };
 
         $scope.checkAndTransformRecipient = function (email) {
-            if(email.trim().indexOf(' ') >= 0) {
+            if (email.trim().indexOf(' ') >= 0) {
                 var emailsArr = email.split(' ');
                 $scope.emails = $scope.emails.concat(emailsArr.filter(function (value, index, self) {
                     return emailsArr.indexOf(value) === index && $scope.emails.indexOf(value) == -1 && value.trim();
@@ -376,18 +347,19 @@
             delete $scope.emails[email];
         };
 
-        $scope.hide = function() {
+        $scope.hide = function () {
             $mdDialog.hide();
         };
-        $scope.cancel = function(invitations) {
+        $scope.cancel = function (invitations) {
             $mdDialog.cancel(invitations);
         };
         (function initController() {
+
         })();
     }
 
     // **************************************************************************
-    function GroupController($scope, $mdDialog, UserService, GroupService, PermissionService, UtilService, group) {
+    function GroupController($scope, $mdDialog, GroupService, PermissionService, UtilService, group) {
         'ngInject';
 
         $scope.UtilService = UtilService;
@@ -396,92 +368,80 @@
         $scope.roles = [];
         $scope.group.users = $scope.group.users || [];
         $scope.showGroups = false;
-        $scope.getRoles = function() {
-            GroupService.getRoles().then(function(rs) {
-                if(rs.success)
-                {
+        $scope.getRoles = function () {
+            GroupService.getRoles().then(function (rs) {
+                if (rs.success) {
                     $scope.roles = rs.data;
                 }
-                else
-                {
+                else {
                     alertify.error(rs.message);
                 }
             });
         };
-        $scope.getGroupsCount = function() {
-            GroupService.getGroupsCount().then(function(rs) {
-                if(rs.success)
-                {
+        $scope.getGroupsCount = function () {
+            GroupService.getGroupsCount().then(function (rs) {
+                if (rs.success) {
                     $scope.count = rs.data;
                 }
-                else
-                {
+                else {
                     alertify.error(rs.message);
                 }
             });
         };
-        $scope.getAllPermissions = function() {
-            PermissionService.getAllPermissions().then(function(rs) {
-                if(rs.success)
-                {
+        $scope.getAllPermissions = function () {
+            PermissionService.getAllPermissions().then(function (rs) {
+                if (rs.success) {
                     $scope.permissions = rs.data;
                     $scope.aggregatePermissionsByBlocks(rs.data);
                     collectPermissions();
                 }
-                else
-                {
+                else {
                     alertify.error(rs.message);
                 }
             });
         };
-        $scope.createGroup = function(group) {
-            group.permissions = $scope.permissions.filter(function(permission) {
+        $scope.createGroup = function (group) {
+            group.permissions = $scope.permissions.filter(function (permission) {
                 return permission.value;
             });
-            GroupService.createGroup(group).then(function(rs) {
-                if(rs.success)
-                {
+            GroupService.createGroup(group).then(function (rs) {
+                if (rs.success) {
                     $scope.cancel(rs.data);
                     alertify.success('Group "' + group.name + '" was created');
                 }
-                else
-                {
+                else {
                     alertify.error(rs.message);
                 }
             });
         };
-        $scope.getGroup = function(id) {
-            GroupService.getGroup(id).then(function(rs) {
-                if(rs.success)
-                {
+        $scope.getGroup = function (id) {
+            GroupService.getGroup(id).then(function (rs) {
+                if (rs.success) {
                     $scope.group = rs.data;
                 }
-                else
-                {
+                else {
                     alertify.error(rs.message);
                 }
             });
         };
-        $scope.updateGroup = function(group) {
-            group.permissions = $scope.permissions.filter(function(permission) {
+        $scope.updateGroup = function (group) {
+            group.permissions = $scope.permissions.filter(function (permission) {
                 return permission.value;
             });
-            GroupService.updateGroup(group).then(function(rs) {
-                if(rs.success)
-                {
+            GroupService.updateGroup(group).then(function (rs) {
+                if (rs.success) {
                     $scope.cancel(rs.data);
                     alertify.success('Group updated');
                 }
-                else
-                {
+                else {
                     alertify.error(rs.message);
                 }
             });
         };
 
         $scope.aggregatePermissionsByBlocks = function (permissions) {
-            permissions.forEach(function(p, index) {
-                if(!$scope.blocks[p.block]) {
+            permissions.forEach(function (p, index) {
+                if (!$scope.blocks[p.block]) {
                     $scope.blocks[p.block] = {};
                     $scope.blocks[p.block].selected = [];
                     $scope.blocks[p.block].permissions = [];
@@ -491,7 +451,7 @@
         };
 
         function collectPermissions() {
-            if($scope.group.permissions) {
+            if ($scope.group.permissions) {
                 $scope.group.permissions.forEach(function (p) {
                     if ($scope.blocks[p.block].selected) {
                         $scope.blocks[p.block].selected = [];
@@ -505,23 +465,23 @@
             }
         };
 
-        $scope.isCheckedBlock = function(blockName) {
+        $scope.isCheckedBlock = function (blockName) {
             return $scope.getCheckedPermissions(blockName).length === $scope.blocks[blockName].permissions.length;
         };
 
         $scope.getCheckedPermissions = function (blockName) {
-            return $scope.blocks[blockName].permissions.filter(function(permission) {
+            return $scope.blocks[blockName].permissions.filter(function (permission) {
                 return permission.value;
             })
         };
 
         $scope.setPermissionsValue = function (blockName, value) {
-            $scope.blocks[blockName].permissions.forEach(function(permission) {
+            $scope.blocks[blockName].permissions.forEach(function (permission) {
                 permission.value = value;
             })
         };
 
-        $scope.toggleAllPermissions = function(blockName) {
+        $scope.toggleAllPermissions = function (blockName) {
             var checkedPermissionsCount = $scope.getCheckedPermissions(blockName).length;
             if (checkedPermissionsCount === $scope.blocks[blockName].permissions.length) {
                 $scope.setPermissionsValue(blockName, false);
@@ -530,20 +490,20 @@
             }
         };
 
-        $scope.isIndeterminateBlock = function(blockName) {
+        $scope.isIndeterminateBlock = function (blockName) {
             var checkedPermissionsCount = $scope.getCheckedPermissions(blockName).length;
             return (checkedPermissionsCount !== 0 && checkedPermissionsCount !== $scope.blocks[blockName].permissions.length);
         };
 
         $scope.clearPermissions = function () {
-            $scope.permissions.forEach(function(permission) {
+            $scope.permissions.forEach(function (permission) {
                 delete permission.value;
             })
         };
-        $scope.hide = function() {
+        $scope.hide = function () {
             $mdDialog.hide();
         };
-        $scope.cancel = function(group) {
+        $scope.cancel = function (group) {
             $mdDialog.cancel(group);
         };
         (function initController() {
@@ -551,4 +511,6 @@
             $scope.getAllPermissions();
         })();
     }
-})();
+    
+export default UserViewController;
+

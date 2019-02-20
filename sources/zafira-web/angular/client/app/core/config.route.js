@@ -185,10 +185,19 @@
             })
             .state('users', {
                 url: '/users',
-                template: require('../_users/list.html'),
+                component: 'usersComponent',
                 data: {
                     requireLogin: true,
                     classes: 'p-users'
+                },
+                lazyLoad: ($transition$) => {
+                    const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
+
+                    return import(/* webpackChunkName: "integrations" */ '../_users/components/users.module.js')
+                        .then(mod => $ocLazyLoad.load(mod.usersModule))
+                        .catch(err => {
+                            throw new Error('Can\'t load usersModule module, ' + err);
+                        });
                 }
             })
             // For github redirection

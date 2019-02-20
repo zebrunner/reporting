@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('app.user')
+        .module('app.view')
         .controller('ViewController', ViewController);
 
     // **************************************************************************
