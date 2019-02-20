@@ -29,7 +29,7 @@
                     <md-card class="no-margin-h">
                         <md-tabs md-no-ink md-stretch-tabs="never" md-dynamic-height md-border-bottom md-selected="selectedTabIndex">
                             <md-tab ng-if="tab.show();" ng-repeat="tab in tabs" label="{{ tab.name }}" md-on-select="switchTab(tab, $index);">
-                                    <app-users ng-if="tab.name === 'Users'" tabs="tabs" source="sr" search-value="sc" on-search="search()" selected-range="selectedRange" tabs="tabs"></app-users>
+                                    <app-users ng-if="tab.name === 'Users'" tabs="tabs" source="sr" search-value="sc" on-search="search()"></app-users>
                                     <app-group ng-if="tab.name === 'Groups'" tabs="tabs" groups="groups"></app-group>
                                     <app-invites ng-if="tab.name === 'Invitations'" tabs="tabs" invitations="invitations" groups="groups"></app-invites>
                             </md-tab>

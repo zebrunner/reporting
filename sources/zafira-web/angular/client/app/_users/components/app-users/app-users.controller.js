@@ -5,8 +5,7 @@
         .controller('AppUsersController', AppUsersController);
 
     // **************************************************************************
-    function AppUsersController($scope, $state, $mdDialog, $mdDateRangePicker, $location,
-        UserService, UtilService, DashboardService) {
+    function AppUsersController($scope, $state, $mdDialog, $mdDateRangePicker, UserService, UtilService, DashboardService) {
         'ngInject';
             
         $scope.UtilService = UtilService;

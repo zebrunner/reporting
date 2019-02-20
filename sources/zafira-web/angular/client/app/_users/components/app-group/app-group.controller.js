@@ -5,7 +5,7 @@
         .controller('AppGroupController', AppGroupController);
 
     // **************************************************************************
-    function AppGroupController($scope, UserService, GroupService, UtilService) {
+    function AppGroupController($scope, GroupService, UtilService) {
         'ngInject';
 
         $scope.tabs[$scope.tabs.indexOfField('name', 'Groups')].countFunc = function() {
