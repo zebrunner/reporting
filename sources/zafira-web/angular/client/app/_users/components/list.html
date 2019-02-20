@@ -10,16 +10,7 @@
             <div layout="row" layout-xs="column" class="col-lg-12 p-users__header-actions">
                 <app-users-controls on-search="search()" on-reset="reset()" class="control-buttons" ng-if="activeTab.name === 'Users'"></app-users-controls>
             </div>
-            <md-fab-speed-dial  id="main-fab" ng-if="activeTab.fabControlsCount > 1" md-direction="up" class="md-scale md-fab-bottom-right" has-any-permission="['MODIFY_USERS', 'MODIFY_USER_GROUPS']">
-                <md-fab-trigger>
-                    <md-button id="mainFab" aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
-                        <span class="fa fa-bars"></span>
-                    </md-button>
-                </md-fab-trigger>
-                <md-fab-actions>
-                </md-fab-actions>
-            </md-fab-speed-dial>
-            <div class="lonely-fab" ng-if="activeTab.fabControlsCount == 1">
+            <div class="lonely-fab">
                     <app-users-fabs ng-if="activeTab.name === 'Users'" create-user="showCreateUserDialog()"></app-users-fabs>
                     <app-group-fabs ng-if="activeTab.name === 'Groups'"></app-group-fabs>
                     <app-invites-fabs ng-if="activeTab.name ==='Invitations'" tools="tools"></app-invites-fabs>

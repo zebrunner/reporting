@@ -8,7 +8,6 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
             {
                 name: 'Users',
                 countFunc: undefined,
-                fabControlsCount: 1,
                 show: function () {
                     return AuthService.UserHasAnyPermission(['MODIFY_USERS', 'VIEW_USERS']);
                 }
@@ -16,7 +15,6 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
             {
                 name: 'Groups',
                 countFunc: undefined,
-                fabControlsCount: 1,
                 show: function () {
                     return AuthService.UserHasAnyPermission(['MODIFY_USER_GROUPS']);
                 }
@@ -24,7 +22,6 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
             {
                 name: 'Invitations',
                 countFunc: undefined,
-                fabControlsCount: 1,
                 show: function () {
                     $scope.tools = $rootScope.tools;
                     return AuthService.UserHasAnyRole(['ROLE_ADMIN']) && AuthService.UserHasAnyPermission(['INVITE_USERS', 'MODIFY_INVITATIONS']);
