@@ -1,3 +1,5 @@
+import template from './app-users.html';
+
 (function () {
     'use strict';
 
@@ -5,7 +7,7 @@
 
     angular.module('app.appUsers').directive('appUsers', () => {
         return {
-            template: require('./app-users.html'),
+            template,
             controller: 'AppUsersController',
             scope: {
                 onSearch: '&',
@@ -15,8 +17,7 @@
             },
             controllerAs: '$ctrl',
             restrict: 'E',
-            replace: true,
-            link: () => {}
+            replace: true
         };
     });
 

@@ -1,3 +1,5 @@
+import template from './app-group.html';
+
 (function () {
     'use strict';
 
@@ -5,15 +7,14 @@
 
     angular.module('app.appGroup').directive('appGroup', function () {
         return {
-            template: require('./app-group.html'),
+            template,
             controller: 'AppGroupController',
             scope: {
                 tabs: '=',
                 groups: '='
             },
             restrict: 'E',
-            replace: true,
-            link: () => {}
+            replace: true
         };
     });
 

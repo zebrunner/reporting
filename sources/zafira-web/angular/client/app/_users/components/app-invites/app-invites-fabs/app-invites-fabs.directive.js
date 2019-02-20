@@ -1,18 +1,18 @@
 import controller from '../../user.view.controller';
+import template from './app-invites-fabs.html';
 
 (function () {
     'use strict';
 
     angular.module('app.appInvites').directive('appInvitesFabs', () => {
         return {
-            template: require('./app-invites-fabs.html'),
+            template,
             controller,
             scope: {
                 tools: '='
             },
             restrict: 'E',
-            replace: true,
-            link: () => {}
+            replace: true
         };
     });
 

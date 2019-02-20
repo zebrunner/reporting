@@ -1,11 +1,12 @@
 import controller from '../../user.view.controller';
+import template from './app-group-fabs.html';
 
 (function () {
     'use strict';
 
     angular.module('app.appGroup').directive('appGroupFabs', () => {
         return {
-            template: require('./app-group-fabs.html'),
+            template,
             controller,
             scope: {
             },

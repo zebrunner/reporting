@@ -1,3 +1,5 @@
+import template from './app-invites.html';
+
 (function () {
     'use strict';
 
@@ -5,7 +7,7 @@
 
     angular.module('app.appInvites').directive('appInvites', () => {
         return {
-            template: require('./app-invites.html'),
+            template,
             controller: 'AppInvitesController',
             scope: {
                 tabs: '=',
@@ -14,8 +16,7 @@
             },
             controllerAs: '$ctrl',
             restrict: 'E',
-            replace: true,
-            link:() => {}
+            replace: true
         };
     });
 

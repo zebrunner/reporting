@@ -1,16 +1,17 @@
+import template from './app-users-controls.html';
+
 (function () {
     'use strict';
 
     angular.module('app.appUsers').directive('appUsersControls', () => {
         return {
-            template: require('./app-users-controls.html'),
+            template,
             scope: {
                 onSearch: '&',
                 onReset: '&'
             },
             restrict: 'E',
-            replace: true,
-            link: () => {}
+            replace: true
         };
     });
 
