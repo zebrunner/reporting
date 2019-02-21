@@ -6,7 +6,7 @@
         .controller('UserProfileController', UserProfileController);
 
     // **************************************************************************
-    function UserProfileController($scope, $rootScope, $mdDialog, $timeout, $location, $state, UserService,
+    function UserProfileController($scope, $rootScope, $mdDialog, $state, UserService,
                                    DashboardService, UtilService, AuthService, UploadService) {
         'ngInject';
 
