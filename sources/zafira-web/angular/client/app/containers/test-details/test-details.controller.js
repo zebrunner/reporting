@@ -63,6 +63,8 @@
             testGroups: null,
             testGroupMode: 'PLAIN',
             testRun: testRun,
+            testsLoading: true,
+            testsFilteredEmpty: true,
             // mobileBreakpoint: mediaBreakpoints.mobile || 0,
             // windowWidthService: windowWidthService,
             testsTagsOptions: {},
@@ -79,6 +81,9 @@
             changeTestStatus: changeTestStatus,
             showDetailsDialog: showDetailsDialog,
             goToTestDetails: goToTestDetails,
+            get empty() {
+                return !Object.keys(vm.testRun.tests || {}).length ;
+            }
         };
 
         vm.$onInit = controlInit;
@@ -158,7 +163,8 @@
                     showTestsByTags(vm.testRun.tests);
                     showTestsByStatuses(vm.testRun.tests);
                     vm.testRun.tags = collectTags(vm.testRun.tests);
-                });
+                })
+                .finally(()=>{vm.testsLoading = false});
                 vm.subscriptions[vm.testRun.id] = subscribeTestsTopic(vm.testRun.id);
         }
 
@@ -174,7 +180,7 @@
                 .then(function (rs) {
                     if (rs.success) {
                         const data = rs.data.results || [];
-
+                        vm.testRun.tests = {};
                         data.forEach(function(test) {
                             addTest(test);
                         });
@@ -209,7 +215,6 @@
                 return tag.name !== 'TESTRAIL_TESTCASE_UUID' && tag.name !== 'QTEST_TESTCASE_UUID';
             });
 
-            vm.testRun.tests = vm.testRun.tests || {};
             vm.testRun.tests[test.id] = test;
 
             if (vm.testGroupMode === 'PLAIN') {
@@ -279,12 +284,16 @@
         }
 
         function showTestsByStatuses(tests, statuses) {
+            vm.testsFilteredEmpty = true;
             angular.forEach(tests, function (test) {
                 test.showByStatus = false;
                 if (statuses && statuses.length) {
                     test.showByStatus = statuses.includes(test.status.toLowerCase());
                 } else {
                     test.showByStatus = true;
+                }
+                if (test.showByStatus) {
+                    vm.testsFilteredEmpty = false;
                 }
             });
         }
