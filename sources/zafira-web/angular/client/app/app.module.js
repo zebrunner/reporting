@@ -7,7 +7,6 @@
         // Custom Feature modules
         'app.page',
         'app.services',
-        'app.user',
         'app.view',
         'app.appSidebar',
         'app.appHeader',
@@ -1171,7 +1170,6 @@
     require('./_services/services.module');
 //Modules
     require('./_nav/sidebar.module');
-    require('./_user/user.module');
     require('./_views/view.module');
     require('./core/core.module');
     require('./layout/layout.module');

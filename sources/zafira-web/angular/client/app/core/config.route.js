@@ -177,10 +177,19 @@
             })
             .state('users/profile', {
                 url: '/users/profile',
-                template: require('../_user/profile.html'),
+                component: 'userComponent',
                 data: {
                     requireLogin: true,
                     classes: 'p-user-profile'
+                },
+                lazyLoad: ($transition$) => {
+                    const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
+
+                    return import(/* webpackChunkName: "profile" */ '../_user/user.module.js')
+                        .then(mod => $ocLazyLoad.load(mod.userModule))
+                        .catch(err => {
+                            throw new Error('Can\'t load userModule module, ' + err);
+                        });
                 }
             })
             .state('users', {

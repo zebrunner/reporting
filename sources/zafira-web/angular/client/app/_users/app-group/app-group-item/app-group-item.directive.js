@@ -1,19 +1,16 @@
 import controller from '../../user.view.controller';
 import template from './app-group-item.html';
 
-(function () {
-    'use strict';
+const appGroupItem = function appGroupItem() {
+    return {
+        template,
+        controller,
+        scope: {
+            group: '='
+        },
+        restrict: 'E',
+        replace: true
+    };
+};
 
-    angular.module('app.appGroup').directive('appGroupItem', () => {
-        return {
-            template,
-            controller,
-            scope: {
-                group: '='
-            },
-            restrict: 'E',
-            replace: true
-        };
-    });
-
-})();
+export default appGroupItem;

@@ -1,23 +1,19 @@
 import template from './app-invites.html';
+import controller from './app-invites.controller';
 
-(function () {
-    'use strict';
+const appInvites = function appInvites() {
+    return {
+        template,
+        controller,
+        scope: {
+            tabs: '=',
+            invitations: "=",
+            groups: "="
+        },
+        controllerAs: '$ctrl',
+        restrict: 'E',
+        replace: true
+    };
+};
 
-    require('./app-invites.controller');
-
-    angular.module('app.appInvites').directive('appInvites', () => {
-        return {
-            template,
-            controller: 'AppInvitesController',
-            scope: {
-                tabs: '=',
-                invitations: "=",
-                groups: "="
-            },
-            controllerAs: '$ctrl',
-            restrict: 'E',
-            replace: true
-        };
-    });
-
-})();
+export default appInvites;

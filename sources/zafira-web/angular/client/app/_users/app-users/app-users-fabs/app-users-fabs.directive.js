@@ -1,16 +1,14 @@
 import template from './app-users-fabs.html';
 
-(function () {
-    'use strict';
+const appUsersFabs = function appUserFabs() {
+    return {
+        template,
+        scope: {
+            createUser: '&'
+        },
+        restrict: 'E',
+        replace: true
+    };
+};
 
-    angular.module('app.appUsers').directive('appUsersFabs', () => {
-        return {
-            template,
-            scope: {
-                createUser: '&'
-            },
-            restrict: 'E',
-            replace: true
-        };
-    });
-})();
+export default appUsersFabs;

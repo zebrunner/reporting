@@ -1,18 +1,15 @@
 import controller from '../../user.view.controller';
 import template from './app-group-fabs.html';
 
-(function () {
-    'use strict';
+const appGroupFabs = function appGroupFabs() {
+    return {
+        template,
+        controller,
+        scope: {
+        },
+        restrict: 'E',
+        replace: true
+    };
+};
 
-    angular.module('app.appGroup').directive('appGroupFabs', () => {
-        return {
-            template,
-            controller,
-            scope: {
-            },
-            restrict: 'E',
-            replace: true
-        };
-    });
-
-})();
+export default appGroupFabs;

@@ -1,8 +1,4 @@
-(function () {
-    'use strict';
+import userComponent from './user.component';
 
-    angular.module('app.user', []);
-
-    require('./user.controller');
-    
-})();
+export const userModule = angular.module('app.user', [])
+    .component({ userComponent });

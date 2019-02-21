@@ -1,18 +1,16 @@
 import template from './app-users-controls.html';
 
-(function () {
-    'use strict';
+const appUsersControls = function appUsersControls() {
+    return {
+        template,
+        scope: {
+            onSearch: '&',
+            onReset: '&'
+        },
+        restrict: 'E',
+        replace: true
+    };
+};
 
-    angular.module('app.appUsers').directive('appUsersControls', () => {
-        return {
-            template,
-            scope: {
-                onSearch: '&',
-                onReset: '&'
-            },
-            restrict: 'E',
-            replace: true
-        };
-    });
+export default appUsersControls;
 
-})();

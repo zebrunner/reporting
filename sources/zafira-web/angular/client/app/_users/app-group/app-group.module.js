@@ -1,9 +1,8 @@
-(function () {
-    'use strict';
+import appGroup from './app-group.directive';
+import appGroupItem from './app-group-item/app-group-item.directive';
+import appGroupFabs from './app-group-fabs/app-group-fabs.directive';
 
-    angular.module('app.appGroup', []);
-
-    require('./app-group.directive');
-    require('./app-group-fabs/app-group-fabs.directive');
-    require('./app-group-item/app-group-item.directive');
-})();
+export const appGroupModule = angular.module('app.appGroup', [])
+    .directive({ appGroup })
+    .directive({ appGroupItem })
+    .directive({ appGroupFabs });

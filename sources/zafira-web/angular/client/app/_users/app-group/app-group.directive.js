@@ -1,21 +1,18 @@
 import template from './app-group.html';
+import controller from './app-group.controller';
 
-(function () {
-    'use strict';
+const appGroup = function appGroup() {
+    return {
+        template,
+        controller,
+        scope: {
+            tabs: '=',
+            groups: '='
+        },
+        restrict: 'E',
+        replace: true
+    };
+};
 
-    require('./app-group.controller');
+export default appGroup;
 
-    angular.module('app.appGroup').directive('appGroup', function () {
-        return {
-            template,
-            controller: 'AppGroupController',
-            scope: {
-                tabs: '=',
-                groups: '='
-            },
-            restrict: 'E',
-            replace: true
-        };
-    });
-
-})();
