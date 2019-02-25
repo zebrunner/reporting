@@ -72,6 +72,9 @@ public class ElasticsearchService implements IJMXService
 	public void initInstance() {
 		if(!StringUtils.isBlank(url)) {
 			RestClientBuilder builder = getBuilder(url);
+			if(builder == null) {
+				return;
+			}
 			if (!StringUtils.isBlank(user) && !StringUtils.isBlank(password)) {
 				final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 				credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(user, password));
