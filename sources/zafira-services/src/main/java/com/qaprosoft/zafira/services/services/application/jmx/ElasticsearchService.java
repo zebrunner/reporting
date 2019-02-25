@@ -192,7 +192,7 @@ public class ElasticsearchService implements IJMXService
 			URL url = new URL(path);
 			host = HttpHost.create(url.getHost());
 			prefix = url.getPath();
-			result = prefix!= null ? RestClient.builder(host).setPathPrefix(prefix) : RestClient.builder(host);
+			result = !StringUtils.isBlank(prefix) ? RestClient.builder(host).setPathPrefix(prefix) : RestClient.builder(host);
 		} catch (MalformedURLException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
