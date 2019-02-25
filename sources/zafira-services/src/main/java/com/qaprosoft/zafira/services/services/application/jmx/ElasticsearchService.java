@@ -185,16 +185,18 @@ public class ElasticsearchService implements IJMXService
 	}
 
 	private static RestClientBuilder getBuilder(String path) {
-		String prefix = null;
-		HttpHost host = null;
+		String prefix;
+		HttpHost host;
+		RestClientBuilder result = null;
 		try {
 			URL url = new URL(path);
 			host = HttpHost.create(url.getHost());
 			prefix = url.getPath();
+			result = prefix!= null ? RestClient.builder(host).setPathPrefix(prefix) : RestClient.builder(host);
 		} catch (MalformedURLException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
-		return RestClient.builder(host).setPathPrefix(prefix);
+		return result;
 	}
 
 	private static Map<String, String> prepareCorrelationIdMap(String correlationId) {
