@@ -51,6 +51,11 @@
                         el.addClass('hide').removeClass('active');
                     });
                 });
+                $transitions.onError({}, function() {
+                    $rootScope.$watch('$viewContentLoaded', function() {
+                        el.addClass('hide').removeClass('active');
+                    });
+                });
 
                 scope.$on('preloader:active', function() {
                     el.removeClass('hide').addClass('active');
