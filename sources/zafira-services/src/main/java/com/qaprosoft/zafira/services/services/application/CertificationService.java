@@ -49,6 +49,9 @@ public class CertificationService {
     private TestService testService;
 
     public CertificationType getCertificationDetails(Long upstreamJobId, Integer upstreamJobBuildNumber) throws ServiceException {
+        if(!elasticsearchService.isClientInitialized()) {
+            return null;
+        }
         CertificationType certification = new CertificationType();
 
         for(TestRun testRun : testRunService.getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(upstreamJobId, upstreamJobBuildNumber))
