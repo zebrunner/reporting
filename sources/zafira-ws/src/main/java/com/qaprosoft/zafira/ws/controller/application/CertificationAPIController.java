@@ -27,12 +27,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.dto.CertificationType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.application.TestConfigService;
-import com.qaprosoft.zafira.services.services.application.TestRunService;
 
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -41,11 +37,6 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping("api/certification")
 public class CertificationAPIController extends AbstractController
 {
-	@Autowired
-	private TestRunService testRunService;
-	
-	@Autowired
-	private TestConfigService testConfigService;
 
 	@Autowired
 	private CertificationService certificationService;
@@ -54,30 +45,6 @@ public class CertificationAPIController extends AbstractController
 	@RequestMapping(path="details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody CertificationType getCertifcationDetails(@RequestParam(value="upstreamJobId") Long upstreamJobId, @RequestParam(value="upstreamJobBuildNumber") Integer upstreamJobBuildNumber) throws ServiceException
 	{
-		CertificationType certification = new CertificationType();
-		
-		for(TestRun testRun : testRunService.getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(upstreamJobId, upstreamJobBuildNumber))
-		{
-			StringBuilder platform = new StringBuilder(testRun.getPlatform());
-			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
-			{
-				if("browser_version".equals(arg.getKey()) && !"*".equals(arg.getValue()))
-				{
-					platform.append(" ").append(arg.getValue());
-				}
-			}
-
-			certification = certificationService.insertIntoCertification(certification, testRun.getId(), platform.toString());
-			
-			/*for(S3ObjectSummary file : amazonService.listFiles(testRun.getId() + "/"))
-			{
-				if(!file.getKey().endsWith("/"))
-				{
-					certification.addScreenshot(amazonService.getComment(file.getKey()), platform.toString(), amazonService.getPublicLink(file));
-				}
-			}*/
-		}
-	
-		return certification;
+		return certificationService.getCertificationDetails(upstreamJobId, upstreamJobBuildNumber);
 	}
 }

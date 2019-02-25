@@ -17,6 +17,7 @@ package com.qaprosoft.zafira.services.services.application;
 
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.dto.CertificationType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.jmx.ElasticsearchService;
@@ -42,9 +43,32 @@ public class CertificationService {
     private TestRunService testRunService;
 
     @Autowired
+    private TestConfigService testConfigService;
+
+    @Autowired
     private TestService testService;
 
-    public CertificationType insertIntoCertification(CertificationType certification, Long testRunId, String platform) throws ServiceException {
+    public CertificationType getCertificationDetails(Long upstreamJobId, Integer upstreamJobBuildNumber) throws ServiceException {
+        CertificationType certification = new CertificationType();
+
+        for(TestRun testRun : testRunService.getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(upstreamJobId, upstreamJobBuildNumber))
+        {
+            StringBuilder platform = new StringBuilder(testRun.getPlatform());
+            for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
+            {
+                if("browser_version".equals(arg.getKey()) && !"*".equals(arg.getValue()))
+                {
+                    platform.append(" ").append(arg.getValue());
+                }
+            }
+
+            insertIntoCertification(certification, testRun.getId(), platform.toString());
+        }
+
+        return certification;
+    }
+
+    private void insertIntoCertification(CertificationType certification, Long testRunId, String platform) throws ServiceException {
         TestRun testRun = testRunService.getTestRunById(testRunId);
         if(testRun == null) {
             throw new ServiceException("Test run with id " + testRunId + " not found");
@@ -55,7 +79,6 @@ public class CertificationService {
                     test.getCiTestId(), buildIndices(test.getStartTime(), test.getFinishTime()));
             screenshotsInfo.keySet().forEach(key -> certification.addScreenshot(screenshotsInfo.get(key), platform, key));
         });
-        return certification;
     }
 
     private String[] buildIndices(Date... dates) {
