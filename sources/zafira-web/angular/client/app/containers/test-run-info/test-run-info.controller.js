@@ -692,7 +692,7 @@
         };
 
         (function init() {
-            getTestRun($stateParams.id).then(function (rs) {
+            getTestRun($stateParams.testRunId).then(function (rs) {
                 $scope.testRun = rs;
                 initTestsWebSocket($scope.testRun);
                 getTest(rs.id).then(function (testsRs) {
