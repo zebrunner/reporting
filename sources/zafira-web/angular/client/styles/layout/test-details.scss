@@ -206,6 +206,8 @@
                         }
                     }
                     &_tags {
+                        display: flex;
+                        flex-wrap: wrap;
                         background-color: transparent;
                         padding-left: 0;
                         margin-left: 0;
@@ -217,8 +219,9 @@
                         &_tag {
                             @extend %detailsItems;
                             background-color: #00000026 !important;
-                            margin: 0 4px 0 0;
+                            margin: 0 4px 4px 0;
                             padding: 4px 8px;
+                            display: inherit;
                         }
                     }
                 }
