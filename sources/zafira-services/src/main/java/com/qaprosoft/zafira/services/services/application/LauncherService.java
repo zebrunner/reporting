@@ -114,8 +114,8 @@ public class LauncherService {
         
         Map<String, String> jobParameters = new ObjectMapper().readValue(launcher.getModel(), new TypeReference<Map<String, String>>(){});
         jobParameters.put("scmURL", scmAccount.buildAuthorizedURL());
-        if(!jobParameters.containsKey("scmBranch")) {
-            jobParameters.put("scmBranch", "*/master");
+        if(!jobParameters.containsKey("branch")) {
+            jobParameters.put("branch", "*/master");
         }
         
         jobParameters.put("zafira_enabled", "true");
@@ -123,9 +123,9 @@ public class LauncherService {
         jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, TenancyContext.getTenantName()));
         
         String args = jobParameters.entrySet().stream().filter(param -> ! Arrays.asList(JenkinsService.getRequiredArgs()).contains(param.getKey()))
-                .map(param -> "-D" + param.getKey() + "=" + param.getValue()).collect(Collectors.joining(" "));
+                .map(param -> param.getKey() + "=" + param.getValue()).collect(Collectors.joining(","));
         
-        jobParameters.put("args", args);
+        jobParameters.put("overrideFields", args);
         
         if(!JenkinsService.checkArguments(jobParameters)) 
             throw new ServiceException("Required arguments not found");
