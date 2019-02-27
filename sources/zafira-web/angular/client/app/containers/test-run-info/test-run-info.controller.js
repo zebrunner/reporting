@@ -28,6 +28,7 @@
         '$state',
         '$httpMock',
         'TestRunsStorage',
+        'testRun',
         TestRunInfoController]);
 
     // **************************************************************************
@@ -35,9 +36,16 @@
                                    $anchorScroll, $location, $timeout, $window, $q,
                                    ElasticsearchService, TestService, TestRunService, UtilService,
                                    ArtifactService, DownloadService, $stateParams, OFFSET, API_URL,
-                                   $state, $httpMock, TestRunsStorage) {
+                                   $state, $httpMock, TestRunsStorage, testRun) {
 
         const TENANT = $rootScope.globals.auth.tenant;
+
+
+        const vm = {
+            testRun: null,
+        };
+
+        vm.$onInit = controllerInit;
 
         $scope.testRun = {};
         $scope.test = {};
@@ -54,8 +62,8 @@
 
         $scope.goToTestRuns = function () {
             $state.go('tests/run', {
-                testRunId: $scope.testRun.id,
-                testRun: $scope.testRun
+                testRunId: vm.testRun.id,
+                testRun: vm.testRun
             });
         };
 
@@ -691,23 +699,26 @@
             return startTime == finishTime ? startTime : startTime + ',' + finishTime;
         };
 
-        (function init() {
-            getTestRun($stateParams.testRunId).then(function (rs) {
-                $scope.testRun = rs;
-                initTestsWebSocket($scope.testRun);
-                getTest(rs.id).then(function (testsRs) {
-                    $scope.test = testsRs.filter(function (t) {
-                        return t.id === parseInt($stateParams.testId);
-                    })[0];
-                    $scope.testRun.tests = testsRs;
-                    SEARCH_CRITERIA = {'correlation-id': $scope.testRun.ciRunId + '_' + $scope.test.ciTestId};
-                    ELASTICSEARCH_INDEX = buildIndex();
+        function controllerInit() {
+            vm.testRun = testRun;
+            $scope.testRun = angular.copy(vm.testRun);
+            initTestsWebSocket($scope.testRun);
+            getTest($scope.testRun.id).then(function(testsRs) {
+                $scope.test = testsRs.filter(function(t) {
+                    return t.id === parseInt($stateParams.testId);
+                })[0];
+                $scope.testRun.tests = testsRs;
+                SEARCH_CRITERIA = {
+                    'correlation-id': $scope.testRun.ciRunId + '_' + $scope.test.ciTestId
+                };
+                ELASTICSEARCH_INDEX = buildIndex();
 
-                    setMode($scope.test.status == 'IN_PROGRESS' ? 'live' : 'record');
-                    $scope.MODE.initFunc.call(this, $scope.test);
-                });
+                setMode($scope.test.status == 'IN_PROGRESS' ? 'live' : 'record');
+                $scope.MODE.initFunc.call(this, $scope.test);
             });
-        })();
+        }
+
+        return vm;
     }
 
     function GalleryController($scope, $mdDialog, $q, DownloadService, url, ciRunId, test, thumbs) {
