@@ -81,7 +81,7 @@
                       </div>
                     </div>
                     <div class="result_error {{test.status}} {{main.theme}}" data-ng-if="test.message && (test.status === 'FAILED' || test.status === 'SKIPPED' || test.status === 'ABORTED')">
-                      <div class="white-space-pre-line">
+                      <div>
                         <show-more name="errorMsg" element-id="test.id" class="test-error" text="test.message" limit="100"></show-more>
                       </div>
                     </div>
