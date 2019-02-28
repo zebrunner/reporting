@@ -331,6 +331,7 @@
         function resetTestsGrouping() {
             vm.testsTagsOptions.reset(); //TODO: refactoring: directive shouldn't extend passed object: ("clear functions" approach)
             vm.testsStatusesOptions.reset();
+            vm.testsFilteredEmpty = false;
             vm.predicate = 'startTime';
             vm.reverse = false;
             vm.testGroups.predicate = 'startTime';
