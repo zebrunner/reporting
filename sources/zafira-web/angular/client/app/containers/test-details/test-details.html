@@ -3,10 +3,10 @@
   <div class="row ui-section no-margin">
     <div class="col-md-12 no-padding">
       <article class="article">
-        <md-card class="no-margin-h">
+        <md-card class="no-margin-h" ng-class="{'empty': $ctrl.empty || $ctrl.testsFilteredEmpty}">
           <md-table-container>
             <table md-table="md-table" class="table">
-              <thead md-head="md-head" data-ng-hide="!$ctrl.testRun.tests">
+              <thead md-head="md-head" data-ng-hide="$ctrl.empty">
                 <tr class="test-run-group-row" md-row="md-row">
                   <th md-column="md-column" class="sort-new test-run-group-column" colspan="4">
                     <div class="test-run-group">
@@ -81,7 +81,7 @@
                       </div>
                     </div>
                     <div class="result_error {{test.status}} {{main.theme}}" data-ng-if="test.message && (test.status === 'FAILED' || test.status === 'SKIPPED' || test.status === 'ABORTED')">
-                      <div class="white-space-pre-line">
+                      <div>
                         <show-more name="errorMsg" element-id="test.id" class="test-error" text="test.message" limit="100"></show-more>
                       </div>
                     </div>
@@ -153,15 +153,15 @@
 
                 </tr>
                 <tr name="testLoading" md-row="md-row">
-                  <td md-cell="md-cell" colspan="4" class="text-center" data-ng-show="!$ctrl.testRun.tests">
+                  <td md-cell="md-cell" colspan="4" class="test-loading" data-ng-show="$ctrl.testsLoading">
                     <span>
                       <md-progress-circular md-mode="indeterminate" md-diameter="20px" class="tests-loading-spinner"></md-progress-circular>
                       Tests are loading...
                     </span>
                   </td>
                 </tr>
-                <tr md-row="md-row" data-ng-if="$ctrl.testRun.tests | isEmpty">
-                  <td md-cell="md-cell" colspan="4" class="text-center">
+                <tr md-row="md-row" data-ng-if="!$ctrl.testsLoading && $ctrl.empty || $ctrl.testsFilteredEmpty && !$ctrl.testsLoading">
+                  <td md-cell="md-cell" colspan="4" class="test-empty">
                     No tests
                   </td>
                 </tr>

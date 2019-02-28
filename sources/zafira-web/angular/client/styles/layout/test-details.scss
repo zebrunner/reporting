@@ -7,6 +7,9 @@
     .content-container {
         overflow: visible !important;
     }
+    .empty {
+        box-shadow: none;
+    }
     md-table-container {
         background-color: $gray-bg-light-new;
         .table {
@@ -163,6 +166,11 @@
                 }
                 @media (max-width: 480px) {
                     width: 100vw;
+                }
+                &-empty,
+                &-loading {
+                    padding: 20px !important;
+                    text-align: center;
                 }
                 &.success {
                     & .test-info,
