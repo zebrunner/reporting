@@ -796,10 +796,6 @@ div.switch-view div.card.bg-white {
     to {top: 0}
 }
 
-body:not(.fixed-menu) div.md-open-menu-container {
-    position: absolute !important;
-}
-
 body.fixed-menu div.md-open-menu-container {
     position: fixed !important;
 }

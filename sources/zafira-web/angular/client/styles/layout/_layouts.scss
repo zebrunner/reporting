@@ -37,6 +37,7 @@ html {
 .app {
     position: relative;
     min-height: 100%; // important!
+    max-height: 100%;
     height: auto; // important!
 
     > .header-container {
