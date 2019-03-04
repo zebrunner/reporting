@@ -1,6 +1,4 @@
-(function () {
-    'use strict';
+import settingsComponent from './settings.component';
 
-    angular.module('app.settings', []);
-
-})(); 
+export const settingsModule = angular.module('app.settings', [])
+.component({ settingsComponent });

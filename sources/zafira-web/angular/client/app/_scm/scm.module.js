@@ -1,6 +1,3 @@
-(function () {
-    'use strict';
+import scmComponent from './scm.component';
 
-    angular.module('app.scm', []);
-
-})();
+export const scmModule = angular.module('app.scm', []).component({ scmComponent });

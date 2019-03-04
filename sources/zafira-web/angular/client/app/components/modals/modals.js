@@ -1,0 +1,10 @@
+require('./build-now/build-now.controller');
+require('./ci-helper/ci-helper.controller');
+require('./comments/comments.controller');
+require('./compare/compare.controller');
+require('./email/email.controller');
+require('./gallery/gallery.controller');
+require('./rerun/rerun.controller');
+require('./spreadsheet/spreadsheet.controller');
+require('./test-details/test-details.controller');
+require('./test-info/test-info.controller');

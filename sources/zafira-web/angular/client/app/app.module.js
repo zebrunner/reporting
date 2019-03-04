@@ -1,44 +1,32 @@
+import '../styles/main.scss';
+
 (function () {
     'use strict';
 
-    angular.module('app', [
+    const ngModule = angular.module('app', [
         // Core modules
-         'app.core'
+         'app.core',
         // Custom Feature modules
-        ,'app.page'
-        ,'app.services'
-        ,'app.auth'
-        ,'app.dashboard'
-        ,'app.user'
-        ,'app.scm'
-        ,'app.testcase'
-        ,'app.testruninfo'
-        ,'app.testsRuns'
-        ,'app.testDetails'
-        ,'app.view'
-        ,'app.settings'
-        ,'app.monitors'
-        ,'app.integrations'
-        ,'app.certification'
-        ,'app.sidebar'
-        ,'app.common'
-        ,'app.testRunCard'
-        ,'app.testsRunsFilter'
+        'app.page',
+        'app.services',
+        'app.view',
+        'app.appSidebar',
+        'app.appHeader',
+        'app.common',
+        'app.testRunCard',
+        'app.testsRunsFilter',
         // 3rd party feature modules
-        ,'ngImgCrop'
-        ,'ngecharts'
-        ,'ui.ace'
-        ,'elasticsearch'
-        ,'md.data.table'
-        ,'timer'
-        ,'n3-line-chart'
-        ,'n3-pie-chart'
-        ,'ngSanitize'
-        ,'chieffancypants.loadingBar'
-        ,'textAngular'
-        ,'gridstack-angular'
-        ,'ngMaterialDateRangePicker'
-        ,'angular-jwt'
+        'ngImgCrop',
+        'ui.ace',
+        'md.data.table',
+        'validation.match',
+        'timer',
+        'ngSanitize',
+        'angular-loading-bar',
+        'textAngular',
+        'ngMaterialDateRangePicker',
+        'angular-jwt',
+        'oc.lazyLoad',
     ])
     .config(['$httpProvider', '$anchorScrollProvider', function($httpProvider, $anchorScrollProvider) {
         $anchorScrollProvider.disableAutoScrolling();
@@ -160,23 +148,12 @@
             link[0].click();
             link.remove();
         };
-        String.prototype.zip = function (objectArray) {
-            var name = this;
-            var zip = new JSZip();
-            var data = zip.folder(name);
-            angular.forEach(objectArray, function (blob, blobName) {
-                data.file(blobName.getValidFilename(), blob, {base64: true});
-            });
-            zip.generateAsync({type:"blob"})
-                .then(function(content) {
-                    content.download(name + '.zip');
-                });
-        };
         String.prototype.getValidFilename = function () {
             return this.replace(/[/\\?%*:|"<>]/g, '-');
         };
     }
-    ]).directive('ngReallyClick', [function() {
+    ])
+    .directive('ngReallyClick', [function() {
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
@@ -189,7 +166,8 @@
                 });
             }
         }
-    }]).directive('nonautocomplete', function () {
+    }])
+    .directive('nonautocomplete', function () {
         return {
             restrict: 'A',
             link:function($scope, element, attrs) {
@@ -197,7 +175,8 @@
                 angular.element('<input type="password" name="password" class="hide"/>').insertBefore(firstDivElement);
             }
         };
-    }).directive('showMore', ['$location', '$anchorScroll', '$timeout', function(location, anchorScroll, timeout) {
+    })
+    .directive('showMore', ['$location', '$anchorScroll', '$timeout', function(location, anchorScroll, timeout) {
         return {
             restrict: 'AE',
             replace: true,
@@ -255,7 +234,8 @@
                 };
             }
         };
-    }]).directive('showPart', function() {
+    }])
+    .directive('showPart', function() {
         "use strict";
         return {
             restrict: 'E',
@@ -277,7 +257,8 @@
                 }
             }
         };
-    }).directive('codeTextarea', ['$timeout', '$interval', '$rootScope', function ($timeout, $interval, $rootScope) {
+    })
+    .directive('codeTextarea', ['$timeout', '$interval', '$rootScope', function ($timeout, $interval, $rootScope) {
         "use strict";
         return {
             restrict: 'E',
@@ -325,7 +306,8 @@
                 });
             }
         };
-    }]).directive('zafiraBackgroundTheme', ['$rootScope', function ($rootScope) {
+    }])
+    .directive('zafiraBackgroundTheme', ['$rootScope', function ($rootScope) {
         return {
             restrict: 'A',
             link:function($scope, iElement, attrs) {
@@ -364,21 +346,24 @@
                 };
 
                 $scope.$watch("main.skin",function(newValue,oldValue) {
-                    if(! newValue && !oldValue) {
-                        newValue = $rootScope.main.skin;
-                        oldValue = $rootScope.main.skin;
-                    } else if($rootScope.main) {
-                        $rootScope.main.skin = newValue;
-                        $rootScope.main.isDark = darkThemes.indexOf(newValue) >= 0;
-                        $scope.main.theme = $rootScope.main.isDark ? 'dark' : '';
-                        $scope.main.default = $rootScope.main.isDark ? 'default' : 'default';
+                    if ($rootScope.main) {
+                        if(!newValue && !oldValue) {
+                            newValue = $rootScope.main.skin;
+                            oldValue = $rootScope.main.skin;
+                        } else {
+                            $rootScope.main.skin = newValue;
+                            $rootScope.main.isDark = darkThemes.indexOf(newValue) >= 0;
+                            $scope.main.theme = $rootScope.main.isDark ? 'dark' : '';
+                            $scope.main.default = $rootScope.main.isDark ? 'default' : 'default';
+                        }
                     }
                     iElement[0].classList.remove(getTheme(oldValue));
                     addTheme(newValue);
                 });
             }
         };
-    }]).directive('sortItem', function () {
+    }])
+    .directive('sortItem', function () {
         "use strict";
         return {
             restrict: 'A',
@@ -407,7 +392,9 @@
                 };
             }
         };
-    }).directive('formErrorValidation', function($q, $timeout, $compile) {
+    })
+    .directive('formErrorValidation', function($q, $timeout, $compile) {
+        'ngInject';
         "use strict";
         return {
             require: 'ngModel',
@@ -440,7 +427,8 @@
                 };
             }
         };
-    }).directive('photoUpload', ['$timeout', '$rootScope', function ($timeout, $rootScope) {
+    })
+    .directive('photoUpload', ['$timeout', '$rootScope', function ($timeout, $rootScope) {
         "use strict";
         return {
             restrict: 'E',
@@ -539,7 +527,9 @@
                 };
             }
         };
-    }]).directive('fieldError', function($q, $timeout, $compile) {
+    }])
+    .directive('fieldError', function($q, $timeout, $compile) {
+        'ngInject';
         "use strict";
         return {
             require: 'ngModel',
@@ -571,16 +561,12 @@
                 })
             }
         };
-    }).directive('profilePhoto', ['$rootScope', function ($rootScope) {
+    })
+    .directive('profilePhoto', ['$rootScope', function ($rootScope) {
         "use strict";
         return {
             restrict: 'E',
-            template: '<span>' +
-            '            <img alt="avatar" ng-src="{{ngModel}}" ng-class="{\'imageRotateHorizontal\': rotateHorizontal}" class="img-circle profile-hovered" ng-if="ngModel && ngModel.length && ngModel.split(\'?\')[0]" style="width: {{imageSize}}px">' +
-            '            <i class="material-icons profile-hovered" style="font-size: {{size}}px; vertical-align: middle; color: #777777" ng-if="icon && iconVisible && !(ngModel && ngModel.length && ngModel.split(\'?\')[0])">{{icon}}</i>' +
-            '            <md-icon class="profile-hovered profile-hovered-full" ng-if="src && !icon && iconVisible && !(ngModel && ngModel.length && ngModel.split(\'?\')[0])" md-svg-src="{{src}}" aria-label="icon" style="width: {{imageSize}}px; height: {{imageSize}}px; color: white;"></md-icon>' +
-            '            <md-tooltip ng-if="label" md-direction="right">{{ label }}</md-tooltip>' +
-            '          </span>',
+            template: require('./shared/profile-photo.directive.html'),
             require: 'ngModel',
             replace: true,
             transclude: true,
@@ -610,7 +596,8 @@
                 }
             }
         };
-    }]).directive('autoHeight', ['$window', function ($window) {
+    }])
+    .directive('autoHeight', ['$window', function ($window) {
         "use strict";
         return {
             restrict: 'A',
@@ -672,7 +659,8 @@
                 }
             }
         };
-    }]).directive('resize', ['$window', function ($window) {
+    }])
+    .directive('resize', ['$window', function ($window) {
         "use strict";
         return {
             restrict: 'A',
@@ -759,7 +747,8 @@
                 };
             }
         };
-    }]).directive('tableLoupe', function () {
+    }])
+    .directive('tableLoupe', function () {
         "use strict";
         return {
             restrict: 'A',
@@ -805,7 +794,8 @@
                 };
             }
         };
-    }).directive('passwordEye', function () {
+    })
+    .directive('passwordEye', function () {
         "use strict";
         return {
             restrict: 'A',
@@ -833,7 +823,8 @@
                 });
             }
         };
-    }).directive('statusButtons', ['$timeout', function ($timeout) {
+    })
+    .directive('statusButtons', ['$timeout', function ($timeout) {
         "use strict";
         return {
             restrict: 'AE',
@@ -921,7 +912,8 @@
                 });
             }
         };
-    }]).directive('chipsArray', ['$timeout', function ($timeout) {
+    }])
+    .directive('chipsArray', ['$timeout', function ($timeout) {
         "use strict";
         return {
             restrict: 'E',
@@ -1060,6 +1052,7 @@
         };
     }])
     .directive('windowWidth', function ($window, windowWidthService) {
+        'ngInject';
         "use strict";
 
         return {
@@ -1123,7 +1116,8 @@
             }
             return items
         };
-    }]).filter('isEmpty', [function() {
+    }])
+    .filter('isEmpty', [function() {
 	  return function(object) {
 	    return angular.equals({}, object);
 	  }
@@ -1145,7 +1139,7 @@
                     var loginRequired = !!(toState.data && toState.data.requireLogin);
                     var onlyGuests = !!(toState.data && toState.data.onlyGuests);
                     var isAuthorized = AuthService.isAuthorized();
-                    var currentUser = UserService.getCurrentUser();
+                    var currentUser = UserService.currentUser;
 
                     //Redirect to login page if authorization is required and user is not authorized
                     if (loginRequired && !isAuthorized) {
@@ -1170,5 +1164,18 @@
                     $document.scrollTo(0, 0);
                 });
             }
-      ])
+      ]);
+
+//Services
+    require('./_services/services.module');
+//Modules
+    require('./_nav/sidebar.module');
+    require('./_views/view.module');
+    require('./core/core.module');
+    require('./layout/layout.module');
+    require('./page/page.module');
+    require('./layout/commons/common.module');
+    require('./components/components');
 })();
+
+

@@ -10,7 +10,7 @@
                      'bg-warning': ['15','25','35'].indexOf(main.skin) >= 0,
                      'bg-danger': ['16','26','36'].indexOf(main.skin) >= 0 }">
         <a href="#!/">
-            <span class="logo-icon"><img src="assets/images/zafira_white_logo.svg"/></span>
+            <span class="logo-icon"><img src="../../assets/images/zafira_white_logo.svg"/></span>
         </a>
     </div>
 
@@ -18,11 +18,11 @@
         <ul class="nav-right pull-right list-unstyled">
             <li>
                 <div class="profile-img hide-phone" style="display: inline-block;" ng-controller="SidebarController">
-                    <profile-photo id="brandPhoto" ng-model="companyLogo.value" size="40" src="assets/images/project_photo.svg" icon-visible="currentUser.isAdmin"></profile-photo>
+                    <profile-photo id="brandPhoto" ng-model="companyLogo.value" size="40" src="../../assets/images/project_photo.svg" icon-visible="currentUser.isAdmin"></profile-photo>
                     <div class="profile-img-content-wrapper" has-any-role="['ROLE_ADMIN']">
                         <div class="profile-img-content">
                             <span>
-                                <md-icon md-svg-src="assets/images/project_circle_add.svg" ng-click="showUploadImageDialog($event)" style="height: 36px; width: 36px;"></md-icon>
+                                <md-icon md-svg-src="../../assets/images/project_circle_add.svg" ng-click="showUploadImageDialog($event)" style="height: 36px; width: 36px;"></md-icon>
                             </span>
                         </div>
                     </div>
@@ -33,7 +33,7 @@
                         <small class="hide-phone" data-ng-if="! selectedProjectsPresent()">Projects</small>
                         <i class="material-icons hide-phone">arrow_drop_down</i>
                         <div class="profile-img show-phone" style="display: inline-block;" ng-controller="SidebarController">
-                            <profile-photo id="brandPhotoPhone" ng-model="companyLogo.value" size="40" src="assets/images/project_photo.svg" icon-visible="currentUser.isAdmin"></profile-photo>
+                            <profile-photo id="brandPhotoPhone" ng-model="companyLogo.value" size="40" src="../../assets/images/project_photo.svg" icon-visible="currentUser.isAdmin"></profile-photo>
                         </div>
                     </md-button>
                     <md-menu-content class="top-header-dropdown" style="z-index:99;"  width="3">
@@ -70,23 +70,23 @@
                     <md-menu-content class="top-header-dropdown" style="z-index:99;" width="3">
                         <md-menu-item>
                             <md-button aria-label="menu" ng-href="#!/users/profile">
-                                <md-icon class="material-icons">account_circle</md-icon><span data-translate="PROFILE"></span></md-button>
+                                <md-icon class="material-icons">account_circle</md-icon><span>Profile</span></md-button>
                         </md-menu-item>
                         <!-- md-menu-item>
                             <md-button aria-label="menu" ng-href="#!/dashboards/{{currentUser.personalDashboardId}}?userId={{currentUser.id}}">
-                                <md-icon class="material-icons">equalizer</md-icon><span data-translate="PERSONAL"></span></md-button>
+                                <md-icon class="material-icons">equalizer</md-icon><span>Personal</span></md-button>
                         </md-menu-item -->
                         <!-- md-menu-item>
                           <md-button aria-label="menu" ng-href="#!/dashboards/{{currentUser.pefrDashboardId}}?userId={{currentUser.id}}">
-                                <md-icon class="material-icons">timeline</md-icon><span data-translate="PERFORMANCE"></span></md-button>
+                                <md-icon class="material-icons">timeline</md-icon><span>Performance</span></md-button>
                         </md-menu-item-->
                         <!--md-menu-item has-any-permission="['VIEW_INTEGRATIONS']">
                             <md-button aria-label="menu" ng-href="#!/integrations">
-                                <md-icon class="material-icons">settings_input_component</md-icon><span data-translate="INTEGRATIONS"></span></md-button>
+                                <md-icon class="material-icons">settings_input_component</md-icon><span>Integrations</span></md-button>
                         </md-menu-item-->
                         <md-menu-item>
                             <md-button aria-label="menu" ng-href="#!/logout">
-                                <md-icon class="material-icons">power_settings_new</md-icon><span data-translate="LOG_OUT"></span></md-button>
+                                <md-icon class="material-icons">power_settings_new</md-icon><span>Logout</span></md-button>
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>

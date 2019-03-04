@@ -8,6 +8,7 @@
     function ProjectProvider() {
 
         this.$get = function($cookieStore) {
+            'ngInject';
             return {
                 initProjects: function(sc) {
                     var projects = $cookieStore.get("projects");

@@ -1,0 +1,62 @@
+diff --git a/sources/zafira-web/angular/client/vendors/angular-timer.js b/sources/zafira-web/angular/client/vendors/angular-timer.js
+index f2e28e42c..8612d0d89 100644
+--- a/sources/zafira-web/angular/client/vendors/angular-timer.js
++++ b/sources/zafira-web/angular/client/vendors/angular-timer.js
+@@ -15,7 +15,6 @@ var timerModule = angular.module('timer', [])
+         startTimeAttr: '=startTime',
+         endTimeAttr: '=endTime',
+         countdownattr: '=countdown',
+-        eta: '=eta',
+         finishCallback: '&finishCallback',
+         autoStart: '&autoStart',
+         language: '@?',
+@@ -320,8 +319,7 @@ var timerModule = angular.module('timer', [])
+ 
+           if(typeTimer !== null){
+             //calculate progress bar
+-        	  
+-            $scope.progressBar = progressBarService.calculateProgressBar($scope.startTime, $scope.millis, $scope.endTime, $scope.countdownattr, $scope.eta);
++            $scope.progressBar = progressBarService.calculateProgressBar($scope.startTime, $scope.millis, $scope.endTime, $scope.countdownattr);
+ 
+             if($scope.progressBar === 100){
+               $scope.displayProgressActive = ''; //No more Bootstrap active effect
+@@ -423,18 +421,30 @@ app.factory('progressBarService', function() {
+    * joke : https://www.youtube.com/watch?v=gENVB6tjq_M
+    * @return {float} 0 --> 100
+    */
+-  ProgressBarService.prototype.calculateProgressBar = function calculateProgressBar(startValue, remainingTime, endTimeAttr, coutdown, eta) {
++  ProgressBarService.prototype.calculateProgressBar = function calculateProgressBar(startValue, remainingTime, endTimeAttr, coutdown) {
++    var displayProgressBar = 0,
++      endTimeValue,
++      initialCountdown;
+ 
+-    displayProgressBar = Math.round((eta - remainingTime / 1000) / eta * 100);
+-    // Security
+-    if(displayProgressBar < 0)
+-    {
+-    		displayProgressBar = 0;
++    remainingTime = remainingTime / 1000; //seconds
++
++
++    if(endTimeAttr !== null){
++      endTimeValue = moment(endTimeAttr);
++      initialCountdown = endTimeValue.diff(startValue, 'seconds');
++      displayProgressBar = remainingTime * 100 / initialCountdown;
+     }
+-    else if(displayProgressBar > 100)
+-    { 
++    else {
++      displayProgressBar = remainingTime * 100 / coutdown;
++    }
++
++    displayProgressBar = 100 - displayProgressBar; //To have 0 to 100 and not 100 to 0
++    displayProgressBar = Math.round(displayProgressBar * 10) / 10; //learn more why : http://stackoverflow.com/questions/588004/is-floating-point-math-broken
++
++    if(displayProgressBar > 100){ //security
+       displayProgressBar = 100;
+-    } 
++    }
++
+     return displayProgressBar;
+   };
+ 

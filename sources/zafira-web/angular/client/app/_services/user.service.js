@@ -3,10 +3,12 @@
 
     angular
         .module('app.services')
-        .factory('UserService', ['$httpMock', '$cookies', '$rootScope', 'UtilService', 'API_URL', '$q', UserService])
+        .service('UserService', UserService);
 
     function UserService($httpMock, $cookies, $rootScope, UtilService, API_URL, $q) {
-        var _currentUser = null;
+        'ngInject';
+
+        let _currentUser = null;
         var service = {
             getUserProfile: getUserProfile,
             getExtendedUserProfile: getExtendedUserProfile,
@@ -24,9 +26,15 @@
             resetUserPreferencesToDefault: resetUserPreferencesToDefault,
             deleteUserPreferences: deleteUserPreferences,
             initCurrentUser: initCurrentUser,
-            getCurrentUser: getCurrentUser,
             clearCurrentUser: clearCurrentUser,
-            setDefaultPreferences: setDefaultPreferences
+            setDefaultPreferences: setDefaultPreferences,
+
+            get currentUser() {
+                return _currentUser;
+            },
+            set currentUser(user) {
+                _currentUser = user;
+            }
         };
 
         return service;
@@ -91,38 +99,39 @@
         }
 
         function initCurrentUser() {
-            if (_currentUser) {
-                !$rootScope.currentUser && ($rootScope.currentUser = _currentUser);
+            if (service.currentUser) {
+                !$rootScope.currentUser && ($rootScope.currentUser = service.currentUser);
 
-                return $q.resolve(_currentUser);
+                return $q.resolve(service.currentUser);
             }
 
             return getExtendedUserProfile()
                 .then(function(rs) {
                     if (rs.success) {
-                        _currentUser = rs.data['user'];
-                        $rootScope.currentUser = _currentUser; //TODO: get rid of $rootScope.currentUser and use service instead
-                        $rootScope.currentUser.isAdmin = $rootScope.currentUser.roles.indexOf('ROLE_ADMIN') >= 0;
-                        setDefaultPreferences($rootScope.currentUser.preferences);
+                        service.currentUser = rs.data['user'];
+                        service.currentUser.isAdmin = service.currentUser.roles.indexOf('ROLE_ADMIN') >= 0;
+                        setDefaultPreferences(service.currentUser.preferences);
 
-                        $rootScope.currentUser.pefrDashboardId = rs.data['performanceDashboardId'];
-                        if (!$rootScope.currentUser.pefrDashboardId) {
+                        service.currentUser.pefrDashboardId = rs.data['performanceDashboardId'];
+                        if (!service.currentUser.pefrDashboardId) {
                             alertify.error('\'User Performance\' dashboard is unavailable!');
                         }
 
-                        $rootScope.currentUser.personalDashboardId = rs.data['personalDashboardId'];
-                        if (!$rootScope.currentUser.personalDashboardId) {
+                        service.currentUser.personalDashboardId = rs.data['personalDashboardId'];
+                        if (!service.currentUser.personalDashboardId) {
                             alertify.error('\'Personal\' dashboard is unavailable!');
                         }
 
-                        $rootScope.currentUser.stabilityDashboardId = rs.data['stabilityDashboardId'];
+                        service.currentUser.stabilityDashboardId = rs.data['stabilityDashboardId'];
 
-                        $rootScope.currentUser.defaultDashboardId = rs.data['defaultDashboardId'];
-                        if (!$rootScope.currentUser.defaultDashboardId) {
+                        service.currentUser.defaultDashboardId = rs.data['defaultDashboardId'];
+                        if (!service.currentUser.defaultDashboardId) {
                             alertify.warning('Default Dashboard is unavailable!');
                         }
 
-                        return _currentUser;
+                        $rootScope.currentUser = service.currentUser; //TODO: get rid of $rootScope.currentUser and use service instead
+
+                        return service.currentUser;
                     } else {
                         return $q.reject(rs);
                     }
@@ -130,27 +139,23 @@
         }
 
         function clearCurrentUser() {
-            _currentUser = null;
-            $rootScope.currentUser = _currentUser;
+            service.currentUser = null;
+            $rootScope.currentUser = service.currentUser;
 
-            return _currentUser;
-        }
-
-        function getCurrentUser() {
-            return _currentUser;
+            return service.currentUser;
         }
 
         function setDefaultPreferences(userPreferences){
             userPreferences.forEach(function(userPreference) {
                 switch(userPreference.name) {
                     case 'DEFAULT_DASHBOARD':
-                        _currentUser.defaultDashboard = userPreference.value;
+                        service.currentUser.defaultDashboard = userPreference.value;
                         break;
                     case 'REFRESH_INTERVAL':
-                        _currentUser.refreshInterval = userPreference.value;
+                        service.currentUser.refreshInterval = userPreference.value;
                         break;
                     case 'THEME':
-                        _currentUser.theme = userPreference.value;
+                        service.currentUser.theme = userPreference.value;
                         break;
                     default:
                         break;
