@@ -1,10 +1,8 @@
 
 // Shared variables and mixins
-@import 
-    "../global/var"                        // global variables
-,   "../global/var-extra"                  // extra global variables
-,   "../bootstrap/bootstrap/mixins"        // Bootstrap mixins
-;
+@import "../global/var";                       // global variables
+@import "../global/var-extra";                 // extra global variables
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/mixins";                          // Bootstrap mixins
 
 @import
 

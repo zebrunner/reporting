@@ -1,12 +1,11 @@
 'use strict';
 
 const JSZip = require('jszip');
-
 const testRunInfoController = function testRunInfoController($scope, $rootScope, $http, $mdDialog, $interval, $log, $filter,
                                    $anchorScroll, $location, $timeout, $window, $q,
                                    elasticsearchService, TestService, TestRunService, UtilService,
                                    ArtifactService, DownloadService, $stateParams, OFFSET, API_URL,
-                                   $state, $httpMock, TestRunsStorage, testRun) {
+                                   $state, $httpMock, TestRunsStorage) {
     'ngInject';
 
     const TENANT = $rootScope.globals.auth.tenant;
@@ -684,7 +683,6 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
     };
 
     function controllerInit() {
-        vm.testRun = testRun;
         $scope.testRun = angular.copy(vm.testRun);
         initTestsWebSocket($scope.testRun);
         getTest($scope.testRun.id).then(function(testsRs) {

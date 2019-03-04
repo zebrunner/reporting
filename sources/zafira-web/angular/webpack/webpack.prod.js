@@ -31,6 +31,5 @@ module.exports = merge(common, {
         new CleanWebpackPlugin(['../dist'], {
             allowExternal: true
         }),
-        // new BundleAnalyzerPlugin(),
     ]
 });

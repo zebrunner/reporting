@@ -1,6 +1,7 @@
 'use strict';
 
 //TODO: // Implement run the linter (before Babel processes the JS).
+//TODO: Source maps are resource heavy and can cause out of memory issue for large source files. We need to enable it only on demand (using env variables);
 
 const path = require('path');
 const webpack = require('webpack');
@@ -8,6 +9,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const ImageminPlugin = require('imagemin-webpack-plugin').default;
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const imageminMozjpeg = require('imagemin-mozjpeg');
 
 module.exports = (env) => {
     const isProd = env === 'production';
@@ -26,6 +29,7 @@ module.exports = (env) => {
             filename: isProd ? '[name].build.[hash:8].min.js' : '[name].build.js',
             chunkFilename: isProd ? '[name].chunk.[hash:8].min.js' : '[name].chunk.js',
             path: path.join(__dirname, '../dist'),
+            pathinfo: isDev,
         },
         resolve: {
             modules: [
@@ -179,10 +183,24 @@ module.exports = (env) => {
             new webpack.ProgressPlugin(),
             // To strip all locales except “en”
             new MomentLocalesPlugin(),
-            new ImageminPlugin({ //TODO: set up more "aggressive" optimizations
+            new ImageminPlugin({
                 test: /\.(jpe?g|png|gif|svg)$/i,
                 disable: isDev,
+                options: {
+                    jpegtran: false,
+                    pngquant: {
+                        quality: '65-90',
+                        speed: 4
+                    },
+                    plugins: [
+                        imageminMozjpeg({
+                            quality: 65,
+                            progressive: true
+                        })
+                    ]
+                },
             }),
+            // new BundleAnalyzerPlugin(),
         ],
         optimization: {
             runtimeChunk: 'single',

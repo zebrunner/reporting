@@ -9,7 +9,7 @@ const testDetailsController = function testDetailsController($scope, $rootScope,
                                                              SettingsService, ProjectProvider,
                                                              ConfigService, SlackService, DownloadService,
                                                              API_URL, DEFAULT_SC, OFFSET, TestRunsStorage,
-                                                             $tableExpandUtil, modalsService, $state, testRun) {
+                                                             $tableExpandUtil, modalsService, $state) {
     'ngInject';
 
     const testGroupDataToStore = {
@@ -24,7 +24,7 @@ const testDetailsController = function testDetailsController($scope, $rootScope,
         tags: [],
         testGroups: null,
         testGroupMode: 'PLAIN',
-        testRun: testRun,
+        testRun: null,
         testsLoading: true,
         testsFilteredEmpty: true,
         // mobileBreakpoint: mediaBreakpoints.mobile || 0,
@@ -54,6 +54,7 @@ const testDetailsController = function testDetailsController($scope, $rootScope,
 
     function controlInit() {
         TENANT = $rootScope.globals.auth.tenant;
+
         initTestGroups();
         initWebsocket();
         initTests();
