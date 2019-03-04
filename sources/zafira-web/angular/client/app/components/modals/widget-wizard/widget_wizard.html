@@ -86,7 +86,24 @@
     <zf-modal-helper-container class="widget-wizard_container-helper">
         <div class="widget-wizard_container-helper_picture">
             <div class="widget-wizard_container-helper_picture_item" ng-if="widget.data.dataset">
-                <div id="chart" data-echarts dataset="widget.data.dataset" force-watch="true" with-legend="false" chart-actions="chartActions" config="echartConfig" data-options="widget.widgetTemplate.model" style="height: 149px; width: 228px;"></div>
+                <div id="chart" data-echarts dataset="widget.data.dataset" ng-if="widget.widgetTemplate.type !== 'TABLE'" force-watch="true" with-legend="false" chart-actions="chartActions" config="echartConfig" data-options="widget.widgetTemplate.model" style="height: 149px; width: 228px;"></div>
+                <table class="table table-striped table-bordered table-hover" ng-if="widget.widgetTemplate.type === 'TABLE'" style="width: 100%;">
+                    <thead>
+                    <tr>
+                        <th class="pointer" data-ng-repeat="column in widget.widgetTemplate.model.columns" data-ng-click="changeSorting(column)">
+                            {{column}}&nbsp;<i class="fa fa-sort"></i>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr data-ng-repeat="row in widget.data.dataset | orderBy:sort.column:sort.descending">
+                        <td data-ng-repeat="column in widget.widgetTemplate.model.columns" data-ng-bind-html="asString(row[column])" data-ng-style="widget.widgetTemplate.model.columns.length > 1 && {'max-width': '500px'}"></td>
+                    </tr>
+                    <tr class="text-center" data-ng-if="widget.data.dataset == 0">
+                        <td colspan="{{widget.model.columns.length}}">No data</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
             <div class="widget-wizard_container-helper_picture_caption" ng-if="widget.widgetTemplate.name">
                 {{widget.widgetTemplate.name}}

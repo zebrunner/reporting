@@ -99,8 +99,28 @@
                              <div data-ng-if="widget.type == 'piechart'" class="pie-chart">
                                 <pie-chart data="widget.data.dataset" options="widget.model"></pie-chart>
                              </div>
-                            <div data-ng-if="ECHART_TYPES.indexOf(widget.type) !== -1 && isJson(widget.model)">
-                                <div data-echarts dataset="widget.data.dataset" with-legend="true" chart-actions="widget.chartActions" data-options="widget.model"></div>
+                            <div data-ng-if="ECHART_TYPES.indexOf(widget.type) !== -1 && isJson(widget.model)" style="overflow: auto;">
+                                <div data-echarts ng-if="widget.type !== 'TABLE' && widget.data.dataset != 0" dataset="widget.data.dataset" with-legend="true" chart-actions="widget.chartActions" data-options="widget.model"></div>
+                                <table ng-if="widget.type === 'TABLE' && widget.data.dataset !== 0" data-ng-attr-id="table-{{ widget.id }}" class="table table-striped table-bordered table-hover" style="width: 100%;">
+                                    <thead>
+                                    <tr>
+                                        <th class="pointer" data-ng-repeat="column in widget.model.columns track by $index" data-ng-click="changeSorting(widget, column)">
+                                            {{column}}&nbsp;<i class="fa fa-sort"></i>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-init="optimizeWidget(widget, rowIndex)" data-ng-repeat="(rowIndex, row) in widget.data.dataset | orderObjectBy:widget.sort.column:widget.sort.descending track by $index">
+                                        <td ng-switch="isFormatted(row[column]);" data-ng-repeat="column in widget.model.columns track by $index">
+                                            <span ng-switch-when="true" data-ng-bind-html="asString(row[column])"></span>
+                                            <span ng-switch-default>{{row[column]}}</span>
+                                        </td>
+                                    </tr>
+                                    <tr ng-init="optimizeWidget(widget)" class="text-center" data-ng-if="widget.data.dataset == 0">
+                                        <td colspan="{{widget.model.columns.length}}">No data</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                              <div data-ng-if="widget.type == 'table'" class="table-responsive">
                                 <table  data-ng-attr-id="table-{{ widget.id }}" class="table table-striped table-bordered table-hover" style="width: 100%;">

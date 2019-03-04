@@ -41,6 +41,9 @@
                                 alertify.error(rs.message);
                             }
                         });
+                    },
+                    need: function (template, widgetId) {
+                        return ! widgetId && template.paramsConfig;
                     }
                 },
                 {
@@ -55,6 +58,9 @@
                         if(widget.id) {
                             initLegendConfigObject();
                         }
+                    },
+                    need: function (template) {
+                        return template.paramsConfig;
                     }
                 },
                 {
@@ -110,6 +116,8 @@
         };
 
         function replaceFontSize(chartConfStr) {
+            if(! chartConfStr)
+                return;
             return chartConfStr.replace(/.{1}fontSize.{1} *: *(\d+)/, '"fontSize": 6');
         }
 
@@ -119,6 +127,8 @@
         };
 
         $scope.executeWidget = function(widget, attributes, isTable) {
+
+            isTable = isTable || widget.widgetTemplate ? widget.widgetTemplate.type === 'TABLE' : false;
 
             if(! $scope.widgetBuilder.paramsConfigObject) {
                 $scope.widgetBuilder.paramsConfigObject = $widget.build($scope.widget, dashboard, currentUserId);
@@ -154,6 +164,13 @@
                     alertify.error(rs.message);
                 }
             });
+        };
+
+        $scope.asString = function (value) {
+            if (value) {
+                value = value.toString();
+            }
+            return value;
         };
 
         function getQueryParams(showStacktrace){
@@ -212,10 +229,17 @@
         };
 
         function getNextCard() {
+            var card = CARDS.items[CARDS.currentItem];
             if(! $scope.isLastCard()) {
-                CARDS.currentItem ++;
+                CARDS.currentItem++;
+                card = CARDS.items[CARDS.currentItem];
+                if (! isCardNeed(card)) {
+                    getNextCard();
+                    return CARDS.items[CARDS.currentItem];
+                }
+                return card;
             }
-            return CARDS.items[CARDS.currentItem];
+            return card;
         };
 
         $scope.isFirstCard = function () {
@@ -231,10 +255,20 @@
         };
 
         function getPreviousCard() {
+            var card = CARDS.items[CARDS.currentItem];
             if(! $scope.isFirstCard()) {
-                CARDS.currentItem --;
+                CARDS.currentItem--;
+                card = CARDS.items[CARDS.currentItem];
+                if (! isCardNeed(card)) {
+                    getPreviousCard();
+                    return CARDS.items[CARDS.currentItem];
+                }
+                return card;
             }
-            return CARDS.items[CARDS.currentItem];
+        };
+
+        function isCardNeed(card) {
+            return !card.need || card.need($scope.widget.widgetTemplate, $scope.widget.id);
         };
 
         function initCard(card) {
@@ -252,83 +286,12 @@
 
         (function initController() {
             if(widget.id) {
-                CARDS.currentItem = 1;
                 $scope.widget = angular.copy(widget);
+                CARDS.currentItem = getNextCard().index - 1;
                 $scope.onChange();
             }
             initCard(CARDS.items[CARDS.currentItem]);
         })();
-    }
-
-    var sdcsdc = {
-        "project": {
-            "values": ["*", "select distinct name from PROJECTS"],
-            "value": "DEFAULT", // maybe boolean - display as checkbox
-            "multiple": "true", // default false
-            "required": "true" // default false
-        }
-    };
-
-    var asxcasc = {
-        "value": {
-            "value": 15
-        },
-        "label": {
-            "value": "\"label\""
-        }
-    };
-
-    var varsdcsdc = {
-        "legend": ["PASSED", "FAILED"]
-    };
-
-    /*SELECT
-  SUM(TOTAL_HOURS) AS "MAN-HOURS",
-  CREATED_AT AS "CREATED_AT"
-FROM TOTAL_VIEW
-GROUP BY "CREATED_AT"
-HAVING SUM(TOTAL_HOURS) < 160
-ORDER BY "CREATED_AT"*/
-
-    /*SELECT
-    ${aggregateFunction}(TOTAL_HOURS) AS "MAN-HOURS",
-        ${groupBy} AS "${groupBy}"
-    FROM ${viewName}
-    GROUP BY "${groupBy}"
-    HAVING ${aggregateFunction}(TOTAL_HOURS) ${aggregateCondition} ${conditionValue}
-    ORDER BY "CREATED_AT"*/
-
-    var adscadscc = {
-        "aggregateFunction": {
-            "values": ["SUM", "MIN", "MAX", "AVG"]
-        },
-        "viewName": {
-            "values": ["TOTAL_VIEW", "MONTHLY_VIEW"]
-        },
-        "groupBy": {
-            "values": ["CREATED_AT", "MODIFIED_AT"]
-        },
-        "aggregateCondition": {
-            "values": ["<", ">"]
-        },
-        "conditionValue": {
-            "value": 160
-        }
-    }
-
-    /*SELECT
-    unnest(array[${statusArray}]) AS  "label",
-        unnest(array[${value}, 20, 15, ${value}, 15, 15]) AS "value"*/
-
-    var adxdac = {
-        "value": {
-            "values": [1000, "select id from test_runs"]
-        },
-        "statusArray": {
-            "values": ["PASSED", "FAILED", "SKIPPED", "KNOWN ISSUE", "ABORTED", "QUEUED"],
-            "multiple": true,
-            "required": true
-        }
     }
 
 })();
