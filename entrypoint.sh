@@ -5,7 +5,7 @@ cd $CATALINA_HOME/temp
 
 unzip -qq zafira.war -d zafira
 rm -rf zafira.war
-sed -i -e 's#http://localhost:8080#'"$ZAFIRA_URL"'#g' zafira/scripts/app.js
+sed -i -e 's#http://localhost:8080#'"$ZAFIRA_URL"'#g' zafira/config.json
 cd zafira && zip -r ../zafira.war * && cd ..
 
 if [ "$ZAFIRA_LDAP_ENABLED" == "true" ];
