@@ -11,6 +11,7 @@ const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const ImageminPlugin = require('imagemin-webpack-plugin').default;
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const imageminMozjpeg = require('imagemin-mozjpeg');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = (env) => {
     const isProd = env === 'production';
@@ -151,6 +152,9 @@ module.exports = (env) => {
             moduleExtensions: ['-loader']
         },
         plugins: [
+            new CopyWebpackPlugin(
+                [{ from: '../config.json'}]
+            ),
             new webpack.ProvidePlugin({
                 $: 'jquery',
                 jQuery: 'jquery',

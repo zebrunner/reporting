@@ -19,6 +19,7 @@
         "bower": "^1.8.0",
         "browser-sync": "^2.12.10",
         "clean-webpack-plugin": "^1.0.1",
+        "copy-webpack-plugin": "^5.0.0",
         "css-loader": "^2.1.0",
         "del": "^2.2.0",
         "extract-text-webpack-plugin": "^3.0.2",
