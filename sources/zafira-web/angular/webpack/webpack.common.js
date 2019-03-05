@@ -63,7 +63,9 @@ module.exports = (env) => {
                                             '@babel/transform-runtime',
                                             ['angularjs-annotate', { 'explicitOnly' : true}],
                                             '@babel/plugin-syntax-dynamic-import'
-                                        ]
+                                        ],
+                                        cacheDirectory: true,
+                                        cacheCompression: isProd,
                                     }
                                 },
                             ]
@@ -149,6 +151,11 @@ module.exports = (env) => {
             moduleExtensions: ['-loader']
         },
         plugins: [
+            new webpack.ProvidePlugin({
+                $: 'jquery',
+                jQuery: 'jquery',
+                'window.jQuery': 'jquery',
+            }),
             new MiniCssExtractPlugin({
                 filename: isProd ? '[name].[hash:8].css' : '[name].css',
                 chunkFilename: isProd ? '[name].chunk.[hash:8].css' : '[name].chunk.css',

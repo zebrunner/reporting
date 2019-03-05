@@ -1,5 +1,5 @@
 import '../styles/vendors.scss';
-window.jQuery = window.$ = require('jquery');
+
 require('angular');
 require('angular-aria');
 require('angular-animate');
