@@ -1133,31 +1133,40 @@ const ngModule = angular.module('app', [
              $document, UserService) {
 
         $transitions.onBefore({}, function(trans) {
-            var toState = trans.to();
-            var toStateParams = trans.params();
-            var loginRequired = !!(toState.data && toState.data.requireLogin);
-            var onlyGuests = !!(toState.data && toState.data.onlyGuests);
-            var isAuthorized = AuthService.isAuthorized();
-            var currentUser = UserService.currentUser;
+            const toState = trans.to();
+            const toStateParams = trans.params();
+            const loginRequired = !!(toState.data && toState.data.requireLogin);
+            const onlyGuests = !!(toState.data && toState.data.onlyGuests);
+            const isAuthorized = AuthService.isAuthorized();
+            let currentUser = UserService.currentUser;
 
-            //Redirect to login page if authorization is required and user is not authorized
-            if (loginRequired && !isAuthorized) {
-                return trans.router.stateService.target('signin', {referrer: toState.name, referrerParams: toStateParams});
-            } else if (onlyGuests) {
-                if (isAuthorized) {
-                    if (currentUser) {
-                        return trans.router.stateService.target('dashboard', {id: currentUser.defaultDashboardId});
-                    } else {
-                        var authData = AuthService.getAuthData();
+            if (loginRequired) {
+                //Redirect to login page if authorization is required and user is not authorized
+                if (!isAuthorized) {
+                    return trans.router.stateService.target('signin', {referrer: toState.name, referrerParams: toStateParams});
+                }
 
-                        if (authData) {
-                            $rootScope.$broadcast('event:auth-loginSuccess', {auth: authData});
+                //Some controls need user profile on  initialization, so we need to load it if not loaded yet
+                return !!currentUser || UserService.fetchFullUserData();
+            } else if (onlyGuests && isAuthorized) {
+                if (currentUser) {
+                    return trans.router.stateService.target('dashboard', {id: currentUser.defaultDashboardId});
+                } else {
+                    return UserService.fetchFullUserData().then((res) => {
+                        if (res.success) {
+                            currentUser = UserService.currentUser;
+
+                            return trans.router.stateService.target('dashboard', {id: currentUser.defaultDashboardId});
+                        } else {
+                            //If user isAuthorized but we can't get profile data and therefore cn't redirect to dashboard, lets logout
+                            //TODO: it would be better to have some page which can't be broken by lack of userProfile with suggestion to reload page or try to re-login
+                            return trans.router.stateService.target('logout', {});
                         }
-
-                        return false;
-                    }
+                    });
                 }
             }
+
+            return true;
         });
         $transitions.onSuccess({}, function() {
             $document.scrollTo(0, 0);

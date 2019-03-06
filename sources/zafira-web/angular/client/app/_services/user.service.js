@@ -11,7 +11,7 @@
         let _currentUser = null;
         var service = {
             getUserProfile: getUserProfile,
-            getExtendedUserProfile: getExtendedUserProfile,
+            fetchFullUserData,
             updateStatus: updateStatus,
             searchUsers: searchUsers,
             searchUsersWithQuery: searchUsersWithQuery,
@@ -43,7 +43,7 @@
         	return $httpMock.get(API_URL + '/api/users/profile').then(UtilService.handleSuccess, UtilService.handleError('Unable to get user profile'));
         }
 
-        function getExtendedUserProfile() {
+        function fetchFullUserData() {
             return $httpMock.get(API_URL + '/api/users/profile/extended').then(UtilService.handleSuccess, UtilService.handleError('Unable to get extended user profile'));
         }
 
@@ -105,7 +105,7 @@
                 return $q.resolve(service.currentUser);
             }
 
-            return getExtendedUserProfile()
+            return fetchFullUserData()
                 .then(function(rs) {
                     if (rs.success) {
                         service.currentUser = rs.data['user'];

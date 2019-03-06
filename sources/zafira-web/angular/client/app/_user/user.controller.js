@@ -1,6 +1,8 @@
 const UserProfileController = function UserProfileController($scope, $rootScope, $mdDialog, $state, UserService, DashboardService, UtilService, AuthService, UploadService) {
     'ngInject';
 
+    const vm = {};
+
     $scope.UtilService = UtilService;
 
     $scope.user = {};
@@ -239,15 +241,15 @@ const UserProfileController = function UserProfileController($scope, $rootScope,
         };
     }
 
-    (function initController() {
-        $scope.$watch('currentUser.refreshInterval', function (newVal) {
-            if (newVal) {
-                $scope.widgetRefreshIntervals = [0, 30000, 60000, 120000, 300000];
-                $scope.loadDashboards();
-                $scope.getUserProfile();
-            }
-        });
-    })();
+    function initController() {
+        $scope.widgetRefreshIntervals = [0, 30000, 60000, 120000, 300000];
+        $scope.loadDashboards();
+        $scope.getUserProfile();
+    }
+
+    vm.$onInit = initController;
+
+    return vm;
 
 };
 
