@@ -3,20 +3,16 @@
 
     angular
         .module('app.services')
-        .factory('ElasticsearchService', ['$q', '$http', 'esFactory', '$location', 'SettingsService', '$rootScope', ElasticsearchService])
+        .factory('ElasticsearchService', ['$q', '$http', '$location', 'SettingsService', 'UtilService', ElasticsearchService]);
 
-    function ElasticsearchService($q, $http, esFactory, $location, SettingsService, $rootScope) {
-
-        var instance;
-
-        var instanceV2;
-
-        var service = {};
-
-        service.ping = ping;
-        service.search = search;
-        service.count = count;
-        service.isExists = isExists;
+    function ElasticsearchService($q, $http, $location, SettingsService, UtilService) {
+        let instance;
+        const service = {
+            ping,
+            search,
+            count,
+            isExists,
+        };
 
         return service;
 
@@ -88,7 +84,7 @@
                             }
                         });
                     });
-                }, index, searchField, from || from == 0 ? from : page && size ? Math.round((page - 1) * size) : undefined, size, fromTime, query);
+                }, index, searchField, from || from === 0 ? from : page && size ? Math.round((page - 1) * size) : undefined, size, fromTime, query);
             });
         };
 
@@ -145,16 +141,16 @@
                 SettingsService.getSettingByTool('ELASTICSEARCH').then(function(settingsRs) {
                     if (settingsRs.success) {
                         var url = settingsRs.data.find(function(element, index, array) {
-                            return element.name.toLowerCase() == 'url';
+                            return element.name.toLowerCase() === 'url';
                         });
                         var user = settingsRs.data.find(function(element, index, array) {
-                            return element.name.toLowerCase() == 'user';
+                            return element.name.toLowerCase() === 'user';
                         });
                         var password = settingsRs.data.find(function(element, index, array) {
-                            return element.name.toLowerCase() == 'password';
+                            return element.name.toLowerCase() === 'password';
                         });
                         if (url && url.value) {
-                            resolve(createInstanceV2(url.value, user, password));
+                            resolve(createInstance(url.value, user, password));
                         } else {
                             reject({
                                 errorMessage: 'Cannot initialize elasticsearch url'
@@ -166,69 +162,44 @@
         };
 
         function createInstance(url, user, password) {
-            if (user && user.value && password && password.value) {
-                var protocol = url.split('://')[0];
-                var host = url.split('://')[1].split(':')[0];
-                var port = url.split(':')[2].match('\\d+')[0];
-                return esFactory({
-                    host: [{
-                        protocol: protocol,
-                        host: host,
-                        port: port,
-                        auth: user.value + ':' + password.value
-                    }],
-                    ssl: {
-                        rejectUnauthorized: false
-                    }
-                });
-            } else {
-                return esFactory({
-                    host: url,
-                    ssl: {
-                        rejectUnauthorized: false
-                    }
-                });
-            }
-        };
+            if (instance) { return instance; }
 
-        function createInstanceV2(url, user, password) {
-            if(instanceV2)
-                return instanceV2;
-
-            instanceV2 = {};
-            instanceV2.url = url;
-            instanceV2.user = user;
-            instanceV2.password = password;
-            instanceV2.basic = getAuthorizationValue(user.value, password.value);
+            instance = {};
+            instance.url = url;
+            instance.user = user;
+            instance.password = password;
+            instance.basic = getAuthorizationValue(user.value, password.value);
             if(url.includes('@') && ! user.value && ! password.value && ! user.value.length && ! password.value.length) {
                 var protocol_auth_slices = url.split('@')[0].split('://');
                 if(protocol_auth_slices.length === 2 && protocol_auth_slices[1].includes(':')) {
                     var username_password_slices = protocol_auth_slices[1].split(':');
                     if(username_password_slices.length === 2) {
-                        instanceV2.basic = getAuthorizationValue(username_password_slices[0], username_password_slices[1]);
+                        instance.basic = getAuthorizationValue(username_password_slices[0], username_password_slices[1]);
                     }
                 }
             }
 
-            instanceV2.search = function (params, callback) {
+            instance.search = function (params, callback) {
                 apply(buildHttpRequest(url, params.index, 'SEARCH', params.body, user, password), callback);
             };
-            instanceV2.count = function (params, callback) {
+            instance.count = function (params, callback) {
                 apply(buildHttpRequest(url, params.index, 'COUNT', params.body, user, password), callback);
             };
-            instanceV2.indices = {
+            instance.indices = {
                 exists: function (params, callback) {
                     apply(buildHttpRequest(url, params.index, 'EXISTS', null, user, password), callback);
                 }
             };
-            return instanceV2;
+            return instance;
         }
 
         function apply(promise, callback) {
             promise.then(function (rs) {
-                callback(null, rs.data);
+                return callback(null, rs.data);
             }, function (rs) {
-                callback(rs.data, null);
+                const error = (rs && rs.data) || UtilService.handleError('Unable to get data from elasticsearch')({});
+
+                return callback(error, null);
             });
         };
 
@@ -238,30 +209,28 @@
             return "Basic " + btoa(username + ":" + password)
         };
 
-        function getCount(url, params) {
-            return retrieveCount(url, params.index, params.body);
-        };
+        // function getCount(url, params) {
+        //     return retrieveCount(url, params.index, params.body);
+        // };
 
-        function getData(url, params) {
-            return retrieveData(url, params.index, params.body);
-        };
+        // function getData(url, params) {
+        //     return retrieveData(url, params.index, params.body);
+        // };
 
-        function getExisting(url, params) {
-            return retrieveExisting(url, params.index);
-        };
+        // function getExisting(url, params) {
+        //     return retrieveExisting(url, params.index);
+        // };
 
-        function retrieveCount(url, index, body) {
-            return $http.post(url + '/' + index + '/_count', body).then(UtilService.handleSuccess, UtilService.handleError('Unable to get indices count from elasticsearch'));
-        };
+        // function retrieveCount(url, index, body) {
+        //     return $http.post(url + '/' + index + '/_count', body).then(UtilService.handleSuccess, UtilService.handleError('Unable to get indices count from elasticsearch'));
+        // };
 
-        function retrieveData(url, index, body) {
-            return $http.post(url + '/' + index + '/_search', body).then(UtilService.handleSuccess, UtilService.handleError('Unable to get data from elasticsearch'));
-        };
+        // function retrieveData(url, index, body) {
+        //     return $http.post(url + '/' + index + '/_search', body).then(UtilService.handleSuccess, UtilService.handleError('Unable to get data from elasticsearch'));
+        // };
 
         function buildHttpRequest(url, index, action, body, username, password) {
-
-            if(! url || ! action)
-                return;
+            if (!url || !action) { return; }
 
             var postfix = getPostfix(action, index);
             var request = {
@@ -286,7 +255,7 @@
                 request.data = body;
             }
 
-            var authorizationValue = instanceV2.basic;
+            var authorizationValue = instance.basic;
             if(authorizationValue) {
                 request.headers = {
                     'Authorization': authorizationValue
@@ -307,8 +276,7 @@
         };
 
         function getPostfix(action, index) {
-            if(! action)
-                return;
+            if (!action) { return; }
 
             var postfix = '/' + index;
 
@@ -324,6 +292,7 @@
                 default:
                     break;
             }
+
             return postfix;
         };
     }

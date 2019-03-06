@@ -28,7 +28,6 @@
         ,'ngImgCrop'
         ,'ngecharts'
         ,'ui.ace'
-        ,'elasticsearch'
         ,'md.data.table'
         ,'timer'
         ,'n3-line-chart'
