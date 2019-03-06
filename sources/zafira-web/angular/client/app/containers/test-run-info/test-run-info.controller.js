@@ -145,7 +145,7 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
                     var size = logGetter.getSizeFunc.call(this, count);
                     collectElasticsearchLogs(logGetter.from, logGetter.pageCount, size, count, resolve);
                 }
-            });
+            }, function() {});
         });
     };
 

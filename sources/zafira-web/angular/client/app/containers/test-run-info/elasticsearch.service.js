@@ -1,14 +1,15 @@
-const elasticsearchService = function elasticsearchService($q, esFactory, $location, SettingsService) {
+'use strict';
+
+const elasticsearchService = function elasticsearchService($q, $location, SettingsService, UtilService) {
     'ngInject';
 
-    var instance;
-
-    var service = {};
-
-    service.ping = ping;
-    service.search = search;
-    service.count = count;
-    service.isExists = isExists;
+    let instance;
+    const service = {
+        ping,
+        search,
+        count,
+        isExists,
+    };
 
     return service;
 
@@ -22,7 +23,7 @@ const elasticsearchService = function elasticsearchService($q, esFactory, $locat
                 });
             });
         });
-    };
+    }
 
     function doAction(action, func, index, searchField, from, size, fromTime, query) {
         var body = {};
@@ -31,7 +32,7 @@ const elasticsearchService = function elasticsearchService($q, esFactory, $locat
                 body = {
                     sort: [{
                         '@timestamp': {
-                            order: "asc"
+                            order: 'asc'
                         }
                     }],
                     size: size,
@@ -41,9 +42,8 @@ const elasticsearchService = function elasticsearchService($q, esFactory, $locat
                 body.query = {
                     bool: {
                         must: [{
-                                term: searchField
-                            }
-                        ]
+                            term: searchField
+                        }]
                     }
                 };
                 break;
@@ -66,7 +66,7 @@ const elasticsearchService = function elasticsearchService($q, esFactory, $locat
             body: body
         };
         func(params);
-    };
+    }
 
     function search(index, searchField, from, page, size, fromTime, query) {
         return $q(function(resolve, reject) {
@@ -80,9 +80,9 @@ const elasticsearchService = function elasticsearchService($q, esFactory, $locat
                         }
                     });
                 });
-            }, index, searchField, from || from == 0 ? from : page && size ? Math.round((page - 1) * size) : undefined, size, fromTime, query);
+            }, index, searchField, from || from === 0 ? from : page && size ? Math.round((page - 1) * size) : undefined, size, fromTime, query);
         });
-    };
+    }
 
     function count(index, searchField, fromTime, query) {
         return $q(function(resolve, reject) {
@@ -98,7 +98,7 @@ const elasticsearchService = function elasticsearchService($q, esFactory, $locat
                 });
             }, index, searchField, null, null, fromTime, query);
         });
-    };
+    }
 
     function isExists(index, searchField) {
         return $q(function(resolve, reject) {
@@ -114,7 +114,7 @@ const elasticsearchService = function elasticsearchService($q, esFactory, $locat
                 });
             }, index, searchField, null, null, null, null);
         });
-    };
+    }
 
     function getInstance() {
         return $q(function(resolve, reject) {
@@ -130,20 +130,20 @@ const elasticsearchService = function elasticsearchService($q, esFactory, $locat
                 });
             }
         });
-    };
+    }
 
     function prepareData() {
         return $q(function(resolve, reject) {
             SettingsService.getSettingByTool('ELASTICSEARCH').then(function(settingsRs) {
                 if (settingsRs.success) {
                     var url = settingsRs.data.find(function(element, index, array) {
-                        return element.name.toLowerCase() == 'url';
+                        return element.name.toLowerCase() === 'url';
                     });
                     var user = settingsRs.data.find(function(element, index, array) {
-                        return element.name.toLowerCase() == 'user';
+                        return element.name.toLowerCase() === 'user';
                     });
                     var password = settingsRs.data.find(function(element, index, array) {
-                        return element.name.toLowerCase() == 'password';
+                        return element.name.toLowerCase() === 'password';
                     });
                     if (url && url.value) {
                         resolve(createInstance(url.value, user, password));
@@ -155,33 +155,109 @@ const elasticsearchService = function elasticsearchService($q, esFactory, $locat
                 }
             });
         });
-    };
+    }
 
     function createInstance(url, user, password) {
-        if (user && user.value && password && password.value) {
-            var protocol = url.split('://')[0];
-            var host = url.split('://')[1].split(':')[0];
-            var port = url.split(':')[2].match('\\d+')[0];
-            return esFactory({
-                host: [{
-                    protocol: protocol,
-                    host: host,
-                    port: port,
-                    auth: user.value + ':' + password.value
-                }],
-                ssl: {
-                    rejectUnauthorized: false
+        if (instance) { return instance; }
+
+        instance = {};
+        instance.url = url;
+        instance.user = user;
+        instance.password = password;
+        instance.basic = getAuthorizationValue(user.value, password.value);
+        if(url.includes('@') && ! user.value && ! password.value && ! user.value.length && ! password.value.length) {
+            var protocol_auth_slices = url.split('@')[0].split('://');
+            if(protocol_auth_slices.length === 2 && protocol_auth_slices[1].includes(':')) {
+                var username_password_slices = protocol_auth_slices[1].split(':');
+                if(username_password_slices.length === 2) {
+                    instance.basic = getAuthorizationValue(username_password_slices[0], username_password_slices[1]);
                 }
-            });
-        } else {
-            return esFactory({
-                host: url,
-                ssl: {
-                    rejectUnauthorized: false
-                }
-            });
+            }
         }
-    };
+
+        instance.search = function (params, callback) {
+            apply(buildHttpRequest(url, params.index, 'SEARCH', params.body), callback);
+        };
+        instance.count = function (params, callback) {
+            apply(buildHttpRequest(url, params.index, 'COUNT', params.body), callback);
+        };
+        instance.indices = {
+            exists: function (params, callback) {
+                apply(buildHttpRequest(url, params.index, 'EXISTS', null), callback);
+            }
+        };
+        return instance;
+    }
+
+    function apply(promise, callback) {
+        promise.then(function (rs) {
+            return callback(null, rs.data);
+        }, function (rs) {
+            const error = (rs && rs.data) || UtilService.handleError('Unable to get data from elasticsearch')({});
+
+            return callback(error, null);
+        });
+    }
+
+    function getAuthorizationValue(username, password) {
+        if (!username || !password) { return; }
+
+        return "Basic " + btoa(username + ":" + password);
+    }
+
+    function buildHttpRequest(url, index, action, body) {
+        if (!url || !action) { return; }
+
+        var postfix = getPostfix(action, index);
+        var request = {
+            url: url + postfix
+        };
+        switch(action) {
+            case 'SEARCH':
+            case 'COUNT':
+                request.method = 'POST';
+                break;
+            case 'EXISTS':
+                request.method = 'HEAD';
+                break;
+            default:
+                break;
+        }
+
+        if (!request.method) { return; }
+
+        if(['POST'].indexOf(request.method) !== -1) {
+            request.data = body;
+        }
+
+        var authorizationValue = instance.basic;
+        if (authorizationValue) {
+            request.headers = { 'Authorization': authorizationValue };
+        }
+
+        return $http(request);
+    }
+
+    function getPostfix(action, index) {
+        if (!action) { return; }
+
+        var postfix = '/' + index;
+
+        switch(action) {
+            case 'SEARCH':
+                postfix = postfix + '/_search';
+                break;
+            case 'COUNT':
+                postfix = postfix + '/_count';
+                break;
+            case 'EXISTS':
+                break;
+            default:
+                break;
+        }
+
+        return postfix;
+    }
 };
 
 export default elasticsearchService;
