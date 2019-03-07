@@ -187,6 +187,8 @@ const dashboardController = function dashboardController($scope, $rootScope, $q,
             scope: $scope,
             preserveScope: true,
             controller  : function ($scope, $mdToast) {
+                'ngInject';
+
                 $scope.updateWidgetsPosition = function(){
                     var widgets = [];
                     for(var i = 0; i < $scope.dashboard.widgets.length; i++) {
