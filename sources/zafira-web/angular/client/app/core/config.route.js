@@ -474,16 +474,34 @@
             // })
             .state('404', {
                 url: '/404',
-                template: require('../page/404.html'),
+                component: 'notFoundComponent',
                 data: {
-                    classes: 'body-wide body-err'
+                    classes: 'body-wide body-err p-not-found'
+                },
+                lazyLoad: ($transition$) => {
+                    const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
+
+                    return import(/* webpackChunkName: "not-found" */ '../modules/not-found/not-found.module.js')
+                        .then(mod => $ocLazyLoad.load(mod.notFoundModule))
+                        .catch(err => {
+                            throw new Error('Can\'t load notFoundModule module, ' + err);
+                        });
                 }
             })
             .state('500', {
                 url: '/500',
-                template: require('../page/500.html'),
+                component: 'serverErrorComponent',
                 data: {
-                    classes: 'body-wide body-err'
+                    classes: 'body-wide body-err p-server-error'
+                },
+                lazyLoad: ($transition$) => {
+                    const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
+
+                    return import(/* webpackChunkName: "not-found" */ '../modules/server-error/server-error.module.js')
+                        .then(mod => $ocLazyLoad.load(mod.serverErrorModule))
+                        .catch(err => {
+                            throw new Error('Can\'t load serverErrorModule module, ' + err);
+                        });
                 }
             });
 
