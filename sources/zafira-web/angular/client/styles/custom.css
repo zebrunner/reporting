@@ -87,9 +87,6 @@
 }
 
 @media (max-width: 991px) {
-  .video-section {
-    position: relative !important;
-  }
 
   .test-info-section md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
     /*height: 78vh !important;*/

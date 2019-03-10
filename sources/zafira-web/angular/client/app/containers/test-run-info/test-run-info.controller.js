@@ -80,7 +80,7 @@
         var MODES = {
             live: {
                 name: 'live',
-                element: '.video-wrapper',
+                element: '.testrun-info__tab-video-wrapper',
                 initFunc: initLiveMode,
                 logGetter: {
                     from: 0,
@@ -408,7 +408,7 @@
         $scope.fullScreen = function(minimizeOnly) {
             var fullScreenClass = 'full-screen';
             var vncContainer = angular.element(MODES.live.element)[0];
-            var hideArray = ['.table-history', '.test-info-tab'];
+            var hideArray = ['.testrun-info__tab-table-wrapper', '.testrun-info__tab-additional'];
             if(vncContainer.classList.contains(fullScreenClass)) {
                 vncContainer.classList.remove(fullScreenClass);
                 hideArray.forEach(function (value) {
