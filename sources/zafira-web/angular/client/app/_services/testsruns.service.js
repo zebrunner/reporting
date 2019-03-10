@@ -61,12 +61,7 @@
             return searchTypes;
         }
 
-        function fetchTestRuns(force) {
-            // by default return cached data if possible
-            if (!force && _lastResult) {
-                return $q.resolve(_lastResult);
-            }
-
+        function fetchTestRuns() {
             const filter = _activeFilterId ? '?filterId=' + _activeFilterId : undefined;
 
             // save search params

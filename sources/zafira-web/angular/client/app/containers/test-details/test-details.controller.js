@@ -7,49 +7,18 @@
         'testRun',
         '$scope',
         '$rootScope',
-        '$mdToast',
-        '$mdMenu',
-        '$location',
-        '$window',
-        '$cookieStore',
-        '$mdDialog',
-        '$mdConstant',
-        '$interval',
-        '$timeout',
-        '$stateParams',
-        '$mdDateRangePicker',
         '$q',
-        'FilterService',
-        'ProjectService',
         'TestService',
-        'TestRunService',
         'UtilService',
-        'UserService',
-        'SettingsService',
-        'ProjectProvider',
-        'ConfigService',
-        'SlackService',
-        'DownloadService',
         'API_URL',
-        'DEFAULT_SC',
-        'OFFSET',
-        'TestRunsStorage',
-        '$tableExpandUtil',
         'modalsService',
         '$state',
+        '$transitions',
         TestDetailsController]);
 
     // **************************************************************************
-    function TestDetailsController(testRun, $scope, $rootScope, $mdToast,
-                                   $mdMenu, $location, $window, $cookieStore,
-                                   $mdDialog, $mdConstant, $interval, $timeout,
-                                   $stateParams, $mdDateRangePicker, $q,
-                                   FilterService, ProjectService, TestService,
-                                   TestRunService, UtilService, UserService,
-                                   SettingsService, ProjectProvider,
-                                   ConfigService, SlackService, DownloadService,
-                                   API_URL, DEFAULT_SC, OFFSET, TestRunsStorage,
-                                   $tableExpandUtil, modalsService, $state) {
+    function TestDetailsController(testRun, $scope, $rootScope, $q, TestService, UtilService, 
+                                   API_URL, modalsService, $state, $transitions) {
         const testGroupDataToStore = {
             statuses: [],
             tags: []
@@ -94,7 +63,12 @@
             TENANT = $rootScope.globals.auth.tenant;
             initTestGroups();
             initWebsocket();
-            initTests();
+            if (vm.testRun.status === 'IN_PROGRESS' || !TestService.getTests) {
+                initTests();
+            }
+            else {
+                getTests();
+            }
             fillTestRunMetadata();
             bindEvents();
         }
@@ -154,6 +128,20 @@
             }
         }
 
+        function getTests() {
+            vm.testGroups.mode = 'common';
+            vm.testRun.tests = {};
+            TestService.getTests.forEach(function(test) {
+                addTest(test);
+            });
+            vm.testGroups.group.common.data.all = vm.testRun.tests;
+            showTestsByTags(vm.testRun.tests);
+            showTestsByStatuses(vm.testRun.tests);
+            vm.testRun.tags = collectTags(vm.testRun.tests);
+            vm.testsLoading = false
+            vm.subscriptions[vm.testRun.id] = subscribeTestsTopic(vm.testRun.id);
+        }
+
         function initTests() {
             vm.testGroups.mode = 'common';
 
@@ -181,7 +169,8 @@
                     if (rs.success) {
                         const data = rs.data.results || [];
                         vm.testRun.tests = {};
-                        data.forEach(function(test) {
+                        TestService.setTests = data;
+                        TestService.getTests.forEach(function(test) {
                             addTest(test);
                         });
 
@@ -542,6 +531,15 @@
                     vm.zafiraWebsocket.disconnect();
                     UtilService.websocketConnected('zafira');
                 }
+                const onTransStartSubscription = $transitions.onStart({}, function(trans) {
+                    const toState = trans.to();
+                    const prevState = $state.current.name;
+                    if (toState.name !== 'tests/runs/info' && prevState !== 'tests/runs/info') {
+                        TestService.clearDataCache();
+                    }
+    
+                    onTransStartSubscription();
+                });
             });
         }
     }
