@@ -87,6 +87,7 @@
         }
 
         &-table-wrapper {
+            margin-bottom: 0;
             table {
                 overflow: unset;
                 height: fit-content;
@@ -103,7 +104,6 @@
                     min-height: 32px;
 
                     td, th {
-                        padding: 4px 15px;
                         vertical-align: middle !important;
                         font-size: 12px;
                         word-wrap: break-word;
@@ -147,71 +147,70 @@
                 }
             }
         }
-        &-video-section {
-            height: 560px;
-            position: relative;
-            border: 1px solid $custom-gray;
-            border-top: none;
-            border-bottom: none;
-            h4 {
-                margin: 0;
-                padding: 18px 0 15px 16px;
-                font-size: 16px;
-                color: $dark;
+        &-video {
+            &-section {
+                height: 560px;
+                position: relative;
+                h4 {
+                    margin: 0;
+                    padding: 18px 0 15px 16px;
+                    font-size: 16px;
+                    color: $dark;
 
-                span {
-                    width: 12px;
-                    height: 12px;
-                    padding-top: -8px;
+                    span {
+                        width: 12px;
+                        height: 12px;
+                        padding-top: -8px;
 
-                    .red-point {
-                        width: inherit;
-                        top: -6px;
+                        .red-point {
+                            width: inherit;
+                            top: -6px;
+                        }
+                    }
+                }
+
+                md-chips-wrap {
+                    padding-left: 16px;
+                    padding-bottom: 11px;
+                    box-shadow: none;
+
+                    md-chip {
+                        background: $medium-gray;
+                        color: #fff;
+
+                        &.active {
+                            background: $brand-primary;
+                        }
+
+                        &:hover {
+                            cursor: pointer;
+                        }
                     }
                 }
             }
-
-            md-chips-wrap {
-                padding-left: 16px;
-                padding-bottom: 11px;
-                box-shadow: none;
-
-                md-chip {
-                    background: $medium-gray;
-                    color: #fff;
-
-                    &.active {
-                        background: $brand-primary;
-                    }
-
-                    &:hover {
-                        cursor: pointer;
-                    }
-                }
-            }
-        }
-        &-video-wrapper {
-            margin: 0 16px 16px;
-            background: #000;
-            min-height: 465px;
-            position: relative;
-            top: 0;
-            left: 0;
-            display: flex;
-            height: calc(100vh / 2);
-            &.full-screen {
-                position: fixed;
-                width: 100%;
-                height: 100%;
-                padding: 0;
-                margin: 0;
-            }
-            video {
+            &-wrapper {
+                margin: 0 16px 16px;
+                background: #000;
+                min-height: 465px;
+                position: relative;
+                top: 0;
+                left: 0;
+                display: flex;
                 height: calc(100vh / 2);
-                width: 100%;
-                min-height: 100%;
-                padding: 10px 8px;
-                position: absolute;
+                &.full-screen {
+                    position: fixed;
+                    width: 100%;
+                    height: 100%;
+                    padding: 0;
+                    margin: 0;
+                }
+                video {
+                    height: calc(100vh / 2);
+                    width: 100%;
+                    min-height: 100%;
+                    padding: 10px 8px;
+                    position: absolute;
+                }
             }
         }
     }
@@ -219,6 +218,7 @@
     @media (min-width: 992px) {
         &__tab {
             &-video-section {
+                border-left: 1px solid $custom-gray;
                 position: absolute;
                 height: inherit;
                 top: 0;
@@ -231,7 +231,10 @@
                 table {
                     height: 100%;
                     overflow: auto;
-                }
+                    td, th {
+                        padding: 4px 15px !important;
+                    }
+                }                
             }
         }
     }
@@ -243,8 +246,19 @@
             }
         }
         &__tab {
-            &-table-wrapper {
-                height: auto !important;
+            &-table {
+                &-img-wrapper {
+                    white-space: nowrap !important;
+                    .log-wrapper {
+                        line-height: 1;
+                    }
+                }
+                &-wrapper {
+                    height: auto !important;
+                }
+            }
+            &-video-section {
+                border-bottom: 1px solid $custom-gray;
             }
             &-additional {
                 display: none;
