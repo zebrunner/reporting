@@ -162,7 +162,8 @@
             position: relative;
             height: 100%;
             border: 1px solid $custom-gray;
-
+            border-top: none;
+            border-bottom: none;
             h4 {
                 margin: 0;
                 padding: 18px 0 15px 16px;
@@ -236,8 +237,6 @@
                 bottom: 0;
                 height: auto;
                 overflow: auto;
-                border-top: none !important;
-                border-bottom: none !important;
             }
         }
     }
