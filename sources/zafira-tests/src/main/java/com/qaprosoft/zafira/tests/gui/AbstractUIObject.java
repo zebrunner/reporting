@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
@@ -254,14 +253,13 @@ public abstract class AbstractUIObject
 
 	public void clickOutside()
 	{
-		clickByCoordinates("100", "100");
+		clickByCoordinates(100, 100);
 		isBackdropNotPresent(1);
 	}
 
-	public void clickByCoordinates(String x, String y)
+	public void clickByCoordinates(int x, int y)
 	{
-		JavascriptExecutor executor = (JavascriptExecutor)driver;
-		executor.executeScript(String.format("$(document.elementFromPoint(%s, %s)).click();", x, y));
+		clickByCoordinates(driver.findElement(By.tagName("body")), x, y);
 	}
 
 	public void clickByCoordinates(WebElement element, int x, int y) {
