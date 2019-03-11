@@ -11,7 +11,7 @@
 }
 
 .testrun-info {
-    background-color: #fff !important;
+    background-color: #fff;
 
     &__title {
         margin: 0;
@@ -57,10 +57,9 @@
             }
         }
 
-
         .panel {
-            border: none !important;
-            box-shadow: none !important;
+            border: none;
+            box-shadow: none;
         }
 
         md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
@@ -88,21 +87,13 @@
         }
 
         &-table-wrapper {
-            th:first-child {
-                width: 95px !important;
-            }
             table {
-                height: 100%;
-                overflow: auto;
-
+                overflow: unset;
+                height: fit-content;
+                
                 tbody {
                     display: block;
                     overflow-y: auto;
-                    width: 100% !important;
-                }
-
-                thead {
-                    height: 32px !important;
                 }
 
                 tr {
@@ -110,10 +101,9 @@
                     width: 100%;
                     table-layout: fixed;
                     min-height: 32px;
-                    text-align: left !important;
 
                     td, th {
-                        padding: 4px 15px !important;
+                        padding: 4px 15px;
                         vertical-align: middle !important;
                         font-size: 12px;
                         word-wrap: break-word;
@@ -160,7 +150,6 @@
         &-video-section {
             height: 560px;
             position: relative;
-            height: 100%;
             border: 1px solid $custom-gray;
             border-top: none;
             border-bottom: none;
@@ -184,8 +173,8 @@
 
             md-chips-wrap {
                 padding-left: 16px;
-                padding-bottom: 11px !important;
-                box-shadow: none !important;
+                padding-bottom: 11px;
+                box-shadow: none;
 
                 md-chip {
                     background: $medium-gray;
@@ -204,7 +193,7 @@
         &-video-wrapper {
             margin: 0 16px 16px;
             background: #000;
-            min-height: 400px;
+            min-height: 465px;
             position: relative;
             top: 0;
             left: 0;
@@ -219,8 +208,8 @@
             }
             video {
                 height: calc(100vh / 2);
-                width: 100% !important;
-                min-height: 100% !important;
+                width: 100%;
+                min-height: 100%;
                 padding: 10px 8px;
                 position: absolute;
             }
@@ -238,6 +227,12 @@
                 height: auto;
                 overflow: auto;
             }
+             &-table-wrapper {
+                table {
+                    height: 100%;
+                    overflow: auto;
+                }
+            }
         }
     }
 
@@ -250,10 +245,6 @@
         &__tab {
             &-table-wrapper {
                 height: auto !important;
-            }
-            &-table {
-                overflow: unset !important;
-                height: fit-content !important;
             }
             &-additional {
                 display: none;
