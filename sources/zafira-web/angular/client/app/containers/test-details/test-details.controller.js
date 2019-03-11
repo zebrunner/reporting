@@ -531,16 +531,17 @@
                     vm.zafiraWebsocket.disconnect();
                     UtilService.websocketConnected('zafira');
                 }
-                const onTransStartSubscription = $transitions.onStart({}, function(trans) {
+            });
+
+            const onTransStartSubscription = $transitions.onStart({}, function(trans) {
                     const toState = trans.to();
-                    const prevState = $state.current.name;
-                    if (toState.name !== 'tests/runs/info' && prevState !== 'tests/runs/info') {
+                    
+                    if (toState.name !== 'tests/runs/info') {
                         TestService.clearDataCache();
                     }
     
                     onTransStartSubscription();
                 });
-            });
         }
     }
 

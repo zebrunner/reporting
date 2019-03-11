@@ -29,6 +29,7 @@
         'TestRunsStorage',
         'testRun',
         'TestService',
+        '$transitions',
         TestRunInfoController]);
 
     // **************************************************************************
@@ -36,7 +37,7 @@
                                    $anchorScroll, $location, $timeout, $window, $q,
                                    ElasticsearchService, TestRunService, UtilService,
                                    ArtifactService, DownloadService, $stateParams, OFFSET, API_URL,
-                                   $state, $httpMock, TestRunsStorage, testRun, TestService) {
+                                   $state, $httpMock, TestRunsStorage, testRun, TestService, $transitions) {
 
         const TENANT = $rootScope.globals.auth.tenant;
 
@@ -648,19 +649,21 @@
         };
 
         /**************** On destroy **************/
-        $scope.$on('$destroy', function () {
-            closeAll();
-            closeTestsWebsocket();
+        function bindEvents() {
+            $scope.$on('$destroy', function () {
+                closeAll();
+                closeTestsWebsocket();
+            });
+
             const onTransStartSubscription = $transitions.onStart({}, function(trans) {
                 const toState = trans.to();
-
+                
                 if (toState.name !== 'tests/run') {
                     TestService.clearDataCache();
                 }
-
                 onTransStartSubscription();
-            });
-        });
+            });  
+        }
 
         function closeRfbConnection() {
             if(rfb && rfb._rfb_connection_state == 'connected') {
@@ -734,7 +737,8 @@
             }
             else {
                 setTestParams();
-            }            
+            }     
+            bindEvents();     
         }
 
         function setTestParams() {
