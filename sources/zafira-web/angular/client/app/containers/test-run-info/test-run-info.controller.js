@@ -17,7 +17,6 @@
         '$window',
         '$q',
         'ElasticsearchService',
-        'TestService',
         'TestRunService',
         'UtilService',
         'ArtifactService',
@@ -29,14 +28,16 @@
         '$httpMock',
         'TestRunsStorage',
         'testRun',
+        'TestService',
+        '$transitions',
         TestRunInfoController]);
 
     // **************************************************************************
     function TestRunInfoController($scope, $rootScope, $http, $mdDialog, $interval, $log, $filter,
                                    $anchorScroll, $location, $timeout, $window, $q,
-                                   ElasticsearchService, TestService, TestRunService, UtilService,
+                                   ElasticsearchService, TestRunService, UtilService,
                                    ArtifactService, DownloadService, $stateParams, OFFSET, API_URL,
-                                   $state, $httpMock, TestRunsStorage, testRun) {
+                                   $state, $httpMock, TestRunsStorage, testRun, TestService, $transitions) {
 
         const TENANT = $rootScope.globals.auth.tenant;
 
@@ -648,10 +649,21 @@
         };
 
         /**************** On destroy **************/
-        $scope.$on('$destroy', function () {
-            closeAll();
-            closeTestsWebsocket();
-        });
+        function bindEvents() {
+            $scope.$on('$destroy', function () {
+                closeAll();
+                closeTestsWebsocket();
+            });
+
+            const onTransStartSubscription = $transitions.onStart({}, function(trans) {
+                const toState = trans.to();
+                
+                if (toState.name !== 'tests/run') {
+                    TestService.clearDataCache();
+                }
+                onTransStartSubscription();
+            });  
+        }
 
         function closeRfbConnection() {
             if(rfb && rfb._rfb_connection_state == 'connected') {
@@ -703,19 +715,41 @@
             vm.testRun = testRun;
             $scope.testRun = angular.copy(vm.testRun);
             initTestsWebSocket($scope.testRun);
-            getTest($scope.testRun.id).then(function(testsRs) {
-                $scope.test = testsRs.filter(function(t) {
-                    return t.id === parseInt($stateParams.testId);
-                })[0];
-                $scope.testRun.tests = testsRs;
-                SEARCH_CRITERIA = {
-                    'correlation-id': $scope.testRun.ciRunId + '_' + $scope.test.ciTestId
-                };
-                ELASTICSEARCH_INDEX = buildIndex();
 
-                setMode($scope.test.status == 'IN_PROGRESS' ? 'live' : 'record');
-                $scope.MODE.initFunc.call(this, $scope.test);
-            });
+            if(!TestService.getTests) {
+                const params = {
+                    'page': 1,
+                    'pageSize': 100000,
+                    'testRunId': testRun.id
+                };
+    
+                TestService.searchTests(params)
+                    .then(function (rs) {
+                        if (rs.success) {
+                            const data = rs.data.results || [];
+                            vm.testRun.tests = {};
+                            TestService.setTests = data;
+                            setTestParams();
+                        } else {
+                            console.error(rs.message);
+                        }
+                    });
+            }
+            else {
+                setTestParams();
+            }     
+            bindEvents();     
+        }
+
+        function setTestParams() {
+            $scope.test = TestService.getTest($stateParams.testId);
+            SEARCH_CRITERIA = {
+                'correlation-id': $scope.testRun.ciRunId + '_' + $scope.test.ciTestId
+            };
+            ELASTICSEARCH_INDEX = buildIndex();
+                    
+            setMode($scope.test.status == 'IN_PROGRESS' ? 'live' : 'record');
+            $scope.MODE.initFunc.call(this, $scope.test);
         }
 
         return vm;

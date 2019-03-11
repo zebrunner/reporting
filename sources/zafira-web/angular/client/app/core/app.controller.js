@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('app')
-        .controller('AppCtrl', [ '$scope', '$rootScope', '$templateCache', '$state', 'httpBuffer', '$location', '$window', '$cookies', '$document', '$http', '$q', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', 'UtilService', 'ElasticsearchService', 'SettingProvider', AppCtrl]); // overall control
-	    function AppCtrl($scope, $rootScope, $templateCache, $state, httpBuffer, $location, $window, $cookies, $document, $http, $q, appConfig, AuthService, UserService, DashboardService, SettingsService, ConfigService, AuthIntercepter, UtilService, ElasticsearchService, SettingProvider) {
+        .controller('AppCtrl', [ '$scope', '$rootScope', '$templateCache', '$state', 'httpBuffer', '$window', '$cookies', '$q', 'appConfig', 'AuthService', 'UserService', 'SettingsService', 'ConfigService', 'AuthIntercepter', 'UtilService', 'SettingProvider', AppCtrl]); // overall control
+	    function AppCtrl($scope, $rootScope, $templateCache, $state, httpBuffer, $window, $cookies,  $q, appConfig, AuthService, UserService, SettingsService, ConfigService, AuthIntercepter, UtilService, SettingProvider) {
 
 	        $scope.pageTransitionOpts = appConfig.pageTransitionOpts;
 	        $scope.main = appConfig.main;
