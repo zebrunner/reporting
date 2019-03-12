@@ -175,7 +175,7 @@
                                     .then(function(response) {
                                         if (response.success && response.data.results && response.data.results[0]) {
                                             return response.data.results[0];
-                                        } else {
+                                        } else { //TODO: show error message & redirect to testruns
                                             return $q.reject({message: 'Can\'t get test run with ID=' + $stateParams.testRunId});
                                         }
                                     })
@@ -205,7 +205,6 @@
                         resolve: {
                             resolvedTestRuns: ['$state', 'testsRunsService', '$q', function($state, testsRunsService, $q) {
                                 const prevState = $state.current.name;
-                                let force = false;
 
                                 testsRunsService.resetFilteringState();
                                 // read saved search/filtering data only if we reload current page or returning from internal page
@@ -213,10 +212,9 @@
                                     testsRunsService.readStoredParams();
                                 } else {
                                     testsRunsService.deleteStoredParams();
-                                    force = true;
                                 }
 
-                                return testsRunsService.fetchTestRuns(force).catch(function(err) {
+                                return testsRunsService.fetchTestRuns().catch(function(err) {
                                     err && err.message && alertify.error(err.message);
                                     //1st approach: if can't load with user/cached searchParams reset them and reload page
                                     // if (!force) {
@@ -238,8 +236,39 @@
                         url: '/tests/runs/:testRunId/info/:testId',
                         templateUrl: 'app/containers/test-run-info/test-run-info.html',
                         controller: 'TestRunInfoController',
+                        controllerAs: '$ctrl',
+                        bindToController: true,
                         data: {
                             requireLogin: true
+                        },
+                        params: {
+                            testRun: null
+                        },
+                        resolve: {
+                            testRun: ['$stateParams', '$q', '$state', 'TestRunService', function($stateParams, $q, $state, TestRunService) {
+                                if ($stateParams.testRun) {
+                                    return $q.resolve($stateParams.testRun);
+                                } else if ($stateParams.testRunId) {
+                                    const params = {
+                                        id: $stateParams.testRunId
+                                    };
+
+                                    return TestRunService.searchTestRuns(params)
+                                        .then(function(response) {
+                                            if (response.success && response.data.results && response.data.results[0]) {
+                                                return response.data.results[0];
+                                            } else {
+                                                return $q.reject({message: 'Can\'t get test run with ID=' + $stateParams.testRunId});
+                                            }
+                                        })
+                                        .catch(function(error) {
+                                            console.log(error); //TODO: show toaster notification
+                                            $state.go('tests/runs');
+                                        });
+                                } else {
+                                    $state.go('tests/runs');
+                                }
+                            }]
                         }
                     })
                     .state('settings', {

@@ -145,23 +145,23 @@
                                 Notify in Slack
                             </md-button>
                         </md-menu-item>
-                        <md-divider></md-divider>
-                        <md-menu-item ng-if="$ctrl.showBuildNowOption" has-any-permission="['TEST_RUNS_CI']">
+                        <md-divider ng-if="$ctrl.tools['JENKINS']"></md-divider>
+                        <md-menu-item ng-if="$ctrl.showBuildNowOption && $ctrl.tools['JENKINS']" has-any-permission="['TEST_RUNS_CI']">
                             <md-button name="buildNow" data-ng-click="$ctrl.buildNow($event)">
                                 Build now
                             </md-button>
                         </md-menu-item>
-                        <md-menu-item ng-if="$ctrl.testRun.status=='IN_PROGRESS'" has-any-permission="['TEST_RUNS_CI']">
+                        <md-menu-item ng-if="$ctrl.testRun.status=='IN_PROGRESS' && $ctrl.tools['JENKINS']" has-any-permission="['TEST_RUNS_CI']">
                             <md-button name="abort" data-ng-click="$ctrl.abort()">
                                 Abort
                             </md-button>
                         </md-menu-item>
-                        <md-menu-item has-any-permission="['TEST_RUNS_CI']">
+                        <md-menu-item ng-if="$ctrl.tools['JENKINS']" has-any-permission="['TEST_RUNS_CI']">
                             <md-button name="rebuild" data-ng-click="$ctrl.rerun($event)">
                                 Rebuild
                             </md-button>
                         </md-menu-item>
-                        <md-menu-item ng-if="$ctrl.testRun.status!='PASSED'" has-any-permission="['TEST_RUNS_CI']">
+                        <md-menu-item ng-if="$ctrl.testRun.status!='PASSED' && $ctrl.tools['JENKINS']" has-any-permission="['TEST_RUNS_CI']">
                             <md-button name="debug" ng-click="$ctrl.startDebug()">
                                 Debug
                             </md-button>
@@ -261,23 +261,23 @@
                                 Notify in Slack
                             </md-button>
                         </md-menu-item>
-                        <md-divider></md-divider>
-                        <md-menu-item ng-if="$ctrl.showBuildNowOption" has-any-permission="['TEST_RUNS_CI']">
+                        <md-divider ng-if="$ctrl.tools['JENKINS']"></md-divider>
+                        <md-menu-item ng-if="$ctrl.showBuildNowOption && $ctrl.tools['JENKINS']" has-any-permission="['TEST_RUNS_CI']">
                             <md-button name="buildNow" data-ng-click="$ctrl.buildNow($event)">
                                 Build now
                             </md-button>
                         </md-menu-item>
-                        <md-menu-item ng-if="$ctrl.testRun.status=='IN_PROGRESS'" has-any-permission="['TEST_RUNS_CI']">
+                        <md-menu-item ng-if="$ctrl.testRun.status=='IN_PROGRESS' && $ctrl.tools['JENKINS']" has-any-permission="['TEST_RUNS_CI']">
                             <md-button name="abort" data-ng-click="$ctrl.abort()">
                                 Abort
                             </md-button>
                         </md-menu-item>
-                        <md-menu-item has-any-permission="['TEST_RUNS_CI']">
+                        <md-menu-item ng-if="$ctrl.tools['JENKINS']" has-any-permission="['TEST_RUNS_CI']">
                             <md-button name="rebuild" data-ng-click="$ctrl.rerun($event)">
                                 Rebuild
                             </md-button>
                         </md-menu-item>
-                        <md-menu-item ng-if="$ctrl.testRun.status!='PASSED'" has-any-permission="['TEST_RUNS_CI']">
+                        <md-menu-item ng-if="$ctrl.testRun.status!='PASSED' && $ctrl.tools['JENKINS']" has-any-permission="['TEST_RUNS_CI']">
                             <md-button name="debug" ng-click="$ctrl.startDebug()">
                                 Debug
                             </md-button>
@@ -415,23 +415,23 @@
                                 Notify in Slack
                             </md-button>
                         </md-menu-item>
-                        <md-divider></md-divider>
-                        <md-menu-item ng-if="$ctrl.showBuildNowOption" has-any-permission="['TEST_RUNS_CI']">
+                        <md-divider ng-if="$ctrl.tools['JENKINS']"></md-divider>
+                        <md-menu-item ng-if="$ctrl.showBuildNowOption && $ctrl.tools['JENKINS']" has-any-permission="['TEST_RUNS_CI']">
                             <md-button name="buildNow" data-ng-click="$ctrl.buildNow($event)">
                                 Build now
                             </md-button>
                         </md-menu-item>
-                        <md-menu-item ng-if="$ctrl.testRun.status=='IN_PROGRESS'" has-any-permission="['TEST_RUNS_CI']">
+                        <md-menu-item ng-if="$ctrl.testRun.status=='IN_PROGRESS' && $ctrl.tools['JENKINS']" has-any-permission="['TEST_RUNS_CI']">
                             <md-button name="abort" data-ng-click="$ctrl.abort()">
                                 Abort
                             </md-button>
                         </md-menu-item>
-                        <md-menu-item has-any-permission="['TEST_RUNS_CI']">
+                        <md-menu-item ng-if="$ctrl.tools['JENKINS']" has-any-permission="['TEST_RUNS_CI']">
                             <md-button name="rebuild" data-ng-click="$ctrl.rerun($event)">
                                 Rebuild
                             </md-button>
                         </md-menu-item>
-                        <md-menu-item ng-if="$ctrl.testRun.status!='PASSED'" has-any-permission="['TEST_RUNS_CI']">
+                        <md-menu-item ng-if="$ctrl.testRun.status!='PASSED' && $ctrl.tools['JENKINS']" has-any-permission="['TEST_RUNS_CI']">
                             <md-button name="debug" ng-click="$ctrl.startDebug()">
                                 Debug
                             </md-button>

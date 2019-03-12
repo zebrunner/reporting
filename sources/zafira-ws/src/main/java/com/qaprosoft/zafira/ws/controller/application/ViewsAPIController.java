@@ -64,6 +64,7 @@ public class ViewsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasAnyPermission('VIEW_TEST_RUN_VIEWS', 'MODIFY_TEST_RUN_VIEWS')")
 	@RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody View getViewById(@PathVariable(value = "id") long id) throws ServiceException
 	{
@@ -75,6 +76,7 @@ public class ViewsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasAnyPermission('VIEW_TEST_RUN_VIEWS', 'MODIFY_TEST_RUN_VIEWS')")
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<View> getAllViews(@RequestParam(value = "projectId", required = false) Long projectId)
 			throws ServiceException

@@ -17,7 +17,6 @@
         '$window',
         '$q',
         'ElasticsearchService',
-        'TestService',
         'TestRunService',
         'UtilService',
         'ArtifactService',
@@ -28,16 +27,26 @@
         '$state',
         '$httpMock',
         'TestRunsStorage',
+        'testRun',
+        'TestService',
+        '$transitions',
         TestRunInfoController]);
 
     // **************************************************************************
     function TestRunInfoController($scope, $rootScope, $http, $mdDialog, $interval, $log, $filter,
                                    $anchorScroll, $location, $timeout, $window, $q,
-                                   ElasticsearchService, TestService, TestRunService, UtilService,
+                                   ElasticsearchService, TestRunService, UtilService,
                                    ArtifactService, DownloadService, $stateParams, OFFSET, API_URL,
-                                   $state, $httpMock, TestRunsStorage) {
+                                   $state, $httpMock, TestRunsStorage, testRun, TestService, $transitions) {
 
         const TENANT = $rootScope.globals.auth.tenant;
+
+
+        const vm = {
+            testRun: null,
+        };
+
+        vm.$onInit = controllerInit;
 
         $scope.testRun = {};
         $scope.test = {};
@@ -54,8 +63,8 @@
 
         $scope.goToTestRuns = function () {
             $state.go('tests/run', {
-                testRunId: $scope.testRun.id,
-                testRun: $scope.testRun
+                testRunId: vm.testRun.id,
+                testRun: vm.testRun
             });
         };
 
@@ -72,7 +81,7 @@
         var MODES = {
             live: {
                 name: 'live',
-                element: '.video-wrapper',
+                element: '.testrun-info__tab-video-wrapper',
                 initFunc: initLiveMode,
                 logGetter: {
                     from: 0,
@@ -400,7 +409,7 @@
         $scope.fullScreen = function(minimizeOnly) {
             var fullScreenClass = 'full-screen';
             var vncContainer = angular.element(MODES.live.element)[0];
-            var hideArray = ['.table-history', '.test-info-tab'];
+            var hideArray = ['.testrun-info__tab-table-wrapper', '.testrun-info__tab-additional'];
             if(vncContainer.classList.contains(fullScreenClass)) {
                 vncContainer.classList.remove(fullScreenClass);
                 hideArray.forEach(function (value) {
@@ -640,10 +649,21 @@
         };
 
         /**************** On destroy **************/
-        $scope.$on('$destroy', function () {
-            closeAll();
-            closeTestsWebsocket();
-        });
+        function bindEvents() {
+            $scope.$on('$destroy', function () {
+                closeAll();
+                closeTestsWebsocket();
+            });
+
+            const onTransStartSubscription = $transitions.onStart({}, function(trans) {
+                const toState = trans.to();
+                
+                if (toState.name !== 'tests/run') {
+                    TestService.clearDataCache();
+                }
+                onTransStartSubscription();
+            });  
+        }
 
         function closeRfbConnection() {
             if(rfb && rfb._rfb_connection_state == 'connected') {
@@ -691,23 +711,48 @@
             return startTime == finishTime ? startTime : startTime + ',' + finishTime;
         };
 
-        (function init() {
-            getTestRun($stateParams.id).then(function (rs) {
-                $scope.testRun = rs;
-                initTestsWebSocket($scope.testRun);
-                getTest(rs.id).then(function (testsRs) {
-                    $scope.test = testsRs.filter(function (t) {
-                        return t.id === parseInt($stateParams.testId);
-                    })[0];
-                    $scope.testRun.tests = testsRs;
-                    SEARCH_CRITERIA = {'correlation-id': $scope.testRun.ciRunId + '_' + $scope.test.ciTestId};
-                    ELASTICSEARCH_INDEX = buildIndex();
+        function controllerInit() {
+            vm.testRun = testRun;
+            $scope.testRun = angular.copy(vm.testRun);
+            initTestsWebSocket($scope.testRun);
 
-                    setMode($scope.test.status == 'IN_PROGRESS' ? 'live' : 'record');
-                    $scope.MODE.initFunc.call(this, $scope.test);
-                });
-            });
-        })();
+            if(!TestService.getTests) {
+                const params = {
+                    'page': 1,
+                    'pageSize': 100000,
+                    'testRunId': testRun.id
+                };
+    
+                TestService.searchTests(params)
+                    .then(function (rs) {
+                        if (rs.success) {
+                            const data = rs.data.results || [];
+                            vm.testRun.tests = {};
+                            TestService.setTests = data;
+                            setTestParams();
+                        } else {
+                            console.error(rs.message);
+                        }
+                    });
+            }
+            else {
+                setTestParams();
+            }     
+            bindEvents();     
+        }
+
+        function setTestParams() {
+            $scope.test = TestService.getTest($stateParams.testId);
+            SEARCH_CRITERIA = {
+                'correlation-id': $scope.testRun.ciRunId + '_' + $scope.test.ciTestId
+            };
+            ELASTICSEARCH_INDEX = buildIndex();
+                    
+            setMode($scope.test.status == 'IN_PROGRESS' ? 'live' : 'record');
+            $scope.MODE.initFunc.call(this, $scope.test);
+        }
+
+        return vm;
     }
 
     function GalleryController($scope, $mdDialog, $q, DownloadService, url, ciRunId, test, thumbs) {

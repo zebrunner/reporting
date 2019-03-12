@@ -1,0 +1,270 @@
+@import "../global/var";
+
+@keyframes back_button-move {
+    0% {
+        left: 5px;
+    }
+
+    100% {
+        left: 0;
+    }
+}
+
+.testrun-info {
+    background-color: #fff;
+
+    &__title {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1;
+        display: flex;
+        align-items: baseline;
+
+        &-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 80%;
+        }
+
+        .back_button {
+            position: relative;
+            top: 5px;
+            animation: back_button-move 0.2s linear;
+        }
+    }
+
+    &__container {
+        height: calc(100vh - 48px);
+    }
+
+    &__section {
+        height: 100%;
+
+        *[md-tabs-template]>div {
+            height: 100%;
+        }
+
+        >div,
+        section,
+        .tab-content,
+        .history-tab,
+        table {
+            height: inherit;
+
+            >*:not(.testrun-info__tab-video-section) {
+                height: inherit;
+            }
+        }
+
+        .panel {
+            border: none;
+            box-shadow: none;
+        }
+
+        md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
+            overflow: hidden;
+            height: inherit;
+
+            md-tab-content-wrapper {
+                height: inherit;
+            }
+
+            md-tab-content {
+                height: inherit;
+                overflow: hidden !important;
+            }
+        }
+    }
+
+    &__tab {
+        color: $medium-gray;
+        font-size: 14.5px;
+        font-weight: 500;
+        text-transform: capitalize;
+        &.md-active {
+            color: $coal !important;
+        }
+
+        &-table-wrapper {
+            margin-bottom: 0;
+            table {
+                overflow: unset;
+                height: fit-content;
+                
+                tbody {
+                    display: block;
+                    overflow-y: auto;
+                }
+
+                tr {
+                    display: table;
+                    width: 100%;
+                    table-layout: fixed;
+                    min-height: 32px;
+
+                    td, th {
+                        vertical-align: middle !important;
+                        font-size: 12px;
+                        word-wrap: break-word;
+
+                        &:nth-child(1),
+                        &:nth-child(2) {
+                            width: 80px;
+                            text-align: center;
+                        }
+
+                        .material-icons {
+                            color: $gray-light;
+                            font-size: 18px !important;
+
+                            &:hover {
+                                cursor: pointer;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        &-additional {
+            position: relative;
+            bottom: 0;
+            
+            table {
+                margin: 16px 16px;
+                padding-left: 33px;
+                -webkit-padding-start: 33px;
+                list-style: none;
+
+                td {
+                padding: 8px 8px 8px 0;
+                color: $coal;
+                font-size: 14.5px;
+
+                    span{
+                        font-weight: 500;
+                    }
+                }
+            }
+        }
+        &-video {
+            &-section {
+                height: 560px;
+                position: relative;
+                h4 {
+                    margin: 0;
+                    padding: 18px 0 15px 16px;
+                    font-size: 16px;
+                    color: $dark;
+
+                    span {
+                        width: 12px;
+                        height: 12px;
+                        padding-top: -8px;
+
+                        .red-point {
+                            width: inherit;
+                            top: -6px;
+                        }
+                    }
+                }
+
+                md-chips-wrap {
+                    padding-left: 16px;
+                    padding-bottom: 11px;
+                    box-shadow: none;
+
+                    md-chip {
+                        background: $medium-gray;
+                        color: #fff;
+
+                        &.active {
+                            background: $brand-primary;
+                        }
+
+                        &:hover {
+                            cursor: pointer;
+                        }
+                    }
+                }
+            }
+            &-wrapper {
+                margin: 0 16px 16px;
+                background: #000;
+                min-height: 465px;
+                position: relative;
+                top: 0;
+                left: 0;
+                display: flex;
+                height: calc(100vh / 2);
+                &.full-screen {
+                    position: fixed;
+                    width: 100%;
+                    height: 100%;
+                    padding: 0;
+                    margin: 0;
+                }
+                video {
+                    height: calc(100vh / 2);
+                    width: 100%;
+                    min-height: 100%;
+                    padding: 10px 8px;
+                    position: absolute;
+                }
+            }
+        }
+    }
+
+    @media (min-width: 992px) {
+        &__tab {
+            &-video-section {
+                border-left: 1px solid $custom-gray;
+                position: absolute;
+                height: inherit;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                height: auto;
+                overflow: auto;
+            }
+             &-table-wrapper {
+                table {
+                    height: 100%;
+                    overflow: auto;
+                    td, th {
+                        padding: 4px 15px !important;
+                    }
+                }                
+            }
+        }
+    }
+
+    @media (max-width: 991px) {
+        &__section {
+            .history-tab {
+                overflow: auto;
+            }
+        }
+        &__tab {
+            &-table {
+                &-img-wrapper {
+                    white-space: nowrap !important;
+                    .log-wrapper {
+                        line-height: 1;
+                    }
+                }
+                &-wrapper {
+                    height: auto !important;
+                }
+            }
+            &-video-section {
+                border-bottom: 1px solid $custom-gray;
+            }
+            &-additional {
+                display: none;
+            }
+        }
+    }
+}
+
+

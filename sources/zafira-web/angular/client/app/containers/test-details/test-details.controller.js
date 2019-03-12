@@ -7,49 +7,18 @@
         'testRun',
         '$scope',
         '$rootScope',
-        '$mdToast',
-        '$mdMenu',
-        '$location',
-        '$window',
-        '$cookieStore',
-        '$mdDialog',
-        '$mdConstant',
-        '$interval',
-        '$timeout',
-        '$stateParams',
-        '$mdDateRangePicker',
         '$q',
-        'FilterService',
-        'ProjectService',
         'TestService',
-        'TestRunService',
         'UtilService',
-        'UserService',
-        'SettingsService',
-        'ProjectProvider',
-        'ConfigService',
-        'SlackService',
-        'DownloadService',
         'API_URL',
-        'DEFAULT_SC',
-        'OFFSET',
-        'TestRunsStorage',
-        '$tableExpandUtil',
         'modalsService',
         '$state',
+        '$transitions',
         TestDetailsController]);
 
     // **************************************************************************
-    function TestDetailsController(testRun, $scope, $rootScope, $mdToast,
-                                   $mdMenu, $location, $window, $cookieStore,
-                                   $mdDialog, $mdConstant, $interval, $timeout,
-                                   $stateParams, $mdDateRangePicker, $q,
-                                   FilterService, ProjectService, TestService,
-                                   TestRunService, UtilService, UserService,
-                                   SettingsService, ProjectProvider,
-                                   ConfigService, SlackService, DownloadService,
-                                   API_URL, DEFAULT_SC, OFFSET, TestRunsStorage,
-                                   $tableExpandUtil, modalsService, $state) {
+    function TestDetailsController(testRun, $scope, $rootScope, $q, TestService, UtilService, 
+                                   API_URL, modalsService, $state, $transitions) {
         const testGroupDataToStore = {
             statuses: [],
             tags: []
@@ -63,6 +32,8 @@
             testGroups: null,
             testGroupMode: 'PLAIN',
             testRun: testRun,
+            testsLoading: true,
+            testsFilteredEmpty: true,
             // mobileBreakpoint: mediaBreakpoints.mobile || 0,
             // windowWidthService: windowWidthService,
             testsTagsOptions: {},
@@ -79,6 +50,9 @@
             changeTestStatus: changeTestStatus,
             showDetailsDialog: showDetailsDialog,
             goToTestDetails: goToTestDetails,
+            get empty() {
+                return !Object.keys(vm.testRun.tests || {}).length ;
+            }
         };
 
         vm.$onInit = controlInit;
@@ -89,7 +63,12 @@
             TENANT = $rootScope.globals.auth.tenant;
             initTestGroups();
             initWebsocket();
-            initTests();
+            if (vm.testRun.status === 'IN_PROGRESS' || !TestService.getTests) {
+                initTests();
+            }
+            else {
+                getTests();
+            }
             fillTestRunMetadata();
             bindEvents();
         }
@@ -149,6 +128,20 @@
             }
         }
 
+        function getTests() {
+            vm.testGroups.mode = 'common';
+            vm.testRun.tests = {};
+            TestService.getTests.forEach(function(test) {
+                addTest(test);
+            });
+            vm.testGroups.group.common.data.all = vm.testRun.tests;
+            showTestsByTags(vm.testRun.tests);
+            showTestsByStatuses(vm.testRun.tests);
+            vm.testRun.tags = collectTags(vm.testRun.tests);
+            vm.testsLoading = false
+            vm.subscriptions[vm.testRun.id] = subscribeTestsTopic(vm.testRun.id);
+        }
+
         function initTests() {
             vm.testGroups.mode = 'common';
 
@@ -158,7 +151,8 @@
                     showTestsByTags(vm.testRun.tests);
                     showTestsByStatuses(vm.testRun.tests);
                     vm.testRun.tags = collectTags(vm.testRun.tests);
-                });
+                })
+                .finally(()=>{vm.testsLoading = false});
                 vm.subscriptions[vm.testRun.id] = subscribeTestsTopic(vm.testRun.id);
         }
 
@@ -174,8 +168,9 @@
                 .then(function (rs) {
                     if (rs.success) {
                         const data = rs.data.results || [];
-
-                        data.forEach(function(test) {
+                        vm.testRun.tests = {};
+                        TestService.setTests = data;
+                        TestService.getTests.forEach(function(test) {
                             addTest(test);
                         });
 
@@ -209,7 +204,6 @@
                 return tag.name !== 'TESTRAIL_TESTCASE_UUID' && tag.name !== 'QTEST_TESTCASE_UUID';
             });
 
-            vm.testRun.tests = vm.testRun.tests || {};
             vm.testRun.tests[test.id] = test;
 
             if (vm.testGroupMode === 'PLAIN') {
@@ -279,12 +273,16 @@
         }
 
         function showTestsByStatuses(tests, statuses) {
+            vm.testsFilteredEmpty = true;
             angular.forEach(tests, function (test) {
                 test.showByStatus = false;
                 if (statuses && statuses.length) {
                     test.showByStatus = statuses.includes(test.status.toLowerCase());
                 } else {
                     test.showByStatus = true;
+                }
+                if (test.showByStatus) {
+                    vm.testsFilteredEmpty = false;
                 }
             });
         }
@@ -322,6 +320,7 @@
         function resetTestsGrouping() {
             vm.testsTagsOptions.reset(); //TODO: refactoring: directive shouldn't extend passed object: ("clear functions" approach)
             vm.testsStatusesOptions.reset();
+            vm.testsFilteredEmpty = false;
             vm.predicate = 'startTime';
             vm.reverse = false;
             vm.testGroups.predicate = 'startTime';
@@ -533,6 +532,16 @@
                     UtilService.websocketConnected('zafira');
                 }
             });
+
+            const onTransStartSubscription = $transitions.onStart({}, function(trans) {
+                    const toState = trans.to();
+                    
+                    if (toState.name !== 'tests/runs/info') {
+                        TestService.clearDataCache();
+                    }
+    
+                    onTransStartSubscription();
+                });
         }
     }
 

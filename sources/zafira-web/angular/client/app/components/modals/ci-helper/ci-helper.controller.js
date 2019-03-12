@@ -48,21 +48,21 @@
                     json: {
                         "browser": ["chrome", "firefox"],
                         "thread_count": 5,
-                        "scmBranch": "*/master"
+                        "branch": "*/master"
                     }
                 },
                 {
                     name: 'Mobile',
                     json: {
                         "thread_count": 5,
-                        "scmBranch": "*/master"
+                        "branch": "*/master"
                     }
                 },
                 {
                     name: 'API',
                     json: {
                         "thread_count": 5,
-                        "scmBranch": "*/master"
+                        "branch": "*/master"
                     }
                 }
             ]

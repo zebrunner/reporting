@@ -11,8 +11,6 @@
         'TestRunService',
         'UtilService',
         'UserService',
-        'SettingsService',
-        'ConfigService',
         'resolvedTestRuns',
         'testsRunsService',
         '$scope',
@@ -21,12 +19,13 @@
         '$transitions',
         'windowWidthService',
         'activeTestRunId',
+        'TestService',
         TestsRunsController]);
         
     function TestsRunsController($cookieStore, $mdDialog, $timeout, $q, TestRunService, UtilService,
-                                 UserService, SettingsService, ConfigService, resolvedTestRuns,
+                                 UserService, resolvedTestRuns,
                                  testsRunsService, $scope, API_URL, $rootScope, $transitions,
-                                 windowWidthService, activeTestRunId) {
+                                 windowWidthService, activeTestRunId, TestService) {
         let TENANT;
         const vm = {
             testRuns: resolvedTestRuns.results || [],
@@ -447,7 +446,7 @@
                 const toState = trans.to();
 
                 if (toState.name !== 'tests/run'){
-                    testsRunsService.clearDataCache();
+                    TestService.clearDataCache();
                 }
                 onTransStartSubscription();
             });
