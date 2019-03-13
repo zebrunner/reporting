@@ -46,23 +46,34 @@
                 {
                     name: 'Web',
                     json: {
-                        "browser": ["chrome", "firefox"],
+                        "browser": [
+                            "chrome",
+                            "firefox"
+                        ],
                         "thread_count": 5,
-                        "branch": "*/master"
+                        "branch": "*/master",
+                        "email_list": "demo@qaprosoft.com",
+                        "suite": "web"
                     }
                 },
                 {
                     name: 'Mobile',
                     json: {
+                        "platform": "ANDROID",
                         "thread_count": 5,
-                        "branch": "*/master"
+                        "branch": "*/master",
+                        "email_list": "demo@qaprosoft.com",
+                        "suite": "android"
                     }
                 },
                 {
                     name: 'API',
                     json: {
+                        "platform": "API",
                         "thread_count": 5,
-                        "branch": "*/master"
+                        "branch": "*/master",
+                        "email_list": "demo@qaprosoft.com",
+                        "suite": "api"
                     }
                 }
             ]
@@ -116,7 +127,7 @@
             if(template) {
                 $scope.launcher.model = $scope.launcher.model && $scope.launcher.model.isJsonValid() ? $scope.launcher.model : "{}";
                 var json = $scope.launcher.model.toJson();
-                $scope.launcher.model = JSON.stringify(angular.merge(json, template), null, 2);
+                $scope.launcher.model = JSON.stringify(/*angular.merge(json, template)*/template, null, 2);
             }
         };
 
