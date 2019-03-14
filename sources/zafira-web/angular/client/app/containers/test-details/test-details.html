@@ -157,7 +157,7 @@
                     </span>
                   </td>
                 </tr>
-                <tr md-row="md-row" data-ng-if="(!$ctrl.testsLoading && $ctrl.empty || $ctrl.testsFilteredEmpty && !$ctrl.testsLoading) && $ctrl.testRun.status !== 'IN_PROGRESS'">
+                <tr md-row="md-row" data-ng-if="!$ctrl.testsLoading && ($ctrl.empty || $ctrl.testsFilteredEmpty) && $ctrl.testRun.status !== 'IN_PROGRESS'">
                   <td md-cell="md-cell" colspan="4" class="test-empty">
                     No tests
                   </td>
