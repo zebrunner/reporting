@@ -282,6 +282,13 @@
             padding: 0;
             .md-button {
                 min-width: 40px;
+                width: 100%;
+                display: flex;
+                text-transform: none;
+                font-weight: 400;
+                md-icon {
+                    margin-right: 16px;
+                }
             }
             span {
                 padding-left: 16px;
