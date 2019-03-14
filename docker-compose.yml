@@ -63,6 +63,7 @@ services:
       - ZAFIRA_URL=http://localhost:8080
       - ZAFIRA_USER=qpsdemo
       - ZAFIRA_PASS=qpsdemo
+      - ZAFIRA_GROUP="Super admins"
     depends_on:
       - "db"
       - "rabbitmq"

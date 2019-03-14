@@ -1,0 +1,53 @@
+@import "../global/var";
+
+.p-tests-runs {
+    .fixed-page-header {
+        z-index: 5;
+    }
+    &__section {
+        #noData {
+            padding: 15px;
+            background-color: white;
+        }
+    }
+    @media screen and (max-width: $breakpoint-mobile) {
+        .page {
+            padding: 48px 0 0;
+        }
+        ._search-active {
+            padding-top: 48px;
+        }
+        &__section {
+            background-color: white;
+            & .fixed-search-column {
+                min-height: auto;
+            }
+            md-card {
+                background: none;
+            }
+            &._content {
+                background-color: transparent;
+            }
+            &._title {
+                float: left;
+            }
+        }
+        &__title {
+            font-size: 18px;
+            color: black;
+            margin-top: 0;
+            margin-bottom: 0;
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+        & .page {
+            & md-card {
+                margin-bottom: 0;
+            }
+        }
+        #itemsCount {
+            opacity: 0.5;
+            font-size: 18px;
+        }
+    }
+}

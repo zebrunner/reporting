@@ -12,8 +12,9 @@
         ,'app.user'
         ,'app.scm'
         ,'app.testcase'
-        ,'app.testrun'
         ,'app.testruninfo'
+        ,'app.testsRuns'
+        ,'app.testDetails'
         ,'app.view'
         ,'app.settings'
         ,'app.monitors'
@@ -21,6 +22,8 @@
         ,'app.certification'
         ,'app.sidebar'
         ,'app.common'
+        ,'app.testRunCard'
+        ,'app.testsRunsFilter'
         // 3rd party feature modules
         ,'ngImgCrop'
         ,'ngecharts'
@@ -42,16 +45,16 @@
         $httpProvider.defaults.useXDomain = true;
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
-        var $window = $(window);
-
-        $window.scroll(onScroll);
-        $window.resize(onResize);
-
-        function onScroll() {
-        };
-
-        function onResize() {
-        };
+        // var $window = $(window);
+        //
+        // $window.scroll(onScroll);
+        // $window.resize(onResize);
+        //
+        // function onScroll() {
+        // };
+        //
+        // function onResize() {
+        // };
 
         Array.prototype.indexOfId = function(id) {
             for (var i = 0; i < this.length; i++)
@@ -99,7 +102,7 @@
         String.prototype.isJsonValid = function(pretty) {
             var json = this;
             if(pretty) {
-                json = json.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
+                //json = json.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
                 json = json.replace(/\'/g, "\"");
             }
             try {
@@ -110,8 +113,8 @@
             return true;
         };
         String.prototype.toJson = function() {
-            var jsonText = this.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
-            jsonText = jsonText.replace(/\'/g, "\"");
+            //var jsonText = this.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
+            var jsonText = this.replace(/\'/g, "\"");
             return JSON.parse(jsonText);
         };
 
@@ -1055,7 +1058,28 @@
                 });
             }
         };
-    }]).filter('orderObjectBy', ['$sce', function($sce) {
+    }])
+    .directive('windowWidth', function ($window, windowWidthService) {
+        "use strict";
+
+        return {
+            restrict: 'A',
+            link: function($scope) {
+                angular.element($window).on('resize', function() {
+                    windowWidthService.windowWidth = $window.innerWidth;
+                    windowWidthService.windowHeight = $window.innerHeight;
+
+                    $scope.$digest();
+
+                    $scope.$emit('resize.getWindowSize', {
+                        innerWidth: windowWidthService.windowWidth,
+                        innerHeight: windowWidthService.windowHeight
+                    });
+                });
+            }
+        };
+    })
+    .filter('orderObjectBy', ['$sce', function($sce) {
         var STATUSES_ORDER = {
             'PASSED': 0,
             'FAILED': 1,

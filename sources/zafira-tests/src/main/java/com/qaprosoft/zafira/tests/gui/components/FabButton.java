@@ -33,7 +33,7 @@ public class FabButton extends AbstractUIObject
 	{
 		waitUntilElementIsPresent(buttonTrigger, 2);
 		buttonTrigger.click();
-		pause(0.6);
+		pause(2);
 		return buttonsMini;
 	}
 
@@ -49,7 +49,7 @@ public class FabButton extends AbstractUIObject
 
 	public void clickButtonMiniByClassName(String className)
 	{
-		pause(0.6);
+		pause(2);
 		getButtonMiniByClassName(className).click();
 	}
 }

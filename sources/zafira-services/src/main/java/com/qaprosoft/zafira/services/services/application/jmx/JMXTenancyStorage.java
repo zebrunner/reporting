@@ -19,25 +19,32 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
-import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.services.services.application.SettingsService;
-import com.qaprosoft.zafira.services.services.management.TenancyService;
-import com.qaprosoft.zafira.services.services.application.jmx.context.AbstractContext;
-import com.qaprosoft.zafira.services.util.TenancyInitial;
+import javax.annotation.PostConstruct;
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
+import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.services.services.application.SettingsService;
+import com.qaprosoft.zafira.services.services.application.jmx.context.AbstractContext;
+import com.qaprosoft.zafira.services.services.management.TenancyService;
+import com.qaprosoft.zafira.services.util.TenancyInitial;
 
 @Component
 public class JMXTenancyStorage implements TenancyInitial {
 
+    private static final Logger LOGGER = Logger.getLogger( JMXTenancyStorage.class);
+    
     @Autowired
     private TenancyService tenancyService;
 
     @Autowired
     private SettingsService settingsService;
+    
+    @Autowired
+    private CryptoService cryptoService;
 
     private static final Map<Setting.Tool, Map<String, ? extends AbstractContext>> tenancyEntity = new ConcurrentHashMap<>();
 
@@ -51,6 +58,18 @@ public class JMXTenancyStorage implements TenancyInitial {
         Arrays.stream(Setting.Tool.values()).forEach(tool -> {
             settingsService.getServiceByTool(tool).init();
         });
+        
+        try {
+            for(Setting setting : settingsService.getAllSettings()) {
+                if(setting.isValueForEncrypting() && !setting.isEncrypted()) {
+                    setting.setValue(cryptoService.encrypt(setting.getValue()));
+                    setting.setEncrypted(true);
+                    settingsService.updateSetting(setting);
+                }
+            }
+        } catch (Exception e) {
+           LOGGER.error("Unable to encrypt value: " + e.getMessage(), e);
+        }
     }
 
     @SuppressWarnings("unchecked")

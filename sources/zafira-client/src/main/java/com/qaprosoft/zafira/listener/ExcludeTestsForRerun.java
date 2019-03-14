@@ -102,6 +102,7 @@ public class ExcludeTestsForRerun
 							if (!ArrayUtils.contains(allDependentMethods, testNGMethod.getRealClass().getName() + "."
 									+ testNGMethod.getConstructorOrMethod().getMethod().getName()))
 							{
+								@SuppressWarnings("deprecation")
 								SuiteRunner suiteRunner = new SuiteRunner(new Configuration(), new XmlSuite(), "");
 								TestRunner testRunner = new TestRunner(new Configuration(), suiteRunner,
 										testNGMethod.getXmlTest(), false, null, new ArrayList<IClassListener>());

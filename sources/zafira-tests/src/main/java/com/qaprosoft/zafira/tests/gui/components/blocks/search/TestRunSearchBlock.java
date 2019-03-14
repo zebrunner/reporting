@@ -67,6 +67,7 @@ public class TestRunSearchBlock extends AbstractSearchBlock
 	public void selectStatus(String status)
 	{
 		clickOutside();
+		pause(2);
 		if(! isBlank(status))
 			select(statusSelect, status);
 	}
@@ -136,6 +137,10 @@ public class TestRunSearchBlock extends AbstractSearchBlock
 	{
 		appVersionInput.click();
 		commonInput.click();
+		return commonInput;
+	}
+
+	public WebElement getCommonInput() {
 		return commonInput;
 	}
 

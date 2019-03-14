@@ -6,17 +6,38 @@
         .factory('TestService', ['$httpMock', '$cookies', '$rootScope', 'UtilService', 'API_URL', TestService])
 
     function TestService($httpMock, $cookies, $rootScope, UtilService, API_URL) {
-        var service = {};
-
-        service.searchTests = searchTests;
-        service.updateTest = updateTest;
-        service.getTestCaseWorkItemsByType = getTestCaseWorkItemsByType;
-        service.createTestWorkItem = createTestWorkItem;
-        service.deleteTestWorkItem = deleteTestWorkItem;
-        service.getJiraTicket = getJiraTicket;
-        service.getConnectionToJira = getConnectionToJira;
+        const local = {
+            tests: null
+        }
+        const service = {
+            searchTests: searchTests,
+            updateTest: updateTest,
+            getTestCaseWorkItemsByType: getTestCaseWorkItemsByType,
+            createTestWorkItem: createTestWorkItem,
+            deleteTestWorkItem: deleteTestWorkItem,
+            getJiraTicket: getJiraTicket,
+            getConnectionToJira: getConnectionToJira,
+            get getTests() {
+                return local.tests;
+            },
+            set setTests(tests) {
+                local.tests = tests;
+            },
+            getTest: getTest,
+            clearDataCache: clearDataCache,
+        }
 
         return service;
+
+        function getTest(id) {
+            return local.tests.find(function(test) {
+                return test.id == id;
+            })
+        }
+
+        function clearDataCache() {
+            local.tests = null;
+        }
 
         function searchTests(criteria) {
         	return $httpMock.post(API_URL + '/api/tests/search', criteria).then(UtilService.handleSuccess, UtilService.handleError('Unable to search tests'));

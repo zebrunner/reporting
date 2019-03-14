@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
+import com.qaprosoft.zafira.services.services.application.CertificationService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,14 +27,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.dto.CertificationType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.application.TestConfigService;
-import com.qaprosoft.zafira.services.services.application.TestRunService;
-import com.qaprosoft.zafira.services.services.application.jmx.amazon.AmazonService;
 
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -42,41 +37,14 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping("api/certification")
 public class CertificationAPIController extends AbstractController
 {
+
 	@Autowired
-	private TestRunService testRunService;
-	
-	@Autowired
-	private AmazonService amazonService;
-	
-	@Autowired
-	private TestConfigService testConfigService;
+	private CertificationService certificationService;
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(path="details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody CertificationType getCertifcationDetails(@RequestParam(value="upstreamJobId") Long upstreamJobId, @RequestParam(value="upstreamJobBuildNumber") Integer upstreamJobBuildNumber) throws ServiceException
 	{
-		CertificationType certification = new CertificationType();
-		
-		for(TestRun testRun : testRunService.getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(upstreamJobId, upstreamJobBuildNumber))
-		{
-			StringBuilder platform = new StringBuilder(testRun.getPlatform());
-			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
-			{
-				if("browser_version".equals(arg.getKey()) && !"*".equals(arg.getValue()))
-				{
-					platform.append(" ").append(arg.getValue());
-				}
-			}
-			
-			for(S3ObjectSummary file : amazonService.listFiles(String.valueOf(testRun.getId()) + "/"))
-			{
-				if(!file.getKey().endsWith("/"))
-				{
-					certification.addScreenshot(amazonService.getComment(file.getKey()), platform.toString(), amazonService.getPublicLink(file));
-				}
-			}
-		}
-	
-		return certification;		
+		return certificationService.getCertificationDetails(upstreamJobId, upstreamJobBuildNumber);
 	}
 }

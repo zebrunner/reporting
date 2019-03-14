@@ -104,7 +104,7 @@ public class JobsService
 	@Transactional(rollbackFor = Exception.class)
 	public Job createOrUpdateJob(Job newJob) throws ServiceException
 	{
-		Job job = getJobByName(newJob.getName());
+		Job job = getJobByJobURL(newJob.getJobURL());
 		if(job == null )
 		{
 			createJob(newJob);

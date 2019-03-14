@@ -12,7 +12,7 @@ import com.qaprosoft.zafira.tests.gui.components.table.row.TestRunTableRow;
 public class TestRunTable extends AbstractTable
 {
 
-	@FindBy(xpath = "./tr[@md-row]")
+	@FindBy(css = ".test-run-card")
 	private List<TestRunTableRow> testRunTableRows;
 
 	@FindBy(id = "noData")

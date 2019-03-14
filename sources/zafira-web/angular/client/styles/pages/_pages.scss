@@ -41,3 +41,31 @@
         margin: 0;
     }
 }
+
+.p-users {
+    & &__header-actions {
+        min-height: 52px;
+        .md-button {
+            margin: auto 0 auto 16px;
+            border-radius: 4px;
+            box-shadow: none;
+            font-size: 14px;
+            &._white {
+                color: #1f242a;
+                background-color: #fff;
+                &:hover {
+                    background-color: rgba(#fff, .75);
+                }
+                &:active {
+                    box-shadow: 0 4px 8px 0 rgba(0,0,0,.4);
+                }
+            }
+        }
+    }
+}
+
+.p-integrations {
+    .page {
+        padding-top: 63px;
+    }
+}

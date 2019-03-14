@@ -3,31 +3,31 @@
 
     angular
         .module('app.services')
-        .factory('TestRunService', ['$httpMock', '$cookies', '$rootScope', 'UtilService', 'API_URL', TestRunService])
+        .factory('TestRunService', ['$httpMock', 'UtilService', 'API_URL', TestRunService])
 
-    function TestRunService($httpMock, $cookies, $rootScope, UtilService, API_URL) {
-        var service = {};
-
-        service.searchTestRuns = searchTestRuns;
-        service.abortTestRun = abortTestRun;
-        service.abortCIJob = abortCIJob;
-        service.abortDebug = abortDebug;
-        service.getTestRun = getTestRun;
-        service.getTestRunByCiRunId = getTestRunByCiRunId;
-        service.getTestRunResults = getTestRunResults;
-        service.createCompareMatrix = createCompareMatrix;
-        service.deleteTestRun = deleteTestRun;
-        service.sendTestRunResultsEmail = sendTestRunResultsEmail;
-        service.createTestRunResultsSpreadsheet = createTestRunResultsSpreadsheet;
-        service.exportTestRunResultsHTML = exportTestRunResultsHTML;
-        service.markTestRunAsReviewed = markTestRunAsReviewed;
-        service.rerunTestRun = rerunTestRun;
-        service.debugTestRun = debugTestRun;
-        service.buildTestRun = buildTestRun;
-        service.getJobParameters = getJobParameters;
-        service.getEnvironments = getEnvironments;
-        service.getPlatforms = getPlatforms;
-        service.getConsoleOutput = getConsoleOutput;
+    function TestRunService($httpMock, UtilService, API_URL) {
+        var service = {
+            searchTestRuns: searchTestRuns,
+            abortTestRun: abortTestRun,
+            abortCIJob: abortCIJob,
+            abortDebug: abortDebug,
+            getTestRun: getTestRun,
+            getTestRunByCiRunId: getTestRunByCiRunId,
+            getTestRunResults: getTestRunResults,
+            createCompareMatrix: createCompareMatrix,
+            deleteTestRun: deleteTestRun,
+            sendTestRunResultsEmail: sendTestRunResultsEmail,
+            createTestRunResultsSpreadsheet: createTestRunResultsSpreadsheet,
+            exportTestRunResultsHTML: exportTestRunResultsHTML,
+            markTestRunAsReviewed: markTestRunAsReviewed,
+            rerunTestRun: rerunTestRun,
+            debugTestRun: debugTestRun,
+            buildTestRun: buildTestRun,
+            getJobParameters: getJobParameters,
+            getEnvironments: getEnvironments,
+            getPlatforms: getPlatforms,
+            getConsoleOutput: getConsoleOutput,
+        }
 
         return service;
 

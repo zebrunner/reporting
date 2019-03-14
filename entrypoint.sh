@@ -58,6 +58,7 @@ echo zafira.service.version=$ZAFIRA_SERVICE_VERSION >> $CATALINA_HOME/conf/catal
 echo zafira.client.version=$ZAFIRA_CLIENT_VERSION >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.admin.username=$ZAFIRA_USER >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.admin.password=$ZAFIRA_PASS >> $CATALINA_HOME/conf/catalina.properties
+echo zafira.admin.group=$ZAFIRA_GROUP >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.db.jdbc.url=$ZAFIRA_JDBC_URL >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.db.jdbc.user=$ZAFIRA_JDBC_USER >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.db.jdbc.password=$ZAFIRA_JDBC_PASS >> $CATALINA_HOME/conf/catalina.properties

@@ -48,6 +48,7 @@ public class TestRunSpreadsheetService
 	private static final Logger LOGGER = Logger.getLogger(TestRunSpreadsheetService.class);
 
 	private static final String TEST_RUN_INFO_SHEET_NAME = "INFO";
+	
 	private static final String TEST_RUN_RESULTS_SHEET_NAME = "RESULT";
 
 	@Autowired
@@ -108,9 +109,8 @@ public class TestRunSpreadsheetService
 
 	public List<List<Object>> collectTestRunResults(final TestRun testRun) throws ServiceException
 	{
-		String[] headerTitles = {"Status", "Message", "Title", "Owner", "Secondary owner", "Device", "Elapsed", "Started at", ""};
 		List<List<Object>> result = new ArrayList<>();
-		result.add(Arrays.asList(headerTitles));
+		result.add(Arrays.asList("Status", "Message", "Title", "Owner", "Secondary owner", "Device", "Elapsed", "Started at", ""));
 		List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
 		tests.forEach(test -> {
 			List<Object> testResult = new ArrayList<>();

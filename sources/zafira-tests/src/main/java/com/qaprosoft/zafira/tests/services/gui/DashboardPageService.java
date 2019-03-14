@@ -6,7 +6,7 @@ import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
 
 public class DashboardPageService extends AbstractPageService
 {
-
+	@SuppressWarnings("unused")
 	private DashboardPage dashboardPage;
 
 	public DashboardPageService(WebDriver driver)

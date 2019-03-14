@@ -12,15 +12,15 @@ import com.qaprosoft.zafira.tests.gui.components.table.row.TestRow;
 public class TestTable extends AbstractTable
 {
 
-	@FindBy(xpath = "./thead")
+	@FindBy(xpath = ".//thead")
 	private TestSortBlock testSortBlock;
 
-	@FindBy(xpath = "./tbody/tr[@data-ng-repeat]")
+	@FindBy(xpath = ".//tr[contains(@class, 'test ')]")
 	private List<TestRow> testRows;
 
 	public TestTable(WebDriver driver, SearchContext context)
 	{
-		super(driver, context);
+		super(driver, driver);
 	}
 
 	public TestSortBlock getTestSortBlock()

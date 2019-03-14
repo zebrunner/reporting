@@ -1,0 +1,92 @@
+<md-dialog flex="100" style="height: 100%;" aria-label="User profile" zafira-background-theme="modal">
+    <form class="form-validation" name="compare_form" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2 id="modalTitle">Comparison</h2>
+                <span flex></span>
+                <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <div class="col-md-12">
+                    <article ng-if="! loading" class="article">
+                        <div ng-if="allTestsIdentical" style="position: relative;">
+                            <i style="color: #009688" class="material-icons">check</i>
+                            <span style="position: absolute; top: 20%;">All tests are identical</span>
+                        </div>
+                        <md-checkbox ng-show="! allTestsIdentical" class="md-primary" ng-model="hideIdentical" aria-label="Hide identical">
+                            Hide identical
+                        </md-checkbox>
+                        <md-card class="no-margin-h">
+                            <md-table-container>
+                                <table md-table class="table table-striped table-bordered no-margin compare-table">
+                                    <thead md-head>
+                                    <tr md-row>
+                                        <th class="crossed" md-column>
+                                            <div class="row col-md-12">
+                                                <div style="text-align: left;" class="col-md-6">
+                                                    Tests
+                                                </div>
+                                                <div style="text-align: right" class="col-md-6">
+                                                    Test runs
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th md-column data-ng-repeat="testRun in tr track by testRun.id">
+                                            <a href ng-click="openTestRun(testRun.id)">{{ testRun.testSuite.name }}</a>
+                                            <span>
+                                                    {{  testRun.startedAt | date:'medium'}}
+                                                </span>
+                                            <div>
+                                                <small>{{ testRun.appVersion }}</small>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody md-body>
+                                    <tr ng-hide="hideIdentical && test.identical.isIdentical && test.identical.count" md-row data-ng-repeat="(key, test) in uniqueTests | orderObjectBy: 'name' track by key">
+                                        <td>
+                                            <div class="outside-row-element">
+                                                <div ng-if="! test.identical.count">
+                                                    <i style="color: #f0ad4e; font-size: 17px;" class="material-icons">error_outline</i>
+                                                </div>
+                                                <div ng-if="! test.identical.isIdentical">
+                                                    <i style="color: #F44336; font-size: 17px;" class="material-icons">error</i>
+                                                </div>
+                                            </div>
+                                            <b>
+                                                {{ test.name }}
+                                            </b>
+                                        </td>
+                                        <td class="result {{getTest(test, testRun).status}}" md-cell data-ng-repeat="(testRunId, testRun) in tr track by testRunId">
+                                            <div ng-if="getTest(test, testRun)">
+                                                <span data-ng-if="getTest(test, testRun).finishTime && (getTest(test, testRun).finishTime - getTest(test, testRun).startTime)/1000 > 0" class="light_text"><i class="fa fa-clock-o" aria-hidden="true"></i> <timer name="testFinishTime" autostart="false" countdown="(getTest(test, testRun).finishTime - getTest(test, testRun).startTime)/1000">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer></span>
+                                                <!--<span name="testOwner" data-ng-if="getTest(test, testRun).owner" class="light_text"></i> <i class="fa fa-user" aria-hidden="true"></i> {{getTest(test, testRun).owner}}</span>
+                                                <span name="secondaryOwner" data-ng-if="getTest(test, testRun).secondaryOwner" class="light_text"></i> <i class="fa fa-user" aria-hidden="true"></i> {{getTest(test, testRun).secondaryOwner}}</span>-->
+                                                <span name="device" data-ng-if="getTest(test, testRun).testConfig.device" class="light_text"></i> <i class="fa fa-mobile" aria-hidden="true"></i> {{getTest(test, testRun).testConfig.device}}</span>
+                                            </div>
+                                            <div class="result_error {{getTest(test, testRun).status}} {{main.theme}}" data-ng-if="getTest(test, testRun).message && (getTest(test, testRun).status == 'FAILED' || getTest(test, testRun).status == 'SKIPPED')">
+                                                <div class="white-space-pre-line"><show-more name="errorMsg" element-id="getTest(test, testRun).id" text="getTest(test, testRun).message" limit="100" ></show-more></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </md-table-container>
+                        </md-card>
+                    </article>
+                    <div ng-if="loading" layout="row" layout-sm="column" layout-align="space-around">
+                        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                    </div>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+        </md-dialog-actions>
+    </form>
+</md-dialog>
