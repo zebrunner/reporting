@@ -273,6 +273,8 @@ public class TestRunService
 				testRun.setComments(null);
 				testRun.setAppVersion(null);
 				testRun.setReviewed(false);
+				testRun.setKnownIssue(false);
+				testRun.setBlocker(false);
 
 				//make sure to reset below3 fields for existing run as well
 				testRun.setStatus(Status.QUEUED);

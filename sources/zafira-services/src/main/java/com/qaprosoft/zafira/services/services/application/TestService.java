@@ -139,6 +139,10 @@ public class TestService
 		test.setId(null);
 		test.setTestRunId(queuedTestRunId);
 		test.setStatus(Status.QUEUED);
+		test.setMessage(null);
+		test.setKnownIssue(false);
+		test.setBlocker(false);
+		test.setDependsOnMethods(null);
 		test.setTestConfig(null);
 		test.setNeedRerun(true);
 		test.setCiTestId(null);
