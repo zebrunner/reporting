@@ -190,7 +190,7 @@ public abstract class AbstractUIObject
 		return innerTimeoutOperation(() -> {
 			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
 			webDriverWait.until(ExpectedConditions.textMatches(By.xpath("//div[contains(@class, 'ajs') and not(contains(@class, 'ajs-right') )]"), Pattern.compile("^(?=\\s*\\S).*$")));
-			pause(0.5);
+			pause(0.2);
 			return webDriverWait;
 		});
 	}
