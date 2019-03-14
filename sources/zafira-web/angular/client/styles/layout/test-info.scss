@@ -1,26 +1,26 @@
 @import "../global/var";
 
-@keyframes back_button-move {
-    0% {
-        left: 5px;
-    }
-
-    100% {
-        left: 0;
-    }
-}
-
 .testrun-info {
     background-color: #fff;
-
+    .fixed-page-header {
+        height: 54px;
+        &-container {
+            justify-content: space-between;
+            padding-left: 0;
+            &_title {
+                padding-left: 20px;
+                max-width: 85%;
+            }
+        }
+    }
     &__title {
         margin: 0;
         font-size: 18px;
-        line-height: 1;
         display: flex;
-        align-items: baseline;
+        align-items: center;
 
         &-name {
+            padding: 0 10px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -28,13 +28,12 @@
         }
 
         .back_button {
-            position: relative;
             top: 5px;
-            animation: back_button-move 0.2s linear;
         }
     }
 
     &__container {
+        padding-top: 54px !important;
         height: calc(100vh - 48px);
     }
 
@@ -172,7 +171,7 @@
                 md-chips-wrap {
                     padding-left: 16px;
                     padding-bottom: 11px;
-                    box-shadow: none;
+                    box-shadow: none !important;
 
                     md-chip {
                         background: $medium-gray;

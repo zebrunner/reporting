@@ -102,9 +102,8 @@
                           <md-menu-item data-ng-show="test.artifactsToShow.length">
                             <md-menu>
                               <md-button name="testArtifacts" aria-label="Test artifacts" class="md-icon-button" ng-click="$mdMenu.open($event);">
-                                <md-icon class="material-icons">attachment</md-icon>
+                                <md-icon class="material-icons">attachment</md-icon><span>Attachment</span>
                               </md-button>
-                              <span>attachment</span>
                               <md-menu-content>
                                 <md-menu-item ng-repeat="artifact in test.artifactsToShow">
                                   <md-button href="{{artifact.link}}" class="artifact-button" target="blank" name="artifact">{{artifact.name}}</md-button>
@@ -112,17 +111,15 @@
                               </md-menu-content>
                             </md-menu>
                           </md-menu-item>
-                          <md-menu-item>
-                            <md-button name="testDetails" aria-label="Test details" class="md-icon-button" ng-click="$ctrl.showDetailsDialog(test, $event);">
-                              <md-icon class="material-icons">bug_report</md-icon>
+                          <md-menu-item ng-click="$ctrl.showDetailsDialog(test, $event);">
+                            <md-button name="testDetails" aria-label="Test details" class="md-icon-button">
+                              <md-icon class="material-icons">bug_report</md-icon><span>Issues</span>
                             </md-button>
-                            <span>details</span>
                           </md-menu-item>
-                          <md-menu-item>
-                            <md-button class="md-icon-button" ng-click="$ctrl.goToTestDetails(test.id);">
-                              <md-icon class="material-icons">remove_red_eye</md-icon>
+                          <md-menu-item ng-click="$ctrl.goToTestDetails(test.id);">
+                            <md-button class="md-icon-button">
+                              <md-icon class="material-icons">remove_red_eye</md-icon><span>Details</span>
                             </md-button>
-                            <span>overview</span>
                           </md-menu-item>
                         </md-menu-content>
                       </md-menu>
@@ -160,11 +157,16 @@
                     </span>
                   </td>
                 </tr>
-                <tr md-row="md-row" data-ng-if="!$ctrl.testsLoading && $ctrl.empty || $ctrl.testsFilteredEmpty && !$ctrl.testsLoading">
+                <tr md-row="md-row" data-ng-if="!$ctrl.testsLoading && ($ctrl.empty || $ctrl.testsFilteredEmpty) && $ctrl.testRun.status !== 'IN_PROGRESS'">
                   <td md-cell="md-cell" colspan="4" class="test-empty">
                     No tests
                   </td>
                 </tr>
+                <tr md-row="md-row" data-ng-if="!$ctrl.testsLoading && $ctrl.empty && $ctrl.testRun.status === 'IN_PROGRESS'">
+                    <td md-cell="md-cell" colspan="4" class="test-empty">
+                      No tests yet
+                    </td>
+                  </tr>
               </tbody>
             </table>
           </md-table-container>
