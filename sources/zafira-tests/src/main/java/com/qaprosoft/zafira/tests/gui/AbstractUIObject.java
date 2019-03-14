@@ -390,8 +390,9 @@ public abstract class AbstractUIObject
 
 	public void select(WebElement webElement, String value)
 	{
-		String id = webElement.getAttribute("aria-owns");
 		webElement.click();
+		waitUntilElementIsPresent(backdrop, 2);
+		String id = webElement.getAttribute("aria-owns");
 		WebElement option = driver.findElement(By.xpath("//div[@id = '" + id + "' and preceding-sibling::header]//md-option[.//*[contains(text(), '" + value + "') "
 				+ "or contains(text(), '" + value + "')]]"));
 		waitUntilElementToBeClickableWithBackdropMask(option, 1);
