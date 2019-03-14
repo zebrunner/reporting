@@ -221,7 +221,7 @@ public class TestRunsAPIController extends AbstractController {
 	public @ResponseBody TestRunType createQueuedTestRun(@RequestBody QueueTestRunParamsType queuedTestRunParams)
 			throws ServiceException {
 		TestRun testRun = new TestRun();
-		if (jobsService.getJobByJobURL(queuedTestRunParams.getJobName()) != null) {
+		if (jobsService.getJobByName(queuedTestRunParams.getJobName()) != null) {
 			testRun = testRunService.queueTestRun(queuedTestRunParams, userService.getUserById(getPrincipalId()));
 		}
 		return mapper.map(testRun, TestRunType.class);
