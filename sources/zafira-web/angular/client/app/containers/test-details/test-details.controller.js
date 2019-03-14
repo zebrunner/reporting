@@ -34,8 +34,6 @@
             testRun: testRun,
             testsLoading: true,
             testsFilteredEmpty: true,
-            // mobileBreakpoint: mediaBreakpoints.mobile || 0,
-            // windowWidthService: windowWidthService,
             testsTagsOptions: {},
             testsStatusesOptions: {},
             subscriptions: {},
@@ -138,7 +136,7 @@
             showTestsByTags(vm.testRun.tests);
             showTestsByStatuses(vm.testRun.tests);
             vm.testRun.tags = collectTags(vm.testRun.tests);
-            vm.testsLoading = false
+            vm.testsLoading = false;
             vm.subscriptions[vm.testRun.id] = subscribeTestsTopic(vm.testRun.id);
         }
 
@@ -152,8 +150,7 @@
                     showTestsByStatuses(vm.testRun.tests);
                     vm.testRun.tags = collectTags(vm.testRun.tests);
                 })
-                .finally(()=>{vm.testsLoading = false});
-                vm.subscriptions[vm.testRun.id] = subscribeTestsTopic(vm.testRun.id);
+                .finally(() => {vm.testsLoading = false});
         }
 
         function loadTests(testRunId) {
@@ -456,6 +453,7 @@
             vm.zafiraWebsocket.connect({withCredentials: false}, function () {
                 vm.subscriptions.statistics = subscribeStatisticsTopic();
                 vm.subscriptions.testRun = subscribeTestRunsTopic();
+                vm.subscriptions[vm.testRun.id] = subscribeTestsTopic(vm.testRun.id);
                 UtilService.websocketConnected(wsName);
             }, function () {
                 UtilService.reconnectWebsocket(wsName, initWebsocket);
@@ -466,27 +464,19 @@
             return JSON.parse(message.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
         }
 
-        function checkStatisticEvent(event) {
-            return (vm.testRun.id !== +event.testRunStatistics.testRunId);
+        function isCurrentTestRunStatistics(event) {
+            return vm.testRun.id === +event.testRunStatistics.testRunId;
         }
 
         function subscribeStatisticsTopic() {
             return vm.zafiraWebsocket.subscribe('/topic/' + TENANT + '.statistics', function (data) {
                 const event = getEventFromMessage(data.body);
 
-                if (checkStatisticEvent(event)) {
+                if (!isCurrentTestRunStatistics(event)) {
                     return;
                 }
 
-                vm.testRun.inProgress = event.testRunStatistics.inProgress;
-                vm.testRun.passed = event.testRunStatistics.passed;
-                vm.testRun.failed = event.testRunStatistics.failed;
-                vm.testRun.failedAsKnown = event.testRunStatistics.failedAsKnown;
-                vm.testRun.failedAsBlocker = event.testRunStatistics.failedAsBlocker;
-                vm.testRun.skipped = event.testRunStatistics.skipped;
-                vm.testRun.reviewed = event.testRunStatistics.reviewed;
-                vm.testRun.aborted = event.testRunStatistics.aborted;
-                vm.testRun.queued = event.testRunStatistics.queued;
+                Object.assign(vm.testRun, event.testRunStatistics);
                 $scope.$apply();
             });
         }
@@ -494,32 +484,29 @@
         function subscribeTestRunsTopic() {
             return vm.zafiraWebsocket.subscribe('/topic/' + TENANT + '.testRuns', function (data) {
                 const event = getEventFromMessage(data.body);
-                let index = -1;
                 const testRun = angular.copy(event.testRun);
 
-                // if (vm.projects && vm.projects.length && vm.projects.indexOfField('id', event.testRun.project.id) === -1) { return; }
                 if (vm.testRun.id !== +testRun.id) { return; }
 
-                vm.testRuns[index].status = testRun.status;
-                vm.testRuns[index].reviewed = testRun.reviewed;
-                vm.testRuns[index].elapsed = testRun.elapsed;
-                vm.testRuns[index].platform = testRun.platform;
-                vm.testRuns[index].env = testRun.env;
-                vm.testRuns[index].comments = testRun.comments;
-                vm.testRuns[index].reviewed = testRun.reviewed;
+                vm.testRun.status = testRun.status;
+                vm.testRun.reviewed = testRun.reviewed;
+                vm.testRun.elapsed = testRun.elapsed;
+                vm.testRun.platform = testRun.platform;
+                vm.testRun.env = testRun.env;
+                vm.testRun.comments = testRun.comments;
+                vm.testRun.reviewed = testRun.reviewed;
                 $scope.$apply();
             });
         }
 
         function subscribeTestsTopic() {
-            if (vm.zafiraWebsocket && vm.zafiraWebsocket.connected) {
-                return vm.zafiraWebsocket.subscribe('/topic/' + TENANT + '.testRuns.' + vm.testRun.id + '.tests', function (data) {
-                    const event = getEventFromMessage(data.body);
+            return vm.zafiraWebsocket.subscribe('/topic/' + TENANT + '.testRuns.' + vm.testRun.id + '.tests', function (data) {
+                const event = getEventFromMessage(data.body);
+                console.log('subscribeTestsTopic', event);
 
-                    addTest(event.test);
-                    $scope.$apply();
-                });
-            }
+                addTest(event.test);
+                $scope.$apply();
+            });
         }
 
         function bindEvents() {
