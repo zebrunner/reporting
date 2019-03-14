@@ -44,6 +44,7 @@
 
         const vm = {
             testRun: null,
+            wsSubscription: null,
         };
 
         vm.$onInit = controllerInit;
@@ -204,7 +205,7 @@
 
         function pseudoLiveCloseAction(intervalName) {
             $interval.cancel(liveIntervals[intervalName]);
-        };
+        }
 
         function collectElasticsearchLogs(from, page, size, count, resolveFunc) {
 
@@ -510,7 +511,8 @@
             $scope.testsWebsocket.debug = null;
             $scope.testsWebsocket.connect({withCredentials: false}, function () {
                 if($scope.testsWebsocket.connected) {
-                    $scope.testsWebsocket.subscribe("/topic/" + TENANT + ".testRuns." + testRun.id + ".tests", function (data) {
+                    vm.wsSubscription = $scope.testsWebsocket.subscribe("/topic/" + TENANT + ".testRuns." + testRun.id + ".tests", function (data) {
+
                         var test = $scope.getEventFromMessage(data.body).test;
                         if(test.id == $scope.test.id) {
 
@@ -651,7 +653,9 @@
         /**************** On destroy **************/
         function bindEvents() {
             $scope.$on('$destroy', function () {
+                cancelIntervals();
                 closeAll();
+                vm.wsSubscription && vm.wsSubscription.unsubscribe();
                 closeTestsWebsocket();
             });
 
@@ -663,6 +667,12 @@
                 }
                 onTransStartSubscription();
             });  
+        }
+
+        function cancelIntervals() {
+            Object.keys(liveIntervals).forEach(name => {
+                pseudoLiveCloseAction(name);
+            });
         }
 
         function closeRfbConnection() {
