@@ -102,7 +102,7 @@
         String.prototype.isJsonValid = function(pretty) {
             var json = this;
             if(pretty) {
-                json = json.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
+                //json = json.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
                 json = json.replace(/\'/g, "\"");
             }
             try {
@@ -113,8 +113,8 @@
             return true;
         };
         String.prototype.toJson = function() {
-            var jsonText = this.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
-            jsonText = jsonText.replace(/\'/g, "\"");
+            //var jsonText = this.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
+            var jsonText = this.replace(/\'/g, "\"");
             return JSON.parse(jsonText);
         };
 
