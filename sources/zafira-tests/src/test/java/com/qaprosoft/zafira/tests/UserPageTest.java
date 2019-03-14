@@ -159,7 +159,7 @@ public class UserPageTest extends AbstractTest
 				"Change button is not disabled");
 
 		changePasswordModalWindow.changePassword("Welcome2!");
-		userPage.waitUntilAlertWithTextIsPresent(5);
+		userPage.waitUntilAlertWithTextIsPresent(2);
 		Assert.assertEquals(userPage.getSuccessAlert().getText(), "Password changed",
 				"Password changed alert is not present");
 		userPage.getHeader().logOut();
