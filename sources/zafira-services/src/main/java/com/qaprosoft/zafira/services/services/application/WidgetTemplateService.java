@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.management.WidgetTemplateMapper;
 import com.qaprosoft.zafira.models.db.WidgetTemplate;
+import com.qaprosoft.zafira.models.dto.widget.WidgetTemplateParameter;
 import com.qaprosoft.zafira.services.util.SQLUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -41,6 +42,8 @@ public class WidgetTemplateService {
 
     @Autowired
     private SQLUtils sqlUtils;
+
+    private ObjectMapper mapper = new ObjectMapper();
 
     @Transactional(readOnly = true)
     public WidgetTemplate getWidgetTemplateById(Long id) {
@@ -65,34 +68,38 @@ public class WidgetTemplateService {
 
     public void executeWidgetTemplateParamsSQLQueries(WidgetTemplate widgetTemplate) {
         if(widgetTemplate != null && ! StringUtils.isBlank(widgetTemplate.getParamsConfig())) {
-            widgetTemplate.setParamsConfig(executeWidgetTemplateSQLQueries(widgetTemplate.getParamsConfig()));
+            widgetTemplate.setParamsConfig(processParameters(widgetTemplate.getParamsConfig()));
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private String executeWidgetTemplateSQLQueries(String paramsConfig) {
-        ObjectMapper mapper = new ObjectMapper();
+    private String processParameters(String paramsConfig) {
         String result = null;
         try {
-            Map<String, Map<String, Object>> configs = mapper.readValue(paramsConfig, new TypeReference<Map<String, Map<String, Object>>>() {});
-            configs.forEach((configName, configValue) -> configValue.forEach((configParamName, configParamValue) -> {
-                if (configParamName.equals("values") && configParamValue instanceof List) {
-                    List<Object> collector = new ArrayList<>();
-                    ((List) configParamValue).forEach(value -> {
-                        if (value instanceof String && value.toString().trim().toLowerCase().startsWith("select")) {
-                            collector.addAll(sqlUtils.getSingleRowResult(value.toString()));
-                        } else {
-                            collector.add(value);
-                        }
-                    });
-                    ((List) configParamValue).clear();
-                    ((ArrayList) configParamValue).addAll(collector);
-                }
-            }));
-            result = mapper.writeValueAsString(configs);
+            Map<String, WidgetTemplateParameter> params = mapper.readValue(paramsConfig, new TypeReference<Map<String, WidgetTemplateParameter>>() {});
+            params.forEach((name, parameter) -> processParameter(parameter));
+            result = mapper.writeValueAsString(params);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
         return result;
     }
+
+    private void processParameter(WidgetTemplateParameter parameter) {
+        if (parameter.getValuesQuery() != null) {
+            retrieveParameterValues(parameter.getValuesQuery(), parameter);
+            // once query is executed it is no longer should be part of response returned to API client
+            parameter.setValuesQuery(null);
+        }
+    }
+
+    private void retrieveParameterValues(String query, WidgetTemplateParameter parameter) {
+        List<Object> data = sqlUtils.getSingleRowResult(query);
+        if (data != null) {
+            if (parameter.getValues() == null) {
+                parameter.setValues(new ArrayList<>());
+            }
+            parameter.getValues().addAll(data);
+        }
+    }
+
 }

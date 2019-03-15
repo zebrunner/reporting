@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.models.dto;
 
 import com.qaprosoft.zafira.models.db.Attribute;
+import com.qaprosoft.zafira.models.dto.widget.WidgetType;
 
 import java.util.ArrayList;
 import java.util.List;
