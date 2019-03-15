@@ -25,8 +25,8 @@ import javax.validation.Valid;
 
 import com.qaprosoft.zafira.models.db.WidgetTemplate;
 import com.qaprosoft.zafira.models.dto.SQLExecuteType;
-import com.qaprosoft.zafira.models.dto.WidgetTemplateType;
-import com.qaprosoft.zafira.models.dto.WidgetType;
+import com.qaprosoft.zafira.models.dto.widget.WidgetTemplateType;
+import com.qaprosoft.zafira.models.dto.widget.WidgetType;
 import com.qaprosoft.zafira.services.services.application.WidgetTemplateService;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;

@@ -44,7 +44,7 @@
             if(widget.widgetTemplate.legendConfig) {
                 legendConfig.legend = JSON.parse(widget.widgetTemplate.legendConfig).legend;
                 legendConfig.legendItems = {};
-                var legendConfigObject = JSON.parse(widget.legendConfig);
+                var legendConfigObject = JSON.parse(widget.widgetTemplate.legendConfig);
                 angular.forEach(legendConfig.legend, function (legendName) {
                     legendConfig.legendItems[legendName] = widget.id && legendConfigObject[legendName] !== undefined ? legendConfigObject[legendName] : true;
                 });
