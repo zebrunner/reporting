@@ -96,6 +96,7 @@ public class WidgetsAPIController extends AbstractController
 			if(widgetTemplate == null) {
 				throw new ServiceException("Unable to create chart. Template with id " + widget.getWidgetTemplate().getId() + " does not exist.");
 			}
+			widgetTemplateService.executeWidgetTemplateParamsSQLQueries(widgetTemplate);
 			widget.setWidgetTemplate(mapper.map(widgetTemplate, WidgetTemplateType.class));
 			widget.setType(widgetTemplate.getType().name());
 		}
