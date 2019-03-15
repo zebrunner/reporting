@@ -6,12 +6,14 @@
         '$mdDialog',
         '$q',
         'DownloadService',
-        'artifacts',
         '$timeout',
         'activeArtifactId',
+        'TestRunService',
+        'test',
         ImagesViewerController]);
 
-    function ImagesViewerController($scope, $mdDialog, $q, DownloadService, artifacts, $timeout, activeArtifactId) {
+    function ImagesViewerController($scope, $mdDialog, $q, DownloadService, $timeout,
+                                    activeArtifactId, TestRunService, test) {
         const local = {
             imgContainerCssClass: 'images-viewer__viewport',
             imgWrapperCssClass: 'images-viewer__img-wrapper',
@@ -28,8 +30,10 @@
             container: null,
             imageWrapElem: null,
             lastZoomDelta: 0,
+            destroyed: false,
         };
         const vm = {
+            test: null,
             artifacts: [],
             mainImagesLoading: true,
             activeArtifactId: null,
@@ -55,6 +59,8 @@
         }
 
         function selectNextArtifact() {
+            if (vm.mainImagesLoading) { return; }
+
             const currentIndex = vm.artifacts.findIndex(({id}) => id === vm.activeArtifactId);
             const nextIndex = currentIndex !== vm.artifacts.length - 1 ? currentIndex + 1 : 0;
 
@@ -62,6 +68,8 @@
         }
 
         function selectPrevArtifact() {
+            if (vm.mainImagesLoading) { return; }
+
             const currentIndex = vm.artifacts.findIndex(({id}) => id === vm.activeArtifactId);
             const lastIndex = vm.artifacts.length - 1;
             const nextIndex = currentIndex !== 0 ? currentIndex - 1 : lastIndex;
@@ -69,9 +77,36 @@
             setActiveArtifact(vm.artifacts[nextIndex].id);
         }
 
-        //TODO: implement donload Zip after webpack is applied
         function downloadImages() {
-            console.log('TODO: implement after webpack is applied');
+            if (vm.mainImagesLoading || !vm.artifacts.length) { return; }
+
+            const promises = vm.artifacts.map((artifact) => {
+                return DownloadService.plainDownload(artifact.link)
+                    .then(response => {
+                        if (response.success) {
+                            return {
+                                fileName: `${artifact.name}.${artifact.extension}`,
+                                fileData: response.res.data,
+                            };
+                        }
+
+                        return $q.reject(false);
+                    });
+            });
+
+           $q.all(promises)
+                .then(data => {
+                    const name = vm.test.id + '. ' + vm.test.name;
+
+                    name.zip(data.reduce((out, item) => {
+                        out[item.fileName] = item.fileData;
+
+                        return out;
+                    }, {}));
+                })
+                .catch(() => {
+                    alertify.error('Unable to download all files, pleas try again.');
+                });
         }
 
         function keyAction(keyCodeNumber) {
@@ -97,6 +132,7 @@
                 case DOWN:
                     break;
                 case ESC:
+                    vm.closeModal();
                     break;
                 case F_KEY:
                     vm.switchFullscreenMode();
@@ -127,6 +163,8 @@
         }
 
         function switchFullscreenMode(forceQuit) {
+            if (vm.mainImagesLoading) { return; }
+
             if (!document.fullscreenElement &&    // alternative standard method
                 !document.mozFullScreenElement && !document.webkitFullscreenElement && !forceQuit) {  // current working methods
                 if (document.documentElement.requestFullscreen) {
@@ -151,35 +189,38 @@
             removeListeners();
             vm.isFullScreenMode && vm.switchFullscreenMode(true);
             $mdDialog.cancel();
+            local.destroyed = true;
         }
 
         function initController() {
             const start = Date.now();
             let delay = 0;
 
-            vm.artifacts = artifacts;
+            vm.test = test;
+            vm.artifacts = vm.test.imageArtifacts;
             vm.activeArtifactId = activeArtifactId;
 
             loadImages()
                 .then(images => {
-                    images.forEach(img => {
-                        $(`.${local.imgWrapperCssClass}`).append(img);
-                    });
-                })
-                .finally(() => {
-                    const finish = Date.now();
+                    if (!local.destroyed) {
+                        images.forEach(img => {
+                            $(`.${local.imgWrapperCssClass}`).append(img);
+                        });
+                        const finish = Date.now();
 
-                    // images are loaded from cache, so we need delay for modal opening animation
-                    if (finish - start < 1000) {
-                        delay = 1000;
-                    }
-                    $timeout(() => {
-                        vm.mainImagesLoading = false;
+                        // images are loaded from cache, so we need delay for modal opening animation
+                        if (finish - start < 1000) {
+                            delay = 1000;
+                        }
                         $timeout(() => {
-                            initGallery();
-                            registerListeners();
-                        }, 0);
-                    }, delay);
+                            vm.mainImagesLoading = false;
+                            $timeout(() => {
+                                initGallery();
+                                registerListeners();
+                            }, 0);
+                        }, delay);
+                    }
+
                 });
         }
         
@@ -318,6 +359,8 @@
         }
 
         function zoom(zoomIn) {
+            if (vm.mainImagesLoading) { return; }
+
             const prevZoom = local.zoom.value;
 
             if (!zoomIn) {

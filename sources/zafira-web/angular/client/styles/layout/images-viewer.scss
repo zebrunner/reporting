@@ -151,6 +151,7 @@
         bottom: 0;
         z-index: 99999;
         background: url('#{$image_path}/audio.svg') no-repeat center center fixed;
+        pointer-events: none;
     }
 }
 

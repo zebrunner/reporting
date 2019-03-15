@@ -553,7 +553,6 @@
                 });
         }
 
-        //TODO: clean locals
         //TODO: implement lazyLoading after webpack is applied
         function openImagesViewerModal(event, artifact, test) {
             $mdDialog.show({
@@ -565,13 +564,11 @@
                 targetEvent: event,
                 clickOutsideToClose:true,
                 fullscreen: false,
+                escapeToClose: false,
                 locals: {
-                    artifacts: test.imageArtifacts,
+                    test,
                     activeArtifactId: artifact.id,
                 }
-            })
-            .then(function() {
-            }, function() {
             });
         }
     }
