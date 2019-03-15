@@ -367,6 +367,14 @@
                     }
                 }
             }
+            > tbody {
+                > tr {
+                    > th,
+                    > td {
+                        border-top: 0;
+                    }
+                }
+            }
         }
     }
     @media (min-width: $breakpoint-mobile + 1) {
