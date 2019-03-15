@@ -111,7 +111,7 @@
                 }
 
                 function goToTestRun() {
-                    $state.go('tests/run', {testRunId: vm.testRun.id, testRun: vm.testRun});
+                    $state.go('tests/run', {testRunId: vm.testRun.id});
                 }
 
                 function onBackClick() {

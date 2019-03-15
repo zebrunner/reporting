@@ -61,12 +61,7 @@
             TENANT = $rootScope.globals.auth.tenant;
             initTestGroups();
             initWebsocket();
-            if (vm.testRun.status === 'IN_PROGRESS' || !TestService.getTests) {
-                initTests();
-            }
-            else {
-                getTests();
-            }
+            initTests();
             fillTestRunMetadata();
             bindEvents();
         }
@@ -126,20 +121,6 @@
             }
         }
 
-        function getTests() {
-            vm.testGroups.mode = 'common';
-            vm.testRun.tests = {};
-            TestService.getTests.forEach(function(test) {
-                addTest(test);
-            });
-            vm.testGroups.group.common.data.all = vm.testRun.tests;
-            showTestsByTags(vm.testRun.tests);
-            showTestsByStatuses(vm.testRun.tests);
-            vm.testRun.tags = collectTags(vm.testRun.tests);
-            vm.testsLoading = false;
-            vm.subscriptions[vm.testRun.id] = subscribeTestsTopic(vm.testRun.id);
-        }
-
         function initTests() {
             vm.testGroups.mode = 'common';
 
@@ -150,7 +131,9 @@
                     showTestsByStatuses(vm.testRun.tests);
                     vm.testRun.tags = collectTags(vm.testRun.tests);
                 })
-                .finally(() => {vm.testsLoading = false});
+                .finally(() => {
+                    vm.testsLoading = false;
+                });
         }
 
         function loadTests(testRunId) {
@@ -183,7 +166,6 @@
         
         function goToTestDetails(testId) {
             $state.go('tests/runs/info', {
-                testRun: vm.testRun,
                 testRunId: vm.testRun.id,
                 testId: testId
             });
@@ -502,7 +484,6 @@
         function subscribeTestsTopic() {
             return vm.zafiraWebsocket.subscribe('/topic/' + TENANT + '.testRuns.' + vm.testRun.id + '.tests', function (data) {
                 const event = getEventFromMessage(data.body);
-                console.log('subscribeTestsTopic', event);
 
                 addTest(event.test);
                 $scope.$apply();
