@@ -26,9 +26,8 @@
             },
             dimensions: null,
             container: null,
-            draggableElem: null,
-            draggable: null,
-            transform: null,
+            imageWrapElem: null,
+            lastZoomDelta: 0,
         };
         const vm = {
             artifacts: [],
@@ -177,7 +176,7 @@
                     $timeout(() => {
                         vm.mainImagesLoading = false;
                         $timeout(() => {
-                            initPanAndZoom();
+                            initGallery();
                             registerListeners();
                         }, 0);
                     }, delay);
@@ -185,14 +184,23 @@
         }
         
         function registerListeners() {
-            // addPanAndZoomListeners();
             addKeydownListener();
             addFullscreenModeListener();
+            addResizeListener();
         }
 
         function removeListeners() {
             removeKeydownListener();
             removeFullscreenModeListener();
+            removeResizeListener();
+        }
+
+        function addResizeListener() {
+            $(window).on('resize', resizeHandler);
+        }
+
+        function removeResizeListener() {
+            $(window).off('resize', resizeHandler);
         }
 
         function addFullscreenModeListener() {
@@ -201,6 +209,12 @@
 
         function removeFullscreenModeListener() {
             $(document).off('mozfullscreenchange webkitfullscreenchange fullscreenchange', fullscreenModeChangeHandler);
+        }
+
+        function resizeHandler() {
+            $timeout(() => {
+                initSizes();
+            }, 500);
         }
 
         function fullscreenModeChangeHandler() {
@@ -212,7 +226,7 @@
                 document.body.classList.remove('_modal-in-fullscreen');
             }
             $timeout(() => {
-                reinitPanAndZoom();
+                initSizes();
             }, 500);
         }
 
@@ -273,39 +287,10 @@
             return Math.round(value * factor) / factor;
         }
 
-        function initPanAndZoom() {
-
+        function initGallery() {
             local.container = document.querySelector(`.${local.imgContainerCssClass}`);
-
+            local.imageWrapElem = document.querySelector(`.${local.imgWrapperCssClass}`);
             initSizes();
-            
-            local.draggableElem = document.querySelector(`.${local.imgWrapperCssClass}`);
-            TweenLite.set(local.draggableElem, {
-                scale: local.zoom.value,
-                transformOrigin: 'left top',
-                // transformOrigin: 'center center',
-                width: local.dimensions.draggableElemWidth,
-                height: local.dimensions.draggableElemHeight,
-                // x: (local.dimensions.containerWidth - local.dimensions.draggableElemWidth) / 2,
-                // y: (local.dimensions.containerHeight - local.dimensions.draggableElemHeight) / 2
-            });
-            local.transform = local.draggableElem._gsTransform;
-            // setBounds();
-        }
-
-        //TODO: reinit on window resize;
-        function reinitPanAndZoom() {
-            initSizes();
-            TweenLite.set(local.draggableElem, {
-                scale: local.zoom.value,
-                transformOrigin: 'left top',
-                // transformOrigin: 'center center',
-                width: local.dimensions.draggableElemWidth,
-                height: local.dimensions.draggableElemHeight,
-                x: (local.dimensions.containerWidth - local.dimensions.draggableElemWidth) / 2,
-                y: (local.dimensions.containerHeight - local.dimensions.draggableElemHeight) / 2
-            });
-            setBounds();
         }
         
         function initSizes() {
@@ -319,38 +304,21 @@
                 case 1 > containerRatio && containerRatio > local.dimensions.imageRatio:
                 case local.dimensions.imageRatio < 1 && 1 < containerRatio:
                 case containerRatio > local.dimensions.imageRatio && local.dimensions.imageRatio > 1:
-                    local.dimensions.draggableElemWidth = rect.width;
-                    local.dimensions.draggableElemHeight = rect.width * local.dimensions.imageRatio;
+                    local.dimensions.imageWrapElemWidth = rect.width;
+                    local.dimensions.imageWrapElemHeight = rect.width * local.dimensions.imageRatio;
                     break;
                 default:
-                    local.dimensions.draggableElemHeight = rect.height;
-                    local.dimensions.draggableElemWidth = rect.height / local.dimensions.imageRatio;
+                    local.dimensions.imageWrapElemHeight = rect.height;
+                    local.dimensions.imageWrapElemWidth = rect.height / local.dimensions.imageRatio;
             }
 
-        }
-        
-        function addPanAndZoomListeners() {
-            $(local.container).on('wheel', handleWeelEvent);
-        }
+            local.imageWrapElem.style.width = `${local.dimensions.imageWrapElemWidth}px`;
+            local.imageWrapElem.style.height = `${local.dimensions.imageWrapElemHeight}px`;
 
-        function handleWeelEvent(e) {
-            const oldZoom = local.zoom.value;
-            const wheel = e.originalEvent.deltaY / 100;
-            e.preventDefault();
-
-            if (wheel > 0) {
-                local.zoom.value /= local.zoom.factor;
-            } else {
-                local.zoom.value *= local.zoom.factor;
-            }
-
-            local.zoom.value = clamp(local.zoom.value, local.zoom.min, local.zoom.max);
-            changeZoom(local.zoom.value - oldZoom, event);
         }
 
         function zoom(zoomIn) {
-            
-            const oldZoom = local.zoom.value;
+            const prevZoom = local.zoom.value;
 
             if (!zoomIn) {
                 local.zoom.value /= local.zoom.factor;
@@ -358,89 +326,36 @@
                 local.zoom.value *= local.zoom.factor;
             }
 
+            local.zoom.value = precisionRound(local.zoom.value, 2);
             local.zoom.value = clamp(local.zoom.value, local.zoom.min, local.zoom.max);
-            console.log(local.zoom.value);
-            
-            changeZoom(local.zoom.value - oldZoom, event);
+            changeZoom(precisionRound(local.zoom.value - prevZoom, 2));
         }
+
         function changeZoom(zoomDelta) {
-            console.log(zoomDelta);
-            // const scale = local.transform.scaleX;
-            // let x = local.transform.x;
-            // let y = local.transform.y;
+            if (local.lastZoomDelta === zoomDelta) { return; }
 
             const rect = local.container.getBoundingClientRect();
             const imageWrapperRect = document.querySelector('.' + local.imgWrapperCssClass).getBoundingClientRect();
-            let newWidth = imageWrapperRect.width * (1 + zoomDelta);
-            let newHeight = imageWrapperRect.height * (1 + zoomDelta);
-            let newX = rect.width / 2 - newWidth / 2;
-
-            console.log(newWidth, newHeight, newX);
-
-            // const globalX = rect.width/2 - innerImage.clientWidth/2;
-            // const globalY = rect.height/2 - innerImage.clientHeight/2;
-            // let top = (innerImageWrapper.getBoundingClientRect().top)/scalef
-            // const localX = (globalX - x) / scale;
-            // const localY = (globalY - y) / scale;
-            // x += -(localX * (zoomDelta));
-            // top += -(top*zoomDelta)
-            // console.log
-            // y += -(localY * zoomDelta);
-            // innerImageWrapper.style.top = top+"px";
-            // TweenLite.set(local.draggableElem, {
-            //     scale: local.zoom.value,
-            //     x: x,
-            //     y: y,
-            // });
-            // console.log(innerImageWrapper)
-            if (newWidth <= local.dimensions.draggableElemWidth) {
-                TweenLite.to(local.draggableElem, 0.3, {
-                    width: local.dimensions.draggableElemWidth,
-                    height: local.dimensions.draggableElemHeight,
-                });
-                local.zoom.value = 1;
-            }
-            else {
-                TweenLite.to(local.draggableElem, 0.3, {
-                    width: newWidth,
-                    height: newHeight,
-                    // x: newX,
-                });
-            }
-            
-
-            
-
-
-            const scrollLeftOffset = imageWrapperRect.width * zoomDelta / 2;
+            let newWidth =  precisionRound(imageWrapperRect.width * (1 + zoomDelta), 2);
+            let newHeight = precisionRound(imageWrapperRect.height * (1 + zoomDelta), 2);
+            const scrollLeft = (newWidth - rect.width) / 2;
             const scrollTopOffset = imageWrapperRect.height * zoomDelta / 2;
 
-            // console.log(local.container);
-            // debugger;
-            TweenLite.to(local.container, 0.3, {
-                scrollLeft: local.container.scrollLeft + scrollLeftOffset,
-                scrollTop: local.container.scrollTop + scrollTopOffset,
-            });
-            // local.container
-            // setBounds();
-        }
+            if (newWidth < local.dimensions.imageWrapElemWidth) {
+                newWidth =  local.dimensions.imageWrapElemWidth;
+                newHeight =  local.dimensions.imageWrapElemHeight;
+                local.zoom.value = 1;
+            }
+            local.imageWrapElem.style.width = `${newWidth}px`;
+            local.imageWrapElem.style.height = `${newHeight}px`;
+            local.container.scrollLeft = scrollLeft;
+            local.container.scrollTop = local.container.scrollTop + scrollTopOffset;
 
-        function setBounds() {
-            const dx = local.dimensions.containerWidth  - (local.dimensions.draggableElemWidth  * local.zoom.value);
-            const dy = local.dimensions.containerHeight - (local.dimensions.draggableElemHeight * local.zoom.value);
-            const width  = local.dimensions.containerWidth  - dx * 2;
-            const height = local.dimensions.containerHeight - dy * 2;
-
+            vm.lastZoomDelta = zoomDelta;
         }
 
         function clamp(value, min, max) {
             return value < min ? min : (value > max ? max : value);
-        }
-
-        function killDraggable() {
-            if (typeof Draggable === 'undefined') { return; }
-
-            Draggable.get(local.draggableElem).kill();
         }
 
         vm.$onInit = initController;

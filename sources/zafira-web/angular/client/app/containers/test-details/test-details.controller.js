@@ -525,7 +525,6 @@
         function subscribeTestsTopic() {
             return vm.zafiraWebsocket.subscribe('/topic/' + TENANT + '.testRuns.' + vm.testRun.id + '.tests', function (data) {
                 const event = getEventFromMessage(data.body);
-                console.log('subscribeTestsTopic', event);
 
                 addTest(event.test);
                 $scope.$apply();
@@ -557,7 +556,6 @@
         //TODO: clean locals
         //TODO: implement lazyLoading after webpack is applied
         function openImagesViewerModal(event, artifact, test) {
-            console.log(artifact)
             $mdDialog.show({
                 controller: 'ImagesViewerController',
                 templateUrl: 'app/components/modals/images-viewer/images-viewer.html',
