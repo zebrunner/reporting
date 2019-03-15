@@ -1,0 +1,62 @@
+<md-dialog class="images-viewer">
+    <div class="images-viewer__thumbs-container">
+        <div class="images-viewer__thumbs">
+            <div class="images-viewer__thumbs-item"
+                 ng-repeat="artifact in $ctrl.artifacts"
+                 ng-class="{'_active': artifact.id === $ctrl.activeArtifactId}"
+                 ng-click="$ctrl.setActiveArtifact(artifact.id)">
+                <img class="images-viewer__thumbs-image"
+                     ng-src="{{ ::(artifact.thumb ? artifact.thumb : artifact.link) }}">
+                <div class="images-viewer__thumbs-caption">{{ ::artifact.name }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="images-viewer__content">
+        <div class="images-viewer__viewport">
+            <div class="images-viewer__img-wrapper"></div>
+        </div>
+        <div ng-show="$ctrl.mainImagesLoading" class="images-viewer__loader">
+        </div>
+    </div>
+    <div class="images-viewer__controls">
+        <div class="images-viewer__controls-main">
+            <md-button class="md-icon-button images-viewer__controls-main_zoom-more" ng-click="$ctrl.zoom(true)">
+                <i class="material-icons">zoom_in</i>
+                <md-tooltip class="images-viewer__controls-tooltip" md-direction="bottom">Zoom in</md-tooltip>
+            </md-button>
+            <md-button class="md-icon-button images-viewer__controls-main_zoom-less" ng-click="$ctrl.zoom(false)">
+                <i class="material-icons">zoom_out</i>
+                <md-tooltip class="images-viewer__controls-tooltip" md-direction="bottom">Zoom out</md-tooltip>
+            </md-button>
+            <md-button id="close" class="md-icon-button images-viewer__controls-main_close-button" ng-click="$ctrl.closeModal()">
+                <md-icon aria-label="Close dialog">close</md-icon>
+                <md-tooltip class="images-viewer__controls-tooltip" md-direction="bottom">Press 'ESC' to exit dialog</md-tooltip>
+            </md-button>
+            <md-button id="fullscreen"
+                       class="md-icon-button images-viewer__controls-main_fullscreen-button"
+                       ng-click="$ctrl.switchFullscreenMode()">
+                <md-icon aria-label="Close dialog">fullscreen</md-icon>
+                <md-tooltip class="images-viewer__controls-tooltip" md-direction="bottom">Press 'F' to start fullscreen</md-tooltip>
+            </md-button>
+            <md-button id="download" class="md-icon-button images-viewer__controls-main_download-button"
+                       ng-if="false"
+                       ng-click="$ctrl.downloadImages()">
+                <md-icon aria-label="Close dialog">cloud_download</md-icon>
+                <md-tooltip class="images-viewer__controls-tooltip" md-direction="bottom">Press 'S' to download images</md-tooltip>
+            </md-button>
+        </div>
+        <div class="images-viewer__controls-nav">
+            <md-button
+                id="right"
+                class="md-icon-button images-viewer__controls-nav_right-button"
+                data-ng-click="$ctrl.selectNextArtifact()">
+                <md-icon aria-label="Close dialog">chevron_right</md-icon>
+            </md-button>
+            <md-button
+                id="left" class="md-icon-button images-viewer__controls-nav_left-button"
+                data-ng-click="$ctrl.selectPrevArtifact()">
+                <md-icon aria-label="Close dialog">chevron_left</md-icon>
+            </md-button>
+        </div>
+    </div>
+</md-dialog>

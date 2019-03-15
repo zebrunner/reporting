@@ -483,25 +483,54 @@
             })
         };
 
-        $scope.showGalleryDialog = function (event, url) {
+        function prepareArtifacts(test) {
+            const formattedArtifacts = test.artifacts.reduce(function(formatted, artifact) {
+                const name = artifact.name.toLowerCase();
+
+                if (!name.includes('live') && !name.includes('video')) {
+                    const links = artifact.link.split(' ');
+                    const pathname = new URL(links[0]).pathname;
+
+                    artifact.extension = pathname.split('/').pop().split('.').pop();
+                    if (artifact.extension === 'png') {
+                        if (links[1]) {
+                            artifact.link = links[0];
+                            artifact.thumb = links[1];
+                        }
+                        formatted.imageArtifacts.push(artifact);
+                    }
+                    formatted.artifactsToShow.push(artifact);
+                }
+
+                return formatted;
+            }, {imageArtifacts: [], artifactsToShow: []});
+
+            test.imageArtifacts = formattedArtifacts.imageArtifacts;
+            test.artifactsToShow = formattedArtifacts.artifactsToShow;
+        }
+
+        $scope.openImagesViewerModal = function(event, url) {
+            var artifact = $scope.test.imageArtifacts.find(function(art) {
+                return art.link === url;
+            });
             $mdDialog.show({
-                controller: 'GalleryController',
-                templateUrl: 'app/components/modals/gallery/gallery.html',
+                controller: 'ImagesViewerController',
+                templateUrl: 'app/components/modals/images-viewer/images-viewer.html',
+                controllerAs: '$ctrl',
+                bindToController: true,
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,
                 fullscreen: false,
                 locals: {
-                    url: url,
-                    ciRunId: $scope.testRun.ciRunId,
-                    test: $scope.test,
-                    thumbs: $scope.thumbs
+                    artifacts: $scope.test.imageArtifacts,
+                    activeArtifactId: artifact.id,
                 }
             })
-            .then(function(answer) {
+            .then(function() {
             }, function() {
             });
-        };
+        }
 
         /**************** Websockets **************/
         var testsWebsocketName = 'tests';
@@ -760,6 +789,7 @@
                     
             setMode($scope.test.status == 'IN_PROGRESS' ? 'live' : 'record');
             $scope.MODE.initFunc.call(this, $scope.test);
+            prepareArtifacts($scope.test);
         }
 
         return vm;
