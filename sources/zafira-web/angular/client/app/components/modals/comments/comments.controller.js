@@ -1,17 +1,11 @@
 (function () {
     'use strict';
 
-    angular.module('app').controller('CommentsController', [
-        '$scope',
-        '$mdDialog',
-        'TestRunService',
-        'SlackService',
-        'testRun',
-        'isSlackAvailable',
-        'slackChannels',
-        CommentsController]);
+    angular.module('app').controller('CommentsController', CommentsController);
 
     function CommentsController($scope, $mdDialog, TestRunService, SlackService, testRun, isSlackAvailable, slackChannels) {
+        'ngInject';
+
         $scope.title = testRun.testSuite.name;
         $scope.testRun = angular.copy(testRun);
 

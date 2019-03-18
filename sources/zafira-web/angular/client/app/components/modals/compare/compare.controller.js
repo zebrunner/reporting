@@ -1,16 +1,11 @@
 (function () {
     'use strict';
 
-    angular.module('app').controller('CompareController', [
-        '$scope',
-        '$mdDialog',
-        '$q',
-        '$location',
-        'TestService',
-        'selectedTestRuns',
-        CompareController]);
+    angular.module('app').controller('CompareController', CompareController);
 
     function CompareController($scope, $mdDialog, $q, $location, TestService, selectedTestRuns) {
+        'ngInject';
+
         $scope.hideIdentical = false;
         $scope.allTestsIdentical = true;
         $scope.tr = {};

@@ -3,28 +3,29 @@
 
     angular
         .module('app.services')
-        .factory('AuthService', ['$httpMock', '$cookies', '$rootScope', '$state', 'UtilService', 'UserService', 'API_URL', 'jwtHelper', AuthService])
+        .factory('AuthService', AuthService);
 
     function AuthService($httpMock, $cookies, $rootScope, $state, UtilService, UserService, API_URL, jwtHelper) {
+        'ngInject';
 
-        var service = {};
-
-        service.Login = Login;
-        service.Invite = Invite;
-        service.forgotPassword = forgotPassword;
-        service.getForgotPasswordInfo = getForgotPasswordInfo;
-        service.resetPassword = resetPassword;
-        service.getInvitation = getInvitation;
-        service.signup = signup;
-        service.SetCredentials = SetCredentials;
-        service.ClearCredentials = ClearCredentials;
-        service.RefreshToken = RefreshToken;
-        service.GenerateAccessToken = GenerateAccessToken;
-        service.IsLoggedIn = IsLoggedIn;
-        service.UserHasAnyRole = UserHasAnyRole;
-        service.UserHasAnyPermission = UserHasAnyPermission;
-        service.isAuthorized = isAuthorized;
-        service.getAuthData = getAuthData;
+        const service = {
+            Login,
+            Invite,
+            forgotPassword,
+            getForgotPasswordInfo,
+            resetPassword,
+            getInvitation,
+            signup,
+            SetCredentials,
+            ClearCredentials,
+            RefreshToken,
+            GenerateAccessToken,
+            isLoggedIn,
+            UserHasAnyRole,
+            UserHasAnyPermission,
+            isAuthorized,
+            getAuthData,
+        };
 
         function Login(username, password) {
             return $httpMock.post(API_URL + '/api/auth/login', {
@@ -102,17 +103,17 @@
             return isAuthorized;
         }
 
-        function IsLoggedIn() {
-            return !!($rootScope.currentUser && $rootScope.globals.auth);
+        function isLoggedIn() {
+            return !!(UserService.currentUser && $rootScope.globals.auth);
         }
 
         function UserHasAnyRole(roles) {
-            if (!IsLoggedIn()) {
+            if (!isLoggedIn()) {
                 return false;
             }
             var found = false;
             angular.forEach(roles, function(role, index) {
-                if ($rootScope.currentUser.roles.indexOf(role) >= 0) {
+                if (UserService.currentUser.roles.indexOf(role) >= 0) {
                     found = true;
                     return;
                 }
@@ -121,12 +122,12 @@
         }
 
         function UserHasAnyPermission(permissions) {
-            if (!IsLoggedIn()) {
+            if (!isLoggedIn()) {
                 return false;
             }
             var found = false;
             angular.forEach(permissions, function(permission, index) {
-                angular.forEach($rootScope.currentUser.permissions, function(userPermission, index) {
+                angular.forEach(UserService.currentUser.permissions, function(userPermission, index) {
                     if (userPermission.name === permission) {
                         found = true;
                         return;
@@ -147,7 +148,7 @@
                     exceptCondition: '@'
                 },
                 link: function(scope, elem, attrs) {
-                    scope.$watch(AuthService.IsLoggedIn, function(newVal) {
+                    scope.$watch(AuthService.isLoggedIn, function(newVal) {
                         if(newVal) {
                             var exceptValue = !!(attrs.exceptCondition && attrs.exceptCondition == 'true');
                             if(! exceptValue) {
@@ -171,7 +172,7 @@
             return {
                 restrict: 'A',
                 link: function(scope, elem, attrs) {
-                    scope.$watch(AuthService.IsLoggedIn, function() {
+                    scope.$watch(AuthService.isLoggedIn, function() {
                         if (AuthService.UserHasAnyPermission(eval(attrs.hasAnyPermission))) {
                             elem.show();
                         } else {
@@ -184,7 +185,7 @@
         return {
             restrict: 'A',
             link: function(scope, elem, attrs) {
-                scope.$watch(AuthService.IsLoggedIn, function() {
+                scope.$watch(AuthService.isLoggedIn, function() {
                     var currentUser = attrs.user && attrs.user.length ? JSON.parse(attrs.user) : {};
                     if (currentUser && currentUser.id == attrs.isOwner) {
                         elem.show();

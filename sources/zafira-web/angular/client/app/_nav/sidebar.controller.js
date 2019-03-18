@@ -1,12 +1,19 @@
+import uploadImageModalController
+    from '../shared/modals/upload-image-modal/upload-image-modal.controller';
+import uploadImageModalTemplate from '../shared/modals/upload-image-modal/upload-image-modal.html';
+
 (function () {
     'use strict';
 
     angular
         .module('app.sidebar')
-        .controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$q', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'UserService', 'DashboardService', 'AuthService', 'SettingsService', 'UploadService', SidebarController])
+        .controller('SidebarController', SidebarController);
 
     // **************************************************************************
-    function SidebarController($scope, $rootScope, $cookies, $q, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService, SettingsService, UploadService) {
+    function SidebarController($scope, $rootScope, $cookies, $q, $mdDialog, $state, ViewService, ConfigService,
+                               ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService,
+                               SettingsService, UploadService) {
+        'ngInject';
 
     	$scope.DashboardService = DashboardService;
 
@@ -16,8 +23,6 @@
         $rootScope.dashboardList = [];
         $scope.views = [];
         $scope.tools = {};
-
-        var FILE_LOGO_TYPE = "COMMON";
 
         $scope.hasHiddenDashboardPermission = function(){
         	return AuthService.UserHasAnyPermission(["VIEW_HIDDEN_DASHBOARDS"]);
@@ -142,7 +147,7 @@
         $scope.showProjectDialog = function(event) {
             $mdDialog.show({
                 controller: ProjectController,
-                templateUrl: 'app/_nav/project_modal.html',
+                template: require('./project_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,
@@ -156,7 +161,7 @@
         $scope.showViewDialog = function(event, view) {
             $mdDialog.show({
                 controller: ViewController,
-                templateUrl: 'app/_nav/view_modal.html',
+                template: require('./view_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,
@@ -172,22 +177,41 @@
 
         $scope.showUploadImageDialog = function($event) {
             $mdDialog.show({
-                controller: FileUploadController,
-                templateUrl: 'app/_users/upload_image_modal.html',
+                controller: uploadImageModalController,
+                controllerAs: '$ctrl',
+                template: uploadImageModalTemplate,
                 parent: angular.element(document.body),
                 targetEvent: $event,
-                clickOutsideToClose:true,
-                fullscreen: true,
-                scope: $scope,
-                preserveScope: true
-            })
-                .then(function(answer) {
-                }, function() {
-                });
+                clickOutsideToClose: true,
+                locals: {
+                    urlHandler: (url) => {
+                        if (url) {
+                            $rootScope.companyLogo.value = url;
+                            SettingsService.editSetting($rootScope.companyLogo).then(function (prs) {
+                                if (prs.success) {
+                                    $rootScope.companyLogo.value += '?' + (new Date()).getTime();
+                                    alertify.success('Company logo was successfully changed');
+
+                                    return true;
+                                } else {
+                                    alertify.error(prs.message);
+
+                                    return false;
+                                }
+                            });
+                        }
+
+                        return $q.reject(false);
+                    },
+                    fileTypes: 'COMMON',
+                }
+            });
         };
 
         // ***** Modals Controllers *****
         function ProjectController($scope, $mdDialog) {
+            'ngInject';
+
             $scope.project = {};
             $scope.createProject = function(project){
                 ProjectService.createProject(project).then(function(rs) {
@@ -213,6 +237,8 @@
         }
 
         function ViewController($scope, $mdDialog, view) {
+            'ngInject';
+
             $scope.view = {};
             if(view)
             {
@@ -280,38 +306,6 @@
             };
             (function initController() {
             })();
-        }
-
-        function FileUploadController($scope, $mdDialog) {
-            $scope.uploadImage = function (multipartFile) {
-                UploadService.upload(multipartFile, FILE_LOGO_TYPE).then(function (rs) {
-                    if(rs.success)
-                    {
-                        $rootScope.companyLogo.value = rs.data.url;
-                        SettingsService.editSetting($rootScope.companyLogo)
-                            .then(function (prs) {
-                                if(prs.success)
-                                {
-                                   $rootScope.companyLogo.value += '?' + (new Date()).getTime();
-                                    alertify.success("Photo was uploaded");
-                                    $scope.hide();
-                                } else {
-                                    alertify.error(prs.message);
-                                }
-                            });
-                    }
-                    else
-                    {
-                        alertify.error(rs.message);
-                    }
-                });
-            };
-            $scope.hide = function() {
-                $mdDialog.hide(true);
-            };
-            $scope.cancel = function() {
-                $mdDialog.cancel(false);
-            };
         }
 
         (function initController() {

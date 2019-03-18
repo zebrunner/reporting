@@ -22,7 +22,7 @@
                                            name="username"
                                            ng-model="user.username"/>
                                     <div ng-messages="register_form.username.$error" ng-if="register_form.username.$dirty">
-                                        <div ng-message="required" data-translate="VLD_REQUIRED"></div>
+                                        <div ng-message="required">Required</div>
                                     </div>
                                 </md-input-container>
                                 <md-input-container class="md-block">
@@ -32,7 +32,7 @@
                                            name="email"
                                            ng-model="user.email"/>
                                     <div ng-messages="register_form.email.$error" ng-if="register_form.email.$dirty">
-                                        <div ng-message="required" data-translate="VLD_REQUIRED"></div>
+                                        <div ng-message="required">Required</div>
                                     </div>
                                 </md-input-container>
                                 <md-input-container class="md-block">
@@ -42,7 +42,7 @@
                                            name="firstName"
                                            ng-model="user.firstName"/>
                                     <div ng-messages="register_form.firstName.$error" ng-if="register_form.firstName.$dirty">
-                                        <div ng-message="required" data-translate="VLD_REQUIRED"></div>
+                                        <div ng-message="required">Required</div>
                                     </div>
                                 </md-input-container>
                                 <md-input-container class="md-block">
@@ -52,7 +52,7 @@
                                            name="lastName"
                                            ng-model="user.lastName"/>
                                     <div ng-messages="register_form.lastName.$error" ng-if="register_form.lastName.$dirty">
-                                        <div ng-message="required" data-translate="VLD_REQUIRED"></div>
+                                        <div ng-message="required">Required</div>
                                     </div>
                                 </md-input-container>
                                 <md-input-container class="md-block">
@@ -62,7 +62,7 @@
                                            name="password"
                                            ng-model="user.password"/>
                                     <div ng-messages="register_form.password.$error" ng-if="register_form.password.$dirty">
-                                        <div ng-message="required" data-translate="VLD_REQUIRED"></div>
+                                        <div ng-message="required">Required</div>
                                     </div>
                                 </md-input-container>
                                 <md-input-container class="md-block">
@@ -72,7 +72,7 @@
                                            name="confirmPwd"
                                            ng-model="confirmPwd"/>
                                     <div ng-messages="register_form.confirmPwd.$error" ng-if="register_form.confirmPwd.$dirty || register_form.confirmPwd != register_form.password">
-                                        <div ng-message="required" data-translate="VLD_REQUIRED"></div>
+                                        <div ng-message="required">Required</div>
                                     </div>
                                 </md-input-container>
                                 <div layout="row" layout-align="center">
@@ -85,7 +85,7 @@
                     </div>
                 </div>
 
-                <div ng-include="footerSlice.copyright.url"></div>
+                <copyright></copyright>
 
             </div>
         </div>

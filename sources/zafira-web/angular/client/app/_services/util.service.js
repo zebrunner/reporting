@@ -175,7 +175,9 @@
         };
 
         function tryToReconnect(name) {
-            $rootScope.$applyAsync($rootScope.disconnectedWebsockets.websockets[name].function);
+            if($rootScope.disconnectedWebsockets && $rootScope.disconnectedWebsockets.websockets && $rootScope.disconnectedWebsockets.websockets[name]) {
+                $rootScope.$applyAsync($rootScope.disconnectedWebsockets.websockets[name].function);
+            }
         };
 
         function showReconnectWebsocketToast() {
@@ -188,7 +190,7 @@
                 },
                 preserveScope: true,
                 controller: 'WebsocketReconnectController',
-                templateUrl: 'app/components/toasts/websocket-reconnect/websocket-reconnect.html'
+                template: require('../components/toasts/websocket-reconnect/websocket-reconnect.html')
             });
         };
 

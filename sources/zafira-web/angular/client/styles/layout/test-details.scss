@@ -188,6 +188,7 @@
                 }
                 &-info {
                     width: 50vw;
+                    padding-left: 24px;
                     @media (max-width: 730px) {
                         width: 40vw;
                     }
@@ -195,6 +196,7 @@
                         width: 100%;
                         border-top: 0 !important;
                         padding-bottom: 0 !important;
+                        padding-left: 15px;
                     }
                     &__wrapper {
                         display: flex;
@@ -292,6 +294,9 @@
             }
             span {
                 padding-left: 16px;
+                color: rgba(0,0,0,0.87);
+                font-weight: normal;
+                text-transform: none;
             }
         }   
     }

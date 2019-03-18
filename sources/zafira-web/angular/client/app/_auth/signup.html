@@ -5,7 +5,8 @@
                 <div class="card bg-white">
                     <div class="card-content">
                         <section class="logo-container">
-                            <img class="logo" src="{{ companyLogo.value ? companyLogo.value : 'assets/images/background/company_logo_plug.svg' }}">
+                            <img class="logo" ng-if="companyLogo.value" src="{{ companyLogo.value }}">
+                            <img class="logo" ng-if="!companyLogo.value" src="../../assets/images/background/company_logo_plug.svg">
                         </section>
 
                         <form class="form-horizontal" name="signup_form" data-ng-submit="signup(user, signup_form);">
@@ -22,8 +23,8 @@
                                         ng-pattern="/^.+@.+\..+$/"
                                         class="form-control"/>
                                     <div ng-messages="signup_form.email.$error" ng-if="signup_form.email.$dirty">
-                                        <div ng-message="required" data-translate="VLD_REQUIRED"></div>
-                                        <div ng-message="pattern" data-translate="VLD_PATTERN"></div>
+                                        <div ng-message="required">Required</div>
+                                        <div ng-message="pattern">Invalid format</div>
                                     </div>
                                 </md-input-container>
                                 <md-input-container class="md-block">
@@ -81,14 +82,14 @@
                             </div>
                         </form>
 
-                        <div ng-include="footerSlice.copyright.url"></div>
+                        <copyright></copyright>
                     </div>
 
                     <div class="additional-background">
                         <div class="logo-container">
                             <div class="logo"></div>
                         </div>
-                        <div ng-include="footerSlice.robo.url"></div>
+                        <robo></robo>
                     </div>
                 </div>
             </div>

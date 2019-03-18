@@ -1,0 +1,78 @@
+<md-table-container>
+        <form ng-submit="search()" name="search_form">
+            <table class="table-hover" md-table zafira-background-theme="table">
+                <thead md-head style="position: parent;">
+                    <tr md-row>
+                        <th md-column>
+                            <md-input-container class="searchable">
+                                <input id="searchInvitationEmail" type="text" ng-model="sc.email" name="email" placeholder="Email"/>
+                            </md-input-container>
+                        </th>
+                        <th md-column>
+                            Group
+                        </th>
+                        <th md-column>
+                            Date
+                        </th>
+                        <th md-column>
+                            Sent by
+                        </th>
+                        <th md-column>
+                            Status
+                        </th>
+                        <th md-column></th>
+                    </tr>
+                </thead>
+                <tbody md-body>
+                    <tr md-row ng-repeat="invite in invitations | filter:sc">
+                        <td md-cell>
+                            <b>{{ invite.email }}</b>
+                        </td>
+                        <td md-cell>
+                            {{ groups[groups.indexOfField('id', invite.groupId)].name }}
+                        </td>
+                        <td md-cell>
+                            {{ invite.createdAt | date:'dd MMM, yyyy' }}
+                        </td>
+                        <td md-cell>
+                            {{ invite.createdBy.username }}
+                        </td>
+                        <td md-cell>
+                            <span ng-class="{'text-success': invite.status == 'ACCEPTED', 'text-info': invite.status == 'PENDING'}" class="label">{{ invite.status }}</span>
+                        </td>
+                        <td md-cell>
+                            <md-menu has-any-permission="['MODIFY_INVITATIONS']" class="pull-right">
+                                <md-button name="userMenu" aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
+                                    <md-icon class="material-icons">more_vert</md-icon>
+                                </md-button>
+                                <md-menu-content width="2">
+                                    <md-menu-item ng-if="invite.status != 'ACCEPTED'">
+                                        <md-button name="userEdit" data-ng-really-message="Do you really want to retry send the invitation?" data-ng-really-click="retryInvite(invite, $index);">
+                                            <md-icon class="material-icons">loop</md-icon>
+                                            Resend
+                                        </md-button>
+                                    </md-menu-item>
+                                    <md-menu-item ng-if="invite.status != 'ACCEPTED'">
+                                        <md-button name="userEdit" data-ng-really-message="Do you really want to revoke the invitation?" data-ng-really-click="takeOff(invite, $index);">
+                                            <md-icon class="material-icons">highlight_off</md-icon>
+                                            Revoke
+                                        </md-button>
+                                    </md-menu-item>
+                                    <md-menu-item ng-if="invite.status == 'ACCEPTED'">
+                                        <md-button name="userEdit" ng-click="searchUser(invite);">
+                                            <md-icon class="material-icons">account_circle</md-icon>
+                                            Profile
+                                        </md-button>
+                                    </md-menu-item>
+                                </md-menu-content>
+                            </md-menu>
+                        </td>
+                    </tr>
+                <tr md-row data-ng-if="invitations.length == 0">
+                    <td id="noData" md-cell colspan="8" class="text-center">No invitations</td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </md-table-container>
+    

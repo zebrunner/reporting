@@ -1,52 +1,12 @@
 (function () {
     'use strict';
 
-    angular.module('app').controller('TestDetailsModalController', [
-        '$scope',
-        '$rootScope',
-        '$mdDialog',
-        '$interval',
-        'SettingsService',
-        'TestService',
-        'test',
-        'isNewIssue',
-        'isNewTask',
-        'isConnectedToJira',
-        'isJiraEnabled',
-
-        // '$mdToast',
-        // '$mdMenu',
-        // '$location',
-        // '$window',
-        // '$cookieStore',
-        // '$mdDialog',
-        // '$mdConstant',
-        // '$interval',
-        // '$timeout',
-        // '$stateParams',
-        // '$mdDateRangePicker',
-        // '$q',
-        // 'FilterService',
-        // 'ProjectService',
-        // 'TestService',
-        // 'TestRunService',
-        // 'UtilService',
-        // 'UserService',
-        // 'SettingsService',
-        // 'ProjectProvider',
-        // 'ConfigService',
-        // 'SlackService',
-        // 'DownloadService',
-        // 'API_URL',
-        // 'DEFAULT_SC',
-        // 'OFFSET',
-        // 'TestRunsStorage',
-        // '$tableExpandUtil',
-        TestDetailsModalController]);
+    angular.module('app').controller('TestDetailsModalController', TestDetailsModalController);
 
     function TestDetailsModalController(
         $scope, $rootScope, $mdDialog, $interval, SettingsService, TestService,
         test, isNewIssue, isNewTask, isConnectedToJira, isJiraEnabled) {
+        'ngInject';
 
         $scope.jiraId;
         $scope.isConnectedToJira = false;

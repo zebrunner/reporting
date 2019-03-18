@@ -9,12 +9,14 @@
     function customPage() {
         var directive = {
             restrict: 'A',
-            controller: ['$scope', '$element', '$location', '$transitions', '$state', customPageCtrl]
+            controller: customPageCtrl
         };
 
         return directive;
 
         function customPageCtrl($scope, $element, $location, $transitions) {
+            'ngInject';
+
             function handleTransition(toState, fromState) {
                 $element.removeClass('on-canvas');
                 if (toState.name !== fromState.name) {
