@@ -70,6 +70,6 @@ public class SlackAPIController extends AbstractController
 		TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
 		testRun.setSlackChannels(channels);
 		testRunService.updateTestRun(testRun);
-		slackService.sendOnFinish(testRunService.getTestRunByCiRunIdFull(ciRunId));
+		slackService.sendOnFinish(testRun);
 	}
 }
