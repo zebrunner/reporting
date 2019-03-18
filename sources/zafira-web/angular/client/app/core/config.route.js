@@ -155,18 +155,13 @@
                         url: '/tests/runs/:testRunId',
                         templateUrl: 'app/containers/test-details/test-details.html',
                         store: true,
-                        params: {
-                            testRun: null
-                        },
                         data: {
                             requireLogin: true,
                             classes: 'p-tests-run-details'
                         },
                         resolve: {
-                            testRun: ['$stateParams', '$q', '$state', 'TestRunService', function($stateParams, $q, $state, TestRunService) {
-                                if ($stateParams.testRun) {
-                                    return $q.resolve($stateParams.testRun);
-                                } else if ($stateParams.testRunId) {
+                            testRun: ['$stateParams', '$q', '$state', 'TestRunService', '$timeout', function($stateParams, $q, $state, TestRunService, $timeout) {
+                                if ($stateParams.testRunId) {
                                     const params = {
                                         id: $stateParams.testRunId
                                     };
@@ -181,10 +176,14 @@
                                     })
                                     .catch(function(error) {
                                         console.log(error); //TODO: show toaster notification
-                                        $state.go('tests/runs');
+                                        $timeout(() => {
+                                            $state.go('tests/runs');
+                                        }, 0);
                                     });
                                 } else {
-                                    $state.go('tests/runs');
+                                    $timeout(() => {
+                                        $state.go('tests/runs');
+                                    }, 0);
                                 }
                             }]
                         }
@@ -241,14 +240,9 @@
                         data: {
                             requireLogin: true
                         },
-                        params: {
-                            testRun: null
-                        },
                         resolve: {
-                            testRun: ['$stateParams', '$q', '$state', 'TestRunService', function($stateParams, $q, $state, TestRunService) {
-                                if ($stateParams.testRun) {
-                                    return $q.resolve($stateParams.testRun);
-                                } else if ($stateParams.testRunId) {
+                            testRun: ['$stateParams', '$q', '$state', 'TestRunService', '$timeout', function($stateParams, $q, $state, TestRunService, $timeout) {
+                                if ($stateParams.testRunId) {
                                     const params = {
                                         id: $stateParams.testRunId
                                     };
@@ -263,10 +257,14 @@
                                         })
                                         .catch(function(error) {
                                             console.log(error); //TODO: show toaster notification
-                                            $state.go('tests/runs');
+                                            $timeout(() => {
+                                                $state.go('tests/runs');
+                                            }, 0);
                                         });
                                 } else {
-                                    $state.go('tests/runs');
+                                    $timeout(() => {
+                                        $state.go('tests/runs');
+                                    }, 0);
                                 }
                             }]
                         }
