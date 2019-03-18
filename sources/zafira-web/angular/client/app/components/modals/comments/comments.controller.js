@@ -26,7 +26,7 @@
                         $scope.testRun.reviewed = true;
                         $scope.hide($scope.testRun);
                         alertify.success('Test run #' + $scope.testRun.id + ' marked as reviewed');
-                        if (isSlackAvailable && $scope.testRun.slackChannels {
+                        if (isSlackAvailable && $scope.testRun.slackChannels) {
                             if (confirm("Would you like to post latest test run status to slack?")) {
                                 SlackService.triggerReviewNotif($scope.testRun.id);
                             }
