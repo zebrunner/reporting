@@ -13,7 +13,7 @@
         return service;
 
         function triggerReviewNotif(id) {
-            return $httpMock.get(API_URL + '/api/slack/triggerReviewNotif/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to trigger review notif'));
+            return $httpMock.get(API_URL + '/api/slack/testrun/' + id + '/review').then(UtilService.handleSuccess, UtilService.handleError('Unable to trigger review notif'));
         }
     }
 })();
