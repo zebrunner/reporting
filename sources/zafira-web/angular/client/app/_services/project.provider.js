@@ -47,7 +47,9 @@
                     var query = {};
                     var projects = $cookieStore.get("projects");
                     if(projects && projects.length) {
-                        query['projects'] = projects;
+                        query['projects'] = projects.map(function (project) {
+                            return project.name;
+                        });
                     }
                     return query;
                 },
