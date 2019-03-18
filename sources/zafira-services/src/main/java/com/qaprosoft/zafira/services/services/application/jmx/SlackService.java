@@ -15,15 +15,13 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.jmx;
 
-import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_NOTIF_CHANNEL_EXAMPLE;
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_WEB_HOOK_URL;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
 
 import com.qaprosoft.zafira.services.util.URLResolver;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,13 +50,9 @@ import in.ashwanthkumar.slack.webhook.SlackMessage;
 public class SlackService implements IJMXService<SlackContext> {
 
     private final static String RESULTS_PATTERN = "Passed: %d, Failed: %d, Known Issues: %d, Skipped: %d";
-    private final static String MAIN_PATTERN = "Test run #%1$d has been completed after %2$s with status %3$s\n"
-            + "%4$s\n"
-            + "<%5$s|Open in Zafira>  |  <%6$s|Open in Jenkins>";
-
-    private final static String REV_PATTERN = "Test run #%1$d has been reviewed. Status: %2$s\n"
-            + "%3$s\n"
-            + "<%4$s|Open in Zafira>  |  <%5$s|Open in Jenkins>";
+    private final static String INFO_PATTERN = "%1$s\n<%2$s|Open in Zafira>  |  <%3$s|Open in Jenkins>";
+    private final static String ON_FINISH_PATTERN = "Test run #%1$d has been completed after %2$s with status %3$s\n";
+    private final static String REVIEWED_PATTERN = "Test run #%1$d has been reviewed. Status: %2$s\n";
 
     private static final Logger LOGGER = Logger.getLogger(SlackService.class);
 
@@ -120,69 +114,51 @@ public class SlackService implements IJMXService<SlackContext> {
         }
     }
 
-    public void sendAutoStatus(TestRun tr) throws IOException, ServiceException {
-        String channel = getChannelMapping(tr);
-        if (channel != null) {
-            getContext(Setting.Tool.SLACK).setSlack(getSlack().sendToChannel(channel));
+    public void sendOnFinish(TestRun testRun) {
+        String onFinishMessage = String.format(ON_FINISH_PATTERN, testRun.getId(), countElapsedInSMH(testRun.getElapsed()), TestRunResultsEmail.buildStatusText(testRun));
+        sendNotification(testRun, onFinishMessage);
+    }
 
-            String elapsed = countElapsedInSMH(tr.getElapsed());
+    public void sendReviewed(TestRun testRun) {
+        String reviewedMessage = String.format(REVIEWED_PATTERN, testRun.getId(), TestRunResultsEmail.buildStatusText(testRun));
+        sendNotification(testRun, reviewedMessage);
+    }
+
+    private void sendNotification(TestRun tr, String customizedMessage) {
+        String channels = tr.getSlackChannels();
+        if (StringUtils.isNotEmpty(channels)) {
             String zafiraUrl = urlResolver.buildWebURL() + "/#!/tests/runs/" + tr.getId();
             String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber();
-            String status = TestRunResultsEmail.buildStatusText(tr);
-
-            String mainMsg = String.format(MAIN_PATTERN, tr.getId(), elapsed, status, buildRunInfo(tr), zafiraUrl,
-                    jenkinsUrl);
-            String msgRes = String.format(RESULTS_PATTERN, tr.getPassed(), tr.getFailed(),
-                    tr.getFailedAsKnown(), tr.getSkipped());
-
-            SlackAttachment attachment = new SlackAttachment("")
-                    .preText(mainMsg)
-                    .color(determineColor(tr))
-                    .addField(new Field("Test Results", msgRes, false))
-                    .fallback(mainMsg + "\n" + msgRes);
-            getSlack().push(attachment);
+            String attachmentColor = determineColor(tr);
+            String mainMessage = customizedMessage + String.format(INFO_PATTERN, buildRunInfo(tr), zafiraUrl, jenkinsUrl);
+            String resultsMessage = String.format(RESULTS_PATTERN, tr.getPassed(), tr.getFailed(), tr.getFailedAsKnown(), tr.getSkipped());
+            SlackAttachment attachment = generateSlackAttachment(mainMessage, resultsMessage, attachmentColor, tr.getComments());
+            Arrays.stream(channels.split(",")).forEach(channel -> {
+                try {
+                    getContext(Setting.Tool.SLACK).setSlack(getSlack().sendToChannel(channel));
+                    getSlack().push(attachment);
+                } catch (IOException e) {
+                    LOGGER.error("Unable to push Slack notification");
+                }
+            });
         }
     }
 
-    /**
-     * Sends reviewed status
-     * 
-     * @param tr
-     *            - test run
-     * @return 'true' if notification about review was successfully sent
-     * @throws IOException
-     *             - read exception
-     * @throws ServiceException
-     *             - common exception
-     */
-    public boolean sendReviwedStatus(TestRun tr) throws IOException, ServiceException {
-        String channel = getChannelMapping(tr);
-        if (channel != null) {
-            getContext(Setting.Tool.SLACK).setSlack(getSlack().sendToChannel(channel));
-
-            String zafiraUrl = urlResolver.buildWebURL() + "/#!/tests/runs/" + tr.getId();
-            String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber();
-            String status = TestRunResultsEmail.buildStatusText(tr);
-
-            String mainMsg = String.format(REV_PATTERN, tr.getId(), status, buildRunInfo(tr), zafiraUrl, jenkinsUrl);
-            String msgRes = String.format(RESULTS_PATTERN, tr.getPassed(), tr.getFailed(),
-                    tr.getFailedAsKnown(), tr.getSkipped());
-
-            SlackAttachment attachment = new SlackAttachment("")
-                    .preText(mainMsg)
-                    .color(determineColor(tr))
-                    .addField(new Field("Test Results", msgRes, false))
-                    .fallback(mainMsg + "\n" + msgRes);
-            if (tr.getComments() != null) {
-                attachment.addField(new Field("Comments", tr.getComments(), false));
-            }
-            getSlack().push(attachment);
-            return true;
+    private SlackAttachment generateSlackAttachment(String mainMessage, String messageResults, String attachmentColor, String comments) {
+        SlackAttachment slackAttachment = new SlackAttachment("");
+        slackAttachment
+                .preText(mainMessage)
+                .color(attachmentColor)
+                .addField(new Field("Test Results", messageResults, false))
+                .fallback(mainMessage + "\n" + messageResults);
+        if (comments != null) {
+            slackAttachment.addField(new Field("Comments", comments, false));
         }
-        return false;
+        return slackAttachment;
     }
 
-    public String getWebhook() throws ServiceException {
+
+    public String getWebhook() {
         String wH = null;
         Setting slackWebHookURL = settingsService.getSettingByType(SLACK_WEB_HOOK_URL);
         if (slackWebHookURL != null) {
@@ -199,21 +175,6 @@ public class SlackService implements IJMXService<SlackContext> {
             return wH;
         }
         return wH;
-    }
-
-    public String getChannelMapping(TestRun tr) throws ServiceException {
-        List<Setting> sList = settingsService.getSettingsByTool(Setting.Tool.SLACK);
-        String pattern = StringUtils.substringBeforeLast(SLACK_NOTIF_CHANNEL_EXAMPLE.toString(), "_");
-        for (Setting s : sList) {
-            if (s.getName().startsWith(pattern)) {
-                String v = s.getValue();
-                String jobs[] = v.split(";");
-                if (ArrayUtils.contains(jobs, tr.getJob().getName())) {
-                    return StringUtils.substringAfter(s.getName(), pattern + "_");
-                }
-            }
-        }
-        return null;
     }
 
     private String buildRunInfo(TestRun tr) {
