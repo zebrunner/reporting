@@ -49,7 +49,7 @@ public class SlackAPIController extends AbstractController
 	private TestRunService testRunService;
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Send notification on review", nickname = "sendReviewedNotification", httpMethod = "GET")
+	@ApiOperation(value = "Send notification on testrun review", nickname = "sendReviewNotification", httpMethod = "GET")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -61,7 +61,7 @@ public class SlackAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Send notification", nickname = "sendNotification", httpMethod = "GET")
+	@ApiOperation(value = "Send notification on testrun finish", nickname = "sendOnFinishNotification", httpMethod = "GET")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "testrun/{ciRunId}/finish", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
