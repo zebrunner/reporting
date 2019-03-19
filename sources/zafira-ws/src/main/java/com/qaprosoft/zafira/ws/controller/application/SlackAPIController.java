@@ -54,7 +54,7 @@ public class SlackAPIController extends AbstractController
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "testrun/{id}/review", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody void sendReviewedNotification(@PathVariable(value = "id") long id) throws ServiceException, IOException
+	public @ResponseBody void sendOnReviewNotification(@PathVariable(value = "id") long id) throws ServiceException, IOException
 	{
 		TestRun testRun = testRunService.getTestRunByIdFull(id);
 		slackService.sendStatusReviewed(testRun);
@@ -65,7 +65,7 @@ public class SlackAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "testrun/{ciRunId}/finish", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody void sendNotification(@PathVariable(value = "ciRunId") String ciRunId, @RequestParam(value = "channels", required = false) String channels) throws ServiceException
+	public @ResponseBody void sendOnFinishNotification(@PathVariable(value = "ciRunId") String ciRunId, @RequestParam(value = "channels", required = false) String channels) throws ServiceException
 	{
 		TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
 		testRun.setSlackChannels(channels);
