@@ -57,7 +57,7 @@ public class SlackAPIController extends AbstractController
 	public @ResponseBody void sendReviewedNotification(@PathVariable(value = "id") long id) throws ServiceException, IOException
 	{
 		TestRun testRun = testRunService.getTestRunByIdFull(id);
-		slackService.sendReviewed(testRun);
+		slackService.sendStatusReviewed(testRun);
 	}
 
 	@ResponseStatusDetails
@@ -70,6 +70,6 @@ public class SlackAPIController extends AbstractController
 		TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
 		testRun.setSlackChannels(channels);
 		testRunService.updateTestRun(testRun);
-		slackService.sendOnFinish(testRun);
+		slackService.sendStatusOnFinish(testRun);
 	}
 }

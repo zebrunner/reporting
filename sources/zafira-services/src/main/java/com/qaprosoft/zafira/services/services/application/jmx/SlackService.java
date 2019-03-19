@@ -114,12 +114,12 @@ public class SlackService implements IJMXService<SlackContext> {
         }
     }
 
-    public void sendOnFinish(TestRun testRun) {
+    public void sendStatusOnFinish(TestRun testRun) {
         String onFinishMessage = String.format(ON_FINISH_PATTERN, testRun.getId(), countElapsedInSMH(testRun.getElapsed()), TestRunResultsEmail.buildStatusText(testRun));
         sendNotification(testRun, onFinishMessage);
     }
 
-    public void sendReviewed(TestRun testRun) {
+    public void sendStatusReviewed(TestRun testRun) {
         String reviewedMessage = String.format(REVIEWED_PATTERN, testRun.getId(), TestRunResultsEmail.buildStatusText(testRun));
         sendNotification(testRun, reviewedMessage);
     }
