@@ -23,7 +23,7 @@ import javax.annotation.PostConstruct;
 import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.management.TenancyService;
-import com.qaprosoft.zafira.services.util.TenancyInitial;
+import com.qaprosoft.zafira.services.util.TenancyDbInitial;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jasypt.util.password.PasswordEncryptor;
@@ -45,7 +45,7 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 
 @Service
-public class UserService implements TenancyInitial {
+public class UserService implements TenancyDbInitial {
     
     private static final Logger LOGGER = Logger.getLogger(UserService.class);
 
@@ -78,11 +78,11 @@ public class UserService implements TenancyInitial {
 
     @PostConstruct
     public void postConstruct() {
-        tenancyService.iterateItems(this::init);
+        tenancyService.iterateItems(this::initDb);
     }
 
     @Override
-    public void init() {
+    public void initDb() {
         if (!StringUtils.isBlank(adminUsername) && !StringUtils.isBlank(adminPassword)) {
             try {
                 User user = getUserByUsername(adminUsername);

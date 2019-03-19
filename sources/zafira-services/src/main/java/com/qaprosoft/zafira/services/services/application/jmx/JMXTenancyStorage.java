@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
 
+import com.qaprosoft.zafira.services.util.TenancyDbInitial;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,7 +34,7 @@ import com.qaprosoft.zafira.services.services.management.TenancyService;
 import com.qaprosoft.zafira.services.util.TenancyInitial;
 
 @Component
-public class JMXTenancyStorage implements TenancyInitial {
+public class JMXTenancyStorage implements TenancyInitial, TenancyDbInitial {
 
     private static final Logger LOGGER = Logger.getLogger( JMXTenancyStorage.class);
     
@@ -58,7 +59,10 @@ public class JMXTenancyStorage implements TenancyInitial {
         Arrays.stream(Setting.Tool.values()).forEach(tool -> {
             settingsService.getServiceByTool(tool).init();
         });
-        
+    }
+
+    @Override
+    public void initDb() {
         try {
             for(Setting setting : settingsService.getAllSettings()) {
                 if(setting.isValueForEncrypting() && !setting.isEncrypted()) {
@@ -68,7 +72,7 @@ public class JMXTenancyStorage implements TenancyInitial {
                 }
             }
         } catch (Exception e) {
-           LOGGER.error("Unable to encrypt value: " + e.getMessage(), e);
+            LOGGER.error("Unable to encrypt value: " + e.getMessage(), e);
         }
     }
 

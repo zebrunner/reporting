@@ -13,25 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.push.events;
+package com.qaprosoft.zafira.services.util;
 
-import java.io.Serializable;
+public interface TenancyDbInitial {
 
-public class EventMessage implements Serializable {
-
-    private static final long serialVersionUID = 2241656564064701459L;
-
-    private String tenancy;
-
-    public EventMessage(String tenancy) {
-        this.tenancy = tenancy;
-    }
-
-    public String getTenancy() {
-        return tenancy;
-    }
-
-    public void setTenancy(String tenancy) {
-        this.tenancy = tenancy;
-    }
+    void initDb();
 }
