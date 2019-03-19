@@ -1,0 +1,87 @@
+version: '3'
+
+services:
+  db:
+    container_name: zfr_postgres
+    image: qaprosoft/postgres:9.6
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+      - ./database/:/docker-entrypoint-initdb.d
+    ports:
+      - 5433:5432
+    env_file:
+      - integrations.env
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    restart: always
+  rabbitmq:
+    container_name: zfr_rabbitmq
+    image: qaprosoft/rabbitmq:latest
+    ports:
+      - 15672:15672
+      - 61613:61613
+      - 5672:5672
+    volumes:
+      - ./config/definitions.json:/etc/rabbitmq/definitions.json:ro
+    environment:
+      - RABBITMQ_DEFAULT_USER=qpsdemo
+      - RABBITMQ_DEFAULT_PASS=qpsdemo
+    restart: always
+  redis:
+    container_name: zfr_redis
+    image: redis:4.0.11
+    ports:
+      - 6379:6379
+    restart: always
+  elasticsearch:
+    container_name: zfr_elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.1
+    volumes:
+      - ./esdata:/usr/share/elasticsearch/data
+      - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    environment:
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+    restart: always
+  logstash:
+    container_name: zfr_logstash
+    image: docker.elastic.co/logstash/logstash:6.3.1
+    volumes:
+      - ./config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+      - ./config/mapping.json:/mapping.json:ro
+    restart: always
+    depends_on:
+      - elasticsearch
+  zafira:
+    container_name: zfr_zafira
+    build: .
+    ports:
+      - 8080:8080
+    env_file:
+     - integrations.env
+    environment:
+      - ZAFIRA_URL=http://localhost:8080
+      - ZAFIRA_USER=qpsdemo
+      - ZAFIRA_PASS=qpsdemo
+      - ZAFIRA_GROUP="Super admins"
+    depends_on:
+      - db
+      - rabbitmq
+      - redis
+    restart: always
+  zafira-batch:
+    container_name: zfr_batch_service
+    image: qaprosoft/zafira-batch:latest
+    env_file:
+     - integrations.env
+    depends_on:
+      - db
+      - rabbitmq
+      - redis
+    restart: always
