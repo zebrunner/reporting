@@ -44,7 +44,7 @@
 				#{elapsed},
 				#{eta},
 				#{comments},
-			    #{slackChannels}
+				#{slackChannels}
 			)
 		]]>
 	</insert>
@@ -546,7 +546,7 @@
 				TR.ELAPSED AS TEST_RUN_ELAPSED,
 				TR.ETA AS TEST_RUN_ETA,
 				TR.COMMENTS AS TEST_RUN_COMMENTS,
-			    TR.SLACK_CHANNELS AS TEST_RUN_SLACK_CHANNELS,
+				TR.SLACK_CHANNELS AS TEST_RUN_SLACK_CHANNELS,
 				TR.REVIEWED AS TEST_RUN_REVIEWED,
 				TR.MODIFIED_AT AS TEST_RUN_MODIFIED_AT,
 				TR.CREATED_AT AS TEST_RUN_CREATED_AT,
@@ -653,7 +653,7 @@
 				ELAPSED = #{elapsed},
 				ETA = #{eta},
 				COMMENTS = #{comments},
-			    SLACK_CHANNELS = #{slackChannels},
+				SLACK_CHANNELS = #{slackChannels},
 				REVIEWED = #{reviewed}
 			WHERE
 			    ID = #{id}
@@ -743,7 +743,7 @@
         <result column="TEST_RUN_ELAPSED" property="elapsed" />
         <result column="TEST_RUN_ETA" property="eta" />
         <result column="TEST_RUN_COMMENTS" property="comments" />
-		<result column="TEST_RUN_SLACK_CHANNELS" property="slackChannels" />
+        <result column="TEST_RUN_SLACK_CHANNELS" property="slackChannels" />
         <result column="TEST_RUN_REVIEWED" property="reviewed" />
         <result column="TEST_RUN_PASSED" property="passed" />
         <result column="TEST_RUN_FAILED" property="failed" />
