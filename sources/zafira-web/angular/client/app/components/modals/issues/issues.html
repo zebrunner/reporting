@@ -1,0 +1,98 @@
+<md-dialog flex="50" aria-label="User profile" zafira-background-theme="modal" class="issue-modal modal-min-width">
+    <md-toolbar class="issue-modal__header">
+        <div class="md-toolbar-tools">
+            <h2 id="modalTitle">Assign Issue</h2>
+            <span flex></span>
+            <md-button id="close" class="md-icon-button" ng-click="cancel()">
+                <md-icon aria-label="Close dialog">close</md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+    <!-- <md-progress-linear md-mode="query"
+        ng-show="(!isIssueFound || !isTaskFound) && isConnectedToJira || issueTabDisabled || taskTabDisabled">
+    </md-progress-linear> -->
+    <md-dialog-content>
+        <form class="form-validation" name="known_issue_form" ng-cloak>
+            <div class="issue-modal__wrapper">
+                <div class="issue-modal__left">
+                    <div class="info-row">
+                        <div class="info-row__name">Status</div>
+                        <div class="info-row__value">{{newIssue.status ? newIssue.status : "none"}}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-row__name">Assignee</div>
+                        <div class="info-row__value">{{newIssue.assignee ? newIssue.assignee : "none"}}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-row__name">Reporter</div>
+                        <div class="info-row__value">{{newIssue.reporter ? newIssue.reporter : "none"}}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-row__name">Blocker</div>
+                        <div class="info-row__value">
+                            <md-checkbox id="blocker" aria-label="Blocker checkbox" ng-model="newIssue.blocker"
+                                class="no-margin no-padding no-border"></md-checkbox>
+                        </div>
+                    </div>
+                </div>
+                <div class="issue-modal__right">
+                    <md-input-container flex class="issue-element-container _with-badge">
+                        <div>
+                            <label>Jira ID</label>
+                            <input id="issueJiraId" type="text" ng-disabled="selectedIssue"
+                                ng-pattern="/^([A-z0-9]+-[0-9]+|\d+)$/" class="form-control validation jira"
+                                data-ng-model="newIssue.jiraId" data-ng-change="initIssueSearch()" required />
+                        </div>
+                        <span ng-if="isConnectedToJira && !issueJiraIdExists && newIssue.jiraId" class="jira-status elment-with-label label label-warn">Not found in JIRA</span>
+                        <span ng-if="isConnectedToJira && issueJiraIdExists" class="jira-status elment-with-label label label-info">Connected to JIRA</span>
+                    </md-input-container>
+                    <md-input-container flex class="issue-element-container summary-container">
+                        <label>Summary</label>
+                        <textarea id="taskDescription" class="form-control validation summary" rows="1"
+                            data-ng-model="newIssue.description"></textarea>
+                    </md-input-container>
+                    <md-dialog-actions layout="row">
+                        <md-button ng-if="isNewIssue" class="form-button _light md-raised btn-w-md" ng-click="clearIssue()" ng-disabled="known_issue_form.$invalid">
+                            Clear
+                        </md-button>
+                        <md-button id="unassignIssue" ng-if="!isNewIssue" class="form-button _light md-raised btn-w-md"
+                            ng-really-message="Do you really want to delete known issue from current test?"
+                            ng-really-click="unassignIssue(newIssue)" ng-disabled="known_issue_form.$invalid">
+                            Unassign
+                        </md-button>
+                        <md-button id="updateIssue" ng-if="!isNewIssue" class="form-button md-raised btn-w-md md-primary"
+                            ng-click="assignIssue(newIssue, isNewIssue)"
+                            ng-disabled="known_issue_form.$invalid">
+                            Update
+                        </md-button>
+                        <md-button id="assignIssue" ng-if="isNewIssue" class="form-button md-raised btn-w-md md-primary"
+                            ng-click="assignIssue(newIssue, isNewIssue)" ng-disabled="known_issue_form.$invalid || !isConnectedToJira || !issueJiraIdExists">
+                            Assign
+                        </md-button>
+                    </md-dialog-actions>
+                </div>
+            </div>
+        </form>
+        <div class="issue-modal__tickets">
+            <div ng-if="issues.length" ng-repeat="issue in issues">
+                <md-button id="issuesListItem" class="ticket-list-button tickets-font" ng-class="{
+                    '_active' : attachedIssue.id === issue.id}" ng-click="searchScopeIssue(issue)">
+                    <div class="col-md-12 ticket-list-row">
+                        <div layout layout-sm="row">
+                            <div class="col-lg-2 clearfix align-middle ticket-list-text ticket-list-row__jira">
+                                <b class="settings-line">{{issue.jiraId}}</b>
+                            </div>
+                            <div class="col-lg-6 clearfix align-middle ticket-list-text ticket-list-row__text">
+                                {{issue.description}}
+                            </div>
+                            <div class="col-lg-4 clearfix align-middle ticket-list-text ticket-list-row__date">
+                                {{issue.modifiedAt | date : "medium"}}
+                            </div>
+                        </div>
+                    </div>
+                </md-button>
+            </div>
+            <p class="no-tickets-lable" ng-if="!issues.length">No tickets added</p>
+        </div>
+    </md-dialog-content>
+</md-dialog>

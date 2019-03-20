@@ -257,9 +257,6 @@
                         }
                     }
                     &__menu {
-                        @media(min-width: $breakpoint-mobile + 1) {
-                            display: none;
-                        }
                         button.md-icon-button.md-button.md-ink-ripple {
                             padding: 0;
                             margin: 0 -15px 0 0;
@@ -286,6 +283,21 @@
                 display: flex;
                 text-transform: none;
                 font-weight: 400;
+                .point-icon {
+                    font-size: 14px;
+                    min-height: 14px;
+                    max-height: 14px;
+                    min-width: 14px;
+                    max-width: 14px;
+                    margin-left: 5px;
+                    margin-right: 20px;
+                    &._red {
+                        color: $red-new;
+                    }
+                }
+                .assignment {
+                    transform: scale(-1, 1);
+                }
                 md-icon {
                     margin-right: 16px;
                 }

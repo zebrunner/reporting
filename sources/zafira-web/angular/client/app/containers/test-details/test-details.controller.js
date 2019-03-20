@@ -388,8 +388,8 @@
             const isNew = setWorkItemIsNewStatus(test.workItems);
 
             modalsService.openModal({
-                controller: 'TestDetailsModalController',
-                templateUrl: 'app/components/modals/test-details/test-details.html',
+                controller: 'IssuesModalController',
+                templateUrl: 'app/components/modals/issues/issues.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
                 locals: {

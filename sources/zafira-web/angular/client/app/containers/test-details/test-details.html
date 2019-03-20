@@ -94,6 +94,11 @@
                   </td>
                   <td class="test-settings">
                     <div class="align-middle align-right" ng-if="test.status != 'QUEUED'">
+                      <div class="test-settings__button">
+                        <md-button class="md-icon-button" ng-click="$ctrl.goToTestDetails(test.id);">
+                          <md-icon class="material-icons">remove_red_eye</md-icon>
+                        </md-button>
+                      </div>
                       <md-menu class="pull-right test-settings__menu" md-offset="0 {{currentOffset}}">
                         <md-button name="testRunSetting" aria-label="User settings" class="md-icon-button" data-ng-click="initMenuRights($ctrl.testRun); setOffset($event); $mdMenu.open($event);">
                           <md-icon class="material-icons">more_vert</md-icon>
@@ -111,40 +116,18 @@
                               </md-menu-content>
                             </md-menu>
                           </md-menu-item>
-                          <md-menu-item ng-click="$ctrl.showDetailsDialog(test, $event);">
-                            <md-button name="testDetails" aria-label="Test details" class="md-icon-button">
-                              <md-icon class="material-icons">bug_report</md-icon><span>Issues</span>
-                            </md-button>
-                          </md-menu-item>
                           <md-menu-item ng-click="$ctrl.goToTestDetails(test.id);">
                             <md-button class="md-icon-button">
-                              <md-icon class="material-icons">remove_red_eye</md-icon><span>Details</span>
+                              <md-icon class="material-icons point-icon _red">lens</md-icon><span>Mark as failed</span>
+                            </md-button>
+                          </md-menu-item>
+                          <md-menu-item ng-click="$ctrl.showDetailsDialog(test, $event);">
+                            <md-button name="testDetails" aria-label="Test details" class="md-icon-button">
+                              <md-icon class="material-icons assignment">assignment_return</md-icon><span>Assign issue</span>
                             </md-button>
                           </md-menu-item>
                         </md-menu-content>
                       </md-menu>
-                      <div data-ng-show="test.artifactsToShow.length" class="test-settings__button">
-                        <md-menu>
-                          <md-button name="testArtifacts" aria-label="Test artifacts" class="md-icon-button" ng-click="$mdMenu.open($event);">
-                            <md-icon class="material-icons">attachment</md-icon>
-                          </md-button>
-                          <md-menu-content>
-                            <md-menu-item ng-repeat="artifact in test.artifactsToShow">
-                              <md-button href="{{artifact.link}}" class="artifact-button" target="blank" name="artifact">{{artifact.name}}</md-button>
-                            </md-menu-item>
-                          </md-menu-content>
-                        </md-menu>
-                      </div>
-                      <div class="test-settings__button">
-                        <md-button name="testDetails" aria-label="Test details" class="md-icon-button" ng-click="$ctrl.showDetailsDialog(test, $event);">
-                          <md-icon class="material-icons">bug_report</md-icon>
-                        </md-button>
-                      </div>
-                      <div class="test-settings__button">
-                        <md-button class="md-icon-button" ng-click="$ctrl.goToTestDetails(test.id);">
-                          <md-icon class="material-icons">remove_red_eye</md-icon>
-                        </md-button>
-                      </div>
                     </div>
                   </td>
 
