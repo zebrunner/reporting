@@ -52,10 +52,20 @@
             $scope.selectedTabIndex = index != undefined ? index : $scope.selectedTabIndex;
         };
 
+        $scope.searchActive = false;
         $scope.activeTab = $scope.tabs[0];
 
         var DEFAULT_SC = {page : 1, pageSize : 20};
         $scope.sc = angular.copy(DEFAULT_SC);
+
+        $scope.onSearchChange = function (fields) {
+            $scope.searchActive = false;
+            fields.forEach( function (field) {
+                if (field.$modelValue) {
+                    $scope.searchActive = true;
+                }
+            })
+        }
 
         $scope.search = function (page) {
             $scope.sc.date = null;
