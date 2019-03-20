@@ -187,6 +187,11 @@
 				<ref bean="jmxTenancyStorage"/>
 			</list>
 		</constructor-arg>
+		<constructor-arg index="1">
+			<list>
+				<ref bean="jmxTenancyStorage"/>
+			</list>
+		</constructor-arg>
 	</bean>
 	
 	<!-- RabbitMQ message broker -->
@@ -207,12 +212,18 @@
 
 	<rabbit:queue id="tenanciesQueue" durable="false" auto-declare="true" auto-delete="true" />
 
+	<rabbit:queue id="zfrEventsQueue" name="zfrEventsQueue" durable="false" auto-declare="true" auto-delete="true" />
+
+	<rabbit:queue id="zfrCallbacksQueue" name="zfrCallbacksQueue" durable="false" auto-declare="true" auto-delete="true" />
+
 	<rabbit:queue id="monitorsQueue" durable="false" auto-declare="true" auto-delete="true"/>
 
 	<rabbit:direct-exchange id="eventsTopicExchange" name="events" durable="false" auto-declare="true" auto-delete="true" >
 	    <rabbit:bindings>
 	        <rabbit:binding queue="settingsQueue" key="settings"/>
 	        <rabbit:binding queue="tenanciesQueue" key="tenancies"/>
+	        <rabbit:binding queue="zfrEventsQueue" key="zfr_events"/>
+	        <rabbit:binding queue="zfrCallbacksQueue" key="zfr_callbacks"/>
 	        <rabbit:binding queue="monitorsQueue" key="monitors"/>
 	    </rabbit:bindings>
 	</rabbit:direct-exchange>
