@@ -43,6 +43,13 @@
 		]]>
     </select>
 
+    <select id="getScmAccountByRepo" resultMap="ScmAccountResultMap">
+        <include refid="getScmAccount" />
+        <![CDATA[
+			WHERE S.REPO = #{repo};
+		]]>
+    </select>
+
     <select id="getAllScmAccounts" resultMap="ScmAccountResultMap">
         <include refid="getScmAccount" />
     </select>

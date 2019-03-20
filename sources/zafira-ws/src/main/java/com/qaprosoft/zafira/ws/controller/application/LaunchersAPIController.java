@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.models.dto.CreateLauncherParamsType;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -73,6 +74,16 @@ public class LaunchersAPIController extends AbstractController {
     public @ResponseBody LauncherType createLauncher(@RequestBody @Valid LauncherType launcherType) throws ServiceException {
         User owner = new User(getPrincipalId());
         return mapper.map(launcherService.createLauncher(mapper.map(launcherType, Launcher.class), owner), LauncherType.class);
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Create launcher from Jenkins", nickname = "createLauncherFromJenkins", httpMethod = "POST", response = LauncherType.class)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody LauncherType createLauncherFromJenkins(@RequestBody @Valid CreateLauncherParamsType createLauncherParamsType) throws ServiceException {
+        User owner = new User(getPrincipalId());
+        return mapper.map(launcherService.createLauncherForJob(createLauncherParamsType, owner), LauncherType.class);
     }
 
     @ResponseStatusDetails

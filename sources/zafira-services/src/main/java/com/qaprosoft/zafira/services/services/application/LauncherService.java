@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.qaprosoft.zafira.models.dto.CreateLauncherParamsType;
+import com.qaprosoft.zafira.services.exceptions.ScmAccountNotFoundException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -76,6 +79,27 @@ public class LauncherService {
                 }
                 launcher.setJob(job);
             }
+        }
+        launcherMapper.createLauncher(launcher);
+        return launcher;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Launcher createLauncherForJob(CreateLauncherParamsType createLauncherParamsType, User owner) throws ServiceException {
+        Launcher launcher = new Launcher();
+        if(jenkinsService.getContext() != null) {
+            Job job = jobsService.getJobByJobURL(createLauncherParamsType.getJobUrl());
+            if(job == null){
+                job = jobsService.createOrUpdateJobByURL(createLauncherParamsType.getJobUrl(), owner);
+            }
+            launcher.setJob(job);
+            launcher.setName(job.getName());
+            ScmAccount scmAccount = scmAccountService.getScmAccountByRepo(createLauncherParamsType.getRepo());
+            if(scmAccount == null){
+                throw new ScmAccountNotFoundException("Unable to find scm account for repo");
+            }
+            launcher.setScmAccount(scmAccount);
+            launcher.setModel(new JSONObject(createLauncherParamsType.getJobParameters()).toString());
         }
         launcherMapper.createLauncher(launcher);
         return launcher;
