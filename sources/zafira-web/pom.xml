@@ -57,7 +57,7 @@
                     </configuration>
                 </execution>
                 <execution>
-                    <id>npm cache clean --force</id>
+                    <id>npm cache clean</id>
                     <goals>
                         <goal>npm</goal>
                     </goals>
