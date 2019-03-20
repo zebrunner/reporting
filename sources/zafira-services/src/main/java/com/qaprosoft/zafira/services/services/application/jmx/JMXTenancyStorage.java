@@ -67,6 +67,7 @@ public class JMXTenancyStorage implements TenancyInitial, TenancyDbInitial {
     @Override
     public void initDb() {
         try {
+            cryptoService.getKey();
             for(Setting setting : settingsService.getAllSettings()) {
                 if(setting.isValueForEncrypting() && !setting.isEncrypted()) {
                     setting.setValue(cryptoService.encrypt(setting.getValue()));

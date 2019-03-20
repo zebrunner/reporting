@@ -79,14 +79,7 @@ public class CryptoService implements IJMXService<CryptoContext> {
 
             putContext(CRYPTO, new CryptoContext(type, size, key, this.salt));
 
-            String dbKey = settingsService.getSettingByType(KEY).getValue();
-            if (StringUtils.isBlank(dbKey)) {
-                generateKey();
-                key = settingsService.getSettingByType(KEY).getValue();
-            } else {
-                key = dbKey;
-            }
-
+            key = getKey();
             initCryptoTool(key);
 
         } catch (Exception e) {
@@ -117,9 +110,22 @@ public class CryptoService implements IJMXService<CryptoContext> {
         return getCryptoType().getBasicTextEncryptor().decrypt(strToDecrypt);
     }
 
+    public String getKey() throws Exception {
+        String result = settingsService.getSettingByType(KEY).getValue();
+        if (StringUtils.isBlank(result)) {
+            generateKey();
+            result = settingsService.getSettingByType(KEY).getValue();
+        }
+        return result;
+    }
+
     public void generateKey() throws Exception {
         String key = null;
         try {
+            if(getCryptoType() == null || getCryptoType().getType() == null) {
+                init();
+                return;
+            }
             key = new String(Base64
                     .encodeBase64(generateKey(getCryptoType().getType(), getCryptoType().getSize()).getEncoded()));
         } catch (Exception e) {

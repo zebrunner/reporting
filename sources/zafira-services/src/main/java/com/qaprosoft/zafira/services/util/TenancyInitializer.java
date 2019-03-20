@@ -56,7 +56,9 @@ public class TenancyInitializer {
     @RabbitListener(queues = "#{tenanciesQueue.name}")
     public void initTenancy(Message message) {
         try {
-            String tenancy = new Gson().fromJson(new String(message.getBody()), String.class);
+            EventMessage eventMessage = new Gson().fromJson(new String(message.getBody()), EventMessage.class);
+            String tenancy = eventMessage.getTenancy();
+            LOGGER.info("Tenancy with name '" + tenancy + "' initialization is starting....");
             tenancyInitials.forEach(tenancyInitial -> initTenancy(tenancy, tenancyInitial));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -70,6 +72,7 @@ public class TenancyInitializer {
             EventMessage eventMessage = new Gson().fromJson(new String(message.getBody()), EventMessage.class);
             String tenancy = eventMessage.getTenancy();
             try {
+                LOGGER.info("Tenancy with name '" + tenancy + "' DB initialization is starting....");
                 tenancyDbInitials.forEach(tenancyInitial -> initTenancyDb(tenancy, tenancyInitial));
                 result = eventPushService.convertAndSend(TENANCIES, new EventMessage(tenancy));
             } catch (Exception e) {
@@ -87,11 +90,11 @@ public class TenancyInitializer {
      * @param tenancy - to initialize
      * @param tenancyInitial - task to execute
      */
-    public void initTenancy(String tenancy, TenancyInitial tenancyInitial) {
+    private void initTenancy(String tenancy, TenancyInitial tenancyInitial) {
         processMessage(tenancy, tenancyInitial::init);
     }
 
-    public void initTenancyDb(String tenancy, TenancyDbInitial tenancyInitial) {
+    private void initTenancyDb(String tenancy, TenancyDbInitial tenancyInitial) {
         processMessage(tenancy, tenancyInitial::initDb);
     }
 
