@@ -1,4 +1,4 @@
-<div ng-controller="UserControlsController" ng-if="searchActive" class="header-actions">
+<div ng-controller="UserControlsController" ng-if="searchActive || isFiltered" class="header-actions">
     <button id="search" class="md-button md-ink-ripple pull-right" type="button" ng-click="search();">
         <b>Search</b>
     </button>

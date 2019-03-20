@@ -53,6 +53,7 @@
         };
 
         $scope.searchActive = false;
+        $scope.isFiltered = false;
         $scope.activeTab = $scope.tabs[0];
 
         var DEFAULT_SC = {page : 1, pageSize : 20};
@@ -106,6 +107,7 @@
                     alertify.error(rs.message);
                 }
             });
+            $scope.isFiltered = true;
         };
 
         $scope.isEqualDate = function() {
@@ -120,6 +122,7 @@
             $scope.sc = angular.copy(DEFAULT_SC);
             $location.url($location.path());
             $scope.search();
+            $scope.isFiltered = false;
         };
 
         $scope.isDateChosen = true;
@@ -307,6 +310,7 @@
 
         (function initController() {
             $scope.search(1);
+            $scope.isFiltered = false;
         })();
     };
 

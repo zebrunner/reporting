@@ -13,6 +13,7 @@
         $scope.sc = angular.copy(DEFAULT_SC);
 
         $scope.searchActive = false;
+        $scope.isFiltered = false;
 
         $scope.TYPES = {
             HTTP : 'HTTP',
@@ -58,12 +59,14 @@
                     alertify.error(rs.message);
                 }
             });
+            $scope.isFiltered = true;
         };
 
         $scope.reset = function () {
             $scope.sc = angular.copy(DEFAULT_SC);
             $scope.search();
             $scope.searchActive = false;
+            $scope.isFiltered = false;
         };
 
         $scope.getAllMonitors = function () {
@@ -295,6 +298,7 @@
 
         (function init(){
             $scope.search(1);
+            $scope.isFiltered = false;
         })();
     }
 })();
