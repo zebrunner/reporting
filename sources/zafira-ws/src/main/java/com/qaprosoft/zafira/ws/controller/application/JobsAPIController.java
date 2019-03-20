@@ -82,17 +82,6 @@ public class JobsAPIController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create job by url", nickname = "createJobByUrl", httpMethod = "POST", response = JobType.class)
-	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody JobType createJobByUrl(@RequestBody @Valid JobType job,
-			@RequestHeader(value = "Project", required = false) String project) throws
-			ServiceException
-	{
-		return mapper.map(jobsService.createOrUpdateJob(mapper.map(job, Job.class)), JobType.class);
-	}
-
-	@ResponseStatusDetails
 	@ApiOperation(value = "Get all jobs", nickname = "getAllJobs", httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
