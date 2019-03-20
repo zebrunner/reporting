@@ -60,7 +60,7 @@ public class JobsService
 			jenkinsHost = jobUrl.split("/job/")[0];
 		}
 		Job job = new Job(jobName, jobUrl, jenkinsHost, user);
-		createOrUpdateJob(job);
+		job = createOrUpdateJob(job);
 		return job;
 	}
 
