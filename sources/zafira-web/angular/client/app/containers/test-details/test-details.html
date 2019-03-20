@@ -106,7 +106,7 @@
                         <md-menu-content width="2" class="fixed-md-menu-content test-settings__menu-content">
                           <md-menu-item data-ng-show="test.artifactsToShow.length">
                             <md-menu>
-                              <md-button name="testArtifacts" aria-label="Test artifacts" class="md-icon-button" ng-click="$mdMenu.open($event);">
+                              <md-button name="testArtifacts" aria-label="Test artifacts" ng-click="$mdMenu.open($event);">
                                 <md-icon class="material-icons">attachment</md-icon><span>Attachment</span>
                               </md-button>
                               <md-menu-content>
@@ -117,17 +117,17 @@
                             </md-menu>
                           </md-menu-item>
                           <md-menu-item ng-click="$ctrl.updateTest(test, true);">
-                              <md-button class="md-icon-button">
+                              <md-button>
                                 <md-icon class="material-icons point-icon _green">lens</md-icon><span>Mark as passed</span>
-                              </md-button>
+                              </md-button> 
                             </md-menu-item>
                           <md-menu-item ng-click="$ctrl.updateTest(test, false);">
-                            <md-button class="md-icon-button">
+                            <md-button>
                               <md-icon class="material-icons point-icon _red">lens</md-icon><span>Mark as failed</span>
                             </md-button>
                           </md-menu-item>
                           <md-menu-item ng-click="$ctrl.showDetailsDialog(test, $event);">
-                            <md-button name="testDetails" aria-label="Test details" class="md-icon-button">
+                            <md-button name="testDetails" aria-label="Test details">
                               <md-icon class="material-icons assignment">assignment_return</md-icon><span>Assign issue</span>
                             </md-button>
                           </md-menu-item>

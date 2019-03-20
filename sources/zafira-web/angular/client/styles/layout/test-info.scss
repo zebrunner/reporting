@@ -28,7 +28,16 @@
         }
 
         .back_button {
-            top: 5px;
+            min-width: auto;
+            min-height: auto;
+            padding: 0;
+            border-radius: 50%;
+            .material-icons {
+                color: black;
+            }
+            &:hover {
+                background-color: none;
+            }
         }
     }
 
