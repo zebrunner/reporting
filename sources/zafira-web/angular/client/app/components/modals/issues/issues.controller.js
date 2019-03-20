@@ -55,7 +55,7 @@
         return vm;
 
         function initController() {
-            console.log("init")
+            console.log("init");
             if (JSON.parse(isJiraEnabled)) {
                 vm.isConnectedToJira = isConnectedToJira;
             }
