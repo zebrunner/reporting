@@ -429,6 +429,7 @@
                 templateUrl: 'app/components/modals/issues/issues.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
+                controllerAs: '$ctrl',
                 locals: {
                     test: test,
                     isNewIssue: isNew.issue,
