@@ -82,7 +82,6 @@
         "node": ">=0.10.20"
     },
     "dependencies": {
-        "@epelc/gridstack-angular": "^0.6.0-dev",
         "@uirouter/angularjs": "^1.0.22",
         "ace-builds": "^1.4.2",
         "alertifyjs": "^1.11.2",

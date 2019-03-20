@@ -1,15 +1,16 @@
+'use strict';
+
 const testsRunsController = function testsRunsController($cookieStore, $mdDialog, $timeout, $q, TestRunService,
                                                          UtilService, UserService, testsRunsService, $scope, API_URL,
-                                                         $rootScope, $transitions, windowWidthService, activeTestRunId,
-                                                         TestService, resolvedTestRuns) {
+                                                         $rootScope, $transitions, windowWidthService, TestService) {
     'ngInject';
 
     let TENANT;
     const vm = {
-        testRuns: resolvedTestRuns.results || [],
-        totalResults: resolvedTestRuns.totalResults || 0,
-        pageSize: resolvedTestRuns.pageSize,
-        currentPage: resolvedTestRuns.page,
+        testRuns: [],
+        totalResults: 0,
+        pageSize: 20,
+        currentPage: 1,
         selectedTestRuns: {},
         zafiraWebsocket: null,
         subscriptions: {},
@@ -17,7 +18,7 @@ const testsRunsController = function testsRunsController($cookieStore, $mdDialog
         isFilterActive: testsRunsService.isFilterActive,
         isSearchActive: testsRunsService.isSearchActive,
         projects: null,
-        activeTestRunId: activeTestRunId,
+        activeTestRunId: null,
 
         isTestRunsEmpty: isTestRunsEmpty,
         getTestRuns: getTestRuns,

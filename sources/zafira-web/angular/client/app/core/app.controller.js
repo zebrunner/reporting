@@ -114,7 +114,7 @@
                                 });
                             } else {
                                 $timeout(() => {
-                                    $state.go('dashboard', {dashboardId: user.defaultDashboardId});
+                                    $state.go('dashboard.page', {dashboardId: user.defaultDashboardId});
                                 });
                             }
                         }

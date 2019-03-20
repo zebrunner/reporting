@@ -36,7 +36,7 @@ const UserProfileController = function UserProfileController($mdDialog, UserServ
     };
 
     function isIntervalSelected(interval) {
-        return vm.currentUser && parseInt(vm.currentUser.refreshInterval, 10) === parseInt(interval, 10);
+        return vm.currentUser && vm.currentUser.refreshInterval === interval;
     }
 
     function deleteUserProfilePhoto() {
@@ -158,7 +158,7 @@ const UserProfileController = function UserProfileController($mdDialog, UserServ
             if (preferences[i].name === 'DEFAULT_DASHBOARD') {
                 preferences[i].value = preferenceForm.defaultDashboard;
             } else if (preferences[i].name === 'REFRESH_INTERVAL') {
-                preferences[i].value = preferenceForm.refreshInterval;
+                preferences[i].value = parseInt(preferenceForm.refreshInterval, 10);
             } else if (preferences[i].name === 'THEME') {
                 preferences[i].value = vm.main.skin;
             }

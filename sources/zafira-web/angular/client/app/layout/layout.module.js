@@ -1,11 +1,20 @@
-(function () {
-    'use strict';
+'use strict';
 
-    angular.module('app.layout', []);
+import {
+    collapseNav,
+    toggleMenu,
+    toggleNavBottom,
+    toggleNavCollapsedMin,
+    uiPreloader,
+} from './layout.directives';
 
-})();
+const ngModule = angular.module('app.layout', []);
 
-// require('./customizer.controller');
-require('./layout.diretive');
+ngModule
+    .directive({ collapseNav })
+    .directive({ toggleMenu })
+    .directive({ toggleNavBottom })
+    .directive({ toggleNavCollapsedMin })
+    .directive({ uiPreloader });
+
 require('./loader');
-require('./sidebar.directive');

@@ -1,6 +1,6 @@
 window.d3 = require('d3');
-import 'gridstack';
-import '@epelc/gridstack-angular/dist/gridstack-angular';
+import 'gridstack/dist/gridstack.all';
+import '../../vendors/gridstack-angular.min';
 import '../../vendors/pie-chart.min';
 import 'n3-charts/build/LineChart.min';
 window.echarts = require('echarts/lib/echarts');
@@ -15,7 +15,10 @@ require('echarts/lib/component/title');
 require('echarts/lib/component/grid');
 require('echarts/lib/component/calendar');
 
-require('../../vendors/ngecharts'); //TODO: can't use npm  package because this file has custom changes; TODO: seems like that changes don't allow to minify this file therefore it's excluded in webpack config
+//TODO: can't use npm  package because this file has custom changes;
+//TODO: seems like that changes don't allow to minify this file therefore it's excluded in webpack config
+//TODO: fix DI and use as custom module
+require('../../vendors/ngecharts');
 
 import ScreenshotService from './screenshot.util';
 import dashboardComponent from './dashboard.component';

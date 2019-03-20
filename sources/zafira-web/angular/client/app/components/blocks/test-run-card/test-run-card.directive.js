@@ -107,21 +107,21 @@
                 }
 
                 function openTestRun() {
-                    const url = $state.href('tests/run', {testRunId: vm.testRun.id});
+                    const url = $state.href('tests.runDetails', {testRunId: vm.testRun.id});
 
                     window.open(url,'_blank');
                 }
 
                 function goToTestRun() {
-                    $state.go('tests/run', {testRunId: vm.testRun.id});
+                    $state.go('tests.runDetails', {testRunId: vm.testRun.id});
                 }
 
                 function onBackClick() {
-                    $state.go('tests/runs', {activeTestRunId: vm.testRun.id});
+                    $state.go('tests.runs', {activeTestRunId: vm.testRun.id});
                 }
 
                 function copyLink() {
-                    const url = $state.href('tests/run', {testRunId: vm.testRun.id}, {absolute : true});
+                    const url = $state.href('tests.runDetails', {testRunId: vm.testRun.id}, {absolute : true});
 
                     url.copyToClipboard();
                 }
@@ -460,7 +460,7 @@
                             if (rs.success) {
                                 $timeout(function() {
                                     testsRunsService.clearDataCache();
-                                    $state.go('tests/runs');
+                                    $state.go('tests.runs');
                                 }, 1000);
                             }
                         });

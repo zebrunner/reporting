@@ -58,7 +58,7 @@ const dashboardController = function dashboardController($scope, $rootScope, $q,
             }
         }
         angular.copy(dashboard.widgets, $scope.pristineWidgets);
-    };
+    }
 
     function loadWidget (dashboardName, widget, attributes, refresh) {
         var sqlAdapter = {'sql': widget.sql, 'attributes': attributes};
@@ -168,16 +168,18 @@ const dashboardController = function dashboardController($scope, $rootScope, $q,
         var gridstack = angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack');
         //gridstack.batchUpdate();
         $scope.pristineWidgets.forEach(function (widget) {
-            var currentWidget = $scope.dashboard.widgets.filter(function(w) {
+            const currentWidget = $scope.dashboard.widgets.find(function(w) {
                 return widget.id === w.id;
-            })[0];
-            if(currentWidget) {
+            });
+
+            if (currentWidget) {
                 widget.location = jsonSafeParse(widget.location);
                 currentWidget.location.x = widget.location.x;
                 currentWidget.location.y = widget.location.y;
                 currentWidget.location.height = widget.location.height;
                 currentWidget.location.width = widget.location.width;
                 var element = angular.element('#widget-' + currentWidget.id);
+
                 gridstack.update(element, widget.location.x, widget.location.y,
                     widget.location.width, widget.location.height);
             }
@@ -365,7 +367,7 @@ const dashboardController = function dashboardController($scope, $rootScope, $q,
             if(rs) {
                 switch(rs.action) {
                     case 'CREATE':
-                        $state.go('dashboard', {dashboardId: rs.id});
+                        $state.go('dashboard.page', {dashboardId: rs.id});
                         $rootScope.dashboardList.splice(rs.position, 0, rs);
                         break;
                     case 'UPDATE':

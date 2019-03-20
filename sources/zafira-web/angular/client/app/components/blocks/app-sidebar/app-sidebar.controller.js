@@ -24,6 +24,7 @@ import uploadImageModalTemplate
         $rootScope.dashboardList = [];
         $scope.views = [];
         $scope.tools = {};
+        $scope.$state = $state;
 
         $scope.hasHiddenDashboardPermission = function(){
             return AuthService.UserHasAnyPermission(["VIEW_HIDDEN_DASHBOARDS"]);

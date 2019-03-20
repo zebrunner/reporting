@@ -1160,13 +1160,13 @@ const ngModule = angular.module('app', [
         } else if (onlyGuests && isAuthorized) {
             if (!fromState.name) {
                 if (currentUser) {
-                    return trans.router.stateService.target('dashboard', {dashboardId: currentUser.defaultDashboardId});
+                    return trans.router.stateService.target('dashboard.page', {dashboardId: currentUser.defaultDashboardId});
                 } else {
                     return fetchUserData(trans).then((res) => {
                         if (res.success) {
                             currentUser = UserService.currentUser;
 
-                            return trans.router.stateService.target('dashboard', {dashboardId: currentUser.defaultDashboardId});
+                            return trans.router.stateService.target('dashboard.page', {dashboardId: currentUser.defaultDashboardId});
                         }
                     });
                 }

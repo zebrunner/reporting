@@ -5,7 +5,7 @@ const testRunInfoComponent = {
     template,
     controller,
     bindings: {
-        testRun: '=',
+        testRun: '<',
     },
     bindToController: true,
 };

@@ -1,7 +1,8 @@
 'use strict';
 
 const testDetailsController = function testDetailsController($scope, $rootScope, $q, TestService, API_URL,
-                                                             modalsService, $state) {
+                                                             modalsService, $state, $transitions,
+                                                             UtilService) {
     'ngInject';
 
     const testGroupDataToStore = {
@@ -16,7 +17,7 @@ const testDetailsController = function testDetailsController($scope, $rootScope,
         tags: [],
         testGroups: null,
         testGroupMode: 'PLAIN',
-        testRun: testRun,
+        testRun: null,
         testsLoading: true,
         testsFilteredEmpty: true,
         testsTagsOptions: {},
@@ -152,7 +153,7 @@ const testDetailsController = function testDetailsController($scope, $rootScope,
     }
 
     function goToTestDetails(testId) {
-        $state.go('tests/runs/info', {
+        $state.go('tests.runInfo', {
             testRunId: vm.testRun.id,
             testId: testId
         });
@@ -491,7 +492,7 @@ const testDetailsController = function testDetailsController($scope, $rootScope,
         const onTransStartSubscription = $transitions.onStart({}, function(trans) {
             const toState = trans.to();
 
-            if (toState.name !== 'tests/runs/info') {
+            if (toState.name !== 'tests.runInfo') {
                 TestService.clearDataCache();
             }
 

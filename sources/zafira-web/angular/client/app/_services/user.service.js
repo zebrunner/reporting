@@ -147,7 +147,7 @@
                         service.currentUser.defaultDashboard = userPreference.value;
                         break;
                     case 'REFRESH_INTERVAL':
-                        service.currentUser.refreshInterval = userPreference.value;
+                        service.currentUser.refreshInterval = parseInt(userPreference.value, 10);
                         break;
                     case 'THEME':
                         service.currentUser.theme = userPreference.value;

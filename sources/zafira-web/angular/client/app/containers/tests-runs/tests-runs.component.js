@@ -5,8 +5,8 @@ const testsRunsComponent = {
     template,
     controller,
     bindings: {
-        resolvedTestRuns: '=',
-        activeTestRunId: '=',
+        resolvedTestRuns: '<',
+        activeTestRunId: '<',
     },
     bindToController: true,
 };

@@ -39,7 +39,7 @@ module.exports = (env) => {
                 path.join(__dirname, '../node_modules')
             ],
             alias: {
-                'jquery-ui': 'jquery-ui/ui',
+                'jquery-ui': path.resolve(__dirname, '../node_modules/jquery-ui/ui'),
                 'humanizeDuration': 'humanize-duration'
             }
         },

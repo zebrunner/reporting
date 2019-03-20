@@ -5,7 +5,7 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
                                                              $filter, $anchorScroll, $location, $timeout, $window, $q,
                                                              elasticsearchService, TestRunService, UtilService,
                                                              ArtifactService, DownloadService, $stateParams, OFFSET,
-                                                             API_URL, $state, $httpMock, TestRunsStorage, testRun,
+                                                             API_URL, $state, $httpMock, TestRunsStorage,
                                                              TestService, $transitions) {
     'ngInject';
 
@@ -31,7 +31,7 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
     $scope.TestRunsStorage = TestRunsStorage;
 
     $scope.goToTestRuns = function () {
-        $state.go('tests/run', {
+        $state.go('tests.runDetails', {
             testRunId: vm.testRun.id
         });
     };
@@ -642,7 +642,7 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
         const onTransStartSubscription = $transitions.onStart({}, function(trans) {
             const toState = trans.to();
 
-            if (toState.name !== 'tests/run') {
+            if (toState.name !== 'tests.runDetails') {
                 TestService.clearDataCache();
             }
             onTransStartSubscription();
@@ -702,14 +702,13 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
     };
 
     function controllerInit() {
-        vm.testRun = testRun;
         $scope.testRun = angular.copy(vm.testRun);
         initTestsWebSocket($scope.testRun);
 
         const params = {
             'page': 1,
             'pageSize': 100000,
-            'testRunId': testRun.id
+            'testRunId': vm.testRun.id
         };
 
         TestService.searchTests(params)
