@@ -56,7 +56,8 @@ public class TenancyInitializer {
     @RabbitListener(queues = "#{tenanciesQueue.name}")
     public void initTenancy(Message message) {
         try {
-            String tenancy = new Gson().fromJson(new String(message.getBody()), String.class);
+            EventMessage eventMessage = new Gson().fromJson(new String(message.getBody()), EventMessage.class);
+            String tenancy = eventMessage.getTenancy();
             LOGGER.info("Tenancy with name '" + tenancy + "' initialization is starting....");
             tenancyInitials.forEach(tenancyInitial -> initTenancy(tenancy, tenancyInitial));
         } catch (Exception e) {
