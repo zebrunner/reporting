@@ -41,8 +41,8 @@ public class TenancyInitializer {
     @Autowired
     private EventPushService<EventMessage> eventPushService;
 
-    private List<TenancyDbInitial> tenancyDbInitials;
-    private List<TenancyInitial> tenancyInitials;
+    private final List<TenancyDbInitial> tenancyDbInitials;
+    private final List<TenancyInitial> tenancyInitials;
 
     public TenancyInitializer(List<TenancyDbInitial> tenancyDbInitials, List<TenancyInitial> tenancyInitials) {
         this.tenancyDbInitials = tenancyDbInitials;

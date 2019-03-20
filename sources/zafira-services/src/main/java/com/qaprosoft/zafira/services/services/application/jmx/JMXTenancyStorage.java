@@ -51,7 +51,10 @@ public class JMXTenancyStorage implements TenancyInitial, TenancyDbInitial {
 
     @PostConstruct
     public void post() {
-        tenancyService.iterateItems(this::init);
+        tenancyService.iterateItems(() -> {
+            initDb();
+            init();
+        });
     }
 
     @Override
