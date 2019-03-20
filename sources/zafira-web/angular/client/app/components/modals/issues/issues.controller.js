@@ -83,40 +83,27 @@
         };
 
         function updateWorkItemList(workItem) {
-            switch (workItem.type) {
-                case 'BUG':
-                    var issues = vm.issues;
-                    for (var i = 0; i < issues.length; i++) {
-                        if (issues[i].jiraId === workItem.jiraId) {
-                            deleteWorkItemFromList(issues[i]);
-                            break;
-                        }
-                    }
-                    vm.issues.push(workItem);
+            var issues = vm.issues;
+            for (var i = 0; i < issues.length; i++) {
+                if (issues[i].jiraId === workItem.jiraId) {
+                    deleteWorkItemFromList(issues[i]);
                     break;
+                }
             }
+            vm.issues.push(workItem);
             vm.test.workItems.push(workItem);
         };
 
-        /* Deletes workitem from list of workitems on UI */
-
         function deleteWorkItemFromList(workItem) {
-            switch (workItem.type) {
-                case 'BUG':
-                    var issueToDelete = vm.issues.filter(
-                        function(listWorkItem) {
-                            return listWorkItem.jiraId === workItem.jiraId;
-                        })[0];
-                    var issueIndex = vm.issues.indexOf(issueToDelete);
-                    if (issueIndex !== -1) {
-                        vm.issues.splice(issueIndex, 1);
-                    }
-                    break;
+            var issueToDelete = vm.issues.filter(function(listWorkItem) {
+                return listWorkItem.jiraId === workItem.jiraId;
+            })[0];
+            var issueIndex = vm.issues.indexOf(issueToDelete);
+            if (issueIndex !== -1) {
+                vm.issues.splice(issueIndex, 1);
             }
             deleteWorkItemFromTestWorkItems(workItem);
         };
-
-        /* Deletes workitem from list of workitems in test object */
 
         function deleteWorkItemFromTestWorkItems(workItem) {
             var issueToDelete = vm.test.workItems.filter(
@@ -307,7 +294,6 @@
             }
         };
 
-
         /* Initializes empty issue */
 
         function initNewIssue(isInit) {
@@ -352,8 +338,6 @@
 
         /* On Jira ID input change makes search if conditions are fulfilled */
 
-        
-
         /* Closes search interval when the modal is closed */
         function bindEvents() {
             let workItemSearchInterval = $interval(function() {
@@ -385,7 +369,7 @@
 
         /* Sends request to Jira for issue additional info after opening modal */
 
-       function addTestEvent(message) {
+        function addTestEvent(message) {
             var testEvent = {};
             testEvent.description = message;
             testEvent.jiraId = Math.floor(Math.random() * 90000) + 10000;
@@ -410,7 +394,6 @@
             }
         };
 
-
         function hide() {
             $mdDialog.hide(test);
         };
@@ -418,7 +401,5 @@
         function cancel() {
             $mdDialog.cancel(vm.test);
         };
-
     }
-
 })();
