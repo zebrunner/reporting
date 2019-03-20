@@ -3,50 +3,19 @@
 
     angular.module('app').controller('IssuesModalController', [
         '$scope',
-        '$rootScope',
         '$mdDialog',
         '$interval',
         'SettingsService',
         'TestService',
         'test',
         'isNewIssue',
-        'isNewTask',
         'isConnectedToJira',
         'isJiraEnabled',
-
-        // '$mdToast',
-        // '$mdMenu',
-        // '$location',
-        // '$window',
-        // '$cookieStore',
-        // '$mdDialog',
-        // '$mdConstant',
-        // '$interval',
-        // '$timeout',
-        // '$stateParams',
-        // '$mdDateRangePicker',
-        // '$q',
-        // 'FilterService',
-        // 'ProjectService',
-        // 'TestService',
-        // 'TestRunService',
-        // 'UtilService',
-        // 'UserService',
-        // 'SettingsService',
-        // 'ProjectProvider',
-        // 'ConfigService',
-        // 'SlackService',
-        // 'DownloadService',
-        // 'API_URL',
-        // 'DEFAULT_SC',
-        // 'OFFSET',
-        // 'TestRunsStorage',
-        // '$tableExpandUtil',
         IssuesModalController]);
 
     function IssuesModalController(
-        $scope, $rootScope, $mdDialog, $interval, SettingsService, TestService,
-        test, isNewIssue, isNewTask, isConnectedToJira, isJiraEnabled) {
+        $scope, $mdDialog, $interval, SettingsService, TestService,
+        test, isNewIssue, isConnectedToJira, isJiraEnabled) {
 
         $scope.selectedIssue = false;
 
@@ -272,18 +241,11 @@
             var attachedWorkItem = {};
             attachedWorkItem.jiraId = '';
             $scope.attachedIssue = attachedWorkItem;
-            $scope.attachedTask = attachedWorkItem;
             var workItems = $scope.test.workItems;
             for (var i = 0; i < workItems.length; i++) {
                 switch (workItems[i].type) {
                     case 'BUG':
                         $scope.attachedIssue = workItems[i];
-                        break;
-                    case 'TASK':
-                        $scope.attachedTask = workItems[i];
-                        break;
-                    case 'COMMENT':
-                        $scope.testComments.push(workItems[i]);
                         break;
                 }
             }
