@@ -242,7 +242,10 @@
 
         /* Initializes issue object before search */
 
-        $scope.initIssueSearch = function() {
+        $scope.initIssueSearch = function(isInvalid) {
+            if (isInvalid) {
+                return;
+            }
             $scope.issueJiraIdExists = false;
             issueJiraIdInputIsChanged = true;
             $scope.newIssue.description = '';
@@ -258,7 +261,7 @@
             })[0];
             if (existingIssue) {
                 angular.copy(existingIssue, $scope.newIssue);
-            }
+            }            
         };
 
         /* Writes all attached to the test workitems into scope variables.

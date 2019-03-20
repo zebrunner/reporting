@@ -294,6 +294,9 @@
                     &._red {
                         color: $red-new;
                     }
+                    &._green {
+                        color: $green-new;
+                    }
                 }
                 .assignment {
                     transform: scale(-1, 1);

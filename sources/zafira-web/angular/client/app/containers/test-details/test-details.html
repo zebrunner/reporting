@@ -116,7 +116,12 @@
                               </md-menu-content>
                             </md-menu>
                           </md-menu-item>
-                          <md-menu-item ng-click="$ctrl.goToTestDetails(test.id);">
+                          <md-menu-item ng-click="$ctrl.updateTest(test, true);">
+                              <md-button class="md-icon-button">
+                                <md-icon class="material-icons point-icon _green">lens</md-icon><span>Mark as passed</span>
+                              </md-button>
+                            </md-menu-item>
+                          <md-menu-item ng-click="$ctrl.updateTest(test, false);">
                             <md-button class="md-icon-button">
                               <md-icon class="material-icons point-icon _red">lens</md-icon><span>Mark as failed</span>
                             </md-button>

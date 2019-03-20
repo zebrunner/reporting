@@ -48,6 +48,7 @@
             changeTestStatus: changeTestStatus,
             showDetailsDialog: showDetailsDialog,
             goToTestDetails: goToTestDetails,
+            updateTest: updateTest,
             get empty() {
                 return !Object.keys(vm.testRun.tests || {}).length ;
             }
@@ -65,6 +66,42 @@
             fillTestRunMetadata();
             bindEvents();
         }
+
+         function updateTest(test, isPassed) { 
+            var newStatus = isPassed ? 'PASSED' : 'FAILED';
+            if (test.status !== newStatus) {
+                test.status = newStatus;
+            }
+            else {
+                return;
+            }
+            var message;
+            TestService.updateTest(test).then(function(rs) {
+                if (rs.success) {
+                    message = 'Test was marked as ' + test.status;
+                    addTestEvent(message, test);
+                    alertify.success(message);
+                }
+                else {
+                    console.error(rs.message);
+                }
+            });
+        };
+
+        function  addTestEvent(message, test) {
+            var testEvent = {};
+            testEvent.description = message;
+            testEvent.jiraId = Math.floor(Math.random() * 90000) + 10000;
+            testEvent.testCaseId = test.testCaseId;
+            testEvent.type = 'EVENT';
+            TestService.createTestWorkItem(test.id, testEvent).
+                then(function(rs) {
+                    if (rs.success) {
+                    } else {
+                        alertify.error('Failed to add event test "' + test.id);
+                    }
+                })
+        };
 
         function fillTestRunMetadata() {
             addBrowserVersion();
