@@ -122,6 +122,10 @@ public class CryptoService implements IJMXService<CryptoContext> {
     public void generateKey() throws Exception {
         String key = null;
         try {
+            if(getCryptoType() == null || getCryptoType().getType() == null) {
+                init();
+                return;
+            }
             key = new String(Base64
                     .encodeBase64(generateKey(getCryptoType().getType(), getCryptoType().getSize()).getEncoded()));
         } catch (Exception e) {
