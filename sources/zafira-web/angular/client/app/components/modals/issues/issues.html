@@ -57,16 +57,16 @@
                         </md-button>
                         <md-button id="unassignIssue" ng-if="!$ctrl.isNewIssue" class="form-button _light md-raised btn-w-md"
                             ng-really-message="Do you really want to delete known issue from current test?"
-                            ng-really-click="$ctrl.unassignIssue(newIssue)" ng-disabled="known_issue_form.$invalid">
+                            ng-really-click="$ctrl.unassignIssue($ctrl.newIssue)" ng-disabled="known_issue_form.$invalid">
                             Unassign
                         </md-button>
                         <md-button id="updateIssue" ng-if="!$ctrl.isNewIssue" class="form-button md-raised btn-w-md md-primary"
-                            ng-click="$ctrl.assignIssue(newIssue, isNewIssue)"
+                            ng-click="$ctrl.assignIssue($ctrl.newIssue, $ctrl.isNewIssue)"
                             ng-disabled="known_issue_form.$invalid">
                             Update
                         </md-button>
                         <md-button id="assignIssue" ng-if="$ctrl.isNewIssue" class="form-button md-raised btn-w-md md-primary"
-                            ng-click="$ctrl.assignIssue(newIssue, isNewIssue)" ng-disabled="known_issue_form.$invalid || !$ctrl.isConnectedToJira || !$ctrl.issueJiraIdExists">
+                            ng-click="$ctrl.assignIssue($ctrl.newIssue, $ctrl.isNewIssue)" ng-disabled="known_issue_form.$invalid || !$ctrl.isConnectedToJira || !$ctrl.issueJiraIdExists">
                             Assign
                         </md-button>
                     </md-dialog-actions>
@@ -80,13 +80,13 @@
                     <div class="col-md-12 ticket-list-row">
                         <div layout layout-sm="row">
                             <div class="col-lg-2 clearfix align-middle ticket-list-text ticket-list-row__jira">
-                                <b class="settings-line">{{$ctrl.issue.jiraId}}</b>
+                                <b class="settings-line">{{issue.jiraId}}</b>
                             </div>
                             <div class="col-lg-6 clearfix align-middle ticket-list-text ticket-list-row__text">
-                                {{$ctrl.issue.description}}
+                                {{issue.description}}
                             </div>
                             <div class="col-lg-4 clearfix align-middle ticket-list-text ticket-list-row__date">
-                                {{$ctrl.issue.modifiedAt | date : "medium"}}
+                                {{issue.modifiedAt | date : "medium"}}
                             </div>
                         </div>
                     </div>

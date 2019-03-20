@@ -52,10 +52,11 @@
 
         vm.$onInit = initController;
 
+        vm.$onInit();
+
         return vm;
 
         function initController() {
-            console.log("init");
             if (JSON.parse(isJiraEnabled)) {
                 vm.isConnectedToJira = isConnectedToJira;
             }
