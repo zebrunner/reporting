@@ -1,3 +1,5 @@
+'use strict';
+
 const authController = function authController($scope, $rootScope, $location, $state, $cookies, $templateCache, AuthService, UserService,
                             UtilService, InvitationService) {
     'ngInject';
