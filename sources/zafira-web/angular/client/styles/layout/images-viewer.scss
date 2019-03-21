@@ -1,0 +1,162 @@
+@import
+    "../global/var",   
+    "../global/var-extra";
+
+.images-viewer {
+    min-height: 100% !important;
+    min-width: 100vw !important;
+    background-color: rgba(0, 0, 0, 0.7) !important;
+    box-shadow: none;
+    padding-top: 50px;
+    &__controls {
+        &-main {
+            position: fixed;
+            .md-icon-button {
+                position: fixed;
+                background-color: rgba(0, 0, 0, 0.5) !important;
+                md-icon, i {
+                    color: white;
+                }
+            }
+            &_zoom-less {
+                top: 5px;
+                right: 90px;
+            }
+            &_zoom-more {
+                top: 5px;
+                right: 133px;
+            }
+            &_close-button {
+                top: 5px;
+                right: 5px;
+            }
+            &_fullscreen-button {
+                top: 5px;
+                right: 48px;
+            }
+            &_download-button {
+                top: 5px;
+                right: 177px;
+            }
+        }
+        &-nav {
+            button {
+                z-index: 2;
+                position: fixed;
+                top: 50%;
+                background-color: rgba(0, 0, 0, 0.5) !important;
+                md-icon {
+                    color: white;
+                }
+            }
+            &_right-button {
+                right: 5px;
+            }
+            &_left-button {
+                left: 5px;
+            }
+        }
+        &_tooltip {
+            z-index: 1000000 !important;
+            background-color: white !important;
+            color: black !important;
+        }
+    }
+
+    &__thumbs-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    &__thumbs {
+        height: 120px;
+        min-height: 120px;
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+        &-item {
+            cursor: pointer;
+            display: inline-block;
+            margin: 5px 5px 0;
+            color: white;
+            width: 90px;
+            height: 110px;
+            padding: 3px;
+            border: 1px solid transparent;
+            transition: background-color .25s;
+            &:hover,
+            &._active {
+                border-color: white;
+            }
+        }
+        &-caption {
+            width: 100%;
+            max-width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        &-image {
+            width: 100%;
+            height: 85px;
+            object-fit: contain;
+        }
+    }
+    &__content {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        height: calc(100vh - 170px);
+    }
+    &__viewport {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+    }
+    &__img {
+        position: absolute;
+        max-height: 100%;
+        max-width: 100%;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        margin: 0 auto auto 0;
+        pointer-events: none;
+        visibility: hidden;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+        //transition: all .25s;
+        &._active {
+            pointer-events: all;
+            visibility: visible;
+            opacity: 1;
+        }
+        &-wrapper {
+            margin: 0 auto;
+            position: relative;
+
+        }
+    }
+    &__loader {
+        position: fixed;
+        overflow: hidden;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 99999;
+        background: url('#{$image_path}/audio.svg') no-repeat center center fixed;
+        pointer-events: none;
+    }
+}
+
+._modal-in-fullscreen .md-dialog-container {
+    height: 100% !important;
+}
+
+

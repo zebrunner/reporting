@@ -14,11 +14,12 @@
         'modalsService',
         '$state',
         '$transitions',
+        '$mdDialog',
         TestDetailsController]);
 
     // **************************************************************************
     function TestDetailsController(testRun, $scope, $rootScope, $q, TestService, UtilService, 
-                                   API_URL, modalsService, $state, $transitions) {
+                                   API_URL, modalsService, $state, $transitions, $mdDialog) {
         const testGroupDataToStore = {
             statuses: [],
             tags: []
@@ -51,7 +52,8 @@
             updateTest: updateTest,
             get empty() {
                 return !Object.keys(vm.testRun.tests || {}).length ;
-            }
+            },
+            openImagesViewerModal: openImagesViewerModal,
         };
 
         vm.$onInit = controlInit;
@@ -210,12 +212,7 @@
 
         function addTest(test) {
             test.elapsed = test.finishTime ? (test.finishTime - test.startTime) : Number.MAX_VALUE;
-
-            test.artifactsToShow = test.artifacts.filter(function (artifact) {
-                var name = artifact.name.toLowerCase();
-
-                return !name.includes('live') && !name.includes('video');
-            });
+            prepareArtifacts(test);
             test.tags = test.tags.filter(function (tag) {
                 return tag.name !== 'TESTRAIL_TESTCASE_UUID' && tag.name !== 'QTEST_TESTCASE_UUID';
             });
@@ -230,6 +227,32 @@
 
             onTagSelect(testGroupDataToStore.tags);
             onStatusButtonClick(testGroupDataToStore.statuses);
+        }
+
+        function prepareArtifacts(test) {
+            const formattedArtifacts = test.artifacts.reduce(function(formatted, artifact) {
+                const name = artifact.name.toLowerCase();
+
+                if (!name.includes('live') && !name.includes('video')) {
+                    const links = artifact.link.split(' ');
+                    const pathname = new URL(links[0]).pathname;
+
+                    artifact.extension = pathname.split('/').pop().split('.').pop();
+                    if (artifact.extension === 'png') {
+                        if (links[1]) {
+                            artifact.link = links[0];
+                            artifact.thumb = links[1];
+                        }
+                       formatted.imageArtifacts.push(artifact);
+                    }
+                    formatted.artifactsToShow.push(artifact);
+                }
+
+                return formatted;
+            }, {imageArtifacts: [], artifactsToShow: []});
+
+            test.imageArtifacts = formattedArtifacts.imageArtifacts;
+            test.artifactsToShow = formattedArtifacts.artifactsToShow;
         }
 
         function collectTags(tests) {
@@ -548,6 +571,25 @@
     
                     onTransStartSubscription();
                 });
+        }
+
+        //TODO: implement lazyLoading after webpack is applied
+        function openImagesViewerModal(event, artifact, test) {
+            $mdDialog.show({
+                controller: 'ImagesViewerController',
+                templateUrl: 'app/components/modals/images-viewer/images-viewer.html',
+                controllerAs: '$ctrl',
+                bindToController: true,
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose:true,
+                fullscreen: false,
+                escapeToClose: false,
+                locals: {
+                    test,
+                    activeArtifactId: artifact.id,
+                }
+            });
         }
     }
 
