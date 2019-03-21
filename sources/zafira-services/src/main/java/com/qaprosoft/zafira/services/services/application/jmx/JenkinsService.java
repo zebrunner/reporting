@@ -60,7 +60,7 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JenkinsService.class);
 
-    private static final String[] REQUIRED_ARGS = new String[] {"scmURL", "branch", "suite", "overrideFields"};
+    private static final String[] REQUIRED_ARGS = new String[] {"scmURL", "branch", "overrideFields"};
 
     private final String FOLDER_REGEX = ".+job\\/.+\\/job.+";
 
