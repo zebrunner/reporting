@@ -6,5 +6,4 @@ require('./email/email.controller');
 require('./gallery/gallery.controller');
 require('./rerun/rerun.controller');
 require('./spreadsheet/spreadsheet.controller');
-require('./test-details/test-details.controller');
 require('./test-info/test-info.controller');

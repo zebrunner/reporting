@@ -9,7 +9,8 @@ const appUsers = function appUsers() {
             onSearch: '&',
             source: '=',
             searchValue: '=',
-            tabs: '='
+            tabs: '=',
+            onSearchChange: '&'
         },
         controllerAs: '$ctrl',
         restrict: 'E',

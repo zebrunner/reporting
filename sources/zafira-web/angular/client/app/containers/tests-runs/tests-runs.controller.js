@@ -48,7 +48,6 @@ const testsRunsController = function testsRunsController($cookieStore, $mdDialog
 
 
         TENANT = $rootScope.globals.auth.tenant;
-        loadSlackMappings();
         loadSlackAvailability();
         readStoredParams();
         initWebsocket();
@@ -133,10 +132,6 @@ const testsRunsController = function testsRunsController($cookieStore, $mdDialog
 
             return $q.resolve([]);
         });
-    }
-
-    function loadSlackMappings() {
-        testsRunsService.fetchSlackChannels();
     }
 
     function loadSlackAvailability() {

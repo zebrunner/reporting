@@ -1,3 +1,5 @@
+'use strict';
+
 const UserViewController = function UserViewController($scope, $rootScope, $location, $state, $mdDialog, UserService, GroupService, InvitationService, AuthService) {
     'ngInject';
 

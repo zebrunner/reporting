@@ -1,3 +1,5 @@
+'use strict';
+
 import template from './app-invites.html';
 import controller from './app-invites.controller';
 
@@ -7,8 +9,10 @@ const appInvites = function appInvites() {
         controller,
         scope: {
             tabs: '=',
-            invitations: "=",
-            groups: "="
+            invitations: '=',
+            groups: '=',
+            onSearch: '&',
+            onSwitchTab: '&',
         },
         controllerAs: '$ctrl',
         restrict: 'E',

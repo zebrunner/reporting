@@ -36,8 +36,8 @@ const AppInvitesController = function AppInvitesController($scope, InvitationSer
         });
         var userTabIndex = $scope.tabs.indexOfField('name', userTab.name);
         $location.search('email', invite.email);
-        $scope.search(1);
-        $scope.switchTab(userTab, userTabIndex);
+        $scope.onSearch({ data: 1});
+        $scope.onSwitchTab({ tab: userTab, index: userTabIndex });
     };
 
     $scope.getAllInvitations = function () {

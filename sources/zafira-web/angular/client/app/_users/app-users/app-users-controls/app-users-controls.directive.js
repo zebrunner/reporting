@@ -1,3 +1,5 @@
+'use strict';
+
 import template from './app-users-controls.html';
 
 const appUsersControls = function appUsersControls() {
@@ -5,7 +7,7 @@ const appUsersControls = function appUsersControls() {
         template,
         scope: {
             onSearch: '&',
-            onReset: '&'
+            onReset: '&',
         },
         restrict: 'E',
         replace: true

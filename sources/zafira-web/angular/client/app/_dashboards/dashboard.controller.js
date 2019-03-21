@@ -8,7 +8,7 @@ import dashboardEmailModalTemplate from './dashboard-email-modal/dashboard-email
 import dashboardEmailModalController from './dashboard-email-modal/dashboard-email-modal.controller';
 
 const dashboardController = function dashboardController($scope, $rootScope, $q, $timeout, $interval, $cookies, $location, $state,
-                                 $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, projectsService) {
+                                 $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, projectsService, UserService) {
     'ngInject';
 
     const vm = {

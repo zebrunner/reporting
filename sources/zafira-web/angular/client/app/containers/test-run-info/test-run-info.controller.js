@@ -1,5 +1,7 @@
 'use strict';
 
+import ImagesViewerController from '../../components/modals/images-viewer/images-viewer.controller';
+
 const JSZip = require('jszip');
 const testRunInfoController = function testRunInfoController($scope, $rootScope, $http, $mdDialog, $interval, $log,
                                                              $filter, $anchorScroll, $location, $timeout, $window, $q,
@@ -510,8 +512,8 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
         });
 
         $mdDialog.show({
-            controller: 'ImagesViewerController',
-            templateUrl: 'app/components/modals/images-viewer/images-viewer.html',
+            controller: ImagesViewerController,
+            template: require('../../components/modals/images-viewer/images-viewer.html'),
             controllerAs: '$ctrl',
             bindToController: true,
             parent: angular.element(document.body),
@@ -524,7 +526,7 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
                 activeArtifactId: activeArtifact.id,
             }
         });
-    }
+    };
 
     /**************** Websockets **************/
     var testsWebsocketName = 'tests';

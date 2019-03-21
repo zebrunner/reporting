@@ -1,5 +1,8 @@
 'use strict';
 
+import ImagesViewerController from '../../components/modals/images-viewer/images-viewer.controller';
+import IssuesModalController from '../../components/modals/issues/issues.controller';
+
 const testDetailsController = function testDetailsController($scope, $rootScope, $q, TestService, API_URL,
                                                              modalsService, $state, $transitions,
                                                              UtilService, $mdDialog) {
@@ -435,7 +438,7 @@ const testDetailsController = function testDetailsController($scope, $rootScope,
         const isNew = setWorkItemIsNewStatus(test.workItems);
 
         modalsService.openModal({
-            controller: 'IssuesModalController',
+            controller: IssuesModalController,
             template: require('../../components/modals/issues/issues.html'),
             parent: angular.element(document.body),
             targetEvent: event,
@@ -558,25 +561,25 @@ const testDetailsController = function testDetailsController($scope, $rootScope,
 
             onTransStartSubscription();
         });
+    }
 
-        //TODO: implement lazyLoading after webpack is applied
-        function openImagesViewerModal(event, artifact, test) {
-            $mdDialog.show({
-                controller: 'ImagesViewerController',
-                template: require('../../components/modals/images-viewer/images-viewer.html'),
-                controllerAs: '$ctrl',
-                bindToController: true,
-                parent: angular.element(document.body),
-                targetEvent: event,
-                clickOutsideToClose:true,
-                fullscreen: false,
-                escapeToClose: false,
-                locals: {
-                    test,
-                    activeArtifactId: artifact.id,
-                }
-            });
-        }
+    //TODO: implement lazyLoading after webpack is applied
+    function openImagesViewerModal(event, artifact, test) {
+        $mdDialog.show({
+            controller: ImagesViewerController,
+            template: require('../../components/modals/images-viewer/images-viewer.html'),
+            controllerAs: '$ctrl',
+            bindToController: true,
+            parent: angular.element(document.body),
+            targetEvent: event,
+            clickOutsideToClose:true,
+            fullscreen: false,
+            escapeToClose: false,
+            locals: {
+                test,
+                activeArtifactId: artifact.id,
+            }
+        });
     }
 };
 

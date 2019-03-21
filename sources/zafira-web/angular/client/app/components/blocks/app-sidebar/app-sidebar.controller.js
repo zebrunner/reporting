@@ -12,13 +12,13 @@ import uploadImageModalTemplate
 
     // **************************************************************************
     function AppSidebarController($scope, $rootScope, $cookies, $q, $mdDialog, $state, ViewService, ConfigService,
-                                  ProjectService, ProjectProvider, UtilService, UserService, DashboardService,
-                                  AuthService, SettingsService, UploadService) {
+                                  ProjectService, projectsService, UtilService, UserService, DashboardService,
+                                  AuthService, SettingsService) {
         'ngInject';
 
         $scope.DashboardService = DashboardService;
 
-        $scope.selectedProjects = ProjectProvider.getProjects();
+        $scope.selectedProjects = projectsService.getSelectedProjects();
         $scope.version = null;
         $scope.projects = [];
         $rootScope.dashboardList = [];
@@ -52,7 +52,7 @@ import uploadImageModalTemplate
 
         function getViews(){
             return $q(function (resolve, reject) {
-                ViewService.getViewById(ProjectProvider.getProjectsIdQueryParam()).then(function(rs) {
+                ViewService.getAllViews().then(function(rs) {
                     if(rs.success)
                     {
                         $scope.views = rs.data;
@@ -125,7 +125,7 @@ import uploadImageModalTemplate
             $scope.projects.forEach(function(project) {
                 project.selected = undefined;
             });
-            ProjectProvider.setProjects([]);
+            projectsService.resetSelectedProjects();
             $state.reload();
         };
 
@@ -138,9 +138,9 @@ import uploadImageModalTemplate
         $scope.$on("$mdMenuClose", function(name, listener) {
             var isProjectMenuClosing = listener.attr('id') === 'projects-menu';
             if(isProjectMenuClosing) {
-                var projects = ProjectProvider.getProjects();
+                var projects = projectsService.getSelectedProjects();
                 if(! angular.equals(projects, $scope.selectedProjects)) {
-                    ProjectProvider.setProjects($scope.selectedProjects);
+                    projectsService.setSelectedProjects($scope.selectedProjects);
                     $state.reload();
                 }
             }
@@ -311,14 +311,7 @@ import uploadImageModalTemplate
         }
 
         (function initController() {
-            $scope.selectedProjects = ProjectProvider.getProjects();
-            // TODO: 3/20/18  remove on next release
-            if((!$scope.selectedProjects || ! $scope.selectedProjects.length == 0) && ProjectProvider.getProject())
-            {
-                ProjectProvider.setProjects([].push(ProjectProvider.getProject()));
-                ProjectProvider.removeProject();
-                console.log('Project cookies was removed');
-            }
+            $scope.selectedProjects = projectsService.getSelectedProjects();
         })();
     }
 })();
