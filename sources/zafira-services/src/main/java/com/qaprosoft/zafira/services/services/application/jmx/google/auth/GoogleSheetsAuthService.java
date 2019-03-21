@@ -15,6 +15,7 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.jmx.google.auth;
 
+import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.services.sheets.v4.Sheets;
 import com.qaprosoft.zafira.services.services.application.jmx.google.AbstractGoogleService;
 import org.springframework.stereotype.Component;
@@ -22,13 +23,20 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class GoogleSheetsAuthService extends AbstractGoogleService
-{
+public class GoogleSheetsAuthService extends AbstractGoogleService {
 
-	public static Sheets getService(byte[] credsFile) throws IOException
-	{
-		return new Sheets.Builder(getHttpTransport(), getJsonFactory(), authorize(credsFile))
+	public static Sheets getService(byte[] credsFile) throws IOException {
+		return getService(credsFile, null);
+	}
+
+	public static Sheets getService(byte[] credsFile, Long expirationTime) throws IOException {
+		return new Sheets.Builder(getHttpTransport(), getJsonFactory(), getCredentialInstance(credsFile, expirationTime))
 				.setApplicationName(getApplicationName())
 				.build();
 	}
+
+	public static Credential getCredentialInstance(byte[] credsFile, Long expirationTime) throws IOException {
+		return expirationTime == null ? authorize(credsFile) : authorize(credsFile, expirationTime);
+	}
+
 }
