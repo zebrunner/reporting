@@ -202,8 +202,9 @@
                             classes: 'p-tests-runs'
                         },
                         resolve: {
-                            resolvedTestRuns: ['$state', 'testsRunsService', '$q', function($state, testsRunsService, $q) {
+                            resolvedTestRuns: ['$state', 'testsRunsService', '$q', 'projectsService', function($state, testsRunsService, $q, projectsService) {
                                 const prevState = $state.current.name;
+                                const projects = projectsService.getSelectedProjects();
 
                                 testsRunsService.resetFilteringState();
                                 // read saved search/filtering data only if we reload current page or returning from internal page
@@ -212,6 +213,8 @@
                                 } else {
                                     testsRunsService.deleteStoredParams();
                                 }
+
+                                testsRunsService.setSearchParam('projects', projects);
 
                                 return testsRunsService.fetchTestRuns().catch(function(err) {
                                     err && err.message && alertify.error(err.message);
