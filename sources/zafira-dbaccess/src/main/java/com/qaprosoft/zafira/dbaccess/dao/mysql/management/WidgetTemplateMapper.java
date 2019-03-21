@@ -13,42 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.db;
+package com.qaprosoft.zafira.dbaccess.dao.mysql.management;
 
-public class Attribute extends AbstractEntity
-{
-	private static final long serialVersionUID = 6708791122991478693L;
+import com.qaprosoft.zafira.models.db.WidgetTemplate;
 
-	private String key;
-	private String value;
-	
-	public Attribute()
-	{
-	}
+import java.util.List;
 
-	public Attribute(String key, String value)
-	{
-		this.key = key;
-		this.value = value;
-	}
+public interface WidgetTemplateMapper {
 
-	public String getKey()
-	{
-		return key;
-	}
+    WidgetTemplate getWidgetTemplateById(Long id);
 
-	public void setKey(String key)
-	{
-		this.key = key;
-	}
+    WidgetTemplate getWidgetTemplateByName(String name);
 
-	public String getValue()
-	{
-		return value;
-	}
-
-	public void setValue(String value)
-	{
-		this.value = value;
-	}
+    List<WidgetTemplate> getAllWidgetTemplates();
 }

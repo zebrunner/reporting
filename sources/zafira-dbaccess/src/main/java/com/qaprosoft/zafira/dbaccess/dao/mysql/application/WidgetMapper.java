@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
+import com.qaprosoft.zafira.dbaccess.utils.SQLTemplateAdapter;
 import com.qaprosoft.zafira.models.db.Widget;
 import com.qaprosoft.zafira.dbaccess.utils.SQLAdapter;
 
@@ -24,6 +25,8 @@ import java.util.Map;
 public interface WidgetMapper
 {
 	List<Map<String, Object>> executeSQL(SQLAdapter sql);
+
+	List<Map<String, Object>> executeSQLTemplate(SQLTemplateAdapter sql);
 
 	void createWidget(Widget widget);
 

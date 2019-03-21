@@ -18,6 +18,8 @@ package com.qaprosoft.zafira.services.services.application;
 import java.util.List;
 import java.util.Map;
 
+import com.qaprosoft.zafira.dbaccess.utils.SQLTemplateAdapter;
+import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +34,9 @@ public class WidgetService
 {
 	@Autowired
 	private WidgetMapper widgetMapper;
+
+	@Autowired
+	private FreemarkerUtil freemarkerUtil;
 
 	@Transactional(rollbackFor = Exception.class)
 	public Widget createWidget(Widget widget) throws ServiceException
@@ -69,5 +74,14 @@ public class WidgetService
 	public List<Map<String, Object>> executeSQL(String sql) throws ServiceException
 	{
 		return widgetMapper.executeSQL(new SQLAdapter(sql));
+	}
+
+	@Transactional(readOnly = true)
+	public List<Map<String, Object>> executeSQL(String sql, Map<String, Object> params, boolean isSqlFreemarkerTemplate) throws ServiceException
+	{
+		if(isSqlFreemarkerTemplate) {
+			sql = freemarkerUtil.getFreeMarkerTemplateContent(sql, params, false);
+		}
+		return widgetMapper.executeSQLTemplate(new SQLTemplateAdapter(sql, params));
 	}
 }

@@ -15,20 +15,23 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
-import com.qaprosoft.zafira.models.db.AbstractEntity;
-
 public class Widget extends AbstractEntity
 {
 	private static final long serialVersionUID = -750759195176951157L;
 	
 	private String title;
+	private String description;
+	private String paramsConfig;
+	private String legendConfig;
+	private WidgetTemplate widgetTemplate;
+	private boolean refreshable;
+
+	private String type;
 	private Integer size;
 	private Integer position;
 	private String location;
 	private String sql;
 	private String model;
-	private boolean refreshable;
-	private String type;
 
 	public String getTitle()
 	{
@@ -38,6 +41,66 @@ public class Widget extends AbstractEntity
 	public void setTitle(String title)
 	{
 		this.title = title;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getParamsConfig() {
+		return paramsConfig;
+	}
+
+	public void setParamsConfig(String paramsConfig) {
+		this.paramsConfig = paramsConfig;
+	}
+
+	public String getLegendConfig() {
+		return legendConfig;
+	}
+
+	public void setLegendConfig(String legendConfig) {
+		this.legendConfig = legendConfig;
+	}
+
+	public WidgetTemplate getWidgetTemplate() {
+		return widgetTemplate;
+	}
+
+	public void setWidgetTemplate(WidgetTemplate widgetTemplate) {
+		this.widgetTemplate = widgetTemplate;
+	}
+
+	public boolean isRefreshable() {
+		return refreshable;
+	}
+
+	public void setRefreshable(boolean refreshable) {
+		this.refreshable = refreshable;
+	}
+
+	public String getModel()
+	{
+		return model;
+	}
+
+	public void setModel(String model)
+	{
+		this.model = model;
+	}
+
+	public String getType()
+	{
+		return type;
+	}
+
+	public void setType(String type)
+	{
+		this.type = type;
 	}
 
 	public Integer getSize()
@@ -78,33 +141,5 @@ public class Widget extends AbstractEntity
 	public void setSql(String sql)
 	{
 		this.sql = sql;
-	}
-
-	public String getModel()
-	{
-		return model;
-	}
-
-	public boolean isRefreshable() {
-		return refreshable;
-	}
-
-	public void setRefreshable(boolean refreshable) {
-		this.refreshable = refreshable;
-	}
-
-	public void setModel(String model)
-	{
-		this.model = model;
-	}
-
-	public String getType()
-	{
-		return type;
-	}
-
-	public void setType(String type)
-	{
-		this.type = type;
 	}
 }

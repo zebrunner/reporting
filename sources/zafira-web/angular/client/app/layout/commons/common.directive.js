@@ -85,7 +85,8 @@
             template: require('./templates/radio-button.template.html'),
             scope: {
                 ngModel: '=ngModel',
-                value: '='
+                value: '=',
+                onChange: '&?'
             },
             link: function(scope, element, attrs, ngModel){
 
@@ -105,8 +106,9 @@
                 };
                 check();
 
-                scope.onChange = function () {
-
+                scope._onChange = function () {
+                    ngModel.$setViewValue(scope.ngModel);
+                    scope.onChange();
                 };
             }
         };

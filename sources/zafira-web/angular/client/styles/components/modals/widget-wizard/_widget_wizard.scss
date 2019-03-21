@@ -1,0 +1,222 @@
+$standart-padding:      24px;
+$inner-padding:         16px;
+$wizard-dark-gray:      #7f7f7f;
+$wizard-white:          #ffffff;
+
+.zf-md-dialog-container {
+    padding-top: 132px;
+}
+
+.widget-wizard {
+    > .md-dialog-content {
+        > *[ng-transclude] {
+            overflow-y: hidden !important;
+        }
+    }
+    &_container {
+        min-height: 576px !important;
+        min-width: 300px !important;
+        height: 576px;
+        overflow-y: auto !important;
+        padding: 34px 8px 34px 24px !important;
+
+        &_title {
+            padding-bottom: $standart-padding;
+
+            &_sub {
+                font-size: 14px;
+                letter-spacing: 0.14px;
+                color: $wizard-dark-gray;
+            }
+
+            &_common {
+                font-size: 20px;
+                letter-spacing: 0.2px;
+                color: black;
+            }
+        }
+
+        &_elements {
+            &_item {
+                width: 252px;
+                height: 164px;
+                margin: 0 $inner-padding $inner-padding 0;
+
+                &_title {
+                    margin-bottom: 12px;
+                }
+
+                &_description {
+                    font-size: 12px;
+                    font-weight: normal;
+                    letter-spacing: 0.1px;
+                    line-height: 1.33;
+                    color: $wizard-dark-gray;
+                }
+
+                &_icon {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    padding: 0 0 $inner-padding $inner-padding;
+
+                    md-icon {
+                        width: 34px;
+                        height: 34px;
+                        color: rgba(0, 0, 0, 0.2);
+                    }
+                }
+
+                label {
+                    &:before {
+                        background-color: $wizard-white !important;
+                        opacity: 1;
+                        border: none;
+                    }
+
+                    div[ng-transclude] {
+                        transform: none;
+                        line-height: 14px;
+                        font-weight: 500;
+                        padding: $inner-padding;
+                        height: 100%;
+                        top: 0;
+                        left: 0;
+                    }
+
+                    &:hover {
+                        &:before {
+                            opacity: 1;
+                        }
+                    }
+                }
+
+                $parent: &;
+
+                &.zf-checked {
+                    label {
+                        &:before {
+                            border: 2px solid $brand-light;
+                            opacity: 1;
+                        }
+                    }
+
+                    #{$parent}_description {
+                        color: black !important;
+                    }
+
+                    #{$parent}_icon {
+                        md-icon {
+                            color: $brand-light;
+                        }
+                    }
+                }
+            }
+
+            &_input {
+                margin-bottom: $inner-padding;
+                > * {
+                    padding-bottom: $inner-padding;
+                    vertical-align: middle;
+                }
+                .zf-label {
+                    text-transform: capitalize;
+                    line-height: 0;
+                    min-width: 151px;
+                    padding-right: 24px;
+                }
+            }
+
+            &_personal {
+                margin-bottom: 40px;
+                &_item {
+                    > * {
+                        padding-bottom: $inner-padding;
+                        vertical-align: middle;
+                    }
+                    .zf-label {
+                        line-height: 0;
+                        min-width: 151px;
+                        padding-right: 24px;
+                    }
+                }
+            }
+            &_additional {
+                .zf-input-container {
+                    > label {
+                        margin-bottom: 20px;
+                    }
+                    md-checkbox {
+                        margin-right: 64px;
+                        margin-bottom: $standart-padding;
+
+                        > *[ng-transclude] {
+                            font-size: 14px;
+                            font-weight: 500;
+                            margin-left: 32px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    &_container-helper {
+        overflow-y: hidden;
+        padding-left: 0 !important;
+        display: flex;
+        align-items: center;
+        min-width: 240px;
+        &_picture {
+            width: 100%;//228px;
+            min-height: 180px;
+
+            &_item {
+                height: 149px;
+                margin-bottom: 18px;
+                overflow: auto;
+                //padding: 20px;
+
+                *[data-echarts] {
+                    margin: auto !important;
+                    > div {
+                        margin: auto !important;
+                    }
+                }
+            }
+            &_caption {
+                font-size: 12px;
+                font-weight: 500;
+                line-height: normal;
+                letter-spacing: normal;
+                text-align: center;
+                color: rgba(0, 0, 0, 0.5);
+            }
+            &_empty-caption {
+                color: rgba(0, 0, 0, 0.15);
+                letter-spacing: 0.6px;
+                font-weight: 300;
+                font-size: 20px;
+                text-align: center;
+                line-height: 180px;
+                vertical-align: middle;
+            }
+        }
+        &_actions {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 0 $inner-padding $inner-padding $inner-padding;
+        }
+    }
+
+    button {
+        min-width: 88px;
+        border-radius: 4px;
+    }
+
+    @media(min-width: $screen-desktop) {
+        min-width: 864px;
+    }
+}

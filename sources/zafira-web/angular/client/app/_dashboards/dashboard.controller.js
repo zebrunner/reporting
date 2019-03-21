@@ -8,7 +8,7 @@ import dashboardEmailModalTemplate from './dashboard-email-modal/dashboard-email
 import dashboardEmailModalController from './dashboard-email-modal/dashboard-email-modal.controller';
 
 const dashboardController = function dashboardController($scope, $rootScope, $q, $timeout, $interval, $cookies, $location, $state,
-                                 $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, projectsService, UserService) {
+                                 $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, projectsService, UserService, $widget, $mapper) {
     'ngInject';
 
     const vm = {
@@ -16,6 +16,8 @@ const dashboardController = function dashboardController($scope, $rootScope, $q,
     };
 
     $scope.currentUserId = $location.search().userId;
+
+    $scope.ECHART_TYPES = ['echart', 'PIE', 'LINE', 'BAR', 'TABLE', 'OTHER'];
 
     $scope.pristineWidgets = [];
 
@@ -53,19 +55,43 @@ const dashboardController = function dashboardController($scope, $rootScope, $q,
             var currentWidget = dashboard.widgets[i];
             currentWidget.location = jsonSafeParse(currentWidget.location);
             if (!refresh || refresh && currentWidget.refreshable) {
-                loadWidget(dashboard.title, currentWidget, dashboard.attributes, refresh);
+                loadWidget(dashboard, currentWidget, dashboard.attributes, refresh);
             }
         }
         angular.copy(dashboard.widgets, $scope.pristineWidgets);
     }
 
-    function loadWidget (dashboardName, widget, attributes, refresh) {
-        var sqlAdapter = {'sql': widget.sql, 'attributes': attributes};
-        if(!refresh){
-            $scope.isLoading = true;
+    function loadWidget (dashboard, widget, attributes, refresh) {
+        var sqlAdapter, params;
+        let func;
+
+        if(! widget.widgetTemplate) {
+            sqlAdapter = {'sql': widget.sql, 'attributes': attributes};
+            if(!refresh){
+                $scope.isLoading = true;
+            }
+            params = setQueryParams(dashboard.title);
+            func = DashboardService.ExecuteWidgetSQL;
+        } else {
+            widget.builder = widget.builder || {};
+            if(! widget.builder.paramsConfigObject) {
+                widget.builder.paramsConfigObject = $widget.build(widget, dashboard, $scope.currentUserId);
+                widget.builder.legendConfigObject = JSON.parse(widget.legendConfig);
+                applyLegend(widget);
+            }
+
+            sqlAdapter = {
+                "templateId": widget.widgetTemplate.id,
+                "paramsConfig": $mapper.map(widget.builder.paramsConfigObject, function(value) {
+                    return value.value;
+                })
+            };
+
+            params = {'stackTraceRequired': false};
+            func = DashboardService.ExecuteWidgetTemplateSQL;
         }
-        var params = setQueryParams(dashboardName);
-        DashboardService.ExecuteWidgetSQL(params, sqlAdapter).then(function (rs) {
+
+        func(params, sqlAdapter).then(function (rs) {
             if (rs.success) {
                 var data = rs.data;
                 for (var j = 0; j < data.length; j++) {
@@ -74,7 +100,7 @@ const dashboardController = function dashboardController($scope, $rootScope, $q,
                     }
                 }
                 if(!refresh){
-                    widget.model = jsonSafeParse(widget.model);
+                    widget.model = widget.widgetTemplate ? jsonSafeParse(widget.widgetTemplate.chartConfig) : jsonSafeParse(widget.model);
                 }
                 widget.data = {};
                 widget.data.dataset = data;
@@ -90,6 +116,13 @@ const dashboardController = function dashboardController($scope, $rootScope, $q,
             }
         });
     }
+
+    function applyLegend(widget) {
+        widget.chartActions = widget.chartActions || [];
+        angular.forEach(widget.builder.legendConfigObject, function (value, legendName) {
+            widget.chartActions.push({type: value ? 'legendSelect' : 'legendUnSelect', name: legendName});
+        });
+    };
 
     function getNextEmptyGridArea(defaultLocation) {
         var gridstack = angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack');
@@ -389,6 +422,51 @@ const dashboardController = function dashboardController($scope, $rootScope, $q,
                         break;
                 }
                 delete rs.action;
+            }
+        }, function () {
+        });
+    };
+
+    $scope.showNeededWidgetModal = function(event, widget, isNew, dashboard) {
+        if($scope.ECHART_TYPES.indexOf(widget.type) !== -1 && widget.widgetTemplate) {
+            $scope.showWidgetWizardDialog(event, widget, dashboard);
+        } else {
+            $scope.showWidgetDialog(event, widget, isNew, dashboard);
+        }
+    };
+
+    $scope.showWidgetWizardDialog = function (event, widget, dashboard) {
+        $mdDialog.show({
+            controller: 'WidgetWizardController',
+            template: require('../components/modals/widget-wizard/widget_wizard.html'),
+            parent: angular.element(document.body),
+            clickOutsideToClose:false,
+            fullscreen: true,
+            autoWrap: false,
+            locals: {
+                widget: widget,
+                dashboard: dashboard,
+                currentUserId: $scope.currentUserId
+            }
+        })
+        .then(function (rs) {
+            switch(rs.action) {
+                case 'CREATE':
+                    $scope.widgets.push(rs.widget);
+                    updateWidgetsToAdd();
+                    break;
+                case 'UPDATE':
+                    var index = $scope.dashboard.widgets.indexOfField('id', rs.widget.id);
+                    $scope.widgets.splice($scope.widgets.indexOfField('id', rs.widget.id), 1, rs.widget);
+                    $scope.dashboard.widgets.splice(index, 1, rs.widget);
+                    loadWidget(dashboard, $scope.dashboard.widgets[index], dashboard.attributes, false);
+                    updateWidgetsToAdd();
+                    break;
+                case 'DELETE':
+                    delete $scope.widgets[$scope.widgets.indexOfField('id', rs.widget.id)];
+                    break;
+                default:
+                    break;
             }
         }, function () {
         });
