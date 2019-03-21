@@ -8,11 +8,11 @@
                     data-ng-click="$ctrl.toggleMobileSearch();">
                 <md-icon class="material-icons">close</md-icon>
             </button>
+            <button ng-if="$ctrl.matchMode(['SEARCH']);" id="applySearch" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" ng-click="$ctrl.onApply();">
+                <span>SEARCH</span>
+            </button>
             <button ng-if="$ctrl.matchMode(['APPLY', 'SEARCH'])" id="reset" class="filter-reset-btn md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="$ctrl.onReset();">
                 <span>RESET</span>
-            </button>
-            <button ng-if="$ctrl.matchMode(['SEARCH']);" id="applySearch" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" ng-click="$ctrl.onApply();">
-                <span>APPLY</span>
             </button>
             <button ng-if="$ctrl.matchMode(['CREATE'])" id="createFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" ng-click="$ctrl.createFilter();" data-ng-disabled="filter_form.$invalid">
                 <span>CREATE</span>

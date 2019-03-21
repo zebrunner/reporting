@@ -64,6 +64,7 @@ public class TestRun extends AbstractEntity
 	private Integer elapsed;
 	private Integer eta;
 	private String comments;
+	private String slackChannels;
 	private TestConfig config;
 
 	private Integer passed;
@@ -424,6 +425,16 @@ public class TestRun extends AbstractEntity
 	public void setComments(String comments)
 	{
 		this.comments = comments;
+	}
+
+	public String getSlackChannels()
+	{
+		return slackChannels;
+	}
+
+	public void setSlackChannels(String slackChannels)
+	{
+		this.slackChannels = slackChannels;
 	}
 
 	public String getAppVersion()

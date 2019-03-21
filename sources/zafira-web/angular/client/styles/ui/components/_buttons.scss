@@ -62,7 +62,30 @@
 }
 
 
-
+.fixed-search-column {
+    .header-actions {
+        button {
+            border-radius: 4px;
+            box-shadow: none;
+            margin-right: 0;
+            margin-left: 16px;
+            font-size: 14px;
+            z-index: 4;
+            min-width: 80px;
+        }
+        button#clear {
+            background-color: $fog-gray;
+            color: $dark-coal-new;
+            &:hover {
+                background-color: rgba($dark-coal-new, .3);
+            }
+        }
+        button#search {
+            background-color: $medium-teal-bright-new;
+            color: #ffffff;
+        } 
+    }
+}
 
 
 // add to default button

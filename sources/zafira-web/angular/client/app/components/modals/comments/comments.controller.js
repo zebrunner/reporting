@@ -8,10 +8,9 @@
         'SlackService',
         'testRun',
         'isSlackAvailable',
-        'slackChannels',
         CommentsController]);
 
-    function CommentsController($scope, $mdDialog, TestRunService, SlackService, testRun, isSlackAvailable, slackChannels) {
+    function CommentsController($scope, $mdDialog, TestRunService, SlackService, testRun, isSlackAvailable) {
         $scope.title = testRun.testSuite.name;
         $scope.testRun = angular.copy(testRun);
 
@@ -27,7 +26,7 @@
                         $scope.testRun.reviewed = true;
                         $scope.hide($scope.testRun);
                         alertify.success('Test run #' + $scope.testRun.id + ' marked as reviewed');
-                        if (isSlackAvailable && slackChannels.indexOf(testRun.job.name) !== -1) {
+                        if (isSlackAvailable && $scope.testRun.slackChannels) {
                             if (confirm("Would you like to post latest test run status to slack?")) {
                                 SlackService.triggerReviewNotif($scope.testRun.id);
                             }

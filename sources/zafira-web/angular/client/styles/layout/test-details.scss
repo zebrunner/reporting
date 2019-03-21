@@ -300,6 +300,9 @@
                 }
                 .assignment {
                     transform: scale(-1, 1);
+                &.md-focused {
+                    border-radius: 0;
+                    margin: 0;
                 }
                 md-icon {
                     margin-right: 16px;
