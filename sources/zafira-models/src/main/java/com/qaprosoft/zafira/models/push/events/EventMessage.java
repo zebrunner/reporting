@@ -17,13 +17,13 @@ package com.qaprosoft.zafira.models.push.events;
 
 import java.io.Serializable;
 
-public abstract class EventMessage implements Serializable {
+public class EventMessage implements Serializable {
 
     private static final long serialVersionUID = 2241656564064701459L;
 
     private String tenancy;
 
-    protected EventMessage(String tenancy) {
+    public EventMessage(String tenancy) {
         this.tenancy = tenancy;
     }
 

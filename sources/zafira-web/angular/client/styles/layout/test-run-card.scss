@@ -440,11 +440,8 @@
 
     /*SINGLE TEST*/
     &._single {
-        position: sticky;
-        top: 48px;
         background-color: white;
         z-index: 2;
-        box-shadow: 0 4px 8px 0 rgba(4, 0, 0, 0.2);
         @media (min-width: $breakpoint-mobile + 1) {
             padding: 2px 0;
         }
@@ -685,6 +682,7 @@
     &._mobile._single & {
         &__wrapper {
             padding: 10px 12px 5px;
+            margin-bottom: 0;
         }
         &__row {
             .expand-button {

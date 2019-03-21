@@ -1,0 +1,204 @@
+.issue-modal {
+    position: fixed;
+    @media (min-width: 960px) {
+        min-width: 820px !important;
+    }
+    &__header {
+        min-height: 56px;
+        height: 56px;
+        max-height: 56px;
+    }
+    &__wrapper {
+        display: flex;
+        padding: 30px 20px;
+        @media (max-width: 540px) {
+            display: block;
+        }
+    }
+    &__left {
+        min-width: 220px;
+        padding-right: 20px;
+        flex-grow: 1;
+        @media (max-width: 540px) {
+            padding-bottom: 10px;
+        }
+        .info-row {
+            display: flex;
+            margin-bottom: 18px;
+            align-items: center;
+            &__name {
+                min-width: 50px;
+                color: rgba(0, 0, 0, 0.5);
+                margin-right: 14px;
+                font-size: 12px;
+            }
+            &__value {
+                font-size: 12px;
+                color: rgba(0, 0, 0, 0.8);
+                md-checkbox.md-checked {
+                    .md-icon {
+                        background-color: black;
+                        opacity: .8;
+                        &:after {
+                            left: 5px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    &__right {
+        @media (max-width: 820px) {
+            width: 100%;
+        }
+        md-input-container {
+            margin: 17px 0;
+            .md-input.ng-invalid.ng-dirty {
+                border-width: 1px;
+            }
+            &:not(.md-input-invalid.md-input-focused), &:not(.md-input-invalid) {
+                label, label:after {
+                    color: black;
+                }
+            }
+            &._with-badge {
+                display: flex;
+                margin-bottom: 0;
+                .jira-status {
+                    margin-top: 10px;
+                    max-height: 20px;
+                    margin-left: 20px;
+                    border-radius: 2px;
+                    &.label-info {
+                        background-color: #0049b0;
+                    }
+                    &.label-warn {
+                        background-color: #eb4454;
+                    }
+                }
+                & .md-errors-spacer {
+                    min-height: 14px;
+                }
+            }
+            &.summary-container {
+                margin-bottom: 0;
+            }
+            label {
+                transform: translate3d(0,6px,0) !important;
+                font-size: 12px;
+                line-height: 2;
+                font-weight: 500;
+            }
+            input.jira {
+                min-width: 180px;
+                min-height: 40px;
+                border-width: 1px;
+                border-radius: 4px;
+            }
+            textarea.summary {
+                border-width: 1px;
+                border-radius: 4px;
+                min-width: 560px;
+                max-width: 560px;
+                min-height: 80px;
+                @media (max-width: 820px) {
+                    min-width: 100%;
+                }
+            }
+            & .md-errors-spacer {
+                min-height: 18px;
+            }
+        }
+        md-dialog-actions {
+            min-height: 32px;
+            padding: 0;
+            .form-button {
+                box-shadow: none !important;
+                border-radius: 4px;
+                min-width: 80px;
+                font-size: 11px;
+                min-height: 32px;
+                margin: 0 0 0 13px;
+                &._light {
+                    background-color: white;
+                }
+            }
+        }
+    }
+    &__tickets {
+        border-top: 1px solid rgba(0, 0, 0, 0.15);
+        min-height: 258px;
+        max-height: 258px;
+        overflow: auto;
+        .no-tickets-lable {
+            padding-top: 100px;
+            margin: 0 auto;
+            width: fit-content;
+            color: rgba(0, 0, 0, 0.5);
+            font-size: 24px;
+            font-weight: 300;
+        }
+        .ticket-list {
+            &-button {
+                padding: 0;
+                text-transform: none;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+                &._active {
+                    .ticket-list-row {
+                        &__jira {
+                            color: white;
+                            .settings-line {
+                                padding: 4px 6px 6px;
+                                background-color: #eb4454;
+                                border-radius: 10px;
+                                line-height: 1;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                white-space: nowrap;
+                                max-width: 80px;
+                            }
+                        }
+                        &__text {
+                            color: rgba(0, 0, 0, 1);
+                        }
+                        &__date {
+                            color: rgba(0, 0, 0, 1);
+                        }
+                    }
+                }
+            }
+            &-row {
+                margin: 0;
+                padding: 15px 40px;
+                &__jira {
+                    font-size: 13px;
+                    font-weight: 500;
+                    padding: 0;
+                    line-height: 1;
+                    min-width: 80px;
+                    max-width: 80px;
+                    justify-content: center;
+                    .settings-line {
+                        line-height: 20px;
+                        max-height: 20px;
+                    }
+                }
+                &__text {
+                    color: rgba(0, 0, 0, 0.8);
+                    font-size: 12px;
+                    font-weight: 500;
+                    flex-grow: 1;
+                }
+                &__date {
+                    font-family: Roboto;
+                    font-size: 12px;
+                    font-weight: normal;
+                    color: rgba(0, 0, 0, 0.8);
+                    max-width: 145px;
+                    min-width: 145px;
+                    padding: 0;
+                }
+            }
+        }
+    }
+}

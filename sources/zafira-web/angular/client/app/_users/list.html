@@ -6,8 +6,8 @@
         </zf-sub-header-title>
     </zf-sub-header>
     <div class="page user-view-page">
-        <div class="row ui-section">
-            <div layout="row" layout-xs="column" class="col-lg-12 p-users__header-actions">
+        <div class="ui-section">
+            <div layout="row" layout-xs="column" class="col-lg-12 no-padding fixed-search-column users__header-actions">
                 <div class="control-buttons" ng-include="activeTab.controls"></div>
             </div>
             <md-fab-speed-dial ng-if="activeTab.fabControlsCount > 1" id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right" has-any-permission="['MODIFY_USERS', 'MODIFY_USER_GROUPS']">
@@ -21,7 +21,7 @@
                 </md-fab-actions>
             </md-fab-speed-dial>
             <div class="lonely-fab" ng-include="activeTab.fabControls" ng-if="activeTab.fabControlsCount == 1"></div>
-            <div ng-cloak class="col-md-12">
+            <div ng-cloak class="col-md-12 no-padding">
                 <article class="article">
                     <md-card class="no-margin-h">
                         <md-tabs md-no-ink md-stretch-tabs="never" md-dynamic-height md-border-bottom md-selected="selectedTabIndex">

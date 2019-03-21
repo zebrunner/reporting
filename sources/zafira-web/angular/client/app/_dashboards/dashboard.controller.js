@@ -3,9 +3,9 @@
 
     angular
         .module('app.dashboard')
-        .controller('DashboardController', ['$scope', '$rootScope', '$screenshot', '$q', '$timeout', '$interval', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', '$mdToast', '$widget', '$mapper', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
+        .controller('DashboardController', ['$scope', '$rootScope', '$screenshot', '$q', '$timeout', '$interval', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', '$mdToast', '$widget', '$mapper', 'UtilService', 'DashboardService', 'projectsService', DashboardController])
 
-    function DashboardController($scope, $rootScope, $screenshot, $q, $timeout, $interval, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, $mdToast, $widget, $mapper, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
+    function DashboardController($scope, $rootScope, $screenshot, $q, $timeout, $interval, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, $mdToast, $widget, $mapper, UtilService, DashboardService, projectsService) {
 
         $scope.currentUserId = $location.search().userId;
 
@@ -247,17 +247,28 @@
             });
         };
 
-        var setQueryParams = function(dashboardName){
-            var params = ProjectProvider.getProjectsQueryParam();
-            for(var i = 0; i<$scope.dashboard.attributes.length; i++){
-                if ($scope.dashboard.attributes[i].key != null && $scope.dashboard.attributes[i].key == 'project'){
-                    params = "?projects=" + $scope.dashboard.attributes[i].value;
+        var setQueryParams = function(dashboardName) {
+            const selectedProjects = projectsService.getSelectedProjects();
+            let params = '';
+
+            if (selectedProjects && selectedProjects.length) {
+                params = `?projects=${selectedProjects.map(project => project.name).join(',')}`;
+            }
+
+            if ($scope.dashboard.attributes && $scope.dashboard.attributes.length) {
+                const projectAttributeData = $scope.dashboard.attributes.find(attribute => attribute.key === 'project');
+
+                if (projectAttributeData) {
+                    params = `?projects=${projectAttributeData.value}`;
                 }
             }
-            params = params != "" ? params + "&dashboardName=" + dashboardName : params + "?dashboardName=" + dashboardName;
+
+            params = params ? params + '&dashboardName=' + dashboardName : params + '?dashboardName=' + dashboardName;
+
             if ($scope.currentUserId) {
-                params = params + "&currentUserId=" + $scope.currentUserId;
+                params = params + '&currentUserId=' + $scope.currentUserId;
             }
+
             return params;
         };
 
@@ -817,7 +828,7 @@
         })();
     }
 
-    function WidgetController($scope, $rootScope, $mdDialog, DashboardService, ProjectProvider, widget, isNew, dashboard, currentUserId) {
+    function WidgetController($scope, $rootScope, $mdDialog, DashboardService, widget, isNew, dashboard, currentUserId, projectsService) {
         $scope.widget = {};
         $scope.dashboard = {};
         $scope.isNew = angular.copy(isNew);
@@ -929,18 +940,27 @@
         };
 
         var setQueryParams = function(table){
-            var params = ProjectProvider.getProjectsQueryParam();
-            for(var i = 0; i < $scope.dashboard.attributes.length; i++){
-                if ($scope.dashboard.attributes[i].key !== null && $scope.dashboard.attributes[i].key === 'project'){
-                    params = "?projects=" + $scope.dashboard.attributes[i].value;
+            const selectedProjects = projectsService.getSelectedProjects();
+            let params = '';
+
+            if (selectedProjects && selectedProjects.length) {
+                params = `?projects=${selectedProjects.map(project => project.name).join(',')}`;
+            }
+
+            if ($scope.dashboard.attributes && $scope.dashboard.attributes.length) {
+                const projectAttributeData = $scope.dashboard.attributes.find(attribute => attribute.key === 'project');
+
+                if (projectAttributeData) {
+                    params = `?projects=${projectAttributeData.value}`;
                 }
             }
-            params = params !== "" ? params + "&dashboardName=" + $scope.dashboard.title : params + "?dashboardName=" + $scope.dashboard.title;
+
+            params = params ? params + '&dashboardName=' + $scope.dashboard.title : params + '?dashboardName=' + $scope.dashboard.title;
             if (currentUserId) {
-                params = params + "&currentUserId=" + currentUserId;
+                params = params + '&currentUserId=' + currentUserId;
             }
             if (table) {
-                params = params + "&stackTraceRequired=" + true;
+                params = params + '&stackTraceRequired=' + true;
             }
             return params;
         };
@@ -991,7 +1011,7 @@
         })();
     }
 
-    function EmailController($scope, $rootScope, $q, $screenshot, $mdDialog, $mdConstant, DashboardService, UserService, ProjectProvider, widgetId) {
+    function EmailController($scope, $rootScope, $q, $screenshot, $mdDialog, $mdConstant, DashboardService, UserService, widgetId) {
 
         var TYPE = widgetId ? 'WIDGET' : 'DASHBOARD';
 

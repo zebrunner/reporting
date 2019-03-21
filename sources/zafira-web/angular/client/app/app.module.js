@@ -167,10 +167,15 @@
             angular.forEach(objectArray, function (blob, blobName) {
                 data.file(blobName.getValidFilename(), blob, {base64: true});
             });
-            zip.generateAsync({type:"blob"})
-                .then(function(content) {
-                    content.download(name + '.zip');
-                });
+            zip.generateAsync({
+                type:'blob',
+                compression: 'DEFLATE',
+                compressionOptions: {
+                    level: 9,
+                },
+            }).then(function(content) {
+                content.download(name + '.zip');
+            });
         };
         String.prototype.getValidFilename = function () {
             return this.replace(/[/\\?%*:|"<>]/g, '-');
