@@ -52,9 +52,19 @@
                     </goals>
                     <phase>generate-resources</phase>
                     <configuration>
-                        <nodeVersion>v7.1.0</nodeVersion>
-                        <npmVersion>3.10.9</npmVersion>
+                        <nodeVersion>v8.14.0</nodeVersion>
+                        <npmVersion>6.4.1</npmVersion>
                     </configuration>
+                </execution>
+                <execution>
+                    <id>npm cache clean</id>
+                    <goals>
+                        <goal>npm</goal>
+                    </goals>
+                    <configuration>
+                        <arguments>cache clean --force</arguments>
+                    </configuration>
+                    <phase>generate-resources</phase>
                 </execution>
                 <execution>
                     <id>npm install</id>

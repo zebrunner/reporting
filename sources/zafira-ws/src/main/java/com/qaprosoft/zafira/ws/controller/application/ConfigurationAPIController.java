@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -128,7 +129,7 @@ public class ConfigurationAPIController extends AbstractController {
     {
         Map<String, Object> config = new HashMap<>();
         TestRun tr = testRunService.getTestRunByIdFull(id);
-        if (slackService.getWebhook() != null && slackService.getChannelMapping(tr) != null && slackService.isConnected())
+        if (slackService.getWebhook() != null && StringUtils.isNotEmpty(tr.getSlackChannels()) && slackService.isConnected())
         {
             config.put("available", true);
         }

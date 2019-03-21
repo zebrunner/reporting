@@ -64,8 +64,7 @@
 
         $scope.goToTestRuns = function () {
             $state.go('tests/run', {
-                testRunId: vm.testRun.id,
-                testRun: vm.testRun
+                testRunId: vm.testRun.id
             });
         };
 
@@ -769,29 +768,27 @@
             $scope.testRun = angular.copy(vm.testRun);
             initTestsWebSocket($scope.testRun);
 
-            if(!TestService.getTests) {
-                const params = {
-                    'page': 1,
-                    'pageSize': 100000,
-                    'testRunId': testRun.id
-                };
-    
-                TestService.searchTests(params)
-                    .then(function (rs) {
-                        if (rs.success) {
-                            const data = rs.data.results || [];
-                            vm.testRun.tests = {};
-                            TestService.setTests = data;
-                            setTestParams();
-                        } else {
-                            console.error(rs.message);
-                        }
-                    });
-            }
-            else {
-                setTestParams();
-            }     
-            bindEvents();     
+            const params = {
+                'page': 1,
+                'pageSize': 100000,
+                'testRunId': testRun.id
+            };
+
+            TestService.searchTests(params)
+                .then(function (rs) {
+                    if (rs.success) {
+                        const data = rs.data.results || [];
+                        vm.testRun.tests = {};
+                        TestService.setTests = data;
+                        setTestParams();
+                    } else {
+                        console.error(rs.message);
+                    }
+                })
+                .finally(() => {
+                    bindEvents();
+                });
+
         }
 
         function setTestParams() {

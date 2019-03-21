@@ -2,7 +2,10 @@
     <zf-sub-header>
         <zf-sub-header-title>
             <h2 id="testrun-info-title" class="testrun-info__title">
-                <i button ng-click="goToTestRuns();" class="material-icons back_button" md-ink-ripple>keyboard_backspace</i>
+                <md-button name="testInfoBackBtn" aria-label="Go back"
+                    ng-click="goToTestRuns();" class="material-icons back_button">
+                    <md-icon class="material-icons">keyboard_backspace</md-icon>
+                </md-button>
                 <span class="testrun-info__title-name">{{ test.name }}</span>
                 <span class="recording-icon" ng-if="MODE.name == 'live'">
                     <div class="red-point" ng-class="{'flash-point': true}"></div>

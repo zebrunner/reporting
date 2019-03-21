@@ -63,7 +63,6 @@
 
         function init() {
             TENANT = $rootScope.globals.auth.tenant;
-            loadSlackMappings();
             loadSlackAvailability();
             readStoredParams();
             initWebsocket();
@@ -148,10 +147,6 @@
 
                     return $q.resolve([]);
                 });
-        }
-
-        function loadSlackMappings() {
-            testsRunsService.fetchSlackChannels();
         }
 
         function loadSlackAvailability() {

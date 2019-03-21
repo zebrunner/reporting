@@ -49,6 +49,7 @@
             changeTestStatus: changeTestStatus,
             showDetailsDialog: showDetailsDialog,
             goToTestDetails: goToTestDetails,
+            updateTest: updateTest,
             get empty() {
                 return !Object.keys(vm.testRun.tests || {}).length ;
             },
@@ -63,15 +64,46 @@
             TENANT = $rootScope.globals.auth.tenant;
             initTestGroups();
             initWebsocket();
-            if (vm.testRun.status === 'IN_PROGRESS' || !TestService.getTests) {
-                initTests();
-            }
-            else {
-                getTests();
-            }
+            initTests();
             fillTestRunMetadata();
             bindEvents();
         }
+
+         function updateTest(test, isPassed) { 
+            var newStatus = isPassed ? 'PASSED' : 'FAILED';
+            if (test.status !== newStatus) {
+                test.status = newStatus;
+            }
+            else {
+                return;
+            }
+            var message;
+            TestService.updateTest(test).then(function(rs) {
+                if (rs.success) {
+                    message = 'Test was marked as ' + test.status;
+                    addTestEvent(message, test);
+                    alertify.success(message);
+                }
+                else {
+                    console.error(rs.message);
+                }
+            });
+        };
+
+        function  addTestEvent(message, test) {
+            var testEvent = {};
+            testEvent.description = message;
+            testEvent.jiraId = Math.floor(Math.random() * 90000) + 10000;
+            testEvent.testCaseId = test.testCaseId;
+            testEvent.type = 'EVENT';
+            TestService.createTestWorkItem(test.id, testEvent).
+                then(function(rs) {
+                    if (rs.success) {
+                    } else {
+                        alertify.error('Failed to add event test "' + test.id);
+                    }
+                })
+        };
 
         function fillTestRunMetadata() {
             addBrowserVersion();
@@ -128,20 +160,6 @@
             }
         }
 
-        function getTests() {
-            vm.testGroups.mode = 'common';
-            vm.testRun.tests = {};
-            TestService.getTests.forEach(function(test) {
-                addTest(test);
-            });
-            vm.testGroups.group.common.data.all = vm.testRun.tests;
-            showTestsByTags(vm.testRun.tests);
-            showTestsByStatuses(vm.testRun.tests);
-            vm.testRun.tags = collectTags(vm.testRun.tests);
-            vm.testsLoading = false;
-            vm.subscriptions[vm.testRun.id] = subscribeTestsTopic(vm.testRun.id);
-        }
-
         function initTests() {
             vm.testGroups.mode = 'common';
 
@@ -152,7 +170,9 @@
                     showTestsByStatuses(vm.testRun.tests);
                     vm.testRun.tags = collectTags(vm.testRun.tests);
                 })
-                .finally(() => {vm.testsLoading = false});
+                .finally(() => {
+                    vm.testsLoading = false;
+                });
         }
 
         function loadTests(testRunId) {
@@ -185,7 +205,6 @@
         
         function goToTestDetails(testId) {
             $state.go('tests/runs/info', {
-                testRun: vm.testRun,
                 testRunId: vm.testRun.id,
                 testId: testId
             });
@@ -429,10 +448,11 @@
             const isNew = setWorkItemIsNewStatus(test.workItems);
 
             modalsService.openModal({
-                controller: 'TestDetailsModalController',
-                templateUrl: 'app/components/modals/test-details/test-details.html',
+                controller: 'IssuesModalController',
+                templateUrl: 'app/components/modals/issues/issues.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
+                controllerAs: '$ctrl',
                 locals: {
                     test: test,
                     isNewIssue: isNew.issue,

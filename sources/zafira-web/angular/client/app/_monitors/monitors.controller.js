@@ -12,6 +12,9 @@
         var DEFAULT_SC = {page : 1, pageSize : 20};
         $scope.sc = angular.copy(DEFAULT_SC);
 
+        $scope.searchActive = false;
+        $scope.isFiltered = false;
+
         $scope.TYPES = {
             HTTP : 'HTTP',
             PING : 'PING'
@@ -29,6 +32,15 @@
             $scope.blockView = !$scope.blockView;
         };
 
+        $scope.onSearchChange = function (fields) {
+            $scope.searchActive = false;
+
+            fields.forEach( function (field) {
+                if (field.$modelValue) {
+                    $scope.searchActive = true;
+                }
+            })
+        }
         $scope.search = function (page) {
 
             if(page)
@@ -47,11 +59,14 @@
                     alertify.error(rs.message);
                 }
             });
+            $scope.isFiltered = true;
         };
 
         $scope.reset = function () {
             $scope.sc = angular.copy(DEFAULT_SC);
             $scope.search();
+            $scope.searchActive = false;
+            $scope.isFiltered = false;
         };
 
         $scope.getAllMonitors = function () {
@@ -283,6 +298,7 @@
 
         (function init(){
             $scope.search(1);
+            $scope.isFiltered = false;
         })();
     }
 })();

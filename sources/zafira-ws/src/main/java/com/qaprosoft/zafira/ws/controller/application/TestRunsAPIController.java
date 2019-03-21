@@ -179,7 +179,6 @@ public class TestRunsAPIController extends AbstractController {
 		websocketTemplate.convertAndSend(getStatisticsWebsocketPath(),
 				new TestRunStatisticPush(statisticsService.getTestRunStatistic(id)));
 		websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunFull));
-		slackService.sendAutoStatus(testRunFull);
 		return mapper.map(testRun, TestRunType.class);
 	}
 
@@ -202,7 +201,7 @@ public class TestRunsAPIController extends AbstractController {
 			testRunService.abortTestRun(testRun, URLDecoder.decode(abortCause.getComment(), "UTF-8"));
 			for (Test test : testService.getTestsByTestRunId(testRun.getId())) {
 				if (Status.ABORTED.equals(test.getStatus())) {
-					websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestPush(test));
+					websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
 				}
 			}
 			websocketTemplate.convertAndSend(getTestRunsWebsocketPath(),
