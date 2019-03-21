@@ -21,7 +21,7 @@ public abstract class AbstractPageService
 	{
 		try
 		{
-			Thread.sleep(new Double(seconds).intValue());
+			Thread.sleep(new Double(seconds * 1000).intValue());
 		} catch (InterruptedException e)
 		{
 			LOGGER.error(e.getMessage());

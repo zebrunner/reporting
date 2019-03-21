@@ -323,7 +323,7 @@ public class TestRunPageTest extends AbstractTest
 		TestRunAPIService testRunAPIService = new TestRunAPIService();
 		TestRunTypeBuilder testRunTypeBuilder = new TestRunTypeBuilder();
 		TestRunViewType testRunViewType = testRunAPIService.createTestRun(testRunTypeBuilder, 2, 0, 0, 0, 0, 0);
-		testRunPage = (TestRunPage) testRunPage.reload();
+		//testRunPage = (TestRunPage) testRunPage.reload();
 		testRunPageService.clickMarkAsReviewedButton(0).clickMarkAsReviewedButton();
 		generateTestRunsIfNeed(0, 2);
 		TestRunSearchCriteria sc = new TestRunSearchCriteria() {
