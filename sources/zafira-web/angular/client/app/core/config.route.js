@@ -155,7 +155,7 @@
                     }
                 })
                 .state('signup', {
-                    url: '/signup',
+                    url: '/signup?token',
                     component: 'signupComponent',
                     data: {
                         onlyGuests: true,
@@ -204,7 +204,7 @@
                     }
                 })
                 .state('resetPassword', {
-                    url: '/password/reset',
+                    url: '/password/reset?token',
                     component: 'resetPasswordComponent',
                     data: {
                         onlyGuests: true,
