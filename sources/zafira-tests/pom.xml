@@ -25,14 +25,6 @@
                     <groupId>commons-io</groupId>
                     <artifactId>commons-io</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>com.google.http-client</groupId>
-                    <artifactId>google-http-client</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.api-client</groupId>
-                    <artifactId>google-api-client</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -46,6 +38,12 @@
         <dependency>
             <groupId>com.qaprosoft</groupId>
             <artifactId>zafira-services</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>in.ashwanthkumar</groupId>
+                    <artifactId>slack-java-webhook</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.qaprosoft</groupId>
