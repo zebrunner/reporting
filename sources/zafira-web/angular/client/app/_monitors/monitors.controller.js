@@ -7,6 +7,9 @@ const monitorsController = function monitorsController($scope, $q, $rootScope, $
     var DEFAULT_SC = {page : 1, pageSize : 20};
     $scope.sc = angular.copy(DEFAULT_SC);
 
+    $scope.searchActive = false;
+    $scope.isFiltered = false;
+
     $scope.TYPES = {
         HTTP : 'HTTP',
         PING : 'PING'
@@ -22,6 +25,16 @@ const monitorsController = function monitorsController($scope, $q, $rootScope, $
 
     $scope.switchViewType = function () {
         $scope.blockView = !$scope.blockView;
+    };
+
+    $scope.onSearchChange = function (fields) {
+        $scope.searchActive = false;
+
+        fields.forEach( function (field) {
+            if (field.$modelValue) {
+                $scope.searchActive = true;
+            }
+        })
     };
 
     $scope.search = function (page) {
@@ -42,11 +55,14 @@ const monitorsController = function monitorsController($scope, $q, $rootScope, $
                 alertify.error(rs.message);
             }
         });
+        $scope.isFiltered = true;
     };
 
     $scope.reset = function () {
         $scope.sc = angular.copy(DEFAULT_SC);
         $scope.search();
+        $scope.searchActive = false;
+        $scope.isFiltered = false;
     };
 
     $scope.getAllMonitors = function () {
@@ -279,6 +295,7 @@ const monitorsController = function monitorsController($scope, $q, $rootScope, $
 
     (function init(){
         $scope.search(1);
+        $scope.isFiltered = false;
     })();
 };
 

@@ -1,4 +1,4 @@
-const widgetDialogController = function widgetDialogController($scope, $rootScope, $mdDialog, DashboardService, ProjectProvider, widget, isNew, dashboard, currentUserId) {
+const widgetDialogController = function widgetDialogController($scope, $rootScope, $mdDialog, DashboardService, widget, isNew, dashboard, currentUserId, projectsService) {
     'ngInject';
 
     $scope.widget = {};
@@ -112,18 +112,27 @@ const widgetDialogController = function widgetDialogController($scope, $rootScop
     };
 
     var setQueryParams = function(table){
-        var params = ProjectProvider.getProjectsQueryParam();
-        for(var i = 0; i < $scope.dashboard.attributes.length; i++){
-            if ($scope.dashboard.attributes[i].key !== null && $scope.dashboard.attributes[i].key === 'project'){
-                params = "?projects=" + $scope.dashboard.attributes[i].value;
+        const selectedProjects = projectsService.getSelectedProjects();
+        let params = '';
+
+        if (selectedProjects && selectedProjects.length) {
+            params = `?projects=${selectedProjects.map(project => project.name).join(',')}`;
+        }
+
+        if ($scope.dashboard.attributes && $scope.dashboard.attributes.length) {
+            const projectAttributeData = $scope.dashboard.attributes.find(attribute => attribute.key === 'project');
+
+            if (projectAttributeData) {
+                params = `?projects=${projectAttributeData.value}`;
             }
         }
-        params = params !== "" ? params + "&dashboardName=" + $scope.dashboard.title : params + "?dashboardName=" + $scope.dashboard.title;
+
+        params = params ? params + '&dashboardName=' + $scope.dashboard.title : params + '?dashboardName=' + $scope.dashboard.title;
         if (currentUserId) {
-            params = params + "&currentUserId=" + currentUserId;
+            params = params + '&currentUserId=' + currentUserId;
         }
         if (table) {
-            params = params + "&stackTraceRequired=" + true;
+            params = params + '&stackTraceRequired=' + true;
         }
         return params;
     };

@@ -329,10 +329,11 @@
                         classes: 'p-tests-runs'
                     },
                     resolve: {
-                        resolvedTestRuns: function($state, testsRunsService, $q) {
+                        resolvedTestRuns: function($state, testsRunsService, $q, projectsService) {
                             'ngInject';
 
                             const prevState = $state.current.name;
+                            const projects = projectsService.getSelectedProjects();
 
                             testsRunsService.resetFilteringState();
                             // read saved search/filtering data only if we reload current page or returning from internal page
@@ -341,6 +342,8 @@
                             } else {
                                 testsRunsService.deleteStoredParams();
                             }
+
+                            testsRunsService.setSearchParam('projects', projects);
 
                             return testsRunsService.fetchTestRuns().catch(function(err) {
                                 err && err.message && alertify.error(err.message);
@@ -362,7 +365,7 @@
                             const id = $stateParams.activeTestRunId ? $stateParams.activeTestRunId : undefined;
 
                             return $q.resolve(id);
-                        }
+                        },
                     },
                     lazyLoad: ($transition$) => {
                         const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');

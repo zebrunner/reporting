@@ -52,20 +52,6 @@
                                         </md-input-container>
                                     </div>
                                 </div>
-                                <div has-any-permission="['MODIFY_INTEGRATIONS']" data-ng-if="tool.isEnabled && tool.name == 'SLACK'" class="row col-lg-12" style="position: relative">
-                                    <div class="col-lg-6" style="padding: 0">
-                                        <md-input-container class="md-block">
-                                            <label name="newSettingLabel">NEW {{ tool.name }} SETTING</label>
-                                            <input name="slackChannelName" placeholder="SLACK_NOTIF_CHANNEL" type="text" class="form-control" data-ng-model="tool.newSetting.name" ng-disabled="!tool.isEnabled">
-                                        </md-input-container>
-                                    </div>
-                                    <div class="col-lg-6" style="padding: 0">
-                                        <md-input-container class="md-block">
-                                            <label></label>
-                                            <input name="slackChannelValue" placeholder="Value" type="text" class="form-control" data-ng-model="tool.newSetting.value" ng-disabled="!tool.isEnabled">
-                                        </md-input-container>
-                                    </div>
-                                </div>
                             </div>
                             <div has-any-permission="['MODIFY_INTEGRATIONS']" data-ng-if="tool.isEnabled" class="card-action integration-actions text-right" style="border-top: none;">
                                 <md-button ng-if="tool.name == 'GOOGLE' || tool.name == 'CLOUD_FRONT'" ng-click="showUploadFileDialog($event, tool.name, FILE_TYPE_SETTINGS[tool.name]);" class="md-raised btn-w-md md-primary">

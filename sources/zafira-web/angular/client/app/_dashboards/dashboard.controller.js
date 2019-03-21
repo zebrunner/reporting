@@ -8,8 +8,7 @@ import dashboardEmailModalTemplate from './dashboard-email-modal/dashboard-email
 import dashboardEmailModalController from './dashboard-email-modal/dashboard-email-modal.controller';
 
 const dashboardController = function dashboardController($scope, $rootScope, $q, $timeout, $interval, $cookies, $location, $state,
-                                 $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService,
-                                 UserService, AuthService, ProjectProvider) {
+                                 $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, projectsService) {
     'ngInject';
 
     const vm = {
@@ -231,16 +230,27 @@ const dashboardController = function dashboardController($scope, $rootScope, $q,
     };
 
     var setQueryParams = function(dashboardName){
-        var params = ProjectProvider.getProjectsQueryParam();
-        for(var i = 0; i<$scope.dashboard.attributes.length; i++){
-            if ($scope.dashboard.attributes[i].key != null && $scope.dashboard.attributes[i].key == 'project'){
-                params = "?projects=" + $scope.dashboard.attributes[i].value;
+        const selectedProjects = projectsService.getSelectedProjects();
+        let params = '';
+
+        if (selectedProjects && selectedProjects.length) {
+            params = `?projects=${selectedProjects.map(project => project.name).join(',')}`;
+        }
+
+        if ($scope.dashboard.attributes && $scope.dashboard.attributes.length) {
+            const projectAttributeData = $scope.dashboard.attributes.find(attribute => attribute.key === 'project');
+
+            if (projectAttributeData) {
+                params = `?projects=${projectAttributeData.value}`;
             }
         }
-        params = params != "" ? params + "&dashboardName=" + dashboardName : params + "?dashboardName=" + dashboardName;
+
+        params = params ? params + '&dashboardName=' + dashboardName : params + '?dashboardName=' + dashboardName;
+
         if ($scope.currentUserId) {
-            params = params + "&currentUserId=" + $scope.currentUserId;
+            params = params + '&currentUserId=' + $scope.currentUserId;
         }
+
         return params;
     };
 

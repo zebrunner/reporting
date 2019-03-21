@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.services.util;
 
 import com.qaprosoft.zafira.models.push.events.EventMessage;
+import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,7 +33,7 @@ public class EventPushService<T extends EventMessage> {
 
     public enum Type {
 
-        SETTINGS("settings"), MONITORS("monitors");
+        SETTINGS("settings"), MONITORS("monitors"), ZFR_CALLBACKS("zfr_callbacks"), TENANCIES("tenancies");
 
         private final String routingKey;
 
@@ -45,7 +46,24 @@ public class EventPushService<T extends EventMessage> {
         }
     }
 
-    public void convertAndSend(Type type, T eventMessage) {
-        rabbitTemplate.convertAndSend(EXCHANGE_NAME, type.getRoutingKey(), eventMessage);
+    public boolean convertAndSend(Type type, T eventMessage) {
+        try {
+            rabbitTemplate.convertAndSend(EXCHANGE_NAME, type.getRoutingKey(), eventMessage);
+            return true;
+        } catch (AmqpException e) {
+            return false;
+        }
+    }
+
+    public boolean convertAndSend(Type type, T eventMessage, String headerName, String headerValue) {
+        try {
+            rabbitTemplate.convertAndSend(EXCHANGE_NAME, type.getRoutingKey(), eventMessage, message -> {
+                message.getMessageProperties().setHeader(headerName, headerValue);
+                return message;
+            });
+            return true;
+        } catch (AmqpException e) {
+            return false;
+        }
     }
 }

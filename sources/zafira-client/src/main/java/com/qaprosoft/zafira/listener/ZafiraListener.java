@@ -445,6 +445,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 		test.setTestMetrics(configurator.getTestMetrics(result));
 		test.setConfigXML(convertToXML(configurator.getConfiguration()));
 		test.setArtifacts(configurator.getArtifacts(result));
+		configurator.clearArtifacts();
 		
 		String testDetails = "testId: %d; testCaseId: %d; testRunId: %d; name: %s; thread: %s; status: %s, finishTime: %s \n message: %s";
 		String logMessage = String.format(testDetails, test.getId(), test.getTestCaseId(), test.getTestRunId(), test.getName(), threadId, status, finishTime, message);

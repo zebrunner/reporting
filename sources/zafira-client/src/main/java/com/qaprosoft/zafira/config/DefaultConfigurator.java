@@ -99,6 +99,11 @@ public class DefaultConfigurator implements IConfigurator
 	}
 
 	@Override
+	public void clearArtifacts()
+	{
+	}
+
+	@Override
 	public Set<TagType> getTestTags(ITestResult test) {
 		return new HashSet<>();
 	}

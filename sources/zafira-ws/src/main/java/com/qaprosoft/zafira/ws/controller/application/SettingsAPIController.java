@@ -15,12 +15,14 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.qaprosoft.zafira.models.dto.aws.PresignedUrlRequest;
 import com.qaprosoft.zafira.services.services.application.jmx.amazon.CloudFrontService;
 import com.qaprosoft.zafira.services.services.application.jmx.amazon.IURLGenerator;
+import com.qaprosoft.zafira.services.services.application.jmx.google.GoogleService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,6 +73,9 @@ public class SettingsAPIController extends AbstractController
 	private CloudFrontService cloudFrontService;
 
 	@Autowired
+	private GoogleService googleService;
+
+	@Autowired
 	private SettingsService settingsService;
 
 	@Autowired
@@ -78,6 +83,9 @@ public class SettingsAPIController extends AbstractController
 
 	@Value("${zafira.amazon.token.expiration}")
 	private Integer amazonTokenExpiration;
+
+	@Value("${zafira.google.token.expiration}")
+	private Long googleTokenExpiration;
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get all settings", nickname = "getAllSettings", httpMethod = "GET", response = List.class)
@@ -261,6 +269,14 @@ public class SettingsAPIController extends AbstractController
 	public @ResponseBody SessionCredentials getSessionCredentials() throws ServiceException
 	{
 		return amazonService.getTemporarySessionCredentials(amazonTokenExpiration);
+	}
+
+	@ApiOperation(value = "Get google session credentials", nickname = "getGoogleSessionCredentials", httpMethod = "GET", response = String.class)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+	@RequestMapping(value = "google/creds", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+	public @ResponseBody String getGoogleSessionCredentials() throws ServiceException, IOException {
+		return googleService.getTemporaryAccessToken(googleTokenExpiration);
 	}
 
 	@ApiOperation(value = "Generate amazon presigned URL", nickname = "generatePresignedURL", httpMethod = "POST", response = String.class)

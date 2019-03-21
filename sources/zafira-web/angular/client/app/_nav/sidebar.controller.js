@@ -11,13 +11,13 @@ import uploadImageModalTemplate from '../shared/modals/upload-image-modal/upload
 
     // **************************************************************************
     function SidebarController($scope, $rootScope, $cookies, $q, $mdDialog, $state, ViewService, ConfigService,
-                               ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService,
-                               SettingsService, UploadService) {
+                               ProjectService, projectsService, UtilService, UserService, DashboardService, AuthService,
+                               SettingsService) {
         'ngInject';
 
     	$scope.DashboardService = DashboardService;
 
-        $scope.selectedProjects = ProjectProvider.getProjects();
+        $scope.selectedProjects = projectsService.getSelectedProjects();
         $scope.version = null;
         $scope.projects = [];
         $rootScope.dashboardList = [];
@@ -29,11 +29,10 @@ import uploadImageModalTemplate from '../shared/modals/upload-image-modal/upload
         };
 
         $scope.loadProjects = function(){
-            ConfigService.getConfig("projects").then(function(rs) {
-                if(rs.success)
-                {
+            ConfigService.getConfig('projects').then(function(rs) {
+                if (rs.success) {
                     $scope.projects = rs.data;
-                    if($scope.selectedProjects) {
+                    if ($scope.selectedProjects) {
                         $scope.projects.forEach(function (project) {
                             if ($scope.selectedProjects.indexOfField('id', project.id) >= 0) {
                                 project.selected = true;
@@ -50,7 +49,7 @@ import uploadImageModalTemplate from '../shared/modals/upload-image-modal/upload
 
         function getViews(){
             return $q(function (resolve, reject) {
-                ViewService.getViewById(ProjectProvider.getProjectsIdQueryParam()).then(function(rs) {
+                ViewService.getAllViews().then(function(rs) {
                     if(rs.success)
                     {
                         $scope.views = rs.data;
@@ -105,7 +104,7 @@ import uploadImageModalTemplate from '../shared/modals/upload-image-modal/upload
         };
 
         $scope.selectedProjectsPresent = function () {
-            return $scope.selectedProjects && $scope.selectedProjects.length != 0;
+            return $scope.selectedProjects && $scope.selectedProjects.length;
         };
 
         $scope.joinProjectNames = function () {
@@ -123,7 +122,7 @@ import uploadImageModalTemplate from '../shared/modals/upload-image-modal/upload
             $scope.projects.forEach(function(project) {
                 project.selected = undefined;
             });
-            ProjectProvider.setProjects([]);
+            projectsService.resetSelectedProjects();
             $state.reload();
         };
 
@@ -136,9 +135,9 @@ import uploadImageModalTemplate from '../shared/modals/upload-image-modal/upload
         $scope.$on("$mdMenuClose", function(name, listener) {
             var isProjectMenuClosing = listener.attr('id') === 'projects-menu';
             if(isProjectMenuClosing) {
-                var projects = ProjectProvider.getProjects();
+                var projects = projectsService.getSelectedProjects();
                 if(! angular.equals(projects, $scope.selectedProjects)) {
-                    ProjectProvider.setProjects($scope.selectedProjects);
+                    projectsService.setSelectedProjects($scope.selectedProjects);
                     $state.reload();
                 }
             }
@@ -215,12 +214,9 @@ import uploadImageModalTemplate from '../shared/modals/upload-image-modal/upload
             $scope.project = {};
             $scope.createProject = function(project){
                 ProjectService.createProject(project).then(function(rs) {
-                    if(rs.success)
-                    {
-                        alertify.success("Project created successfully");
-                    }
-                    else
-                    {
+                    if (rs.success) {
+                        alertify.success('Project created successfully');
+                    } else {
                         alertify.error(rs.message);
                     }
                 });
@@ -232,8 +228,6 @@ import uploadImageModalTemplate from '../shared/modals/upload-image-modal/upload
             $scope.cancel = function() {
                 $mdDialog.cancel();
             };
-            (function initController() {
-            })();
         }
 
         function ViewController($scope, $mdDialog, view) {
@@ -309,14 +303,6 @@ import uploadImageModalTemplate from '../shared/modals/upload-image-modal/upload
         }
 
         (function initController() {
-            $scope.selectedProjects = ProjectProvider.getProjects();
-            // TODO: 3/20/18  remove on next release
-            if((!$scope.selectedProjects || ! $scope.selectedProjects.length == 0) && ProjectProvider.getProject())
-            {
-                ProjectProvider.setProjects([].push(ProjectProvider.getProject()));
-                ProjectProvider.removeProject();
-                console.log('Project cookies was removed');
-            }
         })();
     }
 })();

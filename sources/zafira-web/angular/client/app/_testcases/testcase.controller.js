@@ -1,4 +1,6 @@
-const testCaseListController = function testCaseListController($scope, $rootScope, $location, $mdDateRangePicker, TestService, TestCaseService, UtilService, ProjectProvider) {
+'use strict';
+
+const testCaseListController = function testCaseListController($scope, $rootScope, $location, $mdDateRangePicker, TestService, TestCaseService, UtilService, projectsService) {
         'ngInject';
 
         const vm = {
@@ -34,7 +36,7 @@ const testCaseListController = function testCaseListController($scope, $rootScop
                 }
             }
 
-    		TestCaseService.searchTestCases(ProjectProvider.initProjects($scope.sc)).then(function(rs) {
+    		TestCaseService.searchTestCases(projectsService.initSelectedProjects($scope.sc)).then(function(rs) {
 				if(rs.success)
         		{
         			$scope.sr = rs.data;

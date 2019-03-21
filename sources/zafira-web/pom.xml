@@ -35,6 +35,16 @@
                     </configuration>
                 </execution>
                 <execution>
+                    <id>npm cache clean</id>
+                    <goals>
+                        <goal>npm</goal>
+                    </goals>
+                    <configuration>
+                        <arguments>cache clean --force</arguments>
+                    </configuration>
+                    <phase>generate-resources</phase>
+                </execution>
+                <execution>
                     <id>npm install</id>
                     <goals>
                         <goal>npm</goal>

@@ -179,7 +179,6 @@ public class TestRunsAPIController extends AbstractController {
 		websocketTemplate.convertAndSend(getStatisticsWebsocketPath(),
 				new TestRunStatisticPush(statisticsService.getTestRunStatistic(id)));
 		websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunFull));
-		slackService.sendAutoStatus(testRunFull);
 		return mapper.map(testRun, TestRunType.class);
 	}
 

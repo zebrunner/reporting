@@ -31,6 +31,8 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
         $scope.selectedTabIndex = index != undefined ? index : $scope.selectedTabIndex;
     };
 
+    $scope.searchActive = false;
+    $scope.isFiltered = false;
     $scope.activeTab = $scope.tabs[0];
     var DEFAULT_SC = {
         page: 1, pageSize: 20, selectedRange: {
@@ -44,6 +46,14 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
     };
     $scope.sc = angular.copy(DEFAULT_SC);
 
+    $scope.onSearchChange = function (fields) {
+        $scope.searchActive = false;
+        fields.forEach( function (field) {
+            if (field.$modelValue) {
+                $scope.searchActive = true;
+            }
+        })
+    };
 
     $scope.search = function (page) {
         $scope.sc.date = null;
@@ -81,6 +91,7 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
                 alertify.error(rs.message);
             }
         });
+        $scope.isFiltered = true;
     };
 
     $scope.isEqualDate = function () {
@@ -93,6 +104,7 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
         $scope.sc = angular.copy(DEFAULT_SC);
         $location.url($location.path());
         $scope.search();
+        $scope.isFiltered = false;
     };
 
 
@@ -257,6 +269,7 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
 
     (function initController() {
         $scope.search(1);
+        $scope.isFiltered = false;
     })();
 };
 

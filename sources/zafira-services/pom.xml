@@ -22,7 +22,7 @@
 
 		<dependency>
 			<groupId>com.qaprosoft</groupId>
-			<artifactId>zafira-client</artifactId>
+			<artifactId>zafira-models</artifactId>
 		</dependency>
 
 		<dependency>

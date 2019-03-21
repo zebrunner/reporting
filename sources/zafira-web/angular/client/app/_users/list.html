@@ -7,7 +7,7 @@
     </zf-sub-header>
     <div class="page user-view-page">
         <div class="row ui-section">
-            <div layout="row" layout-xs="column" class="col-lg-12 p-users__header-actions">
+            <div layout="row" layout-xs="column" class="col-lg-12 no-padding fixed-search-column users__header-actions">
                 <app-users-controls on-search="search()" on-reset="reset()" class="control-buttons" ng-if="activeTab.name === 'Users'"></app-users-controls>
             </div>
             <div class="lonely-fab">
@@ -15,7 +15,7 @@
                     <app-group-fabs ng-if="activeTab.name === 'Groups'"></app-group-fabs>
                     <app-invites-fabs ng-if="activeTab.name ==='Invitations'" tools="tools"></app-invites-fabs>
             </div>
-            <div ng-cloak class="col-md-12">
+            <div ng-cloak class="col-md-12 no-padding">
                 <article class="article">
                     <md-card class="no-margin-h">
                         <md-tabs md-no-ink md-stretch-tabs="never" md-dynamic-height md-border-bottom md-selected="selectedTabIndex">
