@@ -22,7 +22,6 @@
         let _activeSearchType = searchTypes[0];
         let _searchParams = angular.copy(DEFAULT_SC);
         let _activeFilteringTool = null;
-        let _slackChannels = null;
         let _slackAvailability = false;
         let _slackAvailabilityFetched = false;
 
@@ -47,8 +46,6 @@
             resetFilteringState: resetFilteringState,
             readStoredParams: readStoredParams,
             deleteStoredParams: deleteStoredParams,
-            fetchSlackChannels: fetchSlackChannels,
-            getSlackChannels: getSlackChannels,
             getSlackAvailability: getSlackAvailability,
             isSlackAvailabilityFetched: isSlackAvailabilityFetched,
             fetchSlackAvailability: fetchSlackAvailability,
@@ -217,41 +214,6 @@
                     filterId && setActiveFilter(+filterId);
                 }
             }
-        }
-
-        function getSlackChannels() {
-            return _slackChannels;
-        }
-
-        function fetchSlackChannels(force) {
-            const defer = $q.defer();
-
-            // resolve cached data if no force reloading flag
-            if (!force && _slackChannels) {
-                defer.resolve(_slackChannels);
-            }
-
-            SettingsService.getSettingByTool('SLACK').then(function(rs) {
-                if (rs.success) {
-                    const settings = UtilService.settingsAsMap(rs.data);
-
-                    _slackChannels = [];
-                    angular.forEach(settings, function(value, key) {
-                        if (key.indexOf('SLACK_NOTIF_CHANNEL_') === 0) {
-                            angular.forEach(value.split(';'), function(v) {
-                                _slackChannels.push(v);
-                            });
-                        }
-                    });
-
-                    defer.resolve(_slackChannels);
-                } else {
-                    alertify.error(rs.message);
-                    defer.reject(rs);
-                }
-            });
-
-            return defer.promise;
         }
 
         function getSlackAvailability() {

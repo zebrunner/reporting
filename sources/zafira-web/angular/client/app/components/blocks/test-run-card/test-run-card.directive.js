@@ -26,7 +26,6 @@
                     showDeleteTestRunOption: false,
                     isMobile: windowWidthService.isMobile,
                     isSlackAvailable: false,
-                    slackChannels: null,
                     currentOffset: $rootScope.currentOffset,
                     tools: $rootScope.tools,
 
@@ -57,18 +56,7 @@
                 return vm;
 
                 function init() {
-                    initSlackChannels();
                     initSlackAvailability();
-                }
-
-                function initSlackChannels() {
-                    vm.slackChannels = testsRunsService.getSlackChannels();
-
-                    if (!vm.slackChannels) {
-                        testsRunsService.fetchSlackChannels().then(function(slackChannels) {
-                            vm.slackChannels = slackChannels;
-                        });
-                    }
                 }
 
                 function initSlackAvailability() {
@@ -90,7 +78,7 @@
                 }
 
                 function initMenuRights() {
-                    vm.showNotifyInSlackOption = (vm.isSlackAvailable && vm.slackChannels.indexOf(vm.testRun.job.name) !== -1) && vm.testRun.reviewed;
+                    vm.showNotifyInSlackOption = (vm.isSlackAvailable && vm.testRun.slackChannels) && vm.testRun.reviewed;
                     vm.showBuildNowOption = local.jenkins.enabled;
                     vm.showDeleteTestRunOption = true;
                 }
@@ -147,7 +135,6 @@
                         locals: {
                             testRun: vm.testRun,
                             isSlackAvailable: vm.isSlackAvailable,
-                            slackChannels: vm.slackChannels
                         }
                     }).then(function(answer) {
                         vm.testRun.reviewed = answer.reviewed;

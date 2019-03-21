@@ -15,23 +15,16 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.push.events;
 
-import java.io.Serializable;
+public class TenancyResponseEventMessage extends EventMessage {
 
-public class EventMessage implements Serializable {
+    private Boolean success;
 
-    private static final long serialVersionUID = 2241656564064701459L;
-
-    private String tenancy;
-
-    public EventMessage(String tenancy) {
-        this.tenancy = tenancy;
+    public TenancyResponseEventMessage(String tenancy, boolean success) {
+        super(tenancy);
+        this.success = success;
     }
 
-    public String getTenancy() {
-        return tenancy;
-    }
-
-    public void setTenancy(String tenancy) {
-        this.tenancy = tenancy;
+    public Boolean getSuccess() {
+        return success;
     }
 }

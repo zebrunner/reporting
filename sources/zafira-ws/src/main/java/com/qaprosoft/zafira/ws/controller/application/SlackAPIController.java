@@ -22,12 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -54,15 +49,27 @@ public class SlackAPIController extends AbstractController
 	private TestRunService testRunService;
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Trigger review notif", nickname = "triggerReviewNotif", httpMethod = "GET")
+	@ApiOperation(value = "Send notification on testrun review", nickname = "sendReviewNotification", httpMethod = "GET")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "triggerReviewNotif/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody void triggerReviewNotif(@PathVariable(value = "id") long id) throws ServiceException,
-			IOException, InterruptedException
+	@RequestMapping(value = "testrun/{id}/review", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody void sendOnReviewNotification(@PathVariable(value = "id") long id) throws ServiceException, IOException
 	{
-		TestRun tr = testRunService.getTestRunByIdFull(id);
-		slackService.sendReviwedStatus(tr);
+		TestRun testRun = testRunService.getTestRunByIdFull(id);
+		slackService.sendStatusReviewed(testRun);
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Send notification on testrun finish", nickname = "sendOnFinishNotification", httpMethod = "GET")
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "testrun/{ciRunId}/finish", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody void sendOnFinishNotification(@PathVariable(value = "ciRunId") String ciRunId, @RequestParam(value = "channels", required = false) String channels) throws ServiceException
+	{
+		TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
+		testRun.setSlackChannels(channels);
+		testRunService.updateTestRun(testRun);
+		slackService.sendStatusOnFinish(testRun);
 	}
 }
