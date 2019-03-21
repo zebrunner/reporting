@@ -21,7 +21,8 @@ const AppGroupController = function AppGroupController($scope, GroupService, Uti
     $scope.getAllGroups = function () {
         GroupService.getAllGroups().then(function (rs) {
             if (rs.success) {
-                $scope.groups.push.apply($scope.groups, rs.data);
+                GroupService.groups = rs.data;
+                $scope.groups = GroupService.groups;
             }
             else {
                 alertify.error(rs.message);

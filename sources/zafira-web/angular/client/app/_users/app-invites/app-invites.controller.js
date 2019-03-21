@@ -43,7 +43,8 @@ const AppInvitesController = function AppInvitesController($scope, InvitationSer
     $scope.getAllInvitations = function () {
         InvitationService.getAllInvitations().then(function (rs) {
             if (rs.success) {
-                $scope.invitations.push.apply($scope.invitations, rs.data);
+                InvitationService.invitations = rs.data;
+                $scope.invitations = InvitationService.invitations;
             } else {
                 alertify.error(rs.message);
             }

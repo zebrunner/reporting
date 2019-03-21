@@ -1,8 +1,6 @@
 const UserViewController = function UserViewController($scope, $rootScope, $location, $state, $mdDialog, UserService, GroupService, InvitationService, AuthService) {
     'ngInject';
 
-    $scope.groups = GroupService.groups;
-
     $scope.tabs = [
         {
             name: 'Users',
@@ -234,8 +232,6 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
 
     /************** Invitations *****************************/
 
-    $scope.invitations = InvitationService.invitations;
-
     $scope.showInviteUsersDialog = function (event) {
         $mdDialog.show({
             controller: InviteController,
@@ -253,7 +249,7 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
             }, function (invitations) {
                 if (invitations) {
                     invitations.forEach(function (invite) {
-                        $scope.invitations.push(invite);
+                        InvitationService.invitations.push(invite);
                     });
                 }
             });

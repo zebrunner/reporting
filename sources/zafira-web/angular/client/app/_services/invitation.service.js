@@ -6,16 +6,20 @@
         .factory('InvitationService', ['$httpMock', '$cookies', '$rootScope', '$state', 'UtilService', 'UserService', 'API_URL', InvitationService])
 
     function InvitationService($httpMock, $cookies, $rootScope, $state, UtilService, UserService, API_URL) {
-
-        var service = {};
-
-        service.invitations = [];
-
-        service.invite = invite;
-        service.retryInvite = retryInvite;
-        service.getInvitation = getInvitation;
-        service.getAllInvitations = getAllInvitations;
-        service.deleteInvitation = deleteInvitation;
+        let invitations = [];
+        const service = {
+            invite,
+            retryInvite,
+            getInvitation,
+            getAllInvitations,
+            deleteInvitation,
+            get invitations() {
+                return invitations;
+            },
+            set invitations(data) {
+                invitations = data;
+            }
+        };
 
         return service;
 
