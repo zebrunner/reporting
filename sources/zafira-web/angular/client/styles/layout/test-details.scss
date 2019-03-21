@@ -286,6 +286,10 @@
                 display: flex;
                 text-transform: none;
                 font-weight: 400;
+                &.md-focused {
+                    border-radius: 0;
+                    margin: 0;
+                }
                 md-icon {
                     margin-right: 16px;
                 }
