@@ -152,6 +152,10 @@
                                 background-color: #eb4454;
                                 border-radius: 10px;
                                 line-height: 1;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                white-space: nowrap;
+                                max-width: 80px;
                             }
                         }
                         &__text {
@@ -172,6 +176,7 @@
                     padding: 0;
                     line-height: 1;
                     min-width: 80px;
+                    max-width: 80px;
                     justify-content: center;
                     .settings-line {
                         line-height: 20px;
@@ -190,6 +195,7 @@
                     font-weight: normal;
                     color: rgba(0, 0, 0, 0.8);
                     max-width: 145px;
+                    min-width: 145px;
                     padding: 0;
                 }
             }
