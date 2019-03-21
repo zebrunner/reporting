@@ -25,6 +25,14 @@
                     <groupId>commons-io</groupId>
                     <artifactId>commons-io</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.google.http-client</groupId>
+                    <artifactId>google-http-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.api-client</groupId>
+                    <artifactId>google-api-client</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
