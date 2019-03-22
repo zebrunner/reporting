@@ -10,8 +10,12 @@
                 <zf-radio-button class="widget-wizard_container_elements_item" ng-repeat="template in templates track by $index" on-change="onChange();" ng-model="widget.widgetTemplate" value="template">
                     <div class="widget-wizard_container_elements_item_title"><show-part text="template.name" limit="50"></show-part></div>
                     <div class="widget-wizard_container_elements_item_description"><show-part text="template.description" limit="150"></show-part></div>
-                    <div class="widget-wizard_container_elements_item_icon">
-                        <md-icon md-svg-src="{{CHART_ICONS[template.type]}}"></md-icon>
+                    <div class="widget-wizard_container_elements_item_icon" ng-switch="template.type">
+                        <md-icon ng-switch-when="PIE" md-svg-src="../../../../assets/images/pie_chart.svg"></md-icon>
+                        <md-icon ng-switch-when="BAR" md-svg-src="../../../../assets/images/bar_chart.svg"></md-icon>
+                        <md-icon ng-switch-when="TABLE" md-svg-src="../../../../assets/images/table_chart.svg"></md-icon>
+                        <md-icon ng-switch-when="LINE" md-svg-src="../../../../assets/images/line_chart.svg"></md-icon>
+                        <md-icon ng-switch-default md-svg-src="../../../../assets/images/default_chart.svg"></md-icon>
                     </div>
                 </zf-radio-button>
             </div>

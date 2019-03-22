@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('$mapper', ['$location', 'ProjectProvider', MapperUtilService])
+        .factory('$mapper', ['$location', 'projectsService', MapperUtilService])
 
-    function MapperUtilService($location, ProjectProvider) {
+    function MapperUtilService($location, projectsService) {
 
         return {
             map: function (object, callback) {

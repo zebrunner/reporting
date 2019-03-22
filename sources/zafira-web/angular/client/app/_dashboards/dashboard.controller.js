@@ -6,6 +6,8 @@ import widgetDialog from './widget-dialog/widget-dialog.html';
 import widgetDialogController from './widget-dialog/widget-dialog.controller';
 import dashboardEmailModalTemplate from './dashboard-email-modal/dashboard-email-modal.html';
 import dashboardEmailModalController from './dashboard-email-modal/dashboard-email-modal.controller';
+import widgetWizardController from './../components/modals/widget-wizard/widget-wizard.controller';
+import widgetWizardModalTemplate from './../components/modals/widget-wizard/widget_wizard.html';
 
 const dashboardController = function dashboardController($scope, $rootScope, $q, $timeout, $interval, $cookies, $location, $state,
                                  $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, projectsService, UserService, $widget, $mapper) {
@@ -437,8 +439,8 @@ const dashboardController = function dashboardController($scope, $rootScope, $q,
 
     $scope.showWidgetWizardDialog = function (event, widget, dashboard) {
         $mdDialog.show({
-            controller: 'WidgetWizardController',
-            template: require('../components/modals/widget-wizard/widget_wizard.html'),
+            controller: widgetWizardController,
+            template: widgetWizardModalTemplate,
             parent: angular.element(document.body),
             clickOutsideToClose:false,
             fullscreen: true,
