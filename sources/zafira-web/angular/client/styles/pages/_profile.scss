@@ -5,9 +5,7 @@
         position: relative;
         margin: 0 -30px 15px;
         padding: 50px 30px 90px;
-        background: url('#{$image_path}/background/1.jpg') no-repeat center center fixed; 
-        -webkit-background-size: cover;
-        -moz-background-size: cover;
+        background: url('#{$image_path}/background/p-profile-bg-lg.jpg') no-repeat 0 0;
         background-size: cover;
     }
 
@@ -46,5 +44,17 @@
 
     img.media-object {
         border-radius: $border-radius-base;
+    }
+
+    @media (max-width: $screen-lg) {
+        .profile-header {
+            background-image: url('#{$image_path}/background/p-profile-bg-md.jpg');
+        }
+    }
+
+    @media (max-width: $screen-sm) {
+        .profile-header {
+            background-image: url('#{$image_path}/background/p-profile-bg-sm.jpg');
+        }
     }
 }

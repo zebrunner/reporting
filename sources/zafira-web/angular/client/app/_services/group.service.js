@@ -6,17 +6,23 @@
         .factory('GroupService', ['$httpMock', '$cookies', '$rootScope', 'UtilService', 'API_URL', GroupService])
 
     function GroupService($httpMock, $cookies, $rootScope, UtilService, API_URL) {
-        var service = {};
+        let groups = [];
 
-        service.groups = [];
-
-        service.getRoles = getRoles;
-        service.createGroup = createGroup;
-        service.getGroup = getGroup;
-        service.getAllGroups = getAllGroups;
-        service.getGroupsCount = getGroupsCount;
-        service.updateGroup = updateGroup;
-        service.deleteGroup = deleteGroup;
+        var service = {
+            getRoles,
+            createGroup,
+            getGroup,
+            getAllGroups,
+            getGroupsCount,
+            updateGroup,
+            deleteGroup,
+            get groups() {
+                return groups;
+            },
+            set groups(data) {
+                groups = data;
+            }
+        };
 
         return service;
 

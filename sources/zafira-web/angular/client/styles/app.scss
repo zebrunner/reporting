@@ -1,11 +1,8 @@
 
 // Shared variables and mixins
-@import 
-    "global/var"                        // global variables
-,   "global/var-extra"                  // extra global variables
-,   "bootstrap/bootstrap/mixins"        // Bootstrap mixins
-;
-
+@import "global/var";                        // global variables
+@import "global/var-extra";                  // extra global variables
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/mixins";        // Bootstrap mixins
 
 @import 
     "global/shared"
@@ -39,7 +36,5 @@
 ,   "layout/header"
 ,   "layout/body"
 ,   "layout/commons/commons"
-,   "layout/quickview"
-,   "layout/quickview-customizer"
-,   "theme/customzier-options"
+,   "components/modals/widget-wizard/widget_wizard"
 ;

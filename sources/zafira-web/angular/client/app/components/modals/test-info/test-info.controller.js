@@ -1,23 +1,12 @@
 (function () {
     'use strict';
 
-    angular.module('app').controller('TestInfoController', [
-        '$scope',
-        '$rootScope',
-        '$mdDialog',
-        '$interval',
-        'SettingsService',
-        'TestService',
-        'test',
-        'isNewIssue',
-        'isNewTask',
-        'isConnectedToJira',
-        'isJiraEnabled',
-        TestInfoController]);
+    angular.module('app').controller('TestInfoController', TestInfoController);
 
     function TestInfoController($scope, $rootScope, $mdDialog, $interval,  SettingsService,
                                 TestService, test, isNewIssue, isNewTask, isConnectedToJira,
                                 isJiraEnabled) {
+        'ngInject';
 
         $scope.jiraId;
         $scope.isConnectedToJira = false;

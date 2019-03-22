@@ -2,8 +2,11 @@
     'use strict';
 
     angular.module('app')
-        .controller('AppCtrl', [ '$scope', '$rootScope', '$templateCache', '$state', 'httpBuffer', '$window', '$cookies', '$q', 'appConfig', 'AuthService', 'UserService', 'SettingsService', 'ConfigService', 'AuthIntercepter', 'UtilService', 'SettingProvider', AppCtrl]); // overall control
-	    function AppCtrl($scope, $rootScope, $templateCache, $state, httpBuffer, $window, $cookies,  $q, appConfig, AuthService, UserService, SettingsService, ConfigService, AuthIntercepter, UtilService, SettingProvider) {
+        .controller('AppCtrl', AppCtrl); // overall control
+	    function AppCtrl($scope, $rootScope, $templateCache, $state, httpBuffer, $window, $cookies, $q, appConfig,
+                         AuthService, UserService, SettingsService, ConfigService, AuthIntercepter, UtilService,
+                         SettingProvider, $timeout) {
+            'ngInject';
 
 	        $scope.pageTransitionOpts = appConfig.pageTransitionOpts;
 	        $scope.main = appConfig.main;
@@ -13,15 +16,6 @@
             $rootScope.companyLogo = {
                 name: 'COMPANY_LOGO_URL',
                 value: SettingProvider.getCompanyLogoURl() || ''
-            };
-
-            $rootScope.footerSlice = {
-                robo: {
-                    url: 'app/_auth/robo-footer.html'
-                },
-                copyright: {
-                    url: 'app/_auth/copyright-footer.html'
-                }
             };
 
             var UNANIMATED_STATES = ['signin', 'signup', 'forgotPassword', 'resetPassword'];
@@ -115,12 +109,16 @@
                             if (payload.referrer) {
                                 var params = payload.referrerParams ? payload.referrerParams : {};
 
-                               $state.go(payload.referrer, params);
+                                $timeout(() => {
+                                    $state.go(payload.referrer, params);
+                                });
                             } else {
-                                $state.go('dashboard', {id: user.defaultDashboardId});
+                                $timeout(() => {
+                                    $state.go('dashboard.page', {dashboardId: user.defaultDashboardId});
+                                });
                             }
                         }
-                    });
+                    }, function() {});
 	        });
 
             $rootScope.$on('event:auth-loginRequired', function() {
@@ -180,12 +178,12 @@
 
                     $scope.initSession();
 
-                    currentUser = UserService.getCurrentUser();
+                    currentUser = UserService.currentUser;
                     if (!currentUser) {
                         UserService.initCurrentUser()
                             .then(function (user) {
                                 $scope.main.skin = user.theme;
-                            });
+                            }, function() {});
                     } else {
                         $scope.main.skin = currentUser.theme;
                     }

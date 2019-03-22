@@ -15,8 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
-import com.qaprosoft.zafira.models.db.AbstractEntity;
-
 public class Attribute extends AbstractEntity
 {
 	private static final long serialVersionUID = 6708791122991478693L;

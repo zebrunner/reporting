@@ -21,6 +21,7 @@ import java.util.Map;
 import com.qaprosoft.zafira.models.db.UserPreference;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
+import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +55,11 @@ public class DashboardService
 	@Transactional(readOnly = true)
 	public Dashboard getDashboardById(long id) throws ServiceException
 	{
-		return dashboardMapper.getDashboardById(id);
+		Dashboard dashboard = dashboardMapper.getDashboardById(id);
+		if(dashboard == null) {
+			throw new EntityNotExistsException(Dashboard.class ,false);
+		}
+		return dashboard;
 	}
 	
 	@Transactional(readOnly = true)

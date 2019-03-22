@@ -3,14 +3,16 @@
 
     angular.module('app.testRunCard').directive('testRunCard', function() {
         return {
-            templateUrl: 'app/components/blocks/test-run-card/test-run-card.html',
+            template: require('./test-run-card.html'),
             controller: function TestRunCardController(windowWidthService,
                                                        testsRunsService, $rootScope, UtilService,
                                                        $state, $timeout, $mdDialog, $mdToast,
                                                        SlackService, TestRunService, UserService,
                                                        $interval, DownloadService) {
+                'ngInject';
+
                 const local = {
-                    currentUser: UserService.getCurrentUser(),
+                    currentUser: UserService.currentUser,
                     testRunInDebugMode: null,
                     stopConnectingDebug: null,
                     debugHost: null,
@@ -93,21 +95,21 @@
                 }
 
                 function openTestRun() {
-                    const url = $state.href('tests/run', {testRunId: vm.testRun.id});
+                    const url = $state.href('tests.runDetails', {testRunId: vm.testRun.id});
 
                     window.open(url,'_blank');
                 }
 
                 function goToTestRun() {
-                    $state.go('tests/run', {testRunId: vm.testRun.id});
+                    $state.go('tests.runDetails', {testRunId: vm.testRun.id});
                 }
 
                 function onBackClick() {
-                    $state.go('tests/runs', {activeTestRunId: vm.testRun.id});
+                    $state.go('tests.runs', {activeTestRunId: vm.testRun.id});
                 }
 
                 function copyLink() {
-                    const url = $state.href('tests/run', {testRunId: vm.testRun.id}, {absolute : true});
+                    const url = $state.href('tests.runDetails', {testRunId: vm.testRun.id}, {absolute : true});
 
                     url.copyToClipboard();
                 }
@@ -127,7 +129,7 @@
                 function showCommentsDialog(event) {
                     $mdDialog.show({
                         controller: 'CommentsController',
-                        templateUrl: 'app/components/modals/comments/comments.html',
+                        template: require('../../modals/comments/comments.html'),
                         parent: angular.element(document.body),
                         targetEvent: event,
                         clickOutsideToClose:true,
@@ -145,7 +147,7 @@
                 function showEmailDialog(testRuns, event) {
                     $mdDialog.show({
                         controller: 'EmailController',
-                        templateUrl: 'app/components/modals/email/email.html',
+                        template: require('../../modals/email/email.html'),
                         parent: angular.element(document.body),
                         targetEvent: event,
                         clickOutsideToClose:true,
@@ -159,7 +161,7 @@
                 function showCreateSpreadsheetDialog(testRuns, event) {
                     $mdDialog.show({
                         controller: 'SpreadsheetController',
-                        templateUrl: 'app/components/modals/spreadsheet/spreadsheet.html',
+                        template: require('../../modals/spreadsheet/spreadsheet.html'),
                         parent: angular.element(document.body),
                         targetEvent: event,
                         clickOutsideToClose:true,
@@ -183,6 +185,8 @@
                             links: links
                         },
                         controller: function ToastWithLinksController($mdToast, links) {
+                            'ngInject';
+
                             return {
                                 links: links,
 
@@ -244,7 +248,7 @@
                 function showRerunDialog(event) {
                     $mdDialog.show({
                         controller: 'TestRunRerunController',
-                        templateUrl: 'app/components/modals/rerun/rerun.html',
+                        template: require('../../modals/rerun/rerun.html'),
                         parent: angular.element(document.body),
                         targetEvent: event,
                         clickOutsideToClose: true,
@@ -346,7 +350,7 @@
                         controller : 'DebugModeController',
                         controllerAs: '$ctrl',
                         bindToController: true,
-                        templateUrl : 'app/components/toasts/debug-mode/debug-mode.html'
+                        template : require('../../toasts/debug-mode/debug-mode.html')
                     });
                 }
 
@@ -388,7 +392,7 @@
                 function showBuildNowDialog(event) {
                     $mdDialog.show({
                         controller: 'BuildNowController',
-                        templateUrl: 'app/components/modals/build-now/build-now.html',
+                        template: require('../../modals/build-now/build-now.html'),
                         parent: angular.element(document.body),
                         targetEvent: event,
                         clickOutsideToClose:true,
@@ -443,7 +447,7 @@
                             if (rs.success) {
                                 $timeout(function() {
                                     testsRunsService.clearDataCache();
-                                    $state.go('tests/runs');
+                                    $state.go('tests.runs');
                                 }, 1000);
                             }
                         });

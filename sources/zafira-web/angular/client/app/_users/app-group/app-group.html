@@ -1,0 +1,13 @@
+<div class="groups-tab">
+    <div>
+        <div flex>
+            <div data-ng-if="groups.length != 0" class="md-dialog-content">
+                <div class=" groups-tab_group" layout="column"
+                    data-ng-repeat="group in groups | orderBy:'name'">
+                    <app-group-item group="group"></app-group-item>
+                </div>
+            </div>
+            <div data-ng-if="groups.length == 0" class="ng-hide" align="center">No groups created</div>
+        </div>
+    </div>
+</div>

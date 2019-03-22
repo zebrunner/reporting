@@ -225,6 +225,7 @@
                 &-info {
                     width: 50vw;
                     flex-grow: 1;
+                    padding-left: 24px;
                     @media (max-width:670px) {
                         width: 45vw;
                     }
@@ -232,6 +233,7 @@
                         width: 100%;
                         border-top: 0 !important;
                         padding-bottom: 0 !important;
+                        padding-left: 15px;
                     }
                     &__name {
                         margin-bottom: 0;
@@ -436,12 +438,12 @@
                 .assignment {
                     transform: scale(-1, 1);
                 }
-                span {
-                    padding-left: 16px;
-                    color: rgba(0,0,0,0.87);
-                    font-weight: normal;
-                    text-transform: none;
-                }
+            }
+            span {
+                padding-left: 16px;
+                color: rgba(0,0,0,0.87);
+                font-weight: normal;
+                text-transform: none;
             }
         }   
     }

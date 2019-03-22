@@ -1,0 +1,101 @@
+<md-dialog flex="50" aria-label="User profile" zafira-background-theme="modal">
+    <form class="form-validation" name="user_form" ng-submit="createUser(); UtilService.untouchForm(user_form)" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2 id="modalTitle">User</h2>
+                <span flex></span>
+                <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Username</label>
+                        <input id="username" type="text" ng-model="user.username" name="username" required
+                               ng-minlength="3" ng-maxlength="50" ng-pattern="/^[A-Za-z0-9_-]+$/"/>
+                        <div ng-messages="user_form.username.$error">
+                            <div ng-repeat="validation in UtilService.validations.username" ng-message="{{validation.name}}">
+                                <span ng-if="validation.additional">
+                                    <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
+                                    {{ validation.message }}
+                                </span>
+                                <span ng-if="! validation.additional">{{ validation.message }}</span>
+                            </div>
+                            <div ng-message="validationError">{{ signup_form.username.errorMessage }}</div>
+                        </div>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>First name</label>
+                        <input id="firstName" type="text" ng-model="user.firstName" name="firstName"
+                               ng-minlength="2" ng-maxlength="50" ng-pattern="/^[a-zA-Z]+$/"/>
+                        <div ng-messages="user_form.firstName.$error">
+                            <div ng-repeat="validation in UtilService.validations.name" ng-message="{{validation.name}}">
+                                                    <span ng-if="validation.additional">
+                                                        <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
+                                                        {{ validation.message }}
+                                                    </span>
+                                <span ng-if="! validation.additional">{{ validation.message }}</span>
+                            </div>
+                        </div>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Last Name</label>
+                        <input id="lastName" type="text" ng-model="user.lastName" name="lastName"
+                               ng-minlength="2" ng-maxlength="50" ng-pattern="/^[a-zA-Z]+$/"/>
+                        <div ng-messages="user_form.lastName.$error">
+                            <div ng-repeat="validation in UtilService.validations.name" ng-message="{{validation.name}}">
+                                                    <span ng-if="validation.additional">
+                                                        <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
+                                                        {{ validation.message }}
+                                                    </span>
+                                <span ng-if="! validation.additional">{{ validation.message }}</span>
+                            </div>
+                        </div>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Email</label>
+                        <input id="email" type="email" ng-model="user.email" name="email" required ng-pattern="/^.+@.+\..+$/"/>
+                        <div ng-messages="user_form.email.$error" ng-if="user_form.email.$dirty">
+                            <div ng-message="required">Required</div>
+                            <div ng-message="pattern">Invalid format</div>
+                        </div>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container nonautocomplete flex>
+                        <label>Password</label>
+                        <input id="password" type="password" ng-model="user.password" name="password" required
+                               ng-minlength="8" ng-maxlength="50" ng-pattern="/^[A-Za-z0-9_@!]+$/"/>
+                        <div ng-messages="user_form.password.$error">
+                            <div ng-repeat="validation in UtilService.validations.password" ng-message="{{validation.name}}">
+                                <span ng-if="validation.additional">
+                                    <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
+                                    {{ validation.message }}
+                                </span>
+                                <span ng-if="! validation.additional">{{ validation.message }}</span>
+                            </div>
+                        </div>
+                    </md-input-container>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <md-button id="create" type="submit"
+                       class="md-raised btn-w-md md-primary"
+                       ng-disabled="user_form.$invalid">
+                Create
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

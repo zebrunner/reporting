@@ -1,5 +1,4 @@
-(function () {
-    'use strict';
+import testsRunsComponent from './tests-runs.component';
 
-    angular.module('app.testsRuns', []);
-})();
+export const testsRunsModule = angular.module('app.testsRuns', [])
+    .component({ testsRunsComponent });

@@ -1,6 +1,6 @@
-(function () {
-    'use strict';
+import testcaseComponent from './testcase.component';
+import testcaseMetricsComponent from './testcase-metrics.component';
 
-    angular.module('app.testcase', []);
-
-})(); 
+export const testcaseModule = angular.module('app.testcase', [])
+    .component({ testcaseMetricsComponent })
+    .component({ testcaseComponent });

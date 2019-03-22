@@ -20,7 +20,10 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.models.dto.DashboardType;
+import com.qaprosoft.zafira.services.services.application.WidgetTemplateService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,6 +53,12 @@ public class DashboardsAPIController extends AbstractController
 
 	@Autowired
 	private DashboardService dashboardService;
+
+	@Autowired
+	private WidgetTemplateService widgetTemplateService;
+
+	@Autowired
+	private Mapper mapper;
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create dashboard", nickname = "createDashboard", httpMethod = "POST", response = Dashboard.class)
@@ -84,9 +93,13 @@ public class DashboardsAPIController extends AbstractController
     @ApiOperation(value = "Get dashboard by ID", nickname = "getDashboardById", httpMethod = "GET", response = Dashboard.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value="{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Dashboard getDashboardById(@PathVariable(value="id") long id) throws ServiceException
+	public @ResponseBody DashboardType getDashboardById(@PathVariable(value="id") long id) throws ServiceException
 	{
-		return dashboardService.getDashboardById(id);
+		Dashboard dashboard = dashboardService.getDashboardById(id);
+		dashboard.getWidgets().forEach(widget -> {
+			widgetTemplateService.executeWidgetTemplateParamsSQLQueries(widget.getWidgetTemplate());
+		});
+		return mapper.map(dashboard, DashboardType.class);
 	}
 
 	@ResponseStatusDetails

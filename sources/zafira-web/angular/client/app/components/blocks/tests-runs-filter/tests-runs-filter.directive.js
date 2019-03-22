@@ -4,7 +4,7 @@
     angular.module('app.testsRunsFilter')
     .directive('testsRunsFilter', function() {
         return {
-            templateUrl: 'app/components/blocks/tests-runs-filter/tests-runs-filter.html',
+            template: require('./tests-runs-filter.html'),
             controller: TestsRunsFilterController,
             scope: {
                 onFilterChange: '&'
@@ -19,6 +19,8 @@
     function TestsRunsFilterController(FilterService, DEFAULT_SC, TestRunService, $q, ProjectService,
                                        testsRunsService, $cookieStore, UserService, $timeout, $mdDateRangePicker,
                                        windowWidthService, $rootScope) {
+        'ngInject';
+
         const subjectName = 'TEST_RUN';
         const DEFAULT_FILTER_VALUE = {
             subject: {
@@ -65,7 +67,7 @@
                 showTemplate: false,
                 fullscreen: false
             },
-            currentUser: UserService.getCurrentUser(),
+            currentUser: UserService.currentUser,
             chipsCtrl: null,
             isMobile: windowWidthService.isMobile,
             isMobileSearchActive: false,
