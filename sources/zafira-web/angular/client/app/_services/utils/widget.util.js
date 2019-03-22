@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('$widget', ['$location', 'ProjectProvider', WidgetUtilService])
+        .factory('$widget', ['$location', 'projectsService', WidgetUtilService])
 
-    function WidgetUtilService($location, ProjectProvider) {
+    function WidgetUtilService($location, projectsService) {
 
         return {
             build: build,
@@ -66,7 +66,7 @@
 
         // Get query params merged by hierarchy: cookies.projects -> dashboard.attributes -> dashboardName -> currentUserId -> queryParams
         function getENVParams(dashboard, currentUserId) {
-            var params = ProjectProvider.getProjectsQueryParamObject(); //get project from cookies
+            var params = projectsService.getProjectsQueryParamObject(); //get project from cookies
 
             if(dashboard) {
                 dashboard.attributes.forEach(function (attr) { // override with dashboard attributes

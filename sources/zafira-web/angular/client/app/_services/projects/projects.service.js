@@ -15,6 +15,28 @@
 
                 return sc;
             },
+            getProjectsQueryParam: function(sc) {
+                var query = "";
+                var projects = $cookieStore.get("projects");
+                if(projects && projects.length)
+                {
+                    query = "?";
+                    projects.forEach(function (project) {
+                        query = query + "projects=" + project.name + "&";
+                    });
+                }
+                return query;
+            },
+            getProjectsQueryParamObject: function(sc) {
+                var query = {};
+                var projects = $cookieStore.get("projects");
+                if(projects && projects.length) {
+                    query['projects'] = projects.map(function (project) {
+                        return project.name;
+                    });
+                }
+                return query;
+            },
 
             getSelectedProjects: function() {
                 return $cookieStore.get('projects');
