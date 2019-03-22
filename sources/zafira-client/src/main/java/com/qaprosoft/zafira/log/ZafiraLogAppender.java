@@ -465,7 +465,7 @@ public class ZafiraLogAppender extends AppenderSkeleton
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			// TODO: add logging
 		}
 		
 		return connected;

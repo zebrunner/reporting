@@ -21,6 +21,7 @@
 				D.TITLE AS DASHBOARD_TITLE,
 				D.HIDDEN AS DASHBOARD_HIDDEN,
 				D.POSITION AS DASHBOARD_POSITION,
+				D.EDITABLE AS DASHBOARD_EDITABLE,
 				D.MODIFIED_AT AS DASHBOARD_MODIFIED_AT,
 				D.CREATED_AT AS DASHBOARD_CREATED_AT,
 				W.ID AS WIDGET_ID,
@@ -123,6 +124,7 @@
         <result column="DASHBOARD_TITLE" property="title" />
         <result column="DASHBOARD_HIDDEN" property="hidden"/>
         <result column="DASHBOARD_POSITION" property="position"/>
+        <result column="DASHBOARD_EDITABLE" property="editable"/>
         <result column="DASHBOARD_MODIFIED_AT" property="modifiedAt" />
         <result column="DASHBOARD_CREATED_AT" property="createdAt" />
         <collection property="widgets" ofType="com.qaprosoft.zafira.models.db.Widget"

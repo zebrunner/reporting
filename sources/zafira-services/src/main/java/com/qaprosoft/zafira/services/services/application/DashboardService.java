@@ -18,7 +18,9 @@ package com.qaprosoft.zafira.services.services.application;
 import java.util.List;
 import java.util.Map;
 
+import com.qaprosoft.zafira.models.db.UserPreference;
 import com.qaprosoft.zafira.models.dto.user.UserType;
+import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,10 +36,17 @@ public class DashboardService
 {
 	@Autowired
 	private DashboardMapper dashboardMapper;
+
+	@Autowired
+	private UserPreferenceService userPreferenceService;
 	
 	@Transactional(rollbackFor = Exception.class)
 	public Dashboard createDashboard(Dashboard dashboard) throws ServiceException
 	{
+		if(getDashboardByTitle(dashboard.getTitle()) != null) {
+			throw new ServiceException("Dashboard title '" + dashboard.getTitle() + "' is currently in use");
+		}
+		dashboard.setEditable(true);
 		dashboardMapper.createDashboard(dashboard);
 		return dashboard;
 	}
@@ -75,6 +84,11 @@ public class DashboardService
 	@Transactional(rollbackFor = Exception.class)
 	public Dashboard updateDashboard(Dashboard dashboard) throws ServiceException
 	{
+		Dashboard dbDashboard = getDashboardById(dashboard.getId());
+		if (!dbDashboard.isEditable()) {
+			throw new IllegalOperationException("Cannot update not editable dashboard");
+		}
+		dashboard.setEditable(dbDashboard.isEditable());
 		dashboardMapper.updateDashboard(dashboard);
 		return dashboard;
 	}
@@ -82,6 +96,15 @@ public class DashboardService
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteDashboardById(Long id) throws ServiceException
 	{
+		Dashboard dashboard = getDashboardById(id);
+		if (!dashboard.isEditable()) {
+			throw new IllegalOperationException("Cannot delete not editable dashboard");
+		}
+		List<UserPreference> userPreferences = userPreferenceService.getUserPreferencesByNameDashboardTitle("DEFAULT_DASHBOARD", dashboard.getTitle());
+		for(UserPreference userPreference : userPreferences) {
+			userPreference.setValue("General");
+			userPreferenceService.updateUserPreference(userPreference);
+		}
 		dashboardMapper.deleteDashboardById(id);
 	}
 	

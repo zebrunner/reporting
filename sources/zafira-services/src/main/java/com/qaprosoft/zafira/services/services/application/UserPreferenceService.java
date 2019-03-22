@@ -60,6 +60,12 @@ public class UserPreferenceService
 		return userPreferenceMapper.getUserPreferenceById(id);
 	}
 
+	@Transactional(readOnly = true)
+	public List<UserPreference> getUserPreferencesByNameDashboardTitle(String name, String title) throws ServiceException
+	{
+		return userPreferenceMapper.getUserPreferencesByNameAndDashboardTitle(name, title);
+	}
+
 	@Transactional(rollbackFor = Exception.class)
 	public UserPreference updateUserPreference(UserPreference userPreference) throws ServiceException
 	{
