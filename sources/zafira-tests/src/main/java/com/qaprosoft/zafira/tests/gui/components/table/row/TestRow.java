@@ -14,7 +14,7 @@ import com.qaprosoft.zafira.tests.gui.components.modals.testrun.TestDetailsModal
 public class TestRow extends AbstractRow
 {
 
-	@FindBy(xpath = "./td[1]/b")
+	@FindBy(xpath = "./td[1]/*[@name='testName']")
 	private WebElement testName;
 
 	@FindBy(xpath = "./td[1]/b/span[text() = 'BLOCKER']")

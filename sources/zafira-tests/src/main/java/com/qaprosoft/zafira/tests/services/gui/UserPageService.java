@@ -82,7 +82,9 @@ public class UserPageService extends AbstractPageService
 		userPage.getUserSearchBlock().typeUsername(username);
 		userPage.getUserSearchBlock().typeEmail(email);
 		userPage.getUserSearchBlock().typeFirstLastName(firstLastName);
+		pause(2);
 		userPage.getUserSearchBlock().clickSearchButton();
+		pause(2);
 		userPage.waitUntilPageIsLoaded();
 		return userPage;
 	}
@@ -96,6 +98,7 @@ public class UserPageService extends AbstractPageService
 	{
 		userPage.getUserSearchBlock().clickClearButton();
 		userPage.waitUntilPageIsLoaded();
+		pause(2);
 		return userPage;
 	}
 
