@@ -24,7 +24,6 @@ import javax.annotation.PostConstruct;
 import com.qaprosoft.zafira.services.util.TenancyDbInitial;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Setting;
@@ -33,7 +32,6 @@ import com.qaprosoft.zafira.services.services.application.jmx.context.AbstractCo
 import com.qaprosoft.zafira.services.services.management.TenancyService;
 import com.qaprosoft.zafira.services.util.TenancyInitial;
 
-@Component
 public class JMXTenancyStorage implements TenancyInitial, TenancyDbInitial {
 
     private static final Logger LOGGER = Logger.getLogger( JMXTenancyStorage.class);
