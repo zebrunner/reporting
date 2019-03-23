@@ -91,7 +91,9 @@ public class DashboardService
 	{
 		Dashboard dbDashboard = getDashboardById(dashboard.getId());
 		if (!dbDashboard.isEditable()) {
-			throw new IllegalOperationException("Cannot update not editable dashboard");
+			dashboard.setTitle(dbDashboard.getTitle());
+			dashboard.setAttributes(dbDashboard.getAttributes());
+			dashboard.setWidgets(dbDashboard.getWidgets());
 		}
 		dashboard.setEditable(dbDashboard.isEditable());
 		dashboardMapper.updateDashboard(dashboard);
