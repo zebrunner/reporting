@@ -484,7 +484,12 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
     function prepareArtifacts(test) {
         const formattedArtifacts = $scope.logs.reduce(function(formatted, artifact) {
             if (artifact.isImageExists && artifact.blobLog.path) {
-                let newArtifact = {id: artifact.timestamp, name: artifact.blobLog.threadName, link: artifact.blobLog.path};
+                let newArtifact = {
+                    id: artifact.blobLog.path,
+                    name: artifact.blobLog.threadName,
+                    link: artifact.blobLog.path
+                };
+
                 formatted.imageArtifacts.push(newArtifact);
             }
 
@@ -494,10 +499,9 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
         test.imageArtifacts = formattedArtifacts.imageArtifacts;
     }
 
-    $scope.openImagesViewerModal = function(event, id) {
-        // prepareArtifacts($scope.test); TODO: check where to call the function
+    $scope.openImagesViewerModal = function(event, url) {
         const activeArtifact = $scope.test.imageArtifacts.find(function(art) {
-            return art.id === id;
+            return art.link === url;
         });
 
         if (activeArtifact) {
@@ -512,7 +516,7 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
                 fullscreen: false,
                 escapeToClose: false,
                 locals: {
-                    test: $scope.test,
+                    test: angular.copy($scope.test),
                     activeArtifactId: activeArtifact.id,
                 }
             });
