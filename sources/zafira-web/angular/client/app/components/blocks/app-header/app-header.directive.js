@@ -1,20 +1,20 @@
-(function () {
-    'use strict';
+'use strict';
 
-    require('./app-header.controller');
+import controller from './app-header.controller';
+import template from './app-header.html';
 
-    angular.module('app.appHeader').directive('appHeader', function () {
-        return {
-            template: require('./app-header.html'),
-            controller: 'AppHeaderController',
-            scope: {
-                mainData: '=',
-            },
-            controllerAs: '$ctrl',
-            restrict: 'E',
-            replace: true,
-            bindToController: true
-        };
-    });
+const appHeaderDirective = function () {
+    return {
+        template,
+        controller,
+        scope: {
+            mainData: '=',
+        },
+        controllerAs: '$ctrl',
+        restrict: 'E',
+        replace: true,
+        bindToController: true
+    };
+};
 
-})();
+export default appHeaderDirective;

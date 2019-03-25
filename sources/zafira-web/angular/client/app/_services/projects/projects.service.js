@@ -2,9 +2,11 @@
     'use strict';
 
     angular.module('app.services')
-        .service('projectsService', ['$cookieStore', projectsService]);
+        .service('projectsService', projectsService);
 
     function projectsService($cookieStore) {
+        'ngInject';
+
         return {
             initSelectedProjects: function(sc) {
                 const projects = $cookieStore.get('projects');
@@ -15,26 +17,15 @@
 
                 return sc;
             },
-            getProjectsQueryParam: function(sc) {
-                var query = "";
-                var projects = $cookieStore.get("projects");
-                if(projects && projects.length)
-                {
-                    query = "?";
-                    projects.forEach(function (project) {
-                        query = query + "projects=" + project.name + "&";
-                    });
-                }
-                return query;
-            },
+
             getProjectsQueryParamObject: function(sc) {
-                var query = {};
-                var projects = $cookieStore.get("projects");
-                if(projects && projects.length) {
-                    query['projects'] = projects.map(function (project) {
-                        return project.name;
-                    });
+                const query = {};
+                const projects = $cookieStore.get('projects');
+
+                if (projects && projects.length) {
+                    query.projects = projects.map(({ name }) => name);
                 }
+
                 return query;
             },
 
