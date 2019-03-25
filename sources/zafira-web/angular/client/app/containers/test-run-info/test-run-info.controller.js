@@ -133,6 +133,7 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
     function getLogsFromElasticsearch(from, page, size) {
         return $q(function (resolve, reject) {
             elasticsearchService.search(ELASTICSEARCH_INDEX, SEARCH_CRITERIA, from, page, size, $scope.test.startTime).then(function (rs) {
+                prepareArtifacts($scope.test);
                 resolve(rs.map(function (r) {
                     return r._source;
                 }));
@@ -481,34 +482,22 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
     }
 
     function prepareArtifacts(test) {
-        const formattedArtifacts = test.artifacts.reduce(function(formatted, artifact) {
-            const name = artifact.name.toLowerCase();
-
-            if (!name.includes('live') && !name.includes('video')) {
-                const links = artifact.link.split(' ');
-                const pathname = new URL(links[0]).pathname;
-
-                artifact.extension = pathname.split('/').pop().split('.').pop();
-                if (artifact.extension === 'png') {
-                    if (links[1]) {
-                        artifact.link = links[0];
-                        artifact.thumb = links[1];
-                    }
-                    formatted.imageArtifacts.push(artifact);
-                }
-                formatted.artifactsToShow.push(artifact);
+        const formattedArtifacts = $scope.logs.reduce(function(formatted, artifact) {
+            if (artifact.isImageExists && artifact.blobLog.path) {
+                let newArtifact = {id: artifact.timestamp, name: artifact.blobLog.threadName, link: artifact.blobLog.path};
+                formatted.imageArtifacts.push(newArtifact);
             }
 
             return formatted;
-        }, {imageArtifacts: [], artifactsToShow: []});
+        }, {imageArtifacts: []});
 
         test.imageArtifacts = formattedArtifacts.imageArtifacts;
-        test.artifactsToShow = formattedArtifacts.artifactsToShow;
     }
 
-    $scope.openImagesViewerModal = function(event, url) {
+    $scope.openImagesViewerModal = function(event, id) {
+        // prepareArtifacts($scope.test); TODO: check where to call the function
         const activeArtifact = $scope.test.imageArtifacts.find(function(art) {
-            return art.link === url;
+            return art.id === id;
         });
 
         if (activeArtifact) {
@@ -823,7 +812,6 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
 
             setMode($scope.test.status === 'IN_PROGRESS' ? 'live' : 'record');
             $scope.MODE.initFunc.call(this, $scope.test);
-            prepareArtifacts($scope.test);
         }
     }
 
