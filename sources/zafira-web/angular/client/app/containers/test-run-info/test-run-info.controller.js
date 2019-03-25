@@ -595,10 +595,11 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
 
     function collectScreenshots(log) {
         var correlationId = getMetaLogCorrelationId(log);
+        var amazonPath = getMetaLogAmazonPath(log);
         var existsUnrecognizedImage = unrecognizedImages[correlationId];
-        if (existsUnrecognizedImage) {
+        if (existsUnrecognizedImage && amazonPath) {
             catchScreenshot(log, existsUnrecognizedImage, correlationId);
-        } else {
+        } else if(!existsUnrecognizedImage && !amazonPath) {
             preScreenshot(log, correlationId);
         }
     };
