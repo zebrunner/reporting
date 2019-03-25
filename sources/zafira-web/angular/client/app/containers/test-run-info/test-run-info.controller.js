@@ -632,7 +632,8 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
             delete unrecognizedImages[correlationId].thumb;
         } else {
             path = getMetaLogAmazonPath(log);
-            preScreenshot.log.blobLog.image.path = path;
+            preScreenshot.log.blobLog.image.path = preScreenshot.log.blobLog.image.path || [];
+            preScreenshot.log.blobLog.image.path.push(path);
             delete unrecognizedImages[correlationId].image;
         }
         preScreenshot.log.isImageExists = true;
