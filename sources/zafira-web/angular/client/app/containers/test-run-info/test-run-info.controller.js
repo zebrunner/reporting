@@ -464,7 +464,7 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
                 downloadZipFile(name, formattedData);
             })
             .catch(() => {
-                alertify.error('Unable to download all files, pleas try again.');
+                alertify.error('Unable to download all files, please try again.');
             });
     };
 
