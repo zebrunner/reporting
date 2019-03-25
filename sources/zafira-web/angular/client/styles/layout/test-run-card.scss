@@ -369,6 +369,11 @@
                 border-color: currentColor;
             }
         }
+        &._comments {
+            .comments-area {
+                color: rgba(0,0,0,.5);
+            }
+        }
     }
 
     & &__back-btn {
