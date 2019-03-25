@@ -110,8 +110,8 @@
                                                                     class="label label-default">Driver {{
                                                                     log.driver.index + 1 }}</span>
                                                                 <div ng-show="log.blobLog" class="log-wrapper">
-                                                                    <img ng-if="log.isImageExists" ng-click="openImagesViewerModal($event, log.blobLog.path);"
-                                                                        style="max-width: 66%;max-height: 29px;" ng-src="{{log.blobLog.thumb.path || log.blobLog.image[0].path}}"
+                                                                    <img ng-if="log.isImageExists" ng-click="openImagesViewerModal($event, log.blobLog.image.path[0]);"
+                                                                        style="max-width: 66%;max-height: 29px;" ng-src="{{log.blobLog.thumb.path || log.blobLog.image.path[0]}}"
                                                                         alt="image" />
                                                                     <i ng-show="log.isImageExists === false;" class="material-icons">insert_photo</i>
                                                                 </div>

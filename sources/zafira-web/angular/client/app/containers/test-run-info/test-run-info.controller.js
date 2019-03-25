@@ -483,14 +483,20 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
 
     function prepareArtifacts(test) {
         const formattedArtifacts = $scope.logs.reduce(function(formatted, artifact) {
-            if (artifact.isImageExists && artifact.blobLog.path) {
-                let newArtifact = {
-                    id: artifact.blobLog.path,
-                    name: artifact.blobLog.threadName,
-                    link: artifact.blobLog.path
-                };
+            if (artifact.isImageExists && artifact.blobLog.image && artifact.blobLog.image.path) {
+                artifact.blobLog.image.path.forEach(path => {
+                    let newArtifact = {
+                        id: path,
+                        name: artifact.blobLog.image.threadName,
+                        link: path
+                    };
 
-                formatted.imageArtifacts.push(newArtifact);
+                    if (artifact.blobLog.thumb && artifact.blobLog.thumb.path) {
+                        newArtifact.thumb = artifact.blobLog.thumb.path;
+                    }
+
+                    formatted.imageArtifacts.push(newArtifact);
+                });
             }
 
             return formatted;
@@ -621,16 +627,25 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
         var path;
         var prefix = isThumbnail ? 'thumb_' : 'img_';
         $scope.thumbs[prefix + correlationId] = {'log': preScreenshot.log.message, 'thumb': log, 'index': preScreenshot.index, 'path': path};
-        if(isThumbnail) {
+        if (isThumbnail) {
             path = getMetaLogThumbAmazonPath(log);
             preScreenshot.log.blobLog.thumb.path = path;
-            delete unrecognizedImages[correlationId].thumb;
+            if (!unrecognizedImages[correlationId].image) {
+                delete unrecognizedImages[correlationId];
+            } else {
+                delete unrecognizedImages[correlationId].thumb;
+            }
         } else {
             path = getMetaLogAmazonPath(log);
             preScreenshot.log.blobLog.image.path = preScreenshot.log.blobLog.image.path || [];
             preScreenshot.log.blobLog.image.path.push(path);
-            delete unrecognizedImages[correlationId].image;
+            if (!unrecognizedImages[correlationId].thumb) {
+                delete unrecognizedImages[correlationId];
+            } else {
+                delete unrecognizedImages[correlationId].image;
+            }
         }
+
         preScreenshot.log.isImageExists = true;
     };
 
