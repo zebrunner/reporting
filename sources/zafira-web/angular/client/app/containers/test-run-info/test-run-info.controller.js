@@ -595,37 +595,74 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
 
     function collectScreenshots(log) {
         var correlationId = getMetaLogCorrelationId(log);
-        var amazonPath = getMetaLogAmazonPath(log);
-        var existsUnrecognizedImage = unrecognizedImages[correlationId];
-        if (existsUnrecognizedImage && amazonPath) {
-            catchScreenshot(log, existsUnrecognizedImage, correlationId);
-        } else if(!existsUnrecognizedImage && !amazonPath) {
-            preScreenshot(log, correlationId);
+        var isThumbnail = isThumb(log);
+        var existsUnrecognizedImage = getUnrecognizedImageExists(isThumbnail, correlationId);
+        if (existsUnrecognizedImage) {
+            catchScreenshot(log, existsUnrecognizedImage, correlationId, isThumbnail);
+        } else {
+            preScreenshot(log, correlationId, isThumbnail);
         }
     };
 
-    function preScreenshot(log, correlationId) {
+    function preScreenshot(log, correlationId, isThumbnail) {
         var index = $scope.logs.length - 1;
         var appenToLog = $scope.logs[index];
-        appenToLog.blobLog = log;
+        appenToLog.blobLog = appenToLog.blobLog || {};
+        if(isThumbnail) {
+            appenToLog.blobLog.thumb = log;
+        } else {
+            appenToLog.blobLog.image = log;
+        }
         appenToLog.isImageExists = false;
-        unrecognizedImages[correlationId] = {'log': appenToLog, 'index': index};
+        unrecognizedImages[correlationId] = unrecognizedImages[correlationId] || {};
+        if(isThumbnail) {
+            unrecognizedImages[correlationId].thumb = {'log': appenToLog, 'index': index};
+        } else {
+            unrecognizedImages[correlationId].image = {'log': appenToLog, 'index': index};
+        }
     };
 
-    function catchScreenshot(log, preScreenshot, correlationId) {
-        var path = getMetaLogAmazonPath(log);
-        $scope.thumbs[correlationId] = {'log': preScreenshot.log.message, 'thumb': log, 'index': preScreenshot.index, 'path': path};
-        preScreenshot.log.blobLog.path = path;
+    function catchScreenshot(log, preScreenshot, correlationId, isThumbnail) {
+        var path;
+        var prefix = isThumbnail ? 'thumb_' : 'img_';
+        $scope.thumbs[prefix + correlationId] = {'log': preScreenshot.log.message, 'thumb': log, 'index': preScreenshot.index, 'path': path};
+        if(isThumbnail) {
+            path = getMetaLogThumbAmazonPath(log);
+            preScreenshot.log.blobLog.thumb.path = path;
+            delete unrecognizedImages[correlationId].thumb;
+        } else {
+            path = getMetaLogAmazonPath(log);
+            preScreenshot.log.blobLog.image.path = path;
+            delete unrecognizedImages[correlationId].image;
+        }
         preScreenshot.log.isImageExists = true;
-        delete unrecognizedImages[correlationId];
+    };
+
+    function getUnrecognizedImageExists(isThumbnail, correlationId) {
+        if(!unrecognizedImages[correlationId]) {
+            return false;
+        }
+        return isThumbnail ? unrecognizedImages[correlationId].thumb : unrecognizedImages[correlationId].image;
     };
 
     function getMetaLogCorrelationId(log) {
-        return log.headers['AMAZON_PATH_CORRELATION_ID'];
+        return getMetaLogHeader(log, 'AMAZON_PATH_CORRELATION_ID');
     };
 
     function getMetaLogAmazonPath(log) {
-        return log.headers['AMAZON_PATH'];
+        return getMetaLogHeader(log, 'AMAZON_PATH');
+    };
+
+    function getMetaLogThumbAmazonPath(log) {
+        return getMetaLogHeader(log, 'THUMB_AMAZON_PATH');
+    };
+
+    function getMetaLogHeader(log, headerName) {
+        return log.headers[headerName];
+    };
+
+    function isThumb(log) {
+        return getMetaLogThumbAmazonPath(log) !== undefined;
     };
 
     function provideVideo() {
