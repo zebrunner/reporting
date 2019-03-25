@@ -1,10 +1,6 @@
-import uploadImageModalController
-    from '../../../shared/modals/upload-image-modal/upload-image-modal.controller';
-import uploadImageModalTemplate
-    from '../../../shared/modals/upload-image-modal/upload-image-modal.html';
-
 (function () {
     'use strict';
+    let i = 0;
 
     angular
     .module('app.appSidebar')
@@ -13,14 +9,12 @@ import uploadImageModalTemplate
     // **************************************************************************
     function AppSidebarController($scope, $rootScope, $cookies, $q, $mdDialog, $state, ViewService, ConfigService,
                                   ProjectService, projectsService, UtilService, UserService, DashboardService,
-                                  AuthService, SettingsService) {
+                                  AuthService, SettingsService, $timeout) {
         'ngInject';
 
         $scope.DashboardService = DashboardService;
 
-        $scope.selectedProjects = projectsService.getSelectedProjects();
         $scope.version = null;
-        $scope.projects = [];
         $rootScope.dashboardList = [];
         $scope.views = [];
         $scope.tools = {};
@@ -28,26 +22,6 @@ import uploadImageModalTemplate
 
         $scope.hasHiddenDashboardPermission = function(){
             return AuthService.UserHasAnyPermission(["VIEW_HIDDEN_DASHBOARDS"]);
-        };
-
-        $scope.loadProjects = function(){
-            ConfigService.getConfig("projects").then(function(rs) {
-                if(rs.success)
-                {
-                    $scope.projects = rs.data;
-                    if($scope.selectedProjects) {
-                        $scope.projects.forEach(function (project) {
-                            if ($scope.selectedProjects.indexOfField('id', project.id) >= 0) {
-                                project.selected = true;
-                            }
-                        });
-                    }
-                }
-                else
-                {
-                    alertify.error("Unable to load projects");
-                }
-            });
         };
 
         function getViews(){
@@ -106,60 +80,6 @@ import uploadImageModalTemplate
             });
         };
 
-        $scope.selectedProjectsPresent = function () {
-            return $scope.selectedProjects && $scope.selectedProjects.length != 0;
-        };
-
-        $scope.joinProjectNames = function () {
-            var proj = $scope.selectedProjects.map(function(project, index) {
-                return project.name;
-            }).join(', ');
-            if(proj.length > 10) {
-                proj = proj.substring(0, 10) + '....';
-            }
-            return proj;
-        };
-
-        $scope.resetProjects = function () {
-            $scope.selectedProjects = [];
-            $scope.projects.forEach(function(project) {
-                project.selected = undefined;
-            });
-            projectsService.resetSelectedProjects();
-            $state.reload();
-        };
-
-        $scope.chooseProject = function(menu) {
-            $scope.selectedProjects = $scope.projects.filter(function (value) {
-                return value.selected;
-            });
-        };
-
-        $scope.$on("$mdMenuClose", function(name, listener) {
-            var isProjectMenuClosing = listener.attr('id') === 'projects-menu';
-            if(isProjectMenuClosing) {
-                var projects = projectsService.getSelectedProjects();
-                if(! angular.equals(projects, $scope.selectedProjects)) {
-                    projectsService.setSelectedProjects($scope.selectedProjects);
-                    $state.reload();
-                }
-            }
-        });
-
-        $scope.showProjectDialog = function(event) {
-            $mdDialog.show({
-                controller: ProjectController,
-                template: require('../../../_nav/project_modal.html'), //TODO: move to separate component
-                parent: angular.element(document.body),
-                targetEvent: event,
-                clickOutsideToClose:true,
-                fullscreen: true
-            })
-            .then(function(answer) {
-            }, function() {
-            });
-        };
-
         $scope.showViewDialog = function(event, view) {
             $mdDialog.show({
                 controller: ViewController,
@@ -177,66 +97,7 @@ import uploadImageModalTemplate
             });
         };
 
-        $scope.showUploadImageDialog = function($event) {
-            $mdDialog.show({
-                controller: uploadImageModalController,
-                controllerAs: '$ctrl',
-                template: uploadImageModalTemplate,
-                parent: angular.element(document.body),
-                targetEvent: $event,
-                clickOutsideToClose: true,
-                locals: {
-                    urlHandler: (url) => {
-                        if (url) {
-                            $rootScope.companyLogo.value = url;
-                            SettingsService.editSetting($rootScope.companyLogo).then(function (prs) {
-                                if (prs.success) {
-                                    $rootScope.companyLogo.value += '?' + (new Date()).getTime();
-                                    alertify.success('Company logo was successfully changed');
 
-                                    return true;
-                                } else {
-                                    alertify.error(prs.message);
-
-                                    return false;
-                                }
-                            });
-                        }
-
-                        return $q.reject(false);
-                    },
-                    fileTypes: 'COMMON',
-                }
-            });
-        };
-
-        // ***** Modals Controllers *****
-        function ProjectController($scope, $mdDialog) {
-            'ngInject';
-
-            $scope.project = {};
-            $scope.createProject = function(project){
-                ProjectService.createProject(project).then(function(rs) {
-                    if(rs.success)
-                    {
-                        alertify.success("Project created successfully");
-                    }
-                    else
-                    {
-                        alertify.error(rs.message);
-                    }
-                });
-                $scope.hide();
-            };
-            $scope.hide = function() {
-                $mdDialog.hide();
-            };
-            $scope.cancel = function() {
-                $mdDialog.cancel();
-            };
-            (function initController() {
-            })();
-        }
 
         function ViewController($scope, $mdDialog, view) {
             'ngInject';
@@ -309,9 +170,5 @@ import uploadImageModalTemplate
             (function initController() {
             })();
         }
-
-        (function initController() {
-            $scope.selectedProjects = projectsService.getSelectedProjects();
-        })();
     }
 })();

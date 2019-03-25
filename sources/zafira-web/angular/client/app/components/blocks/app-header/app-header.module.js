@@ -1,7 +1,6 @@
-(function () {
-    'use strict';
+'use strict';
 
-    angular.module('app.appHeader', []);
+import appHeader from './app-header.directive';
 
-    require('./app-header.directive');
-})();
+angular.module('app.appHeader', [])
+    .directive({ appHeader });
