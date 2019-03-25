@@ -43,6 +43,9 @@ const ImagesViewerController = function ImagesViewerController($scope, $mdDialog
 
         const activeElem = document.getElementById(vm.activeArtifactId);
         const newElem = document.getElementById(id);
+
+        if (!activeElem || !newElem) { return; }
+
         vm.activeArtifactId = id;
         activeElem.classList.remove(local.imgCssActiveClass);
         newElem.classList.add(local.imgCssActiveClass);
@@ -392,8 +395,6 @@ const ImagesViewerController = function ImagesViewerController($scope, $mdDialog
     }
 
     vm.$onInit = initController;
-    //$mdDialog doesn't fire any lifecycle hook, so we need to fire it manually
-    vm.$onInit();
 
     return vm;
 };

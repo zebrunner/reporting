@@ -511,21 +511,23 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
             return art.link === url;
         });
 
-        $mdDialog.show({
-            controller: ImagesViewerController,
-            template: require('../../components/modals/images-viewer/images-viewer.html'),
-            controllerAs: '$ctrl',
-            bindToController: true,
-            parent: angular.element(document.body),
-            targetEvent: event,
-            clickOutsideToClose:true,
-            fullscreen: false,
-            escapeToClose: false,
-            locals: {
-                test: $scope.test,
-                activeArtifactId: activeArtifact.id,
-            }
-        });
+        if (activeArtifact) {
+            $mdDialog.show({
+                controller: ImagesViewerController,
+                template: require('../../components/modals/images-viewer/images-viewer.html'),
+                controllerAs: '$ctrl',
+                bindToController: true,
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose:true,
+                fullscreen: false,
+                escapeToClose: false,
+                locals: {
+                    test: $scope.test,
+                    activeArtifactId: activeArtifact.id,
+                }
+            });
+        }
     };
 
     /**************** Websockets **************/
