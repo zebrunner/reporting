@@ -11,7 +11,7 @@
                 <app-users-controls on-search="search()"
                                     on-reset="reset()"
                                     class="control-buttons"
-                                    ng-if="activeTab.name === 'Users' && (searchActive || isFiltered)"></app-users-controls>
+                                    ng-if="activeTab.name === 'Users' && ($ctrl.searchActive || isFiltered)"></app-users-controls>
             </div>
             <div class="lonely-fab">
                     <app-users-fabs ng-if="activeTab.name === 'Users'" create-user="showCreateUserDialog()"></app-users-fabs>
@@ -28,7 +28,8 @@
                                                source="sr"
                                                search-value="sc"
                                                on-search-change="onSearchChange(fields)"
-                                               on-search="search()"></app-users>
+                                               on-search="search()"
+                                               search-act="$ctrl.searchActive"></app-users>
                                     <app-group ng-if="tab.name === 'Groups'" tabs="tabs" groups="groups"></app-group>
                                     <app-invites ng-if="tab.name === 'Invitations'"
                                                  tabs="tabs"

@@ -52,7 +52,11 @@ const AppUsersController = function AppUsersController($scope, $state, $mdDialog
             targetEvent: $event,
             model: $scope.searchValue.selectedRange
         }).then(function (result) {
-            if (result) { $scope.searchValue.selectedRange = result; }
+            if (result) { 
+                $scope.searchAct = true;
+                $scope.searchValue.selectedRange = result; 
+                // $scope.$apply();
+            }
 
         })
     };
