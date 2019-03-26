@@ -34,6 +34,8 @@ const testsRunsController = function testsRunsController($cookieStore, $mdDialog
         showCiHelperDialog: showCiHelperDialog,
         resetFilter: resetFilter,
         displaySearch: displaySearch,
+
+        get jenkins() { return $rootScope.jenkins; },
     };
 
     vm.$onInit = init;
@@ -246,29 +248,25 @@ const testsRunsController = function testsRunsController($cookieStore, $mdDialog
     }
 
     function abort(testRun) {
-        if (vm.jenkins.enabled) {
-            TestRunService.abortCIJob(testRun.id, testRun.ciRunId).then(function (rs) {
-                if (rs.success) {
-                    const abortCause = {};
-                    const currentUser = UserService.currentUser;
+        TestRunService.abortCIJob(testRun.id, testRun.ciRunId).then(function (rs) {
+            if (rs.success) {
+                const abortCause = {};
+                const currentUser = UserService.currentUser;
 
-                    abortCause.comment = 'Aborted by ' + currentUser.username;
-                    TestRunService.abortTestRun(testRun.id, testRun.ciRunId, abortCause).then(function(rs) {
-                        if (rs.success){
-                            testRun.status = 'ABORTED';
-                            alertify.success('Testrun ' + testRun.testSuite.name + ' is aborted' );
-                        } else {
-                            alertify.error(rs.message);
-                        }
-                    });
-                }
-                else {
-                    alertify.error(rs.message);
-                }
-            });
-        } else {
-            alertify.error('Unable connect to jenkins');
-        }
+                abortCause.comment = 'Aborted by ' + currentUser.username;
+                TestRunService.abortTestRun(testRun.id, testRun.ciRunId, abortCause).then(function(rs) {
+                    if (rs.success){
+                        testRun.status = 'ABORTED';
+                        alertify.success('Testrun ' + testRun.testSuite.name + ' is aborted' );
+                    } else {
+                        alertify.error(rs.message);
+                    }
+                });
+            }
+            else {
+                alertify.error(rs.message);
+            }
+        });
     }
 
     function batchEmail(event) {
