@@ -213,7 +213,7 @@
         function addTest(test) {
             test.elapsed = test.finishTime ? (test.finishTime - test.startTime) : Number.MAX_VALUE;
             prepareArtifacts(test);
-            test.tags = test.tags.forEach(function(tag) {
+            angular.forEach(test.tags, function (tag) {
                 if(tag.name === 'TESTRAIL_TESTCASE_UUID' || tag.name === 'QTEST_TESTCASE_UUID'){
                     tag.value = tag.value.split('-').pop();
                 }
