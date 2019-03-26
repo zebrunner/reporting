@@ -29,7 +29,6 @@ import org.apache.log4j.Logger;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
@@ -39,9 +38,6 @@ import static com.qaprosoft.zafira.services.util.EventPushService.Type.ZFR_CALLB
 public class TenancyInitializer {
 
     private static final Logger LOGGER = Logger.getLogger(TenancyInitializer.class);
-
-    @Value("${zafira.slack.image}")
-    private String zafiraLogoURL;
 
     @Autowired
     private URLResolver urlResolver;
@@ -95,9 +91,7 @@ public class TenancyInitializer {
                 processMessage(tenancy, () -> {
                     try {
                         Invitation invitation = invitationService.createInitialInvitation(eventMessage.getEmail());
-                        result.setSource(invitation.getSource().name());
                         result.setToken(invitation.getToken());
-                        result.setZafiraLogoURL(zafiraLogoURL);
                         result.setZafiraURL(urlResolver.buildWebURL());
                     } catch (ServiceException e) {
                         LOGGER.error(e.getMessage(), e);

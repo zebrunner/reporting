@@ -18,8 +18,6 @@ package com.qaprosoft.zafira.models.push.events;
 public class TenancyResponseEventMessage extends EventMessage {
 
     private String token;
-    private String source;
-    private String zafiraLogoURL;
     private String zafiraURL;
     private Boolean success;
 
@@ -27,11 +25,9 @@ public class TenancyResponseEventMessage extends EventMessage {
         super(tenancy);
     }
 
-    public TenancyResponseEventMessage(String tenancy, String token, String source, String zafiraLogoURL, String zafiraURL, Boolean success) {
+    public TenancyResponseEventMessage(String tenancy, String token, String zafiraURL, Boolean success) {
         super(tenancy);
         this.token = token;
-        this.source = source;
-        this.zafiraLogoURL = zafiraLogoURL;
         this.zafiraURL = zafiraURL;
         this.success = success;
     }
@@ -42,22 +38,6 @@ public class TenancyResponseEventMessage extends EventMessage {
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public String getZafiraLogoURL() {
-        return zafiraLogoURL;
-    }
-
-    public void setZafiraLogoURL(String zafiraLogoURL) {
-        this.zafiraLogoURL = zafiraLogoURL;
     }
 
     public String getZafiraURL() {
