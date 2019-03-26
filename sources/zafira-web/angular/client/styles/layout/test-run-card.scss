@@ -96,9 +96,11 @@
                     width: 18px;
                     height: 18px;
                 }
-                .md-icon:after {
-                    top: auto;
-                    bottom: 2px;
+                &.md-checked {
+                    .md-icon:after {
+                        left: 3.66667px;
+                        top: -0.77778px;
+                    }
                 }
             }
             span {
