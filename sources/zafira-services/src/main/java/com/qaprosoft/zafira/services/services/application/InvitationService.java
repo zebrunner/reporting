@@ -22,10 +22,12 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.EntityAlreadyExistsException;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.emails.UserInviteEmail;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +36,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+
+import static com.qaprosoft.zafira.models.db.Group.Role.ROLE_ADMIN;
 
 @Service
 public class InvitationService {
@@ -74,7 +78,6 @@ public class InvitationService {
         invitation.setCreatedBy(userService.getUserById(principalId));
         invitation.setStatus(Invitation.Status.PENDING);
         invitationMapper.createInvitation(invitation);
-        sendEmail(invitation);
         return invitation;
     }
 
@@ -84,6 +87,7 @@ public class InvitationService {
             Invitation inv = null;
             try {
                 inv = createInvitation(principalId, invitation, false);
+                sendEmail(inv);
             } catch (ServiceException e) {
                 LOGGER.error(e.getMessage(), e);
             }
@@ -99,6 +103,29 @@ public class InvitationService {
         }
         CompletableFuture.allOf(createInvitationsAsync(principalId, result, invitations)).join();
         return result;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Invitation createInitialInvitation(String email) throws ServiceException {
+        Invitation invitation = null;
+        if (!StringUtils.isBlank(userService.getAdminUsername())) {
+            User user = userService.getUserByUsername(userService.getAdminUsername());
+            if(user == null) {
+                throw new ForbiddenOperationException("Admin with username '" + userService.getAdminUsername() + "' does not exist");
+            }
+
+            Group group = groupService.getPrimaryGroupByRole(ROLE_ADMIN);
+            if(group == null) {
+                throw new ForbiddenOperationException("Group by role '" + ROLE_ADMIN.name() + "' does not exist");
+            }
+
+            invitation = new Invitation();
+            invitation.setGroupId(group.getId());
+            invitation.setSource(User.Source.INTERNAL);
+            invitation.setEmail(email);
+            invitation = createInvitation(user.getId(), invitation, true);
+        }
+        return invitation;
     }
 
     @Transactional(rollbackFor = Exception.class)

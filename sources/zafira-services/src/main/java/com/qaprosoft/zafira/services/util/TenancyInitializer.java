@@ -17,14 +17,19 @@ package com.qaprosoft.zafira.services.util;
 
 import com.google.gson.Gson;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
+import com.qaprosoft.zafira.models.db.Invitation;
+import com.qaprosoft.zafira.models.push.events.EmailEventMessage;
 import com.qaprosoft.zafira.models.push.events.EventMessage;
 import com.qaprosoft.zafira.models.push.events.TenancyResponseEventMessage;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.application.InvitationService;
 import com.qaprosoft.zafira.services.services.management.TenancyService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
@@ -35,8 +40,17 @@ public class TenancyInitializer {
 
     private static final Logger LOGGER = Logger.getLogger(TenancyInitializer.class);
 
+    @Value("${zafira.slack.image}")
+    private String zafiraLogoURL;
+
+    @Autowired
+    private URLResolver urlResolver;
+
     @Autowired
     private TenancyService tenancyService;
+
+    @Autowired
+    private InvitationService invitationService;
 
     @Autowired
     private EventPushService<EventMessage> eventPushService;
@@ -59,7 +73,7 @@ public class TenancyInitializer {
             EventMessage eventMessage = new Gson().fromJson(new String(message.getBody()), EventMessage.class);
             String tenancy = eventMessage.getTenancy();
             LOGGER.info("Tenancy with name '" + tenancy + "' initialization is starting....");
-            tenancyInitials.forEach(tenancyInitial -> initTenancy(tenancy, tenancyInitial));
+            initTenancy(tenancy);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -67,22 +81,40 @@ public class TenancyInitializer {
 
     @RabbitListener(queues = "#{zfrEventsQueue.name}")
     public void initTenancyDb(Message message) {
+        TenancyResponseEventMessage result;
         try {
-            boolean result = false;
-            EventMessage eventMessage = new Gson().fromJson(new String(message.getBody()), EventMessage.class);
+            boolean success;
+            EmailEventMessage eventMessage = new Gson().fromJson(new String(message.getBody()), EmailEventMessage.class);
             String tenancy = eventMessage.getTenancy();
+            result = new TenancyResponseEventMessage(tenancy);
             try {
                 LOGGER.info("Tenancy with name '" + tenancy + "' DB initialization is starting....");
                 tenancyDbInitials.forEach(tenancyInitial -> initTenancyDb(tenancy, tenancyInitial));
-                result = eventPushService.convertAndSend(TENANCIES, new EventMessage(tenancy));
+                success = eventPushService.convertAndSend(TENANCIES, new EventMessage(tenancy));
+                result.setSuccess(success);
+                processMessage(tenancy, () -> {
+                    try {
+                        Invitation invitation = invitationService.createInitialInvitation(eventMessage.getEmail());
+                        result.setSource(invitation.getSource().name());
+                        result.setToken(invitation.getToken());
+                        result.setZafiraLogoURL(zafiraLogoURL);
+                        result.setZafiraURL(urlResolver.buildWebURL());
+                    } catch (ServiceException e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                });
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             } finally {
-                eventPushService.convertAndSend(ZFR_CALLBACKS, new TenancyResponseEventMessage(tenancy, result), "Event-Type", "ZFR_INIT_TENANCY");
+                eventPushService.convertAndSend(ZFR_CALLBACKS, result, "Event-Type", "ZFR_INIT_TENANCY");
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    private void initTenancy(String tenancy) {
+        tenancyInitials.forEach(tenancyInitial -> initTenancy(tenancy, tenancyInitial));
     }
 
     /**
