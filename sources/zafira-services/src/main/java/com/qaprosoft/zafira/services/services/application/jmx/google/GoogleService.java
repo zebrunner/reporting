@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.*;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.GOOGLE;
@@ -39,8 +39,6 @@ public class GoogleService implements IJMXService<GoogleContext>
 {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GoogleService.class);
-
-	private static final String CLIENT_SECRET_JSON = "./client_secret.json";
 
 	@Autowired
 	private GoogleDriveAuthService driveAuthService;
@@ -102,6 +100,14 @@ public class GoogleService implements IJMXService<GoogleContext>
 		}
 	}
 
+	public String getTemporaryAccessToken(Long expiresIn) throws IOException {
+		String result = null;
+		if(getContext() != null) {
+			result = AbstractGoogleService.authorize(getContext().getCredsFile(), expiresIn).getAccessToken();
+		}
+		return result;
+	}
+
 	@Override
 	@SuppressWarnings("all")
 	public boolean isConnected()
@@ -109,8 +115,7 @@ public class GoogleService implements IJMXService<GoogleContext>
 		boolean result = false;
 		try
 		{
-			File file = new File(CLIENT_SECRET_JSON);
-			if(file.exists())
+			if(getContext() != null)
 			{
 				driveAuthService.getService(getContext().getCredsFile()).about();
 				sheetsAuthService.getService(getContext().getCredsFile()).spreadsheets();

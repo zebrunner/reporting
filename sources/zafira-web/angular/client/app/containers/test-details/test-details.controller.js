@@ -14,11 +14,12 @@
         'modalsService',
         '$state',
         '$transitions',
+        '$mdDialog',
         TestDetailsController]);
 
     // **************************************************************************
     function TestDetailsController(testRun, $scope, $rootScope, $q, TestService, UtilService, 
-                                   API_URL, modalsService, $state, $transitions) {
+                                   API_URL, modalsService, $state, $transitions, $mdDialog) {
         const testGroupDataToStore = {
             statuses: [],
             tags: []
@@ -48,9 +49,11 @@
             changeTestStatus: changeTestStatus,
             showDetailsDialog: showDetailsDialog,
             goToTestDetails: goToTestDetails,
+            updateTest: updateTest,
             get empty() {
                 return !Object.keys(vm.testRun.tests || {}).length ;
-            }
+            },
+            openImagesViewerModal: openImagesViewerModal,
         };
 
         vm.$onInit = controlInit;
@@ -65,6 +68,42 @@
             fillTestRunMetadata();
             bindEvents();
         }
+
+         function updateTest(test, isPassed) { 
+            var newStatus = isPassed ? 'PASSED' : 'FAILED';
+            if (test.status !== newStatus) {
+                test.status = newStatus;
+            }
+            else {
+                return;
+            }
+            var message;
+            TestService.updateTest(test).then(function(rs) {
+                if (rs.success) {
+                    message = 'Test was marked as ' + test.status;
+                    addTestEvent(message, test);
+                    alertify.success(message);
+                }
+                else {
+                    console.error(rs.message);
+                }
+            });
+        };
+
+        function  addTestEvent(message, test) {
+            var testEvent = {};
+            testEvent.description = message;
+            testEvent.jiraId = Math.floor(Math.random() * 90000) + 10000;
+            testEvent.testCaseId = test.testCaseId;
+            testEvent.type = 'EVENT';
+            TestService.createTestWorkItem(test.id, testEvent).
+                then(function(rs) {
+                    if (rs.success) {
+                    } else {
+                        alertify.error('Failed to add event test "' + test.id);
+                    }
+                })
+        };
 
         function fillTestRunMetadata() {
             addBrowserVersion();
@@ -173,12 +212,7 @@
 
         function addTest(test) {
             test.elapsed = test.finishTime ? (test.finishTime - test.startTime) : Number.MAX_VALUE;
-
-            test.artifactsToShow = test.artifacts.filter(function (artifact) {
-                var name = artifact.name.toLowerCase();
-
-                return !name.includes('live') && !name.includes('video');
-            });
+            prepareArtifacts(test);
             test.tags = test.tags.filter(function (tag) {
                 return tag.name !== 'TESTRAIL_TESTCASE_UUID' && tag.name !== 'QTEST_TESTCASE_UUID';
             });
@@ -193,6 +227,32 @@
 
             onTagSelect(testGroupDataToStore.tags);
             onStatusButtonClick(testGroupDataToStore.statuses);
+        }
+
+        function prepareArtifacts(test) {
+            const formattedArtifacts = test.artifacts.reduce(function(formatted, artifact) {
+                const name = artifact.name.toLowerCase();
+
+                if (!name.includes('live') && !name.includes('video')) {
+                    const links = artifact.link.split(' ');
+                    const pathname = new URL(links[0]).pathname;
+
+                    artifact.extension = pathname.split('/').pop().split('.').pop();
+                    if (artifact.extension === 'png') {
+                        if (links[1]) {
+                            artifact.link = links[0];
+                            artifact.thumb = links[1];
+                        }
+                       formatted.imageArtifacts.push(artifact);
+                    }
+                    formatted.artifactsToShow.push(artifact);
+                }
+
+                return formatted;
+            }, {imageArtifacts: [], artifactsToShow: []});
+
+            test.imageArtifacts = formattedArtifacts.imageArtifacts;
+            test.artifactsToShow = formattedArtifacts.artifactsToShow;
         }
 
         function collectTags(tests) {
@@ -388,10 +448,11 @@
             const isNew = setWorkItemIsNewStatus(test.workItems);
 
             modalsService.openModal({
-                controller: 'TestDetailsModalController',
-                templateUrl: 'app/components/modals/test-details/test-details.html',
+                controller: 'IssuesModalController',
+                templateUrl: 'app/components/modals/issues/issues.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
+                controllerAs: '$ctrl',
                 locals: {
                     test: test,
                     isNewIssue: isNew.issue,
@@ -510,6 +571,25 @@
     
                     onTransStartSubscription();
                 });
+        }
+
+        //TODO: implement lazyLoading after webpack is applied
+        function openImagesViewerModal(event, artifact, test) {
+            $mdDialog.show({
+                controller: 'ImagesViewerController',
+                templateUrl: 'app/components/modals/images-viewer/images-viewer.html',
+                controllerAs: '$ctrl',
+                bindToController: true,
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose:true,
+                fullscreen: false,
+                escapeToClose: false,
+                locals: {
+                    test,
+                    activeArtifactId: artifact.id,
+                }
+            });
         }
     }
 

@@ -26,8 +26,7 @@ import org.apache.log4j.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
 public abstract class AbstractGoogleService
 {
@@ -37,7 +36,7 @@ public abstract class AbstractGoogleService
 	private static String APPLICATION_NAME;
 	private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
-	private static final List<String> SCOPES = Arrays.asList(SheetsScopes.SPREADSHEETS, SheetsScopes.DRIVE);
+	private static final Set<String> SCOPES = SheetsScopes.all();
 
 	private static NetHttpTransport HTTP_TRANSPORT;
 
@@ -50,6 +49,13 @@ public abstract class AbstractGoogleService
 		{
 			LOGGER.error(e.getMessage());
 		}
+	}
+
+	public static Credential authorize(byte[] credsFile, Long expirationTime) throws IOException
+	{
+		Credential credential = authorize(credsFile).setExpiresInSeconds(expirationTime);
+		credential.refreshToken();
+		return credential;
 	}
 
 	public static Credential authorize(byte[] credsFile) throws IOException
@@ -72,7 +78,7 @@ public abstract class AbstractGoogleService
 		return JSON_FACTORY;
 	}
 
-	public static List<String> getScopes()
+	public static Set<String> getScopes()
 	{
 		return SCOPES;
 	}

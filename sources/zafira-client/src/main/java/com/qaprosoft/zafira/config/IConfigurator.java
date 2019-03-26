@@ -47,6 +47,8 @@ public interface IConfigurator
 	
 	Set<TestArtifactType> getArtifacts(ITestResult test);
 
+	void clearArtifacts();
+
 	Set<TagType> getTestTags(ITestResult test);
 	
 	List<String> getTestWorkItems(ITestResult test);

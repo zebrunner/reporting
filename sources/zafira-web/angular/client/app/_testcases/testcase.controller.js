@@ -3,11 +3,11 @@
 
     angular
         .module('app.testcase')
-        .controller('TestCaseListController', ['$scope', '$rootScope', '$location', '$mdDateRangePicker', 'TestService', 'TestCaseService', 'UtilService', 'ProjectProvider', TestCaseListController])
+        .controller('TestCaseListController', ['$scope', '$rootScope', '$location', '$mdDateRangePicker', 'TestService', 'TestCaseService', 'UtilService', 'projectsService', TestCaseListController])
         .controller('MetricController', ['$scope', '$stateParams', '$q', 'TestCaseService', MetricController])
 
        // **************************************************************************
-    function TestCaseListController($scope, $rootScope, $location, $mdDateRangePicker, TestService, TestCaseService, UtilService, ProjectProvider) {
+    function TestCaseListController($scope, $rootScope, $location, $mdDateRangePicker, TestService, TestCaseService, UtilService, projectsService) {
 
     	var DEFAULT_SC = {page : 1, pageSize : 20};
 
@@ -39,7 +39,7 @@
                 }
             }
 
-    		TestCaseService.searchTestCases(ProjectProvider.initProjects($scope.sc)).then(function(rs) {
+    		TestCaseService.searchTestCases(projectsService.initSelectedProjects($scope.sc)).then(function(rs) {
 				if(rs.success)
         		{
         			$scope.sr = rs.data;

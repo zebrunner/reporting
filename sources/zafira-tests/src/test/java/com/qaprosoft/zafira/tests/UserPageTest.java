@@ -195,15 +195,19 @@ public class UserPageTest extends AbstractTest
 		userPage = userPageService.search(Long.valueOf(testUser.getId()).toString(), "", "", "");
 		verifyUsersTableByRowIndex(testUser.getId(), testUser.getUsername(), testUser.getEmail(), testUser.getFirstName(), testUser.getLastName(), 0);
 		userPage.getUserSearchBlock().clearAllInputs();
+		userPageService.clearSearchForm();
 		userPage = userPageService.search("", testUser.getUsername(), "", "");
 		verifyUsersTableByRowIndex(testUser.getId(), testUser.getUsername(), testUser.getEmail(), testUser.getFirstName(), testUser.getLastName(), 0);
 		userPage.getUserSearchBlock().clearAllInputs();
+		userPageService.clearSearchForm();
 		userPage = userPageService.search("", "", testUser.getEmail(), "");
 		verifyUsersTableByRowIndex(testUser.getId(), testUser.getUsername(), testUser.getEmail(), testUser.getFirstName(), testUser.getLastName(), 0);
 		userPage.getUserSearchBlock().clearAllInputs();
+		userPageService.clearSearchForm();
 		userPage = userPageService.search("", "", "", testUser.getFirstName());
 		verifyUsersTableByRowIndex(testUser.getId(), testUser.getUsername(), testUser.getEmail(), testUser.getFirstName(), testUser.getLastName(), 0);
 		userPage.getUserSearchBlock().clearAllInputs();
+		userPageService.clearSearchForm();
 		userPage = userPageService.search("", "", "", testUser.getLastName());
 		verifyUsersTableByRowIndex(testUser.getId(), testUser.getUsername(), testUser.getEmail(), testUser.getFirstName(), testUser.getLastName(), 0);
 		userPage.getUserSearchBlock().clearAllInputs();
@@ -298,7 +302,7 @@ public class UserPageTest extends AbstractTest
 		return CompletableFuture.supplyAsync(() -> {
 			UserAPIService userAPIService = new UserAPIService();
 			int currentCount = userPage.getPageItemsCount();
-			return userAPIService.createUsers(currentCount <= count ? count - currentCount : 1);
+			return userAPIService.createUsers(currentCount < count ? count - currentCount : 1);
 		});
 	}
 }

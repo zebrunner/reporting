@@ -21,6 +21,10 @@ import java.util.*;
 
 import javax.ws.rs.core.MediaType;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.sheets.v4.Sheets;
 import com.qaprosoft.zafira.models.dto.*;
 import com.qaprosoft.zafira.models.dto.aws.PresignedUrlRequest;
 import org.apache.commons.io.FilenameUtils;
@@ -87,6 +91,7 @@ public class  ZafiraClient
 	private static final String TEST_RUN_BY_ID_PATH = "/api/tests/runs/%d";
 	private static final String SETTINGS_TOOL_PATH = "/api/settings/tool/%s";
 	private static final String AMAZON_SESSION_CREDENTIALS_PATH = "/api/settings/amazon/creds";
+	private static final String GOOGLE_SESSION_CREDENTIALS_PATH = "/api/settings/google/creds";
 	private static final String AMAZON_PRESIGNED_URL_PATH = "/api/settings/amazon/presignedURL";
 	private static final String TENANT_TYPE_PATH = "/api/auth/tenant";
 	private static final String PROJECTS_PATH = "/api/projects/%s";
@@ -98,6 +103,8 @@ public class  ZafiraClient
 
 	private AmazonS3 amazonClient;
 	private SessionCredentials amazonS3SessionCredentials;
+
+	private Sheets sheets;
 
 	private TenantType tenantType;
 	
@@ -1053,7 +1060,7 @@ public class  ZafiraClient
 	 * Registers Amazon S3 client
 	 * @throws Exception throws if credentials are invalid or bucket is not exist
 	 */
-	protected void initAmazonS3Client() throws Exception
+	void initAmazonS3Client() throws Exception
 	{
 		this.amazonS3SessionCredentials = getAmazonSessionCredentials().getObject();
 		if(this.amazonS3SessionCredentials != null)
@@ -1120,6 +1127,52 @@ public class  ZafiraClient
 		} catch (Exception e)
 		{
 			LOGGER.error("Unable to get AWS presigned URL", e);
+		}
+		return response;
+	}
+
+	public Optional<Sheets> getSpreadsheetService() {
+		if (!isAvailable())
+			LOGGER.error("Spreadsheet`s operations are unavailable until connection with Zafira is established!");
+	    return Optional.ofNullable(this.sheets);
+    }
+
+	void initGoogleClient()
+	{
+		String accessToken = getGoogleSessionCredentials().getObject();
+		if(accessToken != null) {
+			try {
+				GoogleCredential googleCredential = new GoogleCredential().setAccessToken(accessToken);
+				this.sheets = new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), googleCredential)
+						.setApplicationName(null)
+						.build();
+			} catch (Exception e) {
+				LOGGER.error("Google integration is invalid", e);
+			}
+		}
+	}
+
+	/**
+	 * Gets Google temporary credentials
+	 * @return Google temporary credentials
+	 */
+	private Response<String> getGoogleSessionCredentials()
+	{
+		Response<String> response = new Response<>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + GOOGLE_SESSION_CREDENTIALS_PATH);
+			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.TEXT_PLAIN))
+					.accept(MediaType.TEXT_PLAIN).get(ClientResponse.class);
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200 && clientRS.hasEntity())
+			{
+				response.setObject(clientRS.getEntity(String.class));
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error("Unable to get Google session credentials", e);
 		}
 		return response;
 	}

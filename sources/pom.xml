@@ -50,7 +50,7 @@
         <aspectj.version>1.8.10</aspectj.version>
         <mysql-connector-java.version>5.1.27</mysql-connector-java.version>
         <postgresql.version>42.2.4</postgresql.version>
-        <c3p0.version>0.9.5.2</c3p0.version>
+        <c3p0.version>0.9.5.3</c3p0.version>
         <mybatis.version>3.2.3</mybatis.version>
         <mybatis-spring.version>1.3.0</mybatis-spring.version>
         <jedis.version>2.1.0</jedis.version>
@@ -59,7 +59,7 @@
         <commons-lang3.version>3.3.2</commons-lang3.version>
         <commons-collections4.version>4.0</commons-collections4.version>
         <commons-io.version>2.4</commons-io.version>
-        <commons-fileupload.version>1.3</commons-fileupload.version>
+        <commons-fileupload.version>1.3.3</commons-fileupload.version>
         <commons-codec.version>1.8</commons-codec.version>
         <commons-logging.version>1.1.3</commons-logging.version>
         <commons-validator.version>1.4.0</commons-validator.version>
@@ -67,7 +67,7 @@
         <dozer.version>5.4.0</dozer.version>
         <github.version>1.95</github.version>
         <jgit.version>5.1.3.201810200350-r</jgit.version>
-        <jackson.version>2.9.7</jackson.version>
+        <jackson.version>2.9.8</jackson.version>
         <jasypt.version>1.9.1</jasypt.version>
         <joda-time.version>2.3</joda-time.version>
         <hibernate-validator.version>5.2.4.Final</hibernate-validator.version>

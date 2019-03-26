@@ -13,10 +13,10 @@ public abstract class AbstractSearchBlock extends AbstractUIObject
 
 	protected static final String CONTAINER_LOCATOR = "//thead";
 
-	@FindBy(xpath = "//button[./*[text() = 'APPLY']] | //button[./*[text() = 'Search']]")
+	@FindBy(xpath = "//button[./*[text() = 'APPLY']] | //button[./*[text() = 'Search']] | //button[./*[text() = 'SEARCH']]")
 	protected WebElement searchButton;
 
-	@FindBy(xpath = "//button[./*[text() = 'RESET']] | //button[./*[text() = 'Clear']]")
+	@FindBy(xpath = "//button[./*[text() = 'RESET']] | //button[./*[text() = 'Clear']] | //button[./*[text() = 'Reset']]")
 	protected WebElement clearButton;
 
 	protected AbstractSearchBlock(WebDriver driver, SearchContext context)
