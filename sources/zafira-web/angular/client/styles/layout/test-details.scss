@@ -352,11 +352,6 @@
                         display: flex;
                         flex-wrap: wrap;
                     }
-                    &__button {
-                        @media(max-width: $breakpoint-mobile) {
-                            display: none;
-                        }
-                    }
                     &__menu {
                         button.md-icon-button.md-button.md-ink-ripple {
                             padding: 0;

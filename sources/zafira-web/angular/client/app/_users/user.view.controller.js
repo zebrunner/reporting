@@ -106,6 +106,7 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
         $scope.sc = angular.copy(DEFAULT_SC);
         $location.url($location.path());
         $scope.search();
+        $scope.searchActive = false;
         $scope.isFiltered = false;
     };
 

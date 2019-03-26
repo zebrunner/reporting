@@ -11,7 +11,7 @@
                 <a md-button aria-label="menu" ui-sref="dashboard.list" data-ng-click="loadDashboards();">
                     <i class="material-icons">equalizer</i><span>Boards</span>
                 </a>
-                <ul class="auto-width width-icon">
+                <ul class="auto-width width-icon" toggle-nav-bottom>
                     <li class="sub-search nav-search">
                         <md-input-container class="no-margin no-padding">
                             <label>Search</label>
@@ -32,7 +32,7 @@
                     </li>
                 </ul>
             </li>
-            <li ng-class="{'active':$state.includes('tests')}">
+            <li ng-class="{'active':$state.includes('tests')}" toggle-nav-bottom>
                 <a md-button aria-label="menu" ui-sref="tests.runs">
                     <i class="material-icons">play_circle_outline</i>
                     <span>Runs</span>
@@ -43,7 +43,7 @@
                     <i class="material-icons">remove_red_eye</i><span>Views</span>
                 </a>
                 <ul class="auto-width width-icon">
-                    <li class="sub-search nav-search">
+                    <li class="sub-search nav-search" toggle-nav-bottom>
                         <md-input-container class="no-margin no-padding">
                             <label>Search</label>
                             <input name="search" ng-model="navSCView.name" autocomplete="off"/>
@@ -52,7 +52,7 @@
                         <md-icon toggle-menu="close" class="search_close-button" ng-click="">close</md-icon>
                     </li>
                     <li class="sub-search search-menu">
-                        <ul>
+                        <ul toggle-nav-bottom>
                             <li>
                                 <a class="create-view-button" md-button aria-label="menu" href="" data-ng-click="showViewDialog($event)"></i>New view +</a>
                             </li>
@@ -74,19 +74,19 @@
                   <span>Cases</span>
                 </a>
             </li-->
-            <li ng-class="{'active':$state.includes('users')}">
-                <a md-button aria-label="menu" ui-sref="users.list" has-any-permission="['VIEW_USERS']">
+            <li ng-class="{'active':$state.includes('users')}" toggle-nav-bottom>
+                <a md-button aria-label="menu" ui-sref="users.list"  has-any-permission="['VIEW_USERS']">
                     <i class="material-icons">supervisor_account</i>
                     <span>Users</span>
                 </a>
             </li>
-            <li ui-sref-active="active">
+            <li ui-sref-active="active" toggle-nav-bottom>
                 <a md-button aria-label="menu" ui-sref="monitors" has-any-permission="['VIEW_MONITORS']">
                     <i class="material-icons">laptop_chromebook</i>
                     <span>Monitors</span>
                 </a>
             </li>
-            <li ui-sref-active="active">
+            <li ui-sref-active="active" toggle-nav-bottom>
                 <a md-button aria-label="menu" ui-sref="integrations" has-any-permission="['VIEW_INTEGRATIONS']">
                     <i class="material-icons">settings_input_component</i>
                     <span>Integrations</span>
