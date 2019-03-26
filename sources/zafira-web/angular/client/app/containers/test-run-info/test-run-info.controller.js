@@ -22,7 +22,7 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
     $scope.testRun = {};
     $scope.test = {};
     $scope.drivers = [];
-    $scope.thumbs = {};
+    let logSizeCount = 0;
     var driversQueue = [];
     var driversCount = 0;
     $scope.elasticsearchDataLoaded = false;
@@ -97,13 +97,13 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
                 closeAll();
 
                 $scope.logs = [];
-                $scope.thumbs = {};
+                logSizeCount = 0;
                 unrecognizedImages = {};
                 scrollEnable = false;
                 tryToGetLogsHistoryFromElasticsearch(logGetter).then(function (rs) {
                     $timeout(function () {
                         logGetter.pageCount = null;
-                        logGetter.from = $scope.logs.length + Object.size($scope.thumbs) * 2 + Object.size(unrecognizedImages);
+                        logGetter.from = $scope.logs.length + logSizeCount + Object.size(unrecognizedImages);
                         function update() {
                             $timeout(function() {
                                 if (Object.size(unrecognizedImages) > 0) {
@@ -133,7 +133,6 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
     function getLogsFromElasticsearch(from, page, size) {
         return $q(function (resolve, reject) {
             elasticsearchService.search(ELASTICSEARCH_INDEX, SEARCH_CRITERIA, from, page, size, $scope.test.startTime).then(function (rs) {
-                prepareArtifacts($scope.test);
                 resolve(rs.map(function (r) {
                     return r._source;
                 }));
@@ -183,6 +182,7 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
             hits.forEach(function (hit) {
                 followUpOnLogs(hit);
             });
+            prepareArtifacts($scope.test);
             if(! from && from != 0 && (page * size < count)) {
                 page ++;
                 collectElasticsearchLogs(from, page, size, count, resolveFunc);
@@ -319,8 +319,11 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
     };
 
     $scope.getVideoState = function (log) {
-        var videoElement = angular.element('#videoRecord');
-        videoElement[0].currentTime = log.videoTimestamp;
+        $timeout(() => {
+            const videoElement = angular.element('#videoRecord')[0];
+
+            videoElement && log.videoTimestamp && (videoElement.currentTime = log.videoTimestamp);
+        },0);
     };
 
     function getArtifactsByPartName(test, partName, exclusion) {
@@ -598,6 +601,7 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
         var correlationId = getMetaLogCorrelationId(log);
         var isThumbnail = isThumb(log);
         var existsUnrecognizedImage = getUnrecognizedImageExists(isThumbnail, correlationId);
+        logSizeCount++;
         if (existsUnrecognizedImage) {
             catchScreenshot(log, existsUnrecognizedImage, correlationId, isThumbnail);
         } else {
@@ -625,8 +629,6 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
 
     function catchScreenshot(log, preScreenshot, correlationId, isThumbnail) {
         var path;
-        var prefix = isThumbnail ? 'thumb_' : 'img_';
-        $scope.thumbs[prefix + correlationId] = {'log': preScreenshot.log.message, 'thumb': log, 'index': preScreenshot.index, 'path': path};
         if (isThumbnail) {
             path = getMetaLogThumbAmazonPath(log);
             preScreenshot.log.blobLog.thumb.path = path;
@@ -639,14 +641,13 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
             path = getMetaLogAmazonPath(log);
             preScreenshot.log.blobLog.image.path = preScreenshot.log.blobLog.image.path || [];
             preScreenshot.log.blobLog.image.path.push(path);
+            preScreenshot.log.isImageExists = true;
             if (!unrecognizedImages[correlationId].thumb) {
                 delete unrecognizedImages[correlationId];
             } else {
                 delete unrecognizedImages[correlationId].image;
             }
         }
-
-        preScreenshot.log.isImageExists = true;
     };
 
     function getUnrecognizedImageExists(isThumbnail, correlationId) {
