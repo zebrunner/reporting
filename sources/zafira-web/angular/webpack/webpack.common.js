@@ -152,6 +152,9 @@ module.exports = (env) => {
             moduleExtensions: ['-loader']
         },
         plugins: [
+            new webpack.DefinePlugin({
+                __PRODUCTION__: JSON.stringify(isProd)
+            }),
             new CopyWebpackPlugin(
                 [{ from: '../config.json'}]
             ),
