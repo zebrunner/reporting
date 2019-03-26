@@ -96,6 +96,10 @@
                     width: 18px;
                     height: 18px;
                 }
+                .md-icon:after {
+                    top: auto;
+                    bottom: 2px;
+                }
             }
             span {
                 z-index: 2;
