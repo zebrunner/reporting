@@ -282,7 +282,8 @@ const monitorsController = function monitorsController($scope, $q, $rootScope, $
             scope: $scope.$new(),
             preserveScope: true,
             locals: {
-                monitor: monitor
+                monitor: monitor,
+                get tools() { return $rootScope.tools; }
             }
         }).then(function(answer) {
                 if(answer)

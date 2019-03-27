@@ -37,6 +37,12 @@ const dashboardController = function dashboardController($scope, $rootScope, $q,
         cellHeight: 20
     };
 
+    Object.defineProperty($scope, 'tools', {
+        get: () => {
+            return $rootScope.tools;
+        }
+    });
+
     $scope.isJson = function(json) {
         return typeof(json) === 'object';
     };
