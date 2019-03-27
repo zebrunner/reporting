@@ -24,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.qaprosoft.zafira.models.db.UserPreference.Name.DEFAULT_DASHBOARD;
+
 @Service
 public class UserPreferenceService
 {
@@ -58,6 +60,12 @@ public class UserPreferenceService
 	public UserPreference getUserPreferenceById(long id) throws ServiceException
 	{
 		return userPreferenceMapper.getUserPreferenceById(id);
+	}
+
+	@Transactional(readOnly = true)
+	public List<UserPreference> getUserPreferencesByNameAndDashboardTitle(UserPreference.Name name, String title) throws ServiceException
+	{
+		return userPreferenceMapper.getUserPreferencesByNameAndDashboardTitle(name, title);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
@@ -113,7 +121,7 @@ public class UserPreferenceService
 	@Transactional(rollbackFor = Exception.class)
 	public UserPreference createOrUpdateUserPreference(UserPreference newUserPreference) throws ServiceException
 	{
-		UserPreference userPreference = getUserPreferenceByNameAndUserId(newUserPreference.getName(), newUserPreference.getUserId());
+		UserPreference userPreference = getUserPreferenceByNameAndUserId(newUserPreference.getName().name(), newUserPreference.getUserId());
 		if(userPreference == null)
 		{
 			createUserPreference(newUserPreference);
@@ -128,5 +136,14 @@ public class UserPreferenceService
 			newUserPreference = userPreference;
 		}
 		return newUserPreference;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public void updateDefaultDashboardPreference(String fromTitle, String toTitle) throws ServiceException {
+		List<UserPreference> userPreferences = getUserPreferencesByNameAndDashboardTitle(DEFAULT_DASHBOARD, fromTitle);
+		for(UserPreference userPreference : userPreferences) {
+			userPreference.setValue(toTitle);
+			updateUserPreference(userPreference);
+		}
 	}
 }

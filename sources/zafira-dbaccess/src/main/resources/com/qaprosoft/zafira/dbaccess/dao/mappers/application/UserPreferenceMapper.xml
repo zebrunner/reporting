@@ -57,6 +57,13 @@
 		]]>
 	</select>
 
+	<select id="getUserPreferencesByNameAndDashboardTitle" resultMap="UserPreferenceResultMap">
+		<include refid="getUserPreference" />
+		<![CDATA[
+			WHERE UP.NAME = #{name} AND UP.VALUE = #{title};
+		]]>
+	</select>
+
 	<select id="getDefaultUserPreferences" resultMap="UserPreferenceResultMap">
 		<include refid="getUserPreference" />
 		<![CDATA[

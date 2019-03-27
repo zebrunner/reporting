@@ -29,6 +29,7 @@ public class DashboardType extends AbstractType {
 	private List<WidgetType> widgets = new ArrayList<>();
 	private boolean hidden;
 	private Integer position;
+	private boolean editable;
 	private List<Attribute> attributes;
 
 	public String getTitle()
@@ -75,5 +76,13 @@ public class DashboardType extends AbstractType {
 
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
+	}
+
+	public boolean isEditable() {
+		return editable;
+	}
+
+	public void setEditable(boolean editable) {
+		this.editable = editable;
 	}
 }
