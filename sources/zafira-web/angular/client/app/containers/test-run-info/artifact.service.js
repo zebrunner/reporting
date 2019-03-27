@@ -1,4 +1,4 @@
-import RFB from '@novnc/novnc/core/rfb';
+import '../../../vendors/novnc.min';
 
 const ArtifactService = function ArtifactService($rootScope, $window, $q, $timeout, UtilService) {
     'ngInject';
@@ -20,7 +20,7 @@ const ArtifactService = function ArtifactService($rootScope, $window, $q, $timeo
         container = containerElement;
         containerHeightProperty = heightProperty;
         containerWidthProperty = widthProperty;
-        var rfb = new RFB(angular.element('#vnc')[0], wsURL, { shared: true, credentials: { password: 'selenoid' } });
+        var rfb = new window.RFB(angular.element('#vnc')[0], wsURL, { shared: true, credentials: { password: 'selenoid' } });
 
         //rfb._viewOnly = true;
         rfb.addEventListener("connect",  connected);
