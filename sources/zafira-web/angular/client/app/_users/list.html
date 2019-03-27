@@ -1,41 +1,49 @@
 <div>
     <zf-sub-header>
         <zf-sub-header-title>
-            {{ activeTab.name }}
-            <small id="itemsCount" data-ng-if="activeTab.countFunc">({{ activeTab.countFunc.call() }})</small>
+            {{ $ctrl.activeTab.name }}
+            <small id="itemsCount" data-ng-if="$ctrl.activeTab.countFunc">({{ $ctrl.activeTab.countFunc.call() }})</small>
         </zf-sub-header-title>
     </zf-sub-header>
     <div class="page user-view-page">
         <div class="ui-section">
             <div layout="row" layout-xs="column" class="col-lg-12 no-padding fixed-search-column users__header-actions">
-                <app-users-controls on-search="search()"
-                                    on-reset="reset()"
+                <app-users-controls on-search="$ctrl.search()"
+                                    on-reset="$ctrl.reset()"
                                     class="control-buttons"
-                                    ng-if="activeTab.name === 'Users' && (searchActive || isFiltered)"></app-users-controls>
+                                    ng-if="$ctrl.activeTab.name === 'Users' && ($ctrl.searchActive || $ctrl.isFiltered)"></app-users-controls>
             </div>
             <div class="lonely-fab">
-                    <app-users-fabs ng-if="activeTab.name === 'Users'" create-user="showCreateUserDialog()"></app-users-fabs>
-                    <app-group-fabs ng-if="activeTab.name === 'Groups'"></app-group-fabs>
-                    <app-invites-fabs ng-if="activeTab.name ==='Invitations'" tools="tools"></app-invites-fabs>
+                    <app-users-fabs ng-if="$ctrl.activeTab.name === 'Users'" create-user="$ctrl.showCreateUserDialog()"></app-users-fabs>
+                    <app-group-fabs ng-if="$ctrl.activeTab.name === 'Groups'" create-group="$ctrl.showGroupDialog()"></app-group-fabs>
+                    <app-invites-fabs ng-if="$ctrl.activeTab.name ==='Invitations'" tools="$ctrl.tools" invite="$ctrl.showInviteUsersDialog()"></app-invites-fabs>
             </div>
             <div ng-cloak class="col-md-12 no-padding">
                 <article class="article">
                     <md-card class="no-margin-h">
-                        <md-tabs md-no-ink md-stretch-tabs="never" md-dynamic-height md-border-bottom md-selected="selectedTabIndex">
-                            <md-tab ng-if="tab.show();" ng-repeat="tab in tabs" label="{{ tab.name }}" md-on-select="switchTab(tab, $index);">
+                        <md-tabs md-no-pagination="true" md-no-ink md-stretch-tabs="never" md-dynamic-height md-border-bottom md-selected="$ctrl.selectedTabIndex">
+                            <md-tab ng-if="tab.show();" ng-repeat="tab in $ctrl.tabs" label="{{ tab.name }}" md-on-select="$ctrl.switchTab(tab, $index);">
                                     <app-users ng-if="tab.name === 'Users'"
-                                               tabs="tabs"
-                                               source="sr"
-                                               search-value="sc"
-                                               on-search-change="onSearchChange(fields)"
-                                               on-search="search()"></app-users>
-                                    <app-group ng-if="tab.name === 'Groups'" tabs="tabs" groups="groups"></app-group>
+                                               tabs="$ctrl.tabs"
+                                               source="$ctrl.sr"
+                                               search-value="$ctrl.sc"
+                                               on-search-change="$ctrl.onSearchChange(fields)"
+                                               on-search="$ctrl.search()"
+                                               search-act="$ctrl.searchActive"></app-users>
+                                    <app-group ng-if="tab.name === 'Groups'" 
+                                               tabs="$ctrl.tabs" 
+                                               groups="$ctrl.groups" 
+                                               show-group="$ctrl.showGroupDialog($event, group)"
+                                               delete-group="$ctrl.deleteGroup(group)"
+                                               search="$ctrl.querySearch(criteria, group)"
+                                               add-user="$ctrl.addUserToGroup(user, group)"
+                                               delete-user="$ctrl.deleteUserFromGroup(user, group)"></app-group>
                                     <app-invites ng-if="tab.name === 'Invitations'"
-                                                 tabs="tabs"
-                                                 on-search="search(data)"
-                                                 on-switch-tab="switchTab(tab, index)"
+                                                 tabs="$ctrl.tabs"
+                                                 on-search="$ctrl.search(data)"
+                                                 on-switch-tab="$ctrl.switchTab(tab, index)"
                                                  invitations="invitations"
-                                                 groups="groups"></app-invites>
+                                                 groups="$ctrl.groups"></app-invites>
                             </md-tab>
                         </md-tabs>
                     </md-card>

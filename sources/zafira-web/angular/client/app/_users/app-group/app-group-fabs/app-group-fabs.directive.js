@@ -6,6 +6,7 @@ const appGroupFabs = function appGroupFabs() {
         template,
         controller,
         scope: {
+            createGroup: '&',
         },
         restrict: 'E',
         replace: true

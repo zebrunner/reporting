@@ -6,7 +6,8 @@ const appInvitesFabs = function appInvitesFabs() {
         template,
         controller,
         scope: {
-            tools: '='
+            tools: '=',
+            invite: '&',
         },
         restrict: 'E',
         replace: true

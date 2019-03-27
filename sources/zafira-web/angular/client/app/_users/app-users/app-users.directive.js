@@ -1,7 +1,8 @@
 import template from './app-users.html';
 import controller from './app-users.controller';
 
-const appUsers = function appUsers() {
+const appUsers = function appUsers($timeout) {
+    'ngInject';
     return {
         template,
         controller,
@@ -10,7 +11,8 @@ const appUsers = function appUsers() {
             source: '=',
             searchValue: '=',
             tabs: '=',
-            onSearchChange: '&'
+            onSearchChange: '&',
+            searchAct: '='
         },
         controllerAs: '$ctrl',
         restrict: 'E',

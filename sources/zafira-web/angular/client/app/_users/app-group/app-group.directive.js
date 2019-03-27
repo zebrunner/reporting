@@ -7,7 +7,12 @@ const appGroup = function appGroup() {
         controller,
         scope: {
             tabs: '=',
-            groups: '='
+            groups: '=',
+            showGroup: '&',
+            deleteGroup: '&',
+            search: '&',
+            addUser: '&',
+            deleteUser: '&',
         },
         restrict: 'E',
         replace: true
