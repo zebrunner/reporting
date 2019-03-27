@@ -75,7 +75,7 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
     function onSearchChange(fields) {
         vm.searchActive = false;
         fields.forEach( function (field) {
-            if (field.$modelValue) {
+            if (field.$modelValue || field.$modelValue === 0) {
                 vm.searchActive = true;
             }
         })
