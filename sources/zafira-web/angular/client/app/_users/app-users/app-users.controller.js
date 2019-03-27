@@ -162,9 +162,7 @@ const AppUsersController = function AppUsersController($scope, $state, $mdDialog
                     let actIndex = $scope.source.results.indexOf(active);
 
                     if(actIndex > -1) {
-                        $scope.source.results[actIndex].firstName = answer.firstName || $scope.source.results[actIndex].firstName;
-                        $scope.source.results[actIndex].lastName = answer.lastName || $scope.source.results[actIndex].lastName;
-                        $scope.source.results[actIndex].email = answer.email;
+                        $scope.source.results[actIndex] = {...$scope.source.results[actIndex], ...answer};
                     }
                 }
             }, function (status) {

@@ -167,7 +167,13 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
         })
             .then(function (data) {
                 if (data) {
-                    vm.sr.results.push(data);
+                    let index = vm.sr.results.findIndex(({id}) => data.id === id);
+
+                    if (index !== -1) {
+                        vm.sr.results[index] = {...vm.sr.results[index], ...data};
+                    } else {
+                        vm.sr.results.push(data);
+                    }
                 }
             }, function () {
             });
