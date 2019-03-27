@@ -30,7 +30,7 @@ public interface UserPreferenceMapper
 	
 	UserPreference getUserPreferenceById(long id);
 
-	List<UserPreference> getUserPreferencesByNameAndDashboardTitle(@Param("name") String name, @Param("title") String title);
+	List<UserPreference> getUserPreferencesByNameAndDashboardTitle(@Param("name") UserPreference.Name name, @Param("title") String title);
 
 	List<UserPreference> getUserPreferencesByUserId(long userId);
 

@@ -18,7 +18,6 @@ package com.qaprosoft.zafira.services.services.application;
 import java.util.List;
 import java.util.Map;
 
-import com.qaprosoft.zafira.models.db.UserPreference;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
@@ -90,13 +89,17 @@ public class DashboardService
 	public Dashboard updateDashboard(Dashboard dashboard) throws ServiceException
 	{
 		Dashboard dbDashboard = getDashboardById(dashboard.getId());
+		if(dbDashboard == null) {
+			throw new ServiceException("Dashboard with id '" + dashboard.getId() + "' does not exist");
+		}
 		if (!dbDashboard.isEditable()) {
-			dashboard.setTitle(dbDashboard.getTitle());
-			dashboard.setAttributes(dbDashboard.getAttributes());
-			dashboard.setWidgets(dbDashboard.getWidgets());
+			throw new IllegalOperationException("Cannot update not editable dashboard");
 		}
 		dashboard.setEditable(dbDashboard.isEditable());
 		dashboardMapper.updateDashboard(dashboard);
+		if (!dbDashboard.getTitle().equals(dashboard.getTitle())) {
+			userPreferenceService.updateDefaultDashboardPreference(dbDashboard.getTitle(), dashboard.getTitle());
+		}
 		return dashboard;
 	}
 	
@@ -107,11 +110,7 @@ public class DashboardService
 		if (!dashboard.isEditable()) {
 			throw new IllegalOperationException("Cannot delete not editable dashboard");
 		}
-		List<UserPreference> userPreferences = userPreferenceService.getUserPreferencesByNameDashboardTitle("DEFAULT_DASHBOARD", dashboard.getTitle());
-		for(UserPreference userPreference : userPreferences) {
-			userPreference.setValue("General");
-			userPreferenceService.updateUserPreference(userPreference);
-		}
+		userPreferenceService.updateDefaultDashboardPreference(dashboard.getTitle(), "General");
 		dashboardMapper.deleteDashboardById(id);
 	}
 	

@@ -23,15 +23,19 @@ public class UserPreference extends AbstractEntity {
 
     private static final long serialVersionUID = 3544699350398796894L;
 
-    private String name;
+    private Name name;
     private String value;
     private Long userId;
 
-    public String getName() {
+    public enum Name {
+        DEFAULT_DASHBOARD, REFRESH_INTERVAL, THEME
+    }
+
+    public Name getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(Name name) {
         this.name = name;
     }
 
