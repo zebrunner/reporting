@@ -38,6 +38,7 @@ const appHeaderController = function(UserService, $rootScope, ConfigService, pro
                 const projects = projectsService.getSelectedProjects();
 
                 if (!angular.equals(projects, vm.selectedProjects)) {
+                    if (!projects && !vm.selectedProjects) { return; }
                     if (vm.selectedProjects && vm.selectedProjects.length) {
                         projectsService.setSelectedProjects(vm.selectedProjects);
                     } else {
