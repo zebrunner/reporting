@@ -41,8 +41,7 @@
                                                         <video preload="auto" ng-init="videoPlayerPained = true;" id="videoRecord"
                                                             ng-if="MODE.name == 'record'" ng-attr-width="{{ videoWidth }}"
                                                             controls>
-                                                            <source ng-src="{{ drivers[selectedDriver].link }}" src=""
-                                                                type="video/mp4">
+                                                            <source ng-src="{{ drivers[selectedDriver].link }}" type="video/mp4">
                                                             Your browser does not support the video tag.
                                                         </video>
                                                         <div ng-init="vncPained = true;" ng-if="MODE.name == 'live';"
