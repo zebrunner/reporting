@@ -1,10 +1,9 @@
-const RFB = require('../../../vendors/novnc.min');
+import RFB from '@novnc/novnc/core/rfb';
 
 const ArtifactService = function ArtifactService($rootScope, $window, $q, $timeout, UtilService) {
     'ngInject';
 
     var service = {};
-
     var display;
     var ratio;
     var container;
@@ -33,6 +32,7 @@ const ArtifactService = function ArtifactService($rootScope, $window, $q, $timeo
         angular.element($window).bind('resize', function(){
             autoscale(display, ratio, container);
         });
+
         return rfb;
     };
 

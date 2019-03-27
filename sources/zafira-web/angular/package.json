@@ -82,6 +82,7 @@
         "node": ">=0.10.20"
     },
     "dependencies": {
+        "@novnc/novnc": "^1.0.0",
         "@uirouter/angularjs": "^1.0.22",
         "ace-builds": "^1.4.2",
         "alertifyjs": "^1.11.2",
