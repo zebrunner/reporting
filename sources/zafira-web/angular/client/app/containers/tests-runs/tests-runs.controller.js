@@ -368,6 +368,7 @@ const testsRunsController = function testsRunsController($cookieStore, $mdDialog
                 if (vm.isSearchActive()) { return; }
 
                 vm.testRuns = testsRunsService.addNewTestRun(testRun);
+                vm.totalResults += 1;
             } else {
                 const data = {
                     status: testRun.status,
