@@ -133,7 +133,7 @@ const AppUsersController = function AppUsersController($scope, $state, $mdDialog
                 $scope.updateUser = function () {
                     UserService.createOrUpdateUser($scope.user).then(function (rs) {
                         if (rs.success) {
-                            $scope.hide();
+                            $scope.hide(rs.data);
                             alertify.success('Profile changed');
                         }
                         else {
@@ -141,8 +141,8 @@ const AppUsersController = function AppUsersController($scope, $state, $mdDialog
                         }
                     });
                 };
-                $scope.hide = function () {
-                    $mdDialog.hide(true);
+                $scope.hide = function (res) {
+                    $mdDialog.hide(res);
                 };
                 $scope.cancel = function (status) {
                     $mdDialog.cancel(status);
@@ -156,11 +156,20 @@ const AppUsersController = function AppUsersController($scope, $state, $mdDialog
         })
             .then(function (answer) {
                 if (answer) {
-                    $state.reload();
+                    let active = $scope.source.results.find(function(res) {
+                        return res.id === answer.id;
+                    })
+                    let actIndex = $scope.source.results.indexOf(active);
+
+                    if(actIndex > -1) {
+                        $scope.source.results[actIndex].firstName = answer.firstName || $scope.source.results[actIndex].firstName;
+                        $scope.source.results[actIndex].lastName = answer.lastName || $scope.source.results[actIndex].lastName;
+                        $scope.source.results[actIndex].email = answer.email;
+                    }
                 }
             }, function (status) {
                 if (status) {
-                    $scope.sr.results[index].status = status;
+                    $scope.source.results[index].status = status;
                 }
             });
     };

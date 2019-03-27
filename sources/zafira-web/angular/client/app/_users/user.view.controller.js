@@ -144,7 +144,7 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
                 $scope.createUser = function () {
                     UserService.createOrUpdateUser($scope.user).then(function (rs) {
                         if (rs.success) {
-                            $scope.hide();
+                            $scope.hide(rs.data);
                             alertify.success('User created');
                         }
                         else {
@@ -152,8 +152,8 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
                         }
                     });
                 };
-                $scope.hide = function () {
-                    $mdDialog.hide(true);
+                $scope.hide = function (data) {
+                    $mdDialog.hide(data);
                 };
                 $scope.cancel = function () {
                     $mdDialog.cancel(false);
@@ -165,9 +165,9 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
             clickOutsideToClose: true,
             fullscreen: true
         })
-            .then(function (answer) {
-                if (answer) {
-                    $state.reload();
+            .then(function (data) {
+                if (data) {
+                    vm.sr.results.push(data);
                 }
             }, function () {
             });
