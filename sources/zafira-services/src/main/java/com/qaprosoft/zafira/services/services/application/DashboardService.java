@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.qaprosoft.zafira.models.dto.user.UserType;
-import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -93,7 +93,7 @@ public class DashboardService
 			throw new ServiceException("Dashboard with id '" + dashboard.getId() + "' does not exist");
 		}
 		if (!dbDashboard.isEditable()) {
-			throw new IllegalOperationException("Cannot update not editable dashboard");
+			throw new ForbiddenOperationException("Cannot update not editable dashboard");
 		}
 		dashboard.setEditable(dbDashboard.isEditable());
 		dashboardMapper.updateDashboard(dashboard);
@@ -108,7 +108,7 @@ public class DashboardService
 	{
 		Dashboard dashboard = getDashboardById(id);
 		if (!dashboard.isEditable()) {
-			throw new IllegalOperationException("Cannot delete not editable dashboard");
+			throw new ForbiddenOperationException("Cannot delete not editable dashboard");
 		}
 		userPreferenceService.updateDefaultDashboardPreference(dashboard.getTitle(), "General");
 		dashboardMapper.deleteDashboardById(id);
