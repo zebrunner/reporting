@@ -17,7 +17,7 @@ public class UserPage extends BasePage
 	@FindBy(xpath = ".//thead")
 	private UserSearchBlock userSearchBlock;
 
-	@FindBy(xpath = ".//tbody")
+	@FindBy(xpath = ".//tbody[@name = 'usersTable']")
 	private UserTable userTable;
 
 	@FindBy(xpath = ".//md-table-pagination")
