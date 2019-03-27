@@ -182,7 +182,7 @@
         }
 
         function resetFilteringState(keepSearchType) {
-            deleteActiveFilteringTool();
+            !keepSearchType && deleteActiveFilteringTool();
             !keepSearchType && resetActiveSearchType();
             resetSearchParams();
             resetActiveFilter();

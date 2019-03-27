@@ -1,5 +1,6 @@
 'use strict';
 
+const JSZip = require('jszip');
 const ImagesViewerController = function ImagesViewerController($scope, $mdDialog, $q, DownloadService, $timeout,
                                     activeArtifactId, TestRunService, test) {
     'ngInject';
@@ -43,6 +44,9 @@ const ImagesViewerController = function ImagesViewerController($scope, $mdDialog
 
         const activeElem = document.getElementById(vm.activeArtifactId);
         const newElem = document.getElementById(id);
+
+        if (!activeElem || !newElem) { return; }
+
         vm.activeArtifactId = id;
         activeElem.classList.remove(local.imgCssActiveClass);
         newElem.classList.add(local.imgCssActiveClass);
@@ -84,19 +88,32 @@ const ImagesViewerController = function ImagesViewerController($scope, $mdDialog
                 });
         });
 
-       $q.all(promises)
+        $q.all(promises)
             .then(data => {
                 const name = vm.test.id + '. ' + vm.test.name;
-
-                name.zip(data.reduce((out, item) => {
+                const formattedData = data.reduce((out, item) => {
                     out[item.fileName] = item.fileData;
 
                     return out;
-                }, {}));
+                }, {});
+
+                downloadZipFile(name, formattedData);
             })
             .catch(() => {
-                alertify.error('Unable to download all files, pleas try again.');
+                alertify.error('Unable to download all files, please try again.');
             });
+    }
+
+    function downloadZipFile(name, data) {
+        const zip = new JSZip();
+        const folder = zip.folder(name);
+
+        angular.forEach(data, function (image, imgName) {
+            folder.file(imgName.getValidFilename(), image, {base64: true});
+        });
+        zip.generateAsync({type:"blob"}).then(function(content) {
+            content.download(name + '.zip');
+        });
     }
 
     function keyAction(keyCodeNumber) {
@@ -392,8 +409,6 @@ const ImagesViewerController = function ImagesViewerController($scope, $mdDialog
     }
 
     vm.$onInit = initController;
-    //$mdDialog doesn't fire any lifecycle hook, so we need to fire it manually
-    vm.$onInit();
 
     return vm;
 };

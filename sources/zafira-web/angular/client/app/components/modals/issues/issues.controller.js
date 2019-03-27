@@ -39,8 +39,6 @@ const IssuesModalController = function IssuesModalController(
 
     vm.$onInit = initController;
 
-    vm.$onInit();
-
     return vm;
 
     function initController() {

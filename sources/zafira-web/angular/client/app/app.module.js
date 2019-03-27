@@ -27,10 +27,16 @@ const ngModule = angular.module('app', [
     'angular-jwt',
     'oc.lazyLoad',
 ])
-.config(['$httpProvider', '$anchorScrollProvider', function($httpProvider, $anchorScrollProvider) {
+.config(['$httpProvider', '$anchorScrollProvider', '$qProvider', function($httpProvider, $anchorScrollProvider, $qProvider) {
     $anchorScrollProvider.disableAutoScrolling();
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
+
+    // __PRODUCTION__ variable will be replaced by webpack
+    const isProd = __PRODUCTION__;
+
+    // hide "Possibly unhandled rejection" error notification on production
+    $qProvider.errorOnUnhandledRejections(!isProd);
 
     // var $window = $(window);
     //

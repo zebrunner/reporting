@@ -22,7 +22,7 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
     $scope.testRun = {};
     $scope.test = {};
     $scope.drivers = [];
-    $scope.thumbs = {};
+    let logSizeCount = 0;
     var driversQueue = [];
     var driversCount = 0;
     $scope.elasticsearchDataLoaded = false;
@@ -97,13 +97,13 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
                 closeAll();
 
                 $scope.logs = [];
-                $scope.thumbs = {};
+                logSizeCount = 0;
                 unrecognizedImages = {};
                 scrollEnable = false;
                 tryToGetLogsHistoryFromElasticsearch(logGetter).then(function (rs) {
                     $timeout(function () {
                         logGetter.pageCount = null;
-                        logGetter.from = $scope.logs.length + Object.size($scope.thumbs) * 2 + Object.size(unrecognizedImages);
+                        logGetter.from = $scope.logs.length + logSizeCount + Object.size(unrecognizedImages);
                         function update() {
                             $timeout(function() {
                                 if (Object.size(unrecognizedImages) > 0) {
@@ -182,6 +182,7 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
             hits.forEach(function (hit) {
                 followUpOnLogs(hit);
             });
+            prepareArtifacts($scope.test);
             if(! from && from != 0 && (page * size < count)) {
                 page ++;
                 collectElasticsearchLogs(from, page, size, count, resolveFunc);
@@ -318,8 +319,11 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
     };
 
     $scope.getVideoState = function (log) {
-        var videoElement = angular.element('#videoRecord');
-        videoElement[0].currentTime = log.videoTimestamp;
+        $timeout(() => {
+            const videoElement = angular.element('#videoRecord')[0];
+
+            videoElement && log.videoTimestamp && (videoElement.currentTime = log.videoTimestamp);
+        },0);
     };
 
     function getArtifactsByPartName(test, partName, exclusion) {
@@ -464,7 +468,7 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
                 downloadZipFile(name, formattedData);
             })
             .catch(() => {
-                alertify.error('Unable to download all files, pleas try again.');
+                alertify.error('Unable to download all files, please try again.');
             });
     };
 
@@ -481,29 +485,27 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
     }
 
     function prepareArtifacts(test) {
-        const formattedArtifacts = test.artifacts.reduce(function(formatted, artifact) {
-            const name = artifact.name.toLowerCase();
+        const formattedArtifacts = $scope.logs.reduce(function(formatted, artifact) {
+            if (artifact.isImageExists && artifact.blobLog.image && artifact.blobLog.image.path) {
+                artifact.blobLog.image.path.forEach(path => {
+                    let newArtifact = {
+                        id: path,
+                        name: artifact.blobLog.image.threadName,
+                        link: path
+                    };
 
-            if (!name.includes('live') && !name.includes('video')) {
-                const links = artifact.link.split(' ');
-                const pathname = new URL(links[0]).pathname;
-
-                artifact.extension = pathname.split('/').pop().split('.').pop();
-                if (artifact.extension === 'png') {
-                    if (links[1]) {
-                        artifact.link = links[0];
-                        artifact.thumb = links[1];
+                    if (artifact.blobLog.thumb && artifact.blobLog.thumb.path) {
+                        newArtifact.thumb = artifact.blobLog.thumb.path;
                     }
-                    formatted.imageArtifacts.push(artifact);
-                }
-                formatted.artifactsToShow.push(artifact);
+
+                    formatted.imageArtifacts.push(newArtifact);
+                });
             }
 
             return formatted;
-        }, {imageArtifacts: [], artifactsToShow: []});
+        }, {imageArtifacts: []});
 
         test.imageArtifacts = formattedArtifacts.imageArtifacts;
-        test.artifactsToShow = formattedArtifacts.artifactsToShow;
     }
 
     $scope.openImagesViewerModal = function(event, url) {
@@ -511,21 +513,23 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
             return art.link === url;
         });
 
-        $mdDialog.show({
-            controller: ImagesViewerController,
-            template: require('../../components/modals/images-viewer/images-viewer.html'),
-            controllerAs: '$ctrl',
-            bindToController: true,
-            parent: angular.element(document.body),
-            targetEvent: event,
-            clickOutsideToClose:true,
-            fullscreen: false,
-            escapeToClose: false,
-            locals: {
-                test: $scope.test,
-                activeArtifactId: activeArtifact.id,
-            }
-        });
+        if (activeArtifact) {
+            $mdDialog.show({
+                controller: ImagesViewerController,
+                template: require('../../components/modals/images-viewer/images-viewer.html'),
+                controllerAs: '$ctrl',
+                bindToController: true,
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose:true,
+                fullscreen: false,
+                escapeToClose: false,
+                locals: {
+                    test: angular.copy($scope.test),
+                    activeArtifactId: activeArtifact.id,
+                }
+            });
+        }
     };
 
     /**************** Websockets **************/
@@ -595,36 +599,82 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
 
     function collectScreenshots(log) {
         var correlationId = getMetaLogCorrelationId(log);
-        var existsUnrecognizedImage = unrecognizedImages[correlationId];
+        var isThumbnail = isThumb(log);
+        var existsUnrecognizedImage = getUnrecognizedImageExists(isThumbnail, correlationId);
+        logSizeCount++;
         if (existsUnrecognizedImage) {
-            catchScreenshot(log, existsUnrecognizedImage, correlationId);
+            catchScreenshot(log, existsUnrecognizedImage, correlationId, isThumbnail);
         } else {
-            preScreenshot(log, correlationId);
+            preScreenshot(log, correlationId, isThumbnail);
         }
     };
 
-    function preScreenshot(log, correlationId) {
+    function preScreenshot(log, correlationId, isThumbnail) {
         var index = $scope.logs.length - 1;
         var appenToLog = $scope.logs[index];
-        appenToLog.blobLog = log;
+        appenToLog.blobLog = appenToLog.blobLog || {};
+        if(isThumbnail) {
+            appenToLog.blobLog.thumb = log;
+        } else {
+            appenToLog.blobLog.image = log;
+        }
         appenToLog.isImageExists = false;
-        unrecognizedImages[correlationId] = {'log': appenToLog, 'index': index};
+        unrecognizedImages[correlationId] = unrecognizedImages[correlationId] || {};
+        if(isThumbnail) {
+            unrecognizedImages[correlationId].thumb = {'log': appenToLog, 'index': index};
+        } else {
+            unrecognizedImages[correlationId].image = {'log': appenToLog, 'index': index};
+        }
     };
 
-    function catchScreenshot(log, preScreenshot, correlationId) {
-        var path = getMetaLogAmazonPath(log);
-        $scope.thumbs[correlationId] = {'log': preScreenshot.log.message, 'thumb': log, 'index': preScreenshot.index, 'path': path};
-        preScreenshot.log.blobLog.path = path;
-        preScreenshot.log.isImageExists = true;
-        delete unrecognizedImages[correlationId];
+    function catchScreenshot(log, preScreenshot, correlationId, isThumbnail) {
+        var path;
+        if (isThumbnail) {
+            path = getMetaLogThumbAmazonPath(log);
+            preScreenshot.log.blobLog.thumb.path = path;
+            if (!unrecognizedImages[correlationId].image) {
+                delete unrecognizedImages[correlationId];
+            } else {
+                delete unrecognizedImages[correlationId].thumb;
+            }
+        } else {
+            path = getMetaLogAmazonPath(log);
+            preScreenshot.log.blobLog.image.path = preScreenshot.log.blobLog.image.path || [];
+            preScreenshot.log.blobLog.image.path.push(path);
+            preScreenshot.log.isImageExists = true;
+            if (!unrecognizedImages[correlationId].thumb) {
+                delete unrecognizedImages[correlationId];
+            } else {
+                delete unrecognizedImages[correlationId].image;
+            }
+        }
+    };
+
+    function getUnrecognizedImageExists(isThumbnail, correlationId) {
+        if(!unrecognizedImages[correlationId]) {
+            return false;
+        }
+        return isThumbnail ? unrecognizedImages[correlationId].thumb : unrecognizedImages[correlationId].image;
     };
 
     function getMetaLogCorrelationId(log) {
-        return log.headers['AMAZON_PATH_CORRELATION_ID'];
+        return getMetaLogHeader(log, 'AMAZON_PATH_CORRELATION_ID');
     };
 
     function getMetaLogAmazonPath(log) {
-        return log.headers['AMAZON_PATH'];
+        return getMetaLogHeader(log, 'AMAZON_PATH');
+    };
+
+    function getMetaLogThumbAmazonPath(log) {
+        return getMetaLogHeader(log, 'THUMB_AMAZON_PATH');
+    };
+
+    function getMetaLogHeader(log, headerName) {
+        return log.headers[headerName];
+    };
+
+    function isThumb(log) {
+        return getMetaLogThumbAmazonPath(log) !== undefined;
     };
 
     function provideVideo() {
@@ -782,7 +832,6 @@ const testRunInfoController = function testRunInfoController($scope, $rootScope,
 
             setMode($scope.test.status === 'IN_PROGRESS' ? 'live' : 'record');
             $scope.MODE.initFunc.call(this, $scope.test);
-            prepareArtifacts($scope.test);
         }
     }
 

@@ -91,6 +91,8 @@ export const toggleMenu = () => {
 
 export const toggleNavBottom = () => {
     function link(scope, ele, attrs) {
+        const sidebar = angular.element('#nav-container');
+
         ele.on('click', function () {
             if (sidebar.hasClass(toggleBottomClassName)) {
                 sidebar.removeClass(toggleBottomClassName);

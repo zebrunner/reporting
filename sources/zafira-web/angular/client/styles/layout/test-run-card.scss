@@ -96,6 +96,12 @@
                     width: 18px;
                     height: 18px;
                 }
+                &.md-checked {
+                    .md-icon:after {
+                        left: 3.66667px;
+                        top: -0.77778px;
+                    }
+                }
             }
             span {
                 z-index: 2;
@@ -367,6 +373,11 @@
             &._reviewed {
                 color: #6ac186; // TODO: use correct color after we defined set of defaults with designer
                 border-color: currentColor;
+            }
+        }
+        &._comments {
+            .comments-area {
+                color: rgba(0,0,0,.5);
             }
         }
     }
