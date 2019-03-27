@@ -6,7 +6,12 @@ const appGroupItem = function appGroupItem() {
         template,
         controller,
         scope: {
-            group: '='
+            group: '=',
+            showGroup: '&',
+            deleteGroup: '&',
+            search: '&',
+            addUser: '&',
+            deleteUser: '&',
         },
         restrict: 'E',
         replace: true

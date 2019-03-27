@@ -3,40 +3,7 @@
 const UserViewController = function UserViewController($scope, $rootScope, $location, $state, $mdDialog, UserService, GroupService, InvitationService, AuthService) {
     'ngInject';
 
-    $scope.tabs = [
-        {
-            name: 'Users',
-            countFunc: undefined,
-            show: function () {
-                return AuthService.UserHasAnyPermission(['MODIFY_USERS', 'VIEW_USERS']);
-            }
-        },
-        {
-            name: 'Groups',
-            countFunc: undefined,
-            show: function () {
-                return AuthService.UserHasAnyPermission(['MODIFY_USER_GROUPS']);
-            }
-        },
-        {
-            name: 'Invitations',
-            countFunc: undefined,
-            show: function () {
-                $scope.tools = $rootScope.tools;
-                return AuthService.UserHasAnyRole(['ROLE_ADMIN']) && AuthService.UserHasAnyPermission(['INVITE_USERS', 'MODIFY_INVITATIONS']);
-            }
-        }
-    ];
-
-    $scope.switchTab = function (toTab, index) {
-        $scope.activeTab = toTab;
-        $scope.selectedTabIndex = index != undefined ? index : $scope.selectedTabIndex;
-    };
-
-    $scope.searchActive = false;
-    $scope.isFiltered = false;
-    $scope.activeTab = $scope.tabs[0];
-    var DEFAULT_SC = {
+    let DEFAULT_SC = {
         page: 1, pageSize: 20, selectedRange: {
             selectedTemplate: null,
             selectedTemplateName: null,
@@ -46,33 +13,90 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
             fullscreen: false
         }
     };
-    $scope.sc = angular.copy(DEFAULT_SC);
 
-    $scope.onSearchChange = function (fields) {
-        $scope.searchActive = false;
+    const vm = {
+        tabs: [
+            {
+                name: 'Users',
+                countFunc: undefined,
+                show: function () {
+                    return AuthService.UserHasAnyPermission(['MODIFY_USERS', 'VIEW_USERS']);
+                }
+            },
+            {
+                name: 'Groups',
+                countFunc: undefined,
+                show: function () {
+                    return AuthService.UserHasAnyPermission(['MODIFY_USER_GROUPS']);
+                }
+            },
+            {
+                name: 'Invitations',
+                countFunc: undefined,
+                show: function () {
+                    return AuthService.UserHasAnyRole(['ROLE_ADMIN']) && AuthService.UserHasAnyPermission(['INVITE_USERS', 'MODIFY_INVITATIONS']);
+                }
+            }
+        ],
+        switchTab: switchTab,
+        searchActive: false,
+        isFiltered: false,
+        activeTab: null,
+        sc: angular.copy(DEFAULT_SC),
+        onSearchChange: onSearchChange,
+        search: search,
+        isEqualDate: isEqualDate,
+        reset: reset,
+        showCreateUserDialog: showCreateUserDialog,
+        groups: GroupService.groups,
+        showGroupDialog: showGroupDialog,
+        deleteGroup: deleteGroup,
+        addUserToGroup: addUserToGroup,
+        deleteUserFromGroup: deleteUserFromGroup,
+        usersSearchCriteria: {},
+        querySearch: querySearch,
+        showInviteUsersDialog: showInviteUsersDialog,
+        selectedTabIndex: 0,
+
+        get tools() {
+            return $rootScope.tools;
+        }
+    }
+
+    vm.$onInit = initController;
+
+    return vm; 
+
+    function switchTab(toTab, index) {
+        vm.activeTab = toTab;
+        vm.selectedTabIndex = index != undefined ? index : vm.selectedTabIndex;
+    };
+
+    function onSearchChange(fields) {
+        vm.searchActive = false;
         fields.forEach( function (field) {
             if (field.$modelValue) {
-                $scope.searchActive = true;
+                vm.searchActive = true;
             }
         })
     };
 
-    $scope.search = function (page) {
-        $scope.sc.date = null;
-        $scope.sc.toDate = null;
-        $scope.sc.fromDate = null;
+    function search(page) {
+        vm.sc.date = null;
+        vm.sc.toDate = null;
+        vm.sc.fromDate = null;
 
         if (page) {
-            $scope.sc.page = page;
+            vm.sc.page = page;
         }
 
-        if ($scope.sc.selectedRange.dateStart && $scope.sc.selectedRange.dateEnd) {
-            if (!$scope.isEqualDate()) {
-                $scope.sc.fromDate = $scope.sc.selectedRange.dateStart;
-                $scope.sc.toDate = $scope.sc.selectedRange.dateEnd;
+        if (vm.sc.selectedRange.dateStart && vm.sc.selectedRange.dateEnd) {
+            if (!vm.isEqualDate()) {
+                vm.sc.fromDate = vm.sc.selectedRange.dateStart;
+                vm.sc.toDate = vm.sc.selectedRange.dateEnd;
             }
             else {
-                $scope.sc.date = $scope.sc.selectedRange.dateStart;
+                vm.sc.date = vm.sc.selectedRange.dateStart;
             }
         }
 
@@ -80,38 +104,38 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
         if (requestVariables) {
             for (var key in requestVariables) {
                 if (key && requestVariables[key]) {
-                    $scope.sc[key] = requestVariables[key];
+                    vm.sc[key] = requestVariables[key];
                 }
             }
         }
 
-        UserService.searchUsers($scope.sc).then(function (rs) {
+        UserService.searchUsers(vm.sc).then(function (rs) {
             if (rs.success) {
-                $scope.sr = rs.data;
+                vm.sr = rs.data;
             }
             else {
                 alertify.error(rs.message);
             }
         });
-        $scope.isFiltered = true;
+        vm.isFiltered = true;
     };
 
-    $scope.isEqualDate = function () {
-        if ($scope.sc.selectedRange.dateStart && $scope.sc.selectedRange.dateEnd) {
-            return $scope.sc.selectedRange.dateStart.getTime() === $scope.sc.selectedRange.dateEnd.getTime();
+    function isEqualDate() {
+        if (vm.sc.selectedRange.dateStart && vm.sc.selectedRange.dateEnd) {
+            return vm.sc.selectedRange.dateStart.getTime() === vm.sc.selectedRange.dateEnd.getTime();
         }
     };
 
-    $scope.reset = function () {
-        $scope.sc = angular.copy(DEFAULT_SC);
+    function reset() {
+        vm.sc = angular.copy(DEFAULT_SC);
         $location.url($location.path());
-        $scope.search();
-        $scope.searchActive = false;
-        $scope.isFiltered = false;
+        vm.search();
+        vm.searchActive = false;
+        vm.isFiltered = false;
     };
 
 
-    $scope.showCreateUserDialog = function (event) {
+    function showCreateUserDialog(event) {
         $mdDialog.show({
             controller: function ($scope, $mdDialog, UtilService) {
                 'ngInject';
@@ -150,10 +174,8 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
     };
 
     /************** Groups *************************************/
-
-    $scope.groups = GroupService.groups;
-
-    $scope.showGroupDialog = function (event, group) {
+    
+    function showGroupDialog(event, group) {
         $mdDialog.show({
             controller: GroupController,
             template: require('./app-group/modals/group_modal.html'),
@@ -169,20 +191,20 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
             .then(function () {
             }, function (group) {
                 if (group) {
-                    var index = $scope.groups.indexOfField('id', group.id);
+                    var index = vm.groups.indexOfField('id', group.id);
                     if (index >= 0) {
-                        $scope.groups.splice(index, 1, group);
+                        vm.groups.splice(index, 1, group);
                     } else {
-                        $scope.groups.push(group);
+                        vm.groups.push(group);
                     }
                 }
             });
     };
 
-    $scope.deleteGroup = function (group) {
+    function deleteGroup(group) {
         GroupService.deleteGroup(group.id).then(function (rs) {
             if (rs.success) {
-                $scope.groups.splice($scope.groups.indexOfField('id', group.id), 1);
+                vm.groups.splice(vm.groups.indexOfField('id', group.id), 1);
                 $scope.count--;
                 alertify.success('Group "' + group.name + '" was deleted');
             }
@@ -196,7 +218,7 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
         });
     };
 
-    $scope.addUserToGroup = function (user, group) {
+    function addUserToGroup(user, group) {
         UserService.addUserToGroup(user, group.id).then(function (rs) {
             if (rs.success) {
                 alertify.success('User "' + user.username + '" was added to group "' + group.name + '"');
@@ -206,7 +228,7 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
             }
         });
     };
-    $scope.deleteUserFromGroup = function (user, group) {
+    function deleteUserFromGroup(user, group) {
         UserService.deleteUserFromGroup(user.id, group.id).then(function (rs) {
             if (rs.success) {
                 alertify.success('User "' + user.username + '" was deleted from group "' + group.name + '"');
@@ -217,12 +239,9 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
         });
     };
 
-    $scope.usersSearchCriteria = {};
-    $scope.querySearch = querySearch;
-
     function querySearch(criteria, group) {
-        $scope.usersSearchCriteria.username = criteria;
-        return UserService.searchUsersWithQuery($scope.usersSearchCriteria).then(function (rs) {
+        vm.usersSearchCriteria.username = criteria;
+        return UserService.searchUsersWithQuery(vm.usersSearchCriteria).then(function (rs) {
             if (rs.success) {
                 return rs.data.results.filter(searchFilter(group));
             }
@@ -247,7 +266,7 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
 
     /************** Invitations *****************************/
 
-    $scope.showInviteUsersDialog = function (event) {
+    function showInviteUsersDialog(event) {
         $mdDialog.show({
             controller: InviteController,
             template: require('./app-invites/modals/invite_modal.html'),
@@ -270,10 +289,11 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
             });
     };
 
-    (function initController() {
-        $scope.search(1);
-        $scope.isFiltered = false;
-    })();
+    function initController() {
+        vm.activeTab = vm.tabs[0];
+        vm.search(1);
+        vm.isFiltered = false;
+    };
 };
 
 // **************************************************************************

@@ -4,7 +4,12 @@
             <div data-ng-if="groups.length != 0" class="md-dialog-content">
                 <div class=" groups-tab_group" layout="column"
                     data-ng-repeat="group in groups | orderBy:'name'">
-                    <app-group-item group="group"></app-group-item>
+                    <app-group-item group="group" 
+                                    show-group="showGroup({$event, group})" 
+                                    delete-group="deleteGroup({group: group})"
+                                    search="search({criteria: criteria, group: group})"
+                                    add-user="addUser({user: user, group: group})"
+                                    delete-user="deleteUser({user: user, group: group})"></app-group-item>
                 </div>
             </div>
             <div data-ng-if="groups.length == 0" class="ng-hide" align="center">No groups created</div>
