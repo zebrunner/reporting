@@ -36,6 +36,7 @@ const testsRunsController = function testsRunsController($cookieStore, $mdDialog
         displaySearch: displaySearch,
 
         get jenkins() { return $rootScope.jenkins; },
+        get tools() { return $rootScope.tools; },
     };
 
     vm.$onInit = init;
