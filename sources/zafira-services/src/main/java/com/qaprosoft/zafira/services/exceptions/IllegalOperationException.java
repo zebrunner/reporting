@@ -13,45 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.dto.errors;
+package com.qaprosoft.zafira.services.exceptions;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.qaprosoft.zafira.models.dto.errors.ErrorCodeSerializer;
+public class IllegalOperationException extends ServiceException {
 
-@JsonSerialize(using = ErrorCodeSerializer.class)
-public enum ErrorCode
-{
+    private static final long serialVersionUID = 7149088385814921268L;
 
-	VALIDATION_ERROR(0),
-	INVALID_VALUE(1),
+    public IllegalOperationException() {
+    }
 
-	UNAUTHORIZED(401),
-	FORBIDDENT(403),
+    public IllegalOperationException(String message) {
+        super(message);
+    }
 
-	INTERNAL_SERVER_ERROR(500),
+    public IllegalOperationException(Throwable cause) {
+        super(cause);
+    }
 
-	JOB_NOT_FOUND(1000),
-	INVALID_TEST_RUN(1001),
-	TEST_RUN_NOT_FOUND(1002),
-	TEST_NOT_FOUND(1003),
-	TEST_RUN_NOT_REBUILT(1004),
-	USER_NOT_FOUND(1005),
-	ENTITY_ALREADY_EXISTS(1006),
-	ENTITY_NOT_EXISTS(1007),
-	PROJECT_NOT_EXISTS(1008),
+    public IllegalOperationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	INTEGRATION_UNAVAILABLE(2001),
-	UNHEALTHY_STATUS(2002);
+    public IllegalOperationException(String message, Throwable cause, boolean writableStackTrace) {
+        super(message, cause, writableStackTrace);
+    }
 
-	private final int code;
-
-	ErrorCode(int code)
-	{
-		this.code = code;
-	}
-
-	public int getCode()
-	{
-		return code;
-	}
 }

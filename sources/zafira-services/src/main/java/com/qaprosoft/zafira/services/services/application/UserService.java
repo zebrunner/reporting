@@ -44,6 +44,8 @@ import com.qaprosoft.zafira.models.db.User.Status;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 
+import java.util.Optional;
+
 @Service
 public class UserService implements TenancyDbInitial {
     
@@ -254,4 +256,9 @@ public class UserService implements TenancyDbInitial {
     public boolean checkPassword(String plain, String encrypted) {
         return passwordEncryptor.checkPassword(plain, encrypted);
     }
+
+    public String getAdminUsername() {
+        return this.adminUsername;
+    }
+
 }

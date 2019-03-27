@@ -17,7 +17,7 @@
                     stopConnectingDebug: null,
                     debugHost: null,
                     debugPort: null,
-                    jenkins: $rootScope.jenkins,
+                    get jenkins() { return $rootScope.jenkins; },
                 };
                 const vm = {
                     testRun: null,
@@ -28,8 +28,6 @@
                     showDeleteTestRunOption: false,
                     isMobile: windowWidthService.isMobile,
                     isSlackAvailable: false,
-                    currentOffset: $rootScope.currentOffset,
-                    tools: $rootScope.tools,
 
                     addToSelectedtestRuns: addToSelectedtestRuns,
                     showDetails: showDetails,
@@ -51,6 +49,9 @@
                     downloadApplication: downloadApplication,
                     goToTestRun: goToTestRun,
                     onBackClick: onBackClick,
+
+                    get tools() { return $rootScope.tools; },
+                    get currentOffset() { return $rootScope.currentOffset; },
                 };
 
                 vm.$onInit = init;
@@ -89,7 +90,6 @@
                     initMenuRights();
                     UtilService.setOffset($event);
                     $timeout(function() {
-                        vm.currentOffset = $rootScope.currentOffset;
                         $msMenuCtrl.open($event);
                     });
                 }

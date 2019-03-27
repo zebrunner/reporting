@@ -13,45 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.dto.errors;
+package com.qaprosoft.zafira.models.push.events;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.qaprosoft.zafira.models.dto.errors.ErrorCodeSerializer;
+public class EmailEventMessage extends EventMessage {
 
-@JsonSerialize(using = ErrorCodeSerializer.class)
-public enum ErrorCode
-{
+    private String email;
 
-	VALIDATION_ERROR(0),
-	INVALID_VALUE(1),
+    public EmailEventMessage(String tenancy) {
+        super(tenancy);
+    }
 
-	UNAUTHORIZED(401),
-	FORBIDDENT(403),
+    public String getEmail() {
+        return email;
+    }
 
-	INTERNAL_SERVER_ERROR(500),
-
-	JOB_NOT_FOUND(1000),
-	INVALID_TEST_RUN(1001),
-	TEST_RUN_NOT_FOUND(1002),
-	TEST_NOT_FOUND(1003),
-	TEST_RUN_NOT_REBUILT(1004),
-	USER_NOT_FOUND(1005),
-	ENTITY_ALREADY_EXISTS(1006),
-	ENTITY_NOT_EXISTS(1007),
-	PROJECT_NOT_EXISTS(1008),
-
-	INTEGRATION_UNAVAILABLE(2001),
-	UNHEALTHY_STATUS(2002);
-
-	private final int code;
-
-	ErrorCode(int code)
-	{
-		this.code = code;
-	}
-
-	public int getCode()
-	{
-		return code;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }

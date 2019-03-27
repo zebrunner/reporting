@@ -8,7 +8,7 @@
                 'ngInject';
 
                 return {
-                    version: $rootScope.version
+                    get version() { return $rootScope.version; }
                 };
             },
             controllerAs: '$ctrl',
