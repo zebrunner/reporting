@@ -28,9 +28,10 @@
                               md-autocomplete-snap
                               md-transform-chip="checkAndTransformRecipient($chip)"
                               md-on-remove="removeRecipient($chip)"
+                              md-add-on-blur="true"
                               md-separator-keys="keys"
-                              placeholder="Enter an email...">
-                        <md-chip-template ng-init="setMdChipsCtrl($mdChipsCtrl);">
+                              placeholder="Enter an email..." ng-init="initMdChipsCtrl();">
+                        <md-chip-template>
                             {{ $chip }}
                         </md-chip-template>
                     </md-chips>
@@ -43,7 +44,7 @@
             </div>
         </md-dialog-content>
         <md-dialog-actions layout="row">
-            <md-button ng-click="invite(emails, invite_form);" ng-disabled="emails.length == 0 || ! userGroup || tryInvite" id="change" class="md-raised btn-w-md md-primary">
+            <md-button ng-click="invite(emails, invite_form);" ng-disabled="!chipCtrl || (! chipCtrl.chipBuffer.length && ! chipCtrl.items.length) || ! userGroup || tryInvite" id="change" class="md-raised btn-w-md md-primary">
                 Invite
             </md-button>
         </md-dialog-actions>

@@ -317,16 +317,26 @@ function InviteController($scope, $mdDialog, InvitationService, UtilService, gro
 
     $scope.SOURCES = ['INTERNAL', 'LDAP'];
 
-    var chipCtrl;
     var startedEmail;
 
-    $scope.setMdChipsCtrl = function (mdChipCtrl) {
-        chipCtrl = mdChipCtrl;
+    $scope.initMdChipsCtrl = function () {
+        var chipsCtrlWatcher = $scope.$watch(function () {
+            return getChipsCtrl();
+        }, function (newVal, oldVal) {
+            if(newVal) {
+                $scope.chipCtrl = newVal;
+                chipsCtrlWatcher();
+            }
+        });
     };
 
+    function getChipsCtrl() {
+        return angular.element("md-chips[name = 'email'] md-chips-wrap").scope().$mdChipsCtrl;
+    }
+
     $scope.invite = function (emails, form) {
-        if (chipCtrl.chipBuffer) {
-            startedEmail = chipCtrl.chipBuffer;
+        if ($scope.chipCtrl.chipBuffer) {
+            startedEmail = $scope.chipCtrl.chipBuffer;
         }
         if (emails && emails.length > 0) {
             $scope.tryInvite = true;
@@ -340,7 +350,7 @@ function InviteController($scope, $mdDialog, InvitationService, UtilService, gro
                         $scope.emails = [];
                         $scope.emails.push(startedEmail);
                         startedEmail = undefined;
-                        chipCtrl.chipBuffer = '';
+                        $scope.chipCtrl.chipBuffer = '';
                     }
                 } else {
                     UtilService.resolveError(rs, form, 'validationError', 'email').then(function (rs) {
