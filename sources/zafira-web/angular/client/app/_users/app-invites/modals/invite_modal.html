@@ -18,7 +18,7 @@
                         </md-option>
                     </md-select>
                     <md-select id="userGroup" name="projectId" data-ng-model="userGroup" placeholder="Choose group...." required>
-                        <md-option ng-repeat="group in groups" ng-value="group.id">
+                        <md-option ng-repeat="group in groups" ng-if="group.invitable" ng-value="group.id">
                             {{group.name}}
                         </md-option>
                     </md-select>

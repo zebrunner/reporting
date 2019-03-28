@@ -28,7 +28,7 @@
                         </md-input-container>
                     </div>
                     <div class="radioButtondemoMultiColumn">
-                        <div ng-repeat="(key, value) in blocks" class="row checkbox-clear-inline" style="margin: 0">
+                        <div ng-repeat="(key, value) in blocks" ng-if="(group.role !== 'ROLE_ADMIN' && ['users', 'invitations'].indexOf(key.toLowerCase()) === -1) || group.role === 'ROLE_ADMIN'" class="row checkbox-clear-inline" style="margin: 0">
                             <div flex layout='row' layout-padding layout-align="start center" >
                                 <md-checkbox name="mainBlockCheckbox" class="md-primary main-checkbox" aria-label="Select All"
                                              ng-checked="isCheckedBlock(key)"

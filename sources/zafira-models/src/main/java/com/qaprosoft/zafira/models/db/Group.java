@@ -25,6 +25,7 @@ public class Group extends AbstractEntity
 
 	private String name;
 	private Role role;
+	private Boolean invitable;
 	private List<User> users;
 	private Set<Permission> permissions;
 	
@@ -62,6 +63,14 @@ public class Group extends AbstractEntity
 	public void setRole(Role role)
 	{
 		this.role = role;
+	}
+
+	public Boolean getInvitable() {
+		return invitable;
+	}
+
+	public void setInvitable(Boolean invitable) {
+		this.invitable = invitable;
 	}
 
 	public List<User> getUsers()
