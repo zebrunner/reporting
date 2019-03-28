@@ -15,44 +15,19 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.push.events;
 
-public class TenancyResponseEventMessage extends EventMessage {
+public class EmailEventMessage extends EventMessage {
 
-    private String token;
-    private String zafiraURL;
-    private Boolean success;
+    private String email;
 
-    public TenancyResponseEventMessage(String tenancy) {
+    public EmailEventMessage(String tenancy) {
         super(tenancy);
     }
 
-    public TenancyResponseEventMessage(String tenancy, String token, String zafiraURL, Boolean success) {
-        super(tenancy);
-        this.token = token;
-        this.zafiraURL = zafiraURL;
-        this.success = success;
+    public String getEmail() {
+        return email;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getZafiraURL() {
-        return zafiraURL;
-    }
-
-    public void setZafiraURL(String zafiraURL) {
-        this.zafiraURL = zafiraURL;
-    }
-
-    public Boolean getSuccess() {
-        return success;
-    }
-
-    public void setSuccess(Boolean success) {
-        this.success = success;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
