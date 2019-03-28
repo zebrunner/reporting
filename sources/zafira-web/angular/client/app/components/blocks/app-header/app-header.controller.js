@@ -126,7 +126,8 @@ const appHeaderController = function(UserService, $rootScope, ConfigService, pro
                 urlHandler: (url) => {
                     if (url) {
                         $rootScope.companyLogo.value = url;
-                        SettingsService.editSetting($rootScope.companyLogo).then(function (prs) {
+                        
+                        return SettingsService.editSetting($rootScope.companyLogo).then(function (prs) {
                             if (prs.success) {
                                 $rootScope.companyLogo.value += '?' + (new Date()).getTime();
                                 alertify.success('Company logo was successfully changed');
