@@ -66,7 +66,7 @@ public class UserPageTest extends AbstractTest
 				"Create groups modal window has an invalid title");
 		createGroupModalWindow.closeModalWindow();*/
 
-		List<User> users = userMapper.searchUsers(new UserSearchCriteria());
+		List<User> users = userMapper.searchUsers(new UserSearchCriteria(), false);
 		Assert.assertEquals(userPageService.getUserTableRowsCount(), users.size() >= 20 ? 20 : users.size(),
 				"Count of user menu buttons is not 20");
 
@@ -101,7 +101,7 @@ public class UserPageTest extends AbstractTest
 	@Test(groups = {"acceptance", "user"})
 	public void verifyInfoTest()
 	{
-		List<User> users = userMapper.searchUsers(new UserSearchCriteria());
+		List<User> users = userMapper.searchUsers(new UserSearchCriteria(), false);
 		Assert.assertEquals(userPageService.getUserTableRowsCount(), users.size() >= 20 ? 20 : users.size(),
 				"Count of user menu buttons is not 20");
 		if (users.size() < 20)

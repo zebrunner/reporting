@@ -167,11 +167,13 @@ public class UsersAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("#isPublic or (hasRole('ROLE_ADMIN') and hasAnyPermission('VIEW_USERS', 'MODIFY_USERS'))")
 	@RequestMapping(value = "search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody SearchResult<User> searchUsers(@Valid @RequestBody UserSearchCriteria sc)
+	public @ResponseBody SearchResult<User> searchUsers(@Valid @RequestBody UserSearchCriteria sc,
+														@RequestParam(value = "public", required = false) boolean isPublic)
 			throws ServiceException
 	{
-		return userService.searchUsers(sc);
+		return userService.searchUsers(sc, isPublic);
 	}
 
 	@ResponseStatusDetails
@@ -203,7 +205,7 @@ public class UsersAPIController extends AbstractController
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Add user to group", nickname = "addUserToGroup", httpMethod = "PUT", response = User.class)
-	@PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
 	@RequestMapping(value = "group/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody User addUserToGroup(@RequestBody User user, @PathVariable(value = "id") long id)
 			throws ServiceException
@@ -216,7 +218,7 @@ public class UsersAPIController extends AbstractController
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Delete user from group", nickname = "deleteUserFromGroup", httpMethod = "DELETE")
-	@PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
 	@RequestMapping(value = "{userId}/group/{groupId}", method = RequestMethod.DELETE)
 	public void deleteUserFromGroup(@PathVariable(value = "groupId") long groupId,
 			@PathVariable(value = "userId") long userId) throws ServiceException

@@ -242,13 +242,13 @@ public class UserService implements TenancyDbInitial {
     }
 
     @Transactional(readOnly = true)
-    public SearchResult<User> searchUsers(UserSearchCriteria sc) throws ServiceException {
+    public SearchResult<User> searchUsers(UserSearchCriteria sc, Boolean publicDetails) throws ServiceException {
         actualizeSearchCriteriaDate(sc);
         SearchResult<User> results = new SearchResult<>();
         results.setPage(sc.getPage());
         results.setPageSize(sc.getPageSize());
         results.setSortOrder(sc.getSortOrder());
-        results.setResults(userMapper.searchUsers(sc));
+        results.setResults(userMapper.searchUsers(sc, publicDetails));
         results.setTotalResults(userMapper.getUserSearchCount(sc));
         return results;
     }

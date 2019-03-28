@@ -45,11 +45,11 @@ public interface UserMapper
 
 	void deleteUser(User user);
 
-	void addUserToGroup(@Param("userId") Long userId, @Param("groupId")Long groupId);
+	void addUserToGroup(@Param("userId") Long userId, @Param("groupId") Long groupId);
 
-	void deleteUserFromGroup(@Param("userId") Long userId, @Param("groupId")Long groupId);
+	void deleteUserFromGroup(@Param("userId") Long userId, @Param("groupId") Long groupId);
 
-	List<User> searchUsers(UserSearchCriteria sc);
+	List<User> searchUsers(@Param("sc") UserSearchCriteria sc, @Param("publicDetails") Boolean publicDetails);
 
 	Integer getUserSearchCount(UserSearchCriteria sc);
 }
