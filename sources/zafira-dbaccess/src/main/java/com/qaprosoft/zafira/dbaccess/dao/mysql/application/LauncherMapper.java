@@ -25,6 +25,8 @@ public interface LauncherMapper {
 
     Launcher getLauncherById(Long id);
 
+    Launcher getLauncherByJobId(Long jobId);
+
     List<Launcher> getAllLaunchers();
 
     void updateLauncher(Launcher launcher);

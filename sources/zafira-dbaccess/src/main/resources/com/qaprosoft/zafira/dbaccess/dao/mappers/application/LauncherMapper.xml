@@ -80,6 +80,13 @@
 		]]>
     </select>
 
+    <select id="getLauncherByJobId" resultMap="LauncherResultMap">
+        <include refid="getLaunchers"/>
+        <![CDATA[
+			WHERE L.JOB_ID = #{jobId};
+		]]>
+    </select>
+
     <select id="getAllLaunchers" resultMap="LauncherResultMap">
         <include refid="getLaunchers"/>
     </select>
