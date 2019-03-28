@@ -44,6 +44,8 @@
             value: null
         };
         const SELECT_CRITERIAS = ['ENV', 'PLATFORM', 'PROJECT', 'STATUS'];
+        const DATE_CRITERIAS = ['DATE'];
+        const DATE_CRITERIAS_PICKER_OPERATORS = ['EQUALS', 'NOT_EQUALS', 'BEFORE', 'AFTER'];
         const STATUSES = ['PASSED', 'FAILED', 'SKIPPED', 'ABORTED', 'IN_PROGRESS', 'QUEUED', 'UNKNOWN'];
         const vm = {
             currentCriteria: angular.copy(CURRENT_CRITERIA),
@@ -89,6 +91,7 @@
             onChangeSearchCriteria: onChangeSearchCriteria,
             openDatePicker: openDatePicker,
             toggleMobileSearch: toggleMobileSearch,
+            onFilterSliceUpdate: onFilterSliceUpdate,
         };
 
         vm.$onInit = init;
@@ -232,6 +235,51 @@
                 }
             });
         }
+
+        function clearFilterCriterias(slice) {
+            switch(slice) {
+                case 'CRITERIA':
+                    vm.currentOperator = angular.copy(CURRENT_OPERATOR);
+                    vm.currentCriteria.type = [];
+                case 'OPERATOR':
+                    vm.currentValue = angular.copy(CURRENT_VALUE);
+                    vm.currentOperator.type = [];
+                case 'VALUE':
+                default:
+                    break;
+            };
+        };
+
+        function onFilterSliceUpdate(slice) {
+            clearFilterCriterias(slice);
+            switch(slice) {
+                case 'CRITERIA':
+                    if(isSelectCriteria(vm.currentCriteria.value)) {
+                        vm.currentCriteria.type.push('SELECT');
+                    }
+                    if(isDateCriteria(vm.currentCriteria.value)) {
+                        vm.currentCriteria.type.push('DATE');
+                    }
+                    break;
+                case 'OPERATOR':
+                    if(isDateCriteria(vm.currentCriteria.value) && isDatePickerOperator(vm.currentOperator.value)) {
+                        vm.currentOperator.type.push('DATE');
+                    }
+                    break;
+                case 'VALUE':
+                    break;
+                default:
+                    break;
+            };
+        };
+
+        function isDateCriteria(criteria) {
+            return criteria && DATE_CRITERIAS.indexOf(criteria.name) >= 0;
+        };
+
+        function isDatePickerOperator(operator) {
+            return operator && DATE_CRITERIAS_PICKER_OPERATORS.indexOf(operator) >= 0;
+        };
 
         function isSelectCriteria(criteria) {
             return criteria && SELECT_CRITERIAS.indexOf(criteria.name) >= 0;

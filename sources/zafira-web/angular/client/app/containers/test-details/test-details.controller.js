@@ -203,8 +203,10 @@ const testDetailsController = function testDetailsController($scope, $rootScope,
     function addTest(test) {
         test.elapsed = test.finishTime ? (test.finishTime - test.startTime) : Number.MAX_VALUE;
         prepareArtifacts(test);
-        test.tags = test.tags.filter(function (tag) {
-            return tag.name !== 'TESTRAIL_TESTCASE_UUID' && tag.name !== 'QTEST_TESTCASE_UUID';
+        angular.forEach(test.tags, function (tag) {
+            if (tag.name === 'TESTRAIL_TESTCASE_UUID' || tag.name === 'QTEST_TESTCASE_UUID') {
+                tag.value = tag.value.split('-').pop();
+            }
         });
 
         vm.testRun.tests[test.id] = test;
