@@ -16,7 +16,7 @@
         };
     });
 
-    function TestsRunsFilterController(FilterService, DEFAULT_SC, TestRunService, $q, ProjectService,
+    function TestsRunsFilterController($scope, FilterService, DEFAULT_SC, TestRunService, $q, ProjectService,
                                        testsRunsService, $cookieStore, UserService, $timeout, $mdDateRangePicker,
                                        windowWidthService, $rootScope) {
         'ngInject';
@@ -69,6 +69,28 @@
                 showTemplate: false,
                 fullscreen: false
             },
+            selectedFilterRange: {
+                selectedTemplate: null,
+                selectedTemplateName: null,
+                dateStart: null,
+                dateEnd: null,
+                showTemplate: false,
+                onePanel: true
+            },
+            SYMBOLS: {
+                EQUALS: " == ",
+                NOT_EQUALS: " != ",
+                CONTAINS: " cnt ",
+                NOT_CONTAINS: " !cnt ",
+                MORE: " > ",
+                LESS: " < ",
+                BEFORE: " <= ",
+                AFTER: " >= ",
+                LAST_24_HOURS: " last 24 hours",
+                LAST_7_DAYS: " last 7 days",
+                LAST_14_DAYS: " last 14 days",
+                LAST_30_DAYS: " last 30 days"
+            },
             currentUser: UserService.currentUser,
             chipsCtrl: null,
             isMobile: windowWidthService.isMobile,
@@ -92,6 +114,9 @@
             openDatePicker: openDatePicker,
             toggleMobileSearch: toggleMobileSearch,
             onFilterSliceUpdate: onFilterSliceUpdate,
+            onSelect: onSelect,
+            clearPickFilter: clearPickFilter,
+            pickFilter: pickFilter,
         };
 
         vm.$onInit = init;
@@ -121,7 +146,44 @@
                 $rootScope.$on('tr-filter-apply', onApply);
                 $rootScope.$on('tr-filter-open-search', toggleMobileSearch);
             }
+            $scope.$watch('$ctrl.selectedFilterRange.dateStart', function (oldValue, newVal) {
+                if(oldValue) {
+                    vm.currentValue.value = angular.copy(vm.selectedFilterRange.dateStart);
+                    vm.clearPickFilter();
+                    closeDatePickerMenu();
+                }
+            });
         }
+
+
+        function onSelect(dates) {
+            return vm.selectedFilterRange.selectedTemplateName;
+        };
+
+        function pickFilter($event, showTemplate) {
+            vm.selectedFilterRange.showTemplate = showTemplate;
+            $mdDateRangePicker.show({
+                targetEvent: $event,
+                model: vm.selectedFilterRange,
+                autoConfirm: true
+            }).then(function(result) {
+                if (result) vm.selectedFilterRange = result;
+            })
+        };
+
+        function closeDatePickerMenu() {
+            var menu = angular.element('#filter-editor md-menu *[aria-owns]').scope();
+            if(menu.$mdMenuIsOpen) {
+                menu.$mdMenu.close();
+            }
+        }
+
+        function clearPickFilter() {
+            vm.selectedFilterRange.selectedTemplate = null;
+            vm.selectedFilterRange.selectedTemplateName = null;
+            vm.selectedFilterRange.dateStart = null;
+            vm.selectedFilterRange.dateEnd = null;
+        };
 
         function readStoredParams() {
             if (vm.isSearchActive()) {
