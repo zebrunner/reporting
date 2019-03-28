@@ -74,7 +74,7 @@
                   <span>Cases</span>
                 </a>
             </li-->
-            <li ng-class="{'active':$state.includes('users')}" toggle-nav-bottom>
+            <li has-any-role="['ROLE_ADMIN']" ng-class="{'active':$state.includes('users')}" toggle-nav-bottom>
                 <a md-button aria-label="menu" ui-sref="users.list"  has-any-permission="['VIEW_USERS']">
                     <i class="material-icons">supervisor_account</i>
                     <span>Users</span>

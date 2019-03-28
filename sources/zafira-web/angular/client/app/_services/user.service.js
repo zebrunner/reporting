@@ -56,7 +56,7 @@
         }
 
         function searchUsersWithQuery(searchCriteria, criteria) {
-            return $httpMock.post(API_URL + '/api/users/search', searchCriteria, {params: {q: criteria}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to search users'));
+            return $httpMock.post(API_URL + '/api/users/search?public=true', searchCriteria, {params: {q: criteria}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to search users'));
         }
 
         function updateUserProfile(profile) {

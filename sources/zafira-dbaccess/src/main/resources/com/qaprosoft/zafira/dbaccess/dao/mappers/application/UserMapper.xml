@@ -98,70 +98,94 @@
 			WHERE U.RESET_TOKEN = #{token};
 		]]>
 	</select>
+
+	<sql id="searchDetails">
+		<![CDATA[
+			U.ID AS USER_ID,
+			U.USERNAME AS USER_USERNAME,
+			U.PASSWORD AS USER_PASSWORD,
+			U.FIRST_NAME AS USER_FIRST_NAME,
+			U.LAST_NAME AS USER_LAST_NAME,
+			U.EMAIL AS USER_EMAIL,
+			U.SOURCE AS USER_SOURCE,
+			U.STATUS AS USER_STATUS,
+			U.COVER_PHOTO_URL AS USER_COVER_PHOTO_URL,
+			U.LAST_LOGIN AS USER_LAST_LOGIN,
+			U.MODIFIED_AT AS USER_MODIFIED_AT,
+			U.CREATED_AT AS USER_CREATED_AT
+		]]>
+	</sql>
+
+	<sql id="searchPublicDetails">
+		<![CDATA[
+			U.ID AS USER_ID,
+			U.USERNAME AS USER_USERNAME,
+			U.FIRST_NAME AS USER_FIRST_NAME,
+			U.LAST_NAME AS USER_LAST_NAME,
+			U.EMAIL AS USER_EMAIL,
+			U.COVER_PHOTO_URL AS USER_COVER_PHOTO_URL
+		]]>
+	</sql>
 	
 	<select id="searchUsers" resultMap="UserResultMap">
 		<![CDATA[
 			SELECT
-				U.ID AS USER_ID,
-				U.USERNAME AS USER_USERNAME,
-				U.PASSWORD AS USER_PASSWORD,
-				U.FIRST_NAME AS USER_FIRST_NAME,
-				U.LAST_NAME AS USER_LAST_NAME,
-				U.EMAIL AS USER_EMAIL,
-				U.SOURCE AS USER_SOURCE,
-				U.STATUS AS USER_STATUS,
-				U.COVER_PHOTO_URL AS USER_COVER_PHOTO_URL,
-				U.LAST_LOGIN AS USER_LAST_LOGIN,
-				U.MODIFIED_AT AS USER_MODIFIED_AT,
-				U.CREATED_AT AS USER_CREATED_AT
+		]]>
+		<if test="publicDetails">
+			<include refid="searchPublicDetails" />
+		</if>
+		<if test="! publicDetails">
+			<include refid="searchDetails" />
+		</if>
+		<![CDATA[
 			FROM
 				USERS U
 		]]>
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
-			<if test="null != id">
+			<if test="null != sc.id">
 	            <![CDATA[
-	               AND U.ID = #{id}
+	               AND U.ID = #{sc.id}
 	            ]]>
 			</if>
-			<if test="null != username">
+			<if test="null != sc.username">
 	            <![CDATA[
-	               AND LOWER(U.USERNAME) LIKE LOWER(CONCAT(#{username}, '%')) 
+	               AND LOWER(U.USERNAME) LIKE LOWER(CONCAT(#{sc.username}, '%'))
 	            ]]>
 			</if>
-			<if test="null != email">
+			<if test="null != sc.email">
 	            <![CDATA[
-	               AND LOWER(U.EMAIL) LIKE LOWER(CONCAT(#{email}, '%')) 
+	               AND LOWER(U.EMAIL) LIKE LOWER(CONCAT(#{sc.email}, '%'))
 	            ]]>
 			</if>
-			<if test="null != firstLastName">
+			<if test="null != sc.firstLastName">
 	            <![CDATA[
-	               AND LOWER(CONCAT(U.FIRST_NAME, ' ', U.LAST_NAME)) LIKE LOWER(CONCAT('%', #{firstLastName}, '%')) 
+	               AND LOWER(CONCAT(U.FIRST_NAME, ' ', U.LAST_NAME)) LIKE LOWER(CONCAT('%', #{sc.firstLastName}, '%'))
 	            ]]>
 			</if>
-			<if test="null != status">
+			<if test="null != sc.status">
 				<![CDATA[
-	               AND U.STATUS = #{status}
+	               AND U.STATUS = #{sc.status}
 	            ]]>
 			</if>
-			<if test="null != date">
+			<if test="null != sc.date">
 	            <![CDATA[
-	               AND U.CREATED_AT::date = #{date}::date
+	               AND U.CREATED_AT::date = #{sc.date}::date
 	            ]]>
 			</if>
-			<if test="null != fromDate">
+			<if test="null != sc.fromDate">
 				<![CDATA[
-	               AND U.CREATED_AT::date >= #{fromDate}::date
+	               AND U.CREATED_AT::date >= #{sc.fromDate}::date
 	            ]]>
 			</if>
-			<if test="null != toDate">
+			<if test="null != sc.toDate">
 				<![CDATA[
-	               AND U.CREATED_AT::date <= #{toDate}::date
+	               AND U.CREATED_AT::date <= #{sc.toDate}::date
 	            ]]>
 			</if>
 		</trim>
 		<![CDATA[
 			ORDER BY CASE WHEN U.PASSWORD IS NULL OR U.PASSWORD = '' THEN 0 ELSE 1 END DESC, U.USERNAME
-			LIMIT #{pageSize} OFFSET #{offset}
+			LIMIT #{sc.pageSize} OFFSET #{sc.offset}
 		]]>
 	</select>
 	

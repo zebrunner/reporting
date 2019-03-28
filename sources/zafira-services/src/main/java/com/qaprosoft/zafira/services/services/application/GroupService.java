@@ -52,6 +52,7 @@ public class GroupService
 		return group;
 	}
 
+	@CachePut(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #group.id")
 	@Transactional(rollbackFor = Exception.class)
 	public Group addPermissionsToGroup(Group group) throws ServiceException
 	{
@@ -132,6 +133,7 @@ public class GroupService
 		groupMapper.deleteGroup(id);
 	}
 
+	@CacheEvict(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #groupId")
 	@Transactional(rollbackFor = Exception.class)
 	public void deletePermissionFromGroup(long groupId, long permissionId) throws ServiceException
 	{

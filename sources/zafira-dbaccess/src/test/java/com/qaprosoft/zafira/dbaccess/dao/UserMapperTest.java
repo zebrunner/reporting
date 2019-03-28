@@ -149,7 +149,7 @@ public class UserMapperTest extends AbstractTestNGSpringContextTests
 		userMapper.createUser(USER);
 		groupMapper.createGroup(GROUP);
 		userMapper.addUserToGroup(USER.getId(), GROUP.getId());
-		List<User> userList = userMapper.searchUsers(userSearchCriteria);
+		List<User> userList = userMapper.searchUsers(userSearchCriteria, false);
 		Assert.assertEquals(userList.get(0).getGroups().get(0).getId(), GROUP.getId());
 		Assert.assertEquals(userList.get(0).getId(), USER.getId(), "");
 	}
@@ -161,7 +161,7 @@ public class UserMapperTest extends AbstractTestNGSpringContextTests
 		UserSearchCriteria userSearchCriteria = new UserSearchCriteria();
 		userSearchCriteria.setGroupName(GROUP.getName());
 		userMapper.deleteUserFromGroup(USER.getId(), GROUP.getId());
-		userMapper.searchUsers(userSearchCriteria);
+		userMapper.searchUsers(userSearchCriteria, false);
 	}
 
 	private void checkUser(User user)

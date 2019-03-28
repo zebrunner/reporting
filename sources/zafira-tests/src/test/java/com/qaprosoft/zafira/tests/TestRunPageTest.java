@@ -209,7 +209,7 @@ public class TestRunPageTest extends AbstractTest
 			{
 				setId(3L);
 			}
-		}).get(0).getEmail() : new UserAPIService().createUsers(2).get(0).getEmail();
+		}, false).get(0).getEmail() : new UserAPIService().createUsers(2).get(0).getEmail();
 		testRunPage = (TestRunPage) testRunPage.reload();
 		SendAsEmailModalWindow sendAsEmailModalWindow = testRunPageService.clickSendAsEmailButton(0);
 		Assert.assertEquals(sendAsEmailModalWindow.getHeaderText(), "Email", "Modal is not opened");

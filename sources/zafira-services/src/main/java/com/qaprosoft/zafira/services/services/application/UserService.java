@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -227,14 +228,20 @@ public class UserService implements TenancyDbInitial {
         userMapper.deleteUserById(id);
     }
 
-    @CacheEvict(value = "users", condition = "#user.id != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #user.id")
+    @Caching(evict = {
+            @CacheEvict(value = "users", condition = "#user.id != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #user.id"),
+            @CacheEvict(value = "groups", condition = "#groupId != 0", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #groupId")
+    })
     @Transactional(rollbackFor = Exception.class)
     public User addUserToGroup(User user, long groupId) throws ServiceException {
         userMapper.addUserToGroup(user.getId(), groupId);
         return userMapper.getUserById(user.getId());
     }
 
-    @CacheEvict(value = "users", condition = "#userId != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #userId")
+    @Caching(evict = {
+            @CacheEvict(value = "users", condition = "#userId != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #userId"),
+            @CacheEvict(value = "groups", condition = "#groupId != 0", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #groupId")
+    })
     @Transactional(rollbackFor = Exception.class)
     public User deleteUserFromGroup(long groupId, long userId) throws ServiceException {
         userMapper.deleteUserFromGroup(userId, groupId);
@@ -242,13 +249,13 @@ public class UserService implements TenancyDbInitial {
     }
 
     @Transactional(readOnly = true)
-    public SearchResult<User> searchUsers(UserSearchCriteria sc) throws ServiceException {
+    public SearchResult<User> searchUsers(UserSearchCriteria sc, Boolean publicDetails) throws ServiceException {
         actualizeSearchCriteriaDate(sc);
         SearchResult<User> results = new SearchResult<>();
         results.setPage(sc.getPage());
         results.setPageSize(sc.getPageSize());
         results.setSortOrder(sc.getSortOrder());
-        results.setResults(userMapper.searchUsers(sc));
+        results.setResults(userMapper.searchUsers(sc, publicDetails));
         results.setTotalResults(userMapper.getUserSearchCount(sc));
         return results;
     }

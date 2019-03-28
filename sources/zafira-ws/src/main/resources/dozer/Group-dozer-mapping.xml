@@ -19,6 +19,10 @@
             <b>role</b>
         </field>
         <field>
+            <a>invitable</a>
+            <b>invitable</b>
+        </field>
+        <field>
             <a>users</a>
             <b>users</b>
         </field>
