@@ -204,6 +204,7 @@ public class ElasticsearchService implements IJMXService
 
 	private static Map<String, String> prepareCorrelationIdMap(String correlationId) {
 		return new HashMap<String, String>() {
+			private static final long serialVersionUID = -4417816881742998170L;
 			{
 				put("correlationId", correlationId);
 			}

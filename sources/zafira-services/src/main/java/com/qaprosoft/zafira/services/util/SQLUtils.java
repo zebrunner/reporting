@@ -48,7 +48,9 @@ public class SQLUtils {
             } catch(Exception e) {
                 result = new ArrayList<>();
                 result.add(new HashMap<String, Object>() {
-                    {
+					private static final long serialVersionUID = -2238288036119057961L;
+
+					{
                         put(null, sql);
                     }
                 });

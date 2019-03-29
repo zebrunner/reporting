@@ -20,10 +20,6 @@ import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCr
 
 import javax.annotation.PostConstruct;
 
-import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.services.management.TenancyService;
-import com.qaprosoft.zafira.services.util.TenancyDbInitial;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jasypt.util.password.PasswordEncryptor;
@@ -42,10 +38,12 @@ import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.Group.Role;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.User.Status;
+import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
-
-import java.util.Optional;
+import com.qaprosoft.zafira.services.services.management.TenancyService;
+import com.qaprosoft.zafira.services.util.TenancyDbInitial;
 
 @Service
 public class UserService implements TenancyDbInitial {

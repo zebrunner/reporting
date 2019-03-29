@@ -256,6 +256,8 @@ public class WidgetsAPIController extends AbstractController
 			if(stackTraceRequired) {
 				resultList = new ArrayList<>();
 				resultList.add(new HashMap<String, Object>() {
+					private static final long serialVersionUID = -6210274356733655725L;
+
 					{
 						put("Check your query", ExceptionUtils.getFullStackTrace(e));
 					}
