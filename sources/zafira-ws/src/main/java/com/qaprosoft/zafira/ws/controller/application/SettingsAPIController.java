@@ -294,7 +294,7 @@ public class SettingsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.CREATED)
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_SETTINGS')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_INTEGRATIONS')")
 	@RequestMapping(value = "key/regenerate", method = RequestMethod.POST)
 	public void reEncrypt() throws Exception
 	{
