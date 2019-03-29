@@ -13,7 +13,6 @@ const ngModule = angular.module('app', [
     'app.appHeader',
     'app.common',
     'app.testRunCard',
-    'app.testsRunsFilter',
     // 3rd party feature modules
     'ngImgCrop',
     'ui.ace',
