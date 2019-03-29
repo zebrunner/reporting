@@ -1,0 +1,7 @@
+SET SCHEMA 'zafira';
+
+select check_version(113);
+
+DELETE FROM PERMISSIONS WHERE BLOCK = 'SETTINGS';
+
+select check_version(113);
