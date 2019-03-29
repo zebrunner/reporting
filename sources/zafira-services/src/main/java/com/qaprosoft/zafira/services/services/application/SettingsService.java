@@ -38,7 +38,6 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.emails.AsynSendEmailTask;
 import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
 import com.qaprosoft.zafira.services.services.application.jmx.ElasticsearchService;
-import com.qaprosoft.zafira.services.services.application.jmx.HipchatService;
 import com.qaprosoft.zafira.services.services.application.jmx.IJMXService;
 import com.qaprosoft.zafira.services.services.application.jmx.JenkinsService;
 import com.qaprosoft.zafira.services.services.application.jmx.JiraService;
@@ -80,9 +79,6 @@ public class SettingsService {
 
     @Autowired
     private CloudFrontService cloudFrontService;
-
-    @Autowired
-    private HipchatService hipchatService;
 
     @Autowired
     private CryptoService cryptoService;
@@ -251,9 +247,6 @@ public class SettingsService {
             break;
         case CLOUD_FRONT:
             service = cloudFrontService;
-            break;
-        case HIPCHAT:
-            service = hipchatService;
             break;
         case RABBITMQ:
             service = rabbitMQService;
