@@ -473,7 +473,7 @@
         /* Gets from DB JIRA_CLOSED_STATUS name for the current project*/
 
         var getJiraClosedStatusName = function() {
-            SettingsService.getSetting('JIRA_CLOSED_STATUS').then(function successCallback(rs) {
+            SettingsService.getSetting('JIRA', 'JIRA_CLOSED_STATUS').then(function successCallback(rs) {
                 if(rs.success){
                     $scope.closedStatusName = rs.data.toUpperCase();
                 } else {

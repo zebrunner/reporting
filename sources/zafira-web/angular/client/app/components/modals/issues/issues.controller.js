@@ -311,7 +311,7 @@ const IssuesModalController = function IssuesModalController(
     /* Gets from DB JIRA_CLOSED_STATUS name for the current project*/
 
     function getJiraClosedStatusName() {
-        SettingsService.getSetting('JIRA_CLOSED_STATUS').
+        SettingsService.getSetting('JIRA', 'JIRA_CLOSED_STATUS').
             then(function successCallback(rs) {
                 if (rs.success) {
                     vm.closedStatusName = rs.data.toUpperCase();

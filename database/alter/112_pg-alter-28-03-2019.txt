@@ -1,5 +1,7 @@
 SET SCHEMA 'zafira';
 
+select check_version(112);
+
 ALTER TABLE GROUPS ADD COLUMN INVITABLE BOOLEAN NOT NULL DEFAULT TRUE;
 
 DO $$
@@ -11,3 +13,5 @@ DO $$
     UPDATE GROUPS SET INVITABLE = FALSE WHERE ID = GROUP_ID;
 
   END$$;
+
+select check_version(112);

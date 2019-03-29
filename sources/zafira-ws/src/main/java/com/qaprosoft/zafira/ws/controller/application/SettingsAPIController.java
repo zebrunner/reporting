@@ -88,31 +88,6 @@ public class SettingsAPIController extends AbstractController
 	private Long googleTokenExpiration;
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get all settings", nickname = "getAllSettings", httpMethod = "GET", response = List.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasAnyPermission('VIEW_SETTINGS', 'MODIFY_SETTINGS', 'VIEW_INTEGRATIONS', 'MODIFY_INTEGRATIONSS')")
-	@RequestMapping(value = "list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Setting> getAllSettings() throws ServiceException
-	{
-        return settingsService.getAllSettings();
-	}
-
-    @ResponseStatusDetails
-    @ApiOperation(value = "Get settings by integration", nickname = "getSettingsByIntegration", httpMethod = "GET", response = List.class)
-    @ResponseStatus(HttpStatus.OK)
-    @ApiImplicitParams(
-            { @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasAnyPermission('VIEW_SETTINGS', 'MODIFY_SETTINGS', 'VIEW_INTEGRATIONS', 'MODIFY_INTEGRATIONSS')")
-    @RequestMapping(value = "integration", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Setting> getAllSettings(@RequestParam(value="isIntegrationTool", required = false) boolean isIntegrationTool) throws ServiceException
-    {
-        return settingsService.getSettingsByIntegration(isIntegrationTool);
-    }
-
-
-	@ResponseStatusDetails
 	@ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "tool/{tool}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -159,18 +134,6 @@ public class SettingsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get setting value", nickname = "getSettingValue", httpMethod = "GET", response = String.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasAnyPermission('VIEW_SETTINGS', 'MODIFY_SETTINGS', 'VIEW_INTEGRATIONS', 'MODIFY_INTEGRATIONSS') or #name == 'JIRA_CLOSED_STATUS' or #name == 'COMPANY_LOGO_URL'")
-	@RequestMapping(value = "{name}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody String getSettingValue(@PathVariable(value = "name") String name) throws ServiceException
-	{
-		return settingsService.getSettingValue(Setting.SettingType.valueOf(name));
-	}
-
-	@ResponseStatusDetails
 	@ApiOperation(value = "Get company logo URL", nickname = "getSettingValue", httpMethod = "GET", response = Setting.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "companyLogo", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -180,22 +143,11 @@ public class SettingsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get setting value", nickname = "getSettingValue", httpMethod = "GET", response = Setting.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "{name}/value", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Setting getSetting(@PathVariable(value = "name") String name) throws ServiceException
-	{
-		return settingsService.getSettingByName(name);
-	}
-
-	@ResponseStatusDetails
 	@ApiOperation(value = "Delete setting", nickname = "deleteSetting", httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('MODIFY_SETTINGS')")
+	@PreAuthorize("hasPermission('MODIFY_INTEGRATIONS')")
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void deleteSetting(@PathVariable(value = "id") long id) throws ServiceException
 	{
@@ -207,7 +159,7 @@ public class SettingsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('MODIFY_SETTINGS')")
+	@PreAuthorize("hasPermission('MODIFY_INTEGRATIONS')")
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Setting createSetting(@RequestBody Setting setting) throws Exception
 	{
@@ -219,7 +171,7 @@ public class SettingsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('MODIFY_SETTINGS')")
+	@PreAuthorize("hasPermission('MODIFY_INTEGRATIONS') or (#setting.name == 'COMPANY_LOGO_URL' and hasRole('ROLE_ADMIN'))")
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody void editSetting(@RequestBody Setting setting) throws Exception
 	{
@@ -231,7 +183,7 @@ public class SettingsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('MODIFY_SETTINGS')")
+	@PreAuthorize("hasPermission('MODIFY_INTEGRATIONS')")
 	@RequestMapping(value = "tool", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ConnectedToolType editSettings(@RequestBody List<Setting> settings) throws Exception
 	{

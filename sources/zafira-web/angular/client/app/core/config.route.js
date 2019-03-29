@@ -478,22 +478,6 @@
                             });
                     }
                 })
-                .state('settings', {
-                    url: '/settings',
-                    component: 'settingsComponent',
-                    data: {
-                        requireLogin: true
-                    },
-                    lazyLoad: ($transition$) => {
-                        const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
-
-                        return import(/* webpackChunkName: "settings" */ '../_settings/settings.module.js')
-                            .then(mod => $ocLazyLoad.load(mod.settingsModule))
-                            .catch(err => {
-                                throw new Error('Can\'t load settings module, ' + err);
-                            });
-                    }
-                })
                 .state('monitors', {
                     url: '/monitors',
                     component: 'monitorsComponent',

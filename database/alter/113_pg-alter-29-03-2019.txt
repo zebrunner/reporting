@@ -1,0 +1,8 @@
+SET SCHEMA 'zafira';
+
+select check_version(113);
+
+DELETE FROM PERMISSIONS WHERE BLOCK = 'SETTINGS';
+DELETE FROM SETTINGS WHERE TOOL = 'HIPCHAT';
+
+select check_version(113);

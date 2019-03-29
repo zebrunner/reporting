@@ -8,12 +8,8 @@
     function SettingsService($httpMock, $cookies, $rootScope, UtilService, API_URL) {
         var service = {};
 
-        service.getAllSettings = getAllSettings;
-        service.getSettingsByIntegration = getSettingsByIntegration;
         service.getSetting = getSetting;
         service.getCompanyLogo = getCompanyLogo;
-        service.getSettingByName = getSettingByName;
-        service.getSettingValueByName = getSettingValueByName;
         service.getSettingByTool = getSettingByTool;
         service.deleteSetting = deleteSetting;
         service.createSetting = createSetting;
@@ -25,31 +21,14 @@
 
         return service;
 
-        function getAllSettings() {
-            return $httpMock.get(API_URL + '/api/settings/list').then(UtilService.handleSuccess, UtilService.handleError('Unable to get settings list'));
-        }
-
-        function getSettingsByIntegration(isIntegrationTool) {
-            var config = { params : {} };
-            if(isIntegrationTool)
-                config.params.isIntegrationTool = isIntegrationTool;
-            return $httpMock.get(API_URL + '/api/settings/integration', config).then(UtilService.handleSuccess, UtilService.handleError('Unable to get settings by integration list'));
-        }
-
         function getSettingByTool(tool) {
             return $httpMock.get(API_URL + '/api/settings/tool/' + tool).then(UtilService.handleSuccess, UtilService.handleError('Unable to load' + tool + 'settings'));
         }
 
-        function getSettingByName(name) {
-            return $httpMock.get(API_URL + '/api/settings/' + name).then(UtilService.handleSuccess, UtilService.handleError('Unable to get setting "' + name + '"'));
-        }
-
-        function getSettingValueByName(name) {
-            return $httpMock.get(API_URL + '/api/settings/' + name + '/value').then(UtilService.handleSuccess, UtilService.handleError('Unable to get setting "' + name + '"'));
-        }
-
-        function getSetting(name) {
-            return $httpMock.get(API_URL + '/api/settings/' + name).then(UtilService.handleSuccess, UtilService.handleError('Unable to get setting "' + name + '"'));
+        function getSetting(tool, name) {
+            return getSettingByTool(tool).find(function (setting) {
+                return setting.name === name;
+            });
         }
 
         function getCompanyLogo() {
