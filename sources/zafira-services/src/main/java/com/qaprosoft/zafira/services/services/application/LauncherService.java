@@ -86,14 +86,12 @@ public class LauncherService {
 
     @Transactional(rollbackFor = Exception.class)
     public Launcher createLauncherForJob(CreateLauncherParamsType createLauncherParamsType, User owner) throws ServiceException {
-        Launcher launcher;
-        Job job = jobsService.getJobByJobURL(createLauncherParamsType.getJobUrl());
-        if(job == null){
-            job = jobsService.createOrUpdateJobByURL(createLauncherParamsType.getJobUrl(), owner);
-        }
-        launcher = getLauncherByJobId(job.getId());
-        if(launcher == null){
-            launcher = new Launcher();
+        Launcher launcher = new Launcher();
+        if(jenkinsService.getContext() != null) {
+            Job job = jobsService.getJobByJobURL(createLauncherParamsType.getJobUrl());
+            if(job == null){
+                job = jobsService.createOrUpdateJobByURL(createLauncherParamsType.getJobUrl(), owner);
+            }
             launcher.setJob(job);
             launcher.setName(job.getName());
             ScmAccount scmAccount = scmAccountService.getScmAccountByRepo(createLauncherParamsType.getRepo());
@@ -102,22 +100,14 @@ public class LauncherService {
             }
             launcher.setScmAccount(scmAccount);
             launcher.setModel(new JSONObject(createLauncherParamsType.getJobParameters()).toString());
-            launcherMapper.createLauncher(launcher);
-        } else {
-            launcher.setModel(new JSONObject(createLauncherParamsType.getJobParameters()).toString());
-            launcherMapper.updateLauncher(launcher);
         }
+        launcherMapper.createLauncher(launcher);
         return launcher;
     }
 
     @Transactional(readOnly = true)
     public Launcher getLauncherById(Long id) throws ServiceException {
         return launcherMapper.getLauncherById(id);
-    }
-
-    @Transactional(readOnly = true)
-    public Launcher getLauncherByJobId(Long id) throws ServiceException {
-        return launcherMapper.getLauncherByJobId(id);
     }
 
     @Transactional(readOnly = true)
