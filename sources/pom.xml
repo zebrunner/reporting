@@ -103,7 +103,6 @@
         <apache-commons-io.version>1.3.2</apache-commons-io.version>
         <jenkins-client.version>0.3.7</jenkins-client.version>
         <jira-client.version>0.5</jira-client.version>
-        <hipchat-client.version>0.4.3</hipchat-client.version>
         <commons-beanutils.version>1.9.3</commons-beanutils.version>
         <jjwt.version>0.7.0</jjwt.version>
         <slack-java-webhook.version>0.0.7</slack-java-webhook.version>
@@ -602,11 +601,6 @@
                 <groupId>net.rcarz</groupId>
                 <artifactId>jira-client</artifactId>
                 <version>${jira-client.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.evanwong.oss</groupId>
-                <artifactId>hipchat-java</artifactId>
-                <version>${hipchat-client.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-beanutils</groupId>

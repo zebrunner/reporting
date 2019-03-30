@@ -229,11 +229,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>io.evanwong.oss</groupId>
-			<artifactId>hipchat-java</artifactId>
-		</dependency>
-
-		<dependency>
 		  <groupId>com.offbytwo.jenkins</groupId>
 		  <artifactId>jenkins-client</artifactId>
 		  <exclusions>
