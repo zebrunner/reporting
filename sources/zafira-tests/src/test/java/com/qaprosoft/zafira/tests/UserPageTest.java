@@ -125,6 +125,8 @@ public class UserPageTest extends AbstractTest
 		userPage.waitUntilElementWithTextIsPresent(userPage.getSuccessAlert(), "User created", 5);
 		Assert.assertEquals(userPage.getSuccessAlert().getText(), "User created", "Invalid user created alert");
 		userPage.waitUntilPageIsLoaded(10);
+		userPage.reload();
+		userPage.waitUntilPageIsLoaded(10);
 		userType.setId(userMapper.getUserByUserName(userType.getUsername()).getId());
 		Assert.assertEquals(userPageService.getUserTableRowsCount(), 20, "Count of user menu buttons is not 20");
 		userPageService.search(userType.getId());
@@ -137,6 +139,8 @@ public class UserPageTest extends AbstractTest
 		userType.setEmail("newEmail@test.com");
 		createUserModalWindow.clearAllInputs();
 		createUserModalWindow.updateUser(userType);
+		userPage.getUserSearchBlock().clickClearButton();
+		pause(2);
 		userPageService.search(userType.getId());
 		verifyUsersTableByRowIndex(userType, 0);
 
