@@ -3162,3 +3162,7 @@ $light-inprogress: #68c9fd;
         background-image: none !important;
     }
 }
+
+users-component md-tab-item.md-disabled {
+    display: none;
+}

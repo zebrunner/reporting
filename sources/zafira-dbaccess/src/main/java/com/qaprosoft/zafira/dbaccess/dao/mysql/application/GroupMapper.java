@@ -33,8 +33,8 @@ public interface GroupMapper
 	
 	Group getGroupByName(String name);
 
-	List<Group> getAllGroups();
-	
+	List<Group> getAllGroups(@Param("publicDetails") boolean publicDetails);
+
 	Group getPrimaryGroupByRole(Role role);
 
 	void updateGroup(Group group);

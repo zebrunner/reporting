@@ -45,6 +45,7 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
         sc: angular.copy(DEFAULT_SC),
         onSearchChange: onSearchChange,
         search: search,
+        getGroups: getGroups,
         isEqualDate: isEqualDate,
         reset: reset,
         showCreateUserDialog: showCreateUserDialog,
@@ -295,10 +296,21 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
             });
     };
 
+    function getGroups(isPublic) {
+        GroupService.getAllGroups(isPublic).then(function (rs) {
+            if(rs.success) {
+                GroupService.groups = rs.data;
+            }
+        });
+    };
+
     function initController() {
         vm.activeTab = vm.tabs[0];
         vm.search(1);
         vm.isFiltered = false;
+        if(! AuthService.UserHasAnyPermission('MODIFY_USER_GROUPS')) {
+            vm.getGroups(true);
+        }
     };
 };
 

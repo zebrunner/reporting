@@ -38,8 +38,9 @@
             return $httpMock.get(API_URL + '/api/groups/' + id).then(UtilService.handleSuccess, UtilService.handleError('Failed to get group'));
         }
 
-        function getAllGroups(){
-            return $httpMock.get(API_URL + '/api/groups/all').then(UtilService.handleSuccess, UtilService.handleError('Failed to get groups'));
+        function getAllGroups(isPublic){
+            var postfix = isPublic ? '?public=true' : '';
+            return $httpMock.get(API_URL + '/api/groups/all' + postfix).then(UtilService.handleSuccess, UtilService.handleError('Failed to get groups'));
         }
 
         function getGroupsCount(){

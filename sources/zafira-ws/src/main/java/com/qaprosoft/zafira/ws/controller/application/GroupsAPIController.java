@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -87,10 +88,10 @@ public class GroupsAPIController extends AbstractController {
     @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Get all groups", nickname = "getAllGroups", httpMethod = "GET", response = List.class)
     @RequestMapping(value = "all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
-    public @ResponseBody List<Group> getAllGroups() throws ServiceException
+    @PreAuthorize("hasPermission('MODIFY_USER_GROUPS') or #isPublic")
+    public @ResponseBody List<Group> getAllGroups(@RequestParam(value = "public", required = false) boolean isPublic) throws ServiceException
     {
-        return groupService.getAllGroups();
+        return groupService.getAllGroups(isPublic);
     }
 
     @ResponseStatusDetails

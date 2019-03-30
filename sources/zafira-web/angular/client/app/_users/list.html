@@ -22,15 +22,15 @@
                 <article class="article">
                     <md-card class="no-margin-h">
                         <md-tabs md-no-pagination="true" md-no-ink md-stretch-tabs="never" md-dynamic-height md-border-bottom md-selected="$ctrl.selectedTabIndex">
-                            <md-tab ng-if="tab.show();" ng-repeat="tab in $ctrl.tabs" label="{{ tab.name }}" md-on-select="$ctrl.switchTab(tab, $index);">
-                                    <app-users ng-if="tab.name === 'Users'"
+                            <md-tab ng-disabled="! tab.show();" ng-repeat="tab in $ctrl.tabs" label="{{ tab.name }}" md-on-select="$ctrl.switchTab(tab, $index);">
+                                    <app-users ng-if="tab.name === 'Users' && tab.show();"
                                                tabs="$ctrl.tabs"
                                                source="$ctrl.sr"
                                                search-value="$ctrl.sc"
                                                on-search-change="$ctrl.onSearchChange(fields)"
                                                on-search="$ctrl.search()"
                                                search-act="$ctrl.searchActive"></app-users>
-                                    <app-group ng-if="tab.name === 'Groups'" 
+                                    <app-group ng-if="tab.name === 'Groups' && tab.show();"
                                                tabs="$ctrl.tabs" 
                                                groups="$ctrl.groups" 
                                                show-group="$ctrl.showGroupDialog($event, group)"
@@ -38,7 +38,7 @@
                                                search="$ctrl.querySearch(criteria, group)"
                                                add-user="$ctrl.addUserToGroup(user, group)"
                                                delete-user="$ctrl.deleteUserFromGroup(user, group)"></app-group>
-                                    <app-invites ng-if="tab.name === 'Invitations'"
+                                    <app-invites ng-if="tab.name === 'Invitations' && tab.show();"
                                                  tabs="$ctrl.tabs"
                                                  on-search="$ctrl.search(data)"
                                                  on-switch-tab="$ctrl.switchTab(tab, index)"
