@@ -33,7 +33,7 @@ public abstract class AbstractGoogleService
 
 	protected static final Logger LOGGER = Logger.getLogger(AbstractGoogleService.class);
 
-	private static String APPLICATION_NAME;
+	private static String APPLICATION_NAME = "zafira";
 	private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
 	private static final Set<String> SCOPES = SheetsScopes.all();

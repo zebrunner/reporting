@@ -97,9 +97,9 @@ public class GroupService
 	}
 
 	@Transactional(readOnly = true)
-	public List<Group> getAllGroups() throws ServiceException
+	public List<Group> getAllGroups(Boolean isPublic) throws ServiceException
 	{
-		List<Group> groupList = groupMapper.getAllGroups();
+		List<Group> groupList = groupMapper.getAllGroups(isPublic);
 		for (Group group : groupList)
 		{
 			Collections.sort(group.getUsers());

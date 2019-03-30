@@ -134,7 +134,7 @@
                                                 <span>
                                                 <strong>{{$chip.name.split('_').join(' ') | lowercase}}</strong>
                                                 <span class="chip-operator">{{ $ctrl.SYMBOLS[$chip.operator] }}</span>
-                                                <span ng-if="$ctrl.DATE_CRITERIAS.indexOf($chip.name) === -1 || $ctrl.DATE_CRITERIAS_PICKER_OPERATORS.indexOf($chip.operator) === -1">'{{ $chip.value }}'</span>
+                                                <span ng-if="$ctrl.DATE_CRITERIAS.indexOf($chip.name) === -1">'{{ $chip.value }}'</span>
                                                 <span ng-if="$ctrl.DATE_CRITERIAS.indexOf($chip.name) !== -1 && $ctrl.DATE_CRITERIAS_PICKER_OPERATORS.indexOf($chip.operator) !== -1">'{{ $chip.value | date : 'MMM dd yyyy' }}'</span>
                                                 </span>
                                         </md-chip-template>
