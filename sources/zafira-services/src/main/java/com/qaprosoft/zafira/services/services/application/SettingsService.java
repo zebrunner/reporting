@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
-import com.qaprosoft.zafira.services.services.application.jmx.amazon.CloudFrontService;
 import com.qaprosoft.zafira.services.util.EventPushService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.Message;
@@ -76,9 +75,6 @@ public class SettingsService {
 
     @Autowired
     private AmazonService amazonService;
-
-    @Autowired
-    private CloudFrontService cloudFrontService;
 
     @Autowired
     private CryptoService cryptoService;
@@ -244,9 +240,6 @@ public class SettingsService {
             break;
         case AMAZON:
             service = amazonService;
-            break;
-        case CLOUD_FRONT:
-            service = cloudFrontService;
             break;
         case RABBITMQ:
             service = rabbitMQService;

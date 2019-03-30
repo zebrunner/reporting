@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.qaprosoft.zafira.models.dto.aws.PresignedUrlRequest;
-import com.qaprosoft.zafira.services.services.application.jmx.amazon.CloudFrontService;
-import com.qaprosoft.zafira.services.services.application.jmx.amazon.IURLGenerator;
 import com.qaprosoft.zafira.services.services.application.jmx.google.GoogleService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,9 +66,6 @@ public class SettingsAPIController extends AbstractController
 
 	@Autowired
 	private AmazonService amazonService;
-
-	@Autowired
-	private CloudFrontService cloudFrontService;
 
 	@Autowired
 	private GoogleService googleService;
@@ -237,8 +232,7 @@ public class SettingsAPIController extends AbstractController
 	@RequestMapping(value = "amazon/presignedURL", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody String generatePresignedURL(@RequestBody @Valid PresignedUrlRequest presignedUrlRequest) throws Exception
 	{
-		IURLGenerator generator = cloudFrontService.isConnected() ? cloudFrontService : amazonService;
-		return generator.generatePresignedURL(presignedUrlRequest.getExpiresIn(), presignedUrlRequest.getKey());
+		return amazonService.generatePresignedURL(presignedUrlRequest.getExpiresIn(), presignedUrlRequest.getKey());
 	}
 
 	@ResponseStatusDetails

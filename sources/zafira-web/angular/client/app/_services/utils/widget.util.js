@@ -24,7 +24,7 @@
                     var conf = JSON.parse(widget.paramsConfig);
                     value = conf[paramName] ?  conf[paramName] :  type === 'array' ? config[paramName].multiple ? config[paramName].values : config[paramName].values[0] : config[paramName].value;
                 } else {
-                    value = type === 'array' ? config[paramName].multiple ? config[paramName].values : config[paramName].values[0] : config[paramName].value;
+                    value = type === 'array' ? config[paramName].multiple ? config[paramName].values && config[paramName].values.length ? [config[paramName].values[0]] : config[paramName].values : config[paramName].values[0] : config[paramName].value;
                 }
                 value = overrideWithEnvParams ?
                     type === 'array' &&  config[paramName].values.indexOf(envParams[paramName]) !== -1 ?

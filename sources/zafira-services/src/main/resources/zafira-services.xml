@@ -29,7 +29,6 @@
 				<entry key="bean:name=jenkinsService" value-ref="jenkinsService"/>
 				<entry key="bean:name=slackService" value-ref="slackService"/>
 				<entry key="bean:name=amazonService" value-ref="amazonService"/>
-				<entry key="bean:name=cloudFrontService" value-ref="cloudFrontService"/>
 				<entry key="bean:name=cryptoService" value-ref="cryptoService"/>
 				<entry key="bean:name=rabbitMQService" value-ref="rabbitMQService"/>
 			</map>
@@ -66,8 +65,6 @@
 	<bean id="slackService" class="com.qaprosoft.zafira.services.services.application.jmx.SlackService"/>
 
 	<bean id="amazonService" class="com.qaprosoft.zafira.services.services.application.jmx.amazon.AmazonService"/>
-
-	<bean id="cloudFrontService" class="com.qaprosoft.zafira.services.services.application.jmx.amazon.CloudFrontService"/>
 
 	<bean id="cryptoService" class="com.qaprosoft.zafira.services.services.application.jmx.CryptoService">
 		<property name="salt" value="${zafira.crypto_salt}" />
