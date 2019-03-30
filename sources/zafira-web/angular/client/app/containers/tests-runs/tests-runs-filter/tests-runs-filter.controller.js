@@ -368,6 +368,8 @@ const TestsRunsFilterController = function TestsRunsFilterController($scope, Fil
     function onReset() {
         vm.selectedRange.dateStart = null;
         vm.selectedRange.dateEnd = null;
+        vm.selectedRange.selectedTemplate = null;
+        vm.selectedRange.selectedTemplateName = null;
         vm.searchParams = angular.copy(DEFAULT_SC);
         vm.fastSearch = {};
         testsRunsService.resetFilteringState();
