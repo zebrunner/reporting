@@ -110,7 +110,7 @@ public class InvitationService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Invitation createInitialInvitation(String email) throws ServiceException {
+    public Invitation createInitialInvitation(String email, String groupName) throws ServiceException {
         Invitation invitation = null;
         if (!StringUtils.isBlank(userService.getAdminUsername())) {
             User user = userService.getUserByUsername(userService.getAdminUsername());
@@ -118,7 +118,7 @@ public class InvitationService {
                 throw new ForbiddenOperationException("Admin with username '" + userService.getAdminUsername() + "' does not exist");
             }
 
-            Group group = groupService.getPrimaryGroupByRole(ROLE_ADMIN);
+            Group group = groupService.getGroupByName(groupName);
             if(group == null) {
                 throw new ForbiddenOperationException("Group by role '" + ROLE_ADMIN.name() + "' does not exist");
             }
