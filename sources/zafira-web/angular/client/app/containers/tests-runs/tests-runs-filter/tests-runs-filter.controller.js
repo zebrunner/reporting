@@ -32,6 +32,8 @@ const TestsRunsFilterController = function TestsRunsFilterController($scope, Fil
     const DATE_CRITERIAS_PICKER_OPERATORS = ['EQUALS', 'NOT_EQUALS', 'BEFORE', 'AFTER'];
     const STATUSES = ['PASSED', 'FAILED', 'SKIPPED', 'ABORTED', 'IN_PROGRESS', 'QUEUED', 'UNKNOWN'];
     const vm = {
+        DATE_CRITERIAS_PICKER_OPERATORS: angular.copy(DATE_CRITERIAS_PICKER_OPERATORS),
+        DATE_CRITERIAS: angular.copy(DATE_CRITERIAS),
         currentCriteria: angular.copy(CURRENT_CRITERIA),
         currentOperator: angular.copy(CURRENT_OPERATOR),
         currentValue: angular.copy(CURRENT_VALUE),
