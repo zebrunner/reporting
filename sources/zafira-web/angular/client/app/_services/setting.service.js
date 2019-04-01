@@ -26,9 +26,14 @@
         }
 
         function getSetting(tool, name) {
-            return getSettingByTool(tool).find(function (setting) {
-                return setting.name === name;
-            });
+            return getSettingByTool(tool).then(function (rs) {
+                if(rs.success) {
+                    rs.data = rs.data.find(function (setting) {
+                        return setting.name === name;
+                    });
+                }
+                return rs;
+            })
         }
 
         function getCompanyLogo() {
