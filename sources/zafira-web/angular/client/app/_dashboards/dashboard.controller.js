@@ -143,7 +143,7 @@ const dashboardController = function dashboardController($scope, $rootScope, $q,
         return jsonSafeStringify(location);
     }
 
-    $scope.addDashboardWidget = function (widget) {
+    $scope.addDashboardWidget = function (widget, hideSuccessAlert) {
         widget.location = getNextEmptyGridArea(defaultWidgetLocation);
         var data = {"id": widget.id, "location": widget.location};
         DashboardService.AddDashboardWidget($stateParams.dashboardId, data).then(function (rs) {
@@ -153,7 +153,9 @@ const dashboardController = function dashboardController($scope, $rootScope, $q,
                     widget.location = jsonSafeStringify(widget.location);
                 });
                 loadDashboardData($scope.dashboard, false);
-                alertify.success("Widget added");
+                if(! hideSuccessAlert) {
+                    alertify.success("Widget added");
+                }
                 updateWidgetsToAdd();
             }
             else {
@@ -461,6 +463,7 @@ const dashboardController = function dashboardController($scope, $rootScope, $q,
             switch(rs.action) {
                 case 'CREATE':
                     $scope.widgets.push(rs.widget);
+                    $scope.addDashboardWidget(rs.widget, true);
                     updateWidgetsToAdd();
                     break;
                 case 'UPDATE':
