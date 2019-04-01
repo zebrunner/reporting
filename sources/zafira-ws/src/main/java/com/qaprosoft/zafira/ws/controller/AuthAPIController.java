@@ -26,6 +26,7 @@ import com.qaprosoft.zafira.services.services.application.GroupService;
 import com.qaprosoft.zafira.services.services.application.InvitationService;
 import com.qaprosoft.zafira.services.services.auth.ForgotPasswordService;
 import com.qaprosoft.zafira.services.services.application.jmx.LDAPService;
+import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,17 +84,24 @@ public class AuthAPIController extends AbstractController {
 	private AuthenticationManager authenticationLdapManager;
 
 	@Autowired
+	private URLResolver urlResolver;
+
+	@Autowired
 	private Mapper mapper;
 
 	@Value("${zafira.admin.username}")
 	private String adminUsername;
+
+	@Value("${zafira.multitenant}")
+	private Boolean multitenant;
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get current tenant", nickname = "getTenant", httpMethod = "GET", response = String.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "tenant", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TenantType getTenant() {
-		return new TenantType(TenancyContext.getTenantName());
+
+		return new TenantType(TenancyContext.getTenantName(), urlResolver.getServiceURL(), multitenant);
 	}
 
 	@ResponseStatusDetails

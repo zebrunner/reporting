@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.jmx.amazon;
+package com.qaprosoft.zafira.services.services.application.jmx;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.AMAZON;
 
@@ -23,13 +23,10 @@ import java.net.URL;
 import java.util.*;
 
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
-import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
-import com.qaprosoft.zafira.services.services.application.jmx.IJMXService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -61,7 +58,7 @@ import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.jmx.context.AmazonContext;
 
 @ManagedResource(objectName = "bean:name=amazonService", description = "Amazon init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
-public class AmazonService implements IJMXService<AmazonContext>, IURLGenerator {
+public class AmazonService implements IJMXService<AmazonContext> {
 
     private static final Logger LOGGER = Logger.getLogger(AmazonService.class);
 
@@ -228,17 +225,6 @@ public class AmazonService implements IJMXService<AmazonContext>, IURLGenerator 
             }
         }
         return result;
-    }
-
-    @Override
-    public String generatePresignedURL(Integer expiresIn, String key) {
-        return getAmazonType().getAmazonS3().generatePresignedUrl(
-                new GeneratePresignedUrlRequest(getAmazonType().getS3Bucket(), key).withExpiration(getExpirationDate(expiresIn))).toString();
-    }
-
-    @Override
-    public Date getMaxExpirationDate() {
-        return DateUtils.addDays(new Date(), 6);
     }
 
     @ManagedAttribute(description = "Get current amazon entity")

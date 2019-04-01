@@ -64,7 +64,7 @@
 
 	<bean id="slackService" class="com.qaprosoft.zafira.services.services.application.jmx.SlackService"/>
 
-	<bean id="amazonService" class="com.qaprosoft.zafira.services.services.application.jmx.amazon.AmazonService"/>
+	<bean id="amazonService" class="com.qaprosoft.zafira.services.services.application.jmx.AmazonService"/>
 
 	<bean id="cryptoService" class="com.qaprosoft.zafira.services.services.application.jmx.CryptoService">
 		<property name="salt" value="${zafira.crypto_salt}" />
