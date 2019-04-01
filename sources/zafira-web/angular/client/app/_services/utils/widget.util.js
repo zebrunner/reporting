@@ -31,6 +31,7 @@
                         getValueByType(envParams[paramName], getType(value))
                         : value
                     : value;
+                value = config[paramName].multiple && getType(value) !== 'array' ? [value] : value;
                 if(type) {
                     setParameter(config, paramName, value);
                     config[paramName].type = type;
@@ -95,6 +96,7 @@
                     result = parseInt(stringValue);
                     break;
                 default:
+                    result = stringValue;
                     break;
             }
             return result;
