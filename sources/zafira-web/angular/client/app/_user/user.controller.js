@@ -80,10 +80,10 @@ const UserProfileController = function UserProfileController($mdDialog, UserServ
             });
     }
 
-    function copyAccessToken(accessToken) {
+    function copyAccessToken() {
         var node = document.createElement('pre');
 
-        node.textContent = accessToken;
+        node.textContent = vm.accessToken;
         document.body.appendChild(node);
 
         var selection = window.getSelection();
