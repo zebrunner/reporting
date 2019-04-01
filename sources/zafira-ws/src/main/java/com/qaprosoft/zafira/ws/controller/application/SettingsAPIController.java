@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.qaprosoft.zafira.models.dto.aws.PresignedUrlRequest;
 import com.qaprosoft.zafira.services.services.application.jmx.google.GoogleService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +44,7 @@ import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
-import com.qaprosoft.zafira.services.services.application.jmx.amazon.AmazonService;
+import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
 import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -54,8 +53,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-
-import javax.validation.Valid;
 
 @Controller
 @Api(value = "Settings API")
@@ -224,15 +221,6 @@ public class SettingsAPIController extends AbstractController
 	@RequestMapping(value = "google/creds", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
 	public @ResponseBody String getGoogleSessionCredentials() throws ServiceException, IOException {
 		return googleService.getTemporaryAccessToken(googleTokenExpiration);
-	}
-
-	@ApiOperation(value = "Generate amazon presigned URL", nickname = "generatePresignedURL", httpMethod = "POST", response = String.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-	@RequestMapping(value = "amazon/presignedURL", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody String generatePresignedURL(@RequestBody @Valid PresignedUrlRequest presignedUrlRequest) throws Exception
-	{
-		return amazonService.generatePresignedURL(presignedUrlRequest.getExpiresIn(), presignedUrlRequest.getKey());
 	}
 
 	@ResponseStatusDetails

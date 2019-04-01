@@ -25,6 +25,9 @@ public class URLResolver {
     @Value("${zafira.multitenant}")
     private boolean isMultitenant;
 
+    @Value("${zafira.url}")
+    private String serviceURL;
+
     @Value("${zafira.web.url}")
     private String webURL;
 
@@ -35,5 +38,9 @@ public class URLResolver {
      */
     public String buildWebURL() {
         return isMultitenant ? String.format(webURL, TenancyContext.getTenantName()) : webURL;
+    }
+
+    public String getServiceURL() {
+        return isMultitenant ? String.format(serviceURL, TenancyContext.getTenantName()) : webURL;
     }
 }
