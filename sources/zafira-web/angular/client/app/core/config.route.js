@@ -265,7 +265,7 @@
                 // For github redirection
                 // TODO: Should be only for guests?
                 .state('scm/callback', {
-                    url: '/scm/callback',
+                    url: '/scm/callback?code',
                     component: 'scmComponent',
                     lazyLoad: ($transition$) => {
                         const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
