@@ -40,7 +40,6 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.offbytwo.jenkins.JenkinsServer;
@@ -244,16 +243,27 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
     private JobWithDetails getJobWithDetails(Job ciJob) throws IOException {
         JobWithDetails job;
         if (ciJob.getJobURL().matches(FOLDER_REGEX)) {
-            String jobUrl = ciJob.getJobURL();
-            String folderUrl = jobUrl.substring(0, jobUrl.lastIndexOf("/job/"));
-            String[] folderNameValues = jobUrl.split("/job/");
-            String folderName = folderNameValues[folderNameValues.length - 2];
-            Optional<FolderJob> folder = getServer().getFolderJob(new com.offbytwo.jenkins.model.Job(folderName, folderUrl));
-            job = getServer().getJob(folder.get(), ciJob.getName());
+            job = getJobByURL(ciJob.getJobURL());
         } else {
-            job = getServer().getJob(ciJob.getName());
+            job = getJobByName(ciJob.getName());
         }
         return job;
+    }
+
+    private JobWithDetails getJobByName(String jobName) throws IOException {
+        return getServer().getJob(jobName);
+    }
+
+    private JobWithDetails getJobByURL(String jobUrl) throws IOException {
+        jobUrl = jobUrl.replaceAll("/$", "");
+        String jobName = jobUrl.substring(jobUrl.lastIndexOf("/") + 1);
+        String folderUrl = jobUrl.substring(0, jobUrl.lastIndexOf("/job/"));
+        String folderName = folderUrl.substring(folderUrl.lastIndexOf("/") + 1);
+        return getServer().getJob(getFolderJob(folderUrl, folderName), jobName);
+    }
+
+    private FolderJob getFolderJob(String folderUrl, String folderName) throws IOException {
+        return getServer().getFolderJob(new com.offbytwo.jenkins.model.Job(folderName, folderUrl)).get();
     }
 
     private Map<Integer, String> getLastLogStringsByCount(String log, Integer count, Integer fullCount) {

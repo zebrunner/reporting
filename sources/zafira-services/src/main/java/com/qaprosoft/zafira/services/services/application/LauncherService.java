@@ -64,22 +64,11 @@ public class LauncherService {
     private String apiURL;
 
     @Transactional(rollbackFor = Exception.class)
-    public Launcher createLauncher(Launcher launcher, User owner) throws ServiceException {
+    public Launcher createLauncher(Launcher launcher) throws ServiceException {
         if(jenkinsService.getContext() != null) {
-            String launcherJobName = jenkinsService.getContext().getLauncherJobName();
-            if (launcherJobName != null) {
-                Job job = jobsService.getJobByName(launcherJobName);
-                if(job == null) {
-                    job = jenkinsService.getJob(launcherJobName);
-                    if (job != null) {
-                        job.setJenkinsHost(jenkinsService.getContext().getJenkinsHost());
-                        job.setUser(owner);
-                        jobsService.createJob(job);
-                    }
-                }
+                Job job = jobsService.getJobByName("Launcher");
                 launcher.setJob(job);
             }
-        }
         launcherMapper.createLauncher(launcher);
         return launcher;
     }
