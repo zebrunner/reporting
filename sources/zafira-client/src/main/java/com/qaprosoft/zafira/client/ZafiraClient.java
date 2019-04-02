@@ -26,7 +26,6 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.qaprosoft.zafira.models.dto.*;
-import com.qaprosoft.zafira.models.dto.aws.PresignedUrlRequest;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -66,8 +65,8 @@ public class  ZafiraClient
 	public static final String DEFAULT_USER = "anonymous";
 	public static final String DEFAULT_PROJECT = "UNKNOWN";
 	
-	private static final Integer CONNECT_TIMEOUT = 30000;
-	private static final Integer READ_TIMEOUT = 30000;
+	private static final Integer CONNECT_TIMEOUT = 60000;
+	private static final Integer READ_TIMEOUT = 60000;
 	
 	private static final String STATUS_PATH = "/api/status";
 	private static final String PROFILE_PATH = "/api/users/profile";
@@ -92,7 +91,6 @@ public class  ZafiraClient
 	private static final String SETTINGS_TOOL_PATH = "/api/settings/tool/%s";
 	private static final String AMAZON_SESSION_CREDENTIALS_PATH = "/api/settings/amazon/creds";
 	private static final String GOOGLE_SESSION_CREDENTIALS_PATH = "/api/settings/google/creds";
-	private static final String AMAZON_PRESIGNED_URL_PATH = "/api/settings/amazon/presignedURL";
 	private static final String TENANT_TYPE_PATH = "/api/auth/tenant";
 	private static final String PROJECTS_PATH = "/api/projects/%s";
 
@@ -1026,10 +1024,11 @@ public class  ZafiraClient
 	public String uploadFile(File file, Integer expiresIn, String keyPrefix) throws Exception
 	{
 		String filePath = null;
-		if(this.amazonClient != null && this.tenantType != null)
+		if(this.amazonClient != null && this.tenantType != null && ! StringUtils.isBlank(this.tenantType.getTenant()))
 		{
 			String fileName = RandomStringUtils.randomAlphanumeric(20) + "." + FilenameUtils.getExtension(file.getName());
-			String key = tenantType.getTenant() + keyPrefix + fileName;
+			String relativeKey = keyPrefix + fileName;
+			String key = tenantType.getTenant() + relativeKey;
 
 			try (SdkBufferedInputStream stream = new SdkBufferedInputStream(new FileInputStream(file), (int) (file.length() + 100))) {
 				String type = Mimetypes.getInstance().getMimetype(file.getName());
@@ -1042,7 +1041,8 @@ public class  ZafiraClient
 				this.amazonClient.putObject(putRequest);
 				this.amazonClient.setObjectAcl(this.amazonS3SessionCredentials.getBucket(), key, CannedAccessControlList.Private);
 
-				filePath = generateAmazonPresignedURL(expiresIn, key).getObject();
+				filePath = this.tenantType.isMultitenant() ?
+						this.tenantType.getServiceUrl() + relativeKey : this.amazonClient.getUrl(this.amazonS3SessionCredentials.getBucket(), key).toString();
 
 			} catch (Exception e)
 			{
@@ -1102,31 +1102,6 @@ public class  ZafiraClient
 		} catch (Exception e)
 		{
 			LOGGER.error("Unable to get AWS session credentials", e);
-		}
-		return response;
-	}
-
-	/**
-	 * Gets Amazon S3 temporary credentials
-	 * @return Amazon S3 temporary credentials
-	 */
-	private Response<String> generateAmazonPresignedURL(Integer expiresIn, String key)
-	{
-		Response<String> response = new Response<>(0, null);
-		try
-		{
-			WebResource webResource = client.resource(serviceURL + AMAZON_PRESIGNED_URL_PATH);
-			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
-					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, new PresignedUrlRequest(expiresIn, key));
-			response.setStatus(clientRS.getStatus());
-			if (clientRS.getStatus() == 200)
-			{
-				response.setObject(clientRS.getEntity(String.class));
-			}
-
-		} catch (Exception e)
-		{
-			LOGGER.error("Unable to get AWS presigned URL", e);
 		}
 		return response;
 	}

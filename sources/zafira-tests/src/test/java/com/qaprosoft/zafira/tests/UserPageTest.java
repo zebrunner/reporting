@@ -66,7 +66,7 @@ public class UserPageTest extends AbstractTest
 				"Create groups modal window has an invalid title");
 		createGroupModalWindow.closeModalWindow();*/
 
-		List<User> users = userMapper.searchUsers(new UserSearchCriteria());
+		List<User> users = userMapper.searchUsers(new UserSearchCriteria(), false);
 		Assert.assertEquals(userPageService.getUserTableRowsCount(), users.size() >= 20 ? 20 : users.size(),
 				"Count of user menu buttons is not 20");
 
@@ -101,7 +101,7 @@ public class UserPageTest extends AbstractTest
 	@Test(groups = {"acceptance", "user"})
 	public void verifyInfoTest()
 	{
-		List<User> users = userMapper.searchUsers(new UserSearchCriteria());
+		List<User> users = userMapper.searchUsers(new UserSearchCriteria(), false);
 		Assert.assertEquals(userPageService.getUserTableRowsCount(), users.size() >= 20 ? 20 : users.size(),
 				"Count of user menu buttons is not 20");
 		if (users.size() < 20)
@@ -125,6 +125,8 @@ public class UserPageTest extends AbstractTest
 		userPage.waitUntilElementWithTextIsPresent(userPage.getSuccessAlert(), "User created", 5);
 		Assert.assertEquals(userPage.getSuccessAlert().getText(), "User created", "Invalid user created alert");
 		userPage.waitUntilPageIsLoaded(10);
+		userPage.reload();
+		userPage.waitUntilPageIsLoaded(10);
 		userType.setId(userMapper.getUserByUserName(userType.getUsername()).getId());
 		Assert.assertEquals(userPageService.getUserTableRowsCount(), 20, "Count of user menu buttons is not 20");
 		userPageService.search(userType.getId());
@@ -137,6 +139,8 @@ public class UserPageTest extends AbstractTest
 		userType.setEmail("newEmail@test.com");
 		createUserModalWindow.clearAllInputs();
 		createUserModalWindow.updateUser(userType);
+		userPage.getUserSearchBlock().clickClearButton();
+		pause(2);
 		userPageService.search(userType.getId());
 		verifyUsersTableByRowIndex(userType, 0);
 
@@ -159,7 +163,8 @@ public class UserPageTest extends AbstractTest
 				"Change button is not disabled");
 
 		changePasswordModalWindow.changePassword("Welcome2!");
-		userPage.waitUntilAlertWithTextIsPresent(5);
+		pause(2);
+		//userPage.waitUntilAlertWithTextIsPresent(2);
 		Assert.assertEquals(userPage.getSuccessAlert().getText(), "Password changed",
 				"Password changed alert is not present");
 		userPage.getHeader().logOut();

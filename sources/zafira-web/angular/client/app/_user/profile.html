@@ -1,0 +1,213 @@
+<div class="page page-profile">
+    <header class="profile-header">
+        <div class="profile-img">
+            <profile-photo ng-model="$ctrl.currentUser.photoURL"></profile-photo>
+            <div class="profile-img-content">
+                <span><i class="material-icons" ng-click="$ctrl.showUploadImageDialog($event)">settings</i></span>
+            </div>
+        </div>
+        <div class="profile-personal-info" ng-if="$ctrl.currentUser.firstName || $ctrl.currentUser.lastName">
+            {{$ctrl.currentUser.firstName}} {{$ctrl.currentUser.lastName}}
+        </div>
+    </header>
+
+    <div class="row">
+        <div class="col-lg-12 clearfix">
+        	<h2 id="pageTitle" class="section-header">User profile</h2>
+        </div>
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <div class="panel-body" zafira-background-theme>
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2">
+                            <div class="md-inline-form">
+                                <div layout-padding>
+                                    <form name="profile_form" ng-submit="$ctrl.updateUserProfile(user)">
+                                    	<div layout layout-sm="column">
+                                    		<md-input-container flex>
+                                    			<div id="userRole" class="label label-default" data-ng-repeat="role in $ctrl.user.roles" style="margin-right: 5px;">{{role}}</div>
+                                        	</md-input-container>
+                                        </div>
+                                        <div layout layout-sm="column">
+                                            <md-input-container flex>
+                                                <label>Username</label>
+                                                <input id="userUsername" type="text" ng-model="$ctrl.user.username" name="username" disabled/>
+                                            </md-input-container>
+                                        </div>
+                                        <div layout layout-sm="column">
+                                            <md-input-container flex>
+                                                <label>First Name</label>
+                                                <input id="userFirstName" type="text" ng-model="$ctrl.user.firstName" name="firstName"
+                                                    ng-minlength="2" ng-maxlength="50" ng-pattern="/^[a-zA-Z]+$/"/>
+                                                <div ng-messages="profile_form.firstName.$error">
+                                                    <div ng-repeat="validation in $ctrl.validations.name" ng-message="{{ validation.name }}">
+                                                    <span ng-if="validation.additional">
+                                                        <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
+                                                        {{ validation.message }}
+                                                    </span>
+                                                        <span ng-if="! validation.additional">{{ validation.message }}</span>
+                                                    </div>
+                                                </div>
+                                            </md-input-container>
+                                            <md-input-container flex>
+                                                <label>Last Name</label>
+                                                <input id="userLastName" type="text" ng-model="$ctrl.user.lastName" name="lastName"
+                                                       ng-minlength="2" ng-maxlength="50" ng-pattern="/^[a-zA-Z]+$/"/>
+                                                <div ng-messages="profile_form.lastName.$error">
+                                                    <div ng-repeat="validation in $ctrl.validations.name" ng-message="{{ validation.name }}">
+                                                        <span ng-if="validation.additional">
+                                                            <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
+                                                            {{ validation.message }}
+                                                        </span>
+                                                        <span ng-if="! validation.additional">{{ validation.message }}</span>
+                                                    </div>
+                                                </div>
+                                            </md-input-container>
+                                        </div>
+                                        <div layout layout-sm="column">
+                                            <md-input-container flex>
+                                                <label>Email</label>
+                                                <input id="userEmail" type="email" ng-model="$ctrl.user.email" name="email" ng-pattern="/^.+@.+\..+$/" disabled>
+                                                <div ng-messages="profile_form.email.$error" ng-if="profile_form.email.$dirty">
+		                                            <div ng-message="required">Required</div>
+		                                            <div ng-message="pattern">Invalid format</div>
+		                                        </div>
+                                            </md-input-container>
+                                        </div>
+                                        <div layout="row">
+		                                    <md-button id="saveUserInfo" type="submit"
+		                                               class="md-raised btn-w-md md-primary"
+		                                               ng-disabled="profile_form.$invalid">Save</md-button>
+	                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 clearfix"> <h2 class="section-header">Preferences</h2> </div>
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <div class="panel-body" zafira-background-theme>
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2">
+                            <div class="md-inline-form">
+                                <div layout-padding >
+                                    <form class="form-validation" name="preference_form" ng-submit="$ctrl.updateUserPreferences(preferenceForm);" >
+                                        <div layout-sm="column">
+                                            <md-input-container class="md-block">
+                                                <md-radio-group ng-model="$ctrl.main.skin" class="md-primary">
+                                                    <md-radio-button id="lightSchema" value="32" class="radio-inline">Light color schema</md-radio-button>
+                                                    <md-radio-button id="darkSchema" value="22" class="radio-inline">Dark color schema</md-radio-button>
+                                                </md-radio-group>
+                                            </md-input-container>
+                                        </div>
+                                        <div layout layout-sm="column">
+                                            <md-input-container class="flex">
+                                                <label>Default Dashboard</label>
+                                                <md-select id="defaultDashboard"  ng-model="preferenceForm.defaultDashboard" name="defaultDashboard" placeholder="Default Dashboard">
+                                                    <md-option ng-repeat="dashboard in $ctrl.dashboards" ng-value="dashboard.title" ng-selected="$ctrl.isDashboardSelected(dashboard)">{{dashboard.title}}</md-option>
+                                                </md-select>
+                                            </md-input-container>
+                                        </div>
+                                        <div layout layout-sm="column">
+                                            <md-input-container class="flex">
+                                                <label>Widget Refresh Interval</label>
+                                                <md-select info-window="widgetRefreshInterval" ng-model="preferenceForm.refreshInterval" name="refreshInterval" id="refreshInterval" type="number" placeholder="Widget Refresh Interval">
+                                                    <md-option ng-repeat="interval in $ctrl.widgetRefreshIntervals" ng-value="interval" ng-selected="$ctrl.isIntervalSelected(interval)">{{$ctrl.convertMillis(interval)}}</md-option>
+                                                </md-select>
+                                            </md-input-container>
+                                        </div>
+                                        <br/>
+                                        <div>
+	                                        <md-button id="savePreference" type="submit" class="md-raised btn-w-md md-primary">Save</md-button>
+	                                        <md-button id="resetPreference" class="md-raised btn-w-md md-warn" ng-click="$ctrl.resetPreferences(preferenceForm)">Reset to default</md-button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div ng-if="$ctrl.user.source === 'INTERNAL'" class="row">
+        <div class="col-lg-8 clearfix"> <h2 class="section-header">Change password</h2> </div>
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <div class="panel-body" zafira-background-theme>
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2">
+                            <div class="md-inline-form">
+                                <div layout-padding>
+                                    <form class="form-validation" name="password_form" ng-submit="$ctrl.updateUserPassword(); $ctrl.untouchForm(password_form);">
+                                        <md-input-container  class="md-block">
+                                            <label>Old password</label>
+                                            <input id="userOldPassword" type="password" ng-model="$ctrl.changePassword.oldPassword" name="password" required/>
+                                        </md-input-container>
+                                        <md-input-container  class="md-block">
+                                            <label>Password</label>
+                                            <input id="userPassword" password-eye="mousedown - mouseup" type="password" ng-model="$ctrl.changePassword.password" name="password" required
+                                                   ng-minlength="8" ng-maxlength="50" ng-pattern="/^[A-Za-z0-9_@!]+$/"/>
+                                            <div ng-messages="password_form.password.$error" ng-if="password_form.password.$dirty">
+                                                <div ng-repeat="validation in $ctrl.validations.password" ng-message="{{validation.name}}">
+                                                    <span ng-if="validation.additional">
+                                                        <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
+                                                        {{ validation.message }}
+                                                    </span>
+                                                    <span ng-if="! validation.additional">{{ validation.message }}</span>
+                                                </div>
+                                            </div>
+                                        </md-input-container>
+                                        <div layout="row">
+		                                    <md-button id="changePassword" type="submit"
+		                                               class="md-raised btn-w-md md-primary"
+		                                               ng-disabled="password_form.$invalid">Change</md-button>
+	                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 clearfix"> <h2 class="section-header">Access token</h2> </div>
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <div class="panel-body" zafira-background-theme>
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2">
+                            <div class="md-inline-form">
+                                <div layout-padding>
+                                    <form class="form-validation" name="access_token_form" ng-submit="$ctrl.generateAccessToken()">
+                                        <md-input-container  class="md-block">
+                                            <label>Token</label>
+                                            <input id="userAccessToken" type="text" ng-model="$ctrl.accessToken" name="accessToken"/>
+                                        </md-input-container>
+                                        <div layout="row">
+		                                    <md-button id="generateToken" type="submit" class="md-raised btn-w-md md-primary" style="margin-right: 10px;">Generate</md-button>
+		                                    <md-button id="copyToken" data-ng-if="$ctrl.accessToken" data-ng-click="$ctrl.copyAccessToken()" class="md-raised btn-w-md md-info">Copy</md-button>
+	                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+
+</div>

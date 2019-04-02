@@ -65,7 +65,7 @@ public class GroupMapperTest extends AbstractTestNGSpringContextTests {
     @Test(enabled = ENABLED, dependsOnMethods = {"createGroup"})
     public void getAllGroups()
     {
-        List<Group> groupList = groupMapper.getAllGroups();
+        List<Group> groupList = groupMapper.getAllGroups(false);
         checkGroup(groupList.get(groupList.size() - 1));
     }
 

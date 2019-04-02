@@ -19,11 +19,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.models.db.WidgetTemplate;
+import com.qaprosoft.zafira.models.dto.SQLExecuteType;
+import com.qaprosoft.zafira.models.dto.widget.WidgetTemplateType;
+import com.qaprosoft.zafira.models.dto.widget.WidgetType;
+import com.qaprosoft.zafira.services.services.application.WidgetTemplateService;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -66,7 +73,13 @@ public class WidgetsAPIController extends AbstractController
 	private WidgetService widgetService;
 
 	@Autowired
+	private WidgetTemplateService widgetTemplateService;
+
+	@Autowired
 	private SettingsService settingsService;
+
+	@Autowired
+	private Mapper mapper;
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Create widget", nickname = "createWidget", httpMethod = "POST", response = Widget.class)
@@ -75,10 +88,19 @@ public class WidgetsAPIController extends AbstractController
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_WIDGETS')")
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Widget createWidget(@RequestBody @Valid Widget widget,
+	public @ResponseBody WidgetType createWidget(@RequestBody @Valid WidgetType widget,
 			@RequestHeader(value = "Project", required = false) String project) throws ServiceException
 	{
-		return widgetService.createWidget(widget);
+		if(widget.getWidgetTemplate() != null) {
+			WidgetTemplate widgetTemplate = widgetTemplateService.getWidgetTemplateById(widget.getWidgetTemplate().getId());
+			if(widgetTemplate == null) {
+				throw new ServiceException("Unable to create chart. Template with id " + widget.getWidgetTemplate().getId() + " does not exist.");
+			}
+			widgetTemplateService.executeWidgetTemplateParamsSQLQueries(widgetTemplate);
+			widget.setWidgetTemplate(mapper.map(widgetTemplate, WidgetTemplateType.class));
+			widget.setType(widgetTemplate.getType().name());
+		}
+		return mapper.map(widgetService.createWidget(mapper.map(widget, Widget.class)), WidgetType.class);
 	}
 
 	@ResponseStatusDetails
@@ -111,9 +133,17 @@ public class WidgetsAPIController extends AbstractController
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_WIDGETS')")
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Widget updateWidget(@RequestBody Widget widget) throws ServiceException
+	public @ResponseBody Widget updateWidget(@RequestBody WidgetType widget) throws ServiceException
 	{
-		return widgetService.updateWidget(widget);
+		if(widget.getWidgetTemplate() != null) {
+			WidgetTemplate widgetTemplate = widgetTemplateService.getWidgetTemplateById(widget.getWidgetTemplate().getId());
+			if(widgetTemplate == null) {
+				throw new ServiceException("Unable to update widget. Widget template does not exist");
+			}
+			widgetTemplateService.executeWidgetTemplateParamsSQLQueries(widgetTemplate);
+			widget.setWidgetTemplate(mapper.map(widgetTemplate, WidgetTemplateType.class));
+		}
+		return widgetService.updateWidget(mapper.map(widget, Widget.class));
 	}
 
 	@ResponseStatusDetails
@@ -129,27 +159,27 @@ public class WidgetsAPIController extends AbstractController
             @RequestParam(value = "stackTraceRequired", required = false) boolean stackTraceRequired ) throws ServiceException
 	{
 		String query = sql.getSql();
-		List<Map<String, Object>> resultList;
+		List<Map<String, Object>> resultList = null;
 		try {
-		if (sql.getAttributes() != null)
-		{
-			for (Attribute attribute : sql.getAttributes())
-			{
-				query = query.replaceAll("#\\{" + attribute.getKey() + "\\}", attribute.getValue());
-			}
-		}
+			if(query != null) {
+				if (sql.getAttributes() != null) {
+					for (Attribute attribute : sql.getAttributes()) {
+						query = query.replaceAll("#\\{" + attribute.getKey() + "\\}", attribute.getValue());
+					}
+				}
 
-			query = query
-				.replaceAll("#\\{project}", formatProjects(projects))
-				.replaceAll("#\\{dashboardName}", !StringUtils.isEmpty(dashboardName) ? dashboardName : "")
-				.replaceAll("#\\{currentUserId}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
-				.replaceAll("#\\{currentUserName}", String.valueOf(getPrincipalName()))
-				.replaceAll("#\\{zafiraURL}", urlResolver.buildWebURL())
-				.replaceAll("#\\{jenkinsURL}", settingsService.getSettingByName("JENKINS_URL").getValue())
-				.replaceAll("#\\{hashcode}", "0")
-				.replaceAll("#\\{testCaseId}", "0");
-			
-            resultList = widgetService.executeSQL(query);
+				query = query
+						.replaceAll("#\\{project}", formatProjects(projects))
+						.replaceAll("#\\{dashboardName}", !StringUtils.isEmpty(dashboardName) ? dashboardName : "")
+						.replaceAll("#\\{currentUserId}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
+						.replaceAll("#\\{currentUserName}", String.valueOf(getPrincipalName()))
+						.replaceAll("#\\{zafiraURL}", urlResolver.buildWebURL())
+						.replaceAll("#\\{jenkinsURL}", settingsService.getSettingByName("JENKINS_URL").getValue())
+						.replaceAll("#\\{hashcode}", "0")
+						.replaceAll("#\\{testCaseId}", "0");
+
+				resultList = widgetService.executeSQL(query);
+			}
         }
         catch (Exception e) {
             if (stackTraceRequired) {
@@ -187,8 +217,57 @@ public class WidgetsAPIController extends AbstractController
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Widget> getAllWidgets() throws ServiceException
+	public @ResponseBody List<WidgetType> getAllWidgets() throws ServiceException
 	{
-		return widgetService.getAllWidgets();
+		return widgetService.getAllWidgets().stream().map(widget -> {
+		    widgetTemplateService.executeWidgetTemplateParamsSQLQueries(widget.getWidgetTemplate());
+		    return mapper.map(widget, WidgetType.class);
+        }).collect(Collectors.toList());
 	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Get all widget templates", nickname = "getAllWidgetTemplates", httpMethod = "GET", response = List.class)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "templates", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<WidgetTemplateType> getAllWidgetTemplates() throws ServiceException
+	{
+		return widgetTemplateService.getProcessedWidgetTemplates().stream().map(widgetTemplate -> mapper.map(widgetTemplate, WidgetTemplateType.class)).collect(Collectors.toList());
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Execute SQL template", nickname = "executeSQLTemplate", httpMethod = "POST", response = List.class)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "templates/sql", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<Map<String, Object>> executeSQLTemplate(@RequestBody @Valid SQLExecuteType sqlExecuteType,
+																	  @RequestParam(value = "stackTraceRequired", required = false) boolean stackTraceRequired) throws ServiceException
+	{
+		WidgetTemplate widgetTemplate = widgetTemplateService.getWidgetTemplateById(sqlExecuteType.getTemplateId());
+		if(widgetTemplate == null) {
+			throw new ServiceException("Unable to execute SQL query.");
+		}
+		List<Map<String, Object>> resultList;
+		try {
+			resultList = widgetService.executeSQL(widgetTemplate.getSql(), sqlExecuteType.getParamsConfig(), true);
+		} catch (Exception e) {
+			if(stackTraceRequired) {
+				resultList = new ArrayList<>();
+				resultList.add(new HashMap<String, Object>() {
+					private static final long serialVersionUID = -6210274356733655725L;
+
+					{
+						put("Check your query", ExceptionUtils.getFullStackTrace(e));
+					}
+				});
+				return resultList;
+			} else {
+				throw new ServiceException(e.getMessage(), e);
+			}
+		}
+		return resultList;
+	}
+
 }

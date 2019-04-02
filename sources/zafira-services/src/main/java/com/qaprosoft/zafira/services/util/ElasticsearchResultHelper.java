@@ -20,13 +20,14 @@ import org.elasticsearch.search.SearchHit;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("rawtypes")
 public class ElasticsearchResultHelper {
 
     private static final String HEADERS_FIELD_NAME = "headers";
     private static final String AMAZON_PATH_FIELD_NAME = "AMAZON_PATH";
     private static final String MESSAGE_FIELD_NAME = "message";
 
-    public static HashMap getHeaders(SearchHit hit) {
+	public static HashMap getHeaders(SearchHit hit) {
         return (HashMap) getSourceMap(hit).get(HEADERS_FIELD_NAME);
     }
 

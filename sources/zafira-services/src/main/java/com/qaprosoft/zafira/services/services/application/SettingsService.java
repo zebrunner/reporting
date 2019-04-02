@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
-import com.qaprosoft.zafira.services.services.application.jmx.amazon.CloudFrontService;
 import com.qaprosoft.zafira.services.util.EventPushService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.Message;
@@ -38,14 +37,13 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.emails.AsynSendEmailTask;
 import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
 import com.qaprosoft.zafira.services.services.application.jmx.ElasticsearchService;
-import com.qaprosoft.zafira.services.services.application.jmx.HipchatService;
 import com.qaprosoft.zafira.services.services.application.jmx.IJMXService;
 import com.qaprosoft.zafira.services.services.application.jmx.JenkinsService;
 import com.qaprosoft.zafira.services.services.application.jmx.JiraService;
 import com.qaprosoft.zafira.services.services.application.jmx.LDAPService;
 import com.qaprosoft.zafira.services.services.application.jmx.RabbitMQService;
 import com.qaprosoft.zafira.services.services.application.jmx.SlackService;
-import com.qaprosoft.zafira.services.services.application.jmx.amazon.AmazonService;
+import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
 import com.qaprosoft.zafira.services.services.application.jmx.google.GoogleService;
 
 @Service
@@ -77,12 +75,6 @@ public class SettingsService {
 
     @Autowired
     private AmazonService amazonService;
-
-    @Autowired
-    private CloudFrontService cloudFrontService;
-
-    @Autowired
-    private HipchatService hipchatService;
 
     @Autowired
     private CryptoService cryptoService;
@@ -248,12 +240,6 @@ public class SettingsService {
             break;
         case AMAZON:
             service = amazonService;
-            break;
-        case CLOUD_FRONT:
-            service = cloudFrontService;
-            break;
-        case HIPCHAT:
-            service = hipchatService;
             break;
         case RABBITMQ:
             service = rabbitMQService;

@@ -463,7 +463,7 @@ public class ZafiraLogAppender extends AppenderSkeleton
 				
 			}
 		}
-		catch (Exception e) 
+		catch (Exception e)
 		{
 			// TODO: add logging
 		}

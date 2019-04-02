@@ -38,6 +38,8 @@ import static com.qaprosoft.zafira.services.util.EventPushService.Type.ZFR_CALLB
 public class TenancyInitializer {
 
     private static final Logger LOGGER = Logger.getLogger(TenancyInitializer.class);
+    
+    private static final String DEFAULT_USER_GROUP = "Admins";
 
     @Autowired
     private URLResolver urlResolver;
@@ -90,7 +92,7 @@ public class TenancyInitializer {
                 result.setSuccess(success);
                 processMessage(tenancy, () -> {
                     try {
-                        Invitation invitation = invitationService.createInitialInvitation(eventMessage.getEmail());
+                        Invitation invitation = invitationService.createInitialInvitation(eventMessage.getEmail(), DEFAULT_USER_GROUP);
                         result.setToken(invitation.getToken());
                         result.setZafiraURL(urlResolver.buildWebURL());
                     } catch (ServiceException e) {

@@ -66,12 +66,16 @@ public class InvitationService {
     private SettingsService settingsService;
 
     @Transactional(rollbackFor = Exception.class)
-    public Invitation createInvitation(Long principalId, Invitation invitation, boolean checkExisting) throws ServiceException {
-        if(checkExisting) {
+    public Invitation createInvitation(Long principalId, Invitation invitation, boolean checkExisting, boolean force) throws ServiceException {
+        if (checkExisting) {
             checkExisting(invitation.getEmail());
         }
-        if(groupService.getGroupById(invitation.getGroupId()) == null) {
+        Group group = groupService.getGroupById(invitation.getGroupId());
+        if (group == null) {
             throw new EntityNotExistsException(Group.class, false);
+        }
+        if (!group.getInvitable() && !force) {
+            throw new ForbiddenOperationException("Cannot invite users to not invitable group '" + group.getName() + "'");
         }
         String token = generateToken();
         invitation.setToken(token);
@@ -86,7 +90,7 @@ public class InvitationService {
         return Arrays.stream(invitations).map(invitation -> CompletableFuture.supplyAsync(() -> {
             Invitation inv = null;
             try {
-                inv = createInvitation(principalId, invitation, false);
+                inv = createInvitation(principalId, invitation, false, false);
                 sendEmail(inv);
             } catch (ServiceException e) {
                 LOGGER.error(e.getMessage(), e);
@@ -106,7 +110,7 @@ public class InvitationService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Invitation createInitialInvitation(String email) throws ServiceException {
+    public Invitation createInitialInvitation(String email, String groupName) throws ServiceException {
         Invitation invitation = null;
         if (!StringUtils.isBlank(userService.getAdminUsername())) {
             User user = userService.getUserByUsername(userService.getAdminUsername());
@@ -114,7 +118,7 @@ public class InvitationService {
                 throw new ForbiddenOperationException("Admin with username '" + userService.getAdminUsername() + "' does not exist");
             }
 
-            Group group = groupService.getPrimaryGroupByRole(ROLE_ADMIN);
+            Group group = groupService.getGroupByName(groupName);
             if(group == null) {
                 throw new ForbiddenOperationException("Group by role '" + ROLE_ADMIN.name() + "' does not exist");
             }
@@ -123,7 +127,7 @@ public class InvitationService {
             invitation.setGroupId(group.getId());
             invitation.setSource(User.Source.INTERNAL);
             invitation.setEmail(email);
-            invitation = createInvitation(user.getId(), invitation, true);
+            invitation = createInvitation(user.getId(), invitation, true, true);
         }
         return invitation;
     }

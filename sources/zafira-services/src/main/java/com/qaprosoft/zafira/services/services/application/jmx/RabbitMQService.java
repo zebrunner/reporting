@@ -36,6 +36,7 @@ import com.qaprosoft.zafira.services.services.application.jmx.context.RabbitMQCo
 
 @ManagedResource(objectName = "bean:name=rabbitMQService", description = "RabbitMQ init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200, persistLocation = "foo", persistName = "bar")
 public class RabbitMQService implements IJMXService<RabbitMQContext> {
+
     private static final Logger LOGGER = Logger.getLogger(RabbitMQService.class);
 
     @Autowired

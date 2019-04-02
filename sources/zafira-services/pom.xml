@@ -223,15 +223,6 @@
 					</exclusion>
 				</exclusions>
 	  </dependency>
-		<dependency>
-				<groupId>com.amazonaws</groupId>
-				<artifactId>aws-java-sdk-cloudfront</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>io.evanwong.oss</groupId>
-			<artifactId>hipchat-java</artifactId>
-		</dependency>
 
 		<dependency>
 		  <groupId>com.offbytwo.jenkins</groupId>

@@ -31,6 +31,7 @@
 				<value>dozer/Invitation-dozer-mapping.xml</value>
 				<value>dozer/ScmAccount-dozer-mapping.xml</value>
 				<value>dozer/Tag-dozer-mapping.xml</value>
+				<value>dozer/WidgetTemplate-dozer-mapping.xml</value>
 			</list>
 		</property>
 		<property name="customConvertersWithId">

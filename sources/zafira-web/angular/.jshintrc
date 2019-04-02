@@ -1,24 +1,27 @@
 {
-  "node": true,
-  "browser": true,
-  "esnext": true,
-  "bitwise": true,
-  "camelcase": true,
-  "curly": true,
-  "eqeqeq": true,
-  "immed": true,
-  "indent": 4,
-  "latedef": true,
-  "newcap": true,
-  "noarg": true,
-  "quotmark": "single",
-  "regexp": true,
-  "undef": true,
-  "unused": true,
-  "strict": true,
-  "trailing": true,
-  "smarttabs": true,
-  "globals": {
-    "angular": true
-  }
+    "node": true,
+    "browser": true,
+    "esnext": true,
+    "bitwise": true,
+    "camelcase": true,
+    "curly": true,
+    "eqeqeq": true,
+    "immed": true,
+    "indent": 4,
+    "latedef": true,
+    "newcap": true,
+    "noarg": true,
+    "quotmark": "single",
+    "regexp": true,
+    "undef": true,
+    "unused": true,
+    "strict": true,
+    "trailing": true,
+    "smarttabs": true,
+    "globals": {
+        "angular": true
+    },
+    // Ignored Warnings
+    "-W003": true, // 'x' was used before it was defined
+    "-W026": true // Inner functions should be listed at the top of the outer function.
 }

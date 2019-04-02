@@ -1,10 +1,11 @@
-<div class="page-signin" ng-controller="AuthController">
+<div class="page-signin">
     <div class="wrapper">
         <div class="main-body">
             <div class="card bg-white">
                 <div class="card-content">
                     <section class="logo-container">
-                        <img class="logo" src="{{ companyLogo.value ? companyLogo.value : 'assets/images/background/company_logo_plug.svg' }}">
+                        <img class="logo" ng-if="companyLogo.value" src="{{ companyLogo.value }}">
+                        <img class="logo" ng-if="!companyLogo.value" src="../../assets/images/background/company_logo_plug.svg">
                     </section>
 
                     <form name="signin_form" class="md-form-login form-validation" data-ng-submit="signin(credentials); UtilService.untouchForm(signin_form)">
@@ -50,14 +51,14 @@
                                        ng-disabled="signin_form.$invalid">Sign in</md-button>
                         </div>
                     </form>
-                    <div ng-include="footerSlice.copyright.url"></div>
+                    <copyright></copyright>
                 </div>
 
                 <div class="additional-background">
                     <div class="logo-container">
                         <div class="logo"></div>
                     </div>
-                    <div ng-include="footerSlice.robo.url"></div>
+                    <robo></robo>
                 </div>
             </div>
         </div>

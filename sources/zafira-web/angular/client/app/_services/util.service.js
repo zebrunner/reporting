@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('UtilService', ['$rootScope', '$mdToast', '$timeout', '$q', '$window', UtilService]);
+        .factory('UtilService', ['$rootScope', '$mdToast', '$timeout', '$q', '$window', '$httpParamSerializer', UtilService])
 
-    function UtilService($rootScope, $mdToast, $timeout, $q, $window) {
+    function UtilService($rootScope, $mdToast, $timeout, $q, $window, $httpParamSerializer) {
         var service = {};
 
         service.untouchForm = untouchForm;
@@ -17,6 +17,7 @@
         service.settingsAsMap = settingsAsMap;
         service.reconnectWebsocket = reconnectWebsocket;
         service.websocketConnected = websocketConnected;
+        service.buildURL = buildURL;
         service.setOffset = setOffset;
         service.showDeleteMessage = showDeleteMessage;
 
@@ -175,7 +176,9 @@
         };
 
         function tryToReconnect(name) {
-            $rootScope.$applyAsync($rootScope.disconnectedWebsockets.websockets[name].function);
+            if($rootScope.disconnectedWebsockets && $rootScope.disconnectedWebsockets.websockets && $rootScope.disconnectedWebsockets.websockets[name]) {
+                $rootScope.$applyAsync($rootScope.disconnectedWebsockets.websockets[name].function);
+            }
         };
 
         function showReconnectWebsocketToast() {
@@ -188,7 +191,7 @@
                 },
                 preserveScope: true,
                 controller: 'WebsocketReconnectController',
-                templateUrl: 'app/components/toasts/websocket-reconnect/websocket-reconnect.html'
+                template: require('../components/toasts/websocket-reconnect/websocket-reconnect.html')
             });
         };
 
@@ -239,6 +242,13 @@
             return result;
         };
 
+        function buildURL(url, queryParams) {
+            if(angular.isObject(queryParams)) {
+                var prefix = url.indexOf('?') !== -1 ? '&' : '?';
+                url += prefix + $httpParamSerializer(queryParams)
+            }
+            return url;
+        };
         function setOffset(event) {
             const bottomHeight = $window.innerHeight - event.target.clientHeight - event.clientY;
 

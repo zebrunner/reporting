@@ -6,8 +6,8 @@
         .provider('SettingProvider', SettingProvider);
 
     function SettingProvider() {
-
         this.$get = function($cookieStore) {
+            'ngInject';
             return {
                 getCompanyLogoURl: function() {
                     return $cookieStore.get("companyLogoURL");

@@ -1,6 +1,6 @@
-(function () {
-    'use strict';
+import monitorsComponent from './monitors.component';
+import MonitorsService from './monitor.service';
 
-    angular.module('app.monitors', []);
-
-})();
+export const monitorsModule = angular.module('app.monitors', [])
+    .factory({ MonitorsService })
+    .component({ monitorsComponent })

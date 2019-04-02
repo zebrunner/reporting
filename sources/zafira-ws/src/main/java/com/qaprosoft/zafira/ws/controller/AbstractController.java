@@ -44,10 +44,13 @@ import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
 
 public abstract class AbstractController
 {
+
+	private static final String INTERNAL_SERVER_ERROR_MSG = "Unexpected error has occurred. Please try again later.";
+
 	protected static final String TEST_RUNS_WEBSOCKET_PATH = "/topic/%s.testRuns";
 	
 	private static final String TESTS_WEBSOCKET_PATH = "/topic/%s.testRuns.%s.tests";
-	
+
 	protected static final String STATISTICS_WEBSOCKET_PATH = "/topic/%s.statistics";
 
 	@Resource(name = "messageSource")
@@ -256,7 +259,7 @@ public abstract class AbstractController
 	public ErrorResponse handleEntityIsNotExistsException(EntityNotExistsException e)
 	{
 		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.ENTITY_NOT_EXISTS, null, e.getMessage()));
+		result.setError(new Error(ErrorCode.ENTITY_NOT_EXISTS, e.getMessage()));
 		return result;
 	}
 	
@@ -266,7 +269,7 @@ public abstract class AbstractController
 	public ErrorResponse handleProjectNotFoundException(ProjectNotFoundException e)
 	{
 		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.PROJECT_NOT_EXISTS, null, e.getMessage()));
+		result.setError(new Error(ErrorCode.PROJECT_NOT_EXISTS, e.getMessage()));
 		return result;
 	}
 	
@@ -279,6 +282,16 @@ public abstract class AbstractController
 		result.setError(new Error(ErrorCode.UNHEALTHY_STATUS, "reason", e.getMessage()));
 		return result;
     }
+
+	@ExceptionHandler(Exception.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ResponseBody
+	public ErrorResponse handleOtherException(Exception e)
+	{
+		ErrorResponse result = new ErrorResponse();
+		result.setError(new Error(ErrorCode.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG));
+		return result;
+	}
 
 	protected void checkCurrentUserAccess(long userId) throws ForbiddenOperationException
 	{

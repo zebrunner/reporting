@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.qaprosoft.zafira.models.dto.user.UserType;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
+import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,10 +36,17 @@ public class DashboardService
 {
 	@Autowired
 	private DashboardMapper dashboardMapper;
+
+	@Autowired
+	private UserPreferenceService userPreferenceService;
 	
 	@Transactional(rollbackFor = Exception.class)
 	public Dashboard createDashboard(Dashboard dashboard) throws ServiceException
 	{
+		if(getDashboardByTitle(dashboard.getTitle()) != null) {
+			throw new ServiceException("Dashboard title '" + dashboard.getTitle() + "' is currently in use");
+		}
+		dashboard.setEditable(true);
 		dashboardMapper.createDashboard(dashboard);
 		return dashboard;
 	}
@@ -45,7 +54,11 @@ public class DashboardService
 	@Transactional(readOnly = true)
 	public Dashboard getDashboardById(long id) throws ServiceException
 	{
-		return dashboardMapper.getDashboardById(id);
+		Dashboard dashboard = dashboardMapper.getDashboardById(id);
+		if(dashboard == null) {
+			throw new EntityNotExistsException(Dashboard.class ,false);
+		}
+		return dashboard;
 	}
 	
 	@Transactional(readOnly = true)
@@ -75,13 +88,29 @@ public class DashboardService
 	@Transactional(rollbackFor = Exception.class)
 	public Dashboard updateDashboard(Dashboard dashboard) throws ServiceException
 	{
+		Dashboard dbDashboard = getDashboardById(dashboard.getId());
+		if(dbDashboard == null) {
+			throw new ServiceException("Dashboard with id '" + dashboard.getId() + "' does not exist");
+		}
+		if (!dbDashboard.isEditable()) {
+			throw new ForbiddenOperationException("Cannot update not editable dashboard");
+		}
+		dashboard.setEditable(dbDashboard.isEditable());
 		dashboardMapper.updateDashboard(dashboard);
+		if (!dbDashboard.getTitle().equals(dashboard.getTitle())) {
+			userPreferenceService.updateDefaultDashboardPreference(dbDashboard.getTitle(), dashboard.getTitle());
+		}
 		return dashboard;
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteDashboardById(Long id) throws ServiceException
 	{
+		Dashboard dashboard = getDashboardById(id);
+		if (!dashboard.isEditable()) {
+			throw new ForbiddenOperationException("Cannot delete not editable dashboard");
+		}
+		userPreferenceService.updateDefaultDashboardPreference(dashboard.getTitle(), "General");
 		dashboardMapper.deleteDashboardById(id);
 	}
 	

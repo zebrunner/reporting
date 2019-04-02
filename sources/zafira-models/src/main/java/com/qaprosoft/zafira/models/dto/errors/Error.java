@@ -38,6 +38,12 @@ public class Error
 		this.code = code;
 	}
 
+	public Error(ErrorCode code, String message)
+	{
+		this.code = code;
+		this.message = message;
+	}
+
 	public Error(ErrorCode code, String field, String message)
 	{
 		this.code = code;

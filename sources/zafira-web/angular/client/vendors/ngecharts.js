@@ -14,7 +14,10 @@
             scope: {
                 options: '=options',
                 dataset: '=dataset',
-                withLegend: '=withLegend'
+                withLegend: '=withLegend',
+                forceWatch: '=forceWatch',
+                chartActions: '=chartActions',
+                config: '=config'
             },
             link: buildLinkFunc($window, $filter)
         };
@@ -63,6 +66,12 @@
                     }
                 }
 
+                if(! scope.withLegend) {
+                    opts.legend = {
+                        show: false
+                    };
+                }
+
                 axisFormatterApply(opts.xAxis);
                 axisFormatterApply(opts.yAxis);
                 tooltipFormatterApply(opts.tooltip);
@@ -73,16 +82,38 @@
                 angular.element($window).bind('resize', function(){
                     chart.resize();
                 });
+
+                if(scope.config) {
+                    angular.extend(scope.config, {
+                        clear: function () {
+                            if(chart && chart.clear) {
+                                chart.clear();
+                            }
+                        }
+                    });
+                }
+
+                if(scope.chartActions) {
+                    scope.$watchCollection('chartActions', function (actions, oldVal) {
+                        if (! scope.chartActions || ! scope.chartActions.length) return;
+                        if (chart && chart.dispatchAction) {
+                            applyActions(scope.chartActions);
+                        }
+                    });
+                }
             };
 
             scope.$watch('options', function (newVal, oldVal) {
-                if (angular.equals(newVal, oldVal)) return;
+                if (angular.equals(newVal, oldVal) && ! scope.forceWatch) return;
                 createChart(newVal);
             });
 
-            scope.$watch('data', function (newVal, oldVal) {
-                if (angular.equals(newVal, oldVal)) return;
-            });
+            function applyActions(actions) {
+                actions.forEach(function (action, index) {
+                    chart.dispatchAction(action);
+                    delete actions[index];
+                });
+            };
 
             function axisFormatterApply(axis) {
                 if(axis && axis.axisLabel && axis.axisLabel.formatter) {

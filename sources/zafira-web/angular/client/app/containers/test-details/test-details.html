@@ -88,18 +88,18 @@
                     <div class="test-settings__wrapper" ng-if="test.artifactsToShow.length">
                       <div ng-repeat="artifact in test.artifactsToShow">
                           <a name="testArtifactsGallery" aria-label="Test artifacts" class="test-settings__attachment" ng-click="$ctrl.openImagesViewerModal($event, artifact, test)" href="" ng-if="['png'].indexOf(artifact.extension) !== -1">
-                              <md-icon md-svg-src="assets/images/_icons_artifacts/image.svg" class="material-icons"></md-icon>
+                              <md-icon md-svg-src="../../../assets/images/_icons_artifacts/image.svg" class="material-icons"></md-icon>
                               <p>{{artifact.name}}</p>
                               <md-tooltip md-direction="bottom">{{artifact.name}}</md-tooltip>
                           </a>
                           <a name="testArtifacts" href="{{artifact.link}}" target="{{ artifact.extension ? '_self' : '_blank' }}" aria-label="Test artifacts" class="test-settings__attachment" ng-if="['png'].indexOf(artifact.extension) === -1">
-                              <md-icon md-svg-src="assets/images/_icons_artifacts/pdf.svg" ng-if="['pdf'].indexOf(artifact.extension) !== -1" class="material-icons"></md-icon>
-                              <md-icon md-svg-src="assets/images/_icons_artifacts/apk.svg" ng-if="['apk'].indexOf(artifact.extension) !== -1" class="material-icons"></md-icon>
-                              <md-icon md-svg-src="assets/images/_icons_artifacts/exe.svg" ng-if="['exe'].indexOf(artifact.extension) !== -1" class="material-icons"></md-icon>
-                              <md-icon md-svg-src="assets/images/_icons_artifacts/doc.svg" ng-if="['doc', 'docx'].indexOf(artifact.extension) !== -1" class="material-icons"></md-icon>
-                              <md-icon md-svg-src="assets/images/_icons_artifacts/xls.svg" ng-if="['xls', 'xlsx'].indexOf(artifact.extension) !== -1" class="material-icons"></md-icon>
-                              <md-icon md-svg-src="assets/images/_icons_artifacts/txt.svg" ng-if="['txt'].indexOf(artifact.extension) !== -1" class="material-icons"></md-icon>
-                              <md-icon md-svg-src="assets/images/_icons_artifacts/bin.svg" ng-if="artifact.extension && ['txt', 'pdf', 'xls', 'xlsx', 'doc', 'docx', 'exe', 'apk', 'png'].indexOf(artifact.extension) === -1" class="material-icons"></md-icon>
+                              <md-icon md-svg-src="../../../assets/images/_icons_artifacts/pdf.svg" ng-if="['pdf'].indexOf(artifact.extension) !== -1" class="material-icons"></md-icon>
+                              <md-icon md-svg-src="../../../assets/images/_icons_artifacts/apk.svg" ng-if="['apk'].indexOf(artifact.extension) !== -1" class="material-icons"></md-icon>
+                              <md-icon md-svg-src="../../../assets/images/_icons_artifacts/exe.svg" ng-if="['exe'].indexOf(artifact.extension) !== -1" class="material-icons"></md-icon>
+                              <md-icon md-svg-src="../../../assets/images/_icons_artifacts/doc.svg" ng-if="['doc', 'docx'].indexOf(artifact.extension) !== -1" class="material-icons"></md-icon>
+                              <md-icon md-svg-src="../../../assets/images/_icons_artifacts/xls.svg" ng-if="['xls', 'xlsx'].indexOf(artifact.extension) !== -1" class="material-icons"></md-icon>
+                              <md-icon md-svg-src="../../../assets/images/_icons_artifacts/txt.svg" ng-if="['txt'].indexOf(artifact.extension) !== -1" class="material-icons"></md-icon>
+                              <md-icon md-svg-src="../../../assets/images/_icons_artifacts/bin.svg" ng-if="artifact.extension && ['txt', 'pdf', 'xls', 'xlsx', 'doc', 'docx', 'exe', 'apk', 'png'].indexOf(artifact.extension) === -1" class="material-icons"></md-icon>
                               <md-icon md-font-library="material-icons" ng-if="!artifact.extension" class="material-icons">link</md-icon>
                               <p>{{artifact.name}}</p>
                               <md-tooltip md-direction="bottom">{{artifact.name}}</md-tooltip>
@@ -122,7 +122,7 @@
                           <md-icon class="material-icons">remove_red_eye</md-icon>
                         </md-button>
                       </div>
-                      <md-menu class="pull-right test-settings__menu" md-offset="0 {{currentOffset}}">
+                      <md-menu class="pull-right test-settings__menu">
                         <md-button name="testRunSetting" aria-label="User settings" class="md-icon-button" data-ng-click="initMenuRights($ctrl.testRun); setOffset($event); $mdMenu.open($event);">
                           <md-icon class="material-icons">more_vert</md-icon>
                         </md-button>

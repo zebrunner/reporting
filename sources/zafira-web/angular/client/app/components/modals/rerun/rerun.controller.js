@@ -1,15 +1,10 @@
 (function () {
     'use strict';
 
-    angular.module('app').controller('TestRunRerunController', [
-        '$scope',
-        '$mdDialog',
-        'TestRunService',
-        'testRun',
-        'jenkins',
-        TestRunRerunController]);
+    angular.module('app').controller('TestRunRerunController', TestRunRerunController);
 
     function TestRunRerunController($scope, $mdDialog, TestRunService, testRun, jenkins) {
+        'ngInject';
 
         $scope.rerunFailures = true;
         $scope.testRun = testRun;

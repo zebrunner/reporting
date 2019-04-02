@@ -1,11 +1,5 @@
-(function () {
-    'use strict';
-
-    angular
-        .module('app.integrations')
-        .controller('IntegrationsController', ['$scope', '$rootScope', '$state', '$mdConstant', '$stateParams', '$mdDialog', 'UploadService', 'SettingsService', IntegrationsController])
-
-    function IntegrationsController($scope, $rootScope, $state, $mdConstant, $stateParams, $mdDialog, UploadService, SettingsService) {
+const integrationsController = function integrationsController($scope, $rootScope, $state, $mdConstant, $stateParams, $mdDialog, UploadService, SettingsService) {
+        'ngInject';
 
         $scope.settingTools = [];
         $scope.enabledSettings = {};
@@ -217,7 +211,7 @@
         $scope.showUploadFileDialog = function ($event, toolName, settingName) {
             $mdDialog.show({
                 controller: FileUploadController,
-                templateUrl: 'app/_integrations/file_modal.html',
+                template: require('./file_modal.html'),
                 parent: angular.element(document.body),
                 targetEvent: $event,
                 clickOutsideToClose: true,
@@ -236,6 +230,8 @@
         };
 
         function FileUploadController($scope, $mdDialog, toolName, settingName) {
+            'ngInject';
+
             $scope.uploadFile = function (multipartFile) {
                 UploadService.uploadSettingFile(multipartFile, toolName, settingName).then(function (rs) {
                     if(rs.success)
@@ -270,5 +266,6 @@
                 });
             }
         })();
-    }
-})();
+    };
+
+export default integrationsController;

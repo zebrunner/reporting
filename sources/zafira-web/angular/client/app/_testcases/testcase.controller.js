@@ -1,14 +1,11 @@
-(function () {
-    'use strict';
+'use strict';
 
-    angular
-        .module('app.testcase')
-        .controller('TestCaseListController', ['$scope', '$rootScope', '$location', '$mdDateRangePicker', 'TestService', 'TestCaseService', 'UtilService', 'projectsService', TestCaseListController])
-        .controller('MetricController', ['$scope', '$stateParams', '$q', 'TestCaseService', MetricController])
+const testCaseListController = function testCaseListController($scope, $rootScope, $location, $mdDateRangePicker, TestService, TestCaseService, UtilService, projectsService) {
+        'ngInject';
 
-       // **************************************************************************
-    function TestCaseListController($scope, $rootScope, $location, $mdDateRangePicker, TestService, TestCaseService, UtilService, projectsService) {
-
+        const vm = {
+          currentUser: null,
+        };
     	var DEFAULT_SC = {page : 1, pageSize : 20};
 
     	// TODO: make percent range for testcase label color configurable
@@ -108,7 +105,6 @@
         };
 
         $scope.onSelect = function(scope) {
-            console.log($scope.selectedRange.selectedTemplateName);
             return $scope.selectedRange.selectedTemplateName;
         };
 
@@ -133,15 +129,22 @@
             return $date.getTime() < new Date().getTime();
         };
 
-        (function initController() {
+        function initController() {
+            vm.currentUser = UtilService.currentUser;
 			$scope.search(1);
-		})();
-	}
+		}
 
-    function MetricController($scope, $stateParams, $q, TestCaseService) {
+        vm.$onInit = initController;
+
+        return vm;
+	};
+
+const metricController = function metricController($scope, $stateParams, $q, TestCaseService) {
+        'ngInject';
 
         $scope.metrics = {};
 
+        const vm = {};
         var options = {
             series: [],
             axes: {
@@ -202,7 +205,7 @@
             return 0;
         }
 
-        (function initController() {
+        function initController() {
             getTestMetricsByTestCaseId().then(function (rs) {
                 if(rs.success) {
                     angular.forEach($scope.metrics, function (env, operation) {
@@ -222,6 +225,16 @@
                     });
                 }
             });
-        })();
-    }
-})();
+        }
+
+        vm.$onInit = initController;
+
+        return vm;
+    };
+
+
+
+export {
+    testCaseListController,
+    metricController
+};

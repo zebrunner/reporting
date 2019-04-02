@@ -41,8 +41,7 @@
                                                         <video preload="auto" ng-init="videoPlayerPained = true;" id="videoRecord"
                                                             ng-if="MODE.name == 'record'" ng-attr-width="{{ videoWidth }}"
                                                             controls>
-                                                            <source ng-src="{{ drivers[selectedDriver].link }}" src=""
-                                                                type="video/mp4">
+                                                            <source ng-src="{{ drivers[selectedDriver].link }}" type="video/mp4">
                                                             Your browser does not support the video tag.
                                                         </video>
                                                         <div ng-init="vncPained = true;" ng-if="MODE.name == 'live';"
@@ -53,38 +52,33 @@
                                                     <div class="testrun-info__tab-additional">
                                                         <table>
                                                             <tbody>
-                                                                <tr>
-                                                                    <td>Status</td>
-                                                                    <td><span style="text-transform: capitalize;">{{
-                                                                            test.status.split('_').join('
-                                                                            ').toLowerCase() }}</span></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Started</td>
-                                                                    <td>
-                                                                        <span>{{ test.startTime | date: 'HH:mm dd MMM
-                                                                            yyyy'}}</span>
-                                                                        <span>(<time am-time-ago="test.startTime" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>)</span>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr ng-if="test.finishTime && test.startTime && (test.finishTime - test.startTime) > 0">
-                                                                    <td>Duration</td>
-                                                                    <td>
-                                                                        <span>
-                                                                            {{(test.finishTime - test.startTime) / 1000
-                                                                            | number: 0}} seconds
-                                                                        </span>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Platform</td>
-                                                                    <td>
-                                                                        <span data-ng-if="testRun.platform != ''" class="platform-icon {{testRun.platform | lowercase}}" />
-                                                                        <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
-                                                                        <span data-ng-if="testRun.browserVersion">{{
-                                                                            testRun.browserVersion }}</span>
-                                                                    </td>
-                                                                </tr>
+                                                            <tr>
+                                                                <td>Status</td>
+                                                                <td><span style="text-transform: capitalize;">{{ test.status.split('_').join(' ').toLowerCase() }}</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Started</td>
+                                                                <td>
+                                                                    <span>{{ test.startTime | date: 'HH:mm dd MMM yyyy'}}</span>
+                                                                    <span>(<time am-time-ago="test.startTime" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>)</span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr ng-if="test.finishTime && test.startTime && (test.finishTime - test.startTime) > 0">
+                                                                <td>Duration</td>
+                                                                <td>
+                                                        <span>
+                                                            {{(test.finishTime - test.startTime) / 1000 | number: 0}} seconds
+                                                        </span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Platform</td>
+                                                                <td>
+                                                                    <span data-ng-if="testRun.platform !== ''" class="platform-icon {{testRun.platform | lowercase}}"></span>
+                                                                    <span data-ng-if="testRun.platform === ''" class="platform-icon unknown"></span>
+                                                                    <span data-ng-if="testRun.browserVersion">{{ testRun.browserVersion }}</span>
+                                                                </td>
+                                                            </tr>
                                                             </tbody>
                                                         </table>
                                                     </div>
@@ -115,8 +109,8 @@
                                                                     class="label label-default">Driver {{
                                                                     log.driver.index + 1 }}</span>
                                                                 <div ng-show="log.blobLog" class="log-wrapper">
-                                                                    <img ng-if="log.isImageExists" ng-click="openImagesViewerModal($event, log.blobLog.path);"
-                                                                        style="max-width: 66%;max-height: 29px;" ng-src="{{log.blobLog.path}}"
+                                                                    <img ng-if="log.isImageExists" ng-click="openImagesViewerModal($event, log.blobLog.image.path[0]);"
+                                                                        style="max-width: 66%;max-height: 29px;" ng-src="{{log.blobLog.thumb.path || log.blobLog.image.path[0]}}"
                                                                         alt="image" />
                                                                     <i ng-show="log.isImageExists === false;" class="material-icons">insert_photo</i>
                                                                 </div>

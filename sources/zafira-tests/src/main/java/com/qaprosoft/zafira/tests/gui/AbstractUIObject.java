@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
@@ -191,7 +190,7 @@ public abstract class AbstractUIObject
 		return innerTimeoutOperation(() -> {
 			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
 			webDriverWait.until(ExpectedConditions.textMatches(By.xpath("//div[contains(@class, 'ajs') and not(contains(@class, 'ajs-right') )]"), Pattern.compile("^(?=\\s*\\S).*$")));
-			pause(0.5);
+			pause(0.2);
 			return webDriverWait;
 		});
 	}
@@ -254,14 +253,13 @@ public abstract class AbstractUIObject
 
 	public void clickOutside()
 	{
-		clickByCoordinates("100", "100");
+		clickByCoordinates(100, 100);
 		isBackdropNotPresent(1);
 	}
 
-	public void clickByCoordinates(String x, String y)
+	public void clickByCoordinates(int x, int y)
 	{
-		JavascriptExecutor executor = (JavascriptExecutor)driver;
-		executor.executeScript(String.format("$(document.elementFromPoint(%s, %s)).click();", x, y));
+		clickByCoordinates(driver.findElement(By.tagName("body")), x, y);
 	}
 
 	public void clickByCoordinates(WebElement element, int x, int y) {
@@ -392,8 +390,9 @@ public abstract class AbstractUIObject
 
 	public void select(WebElement webElement, String value)
 	{
-		String id = webElement.getAttribute("aria-owns");
 		webElement.click();
+		waitUntilElementIsPresent(backdrop, 2);
+		String id = webElement.getAttribute("aria-owns");
 		WebElement option = driver.findElement(By.xpath("//div[@id = '" + id + "' and preceding-sibling::header]//md-option[.//*[contains(text(), '" + value + "') "
 				+ "or contains(text(), '" + value + "')]]"));
 		waitUntilElementToBeClickableWithBackdropMask(option, 1);

@@ -1,23 +1,12 @@
 (function () {
     'use strict';
 
-    angular.module('app').controller('TestInfoController', [
-        '$scope',
-        '$rootScope',
-        '$mdDialog',
-        '$interval',
-        'SettingsService',
-        'TestService',
-        'test',
-        'isNewIssue',
-        'isNewTask',
-        'isConnectedToJira',
-        'isJiraEnabled',
-        TestInfoController]);
+    angular.module('app').controller('TestInfoController', TestInfoController);
 
     function TestInfoController($scope, $rootScope, $mdDialog, $interval,  SettingsService,
                                 TestService, test, isNewIssue, isNewTask, isConnectedToJira,
                                 isJiraEnabled) {
+        'ngInject';
 
         $scope.jiraId;
         $scope.isConnectedToJira = false;
@@ -484,7 +473,7 @@
         /* Gets from DB JIRA_CLOSED_STATUS name for the current project*/
 
         var getJiraClosedStatusName = function() {
-            SettingsService.getSetting('JIRA_CLOSED_STATUS').then(function successCallback(rs) {
+            SettingsService.getSetting('JIRA', 'JIRA_CLOSED_STATUS').then(function successCallback(rs) {
                 if(rs.success){
                     $scope.closedStatusName = rs.data.toUpperCase();
                 } else {

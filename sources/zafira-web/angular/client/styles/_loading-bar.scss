@@ -1,0 +1,19 @@
+#loading-bar {
+    .bar {
+        background: #effff4;
+    }
+
+    &-spinner {
+        bottom: 7px;
+        right: 7px;
+        top: auto;
+        left: auto;
+
+        .spinner-icon {
+            width: 16px;
+            height: 16px;
+            border-top-color:  #009688;
+            border-left-color: #009688;
+        }
+    }
+}

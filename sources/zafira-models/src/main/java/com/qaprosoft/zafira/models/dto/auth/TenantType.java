@@ -25,6 +25,8 @@ public class TenantType implements Serializable {
 	private static final long serialVersionUID = 8220711984153406216L;
 
 	private String tenant;
+	private String serviceUrl;
+	private Boolean multitenant;
 
 	public TenantType() {
 	}
@@ -33,11 +35,33 @@ public class TenantType implements Serializable {
 		this.tenant = tenant;
 	}
 
+	public TenantType(String tenant, String serviceUrl, Boolean multitenant) {
+		this.tenant = tenant;
+		this.serviceUrl = serviceUrl;
+		this.multitenant = multitenant;
+	}
+
 	public String getTenant() {
 		return tenant;
 	}
 
 	public void setTenant(String tenant) {
 		this.tenant = tenant;
+	}
+
+	public String getServiceUrl() {
+		return serviceUrl;
+	}
+
+	public void setServiceUrl(String serviceUrl) {
+		this.serviceUrl = serviceUrl;
+	}
+
+	public boolean isMultitenant() {
+		return multitenant;
+	}
+
+	public void setMultitenant(boolean multitenant) {
+		this.multitenant = multitenant;
 	}
 }

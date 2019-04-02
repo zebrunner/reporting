@@ -49,12 +49,12 @@ import in.ashwanthkumar.slack.webhook.SlackMessage;
 @ManagedResource(objectName = "bean:name=slackService", description = "Slack init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200, persistLocation = "foo", persistName = "bar")
 public class SlackService implements IJMXService<SlackContext> {
 
+    private static final Logger LOGGER = Logger.getLogger(SlackService.class);
+
     private final static String RESULTS_PATTERN = "Passed: %d, Failed: %d, Known Issues: %d, Skipped: %d";
     private final static String INFO_PATTERN = "%1$s\n<%2$s|Open in Zafira>  |  <%3$s|Open in Jenkins>";
     private final static String ON_FINISH_PATTERN = "Test run #%1$d has been completed after %2$s with status %3$s\n";
     private final static String REVIEWED_PATTERN = "Test run #%1$d has been reviewed. Status: %2$s\n";
-
-    private static final Logger LOGGER = Logger.getLogger(SlackService.class);
 
     @Value("${zafira.slack.image}")
     private String image;

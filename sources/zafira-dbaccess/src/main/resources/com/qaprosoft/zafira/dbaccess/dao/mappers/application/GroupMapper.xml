@@ -35,6 +35,7 @@
 				G.ID AS GROUP_ID,
 				G.NAME AS GROUP_NAME,
 				G.ROLE AS GROUP_ROLE,
+				G.INVITABLE AS GROUP_INVITABLE,
 				G.MODIFIED_AT AS GROUP_MODIFIED_AT,
 				G.CREATED_AT AS GROUP_CREATED_AT,
 				U.ID AS USER_ID,
@@ -73,6 +74,33 @@
 		]]>
     </sql>
 
+    <sql id="getPublicGroupsInfo">
+        <![CDATA[
+			SELECT
+				G.ID AS GROUP_ID,
+				G.NAME AS GROUP_NAME,
+				G.ROLE AS GROUP_ROLE,
+				G.INVITABLE AS GROUP_INVITABLE,
+
+				U.ID AS USER_ID,
+				U.USERNAME AS USER_USERNAME,
+				U.FIRST_NAME AS USER_FIRST_NAME,
+				U.LAST_NAME AS USER_LAST_NAME,
+				U.EMAIL AS USER_EMAIL,
+				U.COVER_PHOTO_URL AS USER_COVER_PHOTO_URL
+			FROM
+				GROUPS G
+			LEFT JOIN
+				USER_GROUPS UG
+			ON
+				G.ID = UG.GROUP_ID
+			LEFT JOIN
+				USERS U
+			ON
+				UG.USER_ID = U.ID
+		]]>
+    </sql>
+
     <sql id="getCount">
         <![CDATA[
 			SELECT
@@ -87,7 +115,15 @@
     </select>
 
     <select id="getAllGroups" resultMap="GroupResultMap">
-        <include refid="getGroup" />
+        <if test="publicDetails">
+          <include refid="getPublicGroupsInfo"/>
+            <![CDATA[
+			  WHERE G.INVITABLE = TRUE;
+		    ]]>
+        </if>
+        <if test="! publicDetails">
+          <include refid="getGroup" />
+        </if>
     </select>
 
     <select id="getGroupById" resultMap="GroupResultMap">
@@ -110,6 +146,7 @@
 				G.ID AS GROUP_ID,
 				G.NAME AS GROUP_NAME,
 				G.ROLE AS GROUP_ROLE,
+				G.INVITABLE AS GROUP_INVITABLE,
 				G.MODIFIED_AT AS GROUP_MODIFIED_AT,
 				G.CREATED_AT AS GROUP_CREATED_AT
 			FROM
@@ -168,6 +205,7 @@
         <id column="GROUP_ID" property="id" />
         <result column="GROUP_NAME" property="name" />
         <result column="GROUP_ROLE" property="role" />
+        <result column="GROUP_INVITABLE" property="invitable" />
 
         <result column="GROUP_MODIFIED_AT" property="modifiedAt" />
         <result column="GROUP_CREATED_AT" property="createdAt" />

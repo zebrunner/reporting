@@ -33,6 +33,7 @@ public class GroupType extends AbstractType {
 
     @NotEmpty(message = "Role required")
     private Group.Role role;
+    private Boolean invitable;
     private List<User> users;
     private Set<Permission> permissions;
 
@@ -50,6 +51,14 @@ public class GroupType extends AbstractType {
 
     public void setRole(Group.Role role) {
         this.role = role;
+    }
+
+    public Boolean getInvitable() {
+        return invitable;
+    }
+
+    public void setInvitable(Boolean invitable) {
+        this.invitable = invitable;
     }
 
     public List<User> getUsers() {

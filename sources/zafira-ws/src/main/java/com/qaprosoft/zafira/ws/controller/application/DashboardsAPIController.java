@@ -15,12 +15,15 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.models.dto.DashboardType;
+import com.qaprosoft.zafira.services.services.application.WidgetTemplateService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -51,21 +54,27 @@ public class DashboardsAPIController extends AbstractController
 	@Autowired
 	private DashboardService dashboardService;
 
+	@Autowired
+	private WidgetTemplateService widgetTemplateService;
+
+	@Autowired
+	private Mapper mapper;
+
     @ResponseStatusDetails
     @ApiOperation(value = "Create dashboard", nickname = "createDashboard", httpMethod = "POST", response = Dashboard.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Dashboard createDashboard(@RequestBody @Valid Dashboard dashboard) throws ServiceException, IOException, InterruptedException
+	public @ResponseBody DashboardType createDashboard(@RequestBody @Valid DashboardType dashboard) throws ServiceException
 	{
-		return dashboardService.createDashboard(dashboard);
+		return mapper.map(dashboardService.createDashboard(mapper.map(dashboard, Dashboard.class)), DashboardType.class);
 	}
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get dashboards", nickname = "getAllDashboards", httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Dashboard> getAllDashboards(@RequestParam(value="hidden", required=false) boolean hidden) throws ServiceException
+	public @ResponseBody List<DashboardType> getAllDashboards(@RequestParam(value="hidden", required=false) boolean hidden) throws ServiceException
 	{
 		List<Dashboard> dashboards;
 		if(!hidden && hasPermission(Permission.Name.VIEW_HIDDEN_DASHBOARDS))
@@ -77,25 +86,29 @@ public class DashboardsAPIController extends AbstractController
 			dashboards = dashboardService.getDashboardsByHidden(false);
 		}
 
-		return dashboards;
+		return dashboards.stream().map(dashboard -> mapper.map(dashboard, DashboardType.class)).collect(Collectors.toList());
 	}
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get dashboard by ID", nickname = "getDashboardById", httpMethod = "GET", response = Dashboard.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value="{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Dashboard getDashboardById(@PathVariable(value="id") long id) throws ServiceException
+	public @ResponseBody DashboardType getDashboardById(@PathVariable(value="id") long id) throws ServiceException
 	{
-		return dashboardService.getDashboardById(id);
+		Dashboard dashboard = dashboardService.getDashboardById(id);
+		dashboard.getWidgets().forEach(widget -> {
+			widgetTemplateService.executeWidgetTemplateParamsSQLQueries(widget.getWidgetTemplate());
+		});
+		return mapper.map(dashboard, DashboardType.class);
 	}
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get dashboard by title", nickname = "getDashboardByTitle", httpMethod = "GET", response = Dashboard.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value="title", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Dashboard getDashboardByTitle(@RequestParam(value="title", required=false) String title) throws ServiceException
+	public @ResponseBody DashboardType getDashboardByTitle(@RequestParam(value="title", required=false) String title) throws ServiceException
 	{
-		return dashboardService.getDashboardByTitle(title);
+		return mapper.map(dashboardService.getDashboardByTitle(title), DashboardType.class);
 	}
 
     @ResponseStatusDetails
@@ -113,9 +126,9 @@ public class DashboardsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Dashboard updateDashboard(@RequestBody Dashboard dashboard) throws ServiceException
+	public @ResponseBody DashboardType updateDashboard(@Valid @RequestBody DashboardType dashboard) throws ServiceException
 	{
-		return dashboardService.updateDashboard(dashboard);
+		return mapper.map(dashboardService.updateDashboard(mapper.map(dashboard, Dashboard.class)), DashboardType.class);
 	}
 
     @ResponseStatusDetails

@@ -57,7 +57,7 @@
     .ui-select select {
         width: 120%;
         width: -moz-calc(100% + 3em);
-        width: calc(100% + em);
+        width: calc(100% + 3em);
     }
 }
 /* Firefox focus has odd artifacts around the text, this kills that. See https://developer.mozilla.org/en-US/docs/Web/CSS/:-moz-focusring */

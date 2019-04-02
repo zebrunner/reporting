@@ -52,6 +52,7 @@ public class GroupService
 		return group;
 	}
 
+	@CachePut(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #group.id")
 	@Transactional(rollbackFor = Exception.class)
 	public Group addPermissionsToGroup(Group group) throws ServiceException
 	{
@@ -96,9 +97,9 @@ public class GroupService
 	}
 
 	@Transactional(readOnly = true)
-	public List<Group> getAllGroups() throws ServiceException
+	public List<Group> getAllGroups(Boolean isPublic) throws ServiceException
 	{
-		List<Group> groupList = groupMapper.getAllGroups();
+		List<Group> groupList = groupMapper.getAllGroups(isPublic);
 		for (Group group : groupList)
 		{
 			Collections.sort(group.getUsers());
@@ -132,6 +133,7 @@ public class GroupService
 		groupMapper.deleteGroup(id);
 	}
 
+	@CacheEvict(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #groupId")
 	@Transactional(rollbackFor = Exception.class)
 	public void deletePermissionFromGroup(long groupId, long permissionId) throws ServiceException
 	{

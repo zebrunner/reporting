@@ -17,7 +17,9 @@ package com.qaprosoft.zafira.models.push.events;
 
 public class TenancyResponseEventMessage extends EventMessage {
 
-    private String token;
+	private static final long serialVersionUID = -8149563995165621982L;
+	
+	private String token;
     private String zafiraURL;
     private Boolean success;
 
