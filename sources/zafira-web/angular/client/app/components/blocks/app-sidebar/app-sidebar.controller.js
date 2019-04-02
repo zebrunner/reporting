@@ -17,7 +17,6 @@
         $scope.version = null;
         $rootScope.dashboardList = [];
         $scope.views = [];
-        $scope.tools = {};
         $scope.$state = $state;
 
         $scope.hasHiddenDashboardPermission = function(){
@@ -83,7 +82,7 @@
         $scope.showViewDialog = function(event, view) {
             $mdDialog.show({
                 controller: ViewController,
-                template: require('../../../_nav/view_modal.html'), //TODO: move to separate component
+                template: require('./view_modal.html'), //TODO: move to separate component
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,

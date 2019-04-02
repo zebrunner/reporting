@@ -105,6 +105,7 @@
             }
         };
 
+        // TODO: why we don't get this data from tools service?
         ConfigService.getConfig("jenkins").then(function(rs) {
             $scope.jenkinsEnabled = rs.data.connected;
         });

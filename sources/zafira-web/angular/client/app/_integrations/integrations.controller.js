@@ -1,5 +1,11 @@
-const integrationsController = function integrationsController($scope, $rootScope, $state, $mdConstant, $stateParams, $mdDialog, UploadService, SettingsService) {
+'use strict';
+
+const integrationsController = function integrationsController($scope, $rootScope, $state, $mdConstant,
+                                                               $stateParams, $mdDialog, UploadService,
+                                                               SettingsService, toolsService) {
         'ngInject';
+
+        const vm = {};
 
         $scope.settingTools = [];
         $scope.enabledSettings = {};
@@ -86,10 +92,13 @@ const integrationsController = function integrationsController($scope, $rootScop
             settings.push(setting);
             SettingsService.editSettings(settings).then(function (rs) {
                 if (rs.success) {
-                    if(setting.value)
+                    //TODO: move getting settings into resolver after BE is fixed
+                    toolsService.fillToolSettings(tool.name, rs.data);
+                    if (setting.value) {
                         alertify.success('Tool ' + tool.name + ' is enabled');
-                    else
+                    } else {
                         alertify.success('Tool ' + tool.name + ' is disabled');
+                    }
                 }
             });
         };
@@ -178,7 +187,7 @@ const integrationsController = function integrationsController($scope, $rootScop
                     var enabledSetting = getEnabledSetting(rsTool, settings.data);
                     var currentTool = {
                         name: rsTool,
-                        isConnected: $rootScope.tools[rsTool],
+                        isConnected: toolsService.tools[rsTool],
                         settings: settings.data.filter(function (setting) {
                             setting.notEditable = NOT_EDITABLE_SETTINGS.indexOf(setting.name) >= 0;
                             return isEnabledSetting(rsTool, setting) ? false : setting.tool === rsTool;
@@ -187,7 +196,7 @@ const integrationsController = function integrationsController($scope, $rootScop
                         newSetting: {}
                     };
                     $scope.enabledSettings[enabledSetting.tool] = enabledSetting.id;
-                    if($scope.settingTools.indexOfName(tool) == -1) {
+                    if ($scope.settingTools.indexOfName(tool) === -1) {
                         currentTool.settings.sort(compareBySettingSortOrder);
                         $scope.settingTools.push(currentTool);
                         $scope.settingTools.sort(compareByName);
@@ -197,7 +206,7 @@ const integrationsController = function integrationsController($scope, $rootScop
                         SettingsService.isToolConnected(tool).then(function (rs) {
                             if(rs.success) {
                                 currentTool.isConnected = rs.data;
-                                $rootScope.tools[tool] = rs.data;
+                                toolsService.tools[tool] = rs.data;
                             }
                         });
                         $scope.settingTools.splice(index, 1, currentTool);
@@ -253,19 +262,16 @@ const integrationsController = function integrationsController($scope, $rootScop
             };
         }
 
-        (function init(){
-            if($rootScope.tools && Object.size($rootScope.tools)) {
-                for(var key in $rootScope.tools) {
-                    initTool(key);
-                }
-            }
-            else
-            {
-                $rootScope.$on("event:settings-toolsInitialized", function(ev, tool){
-                    initTool(tool);
-                });
-            }
-        })();
+        function controllerInit() {
+            // tools should be fetched by resolver
+            Object.keys(toolsService.tools).forEach((key) => {
+                initTool(key);
+            });
+        }
+
+        vm.$onInit = controllerInit;
+
+        return vm;
     };
 
 export default integrationsController;

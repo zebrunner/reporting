@@ -6,6 +6,11 @@
             'ngInject';
 
             $stateProvider
+                .state('home', {
+                  redirectTo: (transisiton) => {
+                    return transisiton.router.stateService.target('dashboard.list', {}, { location: 'replace' });
+                  },
+                })
                 .state('dashboard', {
                     url: '/dashboards',
                     abstract: true,
@@ -42,7 +47,7 @@
                             } else {
                                 // Timeout to avoid digest issues
                                 $timeout(function () {
-                                    $state.go('dashboard.list', {}, {location: 'replace'});
+                                    $state.go('home');
                                 });
 
                                 return false;
@@ -83,12 +88,13 @@
                                         if (defaultDashboard) {
                                             defaultDashboardId = defaultDashboard.id;
 
+                                            // Redirect to default dashboard
                                             // Timeout to avoid digest issues
                                             $timeout(function() {
                                                 $state.go('dashboard.page', {dashboardId: defaultDashboardId}, {location: 'replace'});
                                             });
 
-                                            return $q.reject('Redirected to default dashboard');
+                                            return false;
                                         } else {
                                             //TODO: dashboards is a home page. If we redirect to dashboards we can get infinity loop. We need to add simple error page;
                                             const message = 'Can\'t fetch default dashboard';
@@ -108,12 +114,13 @@
                                 });
                             }
 
+                            // Redirect to default dashboard
                             // Timeout to avoid digest issues
                             $timeout(function() {
                                 $state.go('dashboard.page', {dashboardId: defaultDashboardId}, {location: 'replace'});
                             });
 
-                            return $q.reject('Redirected to default dashboard');
+                            return false;
                         }
                     },
                     lazyLoad: ($transition$) => {
@@ -500,6 +507,22 @@
                     data: {
                         requireLogin: true,
                         classes: 'p-integrations'
+                    },
+                    resolve: {
+                        toolsServicePrepare: (toolsService, $timeout, $state) => {
+                            'ngInject';
+
+                            return toolsService.getTools()
+                                .catch((err) => {
+                                    err && err.message && alertify.error(err.message);
+                                    // Timeout to avoid digest issues
+                                    $timeout(() => {
+                                        $state.go('home');
+                                    }, 0);
+
+                                    return false;
+                                });
+                        }
                     },
                     lazyLoad: ($transition$) => {
                         const $ocLazyLoad = $transition$.injector().get('$ocLazyLoad');

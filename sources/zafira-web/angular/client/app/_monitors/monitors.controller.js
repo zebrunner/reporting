@@ -188,7 +188,7 @@ const monitorsController = function monitorsController($scope, $q, $rootScope, $
 
     $scope.openMonitorDialog = function ($event, monitor) {
         $mdDialog.show({
-            controller: function ($scope, $mdDialog, monitor) {
+            controller: function ($scope, $mdDialog, monitor, toolsService) {
                 'ngInject';
 
                 if(!monitor) {
@@ -202,6 +202,10 @@ const monitorsController = function monitorsController($scope, $q, $rootScope, $
                         return recipient;
                     });
                 }
+
+                Object.defineProperty($scope, 'tools', {
+                    get: () => toolsService.tools,
+                });
 
                 $scope.createMonitor = function () {
                     $scope.monitor.recipients = $scope.monitor.emailList.toString();
@@ -283,7 +287,6 @@ const monitorsController = function monitorsController($scope, $q, $rootScope, $
             preserveScope: true,
             locals: {
                 monitor: monitor,
-                get tools() { return $rootScope.tools; }
             }
         }).then(function(answer) {
                 if(answer)
