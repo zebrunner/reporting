@@ -66,9 +66,9 @@ public class LauncherService {
     @Transactional(rollbackFor = Exception.class)
     public Launcher createLauncher(Launcher launcher) throws ServiceException {
         if(jenkinsService.getContext() != null) {
-                Job job = jobsService.getJobByName("Launcher");
-                launcher.setJob(job);
-            }
+            Job job = jobsService.getJobByName("Launcher");
+            launcher.setJob(job);
+        }
         launcherMapper.createLauncher(launcher);
         return launcher;
     }

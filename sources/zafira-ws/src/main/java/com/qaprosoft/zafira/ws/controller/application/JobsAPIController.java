@@ -23,6 +23,10 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.ws.rs.QueryParam;
 
+import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.dto.JobUrlType;
+import com.qaprosoft.zafira.services.services.application.UserService;
+import com.qaprosoft.zafira.ws.controller.AbstractController;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +62,7 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "Jobs API")
 @CrossOrigin
 @RequestMapping("api/jobs")
-public class JobsAPIController
+public class JobsAPIController extends AbstractController
 {
 
 	@Autowired
@@ -70,6 +74,9 @@ public class JobsAPIController
 	@Autowired
 	private TestRunService testRunService;
 
+	@Autowired
+	private UserService userService;
+
 	@ResponseStatusDetails
 	@ApiOperation(value = "Create job", nickname = "createJob", httpMethod = "POST", response = JobType.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -79,6 +86,16 @@ public class JobsAPIController
 			ServiceException
 	{
 		return mapper.map(jobsService.createOrUpdateJob(mapper.map(job, Job.class)), JobType.class);
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Create job by url", nickname = "createJobByUrl", httpMethod = "POST", response = JobType.class)
+	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "url", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody JobType createJobByUrl(@RequestBody @Valid JobUrlType jobUrl) throws ServiceException
+	{
+		User user = userService.getUserById(getPrincipalId());
+		return mapper.map(jobsService.createOrUpdateJobByURL(jobUrl.getJobUrlValue(), user), JobType.class);
 	}
 
 	@ResponseStatusDetails
