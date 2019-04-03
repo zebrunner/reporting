@@ -53,6 +53,7 @@ public class JiraService implements IJMXService<JiraContext> {
         String url = null;
         String username = null;
         String password = null;
+        boolean enabled = false;
 
         try {
             List<Setting> jiraSettings = settingsService.getSettingsByTool(JIRA);
@@ -70,11 +71,14 @@ public class JiraService implements IJMXService<JiraContext> {
                 case JIRA_PASSWORD:
                     password = setting.getValue();
                     break;
+                case JIRA_ENABLED:
+                    enabled = Boolean.valueOf(setting.getValue());
+                    break;
                 default:
                     break;
                 }
             }
-            init(url, username, password);
+            init(url, username, password, enabled);
         } catch (Exception e) {
             LOGGER.error("Setting does not exist", e);
         }
@@ -84,11 +88,12 @@ public class JiraService implements IJMXService<JiraContext> {
     @ManagedOperationParameters({
             @ManagedOperationParameter(name = "url", description = "Jira url"),
             @ManagedOperationParameter(name = "username", description = "Jira username"),
-            @ManagedOperationParameter(name = "password", description = "Jira password") })
-    public void init(String url, String username, String password) {
+            @ManagedOperationParameter(name = "password", description = "Jira password"),
+            @ManagedOperationParameter(name = "enabled", description = "Jira enabled") })
+    public void init(String url, String username, String password, boolean enabled) {
         try {
             if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
-                putContext(JIRA, new JiraContext(url, username, password));
+                putContext(JIRA, new JiraContext(url, username, password, enabled));
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize Jira integration: " + e.getMessage());

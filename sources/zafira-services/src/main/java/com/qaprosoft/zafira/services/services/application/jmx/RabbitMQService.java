@@ -51,6 +51,7 @@ public class RabbitMQService implements IJMXService<RabbitMQContext> {
         String port = null;
         String username = null;
         String password = null;
+        boolean enabled = false;
 
         try {
             List<Setting> rabbitmqSettings = settingsService.getSettingsByTool(RABBITMQ);
@@ -71,11 +72,14 @@ public class RabbitMQService implements IJMXService<RabbitMQContext> {
                 case RABBITMQ_PASSWORD:
                     password = setting.getValue();
                     break;
+                case RABBITMQ_ENABLED:
+                    enabled = Boolean.valueOf(setting.getValue());
+                    break;
                 default:
                     break;
                 }
             }
-            init(host, port, username, password);
+            init(host, port, username, password, enabled);
         } catch (Exception e) {
             LOGGER.error("Setting does not exist", e);
         }
@@ -86,12 +90,13 @@ public class RabbitMQService implements IJMXService<RabbitMQContext> {
             @ManagedOperationParameter(name = "host", description = "RabbitMQ host"),
             @ManagedOperationParameter(name = "port", description = "RabbitMQ port"),
             @ManagedOperationParameter(name = "username", description = "RabbitMQ username"),
-            @ManagedOperationParameter(name = "password", description = "RabbitMQ password") })
-    public void init(String host, String port, String username, String password) {
+            @ManagedOperationParameter(name = "password", description = "RabbitMQ password"),
+            @ManagedOperationParameter(name = "enabled", description = "RabbitMQ enabled") })
+    public void init(String host, String port, String username, String password, boolean enabled) {
         try {
             if (!StringUtils.isEmpty(host) && !StringUtils.isEmpty(port) && !StringUtils.isEmpty(username)
                     && !StringUtils.isEmpty(password)) {
-                putContext(RABBITMQ, new RabbitMQContext(host, port, username, password));
+                putContext(RABBITMQ, new RabbitMQContext(host, port, username, password, enabled));
                 getContext(RABBITMQ).getConnectionCompletableFuture().get(15, TimeUnit.SECONDS);
             }
         } catch (Exception e) {

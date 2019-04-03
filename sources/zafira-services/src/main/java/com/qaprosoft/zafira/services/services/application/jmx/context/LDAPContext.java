@@ -25,7 +25,8 @@ public class LDAPContext extends AbstractContext {
     private BindAuthenticator bindAuthenticator;
     private FilterBasedLdapUserSearch filterBasedLdapUserSearch;
 
-    public LDAPContext(String dn, String searchFilter, String url, String managerUser, String managerPassword) {
+    public LDAPContext(String dn, String searchFilter, String url, String managerUser, String managerPassword, boolean enabled) {
+        super(enabled);
         this.ldapContextSource = new LdapContextSource();
         this.ldapContextSource.setUrl(url);
         this.ldapContextSource.setUserDn(managerUser);

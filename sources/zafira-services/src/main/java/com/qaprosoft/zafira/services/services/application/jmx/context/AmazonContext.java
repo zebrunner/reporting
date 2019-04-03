@@ -32,8 +32,9 @@ public class AmazonContext extends AbstractContext
     private BasicAWSCredentials basicAWSCredentials;
     private String s3Bucket;
 
-    public AmazonContext(String accessKey, String privateKey, String region, String s3Bucket, ClientConfiguration clientConfiguration)
+    public AmazonContext(String accessKey, String privateKey, String region, String s3Bucket, ClientConfiguration clientConfiguration, boolean enabled)
     {
+        super(enabled);
         this.s3Bucket = s3Bucket;
         this.basicAWSCredentials = new BasicAWSCredentials(accessKey, privateKey);
         this.amazonS3 = AmazonS3ClientBuilder.standard()

@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.jmx;
 
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_ENABLED;
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_WEB_HOOK_URL;
 
 import java.io.IOException;
@@ -107,7 +108,8 @@ public class SlackService implements IJMXService<SlackContext> {
         String wH = getWebhook();
         if (wH != null) {
             try {
-                putContext(Setting.Tool.SLACK, new SlackContext(wH, author, picPath));
+                Setting enabledSetting = settingsService.getSettingByName(SLACK_ENABLED.name());
+                putContext(Setting.Tool.SLACK, new SlackContext(wH, author, picPath, Boolean.valueOf(enabledSetting.getValue())));
             } catch (IllegalArgumentException e) {
                 LOGGER.info("Webhook url is not provided");
             }

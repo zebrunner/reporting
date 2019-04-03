@@ -55,6 +55,8 @@ public class AsynSendEmailTask implements Runnable, IJMXService<EmailContext> {
         String user = null;
         String fromAddress = null;
         String password = null;
+        boolean enabled = false;
+
         try {
             List<Setting> emailSettings = settingsService.getSettingsByTool(EMAIL);
             for (Setting setting : emailSettings) {
@@ -77,20 +79,23 @@ public class AsynSendEmailTask implements Runnable, IJMXService<EmailContext> {
                 case EMAIL_PASSWORD:
                     password = setting.getValue();
                     break;
+                case EMAIL_ENABLED:
+                    enabled = Boolean.valueOf(setting.getValue());
+                    break;
                 default:
                     break;
                 }
             }
-            init(host, port, user, fromAddress, password);
+            init(host, port, user, fromAddress, password, enabled);
         } catch (Exception e) {
             LOGGER.error("Setting does not exist", e);
         }
     }
 
-    public void init(String host, int port, String user, String fromAddress, String password) {
+    public void init(String host, int port, String user, String fromAddress, String password, boolean enabled) {
         try {
             if (!StringUtils.isBlank(host) && !StringUtils.isBlank(user) && !StringUtils.isBlank(password) && port != 0) {
-                putContext(EMAIL, new EmailContext(host, port, user, fromAddress, password));
+                putContext(EMAIL, new EmailContext(host, port, user, fromAddress, password, enabled));
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize SMTP integration: " + e.getMessage());

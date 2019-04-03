@@ -28,8 +28,9 @@ public class RabbitMQContext extends AbstractContext
     private Connection connection;
     private CompletableFuture<Connection> connectionCompletableFuture;
 
-    public RabbitMQContext(String host, String port, String username, String password)
+    public RabbitMQContext(String host, String port, String username, String password, boolean enabled)
     {
+        super(enabled);
         this.cachingConnectionFactory = new CachingConnectionFactory(host, Integer.parseInt(port));
         this.cachingConnectionFactory.setUsername(username);
         this.cachingConnectionFactory.setPassword(password);

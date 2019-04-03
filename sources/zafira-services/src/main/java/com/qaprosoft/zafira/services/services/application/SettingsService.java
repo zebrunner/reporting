@@ -130,7 +130,7 @@ public class SettingsService {
     }
 
     public boolean isConnected(Tool tool) {
-        return tool != null && !tool.equals(Tool.CRYPTO) && getServiceByTool(tool).isConnected();
+        return tool != null && !tool.equals(Tool.CRYPTO) && getServiceByTool(tool).isEnabledAndConnected(tool);
     }
 
     @Transactional(readOnly = true)

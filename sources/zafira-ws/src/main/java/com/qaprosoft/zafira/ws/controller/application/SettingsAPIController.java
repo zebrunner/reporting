@@ -202,7 +202,7 @@ public class SettingsAPIController extends AbstractController
         TimeUnit.SECONDS.sleep(3);
 		connectedTool.setName(tool.name());
 		connectedTool.setSettingList(settings);
-		connectedTool.setConnected(settingsService.getServiceByTool(tool).isConnected());
+		connectedTool.setConnected(settingsService.getServiceByTool(tool).isEnabledAndConnected(tool));
         return connectedTool;
 	}
 

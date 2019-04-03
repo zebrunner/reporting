@@ -52,16 +52,13 @@ public class EmailService
 
 	@Autowired
 	private AsynSendEmailTask emailTask;
-
-	@Autowired
-	private SettingsService settingsService;
 	
 	private static final EmailValidator validator = EmailValidator.getInstance();
 
 	public String sendEmail(final IEmailMessage message, final String... emails) throws ServiceException
 	{
 
-		if(! settingsService.isConnected(EMAIL))
+		if(! emailTask.isEnabledAndConnected(EMAIL))
 		{
 			return null;
 		}
