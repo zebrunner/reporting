@@ -99,6 +99,9 @@ public class AsynSendEmailTask implements Runnable, IJMXService<EmailContext> {
 
     @Override
     public boolean isConnected() {
+        if(isContextConnected() != null) {
+            return isContextConnected();
+        }
         boolean connected = false;
         JavaMailSenderImpl sender = getJavaMailSenderImpl();
         if (sender != null) {
@@ -108,7 +111,8 @@ public class AsynSendEmailTask implements Runnable, IJMXService<EmailContext> {
             } catch (MessagingException e) {
                 // Will be thrown when SMTP not configured properly
             }
-        } 
+        }
+        setConnected(connected);
         return connected;
     }
 
@@ -117,10 +121,28 @@ public class AsynSendEmailTask implements Runnable, IJMXService<EmailContext> {
     }
 
     public JavaMailSenderImpl getJavaMailSenderImpl() {
-        return getContext(EMAIL) != null ? (JavaMailSenderImpl) getContext(EMAIL).getJavaMailSender() : null;
+        return getContext() != null ? (JavaMailSenderImpl) getContext().getJavaMailSender() : null;
     }
 
     public String getFromAddress() {
-        return getContext(EMAIL) != null ? getContext(EMAIL).getFromAddress() : null;
+        return getContext() != null ? getContext().getFromAddress() : null;
+    }
+
+    public void setConnected(boolean isConnected) {
+        if(getContext() != null) {
+            getContext().setConnected(isConnected);
+        }
+    }
+
+    public Boolean isContextConnected() {
+        Boolean result = null;
+        if(getContext() != null) {
+            result = getContext().isConnected();
+        }
+        return result;
+    }
+
+    public EmailContext getContext() {
+        return getContext(EMAIL);
     }
 }

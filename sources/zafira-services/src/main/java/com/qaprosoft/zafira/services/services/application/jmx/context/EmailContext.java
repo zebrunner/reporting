@@ -25,6 +25,7 @@ public class EmailContext extends AbstractContext
 
     private JavaMailSender javaMailSender;
     private String fromAddress;
+    private Boolean isConnected;
 
     public EmailContext(String host, int port, String user, String fromAddress, String password)
     {
@@ -63,5 +64,13 @@ public class EmailContext extends AbstractContext
     public void setFromAddress(String fromAddress)
     {
         this.fromAddress = fromAddress;
+    }
+
+    public Boolean isConnected() {
+        return isConnected;
+    }
+
+    public void setConnected(Boolean connected) {
+        isConnected = connected;
     }
 }
