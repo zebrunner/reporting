@@ -42,7 +42,7 @@
                             "firefox"
                         ],
                         "thread_count": 5,
-                        "branch": "*/master",
+                        "branch": "master",
                         "email_list": "demo@qaprosoft.com",
                         "suite": "web"
                     }
@@ -52,7 +52,7 @@
                     json: {
                         "platform": "ANDROID",
                         "thread_count": 5,
-                        "branch": "*/master",
+                        "branch": "master",
                         "email_list": "demo@qaprosoft.com",
                         "suite": "android"
                     }
@@ -62,7 +62,7 @@
                     json: {
                         "platform": "API",
                         "thread_count": 5,
-                        "branch": "*/master",
+                        "branch": "master",
                         "email_list": "demo@qaprosoft.com",
                         "suite": "api"
                     }
