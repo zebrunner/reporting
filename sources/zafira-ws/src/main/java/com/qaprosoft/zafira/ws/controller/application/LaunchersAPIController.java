@@ -72,8 +72,7 @@ public class LaunchersAPIController extends AbstractController {
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody LauncherType createLauncher(@RequestBody @Valid LauncherType launcherType) throws ServiceException {
-        User owner = new User(getPrincipalId());
-        return mapper.map(launcherService.createLauncher(mapper.map(launcherType, Launcher.class), owner), LauncherType.class);
+        return mapper.map(launcherService.createLauncher(mapper.map(launcherType, Launcher.class)), LauncherType.class);
     }
 
     @ResponseStatusDetails
