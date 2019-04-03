@@ -18,12 +18,13 @@ package com.qaprosoft.zafira.services.services.application.jmx;
 import static com.qaprosoft.zafira.models.db.Setting.Tool.RABBITMQ;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
@@ -44,6 +45,10 @@ public class RabbitMQService implements IJMXService<RabbitMQContext> {
 
     @Autowired
     private CryptoService cryptoService;
+
+    @Autowired
+    @Qualifier("settingsQueue")
+    private Queue settingsQueue;
 
     @Override
     public void init() {
@@ -97,11 +102,18 @@ public class RabbitMQService implements IJMXService<RabbitMQContext> {
             if (!StringUtils.isEmpty(host) && !StringUtils.isEmpty(port) && !StringUtils.isEmpty(username)
                     && !StringUtils.isEmpty(password)) {
                 putContext(RABBITMQ, new RabbitMQContext(host, port, username, password, enabled));
-                getContext(RABBITMQ).getConnectionCompletableFuture().get(15, TimeUnit.SECONDS);
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize RabbitMQ integration: " + e.getMessage());
         }
+    }
+
+    public String getSettingQueueName() {
+        return this.settingsQueue.getName();
+    }
+
+    public boolean isSettingQueueConsumer(String settingQueueName) {
+        return settingQueueName.equals(getSettingQueueName());
     }
 
     @Override
@@ -113,4 +125,5 @@ public class RabbitMQService implements IJMXService<RabbitMQContext> {
     public Connection getConnection() {
         return getContext(RABBITMQ) != null ? getContext(RABBITMQ).getConnection() : null;
     }
+
 }

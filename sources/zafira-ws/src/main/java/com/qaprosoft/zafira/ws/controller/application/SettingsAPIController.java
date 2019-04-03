@@ -198,8 +198,6 @@ public class SettingsAPIController extends AbstractController
             settingsService.updateSetting(setting);
 		}
         settingsService.notifyToolReinitiated(tool, TenancyContext.getTenantName());
-        // TODO: find better solution
-        TimeUnit.SECONDS.sleep(3);
 		connectedTool.setName(tool.name());
 		connectedTool.setSettingList(settings);
 		connectedTool.setConnected(settingsService.getServiceByTool(tool).isEnabledAndConnected(tool));
