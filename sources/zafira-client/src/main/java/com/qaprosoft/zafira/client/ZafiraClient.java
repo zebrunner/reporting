@@ -1041,8 +1041,7 @@ public class  ZafiraClient
 				this.amazonClient.putObject(putRequest);
 				this.amazonClient.setObjectAcl(this.amazonS3SessionCredentials.getBucket(), key, CannedAccessControlList.Private);
 
-				filePath = this.tenantType.isMultitenant() ?
-						this.tenantType.getServiceUrl() + relativeKey : this.amazonClient.getUrl(this.amazonS3SessionCredentials.getBucket(), key).toString();
+				filePath = this.tenantType.isMultitenant() ? getServiceURL() + relativeKey : getFilePath(key);
 
 			} catch (Exception e)
 			{
@@ -1054,6 +1053,14 @@ public class  ZafiraClient
 		}
 
 		return filePath;
+	}
+
+	public String getServiceURL() {
+		return this.tenantType.getServiceUrl();
+	}
+
+	private String getFilePath(String key) {
+		return this.amazonClient.getUrl(this.amazonS3SessionCredentials.getBucket(), key).toString();
 	}
 
 	/**
