@@ -28,13 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import com.qaprosoft.zafira.models.db.Launcher;
 import com.qaprosoft.zafira.models.db.User;
@@ -132,5 +126,14 @@ public class LaunchersAPIController extends AbstractController {
     @RequestMapping(value = "build", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public void build(@RequestBody @Valid LauncherType launcherType) throws ServiceException, IOException {
         launcherService.buildLauncherJob(mapper.map(launcherType, Launcher.class), userService.getNotNullUserById(getPrincipalId()));
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Build job with launcher", nickname = "build", httpMethod = "POST")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @RequestMapping(value = "sync", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void sync(@RequestParam String repo) throws ServiceException {
+        launcherService.syncRepo(repo);
     }
 }

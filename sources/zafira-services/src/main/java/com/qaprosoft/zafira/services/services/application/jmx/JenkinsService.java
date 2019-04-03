@@ -223,6 +223,18 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
         return jobParameters;
     }
 
+    public Map<String, String> getOnPushBuildParameters(Job ciJob) {
+        Map<String, String> jobParameters = null;
+        try {
+            JobWithDetails job = getJobWithDetails(ciJob);
+            jobParameters = job.getLastBuild().details().getParameters();
+            jobParameters.put("onlyUpdated", "false");
+        } catch (Exception e) {
+            LOGGER.error("Unable to get job:  " + e.getMessage());
+        }
+        return jobParameters;
+    }
+
     public Map<Integer, String> getBuildConsoleOutputHtml(Job ciJob, Integer buildNumber, Integer stringsCount,
             Integer fullCount) {
         Map<Integer, String> result = new HashMap<>();

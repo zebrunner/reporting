@@ -155,4 +155,10 @@ public class LauncherService {
         
         jenkinsService.buildJob(job, jobParameters);
     }
+
+    public void syncRepo(String repo) throws ServiceException {
+        Job job = jobsService.getJobByName("onPush-" + repo);
+        jenkinsService.buildJob(job, jenkinsService.getOnPushBuildParameters(job));
+    }
+
 }
