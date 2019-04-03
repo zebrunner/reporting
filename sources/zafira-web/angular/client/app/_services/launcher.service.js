@@ -15,6 +15,7 @@
         service.updateLauncher = updateLauncher;
         service.deleteLauncherById = deleteLauncherById;
         service.buildLauncher = buildLauncher;
+        service.synchronizeLaunchers = synchronizeLaunchers;
 
         return service;
 
@@ -40,6 +41,10 @@
 
         function buildLauncher(launcher) {
             return $http.post(API_URL + '/api/launchers/build', launcher).then(UtilService.handleSuccess, UtilService.handleError('Unable to build with launcher'));
+        }
+
+        function synchronizeLaunchers(repo) {
+            return $http.get(API_URL + '/api/launchers/sync', {params:{'repo': repo}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to sync with launchers'));
         }
     }
 })();

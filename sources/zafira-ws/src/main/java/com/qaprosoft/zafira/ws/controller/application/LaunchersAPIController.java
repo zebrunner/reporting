@@ -132,7 +132,7 @@ public class LaunchersAPIController extends AbstractController {
     @ApiOperation(value = "Build job with launcher", nickname = "build", httpMethod = "POST")
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @RequestMapping(value = "sync", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "sync", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public void sync(@RequestParam String repo) throws ServiceException {
         launcherService.syncRepo(repo);
     }

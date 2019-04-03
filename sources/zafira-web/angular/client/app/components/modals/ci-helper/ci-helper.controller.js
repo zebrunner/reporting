@@ -148,13 +148,23 @@
         $scope.getElement = function(item) {
             var result;
             if(angular.isArray(item)) {
-                result = 'select'
+                result = 'select';
             } else if(item === true || item === false) {
-                result = 'checkbox'
+                result = 'checkbox';
             } else {
                 result = 'input';
             }
             return result;
+        };
+
+        $scope.synchronizeLaunchers = function(repo) {
+            LauncherService.synchronizeLaunchers(repo).then(function (rs) {
+                if (rs.success) {
+                    alertify.success('Synchronization is in progress.');
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
         };
 
         $scope.addTemplate = function() {
