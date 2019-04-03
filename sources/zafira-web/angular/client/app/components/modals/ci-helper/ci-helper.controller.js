@@ -157,8 +157,8 @@
             return result;
         };
 
-        $scope.synchronizeLaunchers = function(repo) {
-            LauncherService.synchronizeLaunchers(repo).then(function (rs) {
+        $scope.synchronizeLaunchers = function() {
+            LauncherService.synchronizeLaunchers('carina-demo').then(function (rs) {
                 if (rs.success) {
                     alertify.success('Synchronization is in progress.');
                 } else {
