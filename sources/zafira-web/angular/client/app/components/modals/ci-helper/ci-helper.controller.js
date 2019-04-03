@@ -158,7 +158,8 @@
         };
 
         $scope.synchronizeLaunchers = function() {
-            LauncherService.synchronizeLaunchers('carina-demo').then(function (rs) {
+            const scmAccount = $scope.scmAccounts[0];
+            LauncherService.synchronizeLaunchers(scmAccount.repo).then(function (rs) {
                 if (rs.success) {
                     alertify.success('Synchronization is in progress.');
                 } else {
