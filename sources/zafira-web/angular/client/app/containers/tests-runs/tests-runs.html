@@ -42,7 +42,7 @@
                     <md-tooltip md-direction="top">Compare</md-tooltip>
                     <span class="fa fa-columns" aria-hidden="true"></span>
                 </md-button>
-                <md-button id="rerunTestRuns" data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to rerun multiple test runs?" data-ng-really-click="$ctrl.batchRerun()" has-any-permission="['TEST_RUNS_CI']">
+                <md-button id="rerunTestRuns" data-ng-if="$ctrl.jenkins.enabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to rerun multiple test runs?" data-ng-really-click="$ctrl.batchRerun()" has-any-permission="['TEST_RUNS_CI']">
                     <md-tooltip md-direction="top">Rerun</md-tooltip>
                     <span class="fa fa-undo" aria-hidden="true"></span>
                 </md-button>

@@ -5,7 +5,7 @@
         .controller('AppCtrl', AppCtrl); // overall control
 	    function AppCtrl($scope, $rootScope, $templateCache, $state, httpBuffer, $window, $cookies, $q, appConfig,
                          AuthService, UserService, SettingsService, ConfigService, AuthIntercepter, UtilService,
-                         SettingProvider, $timeout) {
+                         SettingProvider, $timeout, toolsService) {
             'ngInject';
 
 	        $scope.pageTransitionOpts = appConfig.pageTransitionOpts;
@@ -24,13 +24,6 @@
                 return UNANIMATED_STATES.indexOf($state.current.name) == -1;
             };
 
-	        // ************** Integrations **************
-
-	        $rootScope.jenkins  = { enabled : false };
-	        $rootScope.jira     = { enabled : false };
-	        $rootScope.rabbitmq = { enabled : false };
-	        $rootScope.google = { enabled : false };
-
             $scope.setOffset = function (event) {
 	              $rootScope.currentOffset = 0;
 	              var bottomHeight = $window.innerHeight - event.target.clientHeight - event.clientY;
@@ -39,61 +32,7 @@
 	              }
             };
 
-	        $scope.initSession = function()
-	        {
-
-                SettingsService.getSettingTools().then(function(rs) {
-                    if(rs.success)
-                    {
-                        $rootScope.tools = {};
-                        rs.data.forEach(function(tool) {
-                            SettingsService.isToolConnected(tool).then(function(rs) {
-                                if(rs.success)
-                                {
-                                    $rootScope.tools[tool] = rs.data;
-                                    $rootScope.$broadcast("event:settings-toolsInitialized", tool);
-                                }
-                            });
-                        });
-                    }
-                });
-	        };
-
-	        $rootScope.$on('event:settings-toolsInitialized', function (event, data) {
-
-	            switch(data) {
-                    case "RABBITMQ":
-                        SettingsService.getSettingByTool("RABBITMQ").then(function(rs) {
-                            var settings = UtilService.settingsAsMap(rs.data);
-                            $rootScope.rabbitmq.enabled = settings["RABBITMQ_ENABLED"];
-                            $rootScope.rabbitmq.user = settings["RABBITMQ_USER"];
-                            $rootScope.rabbitmq.pass = settings["RABBITMQ_PASSWORD"];
-                        });
-                        break;
-                    case "JIRA":
-                        SettingsService.getSettingByTool("JIRA").then(function(rs) {
-                            var settings = UtilService.settingsAsMap(rs.data);
-                            $rootScope.jira.enabled = settings["JIRA_ENABLED"];
-                            $rootScope.jira.url = settings["JIRA_URL"];
-                        });
-                        break;
-                    case "JENKINS":
-                        SettingsService.getSettingByTool("JENKINS").then(function(rs) {
-                            var settings = UtilService.settingsAsMap(rs.data);
-                            $rootScope.jenkins.enabled = settings["JENKINS_ENABLED"];
-                            $rootScope.jenkins.url = settings["JENKINS_URL"];
-                        });
-                        break;
-                    case "GOOGLE":
-                        SettingsService.getSettingByTool("GOOGLE").then(function(rs) {
-                            var settings = UtilService.settingsAsMap(rs.data);
-                            $rootScope.google.enabled = settings["GOOGLE_ENABLED"];
-                        });
-                        break;
-                    default:
-                        break;
-                }
-            });
+	        $scope.initSession = toolsService.getTools;
 
 	        $rootScope.$on("event:auth-loginSuccess", function(ev, payload){
                 AuthService.SetCredentials(payload.auth);

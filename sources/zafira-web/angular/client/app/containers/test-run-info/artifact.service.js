@@ -38,8 +38,10 @@ const ArtifactService = function ArtifactService($rootScope, $window, $q, $timeo
         return rfb;
     };
 
+    //TODO: looks like unused method
     function provideLogs(rabbitmq, testRun, test, logsContainer, needReconnect, func) {
         return $q(function (resolve, reject) {
+            //TODO: Use toolsService
             var rabbitmqWatcher = $rootScope.$watch('rabbitmq.enabled', function (newVal) {
                 if(newVal)
                 {

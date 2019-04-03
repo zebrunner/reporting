@@ -133,13 +133,14 @@
         };
 
         function settingsAsMap(settings) {
-            var map = {};
-            if(settings)
-                settings.forEach(function(setting) {
-                    map[setting.name] = setting.value;
+            const map = {};
+
+            settings && settings.forEach(({ name, value }) => {
+                    map[name] = value;
                 });
+
             return map;
-	    };
+	    }
 
         // ************** Websockets **************
 

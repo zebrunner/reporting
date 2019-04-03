@@ -1130,6 +1130,14 @@ const ngModule = angular.module('app', [
               UserService) {
     'ngInject';
 
+    const rejectTypes = { // https://ui-router.github.io/ng1/docs/latest/enums/transition.rejecttype.html
+        ABORTED: 3,
+        ERROR: 6,
+        IGNORED: 5,
+        INVALID: 4,
+        SUPERSEDE: 2,
+    };
+
     function fetchUserData(trans) {
         return UserService.fetchFullUserData().then((res) => {
             if (!res.success) {
@@ -1185,6 +1193,17 @@ const ngModule = angular.module('app', [
     $transitions.onSuccess({}, function() {
         $document.scrollTo(0, 0);
     });
+    // ignore SUPERSEDED and IGNORED transition rejections
+    $transitions.onError({}, transition => {
+        const err = transition.error();
+
+        switch (err.type) {
+            case rejectTypes.SUPERSEDED:
+            case rejectTypes.IGNORED:
+                break;
+        }
+    })
+
 });
 
 angular.injector(['ng']).get('$http').get('./config.json').then(function(response){
@@ -1199,7 +1218,6 @@ angular.injector(['ng']).get('$http').get('./config.json').then(function(respons
 //Services
 require('./_services/services.module');
 //Modules
-require('./_nav/sidebar.module');
 require('./_views/view.module');
 require('./core/core.module');
 require('./layout/layout.module');

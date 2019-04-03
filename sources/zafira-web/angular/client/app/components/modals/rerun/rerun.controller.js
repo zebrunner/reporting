@@ -3,14 +3,14 @@
 
     angular.module('app').controller('TestRunRerunController', TestRunRerunController);
 
-    function TestRunRerunController($scope, $mdDialog, TestRunService, testRun, jenkins) {
+    function TestRunRerunController($scope, $mdDialog, TestRunService, testRun, toolsService) {
         'ngInject';
 
         $scope.rerunFailures = true;
         $scope.testRun = testRun;
 
         $scope.rebuild = function (testRun, rerunFailures) {
-            if (jenkins.enabled) {
+            if (toolsService.jenkins.enabled) {
                 TestRunService.rerunTestRun(testRun.id, rerunFailures).then(function(rs) {
                     if(rs.success)
                     {

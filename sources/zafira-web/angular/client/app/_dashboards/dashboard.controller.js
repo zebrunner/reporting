@@ -9,12 +9,16 @@ import dashboardEmailModalController from './dashboard-email-modal/dashboard-ema
 import widgetWizardController from './../components/modals/widget-wizard/widget-wizard.controller';
 import widgetWizardModalTemplate from './../components/modals/widget-wizard/widget_wizard.html';
 
-const dashboardController = function dashboardController($scope, $rootScope, $q, $timeout, $interval, $cookies, $location, $state,
-                                 $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, projectsService, UserService, $widget, $mapper) {
+const dashboardController = function dashboardController($scope, $rootScope, $q, $timeout, $interval,
+                                                         $cookies, $location, $state, $http, $mdConstant,
+                                                         $stateParams, $mdDialog, $mdToast, UtilService,
+                                                         DashboardService, projectsService, UserService,
+                                                         $widget, $mapper, toolsService) {
     'ngInject';
 
     const vm = {
         dashboard: null,
+        get tools() { return toolsService.tools; },
     };
 
     $scope.currentUserId = $location.search().userId;
@@ -36,12 +40,6 @@ const dashboardController = function dashboardController($scope, $rootScope, $q,
         },
         cellHeight: 20
     };
-
-    Object.defineProperty($scope, 'tools', {
-        get: () => {
-            return $rootScope.tools;
-        }
-    });
 
     $scope.isJson = function(json) {
         return typeof(json) === 'object';
@@ -610,10 +608,6 @@ const dashboardController = function dashboardController($scope, $rootScope, $q,
         }
     };
 
-    $scope.$on('$destroy', function() {
-        $scope.stopRefreshIntervalInterval();
-    });
-
     function getDashboardById(dashboardId) {
         return $q(function (resolve, reject) {
             DashboardService.GetDashboardById(dashboardId).then(function (rs) {
@@ -649,6 +643,7 @@ const dashboardController = function dashboardController($scope, $rootScope, $q,
     });
 
     $scope.$on('$destroy', function () {
+        $scope.stopRefreshIntervalInterval();
         $scope.resetGrid();
     });
 
