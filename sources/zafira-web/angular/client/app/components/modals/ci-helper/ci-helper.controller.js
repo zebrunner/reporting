@@ -157,17 +157,6 @@
             return result;
         };
 
-        $scope.synchronizeLaunchers = function() {
-            const scmAccount = $scope.scmAccounts[0];
-            LauncherService.synchronizeLaunchers('carina-demo').then(function (rs) {
-                if (rs.success) {
-                    alertify.success('Synchronization is in progress.');
-                } else {
-                    alertify.error(rs.message);
-                }
-            });
-        };
-
         $scope.addTemplate = function() {
             $scope.cardNumber = 1;
             $scope.launcher = {};
@@ -227,6 +216,17 @@
                 }
                 $scope.applyBuilder(launcher);
             }
+        };
+
+        $scope.synchronizeLaunchers = function() {
+            const scmAccount = $scope.scmAccounts[0];
+            LauncherService.synchronizeLaunchers('carina-demo').then(function (rs) {
+                if (rs.success) {
+                    alertify.success('Synchronization is in progress.');
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
         };
 
         function buildError(launcher) {
