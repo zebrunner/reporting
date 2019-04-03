@@ -129,7 +129,7 @@ public class LaunchersAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Build job with launcher", nickname = "build", httpMethod = "POST")
+    @ApiOperation(value = "Build job with launcher", nickname = "build", httpMethod = "GET")
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "sync", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
