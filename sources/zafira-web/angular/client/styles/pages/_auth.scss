@@ -36,14 +36,10 @@
         }
 
         @media(max-width: 749px) {
-            max-width: 360px;
+            max-width: 375px;
             width: auto;
             min-height: auto;
         }
-
-        //@media (max-width: 360px){
-        //    margin: auto 20px;
-        //}
 
         .card {
             display: flex;
@@ -65,10 +61,23 @@
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            padding: 40px 0 0;
+            padding: 20px 0 0;
             margin-bottom: 20px;
-            a{
-                margin-right: -8px;
+            .md-button {
+                background-color: white;
+                font-size: 14px;
+                font-weight: 500;
+                padding: 9px 20px;
+                min-width: 88px;
+                min-height: 40px;
+                border-radius: 4px;
+                border: solid 1px rgba(0, 0, 0, 0.15);
+                &:not([disabled]){
+                    color: #000000;
+                    &:hover {
+                        border: 1px solid black;
+                    }
+                }
             }
         }
 
@@ -79,6 +88,7 @@
             @media(max-width: 749px){
                 width: 100%;
                 min-height: auto;
+                max-width: 100%;
             }
             .added-small{
                 margin-top: -8px;
@@ -93,23 +103,22 @@
     }
 
     .additional-info {
-        color: #898989;
-        line-height: 10px;
+        color: rgba(0, 0, 0, 0.25);
+        line-height: 1.15;
         position: absolute;
         padding-bottom: 28px;
+        padding-right: 5px;
         bottom: 0;
         font-size: 10px;
-
         @media(max-width: 749px){
-            position: static;
-            padding-bottom: 0;
+            margin-bottom: -12px;
         }
     }
 
     .card {
         @extend .z-depth-2;
         .card-content {
-            padding: 30px 19px;
+            padding: 30px;
         }
     }
 
@@ -130,12 +139,11 @@
     }
 
     .logo-container{
-        height: 48px;
-        margin-bottom: 40px;
+        margin-bottom: 66px;
         .logo{
-            width: 48px;
-            border-radius: 50%;
-            height: 48px;
+            width: 32px;
+            height: 18px;
+            color: #26a69a;
         }
     }
 
@@ -148,80 +156,160 @@
     }
 
     .button-container{
-        padding: 16px 0 20px;
+        padding: 13px 0 20px;
         display: flex;
         align-items: center;
+        @media(max-width: 749px){
+            padding-top: 3px;
+        }
+        .md-button {
+            background-color: white;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 9px 20px;
+            min-width: 88px;
+            min-height: 40px;
+            border-radius: 4px;
+            border: solid 1px rgba(0, 0, 0, 0.15);
+            &:not([disabled]){
+                color: #000000;
+                &:hover {
+                    border: 1px solid black;
+                }
+            }
+        }
     }
 
     .additional-action {
-        color: $gray-base;
+        letter-spacing: .35px;
+        color: black;
         font-size: 12px;
-        line-height: 16px;
-        letter-spacing: 0.1px;
         &__link {
+            color: black;
             text-decoration: underline;
-            color: $gray-base;
             &:hover {
-                text-decoration: none;
-                color: $gray-base;
+                color: black;
             }
+        }
+        @media(max-width: 749px){
+            font-size: 14px;
         }
     }
 
     .additional-background{
+        background-color: #edeff1;
         @media(max-width: 749px){
+            max-width: 100%;
             width: 100%;
+            background-color: white;
+            padding-bottom: 0;
+            min-height: auto;
         }
-        padding: 30px 30px 0;
+        padding: 30px;
         width: 50%;
         max-width: 360px;
         min-height: 480px;
-        background: $main_container_bg url('../assets/images/background/zafira_logo_background.svg') no-repeat -119px top/cover scroll;
         background-size: cover;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        .logo-container{
-            height: 32px;
-            margin-bottom: 21px;
-            .logo{
-                width: 32px;
-                height: 32px;
-                background-size: contain;
-                border-radius: 0;
-                background:#dddfe1 url('../assets/images/background/zafira_logo_bw.svg') no-repeat center;
+        .version-container{
+            line-height: 1;
+            span {
+                font-size: 14px;
+                font-weight: bold;
+                letter-spacing: 0.2px;
+                color: rgba(0, 0, 0, 0.25);
+                @media(max-width: 749px){
+                    line-height: 1;
+                    font-size: 12px;
+                    margin-left: 15px;
+                }
+                @media(max-width: 356px) {
+                    margin-left: 0;
+                }
+            }
+            @media(max-width: 749px){
+                margin-bottom: 8px;
+                margin-top: 13px;
             }
         }
 
-        .robo-background{
+        .man-background{
+            position: relative;
             height: 100%;
             min-height: 397px;
             display: flex;
             justify-content: space-between;
-            margin-right: 9px;
             flex-direction: column;
-        }
-
-        .text{
-            max-width: 228px;
-            font-size: 14px;
-            color: #000;
-            &__caption{
-                font-weight: bold;
-                line-height: 1.2;
-                font-size: 20px;
-                margin-bottom: 15px;
+            @media(max-width: 749px){
+                min-height: auto;
             }
-            p{
-                line-height: 1.25;
+            .text{
+                z-index: 1;
+                @media(max-width: 749px){
+                    margin-bottom: 96px;
+                }
+                p{
+                    margin-top: 76px;
+                    margin-bottom: 0;
+                    max-width: 230px;
+                    font-size: 16px;
+                    font-weight: 500;
+                    font-style: normal;
+                    font-stretch: normal;
+                    line-height: 1.5;
+                    letter-spacing: 0.2px;
+                    text-align: left;
+                    color: #000000;
+                    @media(max-width: 749px){
+                        margin: 0;
+                        max-width: 180px;
+                        margin-left: 15px;
+                        line-height: 1.39;
+                    }
+                    @media(max-width: 356px) {
+                        margin-left: 0;
+                    }
+                }
             }
-        }
-
-        .robot{
-            width: 100%;
-            height: 140px;
-            background: url('../assets/images/background/robo.svg') right bottom no-repeat;
-            background-size: contain;
-        }
+            .asset {
+                position: absolute;
+                width: 100%;
+                height: 128px;
+                top: 61px;
+                left: 33px;
+                opacity: .5;
+                background: url('../assets/images/background/asset.svg') left bottom no-repeat;
+                background-size: contain;
+                @media(max-width: 749px){
+                    top: -25px;
+                    height: 160px;
+                    left: 40px;
+                    opacity: .25;
+                }
+                @media(max-width: 356px) {
+                    left: 15px;
+                }
+            }
+            .man {
+                width: 100%;
+                height: 191px;
+                margin-bottom: 43px;
+                background: url('../assets/images/background/zafira_login_desktop_illustration-01.svg') right bottom no-repeat;
+                background-size: contain;
+                @media(max-width: 749px){
+                    background: url('../assets/images/background/zafira_login_mobile_illustration-01-01.svg') right bottom no-repeat;
+                    margin-bottom: -2px;
+                    height: 145px;
+                    position: absolute;
+                    right: 8px;
+                    bottom: 0;
+                }
+                @media(max-width: 356px) {
+                    right: -20px;
+                }
+            }
+        }        
     }
 }
