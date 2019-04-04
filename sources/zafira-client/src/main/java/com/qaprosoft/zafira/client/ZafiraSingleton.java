@@ -104,7 +104,7 @@ public enum ZafiraSingleton {
 							CompletableFuture.runAsync(TENANT_INIT)
 					).exceptionally(error -> {
 						throw new RuntimeException(error.getMessage(), error);
-					});
+					}).get();
 				}
 			}
 		} catch (Exception e) {
