@@ -3,11 +3,11 @@ import signinComponent from './signin.component';
 import forgotPasswordComponent from './forgot-password.component';
 import resetPasswordComponent from './reset-password.component';
 
-require('./robo/robo.module');
+require('./bg-instance/bg-instance.module');
 require('./copyright/copyright.module');
 
 export const authModule = angular.module('app.auth', [
-    'app.robo',
+    'app.bgInstance',
     'app.copyright',
     ])
     .component({ signupComponent })

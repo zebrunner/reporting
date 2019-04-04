@@ -5,8 +5,7 @@
                 <div class="card bg-white">
                     <div class="card-content">
                         <section class="logo-container">
-                            <img class="logo" ng-if="companyLogo.value" src="{{ companyLogo.value }}">
-                            <img class="logo" ng-if="!companyLogo.value" src="../../assets/images/background/company_logo_plug.svg">
+                            <img class="logo" src="../../assets/images/background/zf.svg">
                         </section>
 
                         <form class="form-horizontal" name="signup_form" data-ng-submit="signup(user, signup_form);">
@@ -86,10 +85,10 @@
                     </div>
 
                     <div class="additional-background">
-                        <div class="logo-container">
-                            <div class="logo"></div>
+                        <div class="version-container">
+                            <img class="logo" ng-if="companyLogo.value" src="{{ companyLogo.value }}">
                         </div>
-                        <robo></robo>
+                        <bg-instance></bg-instance>
                     </div>
                 </div>
             </div>
