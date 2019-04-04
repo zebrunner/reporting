@@ -32,6 +32,10 @@ const authController = function authController($scope, $rootScope, $location, $s
     $scope.forgotPasswordType = {};
     $scope.forgotPasswordEmailWasSent = false;
 
+    Object.defineProperty($scope, 'companyLogo', {
+       get: () => $rootScope.companyLogo,
+    });
+
     $scope.emailType = {};
 
     $scope.forgotPassword = function (forgotPassword) {

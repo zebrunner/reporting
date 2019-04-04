@@ -1,9 +1,9 @@
 (function () {
     'use strict';
 
-    angular.module('app.robo').directive('robo', function () {
+    angular.module('app.bgInstance').directive('bgInstance', function () {
         return {
-            template: require('./robo.html'),
+            template: require('./bg-instance.html'),
             restrict: 'E',
             replace: true,
         };

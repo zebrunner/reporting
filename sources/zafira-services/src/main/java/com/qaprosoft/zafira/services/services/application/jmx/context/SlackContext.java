@@ -22,8 +22,9 @@ public class SlackContext extends AbstractContext
 
     private Slack slack;
 
-    public SlackContext(String webHook, String author, String picPath)
+    public SlackContext(String webHook, String author, String picPath, boolean enabled)
     {
+        super(enabled);
         this.slack = new Slack(webHook);
         this.slack = this.slack.displayName(author);
         this.slack = this.slack.icon(picPath);

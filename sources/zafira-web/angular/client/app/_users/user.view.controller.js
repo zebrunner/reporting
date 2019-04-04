@@ -1,6 +1,8 @@
 'use strict';
 
-const UserViewController = function UserViewController($scope, $rootScope, $location, $state, $mdDialog, UserService, GroupService, InvitationService, AuthService) {
+const UserViewController = function UserViewController($scope, $rootScope, $location, $state, $mdDialog,
+                                                       UserService, GroupService, InvitationService,
+                                                       AuthService, toolsService) {
     'ngInject';
 
     let DEFAULT_SC = {
@@ -60,7 +62,7 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
         selectedTabIndex: 0,
 
         get tools() {
-            return $rootScope.tools;
+            return toolsService.tools;
         }
     }
 
@@ -283,7 +285,7 @@ const UserViewController = function UserViewController($scope, $rootScope, $loca
             fullscreen: true,
             locals: {
                 groups: GroupService.groups,
-                isLDAPConnected: $rootScope.tools['LDAP']
+                isLDAPConnected: vm.tools['LDAP']
             }
         })
             .then(function (invitations) {

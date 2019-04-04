@@ -62,6 +62,7 @@ public class GoogleService implements IJMXService<GoogleContext>
 	{
 		String originName = null;
 		byte[] credsFile = null;
+		boolean enabled = false;
 
 		try {
 			List<Setting> googleSettings = settingsService.getSettingsByTool(GOOGLE);
@@ -74,11 +75,14 @@ public class GoogleService implements IJMXService<GoogleContext>
 						credsFile = setting.getFile();
 						originName = setting.getValue();
 						break;
+					case GOOGLE_ENABLED:
+						enabled = Boolean.valueOf(setting.getValue());
+						break;
 					default:
 						break;
 				}
 			}
-			init(credsFile, originName);
+			init(credsFile, originName, enabled);
 		} catch (Exception e) {
 			LOGGER.error("Setting does not exist", e);
 		}
@@ -87,11 +91,12 @@ public class GoogleService implements IJMXService<GoogleContext>
 	@ManagedOperation(description = "Change Google initialization")
 	@ManagedOperationParameters({
 			@ManagedOperationParameter(name = "originName", description = "Google origin name file"),
-			@ManagedOperationParameter(name = "credsFile", description = "Google creds file") })
-	public void init(byte[] credsFile, String originName) {
+			@ManagedOperationParameter(name = "credsFile", description = "Google creds file"),
+			@ManagedOperationParameter(name = "enabled", description = "Google enabled") })
+	public void init(byte[] credsFile, String originName, boolean enabled) {
 		try {
 			if (!StringUtils.isEmpty(originName) && credsFile != null) {
-				putContext(GOOGLE, new GoogleContext(credsFile, originName));
+				putContext(GOOGLE, new GoogleContext(credsFile, originName, enabled));
 				driveService = new GoogleDriveService(credsFile);
 				spreadsheetsService = new GoogleSpreadsheetsService(credsFile);
 			}

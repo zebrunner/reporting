@@ -5,7 +5,7 @@ import IssuesModalController from '../../components/modals/issues/issues.control
 
 const testDetailsController = function testDetailsController($scope, $rootScope, $q, TestService, API_URL,
                                                              modalsService, $state, $transitions,
-                                                             UtilService, $mdDialog) {
+                                                             UtilService, $mdDialog, toolsService) {
     'ngInject';
 
     const testGroupDataToStore = {
@@ -41,6 +41,7 @@ const testDetailsController = function testDetailsController($scope, $rootScope,
         get empty() {
             return !Object.keys(vm.testRun.tests || {}).length ;
         },
+        get jira() { return toolsService.jira; },
         openImagesViewerModal,
     };
 
@@ -449,8 +450,6 @@ const testDetailsController = function testDetailsController($scope, $rootScope,
                 test: test,
                 isNewIssue: isNew.issue,
                 isNewTask: isNew.task,
-                isConnectedToJira: $rootScope.tools['JIRA'],
-                isJiraEnabled: $rootScope.jira.enabled
             }
         })
         .catch(function(response) {

@@ -18,6 +18,7 @@ package com.qaprosoft.zafira.ws.controller;
 import javax.validation.Valid;
 
 import com.qaprosoft.zafira.models.db.Invitation;
+import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.dto.auth.*;
 import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
 import com.qaprosoft.zafira.models.dto.user.PasswordType;
@@ -52,6 +53,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+
+import static com.qaprosoft.zafira.models.db.Setting.Tool.LDAP;
 
 @Controller
 @Api(value = "Auth API")
@@ -150,7 +153,7 @@ public class AuthAPIController extends AbstractController {
 			throw new ForbiddenOperationException();
 		}
 		if(invitation.getSource().equals(User.Source.LDAP)) {
-			if(ldapService.searchUser(userType.getUsername()) == null) {
+			if(ldapService.isEnabledAndConnected(LDAP) && ldapService.searchUser(userType.getUsername()) == null) {
 				throw new ForbiddenOperationException();
 			}
 		}

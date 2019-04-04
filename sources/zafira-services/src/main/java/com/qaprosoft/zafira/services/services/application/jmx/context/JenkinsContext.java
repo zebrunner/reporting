@@ -30,7 +30,8 @@ public class JenkinsContext extends AbstractContext {
     private String launcherJobName;
     private String jenkinsHost;
 
-    public JenkinsContext(String url, String username, String passwordOrApiToken, String launcherJobName) {
+    public JenkinsContext(String url, String username, String passwordOrApiToken, String launcherJobName, boolean enabled) {
+        super(enabled);
         try {
             JenkinsConfig config = new JenkinsConfig(username, passwordOrApiToken, HTTP_TIMEOUT);
             this.jenkinsServer = new JenkinsServer(new JenkinsClient(new URI(url), config));

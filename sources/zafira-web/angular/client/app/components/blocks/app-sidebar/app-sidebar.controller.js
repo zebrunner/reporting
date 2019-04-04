@@ -15,9 +15,8 @@
         $scope.DashboardService = DashboardService;
 
         $scope.version = null;
-        $rootScope.dashboardList = [];
+        $scope.dashboardList = [];
         $scope.views = [];
-        $scope.tools = {};
         $scope.$state = $state;
 
         $scope.hasHiddenDashboardPermission = function(){
@@ -59,7 +58,7 @@
                 if ($scope.hasHiddenDashboardPermission() == true) {
                     DashboardService.GetDashboards().then(function (rs) {
                         if (rs.success) {
-                            $rootScope.dashboardList = rs.data;
+                            $scope.dashboardList = rs.data;
                             resolve(rs.data);
                         } else {
                             reject(rs.message);
@@ -70,7 +69,7 @@
                     var hidden = true;
                     DashboardService.GetDashboards(hidden).then(function (rs) {
                         if (rs.success) {
-                            $rootScope.dashboardList = rs.data;
+                            $scope.dashboardList = rs.data;
                             resolve(rs.data);
                         } else {
                             reject(rs.message);
@@ -83,7 +82,7 @@
         $scope.showViewDialog = function(event, view) {
             $mdDialog.show({
                 controller: ViewController,
-                template: require('../../../_nav/view_modal.html'), //TODO: move to separate component
+                template: require('./view_modal.html'), //TODO: move to separate component
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,

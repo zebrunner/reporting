@@ -31,4 +31,9 @@ public interface IJMXService<T extends AbstractContext> {
     default void putContext(Tool tool, T t) {
         JMXTenancyStorage.<T>putContext(tool, t);
     }
+
+    default boolean isEnabledAndConnected(Tool tool) {
+        T context = getContext(tool);
+        return context != null && context.isEnabled() && isConnected();
+    }
 }
