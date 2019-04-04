@@ -414,6 +414,7 @@ const dashboardController = function dashboardController($scope, $rootScope, $q,
                 isNew: isNew
             }
         })
+        //TODO: what the reason of this action?
         .then(function (rs) {
             if(rs) {
                 switch(rs.action) {

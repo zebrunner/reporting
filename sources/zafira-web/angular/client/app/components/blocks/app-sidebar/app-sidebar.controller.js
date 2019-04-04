@@ -15,7 +15,7 @@
         $scope.DashboardService = DashboardService;
 
         $scope.version = null;
-        $rootScope.dashboardList = [];
+        $scope.dashboardList = [];
         $scope.views = [];
         $scope.$state = $state;
 
@@ -58,7 +58,7 @@
                 if ($scope.hasHiddenDashboardPermission() == true) {
                     DashboardService.GetDashboards().then(function (rs) {
                         if (rs.success) {
-                            $rootScope.dashboardList = rs.data;
+                            $scope.dashboardList = rs.data;
                             resolve(rs.data);
                         } else {
                             reject(rs.message);
@@ -69,7 +69,7 @@
                     var hidden = true;
                     DashboardService.GetDashboards(hidden).then(function (rs) {
                         if (rs.success) {
-                            $rootScope.dashboardList = rs.data;
+                            $scope.dashboardList = rs.data;
                             resolve(rs.data);
                         } else {
                             reject(rs.message);
