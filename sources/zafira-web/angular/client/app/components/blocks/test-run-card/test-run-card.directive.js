@@ -8,7 +8,7 @@
                                                        testsRunsService, $rootScope, UtilService,
                                                        $state, $timeout, $mdDialog, $mdToast,
                                                        SlackService, TestRunService, UserService,
-                                                       $interval, DownloadService) {
+                                                       $interval, DownloadService, toolsService) {
                 'ngInject';
 
                 const local = {
@@ -17,7 +17,6 @@
                     stopConnectingDebug: null,
                     debugHost: null,
                     debugPort: null,
-                    get jenkins() { return $rootScope.jenkins; },
                 };
                 const vm = {
                     testRun: null,
@@ -50,7 +49,7 @@
                     goToTestRun: goToTestRun,
                     onBackClick: onBackClick,
 
-                    get tools() { return $rootScope.tools; },
+                    get tools() { return toolsService.tools; },
                     get currentOffset() { return $rootScope.currentOffset; },
                 };
 
@@ -82,7 +81,7 @@
 
                 function initMenuRights() {
                     vm.showNotifyInSlackOption = (vm.isSlackAvailable && vm.testRun.slackChannels) && vm.testRun.reviewed;
-                    vm.showBuildNowOption = local.jenkins.enabled;
+                    vm.showBuildNowOption = toolsService.jenkins.enabled;
                     vm.showDeleteTestRunOption = true;
                 }
 
@@ -255,7 +254,6 @@
                         fullscreen: true,
                         locals: {
                             testRun: vm.testRun,
-                            jenkins: local.jenkins
                         }
                     });
                 }
@@ -366,7 +364,7 @@
                 }
 
                 function abortDebug(debuggedTestRun) {
-                    if (local.jenkins.enabled) {
+                    if (toolsService.jenkins.enabled) {
                         TestRunService.abortDebug(debuggedTestRun.id, debuggedTestRun.ciRunId).then(function (rs) {
                             if (rs.success) {
                                 const abortCause = {};
@@ -404,7 +402,7 @@
                 }
 
                 function abort() {
-                    if (local.jenkins.enabled) {
+                    if (toolsService.jenkins.enabled) {
                         TestRunService.abortCIJob(vm.testRun.id, vm.testRun.ciRunId).then(function (rs) {
                             if (rs.success) {
                                 const abortCause = {};

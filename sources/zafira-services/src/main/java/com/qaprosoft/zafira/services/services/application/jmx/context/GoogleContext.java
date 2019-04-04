@@ -21,7 +21,8 @@ public class GoogleContext extends AbstractContext
     private final byte[] credsFile;
     private final String credsFileOriginName;
 
-    public GoogleContext(byte[] credsFile, String credsFileOriginName) {
+    public GoogleContext(byte[] credsFile, String credsFileOriginName, boolean enabled) {
+        super(enabled);
         this.credsFile = credsFile;
         this.credsFileOriginName = credsFileOriginName;
     }

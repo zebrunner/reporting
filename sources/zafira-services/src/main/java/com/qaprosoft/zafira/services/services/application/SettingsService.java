@@ -130,7 +130,7 @@ public class SettingsService {
     }
 
     public boolean isConnected(Tool tool) {
-        return tool != null && !tool.equals(Tool.CRYPTO) && getServiceByTool(tool).isConnected();
+        return tool != null && !tool.equals(Tool.CRYPTO) && getServiceByTool(tool).isEnabledAndConnected(tool);
     }
 
     @Transactional(readOnly = true)
@@ -192,13 +192,14 @@ public class SettingsService {
      * @param tenant whose integration was updated
      */
     public void notifyToolReinitiated(Tool tool, String tenant) {
-        eventPushService.convertAndSend(EventPushService.Type.SETTINGS, new ReinitEventMessage(tenant, tool));
+        eventPushService.convertAndSend(EventPushService.Type.SETTINGS, new ReinitEventMessage(tenant, rabbitMQService.getSettingQueueName(), tool));
+        getServiceByTool(tool).init();
     }
 
     @RabbitListener(queues = "#{settingsQueue.name}")
     public void process(Message message) {
         ReinitEventMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
-        if (getServiceByTool(rm.getTool()) != null) {
+        if (! rabbitMQService.isSettingQueueConsumer(rm.getQueueName()) && getServiceByTool(rm.getTool()) != null) {
             TenancyContext.setTenantName(rm.getTenancy());
             getServiceByTool(rm.getTool()).init();
         }

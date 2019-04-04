@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
+import static com.qaprosoft.zafira.models.db.Setting.Tool.JIRA;
 import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_BLOCKER;
 import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_KNOWN_ISSUE;
 import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.REMOVE_BLOCKER;
@@ -193,7 +194,7 @@ public class TestService
 				if (knownIssue != null)
 				{
 					Issue issueFromJira = jiraService.getIssue(knownIssue.getJiraId());
-					boolean isJiraIdClosed = jiraService.isConnected() && issueFromJira != null
+					boolean isJiraIdClosed = jiraService.isEnabledAndConnected(JIRA) && issueFromJira != null
 							&& jiraService.isIssueClosed(issueFromJira);
 					if (!isJiraIdClosed)
 					{

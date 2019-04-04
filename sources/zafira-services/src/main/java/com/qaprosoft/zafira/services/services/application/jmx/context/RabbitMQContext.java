@@ -20,6 +20,9 @@ import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.amqp.rabbit.connection.ConnectionListener;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class RabbitMQContext extends AbstractContext
 {
@@ -28,8 +31,9 @@ public class RabbitMQContext extends AbstractContext
     private Connection connection;
     private CompletableFuture<Connection> connectionCompletableFuture;
 
-    public RabbitMQContext(String host, String port, String username, String password)
+    public RabbitMQContext(String host, String port, String username, String password, boolean enabled)
     {
+        super(enabled);
         this.cachingConnectionFactory = new CachingConnectionFactory(host, Integer.parseInt(port));
         this.cachingConnectionFactory.setUsername(username);
         this.cachingConnectionFactory.setPassword(password);
@@ -47,14 +51,6 @@ public class RabbitMQContext extends AbstractContext
                 //connection = cachingConnectionFactory.createConnection();
             }
         });
-        this.connectionCompletableFuture = CompletableFuture.supplyAsync(() -> {
-            this.connection = this.cachingConnectionFactory.createConnection();
-            return this.connection;
-        });
-    }
-
-    public CompletableFuture<?> getConnectionCompletableFuture() {
-        return CompletableFuture.allOf(this.connectionCompletableFuture);
     }
 
     public CachingConnectionFactory getCachingConnectionFactory()
@@ -67,13 +63,29 @@ public class RabbitMQContext extends AbstractContext
         this.cachingConnectionFactory = cachingConnectionFactory;
     }
 
+    /**
+     * Gets new connection from RabbitMQ connections factory.
+     * If connection is not established, tries to retrieve it from factory using
+     *   previously instantiated connection completable future or creates a completable future if it doesn't exist.
+     * Compleatble future interrupts after 15 seconds if completable future does not completed yet
+     * @return retrieved connection
+     */
     public Connection getConnection()
     {
+        if(connection == null || ! connection.isOpen()) {
+            if(connectionCompletableFuture == null || connectionCompletableFuture.isDone()) {
+                this.connectionCompletableFuture = CompletableFuture.supplyAsync(() -> {
+                    this.connection = this.cachingConnectionFactory.createConnection();
+                    return this.connection;
+                });
+            }
+            try {
+                connection = connectionCompletableFuture.get(15, TimeUnit.SECONDS);
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
         return connection;
     }
 
-    public void setConnection(Connection connection)
-    {
-        this.connection = connection;
-    }
 }

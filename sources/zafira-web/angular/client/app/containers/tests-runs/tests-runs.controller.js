@@ -2,7 +2,8 @@
 
 const testsRunsController = function testsRunsController($cookieStore, $mdDialog, $timeout, $q, TestRunService,
                                                          UtilService, UserService, testsRunsService, $scope, API_URL,
-                                                         $rootScope, $transitions, windowWidthService, TestService) {
+                                                         $rootScope, $transitions, windowWidthService, TestService,
+                                                         toolsService) {
     'ngInject';
 
     let TENANT;
@@ -35,8 +36,8 @@ const testsRunsController = function testsRunsController($cookieStore, $mdDialog
         resetFilter: resetFilter,
         displaySearch: displaySearch,
 
-        get jenkins() { return $rootScope.jenkins; },
-        get tools() { return $rootScope.tools; },
+        get jenkins() { return toolsService.jenkins; },
+        get tools() { return toolsService.tools; },
     };
 
     vm.$onInit = init;
@@ -425,7 +426,7 @@ const testsRunsController = function testsRunsController($cookieStore, $mdDialog
         const onTransStartSubscription = $transitions.onStart({}, function(trans) {
             const toState = trans.to();
 
-            if (toState.name !== 'tests/run'){
+            if (toState.name !== 'tests.runDetails'){
                 TestService.clearDataCache();
             }
             onTransStartSubscription();

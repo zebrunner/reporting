@@ -18,12 +18,13 @@ package com.qaprosoft.zafira.services.services.application.jmx;
 import static com.qaprosoft.zafira.models.db.Setting.Tool.RABBITMQ;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
@@ -45,12 +46,17 @@ public class RabbitMQService implements IJMXService<RabbitMQContext> {
     @Autowired
     private CryptoService cryptoService;
 
+    @Autowired
+    @Qualifier("settingsQueue")
+    private Queue settingsQueue;
+
     @Override
     public void init() {
         String host = null;
         String port = null;
         String username = null;
         String password = null;
+        boolean enabled = false;
 
         try {
             List<Setting> rabbitmqSettings = settingsService.getSettingsByTool(RABBITMQ);
@@ -71,11 +77,14 @@ public class RabbitMQService implements IJMXService<RabbitMQContext> {
                 case RABBITMQ_PASSWORD:
                     password = setting.getValue();
                     break;
+                case RABBITMQ_ENABLED:
+                    enabled = Boolean.valueOf(setting.getValue());
+                    break;
                 default:
                     break;
                 }
             }
-            init(host, port, username, password);
+            init(host, port, username, password, enabled);
         } catch (Exception e) {
             LOGGER.error("Setting does not exist", e);
         }
@@ -86,17 +95,25 @@ public class RabbitMQService implements IJMXService<RabbitMQContext> {
             @ManagedOperationParameter(name = "host", description = "RabbitMQ host"),
             @ManagedOperationParameter(name = "port", description = "RabbitMQ port"),
             @ManagedOperationParameter(name = "username", description = "RabbitMQ username"),
-            @ManagedOperationParameter(name = "password", description = "RabbitMQ password") })
-    public void init(String host, String port, String username, String password) {
+            @ManagedOperationParameter(name = "password", description = "RabbitMQ password"),
+            @ManagedOperationParameter(name = "enabled", description = "RabbitMQ enabled") })
+    public void init(String host, String port, String username, String password, boolean enabled) {
         try {
             if (!StringUtils.isEmpty(host) && !StringUtils.isEmpty(port) && !StringUtils.isEmpty(username)
                     && !StringUtils.isEmpty(password)) {
-                putContext(RABBITMQ, new RabbitMQContext(host, port, username, password));
-                getContext(RABBITMQ).getConnectionCompletableFuture().get(15, TimeUnit.SECONDS);
+                putContext(RABBITMQ, new RabbitMQContext(host, port, username, password, enabled));
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize RabbitMQ integration: " + e.getMessage());
         }
+    }
+
+    public String getSettingQueueName() {
+        return this.settingsQueue.getName();
+    }
+
+    public boolean isSettingQueueConsumer(String settingQueueName) {
+        return settingQueueName.equals(getSettingQueueName());
     }
 
     @Override
@@ -108,4 +125,5 @@ public class RabbitMQService implements IJMXService<RabbitMQContext> {
     public Connection getConnection() {
         return getContext(RABBITMQ) != null ? getContext(RABBITMQ).getConnection() : null;
     }
+
 }

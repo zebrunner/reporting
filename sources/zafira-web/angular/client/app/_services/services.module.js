@@ -1,9 +1,9 @@
-(function () {
-    'use strict';
+'use strict';
 
-    angular.module('app.services', []);
+import toolsService from './tools/tools.service';
 
-})();
+angular.module('app.services', [])
+    .service({ toolsService });
 
 require('./auth.intercepter');
 require('./utils/HttpMockResolver');

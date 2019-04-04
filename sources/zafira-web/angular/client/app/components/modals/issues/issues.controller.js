@@ -1,14 +1,13 @@
 'use strict';
 const IssuesModalController = function IssuesModalController(
         $scope, $mdDialog, $interval, SettingsService, TestService,
-        test, isNewIssue, isConnectedToJira, isJiraEnabled) {
+        test, isNewIssue, toolsService) {
     'ngInject';
         
     const vm = {
         isNewIssue: isNewIssue,
         issueJiraIdInputIsChanged: false,
         selectedIssue: false,
-        isConnectedToJira: false,
         issueJiraIdExists: false,
         issueTabDisabled: true,
         isIssueFound: true,
@@ -35,6 +34,7 @@ const IssuesModalController = function IssuesModalController(
         hide: hide,
         cancel: cancel,
         bindEvents: bindEvents,
+        get isConnectedToJira() { return toolsService.jira.enabled; },
     };
 
     vm.$onInit = initController;
@@ -42,9 +42,6 @@ const IssuesModalController = function IssuesModalController(
     return vm;
 
     function initController() {
-        if (JSON.parse(isJiraEnabled)) {
-            vm.isConnectedToJira = isConnectedToJira;
-        }
         getJiraClosedStatusName();
         initAttachedWorkItems();
         initNewIssue();
