@@ -49,6 +49,7 @@ public class LDAPService implements IJMXService<LDAPContext> {
         String url = null;
         String managerUser = null;
         String managerPassword = null;
+        boolean enabled = false;
 
         try {
             List<Setting> ldapSettings = settingsService.getSettingsByTool(LDAP);
@@ -75,11 +76,14 @@ public class LDAPService implements IJMXService<LDAPContext> {
                     case LDAP_MANAGER_PASSWORD:
                         managerPassword = setting.getValue();
                         break;
+                    case LDAP_ENABLED:
+                        enabled = Boolean.valueOf(setting.getValue());
+                        break;
                     default:
                         break;
                 }
             }
-            init(dn, searchFilter, url, managerUser, managerPassword);
+            init(dn, searchFilter, url, managerUser, managerPassword, enabled);
         } catch(Exception e) {
             LOGGER.error("Setting does not exist", e);
         }
@@ -91,12 +95,13 @@ public class LDAPService implements IJMXService<LDAPContext> {
             @ManagedOperationParameter(name = "searchFilter", description = "Ldap search filter"),
             @ManagedOperationParameter(name = "url", description = "Ldap url"),
             @ManagedOperationParameter(name = "managerUser", description = "Ldap manager user"),
-            @ManagedOperationParameter(name = "managerPassword", description = "Ldap manager password")})
-    public void init(String dn, String searchFilter, String url, String managerUser, String managerPassword){
+            @ManagedOperationParameter(name = "managerPassword", description = "Ldap manager password"),
+            @ManagedOperationParameter(name = "enabled", description = "Ldap enabled")})
+    public void init(String dn, String searchFilter, String url, String managerUser, String managerPassword, boolean enabled){
         try
         {
             if(!StringUtils.isBlank(dn) && !StringUtils.isBlank(searchFilter) && !StringUtils.isBlank(url) && !StringUtils.isBlank(managerUser) && !StringUtils.isBlank(managerPassword)) {
-                putContext(LDAP, new LDAPContext(dn, searchFilter, url, managerUser, managerPassword));
+                putContext(LDAP, new LDAPContext(dn, searchFilter, url, managerUser, managerPassword, enabled));
             }
         } catch (Exception e)
         {

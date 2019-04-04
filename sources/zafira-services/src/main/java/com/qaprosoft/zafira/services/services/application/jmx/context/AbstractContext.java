@@ -20,4 +20,18 @@ import org.apache.log4j.Logger;
 public abstract class AbstractContext {
 
     protected static final Logger LOGGER = Logger.getLogger(AbstractContext.class);
+
+    private Boolean enabled;
+
+    public AbstractContext(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 }

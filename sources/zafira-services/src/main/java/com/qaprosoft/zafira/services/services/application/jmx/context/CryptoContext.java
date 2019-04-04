@@ -28,6 +28,7 @@ public class CryptoContext extends AbstractContext
 
     public CryptoContext(String type, int size, String key, String salt)
     {
+        super(true);
         this.type = type;
         this.size = size;
         this.key = key;

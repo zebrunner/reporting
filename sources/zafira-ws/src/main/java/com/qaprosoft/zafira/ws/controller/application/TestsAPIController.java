@@ -64,6 +64,8 @@ import io.swagger.annotations.ApiParam;
 import net.rcarz.jiraclient.Issue;
 import springfox.documentation.annotations.ApiIgnore;
 
+import static com.qaprosoft.zafira.models.db.Setting.Tool.JIRA;
+
 @Controller
 @Api(value = "Tests API")
 @RequestMapping("api/tests")
@@ -287,7 +289,7 @@ public class TestsAPIController extends AbstractController
 	@RequestMapping(value = "jira/connect", method = RequestMethod.GET)
 	public @ResponseBody boolean getConnectionToJira()
 	{
-		return jiraService.isConnected();
+		return jiraService.isEnabledAndConnected(JIRA);
 	}
 	
 	@ResponseStatusDetails

@@ -81,6 +81,7 @@ public class AmazonService implements IJMXService<AmazonContext> {
         String privateKey = null;
         String region = null;
         String bucket = null;
+        Boolean enabled = false;
 
         try {
             List<Setting> amazonSettings = settingsService.getSettingsByTool(AMAZON);
@@ -101,11 +102,14 @@ public class AmazonService implements IJMXService<AmazonContext> {
                 case AMAZON_BUCKET:
                     bucket = setting.getValue();
                     break;
+                case AMAZON_ENABLED:
+                    enabled = Boolean.valueOf(setting.getValue());
+                    break;
                 default:
                     break;
                 }
             }
-            init(accessKey, privateKey, region, bucket);
+            init(accessKey, privateKey, region, bucket, enabled);
         } catch (Exception e) {
             LOGGER.error("Setting does not exist", e);
         }
@@ -116,12 +120,13 @@ public class AmazonService implements IJMXService<AmazonContext> {
             @ManagedOperationParameter(name = "accessKey", description = "Amazon access key"),
             @ManagedOperationParameter(name = "privateKey", description = "Amazon private key"),
             @ManagedOperationParameter(name = "region", description = "Amazon region"),
-            @ManagedOperationParameter(name = "bucket", description = "Amazon bucket")})
-    public void init(String accessKey, String privateKey, String region, String bucket) {
+            @ManagedOperationParameter(name = "bucket", description = "Amazon bucket"),
+            @ManagedOperationParameter(name = "enabled", description = "Amazon enabled")})
+    public void init(String accessKey, String privateKey, String region, String bucket, Boolean enabled) {
         try {
             if (!StringUtils.isBlank(accessKey) && !StringUtils.isBlank(privateKey) && !StringUtils.isBlank(region)
                     && !StringUtils.isBlank(bucket)) {
-                putContext(AMAZON, new AmazonContext(accessKey, privateKey, region, bucket, clientConfiguration));
+                putContext(AMAZON, new AmazonContext(accessKey, privateKey, region, bucket, clientConfiguration, enabled));
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize Amazon integration: " + e.getMessage());
@@ -209,7 +214,7 @@ public class AmazonService implements IJMXService<AmazonContext> {
      */
     public SessionCredentials getTemporarySessionCredentials(int expiresIn) {
         SessionCredentials result = null;
-        if (isConnected()) {
+        if (isEnabledAndConnected(AMAZON)) {
             GetSessionTokenRequest getSessionTokenRequest = new GetSessionTokenRequest();
             GetSessionTokenResult getSessionTokenResult;
             getSessionTokenRequest.setDurationSeconds(expiresIn);

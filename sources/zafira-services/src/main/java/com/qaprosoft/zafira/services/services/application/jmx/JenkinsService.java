@@ -75,6 +75,7 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
         String username = null;
         String passwordOrApiToken = null;
         String launcherJobName = null;
+        boolean enabled = false;
 
         try {
             List<Setting> jenkinsSettings = settingsService.getSettingsByTool(JENKINS);
@@ -95,11 +96,14 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
                 case JENKINS_LAUNCHER_JOB_NAME:
                     launcherJobName = setting.getValue();
                     break;
+                case JENKINS_ENABLED:
+                    enabled = Boolean.valueOf(setting.getValue());
+                    break;
                 default:
                     break;
                 }
             }
-            init(url, username, passwordOrApiToken, launcherJobName);
+            init(url, username, passwordOrApiToken, launcherJobName, enabled);
         } catch (Exception e) {
             LOGGER.error("Setting does not exist", e);
         }
@@ -110,11 +114,12 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
             @ManagedOperationParameter(name = "url", description = "Jenkins url"),
             @ManagedOperationParameter(name = "username", description = "Jenkins username"),
             @ManagedOperationParameter(name = "passwordOrApiToken", description = "Jenkins passwordOrApiToken or api token"),
-            @ManagedOperationParameter(name = "launcherJobName", description = "Jenkins launcher job name") })
-    public void init(String url, String username, String passwordOrApiToken, String launcherJobName) {
+            @ManagedOperationParameter(name = "launcherJobName", description = "Jenkins launcher job name"),
+            @ManagedOperationParameter(name = "enabled", description = "Jenkins enabled") })
+    public void init(String url, String username, String passwordOrApiToken, String launcherJobName, Boolean enabled) {
         try {
             if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(passwordOrApiToken)) {
-                putContext(JENKINS, new JenkinsContext(url, username, passwordOrApiToken, launcherJobName));
+                putContext(JENKINS, new JenkinsContext(url, username, passwordOrApiToken, launcherJobName, enabled));
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize Jenkins integration: " + e.getMessage());

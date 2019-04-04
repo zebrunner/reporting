@@ -30,8 +30,9 @@ public class JiraContext extends AbstractContext
     private BasicCredentials credentials;
     private JiraClient jiraClient;
 
-    public JiraContext(String url, String username, String password)
+    public JiraContext(String url, String username, String password, boolean enabled)
     {
+        super(enabled);
         this.credentials = new BasicCredentials(username, password);
         this.jiraClient = new JiraClient(url, credentials);
         final HttpParams httpParams = new BasicHttpParams();
