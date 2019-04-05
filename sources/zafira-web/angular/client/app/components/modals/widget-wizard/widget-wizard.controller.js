@@ -87,6 +87,26 @@ const widgetWizardController = function WidgetWizardController($scope, $mdDialog
         }
     };
 
+    $scope.switchInputEnabled = function(paramValue) {
+        if(paramValue.input_enabled) {
+            paramValue.value = paramValue.values && paramValue.values.length ? paramValue.values[0] : undefined;
+        } else {
+            paramValue.value = undefined;
+        }
+    };
+
+    $scope.hasEmptyOptionalParams = function (revert) {
+        var result = false;
+        angular.forEach($scope.widgetBuilder.paramsConfigObject, function (value, key) {
+            var predicate = revert ? value.input_enabled : ! value.input_enabled;
+            if(! value.required && predicate) {
+                result = true;
+                return;
+            }
+        });
+        return result;
+    };
+
     function replaceFontSize(chartConfStr) {
         if(! chartConfStr)
             return;
