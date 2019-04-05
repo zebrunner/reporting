@@ -531,7 +531,7 @@ public class ZafiraLogAppender extends AppenderSkeleton
 			} else {
 				testId = ZafiraListener.getThreadCiTestId();
 			}
-			this.correlationId = testId != null ? routingKey + "_" + String.valueOf(testId) : routingKey;
+			this.correlationId = testId != null ? routingKey + "_" + testId : routingKey;
 		}
 
 		/**
