@@ -29,7 +29,6 @@ const authController = function authController($scope, $rootScope, $location, $s
 
     var token;
 
-    $scope.companyLogo = $rootScope.companyLogo;
     $scope.forgotPasswordType = {};
     $scope.forgotPasswordEmailWasSent = false;
 
