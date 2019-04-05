@@ -473,7 +473,7 @@ public class TestRunService
 			{
 				for (Test test : tests)
 				{
-					if (IN_PROGRESS.equals(test.getStatus()) || QUEUED.equals(test.getStatus()))
+					if (IN_PROGRESS.equals(test.getStatus()))
 					{
 						testService.skipTest(test);
 					}
