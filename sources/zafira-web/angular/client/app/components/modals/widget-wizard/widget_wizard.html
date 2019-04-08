@@ -81,7 +81,7 @@
                                 </md-input-container>
                             </zf-input-container>
                         </div>
-                        <md-switch ng-init="paramValue.input_enabled = paramValue.multiple ? !! paramValue.value && !! paramValue.value.length : !! paramValue.value" ng-model="paramValue.input_enabled" ng-change="switchInputEnabled(paramValue)" aria-label="extended_switch"></md-switch>
+                        <md-switch ng-init="paramValue.input_enabled = paramValue.multiple ? !! paramValue.value && !! paramValue.value.length : !! paramValue.value" class="md-primary" ng-model="paramValue.input_enabled" ng-change="switchInputEnabled(paramValue)" aria-label="extended_switch"></md-switch>
                     </div>
                 </ng-form>
                 <div ng-show="hasEmptyOptionalParams(false)" class="widget-wizard_container_elements_show-more" md-no-ink>
