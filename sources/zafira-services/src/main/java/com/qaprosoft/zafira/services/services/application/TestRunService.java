@@ -80,7 +80,7 @@ public class TestRunService
 	public static final String DEFAULT_PROJECT = "UNKNOWN";
 
 	public enum FailureCause {
-		UNRECOGNIZED_FAILURE("UNRECOGNIZEDFAILURE"),
+		UNRECOGNIZED_FAILURE("UNRECOGNIZED FAILURE"),
 		COMPILATION_FAILURE("COMPILATION FAILURE"),
 		TIMED_OUT("TIMED OUT"),
 		BUILD_FAILURE("BUILD FAILURE"),
@@ -624,7 +624,9 @@ public class TestRunService
     {
         boolean failure = false;
         if(StringUtils.isNotEmpty(comments)){
-            if(comments.contains(FailureCause.BUILD_FAILURE.getCause()) || comments.contains(FailureCause.COMPILATION_FAILURE.getCause())){
+            if(comments.contains(FailureCause.BUILD_FAILURE.getCause()) ||
+					comments.contains(FailureCause.COMPILATION_FAILURE.getCause()) ||
+					comments.contains(FailureCause.UNRECOGNIZED_FAILURE.getCause())){
                 failure = true;
             }
         }
