@@ -19,6 +19,8 @@ import java.util.List;
 
 import com.qaprosoft.zafira.models.db.User;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +39,9 @@ public class JobsService
 	
 	@Autowired
 	private JobViewMapper jobViewMapper;
-	
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(JobsService.class);
+
 	@Transactional(rollbackFor = Exception.class)
 	public void createJob(Job job) throws ServiceException
 	{
@@ -46,7 +50,7 @@ public class JobsService
 
 	//Check the same logics in ZafiraClient method registerJob
 	@Transactional(rollbackFor = Exception.class)
-	public Job createOrUpdateJobByURL(String jobUrl, User user) throws ServiceException
+	public Job createOrUpdateJobByURL(String jobUrl, User user)
 	{
 		jobUrl = jobUrl.replaceAll("/$", "");
 		String jobName = StringUtils.substringAfterLast(jobUrl, "/");
@@ -60,7 +64,11 @@ public class JobsService
 			jenkinsHost = jobUrl.split("/job/")[0];
 		}
 		Job job = new Job(jobName, jobUrl, jenkinsHost, user);
-		job = createOrUpdateJob(job);
+		try {
+			job = createOrUpdateJob(job);
+		} catch (ServiceException e){
+			LOGGER.error("Unable to create or update job");
+		}
 		return job;
 	}
 

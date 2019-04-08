@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.qaprosoft.zafira.models.dto.CreateLauncherParamsType;
@@ -63,6 +64,7 @@ public class LauncherService {
     @Value("${zafira.webservice.url}")
     private String apiURL;
 
+
     @Transactional(rollbackFor = Exception.class)
     public Launcher createLauncher(Launcher launcher) throws ServiceException {
         if(jenkinsService.getContext() != null) {
@@ -75,25 +77,18 @@ public class LauncherService {
 
     @Transactional(rollbackFor = Exception.class)
     public Launcher createLauncherForJob(CreateLauncherParamsType createLauncherParamsType, User owner) throws ServiceException {
-        Launcher launcher;
-        Job job = jobsService.getJobByJobURL(createLauncherParamsType.getJobUrl());
-        if(job == null){
-            job = jobsService.createOrUpdateJobByURL(createLauncherParamsType.getJobUrl(), owner);
-        }
-        launcher = getLauncherByJobId(job.getId());
-        if(launcher == null){
-            launcher = new Launcher();
+        String jobUrl = createLauncherParamsType.getJobUrl();
+        Job job = Optional.of(jobsService.getJobByJobURL(jobUrl)).orElseGet(() -> jobsService.createOrUpdateJobByURL(jobUrl, owner));
+        ScmAccount scmAccount = Optional.of(scmAccountService.getScmAccountByRepo(createLauncherParamsType.getRepo()))
+                .orElseThrow(() -> new ScmAccountNotFoundException("Unable to find scm account for repo"));
+        Launcher launcher = Optional.of(getLauncherByJobId(job.getId())).orElse(new Launcher());
+        launcher.setModel(new JSONObject(createLauncherParamsType.getJobParameters()).toString());
+        if(launcher.getId() == null){
             launcher.setJob(job);
             launcher.setName(job.getName());
-            ScmAccount scmAccount = scmAccountService.getScmAccountByRepo(createLauncherParamsType.getRepo());
-            if(scmAccount == null){
-                throw new ScmAccountNotFoundException("Unable to find scm account for repo");
-            }
             launcher.setScmAccount(scmAccount);
-            launcher.setModel(new JSONObject(createLauncherParamsType.getJobParameters()).toString());
             launcherMapper.createLauncher(launcher);
         } else {
-            launcher.setModel(new JSONObject(createLauncherParamsType.getJobParameters()).toString());
             launcherMapper.updateLauncher(launcher);
         }
         return launcher;
