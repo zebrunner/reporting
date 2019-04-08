@@ -115,7 +115,7 @@ $wizard-white:          #ffffff;
 
             &_input {
                 margin-bottom: $inner-padding;
-                > * {
+                > *:not(md-switch) {
                     padding-bottom: $inner-padding;
                     vertical-align: middle;
                 }
@@ -124,6 +124,24 @@ $wizard-white:          #ffffff;
                     line-height: 0;
                     min-width: 151px;
                     padding-right: 24px;
+                }
+                md-switch {
+                    padding-left: 16px;
+                    margin: 0;
+                }
+                md-select[disabled] > md-select-value {
+                    background-image: none;
+                }
+            }
+
+            &_show-more {
+                button {
+                    padding: 0;
+                    text-align: left;
+
+                    &:hover {
+                        background-color: transparent !important;
+                    }
                 }
             }
 
@@ -157,6 +175,11 @@ $wizard-white:          #ffffff;
                         }
                     }
                 }
+            }
+
+            .divider {
+                background-color: rgba(0, 0, 0, 0.15);
+                margin: 14px 16px 30px 0;
             }
         }
     }
