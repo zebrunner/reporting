@@ -54,9 +54,9 @@ services:
     depends_on:
       - elasticsearch
   zafira:
-    image: qaprosoft/zafira:latest
+    image: qaprosoft/zafira:1.0
     ports:
-      - 8080:8080
+      - 8082:8080
     env_file:
      - integrations.env
     environment:
@@ -78,3 +78,9 @@ services:
       - "rabbitmq"
       - "redis"
     restart: always
+  zafira-ui:
+    image: qaprosoft/zafira-ui:1.0
+    ports:
+      - 8083:80
+    depends_on:
+      - "zafira"

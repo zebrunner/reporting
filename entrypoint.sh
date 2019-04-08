@@ -3,11 +3,6 @@
 # Change Zafira API URL
 cd $CATALINA_HOME/temp
 
-unzip -qq zafira.war -d zafira
-rm -rf zafira.war
-sed -i -e 's#http://localhost:8080#'"$ZAFIRA_URL"'#g' zafira/config.json
-cd zafira && zip -r ../zafira.war * && cd ..
-
 if [ "$ZAFIRA_LDAP_ENABLED" == "true" ];
 then
   unzip -qq zafira-ws.war -d zafira-ws
@@ -18,7 +13,6 @@ fi
 
 # Place WAR to webapps
 cp zafira-ws.war $CATALINA_HOME/webapps/zafira-ws.war
-cp zafira.war $CATALINA_HOME/webapps/zafira.war
 
 # Clear temp
 rm -rf zafira*
