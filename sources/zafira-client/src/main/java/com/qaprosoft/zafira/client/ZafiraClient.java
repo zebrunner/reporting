@@ -1039,7 +1039,8 @@ public class  ZafiraClient
 
 				PutObjectRequest putRequest = new PutObjectRequest(this.amazonS3SessionCredentials.getBucket(), key, stream, metadata);
 				this.amazonClient.putObject(putRequest);
-				this.amazonClient.setObjectAcl(this.amazonS3SessionCredentials.getBucket(), key, CannedAccessControlList.Private);
+				CannedAccessControlList controlList = this.tenantType.isMultitenant() ? CannedAccessControlList.Private : CannedAccessControlList.PublicRead;
+				this.amazonClient.setObjectAcl(this.amazonS3SessionCredentials.getBucket(), key, controlList);
 
 				filePath = this.tenantType.isMultitenant() ? getServiceURL() + relativeKey : getFilePath(key);
 
