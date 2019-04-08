@@ -148,9 +148,9 @@
         $scope.getElement = function(item) {
             var result;
             if(angular.isArray(item)) {
-                result = 'select';
+                result = 'select'
             } else if(item === true || item === false) {
-                result = 'checkbox';
+                result = 'checkbox'
             } else {
                 result = 'input';
             }
