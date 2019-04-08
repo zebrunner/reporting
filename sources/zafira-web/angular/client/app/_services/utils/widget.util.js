@@ -16,28 +16,35 @@
             var config = JSON.parse(widget.widgetTemplate.paramsConfig);
             var envParams = getENVParams(dashboard, userId);
             angular.forEach(config, function (paramValue, paramName) {
-                var type = config[paramName].value ? getType(config[paramName].value) :
-                    config[paramName].values && config[paramName].values.length ? 'array' : undefined;
-                var overrideWithEnvParams = !! envParams[paramName];
-                var value;
-                if(widget.id && widget.paramsConfig && widget.paramsConfig.length) {
-                    var conf = JSON.parse(widget.paramsConfig);
-                    value = conf[paramName] ?  conf[paramName] :  type === 'array' ? config[paramName].multiple ? config[paramName].values : config[paramName].values[0] : config[paramName].value;
-                } else {
-                    value = type === 'array' ? config[paramName].multiple ? config[paramName].values && config[paramName].values.length ? [config[paramName].values[0]] : config[paramName].values : config[paramName].values[0] : config[paramName].value;
-                }
-                value = overrideWithEnvParams ?
-                    type === 'array' &&  config[paramName].values.indexOf(envParams[paramName]) !== -1 ?
-                        getValueByType(envParams[paramName], getType(value))
-                        : value
-                    : value;
-                value = config[paramName].multiple && getType(value) !== 'array' ? [value] : value;
+                var type = paramValue.value ? getType(paramValue.value) :
+                    paramValue.values && paramValue.values.length ? 'array' : undefined;
+                var isExistingWidget = widget.id && widget.paramsConfig && widget.paramsConfig.length;
+                var value = getValue(widget.paramsConfig, paramName, paramValue, type, isExistingWidget, envParams);
                 if(type) {
                     setParameter(config, paramName, value);
-                    config[paramName].type = type;
+                    paramValue.type = type;
                 }
             });
             return config;
+        };
+
+        function getValue(paramsConfig, paramName, paramValue, type, isExistingWidget, envParams) {
+            var value;
+            var required = !! paramValue.required;
+            var overrideWithEnvParams = !! envParams && !! envParams[paramName];
+            if(isExistingWidget) {
+                var conf = JSON.parse(paramsConfig);
+                value = conf[paramName] ?  conf[paramName] :  type === 'array' ? paramValue.multiple ? paramValue.values : required ? paramValue.values[0] : undefined : paramValue.value;
+            } else {
+                value = type === 'array' ? paramValue.multiple ? paramValue.values && paramValue.values.length ? required ? [paramValue.values[0]] : undefined : paramValue.values : required ? paramValue.values[0] : undefined : paramValue.value;
+            }
+            value = overrideWithEnvParams ?
+                type === 'array' &&  envParams && paramValue.values.indexOf(envParams[paramName]) !== -1 ?
+                    getValueByType(envParams[paramName], getType(value))
+                    : value
+                : value;
+            value = paramValue.multiple && getType(value) !== 'array' ? [value] : value;
+            return value;
         };
 
         function buildLegend(widget) {
