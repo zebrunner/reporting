@@ -23,12 +23,14 @@ import java.net.URL;
 import java.util.*;
 
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
+import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
@@ -36,12 +38,10 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.amazonaws.ClientConfiguration;
-import com.amazonaws.HttpMethod;
 import com.amazonaws.internal.SdkBufferedInputStream;
 import com.amazonaws.services.s3.internal.Mimetypes;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -74,6 +74,12 @@ public class AmazonService implements IJMXService<AmazonContext> {
 
     @Autowired
     private ClientConfiguration clientConfiguration;
+
+    @Autowired
+    private URLResolver urlResolver;
+
+    @Value("${zafira.multitenant}")
+    private Boolean multitenant;
 
     @Override
     public void init() {
@@ -148,27 +154,15 @@ public class AmazonService implements IJMXService<AmazonContext> {
         return getAmazonType().getAmazonS3().listObjects(listObjectRequest).getObjectSummaries();
     }
 
-    public String getComment(String key) {
-        return getAmazonType().getAmazonS3().getObjectMetadata(getAmazonType().getS3Bucket(), key)
-                .getUserMetaDataOf(COMMENT_KEY);
-    }
-
-    public String getPublicLink(S3ObjectSummary objectSummary) {
-        GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(
-                getAmazonType().getS3Bucket(),
-                objectSummary.getKey());
-        generatePresignedUrlRequest.setMethod(HttpMethod.GET);
-        return getAmazonType().getAmazonS3().generatePresignedUrl(generatePresignedUrlRequest).toString();
-    }
-
     public String saveFile(final FileUploadType file) throws ServiceException {
+        String result;
         SdkBufferedInputStream stream = null;
-        GeneratePresignedUrlRequest request;
         try {
             stream = new SdkBufferedInputStream(file.getFile().getInputStream(),
                     (int) (file.getFile().getSize() + 100));
             String type = Mimetypes.getInstance().getMimetype(file.getFile().getOriginalFilename());
-            String key = getFileKey(file);
+            String relativePath = getFileKey(file);
+            String key = TenancyContext.getTenantName() + relativePath;
 
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(type);
@@ -176,17 +170,18 @@ public class AmazonService implements IJMXService<AmazonContext> {
 
             PutObjectRequest putRequest = new PutObjectRequest(getAmazonType().getS3Bucket(), key, stream, metadata);
             getAmazonType().getAmazonS3().putObject(putRequest);
-            getAmazonType().getAmazonS3().setObjectAcl(getAmazonType().getS3Bucket(), key,
-                    CannedAccessControlList.PublicRead);
+            CannedAccessControlList controlList = multitenant ? CannedAccessControlList.Private : CannedAccessControlList.PublicRead;
+            getAmazonType().getAmazonS3().setObjectAcl(getAmazonType().getS3Bucket(), key, controlList);
 
-            request = new GeneratePresignedUrlRequest(getAmazonType().getS3Bucket(), key);
+            result = multitenant ? urlResolver.getServiceURL() + relativePath :
+                    getAmazonType().getAmazonS3().getUrl(getAmazonType().getS3Bucket(), key).toString();
 
         } catch (IOException e) {
             throw new AWSException("Can't save file to Amazone", e);
         } finally {
             IOUtils.closeQuietly(stream);
         }
-        return getAmazonType().getAmazonS3().generatePresignedUrl(request).toString().split("\\?")[0];
+        return result;
     }
 
     public void removeFile(final String linkToFile) throws ServiceException {
@@ -199,12 +194,8 @@ public class AmazonService implements IJMXService<AmazonContext> {
     }
 
     private String getFileKey(final FileUploadType file) {
-        return buildPath(file.getType()) + FILE_PATH_SEPARATOR + RandomStringUtils.randomAlphanumeric(20) + "." +
+        return file.getType().getPath() + FILE_PATH_SEPARATOR + RandomStringUtils.randomAlphanumeric(20) + "." +
                 FilenameUtils.getExtension(file.getFile().getOriginalFilename());
-    }
-
-    private String buildPath(FileUploadType.Type type) {
-        return TenancyContext.getTenantName() + type.getPath();
     }
 
     /**
