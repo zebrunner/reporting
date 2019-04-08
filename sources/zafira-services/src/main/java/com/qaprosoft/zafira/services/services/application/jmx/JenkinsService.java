@@ -258,13 +258,7 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
     }
 
     private JobWithDetails getJobWithDetails(Job ciJob) throws IOException {
-        JobWithDetails job;
-        if (ciJob.getJobURL().matches(FOLDER_REGEX)) {
-            job = getJobByURL(ciJob.getJobURL());
-        } else {
-            job = getJobByName(ciJob.getName());
-        }
-        return job;
+        return ciJob.getJobURL().matches(FOLDER_REGEX) ? getJobByURL(ciJob.getJobURL()) : getJobByName(ciJob.getName());
     }
 
     private JobWithDetails getJobByName(String jobName) throws IOException {
