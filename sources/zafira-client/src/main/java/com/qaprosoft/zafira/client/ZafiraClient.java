@@ -1127,7 +1127,7 @@ public class  ZafiraClient
 			try {
 				GoogleCredential googleCredential = new GoogleCredential().setAccessToken(accessToken);
 				this.sheets = new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), googleCredential)
-						.setApplicationName(null)
+						.setApplicationName(UUID.randomUUID().toString())
 						.build();
 			} catch (Exception e) {
 				LOGGER.error("Google integration is invalid", e);
