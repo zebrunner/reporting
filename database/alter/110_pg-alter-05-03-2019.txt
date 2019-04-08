@@ -1,6 +1,6 @@
 SET SCHEMA 'zafira';
 
-select check_version(109);
+select check_version(110);
 
 DO $$
 DECLARE PERMISSION_ID PERMISSIONS.id%TYPE;
@@ -22,4 +22,4 @@ BEGIN
 
 END$$;
 
-select add_version(109);
+select add_version(110);

@@ -1,6 +1,6 @@
 SET SCHEMA 'zafira';
 
-select check_version(111);
+select check_version(112);
 
 ALTER TABLE DASHBOARDS ADD COLUMN EDITABLE BOOLEAN NOT NULL DEFAULT TRUE;
 
@@ -23,4 +23,4 @@ DO $$
 
   END$$;
 
-select add_version(111);
+select add_version(112);
