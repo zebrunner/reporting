@@ -1,6 +1,6 @@
 SET SCHEMA 'zafira';
 
-select check_version(112);
+select check_version(113);
 
 ALTER TABLE GROUPS ADD COLUMN INVITABLE BOOLEAN NOT NULL DEFAULT TRUE;
 
@@ -14,4 +14,4 @@ DO $$
 
   END$$;
 
-select check_version(112);
+select add_version(113);

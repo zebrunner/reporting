@@ -43,7 +43,8 @@
                     getValueByType(envParams[paramName], getType(value))
                     : value
                 : value;
-            value = paramValue.multiple && getType(value) !== 'array' ? [value] : value;
+            value = paramValue.multiple && getType(value) !== 'array'? value ? [value] : [] : value;
+            value = required ? value : value ? value : '';
             return value;
         };
 
