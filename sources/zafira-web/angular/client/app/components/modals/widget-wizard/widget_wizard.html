@@ -50,9 +50,8 @@
                         </div>
                     </div>
                 </ng-form>
-                <div ng-show="showAdvanced || hasEmptyOptionalParams(true)" class="divider"></div>
                 <ng-form class="zf-display-table" name="notRequiredparams">
-                    <div ng-if="! paramValue.required" ng-show="showAdvanced || paramValue.input_enabled" class="widget-wizard_container_elements_input" ng-repeat="(paramName, paramValue) in widgetBuilder.paramsConfigObject track by $index" ng-switch="paramValue.type">
+                    <div ng-if="! paramValue.required" ng-show="showAdvanced || paramValue.input_enabled || paramValue.oldValue" class="widget-wizard_container_elements_input" ng-repeat="(paramName, paramValue) in widgetBuilder.paramsConfigObject track by $index" ng-switch="paramValue.type">
                         <div class="zf-label">{{paramName}}</div>
                         <div ng-switch-default>
                             <zf-input-container>

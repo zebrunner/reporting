@@ -88,10 +88,19 @@ const widgetWizardController = function WidgetWizardController($scope, $mdDialog
     };
 
     $scope.switchInputEnabled = function(paramValue) {
-        if(paramValue.input_enabled) {
-            paramValue.value = paramValue.values && paramValue.values.length ? paramValue.values[0] : undefined;
+        if(! widget.id) {
+            if (paramValue.input_enabled) {
+                paramValue.value = paramValue.values && paramValue.values.length ? paramValue.values[0] : undefined;
+            } else {
+                paramValue.value = undefined;
+            }
         } else {
-            paramValue.value = undefined;
+            if (paramValue.input_enabled) {
+                paramValue.value = paramValue.oldValue;
+            } else {
+                paramValue.oldValue = paramValue.oldValue || angular.copy(paramValue.value);
+                paramValue.value = undefined;
+            }
         }
     };
 

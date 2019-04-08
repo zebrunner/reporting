@@ -115,7 +115,7 @@ $wizard-white:          #ffffff;
 
             &_input {
                 margin-bottom: $inner-padding;
-                > * {
+                > *:not(md-switch) {
                     padding-bottom: $inner-padding;
                     vertical-align: middle;
                 }
@@ -127,6 +127,10 @@ $wizard-white:          #ffffff;
                 }
                 md-switch {
                     padding-left: 16px;
+                    margin: 0;
+                }
+                md-select[disabled] > md-select-value {
+                    background-image: none;
                 }
             }
 
