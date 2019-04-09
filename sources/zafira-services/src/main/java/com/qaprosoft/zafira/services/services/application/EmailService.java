@@ -40,20 +40,20 @@ import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 import javax.mail.MessagingException;
 
 @Component
-public class EmailService
-{
+public class EmailService {
+
 	private static final Logger LOGGER = Logger.getLogger(EmailService.class);
+
+	private static final EmailValidator validator = EmailValidator.getInstance();
 
 	@Autowired
 	private FreemarkerUtil freemarkerUtil;
 
-	/*@Autowired
-	private AutowireCapableBeanFactory autowireizer;*/
+	private final AsynSendEmailTask emailTask;
 
-	@Autowired
-	private AsynSendEmailTask emailTask;
-	
-	private static final EmailValidator validator = EmailValidator.getInstance();
+	public EmailService(AsynSendEmailTask emailTask) {
+		this.emailTask = emailTask;
+	}
 
 	public String sendEmail(final IEmailMessage message, final String... emails) throws ServiceException
 	{
@@ -64,28 +64,26 @@ public class EmailService
 		}
 
 		final String text = freemarkerUtil.getFreeMarkerTemplateContent(message.getType().getTemplateName(), message);
+		final String[] recipients = processRecipients(emails);
 
-		synchronized (emailTask) {
-			final String[] recipients = processRecipients(emails);
+		if (!ArrayUtils.isEmpty(recipients)) {
+			final MimeMessagePreparator preparator = mimeMessage -> {
+				boolean hasAttachments = message.getAttachments() != null;
 
-			if (!ArrayUtils.isEmpty(recipients)) {
-				final MimeMessagePreparator preparator = mimeMessage -> {
-					boolean hasAttachments = message.getAttachments() != null;
-
-					MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachments);
-					msg.setSubject(message.getSubject());
-					msg.setTo(recipients);
-					msgSetFrom(msg);
-					msg.setText(text, true);
-					if (hasAttachments) {
-						for (Attachment attachment : message.getAttachments()) {
-							msg.addAttachment(attachment.getName() + "." + FilenameUtils.getExtension(attachment.getFile().getName()), attachment.getFile());
-							msg.addInline(attachment.getName().replaceAll(" ", "_"), attachment.getFile());
-						}
+				MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachments);
+				msg.setSubject(message.getSubject());
+				msg.setTo(recipients);
+				msgSetFrom(msg);
+				msg.setText(text, true);
+				if (hasAttachments) {
+					for (Attachment attachment : message.getAttachments()) {
+						msg.addAttachment(attachment.getName() + "." + FilenameUtils.getExtension(attachment.getFile().getName()), attachment.getFile());
+						msg.addInline(attachment.getName().replaceAll(" ", "_"), attachment.getFile());
 					}
-				};
+				}
+			};
+			synchronized (emailTask) {
 				this.emailTask.setPreparator(preparator);
-				//autowireizer.autowireBean(this.emailTask);
 				Executors.newSingleThreadExecutor().execute(this.emailTask);
 			}
 		}
