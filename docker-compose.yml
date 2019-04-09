@@ -56,7 +56,7 @@ services:
   zafira:
     image: qaprosoft/zafira:1.0
     ports:
-      - 8082:8080
+      - 8080:8080
     env_file:
      - integrations.env
     environment:
@@ -79,8 +79,10 @@ services:
       - "redis"
     restart: always
   zafira-ui:
-    image: qaprosoft/zafira-ui:1.0
+    image: qaprosoft/zafira-ui:latest
     ports:
-      - 8083:80
+      - 80:80
+    environment:
+      - ZAFIRA_WS_URL=http://localhost:8080/zafira-ws
     depends_on:
       - "zafira"
