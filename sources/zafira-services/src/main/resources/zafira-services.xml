@@ -16,63 +16,7 @@
 
 	<context:component-scan base-package="com.qaprosoft.zafira.services" />
 
-	<bean id="jmxTenancyStorage" class="com.qaprosoft.zafira.services.services.application.integration.impl.IntegrationTenancyStorage" depends-on="exporter"/>
-
-	<bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean"/>
-
-	<bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
-		<property name="beans">
-			<map>
-				<entry key="bean:name=googleService" value-ref="googleService"/>
-				<entry key="bean:name=ldapService" value-ref="ldapService"/>
-				<entry key="bean:name=jiraService" value-ref="jiraService"/>
-				<entry key="bean:name=jenkinsService" value-ref="jenkinsService"/>
-				<entry key="bean:name=slackService" value-ref="slackService"/>
-				<entry key="bean:name=amazonService" value-ref="amazonService"/>
-				<entry key="bean:name=cryptoService" value-ref="cryptoService"/>
-				<entry key="bean:name=rabbitMQService" value-ref="rabbitMQService"/>
-			</map>
-		</property>
-		<property name="assembler" ref="assembler"/>
-		<property name="namingStrategy" ref="namingStrategy"/>
-		<property name="autodetect" value="true"/>
-		<property name="server" ref="mbeanServer"/>
-	</bean>
-
-	<bean id="jmxAttributeSource"
-		  class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource"/>
-
-	<!-- will create management interface using annotation metadata -->
-	<bean id="assembler"
-		  class="org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler">
-		<property name="attributeSource" ref="jmxAttributeSource"/>
-	</bean>
-
-	<!-- will pick up the ObjectName from the annotation -->
-	<bean id="namingStrategy"
-		  class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
-		<property name="attributeSource" ref="jmxAttributeSource"/>
-	</bean>
-
-	<bean id="googleService" class="com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleService"/>
-
-	<bean id="ldapService" class="com.qaprosoft.zafira.services.services.application.integration.impl.LDAPService"/>
-
-	<bean id="jiraService" class="com.qaprosoft.zafira.services.services.application.integration.impl.JiraService"/>
-
-	<bean id="jenkinsService" class="com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService"/>
-
-	<bean id="slackService" class="com.qaprosoft.zafira.services.services.application.integration.impl.SlackService"/>
-
-	<bean id="amazonService" class="com.qaprosoft.zafira.services.services.application.integration.impl.AmazonService"/>
-
-	<bean id="cryptoService" class="com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService">
-		<property name="salt" value="${zafira.crypto_salt}" />
-	</bean>
-	
-	<bean id="rabbitMQService" class="com.qaprosoft.zafira.services.services.application.integration.impl.RabbitMQService"/>
-
-	<bean id="asyncSendEmailTask" class="com.qaprosoft.zafira.services.services.application.integration.impl.AsynSendEmailTask"/>
+	<bean id="jmxTenancyStorage" class="com.qaprosoft.zafira.services.services.application.integration.impl.IntegrationTenancyStorage" depends-on="integrationService"/>
 
 	<bean id="passwordEncryptor" class="org.jasypt.util.password.BasicPasswordEncryptor" />
 

@@ -24,12 +24,14 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.stereotype.Component;
 
 import javax.mail.MessagingException;
 import java.util.List;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.EMAIL;
 
+@Component
 public class AsynSendEmailTask implements Runnable, Integration<EmailContext> {
 
     private static final Logger LOGGER = Logger.getLogger(AsynSendEmailTask.class);

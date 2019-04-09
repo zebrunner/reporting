@@ -32,11 +32,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedOperationParameter;
-import org.springframework.jmx.export.annotation.ManagedOperationParameters;
-import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.internal.SdkBufferedInputStream;
@@ -57,13 +52,12 @@ import com.qaprosoft.zafira.services.exceptions.AWSException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.context.AmazonContext;
+import org.springframework.stereotype.Component;
 
-@ManagedResource(objectName = "bean:name=amazonService", description = "Amazon init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
+@Component
 public class AmazonService implements Integration<AmazonContext> {
 
     private static final Logger LOGGER = Logger.getLogger(AmazonService.class);
-
-    private static final String COMMENT_KEY = "comment";
 
     private static final String FILE_PATH_SEPARATOR = "/";
 
@@ -122,13 +116,6 @@ public class AmazonService implements Integration<AmazonContext> {
         }
     }
 
-    @ManagedOperation(description = "Amazon initialization")
-    @ManagedOperationParameters({
-            @ManagedOperationParameter(name = "accessKey", description = "Amazon access key"),
-            @ManagedOperationParameter(name = "privateKey", description = "Amazon private key"),
-            @ManagedOperationParameter(name = "region", description = "Amazon region"),
-            @ManagedOperationParameter(name = "bucket", description = "Amazon bucket"),
-            @ManagedOperationParameter(name = "enabled", description = "Amazon enabled")})
     public void init(String accessKey, String privateKey, String region, String bucket, Boolean enabled) {
         try {
             if (!StringUtils.isBlank(accessKey) && !StringUtils.isBlank(privateKey) && !StringUtils.isBlank(region)
@@ -224,7 +211,6 @@ public class AmazonService implements Integration<AmazonContext> {
         return result;
     }
 
-    @ManagedAttribute(description = "Get current amazon entity")
     public AmazonContext getAmazonType() {
         return getContext(AMAZON);
     }

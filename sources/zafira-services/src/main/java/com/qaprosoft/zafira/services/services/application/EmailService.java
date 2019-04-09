@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.qaprosoft.zafira.models.db.Attachment;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -39,7 +39,7 @@ import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 
 import javax.mail.MessagingException;
 
-@Service
+@Component
 public class EmailService
 {
 	private static final Logger LOGGER = Logger.getLogger(EmailService.class);

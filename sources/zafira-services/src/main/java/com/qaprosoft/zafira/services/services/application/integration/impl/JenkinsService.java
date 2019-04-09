@@ -35,11 +35,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedOperationParameter;
-import org.springframework.jmx.export.annotation.ManagedOperationParameters;
-import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -55,8 +50,9 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.context.JenkinsContext;
+import org.springframework.stereotype.Component;
 
-@ManagedResource(objectName = "bean:name=jenkinsService", description = "Jenkins init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200, persistLocation = "foo", persistName = "bar")
+@Component
 public class JenkinsService implements Integration<JenkinsContext> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JenkinsService.class);
@@ -111,13 +107,6 @@ public class JenkinsService implements Integration<JenkinsContext> {
         }
     }
 
-    @ManagedOperation(description = "Change Jenkins initialization")
-    @ManagedOperationParameters({
-            @ManagedOperationParameter(name = "url", description = "Jenkins url"),
-            @ManagedOperationParameter(name = "username", description = "Jenkins username"),
-            @ManagedOperationParameter(name = "passwordOrApiToken", description = "Jenkins passwordOrApiToken or api token"),
-            @ManagedOperationParameter(name = "launcherJobName", description = "Jenkins launcher job name"),
-            @ManagedOperationParameter(name = "enabled", description = "Jenkins enabled") })
     public void init(String url, String username, String passwordOrApiToken, String launcherJobName, Boolean enabled) {
         try {
             if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(passwordOrApiToken)) {
@@ -329,7 +318,6 @@ public class JenkinsService implements Integration<JenkinsContext> {
         return getServer() != null && getServer().isRunning();
     }
 
-    @ManagedAttribute(description = "Get jenkins server")
     public JenkinsServer getServer() {
         return getContext(JENKINS) != null ? getContext(JENKINS).getJenkinsServer() : null;
     }

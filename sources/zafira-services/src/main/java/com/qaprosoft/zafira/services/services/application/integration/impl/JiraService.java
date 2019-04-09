@@ -24,11 +24,6 @@ import com.qaprosoft.zafira.services.services.application.integration.Integratio
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedOperationParameter;
-import org.springframework.jmx.export.annotation.ManagedOperationParameters;
-import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -37,9 +32,11 @@ import com.qaprosoft.zafira.services.services.application.integration.context.Ji
 
 import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.JiraClient;
+import org.springframework.stereotype.Component;
 
-@ManagedResource(objectName = "bean:name=jiraService", description = "Jira init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
+@Component
 public class JiraService implements Integration<JiraContext> {
+
     private static final Logger LOGGER = Logger.getLogger(JiraService.class);
 
     @Autowired
@@ -85,12 +82,6 @@ public class JiraService implements Integration<JiraContext> {
         }
     }
 
-    @ManagedOperation(description = "Change Jira initialization")
-    @ManagedOperationParameters({
-            @ManagedOperationParameter(name = "url", description = "Jira url"),
-            @ManagedOperationParameter(name = "username", description = "Jira username"),
-            @ManagedOperationParameter(name = "password", description = "Jira password"),
-            @ManagedOperationParameter(name = "enabled", description = "Jira enabled") })
     public void init(String url, String username, String password, boolean enabled) {
         try {
             if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
@@ -138,7 +129,6 @@ public class JiraService implements Integration<JiraContext> {
         return isIssueClosed;
     }
 
-    @ManagedAttribute(description = "Get jira client")
     public JiraClient getJiraClient() {
         return getContext(JIRA) != null ? getContext(JIRA).getJiraClient() : null;
     }

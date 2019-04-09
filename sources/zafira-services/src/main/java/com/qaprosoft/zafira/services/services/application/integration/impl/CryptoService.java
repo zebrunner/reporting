@@ -29,28 +29,29 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedOperationParameter;
-import org.springframework.jmx.export.annotation.ManagedOperationParameters;
-import org.springframework.jmx.export.annotation.ManagedResource;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.EncryptorInitializationException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.context.CryptoContext;
+import org.springframework.stereotype.Component;
 
 /**
  * Created by irina on 21.7.17.
  */
-@ManagedResource(objectName = "bean:name=cryptoService", description = "Crypto init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
+@Component
 public class CryptoService implements Integration<CryptoContext> {
     private static final Logger LOGGER = Logger.getLogger(CryptoService.class);
 
-    private String salt;
+    private final String salt;
 
     @Autowired
     private SettingsService settingsService;
+
+    public CryptoService(@Value("${zafira.crypto_salt}") String salt) {
+        this.salt = salt;
+    }
 
     @Override
     public void init() {
@@ -88,9 +89,6 @@ public class CryptoService implements Integration<CryptoContext> {
         }
     }
 
-    @ManagedOperation(description = "Change Crypto initialization")
-    @ManagedOperationParameters({
-            @ManagedOperationParameter(name = "key", description = "Crypto key") })
     public void initCryptoTool(String key) {
         try {
             if (!StringUtils.isEmpty(key)) {
@@ -141,10 +139,6 @@ public class CryptoService implements Integration<CryptoContext> {
         return salt;
     }
 
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
-
     @Override
     public boolean isConnected() {
         boolean connected = false;
@@ -163,7 +157,6 @@ public class CryptoService implements Integration<CryptoContext> {
         return keyGenerator.generateKey();
     }
 
-    @ManagedAttribute(description = "Get current crypto entity")
     public CryptoContext getCryptoType() {
         return getContext(CRYPTO);
     }

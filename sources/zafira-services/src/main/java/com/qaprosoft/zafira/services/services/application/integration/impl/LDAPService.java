@@ -22,16 +22,15 @@ import com.qaprosoft.zafira.services.services.application.integration.context.LD
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jmx.export.annotation.*;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.support.LdapContextSource;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.LDAP;
 
-@ManagedResource(objectName="bean:name=ldapService", description="Ldap init Managed Bean",
-        currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200)
+@Component
 public class LDAPService implements Integration<LDAPContext> {
 
     private final static Logger LOGGER = Logger.getLogger(LDAPService.class);
@@ -90,14 +89,6 @@ public class LDAPService implements Integration<LDAPContext> {
         }
     }
 
-    @ManagedOperation(description="Change Ldap initialization")
-    @ManagedOperationParameters({
-            @ManagedOperationParameter(name = "dn", description = "Ldap dn"),
-            @ManagedOperationParameter(name = "searchFilter", description = "Ldap search filter"),
-            @ManagedOperationParameter(name = "url", description = "Ldap url"),
-            @ManagedOperationParameter(name = "managerUser", description = "Ldap manager user"),
-            @ManagedOperationParameter(name = "managerPassword", description = "Ldap manager password"),
-            @ManagedOperationParameter(name = "enabled", description = "Ldap enabled")})
     public void init(String dn, String searchFilter, String url, String managerUser, String managerPassword, boolean enabled){
         try
         {
@@ -129,7 +120,6 @@ public class LDAPService implements Integration<LDAPContext> {
         return result;
     }
 
-    @ManagedAttribute(description="Get ldap context source")
     public LdapContextSource getLdapContextSource()
     {
         return getType().getLdapContextSource();

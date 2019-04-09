@@ -31,7 +31,9 @@ import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.context.AbstractContext;
 import com.qaprosoft.zafira.services.services.management.TenancyService;
 import com.qaprosoft.zafira.services.util.TenancyInitial;
+import org.springframework.stereotype.Component;
 
+@Component
 public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbInitial {
 
     private static final Logger LOGGER = Logger.getLogger( IntegrationTenancyStorage.class);

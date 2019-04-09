@@ -26,15 +26,14 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jmx.export.annotation.*;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.GOOGLE;
 
-@ManagedResource(objectName = "bean:name=googleService", description = "Google init Managed Bean",
-		currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
+@Component
 public class GoogleService implements Integration<GoogleContext>
 {
 
@@ -57,7 +56,6 @@ public class GoogleService implements Integration<GoogleContext>
 	private GoogleSpreadsheetsService spreadsheetsService;
 
 	@Override
-	@ManagedOperation(description = "Google initialization")
 	public void init()
 	{
 		String originName = null;
@@ -88,11 +86,6 @@ public class GoogleService implements Integration<GoogleContext>
 		}
 	}
 
-	@ManagedOperation(description = "Change Google initialization")
-	@ManagedOperationParameters({
-			@ManagedOperationParameter(name = "originName", description = "Google origin name file"),
-			@ManagedOperationParameter(name = "credsFile", description = "Google creds file"),
-			@ManagedOperationParameter(name = "enabled", description = "Google enabled") })
 	public void init(byte[] credsFile, String originName, boolean enabled) {
 		try {
 			if (!StringUtils.isEmpty(originName) && credsFile != null) {
@@ -132,19 +125,16 @@ public class GoogleService implements Integration<GoogleContext>
 		return result;
 	}
 
-	@ManagedAttribute(description = "Get google drive client")
 	public GoogleDriveService getDriveService()
 	{
 		return driveService;
 	}
 
-	@ManagedAttribute(description = "Get google spreadsheet client")
 	public GoogleSpreadsheetsService getSpreadsheetsService()
 	{
 		return spreadsheetsService;
 	}
 
-	@ManagedAttribute(description = "Get google context")
 	public GoogleContext getContext() {
 		return getContext(GOOGLE);
 	}

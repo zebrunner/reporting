@@ -26,17 +26,13 @@ import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedOperationParameter;
-import org.springframework.jmx.export.annotation.ManagedOperationParameters;
-import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.context.RabbitMQContext;
+import org.springframework.stereotype.Component;
 
-@ManagedResource(objectName = "bean:name=rabbitMQService", description = "RabbitMQ init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200, persistLocation = "foo", persistName = "bar")
+@Component
 public class RabbitMQService implements Integration<RabbitMQContext> {
 
     private static final Logger LOGGER = Logger.getLogger(RabbitMQService.class);
@@ -91,13 +87,6 @@ public class RabbitMQService implements Integration<RabbitMQContext> {
         }
     }
 
-    @ManagedOperation(description = "Change RabbitMQ initialization")
-    @ManagedOperationParameters({
-            @ManagedOperationParameter(name = "host", description = "RabbitMQ host"),
-            @ManagedOperationParameter(name = "port", description = "RabbitMQ port"),
-            @ManagedOperationParameter(name = "username", description = "RabbitMQ username"),
-            @ManagedOperationParameter(name = "password", description = "RabbitMQ password"),
-            @ManagedOperationParameter(name = "enabled", description = "RabbitMQ enabled") })
     public void init(String host, String port, String username, String password, boolean enabled) {
         try {
             if (!StringUtils.isEmpty(host) && !StringUtils.isEmpty(port) && !StringUtils.isEmpty(username)
@@ -122,7 +111,6 @@ public class RabbitMQService implements Integration<RabbitMQContext> {
         return getConnection() != null && getConnection().isOpen();
     }
 
-    @ManagedAttribute(description = "Get rabbitMQ connection")
     public Connection getConnection() {
         return getContext(RABBITMQ) != null ? getContext(RABBITMQ).getConnection() : null;
     }

@@ -28,11 +28,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedOperationParameter;
-import org.springframework.jmx.export.annotation.ManagedOperationParameters;
-import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.HttpStatusCodes;
@@ -47,8 +42,9 @@ import in.ashwanthkumar.slack.webhook.Slack;
 import in.ashwanthkumar.slack.webhook.SlackAttachment;
 import in.ashwanthkumar.slack.webhook.SlackAttachment.Field;
 import in.ashwanthkumar.slack.webhook.SlackMessage;
+import org.springframework.stereotype.Component;
 
-@ManagedResource(objectName = "bean:name=slackService", description = "Slack init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200, persistLocation = "foo", persistName = "bar")
+@Component
 public class SlackService implements Integration<SlackContext> {
 
     private static final Logger LOGGER = Logger.getLogger(SlackService.class);
@@ -101,10 +97,6 @@ public class SlackService implements Integration<SlackContext> {
         return true;
     }
 
-    @ManagedOperation(description = "Change Slack initialization")
-    @ManagedOperationParameters({
-            @ManagedOperationParameter(name = "author", description = "Slack author"),
-            @ManagedOperationParameter(name = "picPath", description = "Slack pi path") })
     public void init(String author, String picPath) throws ServiceException {
         String wH = getWebhook();
         if (wH != null) {
@@ -228,7 +220,6 @@ public class SlackService implements Integration<SlackContext> {
         return "warning";
     }
 
-    @ManagedAttribute(description = "Get Slack current instance")
     public Slack getSlack() {
         return getContext(Setting.Tool.SLACK) != null ? getContext(Setting.Tool.SLACK).getSlack() : null;
     }

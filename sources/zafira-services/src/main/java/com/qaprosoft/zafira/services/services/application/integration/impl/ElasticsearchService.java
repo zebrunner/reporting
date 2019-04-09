@@ -36,9 +36,8 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -52,25 +51,24 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("rawtypes")
-@Service
+@Component
 public class ElasticsearchService implements Integration
 {
 
 	private static final Logger LOGGER = Logger.getLogger(ElasticsearchService.class);
 
-	@Value("${zafira.elasticsearch.url}")
-	private String url;
-
-	@Value("${zafira.elasticsearch.user}")
-	private String user;
-
-	@Value("${zafira.elasticsearch.pass}")
-	private String password;
-
+	private final String url;
+	private final String user;
+	private final String password;
 	private RestHighLevelClient client;
 
-	@PostConstruct
-	public void initInstance() {
+	public ElasticsearchService(@Value("${zafira.elasticsearch.url}") String url,
+								@Value("${zafira.elasticsearch.user}") String user,
+								@Value("${zafira.elasticsearch.pass}") String password) {
+		this.url = url;
+		this.user = user;
+		this.password = password;
+
 		if(!StringUtils.isBlank(url)) {
 			RestClientBuilder builder = getBuilder(url);
 			if(builder == null) {
