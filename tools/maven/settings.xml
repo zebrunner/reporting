@@ -10,6 +10,7 @@
         </activation>
         <properties>
             <zafira.multitenant>false</zafira.multitenant>
+	<zafira.debugMode>false</zafira.debugMode>
 
             <zafira.service.version>1.0</zafira.service.version>
             <zafira.client.version>1.0</zafira.client.version>

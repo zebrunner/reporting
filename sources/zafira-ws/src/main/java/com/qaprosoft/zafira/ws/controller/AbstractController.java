@@ -20,6 +20,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.qaprosoft.zafira.services.exceptions.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -55,6 +56,9 @@ public abstract class AbstractController
 
 	@Resource(name = "messageSource")
 	protected MessageSource messageSource;
+
+	@Value("${zafira.debugMode:false}")
+	protected Boolean debugMode;
 	
 	protected String getStatisticsWebsocketPath()
 	{
@@ -286,8 +290,10 @@ public abstract class AbstractController
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ResponseBody
-	public ErrorResponse handleOtherException(Exception e)
-	{
+	public Object handleOtherException(Exception e) throws ServiceException {
+		if(this.debugMode) {
+			throw new ServiceException(e);
+		}
 		ErrorResponse result = new ErrorResponse();
 		result.setError(new Error(ErrorCode.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG));
 		return result;
