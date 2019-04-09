@@ -27,28 +27,22 @@ import org.springframework.stereotype.Component;
 
 import javax.mail.MessagingException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.EMAIL;
 
 @Component
-public class AsynSendEmailTask extends AbstractIntegration<EmailContext> implements Runnable {
+public class MailSender extends AbstractIntegration<EmailContext> {
 
-    private static final Logger LOGGER = Logger.getLogger(AsynSendEmailTask.class);
+    private static final Logger LOGGER = Logger.getLogger(MailSender.class);
 
     private final SettingsService settingsService;
     private final CryptoService cryptoService;
 
-    private MimeMessagePreparator preparator;
-
-    public AsynSendEmailTask(SettingsService settingsService, CryptoService cryptoService) {
+    public MailSender(SettingsService settingsService, CryptoService cryptoService) {
         super(EMAIL);
         this.settingsService = settingsService;
         this.cryptoService = cryptoService;
-    }
-
-    @Override
-    public void run() {
-        getJavaMailSenderImpl().send(preparator);
     }
 
     @Override
@@ -105,6 +99,10 @@ public class AsynSendEmailTask extends AbstractIntegration<EmailContext> impleme
         }
     }
 
+    public CompletableFuture<Void> send(MimeMessagePreparator preparator) {
+        return CompletableFuture.runAsync(() -> this.getJavaMailSenderImpl().send(preparator));
+    }
+
     @Override
     public boolean isConnected() {
         if(isContextConnected() != null) {
@@ -122,10 +120,6 @@ public class AsynSendEmailTask extends AbstractIntegration<EmailContext> impleme
         }
         setConnected(connected);
         return connected;
-    }
-
-    public void setPreparator(MimeMessagePreparator preparator) {
-        this.preparator = preparator;
     }
 
     public JavaMailSenderImpl getJavaMailSenderImpl() {

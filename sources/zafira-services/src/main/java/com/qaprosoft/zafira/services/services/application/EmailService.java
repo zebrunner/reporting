@@ -17,21 +17,19 @@ package com.qaprosoft.zafira.services.services.application;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
-import java.util.concurrent.Executors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
 
 import com.qaprosoft.zafira.models.db.Attachment;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.application.integration.impl.AsynSendEmailTask;
+import com.qaprosoft.zafira.services.services.application.integration.impl.MailSender;
 import com.qaprosoft.zafira.services.services.application.emails.IEmailMessage;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 
@@ -42,22 +40,19 @@ public class EmailService {
 
 	private static final Logger LOGGER = Logger.getLogger(EmailService.class);
 
-	private static final EmailValidator validator = EmailValidator.getInstance();
+	private final MailSender mailSender;
+	private final FreemarkerUtil freemarkerUtil;
+	private final EmailValidator validator;
 
-	@Autowired
-	private FreemarkerUtil freemarkerUtil;
-
-	private final AsynSendEmailTask emailTask;
-
-	public EmailService(AsynSendEmailTask emailTask) {
-		this.emailTask = emailTask;
+	public EmailService(MailSender mailSender, FreemarkerUtil freemarkerUtil) {
+		this.mailSender = mailSender;
+		this.freemarkerUtil = freemarkerUtil;
+		this.validator = EmailValidator.getInstance();
 	}
 
-	public String sendEmail(final IEmailMessage message, final String... emails) throws ServiceException
-	{
+	public String sendEmail(final IEmailMessage message, final String... emails) throws ServiceException {
 
-		if(! emailTask.isEnabledAndConnected())
-		{
+		if(! mailSender.isEnabledAndConnected()) {
 			return null;
 		}
 
@@ -67,7 +62,6 @@ public class EmailService {
 		if (!ArrayUtils.isEmpty(recipients)) {
 			final MimeMessagePreparator preparator = mimeMessage -> {
 				boolean hasAttachments = message.getAttachments() != null;
-
 				MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachments);
 				msg.setSubject(message.getSubject());
 				msg.setTo(recipients);
@@ -80,24 +74,20 @@ public class EmailService {
 					}
 				}
 			};
-			synchronized (emailTask) {
-				this.emailTask.setPreparator(preparator);
-				Executors.newSingleThreadExecutor().execute(this.emailTask);
-			}
+			this.mailSender.send(preparator);
 		}
 		return text;
 	}
 
 	private void msgSetFrom(MimeMessageHelper msg) throws UnsupportedEncodingException, MessagingException {
-		if(! StringUtils.isBlank(this.emailTask.getFromAddress())) {
-			msg.setFrom(this.emailTask.getFromAddress(), this.emailTask.getJavaMailSenderImpl().getUsername());
+		if(! StringUtils.isBlank(this.mailSender.getFromAddress())) {
+			msg.setFrom(this.mailSender.getFromAddress(), this.mailSender.getJavaMailSenderImpl().getUsername());
 		} else {
-			msg.setFrom(this.emailTask.getJavaMailSenderImpl().getUsername());
+			msg.setFrom(this.mailSender.getJavaMailSenderImpl().getUsername());
 		}
 	}
 	
-	private String [] processRecipients(String ... emails)
-	{
+	private String [] processRecipients(String ... emails) {
 		return Arrays.stream(emails).filter(email -> {
 			boolean isValid = validator.isValid(email);
 			if(! isValid) {
