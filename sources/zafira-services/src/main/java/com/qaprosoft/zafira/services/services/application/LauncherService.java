@@ -64,7 +64,6 @@ public class LauncherService {
     @Value("${zafira.webservice.url}")
     private String apiURL;
 
-
     @Transactional(rollbackFor = Exception.class)
     public Launcher createLauncher(Launcher launcher) throws ServiceException {
         launcher.setJob(jobsService.getJobByName("Launcher"));
@@ -75,7 +74,10 @@ public class LauncherService {
     @Transactional(rollbackFor = Exception.class)
     public Launcher createLauncherForJob(CreateLauncherParamsType createLauncherParamsType, User owner) throws ServiceException {
         String jobUrl = createLauncherParamsType.getJobUrl();
-        Job job = Optional.of(jobsService.getJobByJobURL(jobUrl)).orElseGet(() -> jobsService.createOrUpdateJobByURL(jobUrl, owner));
+        Job job = jobsService.getJobByJobURL(jobUrl);
+        if(job == null){
+            job = jobsService.createOrUpdateJobByURL(jobUrl, owner);
+        }
         ScmAccount scmAccount = Optional.of(scmAccountService.getScmAccountByRepo(createLauncherParamsType.getRepo()))
                 .orElseThrow(() -> new ScmAccountNotFoundException("Unable to find scm account for repo"));
         Launcher launcher = Optional.of(getLauncherByJobId(job.getId())).orElse(new Launcher());
