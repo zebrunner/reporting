@@ -78,9 +78,11 @@ public class LauncherService {
         if(job == null){
             job = jobsService.createOrUpdateJobByURL(jobUrl, owner);
         }
-        ScmAccount scmAccount = Optional.of(scmAccountService.getScmAccountByRepo(createLauncherParamsType.getRepo()))
-                .orElseThrow(() -> new ScmAccountNotFoundException("Unable to find scm account for repo"));
-        Launcher launcher = Optional.of(getLauncherByJobId(job.getId())).orElse(new Launcher());
+        ScmAccount scmAccount = scmAccountService.getScmAccountByRepo(createLauncherParamsType.getRepo());
+        if(scmAccount == null)
+            throw new ScmAccountNotFoundException("Unable to find scm account for repo");
+        Launcher launcher = getLauncherByJobId(job.getId());
+        if(launcher == null){ launcher = new Launcher(); }
         launcher.setModel(new JSONObject(createLauncherParamsType.getJobParameters()).toString());
         if(launcher.getId() == null){
             launcher.setJob(job);
