@@ -23,7 +23,7 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.EmailService;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.emails.CommonEmail;
-import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.AmazonService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

@@ -18,7 +18,6 @@ package com.qaprosoft.zafira.ws.controller;
 import javax.validation.Valid;
 
 import com.qaprosoft.zafira.models.db.Invitation;
-import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.dto.auth.*;
 import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
 import com.qaprosoft.zafira.models.dto.user.PasswordType;
@@ -26,7 +25,7 @@ import com.qaprosoft.zafira.services.exceptions.*;
 import com.qaprosoft.zafira.services.services.application.GroupService;
 import com.qaprosoft.zafira.services.services.application.InvitationService;
 import com.qaprosoft.zafira.services.services.auth.ForgotPasswordService;
-import com.qaprosoft.zafira.services.services.application.jmx.LDAPService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.LDAPService;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;

@@ -53,7 +53,7 @@ import com.qaprosoft.zafira.services.services.application.TestMetricService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
 import com.qaprosoft.zafira.services.services.application.TestService;
 import com.qaprosoft.zafira.services.services.application.WorkItemService;
-import com.qaprosoft.zafira.services.services.application.jmx.JiraService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.JiraService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;

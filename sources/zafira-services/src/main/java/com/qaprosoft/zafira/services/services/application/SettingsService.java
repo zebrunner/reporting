@@ -34,17 +34,17 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.Setting.SettingType;
 import com.qaprosoft.zafira.models.db.Setting.Tool;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.application.emails.AsynSendEmailTask;
-import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
-import com.qaprosoft.zafira.services.services.application.jmx.ElasticsearchService;
-import com.qaprosoft.zafira.services.services.application.jmx.IJMXService;
-import com.qaprosoft.zafira.services.services.application.jmx.JenkinsService;
-import com.qaprosoft.zafira.services.services.application.jmx.JiraService;
-import com.qaprosoft.zafira.services.services.application.jmx.LDAPService;
-import com.qaprosoft.zafira.services.services.application.jmx.RabbitMQService;
-import com.qaprosoft.zafira.services.services.application.jmx.SlackService;
-import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
-import com.qaprosoft.zafira.services.services.application.jmx.google.GoogleService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.AsynSendEmailTask;
+import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.ElasticsearchService;
+import com.qaprosoft.zafira.services.services.application.integration.Integration;
+import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.JiraService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.LDAPService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.RabbitMQService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.SlackService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.AmazonService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleService;
 
 @Service
 public class SettingsService {
@@ -212,8 +212,8 @@ public class SettingsService {
     }
 
     @SuppressWarnings("rawtypes")
-    public IJMXService getServiceByTool(Tool tool) {
-        IJMXService service = null;
+    public Integration getServiceByTool(Tool tool) {
+        Integration service = null;
         switch (tool) {
         case GOOGLE:
             service = googleService;

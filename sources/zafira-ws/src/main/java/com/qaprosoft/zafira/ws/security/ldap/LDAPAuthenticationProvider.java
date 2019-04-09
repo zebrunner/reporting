@@ -16,8 +16,8 @@
 package com.qaprosoft.zafira.ws.security.ldap;
 
 import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.services.services.application.jmx.JMXTenancyStorage;
-import com.qaprosoft.zafira.services.services.application.jmx.context.LDAPContext;
+import com.qaprosoft.zafira.services.services.application.integration.impl.IntegrationTenancyStorage;
+import com.qaprosoft.zafira.services.services.application.integration.context.LDAPContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NamingException;
 import org.springframework.ldap.core.DirContextOperations;
@@ -96,7 +96,7 @@ public class LDAPAuthenticationProvider extends AbstractLdapAuthenticationProvid
     }
 
     private static LDAPContext getContext() {
-        return JMXTenancyStorage.<LDAPContext>getContext(Setting.Tool.LDAP);
+        return IntegrationTenancyStorage.<LDAPContext>getContext(Setting.Tool.LDAP);
     }
 
     @Override

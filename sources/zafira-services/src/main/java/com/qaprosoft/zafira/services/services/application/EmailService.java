@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
 
 import com.qaprosoft.zafira.models.db.Attachment;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.application.emails.AsynSendEmailTask;
+import com.qaprosoft.zafira.services.services.application.integration.impl.AsynSendEmailTask;
 import com.qaprosoft.zafira.services.services.application.emails.IEmailMessage;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 

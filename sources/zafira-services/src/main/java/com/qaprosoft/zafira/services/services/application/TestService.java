@@ -41,7 +41,7 @@ import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
-import com.qaprosoft.zafira.services.services.application.jmx.JiraService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.JiraService;
 
 import net.rcarz.jiraclient.Issue;
 
