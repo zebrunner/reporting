@@ -23,7 +23,6 @@ import java.util.List;
 import com.qaprosoft.zafira.services.services.application.integration.Integration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -39,11 +38,13 @@ public class JiraService implements Integration<JiraContext> {
 
     private static final Logger LOGGER = Logger.getLogger(JiraService.class);
 
-    @Autowired
-    private SettingsService settingsService;
+    private final SettingsService settingsService;
+    private final CryptoService cryptoService;
 
-    @Autowired
-    private CryptoService cryptoService;
+    public JiraService(SettingsService settingsService, CryptoService cryptoService) {
+        this.settingsService = settingsService;
+        this.cryptoService = cryptoService;
+    }
 
     @Override
     public void init() {

@@ -25,7 +25,6 @@ import com.qaprosoft.zafira.services.services.application.integration.context.Go
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -39,21 +38,20 @@ public class GoogleService implements Integration<GoogleContext>
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GoogleService.class);
 
-	@Autowired
-	private GoogleDriveAuthService driveAuthService;
-
-	@Autowired
-	private GoogleSheetsAuthService sheetsAuthService;
-
-	@Autowired
-	private SettingsService settingsService;
-
-	@Autowired
-	private CryptoService cryptoService;
+	private final GoogleDriveAuthService driveAuthService;
+	private final GoogleSheetsAuthService sheetsAuthService;
+	private final SettingsService settingsService;
+	private final CryptoService cryptoService;
 
 	private GoogleDriveService driveService;
-
 	private GoogleSpreadsheetsService spreadsheetsService;
+
+	public GoogleService(SettingsService settingsService, GoogleDriveAuthService driveAuthService, GoogleSheetsAuthService sheetsAuthService, CryptoService cryptoService) {
+		this.settingsService = settingsService;
+		this.driveAuthService = driveAuthService;
+		this.sheetsAuthService = sheetsAuthService;
+		this.cryptoService = cryptoService;
+	}
 
 	@Override
 	public void init()

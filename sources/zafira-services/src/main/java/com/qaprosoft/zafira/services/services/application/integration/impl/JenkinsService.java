@@ -34,7 +34,6 @@ import com.qaprosoft.zafira.services.services.application.integration.Integratio
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -58,14 +57,15 @@ public class JenkinsService implements Integration<JenkinsContext> {
     private static final Logger LOGGER = LoggerFactory.getLogger(JenkinsService.class);
 
     private static final String[] REQUIRED_ARGS = new String[] {"scmURL", "branch", "suite", "overrideFields"};
+    private static final String FOLDER_REGEX = ".+job\\/.+\\/job.+";
 
-    private final String FOLDER_REGEX = ".+job\\/.+\\/job.+";
+    private final SettingsService settingsService;
+    private final CryptoService cryptoService;
 
-    @Autowired
-    private SettingsService settingsService;
-
-    @Autowired
-    private CryptoService cryptoService;
+    public JenkinsService(SettingsService settingsService, CryptoService cryptoService) {
+        this.settingsService = settingsService;
+        this.cryptoService = cryptoService;
+    }
 
     @Override
     public void init() {

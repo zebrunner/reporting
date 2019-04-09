@@ -21,7 +21,6 @@ import com.qaprosoft.zafira.services.services.application.integration.Integratio
 import com.qaprosoft.zafira.services.services.application.integration.context.EmailContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
@@ -36,13 +35,15 @@ public class AsynSendEmailTask implements Runnable, Integration<EmailContext> {
 
     private static final Logger LOGGER = Logger.getLogger(AsynSendEmailTask.class);
 
-    @Autowired
-    private SettingsService settingsService;
-
-    @Autowired
-    private CryptoService cryptoService;
+    private final SettingsService settingsService;
+    private final CryptoService cryptoService;
 
     private MimeMessagePreparator preparator;
+
+    public AsynSendEmailTask(SettingsService settingsService, CryptoService cryptoService) {
+        this.settingsService = settingsService;
+        this.cryptoService = cryptoService;
+    }
 
     @Override
     public void run() {

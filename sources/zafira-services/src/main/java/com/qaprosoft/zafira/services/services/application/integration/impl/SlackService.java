@@ -26,7 +26,6 @@ import com.qaprosoft.zafira.services.services.application.integration.Integratio
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.google.api.client.http.HttpResponseException;
@@ -54,23 +53,26 @@ public class SlackService implements Integration<SlackContext> {
     private final static String ON_FINISH_PATTERN = "Test run #%1$d has been completed after %2$s with status %3$s\n";
     private final static String REVIEWED_PATTERN = "Test run #%1$d has been reviewed. Status: %2$s\n";
 
-    @Value("${zafira.slack.image}")
-    private String image;
+    private final String image;
+    private final String author;
+    private final URLResolver urlResolver;
+    private final JenkinsService jenkinsService;
+    private final SettingsService settingsService;
+    private final CryptoService cryptoService;
 
-    @Value("${zafira.slack.author}")
-    private String author;
-
-    @Autowired
-    private URLResolver urlResolver;
-
-    @Autowired
-    private JenkinsService jenkinsService;
-
-    @Autowired
-    private SettingsService settingsService;
-
-    @Autowired
-    private CryptoService cryptoService;
+    public SlackService(URLResolver urlResolver,
+                        JenkinsService jenkinsService,
+                        SettingsService settingsService,
+                        CryptoService cryptoService,
+                        @Value("${zafira.slack.image}") String image,
+                        @Value("${zafira.slack.author}") String author) {
+        this.urlResolver = urlResolver;
+        this.jenkinsService = jenkinsService;
+        this.settingsService = settingsService;
+        this.cryptoService = cryptoService;
+        this.image = image;
+        this.author = author;
+    }
 
     @Override
     public void init() {

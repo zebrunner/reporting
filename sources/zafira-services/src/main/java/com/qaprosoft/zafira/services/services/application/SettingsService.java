@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,36 +51,47 @@ import com.qaprosoft.zafira.services.services.application.integration.impl.googl
 public class SettingsService {
 
     @Autowired
+    @Lazy
     private SettingsMapper settingsMapper;
 
     @Autowired
+    @Lazy
     private JiraService jiraService;
 
     @Autowired
+    @Lazy
     private LDAPService ldapService;
 
     @Autowired
+    @Lazy
     private GoogleService googleService;
 
     @Autowired
+    @Lazy
     private ElasticsearchService elasticsearchService;
 
     @Autowired
+    @Lazy
     private JenkinsService jenkinsService;
 
     @Autowired
+    @Lazy
     private SlackService slackService;
 
     @Autowired
+    @Lazy
     private AsynSendEmailTask emailTask;
 
     @Autowired
+    @Lazy
     private AmazonService amazonService;
 
     @Autowired
+    @Lazy
     private CryptoService cryptoService;
 
     @Autowired
+    @Lazy
     private RabbitMQService rabbitMQService;
 
     @Autowired

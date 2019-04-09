@@ -21,7 +21,6 @@ import com.qaprosoft.zafira.services.services.application.integration.Integratio
 import com.qaprosoft.zafira.services.services.application.integration.context.LDAPContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.stereotype.Component;
@@ -35,11 +34,13 @@ public class LDAPService implements Integration<LDAPContext> {
 
     private final static Logger LOGGER = Logger.getLogger(LDAPService.class);
 
-    @Autowired
-    private SettingsService settingsService;
+    private final SettingsService settingsService;
+    private final CryptoService cryptoService;
 
-    @Autowired
-    private CryptoService cryptoService;
+    public LDAPService(SettingsService settingsService, CryptoService cryptoService) {
+        this.settingsService = settingsService;
+        this.cryptoService = cryptoService;
+    }
 
     @Override
     public void init() {

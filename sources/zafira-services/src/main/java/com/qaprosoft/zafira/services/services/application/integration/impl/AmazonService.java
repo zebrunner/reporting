@@ -30,7 +30,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.amazonaws.ClientConfiguration;
@@ -61,20 +60,20 @@ public class AmazonService implements Integration<AmazonContext> {
 
     private static final String FILE_PATH_SEPARATOR = "/";
 
-    @Autowired
-    private SettingsService settingsService;
-
-    @Autowired
-    private CryptoService cryptoService;
-
-    @Autowired
-    private ClientConfiguration clientConfiguration;
-
-    @Autowired
-    private URLResolver urlResolver;
+    private final SettingsService settingsService;
+    private final CryptoService cryptoService;
+    private final ClientConfiguration clientConfiguration;
+    private final URLResolver urlResolver;
 
     @Value("${zafira.multitenant}")
     private Boolean multitenant;
+
+    public AmazonService(SettingsService settingsService, CryptoService cryptoService, ClientConfiguration clientConfiguration, URLResolver urlResolver) {
+        this.settingsService = settingsService;
+        this.cryptoService = cryptoService;
+        this.clientConfiguration = clientConfiguration;
+        this.urlResolver = urlResolver;
+    }
 
     @Override
     public void init() {

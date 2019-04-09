@@ -23,7 +23,6 @@ import javax.annotation.PostConstruct;
 
 import com.qaprosoft.zafira.services.util.TenancyDbInitial;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Setting;
@@ -37,17 +36,18 @@ import org.springframework.stereotype.Component;
 public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbInitial {
 
     private static final Logger LOGGER = Logger.getLogger( IntegrationTenancyStorage.class);
-    
-    @Autowired
-    private TenancyService tenancyService;
-
-    @Autowired
-    private SettingsService settingsService;
-    
-    @Autowired
-    private CryptoService cryptoService;
 
     private static final Map<Setting.Tool, Map<String, ? extends AbstractContext>> tenancyEntity = new ConcurrentHashMap<>();
+    
+    private final TenancyService tenancyService;
+    private final SettingsService settingsService;
+    private final CryptoService cryptoService;
+
+    public IntegrationTenancyStorage(TenancyService tenancyService, SettingsService settingsService, CryptoService cryptoService) {
+        this.tenancyService = tenancyService;
+        this.settingsService = settingsService;
+        this.cryptoService = cryptoService;
+    }
 
     @PostConstruct
     public void post() {

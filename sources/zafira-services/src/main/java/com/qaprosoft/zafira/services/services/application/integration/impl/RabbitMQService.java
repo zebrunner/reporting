@@ -24,8 +24,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.Connection;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
@@ -37,15 +35,15 @@ public class RabbitMQService implements Integration<RabbitMQContext> {
 
     private static final Logger LOGGER = Logger.getLogger(RabbitMQService.class);
 
-    @Autowired
-    private SettingsService settingsService;
+    private final SettingsService settingsService;
+    private final CryptoService cryptoService;
+    private final Queue settingsQueue;
 
-    @Autowired
-    private CryptoService cryptoService;
-
-    @Autowired
-    @Qualifier("settingsQueue")
-    private Queue settingsQueue;
+    public RabbitMQService(SettingsService settingsService, CryptoService cryptoService, Queue settingsQueue) {
+        this.settingsService = settingsService;
+        this.cryptoService = cryptoService;
+        this.settingsQueue = settingsQueue;
+    }
 
     @Override
     public void init() {

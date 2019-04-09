@@ -28,7 +28,6 @@ import com.qaprosoft.zafira.services.services.application.integration.Integratio
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.qaprosoft.zafira.models.db.Setting;
@@ -37,19 +36,17 @@ import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.context.CryptoContext;
 import org.springframework.stereotype.Component;
 
-/**
- * Created by irina on 21.7.17.
- */
 @Component
 public class CryptoService implements Integration<CryptoContext> {
+
     private static final Logger LOGGER = Logger.getLogger(CryptoService.class);
 
+    private final SettingsService settingsService;
     private final String salt;
 
-    @Autowired
-    private SettingsService settingsService;
-
-    public CryptoService(@Value("${zafira.crypto_salt}") String salt) {
+    public CryptoService(SettingsService settingsService,
+                         @Value("${zafira.crypto_salt}") String salt) {
+        this.settingsService = settingsService;
         this.salt = salt;
     }
 
