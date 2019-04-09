@@ -3,11 +3,6 @@
 # Change Zafira API URL
 cd $CATALINA_HOME/temp
 
-unzip -qq zafira.war -d zafira
-rm -rf zafira.war
-sed -i -e 's#http://localhost:8080#'"$ZAFIRA_URL"'#g' zafira/config.json
-cd zafira && zip -r ../zafira.war * && cd ..
-
 if [ "$ZAFIRA_LDAP_ENABLED" == "true" ];
 then
   unzip -qq zafira-ws.war -d zafira-ws
@@ -18,7 +13,6 @@ fi
 
 # Place WAR to webapps
 cp zafira-ws.war $CATALINA_HOME/webapps/zafira-ws.war
-cp zafira.war $CATALINA_HOME/webapps/zafira.war
 
 # Clear temp
 rm -rf zafira*
@@ -84,6 +78,7 @@ echo zafira.jwt.secret=$ZAFIRA_JWT_TOKEN >> $CATALINA_HOME/conf/catalina.propert
 echo zafira.crypto_salt=$ZAFIRA_CRYPTO_SALT >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.scm.github.client.id=$ZAFIRA_GITHUB_CLIENT_ID >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.scm.github.client.secret=$ZAFIRA_GITHUB_CLIENT_SECRET >> $CATALINA_HOME/conf/catalina.properties
+echo zafira.debugMode=$ZAFIRA_DEBUG_MODE >> $CATALINA_HOME/conf/catalina.properties
 # Shared folder for RSA keys usage
 echo shared.loader=/usr/local/tomcat/shared >> $CATALINA_HOME/conf/catalina.properties
 
