@@ -30,9 +30,11 @@ import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.context.AbstractContext;
 import com.qaprosoft.zafira.services.services.management.TenancyService;
 import com.qaprosoft.zafira.services.util.TenancyInitial;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 @Component
+@DependsOn("integrationService")
 public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbInitial {
 
     private static final Logger LOGGER = Logger.getLogger( IntegrationTenancyStorage.class);
@@ -59,9 +61,7 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
 
     @Override
     public void init() {
-        Arrays.stream(Setting.Tool.values()).forEach(tool -> {
-            settingsService.getServiceByTool(tool).init();
-        });
+        Arrays.stream(Setting.Tool.getValues()).forEach(tool -> settingsService.getServiceByTool(tool).init());
     }
 
     @Override
