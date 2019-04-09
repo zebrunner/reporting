@@ -15,8 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import static com.qaprosoft.zafira.models.db.Setting.Tool.EMAIL;
-
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.concurrent.Executors;
@@ -58,7 +56,7 @@ public class EmailService {
 	public String sendEmail(final IEmailMessage message, final String... emails) throws ServiceException
 	{
 
-		if(! emailTask.isEnabledAndConnected(EMAIL))
+		if(! emailTask.isEnabledAndConnected())
 		{
 			return null;
 		}

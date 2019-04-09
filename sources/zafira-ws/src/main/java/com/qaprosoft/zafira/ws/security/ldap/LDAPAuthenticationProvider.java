@@ -16,7 +16,7 @@
 package com.qaprosoft.zafira.ws.security.ldap;
 
 import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.services.services.application.integration.impl.IntegrationTenancyStorage;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationTenancyStorage;
 import com.qaprosoft.zafira.services.services.application.integration.context.LDAPContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NamingException;

@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.qaprosoft.zafira.services.services.application.integration.Integration;
+import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ import com.qaprosoft.zafira.services.services.application.integration.context.Je
 import org.springframework.stereotype.Component;
 
 @Component
-public class JenkinsService implements Integration<JenkinsContext> {
+public class JenkinsService extends AbstractIntegration<JenkinsContext> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JenkinsService.class);
 
@@ -63,6 +63,7 @@ public class JenkinsService implements Integration<JenkinsContext> {
     private final CryptoService cryptoService;
 
     public JenkinsService(SettingsService settingsService, CryptoService cryptoService) {
+        super(JENKINS);
         this.settingsService = settingsService;
         this.cryptoService = cryptoService;
     }
@@ -110,7 +111,7 @@ public class JenkinsService implements Integration<JenkinsContext> {
     public void init(String url, String username, String passwordOrApiToken, String launcherJobName, Boolean enabled) {
         try {
             if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(passwordOrApiToken)) {
-                putContext(JENKINS, new JenkinsContext(url, username, passwordOrApiToken, launcherJobName, enabled));
+                putContext(new JenkinsContext(url, username, passwordOrApiToken, launcherJobName, enabled));
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize Jenkins integration: " + e.getMessage());
@@ -319,10 +320,10 @@ public class JenkinsService implements Integration<JenkinsContext> {
     }
 
     public JenkinsServer getServer() {
-        return getContext(JENKINS) != null ? getContext(JENKINS).getJenkinsServer() : null;
+        return getContext() != null ? getContext().getJenkinsServer() : null;
     }
 
     public JenkinsContext getContext() {
-        return getContext(JENKINS);
+        return super.getContext();
     }
 }

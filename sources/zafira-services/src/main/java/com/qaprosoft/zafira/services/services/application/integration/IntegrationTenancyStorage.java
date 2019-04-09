@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.integration.impl;
+package com.qaprosoft.zafira.services.services.application.integration;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
 
+import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
 import com.qaprosoft.zafira.services.util.TenancyDbInitial;
 import org.apache.log4j.Logger;
 
@@ -37,17 +38,19 @@ import org.springframework.stereotype.Component;
 @DependsOn("integrationService")
 public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbInitial {
 
-    private static final Logger LOGGER = Logger.getLogger( IntegrationTenancyStorage.class);
+    private static final Logger LOGGER = Logger.getLogger(IntegrationTenancyStorage.class);
 
     private static final Map<Setting.Tool, Map<String, ? extends AbstractContext>> tenancyEntity = new ConcurrentHashMap<>();
     
     private final TenancyService tenancyService;
     private final SettingsService settingsService;
+    private final IntegrationService integrationService;
     private final CryptoService cryptoService;
 
-    public IntegrationTenancyStorage(TenancyService tenancyService, SettingsService settingsService, CryptoService cryptoService) {
+    public IntegrationTenancyStorage(TenancyService tenancyService, SettingsService settingsService, IntegrationService integrationService, CryptoService cryptoService) {
         this.tenancyService = tenancyService;
         this.settingsService = settingsService;
+        this.integrationService = integrationService;
         this.cryptoService = cryptoService;
     }
 
@@ -61,7 +64,7 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
 
     @Override
     public void init() {
-        Arrays.stream(Setting.Tool.getValues()).forEach(tool -> settingsService.getServiceByTool(tool).init());
+        Arrays.stream(Setting.Tool.getValues()).forEach(tool -> integrationService.getServiceByTool(tool).init());
     }
 
     @Override

@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.services.services.application.integration.impl;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
-import com.qaprosoft.zafira.services.services.application.integration.Integration;
+import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import com.qaprosoft.zafira.services.services.application.integration.context.LDAPContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -30,14 +30,15 @@ import java.util.List;
 import static com.qaprosoft.zafira.models.db.Setting.Tool.LDAP;
 
 @Component
-public class LDAPService implements Integration<LDAPContext> {
+public class LdapService extends AbstractIntegration<LDAPContext> {
 
-    private final static Logger LOGGER = Logger.getLogger(LDAPService.class);
+    private final static Logger LOGGER = Logger.getLogger(LdapService.class);
 
     private final SettingsService settingsService;
     private final CryptoService cryptoService;
 
-    public LDAPService(SettingsService settingsService, CryptoService cryptoService) {
+    public LdapService(SettingsService settingsService, CryptoService cryptoService) {
+        super(LDAP);
         this.settingsService = settingsService;
         this.cryptoService = cryptoService;
     }
@@ -94,7 +95,7 @@ public class LDAPService implements Integration<LDAPContext> {
         try
         {
             if(!StringUtils.isBlank(dn) && !StringUtils.isBlank(searchFilter) && !StringUtils.isBlank(url) && !StringUtils.isBlank(managerUser) && !StringUtils.isBlank(managerPassword)) {
-                putContext(LDAP, new LDAPContext(dn, searchFilter, url, managerUser, managerPassword, enabled));
+                putContext(new LDAPContext(dn, searchFilter, url, managerUser, managerPassword, enabled));
             }
         } catch (Exception e)
         {
@@ -128,6 +129,6 @@ public class LDAPService implements Integration<LDAPContext> {
 
     public LDAPContext getType()
     {
-        return getContext(LDAP);
+        return getContext();
     }
 }

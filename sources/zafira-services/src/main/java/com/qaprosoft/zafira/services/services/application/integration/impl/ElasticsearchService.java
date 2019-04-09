@@ -16,7 +16,7 @@
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
 import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.services.services.application.integration.Integration;
+import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import com.qaprosoft.zafira.services.util.ElasticsearchResultHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
@@ -50,9 +50,11 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.qaprosoft.zafira.models.db.Setting.Tool.ELASTICSEARCH;
+
 @SuppressWarnings("rawtypes")
 @Component
-public class ElasticsearchService implements Integration
+public class ElasticsearchService extends AbstractIntegration
 {
 
 	private static final Logger LOGGER = Logger.getLogger(ElasticsearchService.class);
@@ -65,6 +67,7 @@ public class ElasticsearchService implements Integration
 	public ElasticsearchService(@Value("${zafira.elasticsearch.url}") String url,
 								@Value("${zafira.elasticsearch.user}") String user,
 								@Value("${zafira.elasticsearch.pass}") String password) {
+		super(ELASTICSEARCH);
 		this.url = url;
 		this.user = user;
 		this.password = password;

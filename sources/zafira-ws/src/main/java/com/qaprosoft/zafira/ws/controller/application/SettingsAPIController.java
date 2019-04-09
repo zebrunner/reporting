@@ -18,6 +18,7 @@ package com.qaprosoft.zafira.ws.controller.application;
 import java.io.IOException;
 import java.util.List;
 
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +69,9 @@ public class SettingsAPIController extends AbstractController
 
 	@Autowired
 	private SettingsService settingsService;
+
+	@Autowired
+	private IntegrationService integrationService;
 
 	@Autowired
 	private CryptoService cryptoService;
@@ -199,7 +203,7 @@ public class SettingsAPIController extends AbstractController
         settingsService.notifyToolReinitiated(tool, TenancyContext.getTenantName());
 		connectedTool.setName(tool.name());
 		connectedTool.setSettingList(settings);
-		connectedTool.setConnected(settingsService.getServiceByTool(tool).isEnabledAndConnected(tool));
+		connectedTool.setConnected(integrationService.getServiceByTool(tool).isEnabledAndConnected());
         return connectedTool;
 	}
 

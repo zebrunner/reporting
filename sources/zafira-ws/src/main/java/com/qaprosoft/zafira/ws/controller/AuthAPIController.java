@@ -25,7 +25,7 @@ import com.qaprosoft.zafira.services.exceptions.*;
 import com.qaprosoft.zafira.services.services.application.GroupService;
 import com.qaprosoft.zafira.services.services.application.InvitationService;
 import com.qaprosoft.zafira.services.services.auth.ForgotPasswordService;
-import com.qaprosoft.zafira.services.services.application.integration.impl.LDAPService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.LdapService;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
@@ -53,8 +53,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
-import static com.qaprosoft.zafira.models.db.Setting.Tool.LDAP;
-
 @Controller
 @Api(value = "Auth API")
 @CrossOrigin
@@ -71,7 +69,7 @@ public class AuthAPIController extends AbstractController {
 	private UserService userService;
 
 	@Autowired
-	private LDAPService ldapService;
+	private LdapService ldapService;
 
 	@Autowired
 	private GroupService groupService;
@@ -152,7 +150,7 @@ public class AuthAPIController extends AbstractController {
 			throw new ForbiddenOperationException();
 		}
 		if(invitation.getSource().equals(User.Source.LDAP)) {
-			if(ldapService.isEnabledAndConnected(LDAP) && ldapService.searchUser(userType.getUsername()) == null) {
+			if(ldapService.isEnabledAndConnected() && ldapService.searchUser(userType.getUsername()) == null) {
 				throw new ForbiddenOperationException();
 			}
 		}

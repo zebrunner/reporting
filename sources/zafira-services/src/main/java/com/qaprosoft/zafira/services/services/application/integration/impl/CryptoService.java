@@ -24,7 +24,7 @@ import java.util.List;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
-import com.qaprosoft.zafira.services.services.application.integration.Integration;
+import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -37,7 +37,7 @@ import com.qaprosoft.zafira.services.services.application.integration.context.Cr
 import org.springframework.stereotype.Component;
 
 @Component
-public class CryptoService implements Integration<CryptoContext> {
+public class CryptoService extends AbstractIntegration<CryptoContext> {
 
     private static final Logger LOGGER = Logger.getLogger(CryptoService.class);
 
@@ -46,6 +46,7 @@ public class CryptoService implements Integration<CryptoContext> {
 
     public CryptoService(SettingsService settingsService,
                          @Value("${zafira.crypto_salt}") String salt) {
+        super(CRYPTO);
         this.settingsService = settingsService;
         this.salt = salt;
     }
@@ -76,7 +77,7 @@ public class CryptoService implements Integration<CryptoContext> {
                 }
             }
 
-            putContext(CRYPTO, new CryptoContext(type, size, key, this.salt));
+            putContext(new CryptoContext(type, size, key, this.salt));
 
             key = getKey();
             initCryptoTool(key);
@@ -155,6 +156,6 @@ public class CryptoService implements Integration<CryptoContext> {
     }
 
     public CryptoContext getCryptoType() {
-        return getContext(CRYPTO);
+        return getContext();
     }
 }

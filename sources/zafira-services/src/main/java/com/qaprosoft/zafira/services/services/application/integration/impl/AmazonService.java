@@ -23,7 +23,7 @@ import java.net.URL;
 import java.util.*;
 
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
-import com.qaprosoft.zafira.services.services.application.integration.Integration;
+import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -54,7 +54,7 @@ import com.qaprosoft.zafira.services.services.application.integration.context.Am
 import org.springframework.stereotype.Component;
 
 @Component
-public class AmazonService implements Integration<AmazonContext> {
+public class AmazonService extends AbstractIntegration<AmazonContext> {
 
     private static final Logger LOGGER = Logger.getLogger(AmazonService.class);
 
@@ -69,6 +69,7 @@ public class AmazonService implements Integration<AmazonContext> {
     private Boolean multitenant;
 
     public AmazonService(SettingsService settingsService, CryptoService cryptoService, ClientConfiguration clientConfiguration, URLResolver urlResolver) {
+        super(AMAZON);
         this.settingsService = settingsService;
         this.cryptoService = cryptoService;
         this.clientConfiguration = clientConfiguration;
@@ -119,7 +120,7 @@ public class AmazonService implements Integration<AmazonContext> {
         try {
             if (!StringUtils.isBlank(accessKey) && !StringUtils.isBlank(privateKey) && !StringUtils.isBlank(region)
                     && !StringUtils.isBlank(bucket)) {
-                putContext(AMAZON, new AmazonContext(accessKey, privateKey, region, bucket, clientConfiguration, enabled));
+                putContext(new AmazonContext(accessKey, privateKey, region, bucket, clientConfiguration, enabled));
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize Amazon integration: " + e.getMessage());
@@ -192,7 +193,7 @@ public class AmazonService implements Integration<AmazonContext> {
      */
     public SessionCredentials getTemporarySessionCredentials(int expiresIn) {
         SessionCredentials result = null;
-        if (isEnabledAndConnected(AMAZON)) {
+        if (isEnabledAndConnected()) {
             GetSessionTokenRequest getSessionTokenRequest = new GetSessionTokenRequest();
             GetSessionTokenResult getSessionTokenResult;
             getSessionTokenRequest.setDurationSeconds(expiresIn);
@@ -211,6 +212,6 @@ public class AmazonService implements Integration<AmazonContext> {
     }
 
     public AmazonContext getAmazonType() {
-        return getContext(AMAZON);
+        return getContext();
     }
 }

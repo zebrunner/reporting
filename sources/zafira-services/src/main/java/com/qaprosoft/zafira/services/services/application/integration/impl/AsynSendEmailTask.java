@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.services.services.application.integration.impl;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
-import com.qaprosoft.zafira.services.services.application.integration.Integration;
+import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import com.qaprosoft.zafira.services.services.application.integration.context.EmailContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -31,7 +31,7 @@ import java.util.List;
 import static com.qaprosoft.zafira.models.db.Setting.Tool.EMAIL;
 
 @Component
-public class AsynSendEmailTask implements Runnable, Integration<EmailContext> {
+public class AsynSendEmailTask extends AbstractIntegration<EmailContext> implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(AsynSendEmailTask.class);
 
@@ -41,6 +41,7 @@ public class AsynSendEmailTask implements Runnable, Integration<EmailContext> {
     private MimeMessagePreparator preparator;
 
     public AsynSendEmailTask(SettingsService settingsService, CryptoService cryptoService) {
+        super(EMAIL);
         this.settingsService = settingsService;
         this.cryptoService = cryptoService;
     }
@@ -97,7 +98,7 @@ public class AsynSendEmailTask implements Runnable, Integration<EmailContext> {
     public void init(String host, int port, String user, String fromAddress, String password, boolean enabled) {
         try {
             if (!StringUtils.isBlank(host) && !StringUtils.isBlank(user) && !StringUtils.isBlank(password) && port != 0) {
-                putContext(EMAIL, new EmailContext(host, port, user, fromAddress, password, enabled));
+                putContext(new EmailContext(host, port, user, fromAddress, password, enabled));
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize SMTP integration: " + e.getMessage());
@@ -150,6 +151,6 @@ public class AsynSendEmailTask implements Runnable, Integration<EmailContext> {
     }
 
     public EmailContext getContext() {
-        return getContext(EMAIL);
+        return super.getContext();
     }
 }

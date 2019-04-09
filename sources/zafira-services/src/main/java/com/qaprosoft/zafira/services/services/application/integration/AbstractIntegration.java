@@ -15,27 +15,20 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration;
 
-import com.qaprosoft.zafira.models.db.Setting.Tool;
+import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.integration.context.AbstractContext;
 
-public interface Integration<T extends AbstractContext> {
+public abstract class AbstractIntegration<T extends AbstractContext> implements Integration<T> {
 
-    void init();
+    private final Setting.Tool tool;
 
-    boolean isConnected();
-
-    Tool getTool();
-
-    default T getContext() {
-        return IntegrationTenancyStorage.getContext(getTool());
+    public AbstractIntegration(Setting.Tool tool) {
+        this.tool = tool;
     }
 
-    default void putContext(T t) {
-        IntegrationTenancyStorage.putContext(getTool(), t);
+    @Override
+    public Setting.Tool getTool() {
+        return tool;
     }
 
-    default boolean isEnabledAndConnected() {
-        T context = getContext();
-        return context != null && context.isEnabled() && isConnected();
-    }
 }

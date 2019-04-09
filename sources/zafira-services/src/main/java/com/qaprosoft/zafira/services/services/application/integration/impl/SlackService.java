@@ -17,12 +17,13 @@ package com.qaprosoft.zafira.services.services.application.integration.impl;
 
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_ENABLED;
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_WEB_HOOK_URL;
+import static com.qaprosoft.zafira.models.db.Setting.Tool.SLACK;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
-import com.qaprosoft.zafira.services.services.application.integration.Integration;
+import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -44,7 +45,7 @@ import in.ashwanthkumar.slack.webhook.SlackMessage;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SlackService implements Integration<SlackContext> {
+public class SlackService extends AbstractIntegration<SlackContext> {
 
     private static final Logger LOGGER = Logger.getLogger(SlackService.class);
 
@@ -66,6 +67,7 @@ public class SlackService implements Integration<SlackContext> {
                         CryptoService cryptoService,
                         @Value("${zafira.slack.image}") String image,
                         @Value("${zafira.slack.author}") String author) {
+        super(SLACK);
         this.urlResolver = urlResolver;
         this.jenkinsService = jenkinsService;
         this.settingsService = settingsService;
@@ -104,7 +106,7 @@ public class SlackService implements Integration<SlackContext> {
         if (wH != null) {
             try {
                 Setting enabledSetting = settingsService.getSettingByName(SLACK_ENABLED.name());
-                putContext(Setting.Tool.SLACK, new SlackContext(wH, author, picPath, Boolean.valueOf(enabledSetting.getValue())));
+                putContext(new SlackContext(wH, author, picPath, Boolean.valueOf(enabledSetting.getValue())));
             } catch (IllegalArgumentException e) {
                 LOGGER.info("Webhook url is not provided");
             }
@@ -132,7 +134,7 @@ public class SlackService implements Integration<SlackContext> {
             SlackAttachment attachment = generateSlackAttachment(mainMessage, resultsMessage, attachmentColor, tr.getComments());
             Arrays.stream(channels.split(",")).forEach(channel -> {
                 try {
-                    getContext(Setting.Tool.SLACK).setSlack(getSlack().sendToChannel(channel));
+                    getContext().setSlack(getSlack().sendToChannel(channel));
                     getSlack().push(attachment);
                 } catch (IOException e) {
                     LOGGER.error("Unable to push Slack notification");
@@ -223,6 +225,6 @@ public class SlackService implements Integration<SlackContext> {
     }
 
     public Slack getSlack() {
-        return getContext(Setting.Tool.SLACK) != null ? getContext(Setting.Tool.SLACK).getSlack() : null;
+        return getContext() != null ? getContext().getSlack() : null;
     }
 }

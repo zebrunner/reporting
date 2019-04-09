@@ -20,7 +20,7 @@ import static com.qaprosoft.zafira.models.db.Setting.Tool.JIRA;
 
 import java.util.List;
 
-import com.qaprosoft.zafira.services.services.application.integration.Integration;
+import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -34,7 +34,7 @@ import net.rcarz.jiraclient.JiraClient;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JiraService implements Integration<JiraContext> {
+public class JiraService extends AbstractIntegration<JiraContext> {
 
     private static final Logger LOGGER = Logger.getLogger(JiraService.class);
 
@@ -42,6 +42,7 @@ public class JiraService implements Integration<JiraContext> {
     private final CryptoService cryptoService;
 
     public JiraService(SettingsService settingsService, CryptoService cryptoService) {
+        super(JIRA);
         this.settingsService = settingsService;
         this.cryptoService = cryptoService;
     }
@@ -86,7 +87,7 @@ public class JiraService implements Integration<JiraContext> {
     public void init(String url, String username, String password, boolean enabled) {
         try {
             if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
-                putContext(JIRA, new JiraContext(url, username, password, enabled));
+                putContext(new JiraContext(url, username, password, enabled));
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize Jira integration: " + e.getMessage());
@@ -131,6 +132,6 @@ public class JiraService implements Integration<JiraContext> {
     }
 
     public JiraClient getJiraClient() {
-        return getContext(JIRA) != null ? getContext(JIRA).getJiraClient() : null;
+        return getContext() != null ? getContext().getJiraClient() : null;
     }
 }

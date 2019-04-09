@@ -17,8 +17,8 @@ package com.qaprosoft.zafira.services.services.application.integration.impl.goog
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
+import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
-import com.qaprosoft.zafira.services.services.application.integration.Integration;
 import com.qaprosoft.zafira.services.services.application.integration.impl.google.auth.GoogleDriveAuthService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.google.auth.GoogleSheetsAuthService;
 import com.qaprosoft.zafira.services.services.application.integration.context.GoogleContext;
@@ -33,7 +33,7 @@ import java.util.List;
 import static com.qaprosoft.zafira.models.db.Setting.Tool.GOOGLE;
 
 @Component
-public class GoogleService implements Integration<GoogleContext>
+public class GoogleService extends AbstractIntegration<GoogleContext>
 {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GoogleService.class);
@@ -47,6 +47,7 @@ public class GoogleService implements Integration<GoogleContext>
 	private GoogleSpreadsheetsService spreadsheetsService;
 
 	public GoogleService(SettingsService settingsService, GoogleDriveAuthService driveAuthService, GoogleSheetsAuthService sheetsAuthService, CryptoService cryptoService) {
+		super(GOOGLE);
 		this.settingsService = settingsService;
 		this.driveAuthService = driveAuthService;
 		this.sheetsAuthService = sheetsAuthService;
@@ -87,7 +88,7 @@ public class GoogleService implements Integration<GoogleContext>
 	public void init(byte[] credsFile, String originName, boolean enabled) {
 		try {
 			if (!StringUtils.isEmpty(originName) && credsFile != null) {
-				putContext(GOOGLE, new GoogleContext(credsFile, originName, enabled));
+				putContext(new GoogleContext(credsFile, originName, enabled));
 				driveService = new GoogleDriveService(credsFile);
 				spreadsheetsService = new GoogleSpreadsheetsService(credsFile);
 			}
@@ -134,6 +135,6 @@ public class GoogleService implements Integration<GoogleContext>
 	}
 
 	public GoogleContext getContext() {
-		return getContext(GOOGLE);
+		return super.getContext();
 	}
 }

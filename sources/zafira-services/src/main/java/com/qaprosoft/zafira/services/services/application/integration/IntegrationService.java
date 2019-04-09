@@ -15,16 +15,24 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration;
 
+import com.qaprosoft.zafira.models.db.Setting;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
 public class IntegrationService {
 
-    private final Map<String, Integration> integrations;
+    private final Map<Setting.Tool, Integration> integrations;
 
     public IntegrationService(Map<String, Integration> integrations) {
-        this.integrations = integrations;
+        this.integrations = new HashMap<>();
+        integrations.forEach((beanName, integration) -> this.integrations.put(integration.getTool(), integration));
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Integration> T getServiceByTool(Setting.Tool tool) {
+        return (T) integrations.get(tool);
     }
 }

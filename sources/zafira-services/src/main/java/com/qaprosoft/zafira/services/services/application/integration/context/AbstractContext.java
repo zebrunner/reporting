@@ -21,7 +21,7 @@ public abstract class AbstractContext {
 
     protected static final Logger LOGGER = Logger.getLogger(AbstractContext.class);
 
-    private Boolean enabled;
+    private final Boolean enabled;
 
     public AbstractContext(Boolean enabled) {
         this.enabled = enabled;
@@ -29,9 +29,5 @@ public abstract class AbstractContext {
 
     public Boolean isEnabled() {
         return enabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
     }
 }

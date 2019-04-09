@@ -19,7 +19,7 @@ import static com.qaprosoft.zafira.models.db.Setting.Tool.RABBITMQ;
 
 import java.util.List;
 
-import com.qaprosoft.zafira.services.services.application.integration.Integration;
+import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.amqp.core.Queue;
@@ -31,7 +31,7 @@ import com.qaprosoft.zafira.services.services.application.integration.context.Ra
 import org.springframework.stereotype.Component;
 
 @Component
-public class RabbitMQService implements Integration<RabbitMQContext> {
+public class RabbitMQService extends AbstractIntegration<RabbitMQContext> {
 
     private static final Logger LOGGER = Logger.getLogger(RabbitMQService.class);
 
@@ -40,6 +40,7 @@ public class RabbitMQService implements Integration<RabbitMQContext> {
     private final Queue settingsQueue;
 
     public RabbitMQService(SettingsService settingsService, CryptoService cryptoService, Queue settingsQueue) {
+        super(RABBITMQ);
         this.settingsService = settingsService;
         this.cryptoService = cryptoService;
         this.settingsQueue = settingsQueue;
@@ -89,7 +90,7 @@ public class RabbitMQService implements Integration<RabbitMQContext> {
         try {
             if (!StringUtils.isEmpty(host) && !StringUtils.isEmpty(port) && !StringUtils.isEmpty(username)
                     && !StringUtils.isEmpty(password)) {
-                putContext(RABBITMQ, new RabbitMQContext(host, port, username, password, enabled));
+                putContext(new RabbitMQContext(host, port, username, password, enabled));
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize RabbitMQ integration: " + e.getMessage());
@@ -110,7 +111,7 @@ public class RabbitMQService implements Integration<RabbitMQContext> {
     }
 
     public Connection getConnection() {
-        return getContext(RABBITMQ) != null ? getContext(RABBITMQ).getConnection() : null;
+        return getContext() != null ? getContext().getConnection() : null;
     }
 
 }
