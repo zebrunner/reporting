@@ -29,6 +29,7 @@ import com.qaprosoft.zafira.client.ZafiraClient.Response;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * ZafiraSingleton - singleton wrapper around {@link ZafiraClient}.
@@ -104,7 +105,7 @@ public enum ZafiraSingleton {
 							CompletableFuture.runAsync(TENANT_INIT)
 					).exceptionally(error -> {
 						throw new RuntimeException(error.getMessage(), error);
-					}).get();
+					}).get(60, TimeUnit.SECONDS);
 				}
 			}
 		} catch (Exception e) {
