@@ -7,7 +7,7 @@ Zafira is a central automation reporting system that is built on the top of Java
   <img width="600px" height="600px" src="./docs/img/space.png">
 </p>
 
-Zafira was initially designed to track automation progress of the tests written using [Carina automation framework](https://github.com/qaprosoft/carina/) but you are capable to integrate Zafira client into your own automation tool. We are actively developing clients for different languages and frameworks but still looking for active community to provide better support. 
+Zafira was initially designed to track automation progress of the tests written using [Carina automation framework](https://github.com/qaprosoft/carina/) but you are capable to integrate Zafira client into your own automation tool. We are actively developing clients for different languages and frameworks but still looking for active community to provide better support.
 
 #### Primary features
 * Real-time test results tracking via websockets
@@ -62,10 +62,10 @@ Zafira was initially designed to track automation progress of the tests written 
   ```
   $ ./start.sh
   ```
-4. Open in your browser IP address of deployed enviroment at port `8080`
+4. Open in your browser IP address of deployed enviroment at port `80`
 
   ```
-  http://localhost:8080/zafira
+  http://localhost:80/app
   ```
 5. Use next login/pass for access: `qpsdemo/qpsdemo`.
 
