@@ -53,8 +53,17 @@ services:
     restart: always
     depends_on:
       - elasticsearch
+  zafira-batch:
+    image: qaprosoft/zafira-batch:latest
+    env_file:
+     - integrations.env
+    depends_on:
+      - "db"
+      - "rabbitmq"
+      - "redis"
+    restart: always
   zafira:
-    image: qaprosoft/zafira:1.0
+    image: qaprosoft/zafira:latest
     ports:
       - 8080:8080
     env_file:
@@ -64,15 +73,6 @@ services:
       - ZAFIRA_USER=qpsdemo
       - ZAFIRA_PASS=qpsdemo
       - ZAFIRA_GROUP="Super admins"
-    depends_on:
-      - "db"
-      - "rabbitmq"
-      - "redis"
-    restart: always
-  zafira-batch:
-    image: qaprosoft/zafira-batch:latest
-    env_file:
-     - integrations.env
     depends_on:
       - "db"
       - "rabbitmq"

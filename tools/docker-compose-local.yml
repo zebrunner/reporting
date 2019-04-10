@@ -58,6 +58,16 @@ services:
     restart: always
     depends_on:
       - elasticsearch
+  zafira-batch:
+    container_name: zfr_batch_service
+    image: qaprosoft/zafira-batch:latest
+    env_file:
+     - integrations.env
+    depends_on:
+      - db
+      - rabbitmq
+      - redis
+    restart: always
   zafira:
     container_name: zfr_zafira
     build: .
@@ -75,13 +85,12 @@ services:
       - rabbitmq
       - redis
     restart: always
-  zafira-batch:
-    container_name: zfr_batch_service
-    image: qaprosoft/zafira-batch:latest
-    env_file:
-     - integrations.env
+  zafira-ui:
+    container_name: zfr_zafira_ui
+    image: qaprosoft/zafira-ui:latest
+    ports:
+      - 80:80
+    environment:
+      - ZAFIRA_WS_URL=http://localhost:8080/zafira-ws
     depends_on:
-      - db
-      - rabbitmq
-      - redis
-    restart: always
+      - "zafira"
