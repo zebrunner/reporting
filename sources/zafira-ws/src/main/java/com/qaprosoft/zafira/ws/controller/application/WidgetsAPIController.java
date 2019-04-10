@@ -251,7 +251,10 @@ public class WidgetsAPIController extends AbstractController
 		}
 		List<Map<String, Object>> resultList;
 		try {
-			resultList = widgetService.executeSQL(widgetTemplate.getSql(), sqlExecuteType.getParamsConfig(), true);
+			Map<WidgetService.DefaultParam, Object> additionalParameters = new HashMap<>();
+			additionalParameters.put(WidgetService.DefaultParam.CURRENT_USER_NAME, getPrincipalName());
+			additionalParameters.put(WidgetService.DefaultParam.CURRENT_USER_ID, getPrincipalId());
+			resultList = widgetService.executeSQL(widgetTemplate.getSql(), sqlExecuteType.getParamsConfig(), additionalParameters, true);
 		} catch (Exception e) {
 			if(stackTraceRequired) {
 				resultList = new ArrayList<>();
