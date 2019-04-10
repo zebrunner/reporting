@@ -15,16 +15,24 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.context;
 
+import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleDriveService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleSpreadsheetsService;
+
 public class GoogleContext extends AbstractContext
 {
 
     private final byte[] credsFile;
     private final String credsFileOriginName;
 
+    private GoogleDriveService driveService;
+    private GoogleSpreadsheetsService spreadsheetsService;
+
     public GoogleContext(byte[] credsFile, String credsFileOriginName, boolean enabled) {
         super(enabled);
         this.credsFile = credsFile;
         this.credsFileOriginName = credsFileOriginName;
+        this.driveService = new GoogleDriveService(credsFile);
+        this.spreadsheetsService = new GoogleSpreadsheetsService(credsFile);
     }
 
     public byte[] getCredsFile() {
@@ -33,5 +41,13 @@ public class GoogleContext extends AbstractContext
 
     public String getCredsFileOriginName() {
         return credsFileOriginName;
+    }
+
+    public GoogleDriveService getDriveService() {
+        return driveService;
+    }
+
+    public GoogleSpreadsheetsService getSpreadsheetsService() {
+        return spreadsheetsService;
     }
 }

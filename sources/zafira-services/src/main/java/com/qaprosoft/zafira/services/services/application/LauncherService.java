@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.qaprosoft.zafira.services.services.application.integration.context.JenkinsContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -62,14 +63,15 @@ public class LauncherService {
 
     @Transactional(rollbackFor = Exception.class)
     public Launcher createLauncher(Launcher launcher, User owner) throws ServiceException {
-        if(jenkinsService.getContext() != null) {
-            String launcherJobName = jenkinsService.getContext().getLauncherJobName();
+        if(jenkinsService.isConnected()) {
+            JenkinsContext context = jenkinsService.context();
+            String launcherJobName = context.getLauncherJobName();
             if (launcherJobName != null) {
                 Job job = jobsService.getJobByName(launcherJobName);
                 if(job == null) {
-                    job = jenkinsService.getJob(launcherJobName);
+                    job = jenkinsService.getJob(launcherJobName).orElse(null);
                     if (job != null) {
-                        job.setJenkinsHost(jenkinsService.getContext().getJenkinsHost());
+                        job.setJenkinsHost(context.getJenkinsHost());
                         job.setUser(owner);
                         jobsService.createJob(job);
                     }

@@ -18,11 +18,13 @@ package com.qaprosoft.zafira.services.services.application;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.log4j.Logger;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
@@ -80,10 +82,14 @@ public class EmailService {
 	}
 
 	private void msgSetFrom(MimeMessageHelper msg) throws UnsupportedEncodingException, MessagingException {
-		if(! StringUtils.isBlank(this.mailSender.getFromAddress())) {
-			msg.setFrom(this.mailSender.getFromAddress(), this.mailSender.getJavaMailSenderImpl().getUsername());
+		JavaMailSenderImpl javaMailSender = mailSender.getJavaMailSenderImpl()
+													  .orElseThrow(() -> new ForbiddenOperationException("Unable to retrieve sender address"));
+		String fromAddress = mailSender.getFromAddress()
+									   .orElseThrow(() -> new ForbiddenOperationException("Unable to retrieve sender address"));
+		if(! StringUtils.isBlank(fromAddress)) {
+			msg.setFrom(fromAddress, javaMailSender.getUsername());
 		} else {
-			msg.setFrom(this.mailSender.getJavaMailSenderImpl().getUsername());
+			msg.setFrom(javaMailSender.getUsername());
 		}
 	}
 	

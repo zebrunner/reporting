@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
 import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import com.qaprosoft.zafira.services.services.application.integration.context.EmailContext;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import javax.mail.MessagingException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.EMAIL;
@@ -100,51 +102,43 @@ public class MailSender extends AbstractIntegration<EmailContext> {
     }
 
     public CompletableFuture<Void> send(MimeMessagePreparator preparator) {
-        return CompletableFuture.runAsync(() -> this.getJavaMailSenderImpl().send(preparator));
+        return CompletableFuture.runAsync(() -> getJavaMailSenderImpl()
+                .orElseThrow(() -> new ForbiddenOperationException("Mail sender is not configured properly"))
+                .send(preparator));
     }
 
     @Override
     public boolean isConnected() {
-        if(isContextConnected() != null) {
-            return isContextConnected();
-        }
-        boolean connected = false;
-        JavaMailSenderImpl sender = getJavaMailSenderImpl();
-        if (sender != null) {
-            try {
-                sender.testConnection();
-                connected = true;
-            } catch (MessagingException e) {
-                // Will be thrown when SMTP not configured properly
+        return isContextConnected().orElseGet(() -> {
+            boolean connected = false;
+            JavaMailSenderImpl sender = getJavaMailSenderImpl().orElse(null);
+            if (sender != null) {
+                try {
+                    sender.testConnection();
+                    connected = true;
+                } catch (MessagingException e) {
+                    // Will be thrown when SMTP not configured properly
+                }
             }
-        }
-        setConnected(connected);
-        return connected;
+            setConnected(connected);
+            return connected;
+        });
     }
 
-    public JavaMailSenderImpl getJavaMailSenderImpl() {
-        return getContext() != null ? (JavaMailSenderImpl) getContext().getJavaMailSender() : null;
+    public Optional<JavaMailSenderImpl> getJavaMailSenderImpl() {
+        return mapContext(context -> (JavaMailSenderImpl) context.getJavaMailSender());
     }
 
-    public String getFromAddress() {
-        return getContext() != null ? getContext().getFromAddress() : null;
+    public Optional<String> getFromAddress() {
+        return mapContext(EmailContext::getFromAddress);
     }
 
-    public void setConnected(boolean isConnected) {
-        if(getContext() != null) {
-            getContext().setConnected(isConnected);
-        }
+    private void setConnected(boolean isConnected) {
+        getContext().ifPresent(context -> context().setConnected(isConnected));
     }
 
-    public Boolean isContextConnected() {
-        Boolean result = null;
-        if(getContext() != null) {
-            result = getContext().isConnected();
-        }
-        return result;
+    private Optional<Boolean> isContextConnected() {
+        return mapContext(EmailContext::isConnected);
     }
 
-    public EmailContext getContext() {
-        return super.getContext();
-    }
 }

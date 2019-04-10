@@ -17,6 +17,7 @@ package com.qaprosoft.zafira.services.services.application.integration;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
@@ -95,10 +96,9 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T getContext(Setting.Tool tool) {
+    public static <T> Optional<T> getContext(Setting.Tool tool) {
         Map<String, ? extends AbstractContext> clientMap = tenancyEntity.get(tool);
-        return clientMap == null ? null : (T) tenancyEntity.get(tool).get(TenancyContext.getTenantName());
+        return clientMap == null ? Optional.empty() : Optional.ofNullable((T) tenancyEntity.get(tool).get(TenancyContext.getTenantName()));
     }
-
 
 }

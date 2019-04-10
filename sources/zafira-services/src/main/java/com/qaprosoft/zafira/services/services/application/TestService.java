@@ -192,9 +192,9 @@ public class TestService
 				WorkItem knownIssue = workItemService.getWorkItemByTestCaseIdAndHashCode(existingTest.getTestCaseId(), getTestMessageHashCode(test.getMessage()));
 				if (knownIssue != null)
 				{
-					Issue issueFromJira = jiraService.getIssue(knownIssue.getJiraId());
-					boolean isJiraIdClosed = jiraService.isEnabledAndConnected() && issueFromJira != null
-							&& jiraService.isIssueClosed(issueFromJira);
+					Optional<Issue> nullableIssueFromJira = jiraService.getIssue(knownIssue.getJiraId());
+					boolean isJiraIdClosed = jiraService.isEnabledAndConnected() && nullableIssueFromJira.isPresent()
+							&& jiraService.isIssueClosed(nullableIssueFromJira.get());
 					if (!isJiraIdClosed)
 					{
 						existingTest.setKnownIssue(true);

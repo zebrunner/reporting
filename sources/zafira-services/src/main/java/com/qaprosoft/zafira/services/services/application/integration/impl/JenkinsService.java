@@ -27,18 +27,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.model.BuildWithDetails;
 import com.offbytwo.jenkins.model.ExtractHeader;
 import com.offbytwo.jenkins.model.FolderJob;
@@ -121,8 +121,8 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
     public boolean rerunJob(Job ciJob, Integer buildNumber, boolean rerunFailures) {
         boolean success = false;
         try {
-            JobWithDetails job = getJobWithDetails(ciJob);
-
+            JobWithDetails job = getJobWithDetails(ciJob).orElseThrow(() ->
+                    new ForbiddenOperationException("Unable to rerun CI job"));
             Map<String, String> params = job.getBuildByNumber(buildNumber).details().getParameters();
             params.put("rerun_failures", Boolean.toString(rerunFailures));
             params.replace("debug", "false");
@@ -137,7 +137,8 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
     public boolean debug(Job ciJob, Integer buildNumber) {
         boolean success = false;
         try {
-            JobWithDetails job = getJobWithDetails(ciJob);
+            JobWithDetails job = getJobWithDetails(ciJob).orElseThrow(() ->
+                    new ForbiddenOperationException("Unable to debug CI job"));
             Map<String, String> params = job.getBuildByNumber(buildNumber).details().getParameters();
             params.replace("debug", "true");
             params.replace("rerun_failures", "true");
@@ -153,7 +154,8 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
     public boolean buildJob(Job job, Map<String, String> jobParameters) {
         boolean success = false;
         try {
-            JobWithDetails ciJob = getJobWithDetails(job);
+            JobWithDetails ciJob = getJobWithDetails(job).orElseThrow(() ->
+                    new ForbiddenOperationException("Unable to build CI job"));
             QueueReference reference = ciJob.build(jobParameters, true);
             success = checkReference(reference);
         } catch (Exception e) {
@@ -165,7 +167,8 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
     public boolean abortJob(Job ciJob, Integer buildNumber) {
         boolean success = false;
         try {
-            JobWithDetails job = getJobWithDetails(ciJob);
+            JobWithDetails job = getJobWithDetails(ciJob).orElseThrow(() ->
+                    new ForbiddenOperationException("Unable to abord CI job"));
             QueueReference reference = stop(job, buildNumber);
             success = checkReference(reference);
             if (!checkReference(reference)) {
@@ -197,7 +200,8 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
     public List<BuildParameterType> getBuildParameters(Job ciJob, Integer buildNumber) {
         List<BuildParameterType> jobParameters = null;
         try {
-            JobWithDetails job = getJobWithDetails(ciJob);
+            JobWithDetails job = getJobWithDetails(ciJob).orElseThrow(() ->
+                    new ForbiddenOperationException("Unable to retrieve build parameters"));
             jobParameters = getJobParameters(job.getBuildByNumber(buildNumber).details().getActions());
             BuildParameterType buildParameter = new BuildParameterType(HIDDEN, "ci_run_id",
                     UUID.randomUUID().toString());
@@ -208,23 +212,27 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
         return jobParameters;
     }
 
-    public Map<String, String> getBuildParametersMap(Job ciJob, Integer buildNumber) {
+    public Optional<Map<String, String>> getBuildParametersMap(Job ciJob, Integer buildNumber) {
         Map<String, String> jobParameters = null;
         try {
-            JobWithDetails job = getJobWithDetails(ciJob);
-            jobParameters = job.getBuildByNumber(buildNumber).details().getParameters();
+            Optional<JobWithDetails> nullableJob = getJobWithDetails(ciJob);
+            if(! nullableJob.isPresent()) {
+                return Optional.empty();
+            }
+            jobParameters = nullableJob.get().getBuildByNumber(buildNumber).details().getParameters();
             jobParameters.put("ci_run_id", UUID.randomUUID().toString());
         } catch (Exception e) {
             LOGGER.error("Unable to get job:  " + e.getMessage());
         }
-        return jobParameters;
+        return Optional.ofNullable(jobParameters);
     }
 
     public Map<Integer, String> getBuildConsoleOutputHtml(Job ciJob, Integer buildNumber, Integer stringsCount,
             Integer fullCount) {
         Map<Integer, String> result = new HashMap<>();
         try {
-            JobWithDetails jobWithDetails = getJobWithDetails(ciJob);
+            JobWithDetails jobWithDetails = getJobWithDetails(ciJob).orElseThrow(() ->
+                    new ForbiddenOperationException("Unable to retrieve console logs"));
             BuildWithDetails buildWithDetails = jobWithDetails.getBuildByNumber(buildNumber).details();
             buildWithDetails.isBuilding();
             result = getLastLogStringsByCount(buildWithDetails.getConsoleOutputHtml(), stringsCount, fullCount);
@@ -237,19 +245,25 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
         return result;
     }
 
-    private JobWithDetails getJobWithDetails(Job ciJob) throws IOException {
-        JobWithDetails job;
-        if (ciJob.getJobURL().matches(FOLDER_REGEX)) {
-            String jobUrl = ciJob.getJobURL();
-            String folderUrl = jobUrl.substring(0, jobUrl.lastIndexOf("/job/"));
-            String[] folderNameValues = jobUrl.split("/job/");
-            String folderName = folderNameValues[folderNameValues.length - 2];
-            Optional<FolderJob> folder = getServer().getFolderJob(new com.offbytwo.jenkins.model.Job(folderName, folderUrl));
-            job = getServer().getJob(folder.get(), ciJob.getName());
-        } else {
-            job = getServer().getJob(ciJob.getName());
-        }
-        return job;
+    private Optional<JobWithDetails> getJobWithDetails(Job ciJob) {
+        return mapContext(context -> {
+            JobWithDetails job;
+            try {
+                if (ciJob.getJobURL().matches(FOLDER_REGEX)) {
+                    String jobUrl = ciJob.getJobURL();
+                    String folderUrl = jobUrl.substring(0, jobUrl.lastIndexOf("/job/"));
+                    String[] folderNameValues = jobUrl.split("/job/");
+                    String folderName = folderNameValues[folderNameValues.length - 2];
+                    com.google.common.base.Optional<FolderJob> folder = context.getJenkinsServer().getFolderJob(new com.offbytwo.jenkins.model.Job(folderName, folderUrl));
+                    job = context.getJenkinsServer().getJob(folder.orNull(), ciJob.getName());
+                } else {
+                    job = context.getJenkinsServer().getJob(ciJob.getName());
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+            return job;
+        });
     }
 
     private Map<Integer, String> getLastLogStringsByCount(String log, Integer count, Integer fullCount) {
@@ -293,17 +307,19 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
         return params;
     }
 
-    public Job getJob(String jobName) {
-        Job job = null;
-        try {
-            JobWithDetails jobWithDetails = getServer().getJob(jobName);
-            if(jobWithDetails != null && jobWithDetails.getUrl() != null) {
-                job = new Job(jobName, jobWithDetails.getUrl());
+    public Optional<Job> getJob(String jobName) {
+        return mapContext(context -> {
+            Job job = null;
+            try {
+                JobWithDetails jobWithDetails = context.getJenkinsServer().getJob(jobName);
+                if(jobWithDetails != null && jobWithDetails.getUrl() != null) {
+                    job = new Job(jobName, jobWithDetails.getUrl());
+                }
+            } catch (IOException e) {
+                LOGGER.error("Unable to get job by name '" + jobName + "'. " + e.getMessage(), e);
             }
-        } catch (IOException e) {
-            LOGGER.error("Unable to get job by name '" + jobName + "'. " + e.getMessage(), e);
-        }
-        return job;
+            return job;
+        });
     }
 
     public static boolean checkArguments(Map<String, String> args) {
@@ -316,14 +332,11 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
 
     @Override
     public boolean isConnected() {
-        return getServer() != null && getServer().isRunning();
+        try {
+            return context().getJenkinsServer().isRunning();
+        } catch (Exception e) {
+            return false;
+        }
     }
 
-    public JenkinsServer getServer() {
-        return getContext() != null ? getContext().getJenkinsServer() : null;
-    }
-
-    public JenkinsContext getContext() {
-        return super.getContext();
-    }
 }

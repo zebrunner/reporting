@@ -43,9 +43,6 @@ public class GoogleService extends AbstractIntegration<GoogleContext>
 	private final SettingsService settingsService;
 	private final CryptoService cryptoService;
 
-	private GoogleDriveService driveService;
-	private GoogleSpreadsheetsService spreadsheetsService;
-
 	public GoogleService(SettingsService settingsService, GoogleDriveAuthService driveAuthService, GoogleSheetsAuthService sheetsAuthService, CryptoService cryptoService) {
 		super(GOOGLE);
 		this.settingsService = settingsService;
@@ -89,8 +86,6 @@ public class GoogleService extends AbstractIntegration<GoogleContext>
 		try {
 			if (!StringUtils.isEmpty(originName) && credsFile != null) {
 				putContext(new GoogleContext(credsFile, originName, enabled));
-				driveService = new GoogleDriveService(credsFile);
-				spreadsheetsService = new GoogleSpreadsheetsService(credsFile);
 			}
 		} catch (Exception e) {
 			LOGGER.error("Unable to initialize Google integration: " + e.getMessage());
@@ -98,11 +93,8 @@ public class GoogleService extends AbstractIntegration<GoogleContext>
 	}
 
 	public String getTemporaryAccessToken(Long expiresIn) throws IOException {
-		String result = null;
-		if(getContext() != null) {
-			result = AbstractGoogleService.authorize(getContext().getCredsFile(), expiresIn).getAccessToken();
-		}
-		return result;
+		byte[] credsFile = mapContext(GoogleContext::getCredsFile).orElse(null);
+		return credsFile != null ? AbstractGoogleService.authorize(credsFile, expiresIn).getAccessToken() : null;
 	}
 
 	@Override
@@ -114,8 +106,8 @@ public class GoogleService extends AbstractIntegration<GoogleContext>
 		{
 			if(getContext() != null)
 			{
-				driveAuthService.getService(getContext().getCredsFile()).about();
-				sheetsAuthService.getService(getContext().getCredsFile()).spreadsheets();
+				driveAuthService.getService(context().getCredsFile()).about();
+				sheetsAuthService.getService(context().getCredsFile()).spreadsheets();
 				result = true;
 			}
 		} catch(Exception e)
@@ -124,17 +116,21 @@ public class GoogleService extends AbstractIntegration<GoogleContext>
 		return result;
 	}
 
+	/**
+	 * Throws an integration exception if integration is not configured
+	 * @return google drive service client
+	 */
 	public GoogleDriveService getDriveService()
 	{
-		return driveService;
+		return context().getDriveService();
 	}
 
+	/**
+	 * Throws an integration exception if integration is not configured
+	 * @return google drive service client
+	 */
 	public GoogleSpreadsheetsService getSpreadsheetsService()
 	{
-		return spreadsheetsService;
-	}
-
-	public GoogleContext getContext() {
-		return super.getContext();
+		return context().getSpreadsheetsService();
 	}
 }

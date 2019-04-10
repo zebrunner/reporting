@@ -213,7 +213,7 @@ public class SettingsAPIController extends AbstractController
 	@RequestMapping(value = "amazon/creds", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody SessionCredentials getSessionCredentials() throws ServiceException
 	{
-		return amazonService.getTemporarySessionCredentials(amazonTokenExpiration);
+		return amazonService.getTemporarySessionCredentials(amazonTokenExpiration).orElse(null);
 	}
 
 	@ApiOperation(value = "Get google session credentials", nickname = "getGoogleSessionCredentials", httpMethod = "GET", response = String.class)

@@ -19,7 +19,9 @@ import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_CLOSED_STA
 import static com.qaprosoft.zafira.models.db.Setting.Tool.JIRA;
 
 import java.util.List;
+import java.util.Optional;
 
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -30,7 +32,6 @@ import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.context.JiraContext;
 
 import net.rcarz.jiraclient.Issue;
-import net.rcarz.jiraclient.JiraClient;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -96,27 +97,27 @@ public class JiraService extends AbstractIntegration<JiraContext> {
 
     @Override
     public boolean isConnected() {
-        boolean connected = false;
         try {
-            connected = getJiraClient() != null && getJiraClient().getProjects() != null;
+            return context().getJiraClient().getProjects() != null;
         } catch (Exception e) {
-            LOGGER.error("Unable to connect to JIRA", e);
+            return false;
         }
-        return connected;
     }
 
-    public Issue getIssue(String ticket) {
-        Issue issue = null;
-        try {
-            issue = getJiraClient().getIssue(ticket);
-        } catch (Exception e) {
-            LOGGER.error("Unable to find Jira issue: " + ticket, e);
-        }
-        return issue;
+    public Optional<Issue> getIssue(String ticket) {
+        return mapContext(context -> {
+            Issue issue = null;
+            try {
+                issue = context.getJiraClient().getIssue(ticket);
+            } catch (Exception e) {
+                LOGGER.error("Unable to find Jira issue: " + ticket, e);
+            }
+            return issue;
+        });
     }
 
     public boolean isIssueClosed(String ticket) throws ServiceException {
-        Issue issue = getIssue(ticket);
+        Issue issue = getIssue(ticket).orElseThrow(() -> new ForbiddenOperationException("Unable to retrieve an issue"));
         return isIssueClosed(issue);
     }
 
@@ -131,7 +132,4 @@ public class JiraService extends AbstractIntegration<JiraContext> {
         return isIssueClosed;
     }
 
-    public JiraClient getJiraClient() {
-        return getContext() != null ? getContext().getJiraClient() : null;
-    }
 }

@@ -130,16 +130,16 @@ public class AmazonService extends AbstractIntegration<AmazonContext> {
     @Override
     public boolean isConnected() {
         try {
-            return getAmazonType() != null && getAmazonType().getAmazonS3() != null && getAmazonType().getAmazonS3().doesBucketExistV2(getAmazonType().getS3Bucket());
+            return context().getAmazonS3().doesBucketExistV2(context().getS3Bucket());
         } catch (Exception e) {
             return false;
         }
     }
 
     public List<S3ObjectSummary> listFiles(String filePrefix) {
-        ListObjectsRequest listObjectRequest = new ListObjectsRequest().withBucketName(getAmazonType().getS3Bucket())
+        ListObjectsRequest listObjectRequest = new ListObjectsRequest().withBucketName(context().getS3Bucket())
                 .withPrefix(filePrefix);
-        return getAmazonType().getAmazonS3().listObjects(listObjectRequest).getObjectSummaries();
+        return context().getAmazonS3().listObjects(listObjectRequest).getObjectSummaries();
     }
 
     public String saveFile(final FileUploadType file) throws ServiceException {
@@ -156,13 +156,13 @@ public class AmazonService extends AbstractIntegration<AmazonContext> {
             metadata.setContentType(type);
             metadata.setContentLength(file.getFile().getSize());
 
-            PutObjectRequest putRequest = new PutObjectRequest(getAmazonType().getS3Bucket(), key, stream, metadata);
-            getAmazonType().getAmazonS3().putObject(putRequest);
+            PutObjectRequest putRequest = new PutObjectRequest(context().getS3Bucket(), key, stream, metadata);
+            context().getAmazonS3().putObject(putRequest);
             CannedAccessControlList controlList = multitenant ? CannedAccessControlList.Private : CannedAccessControlList.PublicRead;
-            getAmazonType().getAmazonS3().setObjectAcl(getAmazonType().getS3Bucket(), key, controlList);
+            context().getAmazonS3().setObjectAcl(context().getS3Bucket(), key, controlList);
 
             result = multitenant ? urlResolver.getServiceURL() + relativePath :
-                    getAmazonType().getAmazonS3().getUrl(getAmazonType().getS3Bucket(), key).toString();
+                    context().getAmazonS3().getUrl(context().getS3Bucket(), key).toString();
 
         } catch (IOException e) {
             throw new AWSException("Can't save file to Amazone", e);
@@ -174,8 +174,8 @@ public class AmazonService extends AbstractIntegration<AmazonContext> {
 
     public void removeFile(final String linkToFile) throws ServiceException {
         try {
-            getAmazonType().getAmazonS3().deleteObject(
-                    new DeleteObjectRequest(getAmazonType().getS3Bucket(), new URL(linkToFile).getPath().substring(1)));
+            context().getAmazonS3().deleteObject(
+                    new DeleteObjectRequest(context().getS3Bucket(), new URL(linkToFile).getPath().substring(1)));
         } catch (MalformedURLException e) {
             throw new ServiceException(e);
         }
@@ -191,27 +191,25 @@ public class AmazonService extends AbstractIntegration<AmazonContext> {
      * 
      * @return {@link SessionCredentials} object
      */
-    public SessionCredentials getTemporarySessionCredentials(int expiresIn) {
-        SessionCredentials result = null;
-        if (isEnabledAndConnected()) {
-            GetSessionTokenRequest getSessionTokenRequest = new GetSessionTokenRequest();
-            GetSessionTokenResult getSessionTokenResult;
-            getSessionTokenRequest.setDurationSeconds(expiresIn);
-            try {
-                getSessionTokenResult = getAmazonType().getAwsSecurityTokenService()
-                        .getSessionToken(getSessionTokenRequest);
-                Credentials credentials = getSessionTokenResult.getCredentials();
-                result = new SessionCredentials(credentials.getAccessKeyId(), credentials.getSecretAccessKey(),
-                        credentials.getSessionToken(), getAmazonType().getAmazonS3().getRegionName(),
-                        getAmazonType().getS3Bucket());
-            } catch (Exception e) {
-                LOGGER.error("Credentials for Security Token Service are invalid.", e);
-            }
+    public Optional<SessionCredentials> getTemporarySessionCredentials(int expiresIn) {
+        if(! isEnabledAndConnected()) {
+            return Optional.empty();
         }
-        return result;
+        SessionCredentials result = null;
+        GetSessionTokenRequest getSessionTokenRequest = new GetSessionTokenRequest();
+        GetSessionTokenResult getSessionTokenResult;
+        getSessionTokenRequest.setDurationSeconds(expiresIn);
+        try {
+            getSessionTokenResult = context().getAwsSecurityTokenService()
+                    .getSessionToken(getSessionTokenRequest);
+            Credentials credentials = getSessionTokenResult.getCredentials();
+            result = new SessionCredentials(credentials.getAccessKeyId(), credentials.getSecretAccessKey(),
+                    credentials.getSessionToken(), context().getAmazonS3().getRegionName(),
+                    context().getS3Bucket());
+        } catch (Exception e) {
+            LOGGER.error("Credentials for Security Token Service are invalid.", e);
+        }
+        return Optional.ofNullable(result);
     }
 
-    public AmazonContext getAmazonType() {
-        return getContext();
-    }
 }

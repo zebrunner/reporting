@@ -21,6 +21,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import com.qaprosoft.zafira.models.db.*;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import org.dozer.Mapper;
@@ -277,7 +278,7 @@ public class TestsAPIController extends AbstractController
 	@RequestMapping(value = "jira/{issue}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Issue getJiraIssue(@PathVariable(value = "issue") String issue)
 	{
-		return jiraService.getIssue(issue);
+		return jiraService.getIssue(issue).orElseThrow(() -> new ForbiddenOperationException("Unable to retrieve jira issue"));
 	}
 
 	@ApiIgnore

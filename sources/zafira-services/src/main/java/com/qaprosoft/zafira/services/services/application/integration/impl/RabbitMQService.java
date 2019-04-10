@@ -107,11 +107,12 @@ public class RabbitMQService extends AbstractIntegration<RabbitMQContext> {
 
     @Override
     public boolean isConnected() {
-        return getConnection() != null && getConnection().isOpen();
-    }
-
-    public Connection getConnection() {
-        return getContext() != null ? getContext().getConnection() : null;
+        try {
+            Connection connection = context().getConnection();
+            return connection != null && connection.isOpen();
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }

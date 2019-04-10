@@ -103,32 +103,27 @@ public class LdapService extends AbstractIntegration<LDAPContext> {
         }
     }
 
+    /**
+     * Search user by username in ldap context
+     * Throws an {@link com.qaprosoft.zafira.services.exceptions.IntegrationException} if integration is not configured
+     * @param username - username to search
+     * @return - search info
+     */
     public DirContextOperations searchUser(String username) {
-        LDAPContext ldapContext = getType();
-        return ldapContext == null ? null : ldapContext.getFilterBasedLdapUserSearch().searchForUser(username);
+        return context().getFilterBasedLdapUserSearch().searchForUser(username);
     }
 
     @Override
     public boolean isConnected() {
-        boolean result = false;
         try
         {
-            getLdapContextSource().getContext(getLdapContextSource().getUserDn(), getLdapContextSource().getPassword());
-            result = true;
+            LdapContextSource contextSource = context().getLdapContextSource();
+            contextSource.getContext(contextSource.getUserDn(), contextSource.getPassword());
+            return true;
         } catch(Exception e)
         {
-            LOGGER.error(e);
+            return false;
         }
-        return result;
     }
 
-    public LdapContextSource getLdapContextSource()
-    {
-        return getType().getLdapContextSource();
-    }
-
-    public LDAPContext getType()
-    {
-        return getContext();
-    }
 }

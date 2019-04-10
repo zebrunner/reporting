@@ -16,7 +16,11 @@
 package com.qaprosoft.zafira.services.services.application.integration;
 
 import com.qaprosoft.zafira.models.db.Setting.Tool;
+import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.services.application.integration.context.AbstractContext;
+
+import java.util.Optional;
+import java.util.function.Function;
 
 public interface Integration<T extends AbstractContext> {
 
@@ -26,8 +30,16 @@ public interface Integration<T extends AbstractContext> {
 
     Tool getTool();
 
-    default T getContext() {
+    default Optional<T> getContext() {
         return IntegrationTenancyStorage.getContext(getTool());
+    }
+
+    default T context() {
+        return getContext().orElseThrow(() -> new IntegrationException("Integration for tool '" + getTool().name() + "' is not initialized"));
+    }
+
+    default <R> Optional<R> mapContext(Function<T, R> mapper) {
+        return getContext().map(mapper);
     }
 
     default void putContext(T t) {
@@ -35,7 +47,12 @@ public interface Integration<T extends AbstractContext> {
     }
 
     default boolean isEnabledAndConnected() {
-        T context = getContext();
-        return context != null && context.isEnabled() && isConnected();
+        return isEnabled() && isConnected();
     }
+
+    default boolean isEnabled() {
+        Optional<T> context = getContext();
+        return context.isPresent() && context.get().isEnabled();
+    }
+
 }

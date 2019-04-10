@@ -38,7 +38,6 @@ import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
 import com.qaprosoft.zafira.services.services.application.integration.context.SlackContext;
 
-import in.ashwanthkumar.slack.webhook.Slack;
 import in.ashwanthkumar.slack.webhook.SlackAttachment;
 import in.ashwanthkumar.slack.webhook.SlackAttachment.Field;
 import in.ashwanthkumar.slack.webhook.SlackMessage;
@@ -87,18 +86,18 @@ public class SlackService extends AbstractIntegration<SlackContext> {
 
     @Override
     public boolean isConnected() {
-        try {
-            if (getSlack() != null) {
-                getSlack().push(new SlackMessage(StringUtils.EMPTY));
-            } else {
-                return false;
+        return mapContext(context -> {
+            boolean result = false;
+            try {
+                context.getSlack().push(new SlackMessage(StringUtils.EMPTY));
+                result = true;
+            } catch (IOException e) {
+                if (((HttpResponseException) e).getStatusCode() != HttpStatusCodes.STATUS_CODE_NOT_FOUND) {
+                    result = true;
+                }
             }
-        } catch (IOException e) {
-            if (((HttpResponseException) e).getStatusCode() == HttpStatusCodes.STATUS_CODE_NOT_FOUND) {
-                return false;
-            }
-        }
-        return true;
+            return result;
+        }).orElse(false);
     }
 
     public void init(String author, String picPath) throws ServiceException {
@@ -134,8 +133,8 @@ public class SlackService extends AbstractIntegration<SlackContext> {
             SlackAttachment attachment = generateSlackAttachment(mainMessage, resultsMessage, attachmentColor, tr.getComments());
             Arrays.stream(channels.split(",")).forEach(channel -> {
                 try {
-                    getContext().setSlack(getSlack().sendToChannel(channel));
-                    getSlack().push(attachment);
+                    context().setSlack(context().getSlack().sendToChannel(channel));
+                    context().getSlack().push(attachment);
                 } catch (IOException e) {
                     LOGGER.error("Unable to push Slack notification");
                 }
@@ -179,7 +178,7 @@ public class SlackService extends AbstractIntegration<SlackContext> {
     private String buildRunInfo(TestRun tr) {
         StringBuilder sbInfo = new StringBuilder();
         sbInfo.append(tr.getProject().getName());
-        Map<String, String> jenkinsParams = jenkinsService.getBuildParametersMap(tr.getJob(), tr.getBuildNumber());
+        Map<String, String> jenkinsParams = jenkinsService.getBuildParametersMap(tr.getJob(), tr.getBuildNumber()).orElse(null);
         if (jenkinsParams != null && jenkinsParams.get("groups") != null) {
             sbInfo.append("(");
             sbInfo.append(jenkinsParams.get("groups"));
@@ -224,7 +223,4 @@ public class SlackService extends AbstractIntegration<SlackContext> {
         return "warning";
     }
 
-    public Slack getSlack() {
-        return getContext() != null ? getContext().getSlack() : null;
-    }
 }

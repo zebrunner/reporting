@@ -20,10 +20,13 @@ import static com.qaprosoft.zafira.models.db.Setting.Tool.CRYPTO;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Optional;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import com.qaprosoft.zafira.services.exceptions.IntegrationException;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -79,7 +82,8 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
 
             putContext(new CryptoContext(type, size, key, this.salt));
 
-            key = getKey();
+            key = getKey().orElseThrow(() ->
+                    new IntegrationException("Create an integration context before key generating"));
             initCryptoTool(key);
 
         } catch (Exception e) {
@@ -87,10 +91,10 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
         }
     }
 
-    public void initCryptoTool(String key) {
+    private void initCryptoTool(String key) {
         try {
-            if (!StringUtils.isEmpty(key)) {
-                getCryptoType().setKey(key);
+            if (! StringUtils.isEmpty(key)) {
+                context().setKey(key);
             } else {
                 throw new EncryptorInitializationException();
             }
@@ -100,31 +104,33 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
     }
 
     public String encrypt(String strToEncrypt) throws Exception {
-        return getCryptoType().getBasicTextEncryptor().encrypt(strToEncrypt);
+        return context().getBasicTextEncryptor().encrypt(strToEncrypt);
     }
 
     public String decrypt(String strToDecrypt) throws Exception {
-        return getCryptoType().getBasicTextEncryptor().decrypt(strToDecrypt);
+        return context().getBasicTextEncryptor().decrypt(strToDecrypt);
     }
 
-    public String getKey() throws Exception {
-        String result = settingsService.getSettingByType(KEY).getValue();
-        if (StringUtils.isBlank(result)) {
-            generateKey();
-            result = settingsService.getSettingByType(KEY).getValue();
-        }
-        return result;
+    public Optional<String> getKey() throws Exception {
+        return mapContext(context -> {
+            String result = settingsService.getSettingByType(KEY).getValue();
+            if (StringUtils.isBlank(result)) {
+                generateKey();
+                result = settingsService.getSettingByType(KEY).getValue();
+            }
+            return result;
+        });
     }
 
-    public void generateKey() throws Exception {
+    public void generateKey() throws ServiceException {
         String key = null;
         try {
-            if(getCryptoType() == null || getCryptoType().getType() == null) {
+            if(! mapContext(CryptoContext::getType).isPresent()) {
                 init();
                 return;
             }
             key = new String(Base64
-                    .encodeBase64(generateKey(getCryptoType().getType(), getCryptoType().getSize()).getEncoded()));
+                    .encodeBase64(generateKey(context().getType(), context().getSize()).getEncoded()));
         } catch (Exception e) {
             LOGGER.error("Unable to generate key: " + e.getMessage());
         }
@@ -139,13 +145,11 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
 
     @Override
     public boolean isConnected() {
-        boolean connected = false;
         try {
-            connected = getCryptoType().getKey() != null && salt != null;
+            return context().getKey() != null && salt != null;
         } catch (Exception e) {
-            LOGGER.error("Unable to connect to JIRA", e);
+            return false;
         }
-        return connected;
     }
 
     private static SecretKey generateKey(String keyType, int size) throws NoSuchAlgorithmException {
@@ -155,7 +159,4 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
         return keyGenerator.generateKey();
     }
 
-    public CryptoContext getCryptoType() {
-        return getContext();
-    }
 }
