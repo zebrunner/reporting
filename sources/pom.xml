@@ -96,7 +96,7 @@
         <smack.version>3.2.1</smack.version>
         <jersey.version>1.19.4</jersey.version>
         <genson.version>0.99</genson.version>
-        <freemarker.version>2.3.23</freemarker.version>
+        <freemarker.version>2.3.28</freemarker.version>
         <selenium-java.version>2.53.0</selenium-java.version>
         <aws-java-sdk.version>1.11.386</aws-java-sdk.version>
         <commons-configuration2.version>2.1</commons-configuration2.version>
