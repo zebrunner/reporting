@@ -28,6 +28,11 @@ import org.apache.log4j.Logger;
 import com.qaprosoft.zafira.client.ZafiraClient.Response;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 /**
  * ZafiraSingleton - singleton wrapper around {@link ZafiraClient}.
  * 
@@ -41,51 +46,69 @@ public enum ZafiraSingleton {
 	
 	private final String ZAFIRA_PROPERTIES = "zafira.properties";
 
-	private ZafiraClient zc;
+	private ZafiraClient zafiraClient;
 
-	private Boolean running = false;
+	private final CompletableFuture<Response<AuthTokenType>> INIT_FUTURE;
 
 	ZafiraSingleton() {
-		try {
-			CombinedConfiguration config = new CombinedConfiguration(new MergeCombiner());
-			config.setThrowExceptionOnMissing(false);
-			config.addConfiguration(new SystemConfiguration());
-			config.addConfiguration(
-					new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
-							.configure(new Parameters().properties().setFileName(ZAFIRA_PROPERTIES))
-							.getConfiguration());
+		INIT_FUTURE = CompletableFuture.supplyAsync(() -> {
+            Response<AuthTokenType> result = null;
+			try {
+				CombinedConfiguration config = new CombinedConfiguration(new MergeCombiner());
+//				config.setThrowExceptionOnMissing(false);
+				config.addConfiguration(new SystemConfiguration());
+				config.addConfiguration(getConfiguration());
 
-			final boolean enabled = config.getBoolean("zafira_enabled", false);
-			final String url = config.getString("zafira_service_url", StringUtils.EMPTY);
-			final String token = config.getString("zafira_access_token", StringUtils.EMPTY);
+				boolean enabled = config.getBoolean("zafira_enabled", false);
+				String url = config.getString("zafira_service_url", StringUtils.EMPTY);
+				String token = config.getString("zafira_access_token", StringUtils.EMPTY);
 
-			zc = new ZafiraClient(url);
-			if (enabled && zc.isAvailable()) {
-				Response<AuthTokenType> auth = zc.refreshToken(token);
-				if (auth.getStatus() == 200) {
-					this.running = true;
-					zc.setAuthToken(auth.getObject().getType() + " " + auth.getObject().getAccessToken());
-					zc.onInit();
+				zafiraClient = new ZafiraClient(url);
+				if (enabled && zafiraClient.isAvailable()) {
+					result = zafiraClient.refreshToken(token);
 				}
+			} catch (Exception e) {
+				throw new RuntimeException(e.getMessage(), e);
 			}
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-		}
+			return result;
+		});
+
+		INIT_FUTURE.thenAccept(auth -> {
+            if (auth != null && auth.getStatus() == 200) {
+                zafiraClient.setAuthToken(auth.getObject().getType() + " " + auth.getObject().getAccessToken());
+                zafiraClient.onInit();
+            }
+        });
 	}
 
-	/**
+    private FileBasedConfiguration getConfiguration() throws org.apache.commons.configuration2.ex.ConfigurationException {
+        return new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
+                .configure(new Parameters().properties().setFileName(ZAFIRA_PROPERTIES))
+                .getConfiguration();
+    }
+
+    /**
 	 * @return {@link ZafiraClient} instance
 	 */
 	public ZafiraClient getClient() {
-		return zc;
+		return isRunning() ? zafiraClient : null;
 	}
 
 	/**
 	 * 
 	 * @return Zafira integration status
 	 */
-	public Boolean isRunning() {
-		return running;
+	public boolean isRunning() {
+        Response<AuthTokenType> response;
+        try {
+            response = INIT_FUTURE.get(60, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+           return false;
+        } catch (Exception e) {
+        	LOGGER.debug("Cannot connect to zafira", e);
+        	return false;
+		}
+        return response != null && response.getStatus() == 200;
 	}
 
 }
