@@ -28,9 +28,6 @@ import org.apache.log4j.Logger;
 import com.qaprosoft.zafira.client.ZafiraClient.Response;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-
 /**
  * ZafiraSingleton - singleton wrapper around {@link ZafiraClient}.
  * 
@@ -47,36 +44,6 @@ public enum ZafiraSingleton {
 	private ZafiraClient zc;
 
 	private Boolean running = false;
-
-	private final Runnable AMAZON_S3_CLIENT_INIT = () -> {
-		{
-			try {
-				this.zc.initAmazonS3Client();
-			} catch (Exception e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-		}
-	};
-
-	private final Runnable GOOGLE_CLIENT_INIT = () -> {
-		{
-			try {
-				this.zc.initGoogleClient();
-			} catch (Exception e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-		}
-	};
-
-	private final Runnable TENANT_INIT = () -> {
-		{
-			try {
-				this.zc.initTenant();
-			} catch (Exception e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-		}
-	};
 
 	ZafiraSingleton() {
 		try {
@@ -96,16 +63,9 @@ public enum ZafiraSingleton {
 			if (enabled && zc.isAvailable()) {
 				Response<AuthTokenType> auth = zc.refreshToken(token);
 				if (auth.getStatus() == 200) {
-					zc.setAuthToken(auth.getObject().getType() + " " + auth.getObject().getAccessToken());
 					this.running = true;
-
-					CompletableFuture.allOf(
-							CompletableFuture.runAsync(AMAZON_S3_CLIENT_INIT),
-							CompletableFuture.runAsync(GOOGLE_CLIENT_INIT),
-							CompletableFuture.runAsync(TENANT_INIT)
-					).exceptionally(error -> {
-						throw new RuntimeException(error.getMessage(), error);
-					}).get(60, TimeUnit.SECONDS);
+					zc.setAuthToken(auth.getObject().getType() + " " + auth.getObject().getAccessToken());
+					zc.onInit();
 				}
 			}
 		} catch (Exception e) {
@@ -127,4 +87,5 @@ public enum ZafiraSingleton {
 	public Boolean isRunning() {
 		return running;
 	}
+
 }
