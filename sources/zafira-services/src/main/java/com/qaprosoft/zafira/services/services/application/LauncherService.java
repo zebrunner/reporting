@@ -80,6 +80,7 @@ public class LauncherService {
                 jobsService.createJob(job);
             }
         }
+        launcher.setJob(job);
         launcherMapper.createLauncher(launcher);
         return launcher;
     }
