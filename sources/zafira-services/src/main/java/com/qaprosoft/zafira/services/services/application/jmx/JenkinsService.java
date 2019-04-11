@@ -202,6 +202,19 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
         return reference != null && !StringUtils.isEmpty(reference.getQueueItemUrlPart());
     }
 
+    public Job getJobByUrl(String jobUrl) {
+        Job job = null;
+        try {
+            JobWithDetails jobWithDetails = getJobByURL(jobUrl);
+            if(jobWithDetails != null && jobWithDetails.getUrl() != null) {
+                job = new Job(jobWithDetails.getDisplayName(), jobWithDetails.getUrl());
+            }
+        } catch (IOException e) {
+            LOGGER.error("Unable to get job by URL \n" + jobUrl + "\n " + e.getMessage(), e);
+        }
+        return job;
+    }
+
     public List<BuildParameterType> getBuildParameters(Job ciJob, Integer buildNumber) {
         List<BuildParameterType> jobParameters = null;
         try {
@@ -318,18 +331,6 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
         return params;
     }
 
-    public Job getJobByUrl(String jobUrl) {
-        Job job = null;
-        try {
-            JobWithDetails jobWithDetails = getJobByURL(jobUrl);
-            if(jobWithDetails != null && jobWithDetails.getUrl() != null) {
-                job = new Job(jobWithDetails.getDisplayName(), jobWithDetails.getUrl());
-            }
-        } catch (IOException e) {
-            LOGGER.error("Unable to get job by URL \n" + jobUrl + "\n " + e.getMessage(), e);
-        }
-        return job;
-    }
 
     public static boolean checkArguments(Map<String, String> args) {
         return Arrays.stream(REQUIRED_ARGS).filter(arg -> args.get(arg) == null).collect(Collectors.toList()).size() == 0;
