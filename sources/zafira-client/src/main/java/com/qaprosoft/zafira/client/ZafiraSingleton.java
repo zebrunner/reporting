@@ -55,6 +55,8 @@ public enum ZafiraSingleton {
             Response<AuthTokenType> result = null;
 			try {
 				CombinedConfiguration config = new CombinedConfiguration(new MergeCombiner());
+				// TODO: 2019-04-12 it`s make sense to throw an exception until zafira client instance is static in log appender class
+				//  and CombinedConfiguration doesn`t save singleton initialization 'injection'
 //				config.setThrowExceptionOnMissing(false);
 				config.addConfiguration(new SystemConfiguration());
 				config.addConfiguration(getConfiguration());
