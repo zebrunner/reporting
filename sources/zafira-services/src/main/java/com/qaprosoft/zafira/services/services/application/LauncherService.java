@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.qaprosoft.zafira.models.dto.CreateLauncherParamsType;
@@ -70,11 +69,13 @@ public class LauncherService {
             throw new ServiceException("Jenkins is not initialized.");
         }
         String launcherJobName = jenkinsService.getContext().getLauncherJobName();
+        String jenkinsHost = jenkinsService.getContext().getJenkinsHost();
         Job job = jobsService.getJobByName(launcherJobName);
         if (job == null) {
-            job = jenkinsService.getJob(launcherJobName);
+            String launcherJobUrl = jenkinsHost + "/job/" + launcherJobName;
+            job = jenkinsService.getJobByUrl(launcherJobUrl);
             if(job != null) {
-                job.setJenkinsHost(jenkinsService.getContext().getJenkinsHost());
+                job.setJenkinsHost(jenkinsHost);
                 job.setUser(owner);
                 jobsService.createJob(job);
             }

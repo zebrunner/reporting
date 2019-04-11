@@ -318,15 +318,15 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
         return params;
     }
 
-    public Job getJob(String jobName) {
+    public Job getJobByUrl(String jobUrl) {
         Job job = null;
         try {
-            JobWithDetails jobWithDetails = getServer().getJob(jobName);
+            JobWithDetails jobWithDetails = getJobByURL(jobUrl);
             if(jobWithDetails != null && jobWithDetails.getUrl() != null) {
-                job = new Job(jobName, jobWithDetails.getUrl());
+                job = new Job(jobWithDetails.getDisplayName(), jobWithDetails.getUrl());
             }
         } catch (IOException e) {
-            LOGGER.error("Unable to get job by name '" + jobName + "'. " + e.getMessage(), e);
+            LOGGER.error("Unable to get job by URL \n" + jobUrl + "\n " + e.getMessage(), e);
         }
         return job;
     }
