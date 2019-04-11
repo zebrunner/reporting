@@ -207,7 +207,7 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
         try {
             JobWithDetails jobWithDetails = getJobByURL(jobUrl);
             if(jobWithDetails != null && jobWithDetails.getUrl() != null) {
-                job = new Job(jobWithDetails.getDisplayName(), jobWithDetails.getUrl());
+                job = new Job(jobWithDetails.getDisplayName(), jobWithDetails.getUrl().replaceAll("/$",""));
             }
         } catch (IOException e) {
             LOGGER.error("Unable to get job by URL \n" + jobUrl + "\n " + e.getMessage(), e);

@@ -68,11 +68,11 @@ public class LauncherService {
         if (jenkinsService.getContext() == null) {
             throw new ServiceException("Jenkins is not initialized.");
         }
+        String jenkinsHost = jenkinsService.getContext().getJenkinsHost();
         String launcherJobName = jenkinsService.getContext().getLauncherJobName();
-        Job job = jobsService.getJobByName(launcherJobName);
+        String launcherJobUrl = jenkinsHost + "/job/" + launcher.getScmAccount().getOrganizationName() + "/job/" + launcherJobName;
+        Job job = jobsService.getJobByJobURL(launcherJobUrl);
         if (job == null) {
-            String jenkinsHost = jenkinsService.getContext().getJenkinsHost();
-            String launcherJobUrl = jenkinsHost + "/job/" + launcher.getScmAccount().getOrganizationName() + "/job/" + launcherJobName;
             job = jenkinsService.getJobByUrl(launcherJobUrl);
             if(job != null) {
                 job.setJenkinsHost(jenkinsHost);
