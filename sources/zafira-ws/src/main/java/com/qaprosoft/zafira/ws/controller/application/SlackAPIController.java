@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
-import com.qaprosoft.zafira.services.services.application.jmx.SlackService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.SlackService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;

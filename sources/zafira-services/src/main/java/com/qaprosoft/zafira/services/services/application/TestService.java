@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import static com.qaprosoft.zafira.models.db.Setting.Tool.JIRA;
 import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_BLOCKER;
 import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_KNOWN_ISSUE;
 import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.REMOVE_BLOCKER;
@@ -41,7 +40,7 @@ import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
-import com.qaprosoft.zafira.services.services.application.jmx.JiraService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.JiraService;
 
 import net.rcarz.jiraclient.Issue;
 
@@ -193,9 +192,9 @@ public class TestService
 				WorkItem knownIssue = workItemService.getWorkItemByTestCaseIdAndHashCode(existingTest.getTestCaseId(), getTestMessageHashCode(test.getMessage()));
 				if (knownIssue != null)
 				{
-					Issue issueFromJira = jiraService.getIssue(knownIssue.getJiraId());
-					boolean isJiraIdClosed = jiraService.isEnabledAndConnected(JIRA) && issueFromJira != null
-							&& jiraService.isIssueClosed(issueFromJira);
+					Optional<Issue> nullableIssueFromJira = jiraService.getIssue(knownIssue.getJiraId());
+					boolean isJiraIdClosed = jiraService.isEnabledAndConnected() && nullableIssueFromJira.isPresent()
+							&& jiraService.isIssueClosed(nullableIssueFromJira.get());
 					if (!isJiraIdClosed)
 					{
 						existingTest.setKnownIssue(true);

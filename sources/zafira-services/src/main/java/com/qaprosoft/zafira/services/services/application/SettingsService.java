@@ -19,11 +19,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.util.EventPushService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,56 +35,24 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.Setting.SettingType;
 import com.qaprosoft.zafira.models.db.Setting.Tool;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.application.emails.AsynSendEmailTask;
-import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
-import com.qaprosoft.zafira.services.services.application.jmx.ElasticsearchService;
-import com.qaprosoft.zafira.services.services.application.jmx.IJMXService;
-import com.qaprosoft.zafira.services.services.application.jmx.JenkinsService;
-import com.qaprosoft.zafira.services.services.application.jmx.JiraService;
-import com.qaprosoft.zafira.services.services.application.jmx.LDAPService;
-import com.qaprosoft.zafira.services.services.application.jmx.RabbitMQService;
-import com.qaprosoft.zafira.services.services.application.jmx.SlackService;
-import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
-import com.qaprosoft.zafira.services.services.application.jmx.google.GoogleService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.ElasticsearchService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.RabbitMQService;
 
 @Service
 public class SettingsService {
 
-    @Autowired
-    private SettingsMapper settingsMapper;
+    private final SettingsMapper settingsMapper;
+    private final IntegrationService integrationService;
+    private final EventPushService<ReinitEventMessage> eventPushService;
 
-    @Autowired
-    private JiraService jiraService;
-
-    @Autowired
-    private LDAPService ldapService;
-
-    @Autowired
-    private GoogleService googleService;
-
-    @Autowired
-    private ElasticsearchService elasticsearchService;
-
-    @Autowired
-    private JenkinsService jenkinsService;
-
-    @Autowired
-    private SlackService slackService;
-
-    @Autowired
-    private AsynSendEmailTask emailTask;
-
-    @Autowired
-    private AmazonService amazonService;
-
-    @Autowired
-    private CryptoService cryptoService;
-
-    @Autowired
-    private RabbitMQService rabbitMQService;
-
-    @Autowired
-    private EventPushService<ReinitEventMessage> eventPushService;
+    public SettingsService(SettingsMapper settingsMapper,
+                           @Lazy IntegrationService integrationService,
+                           EventPushService<ReinitEventMessage> eventPushService) {
+        this.settingsMapper = settingsMapper;
+        this.integrationService = integrationService;
+        this.eventPushService = eventPushService;
+    }
 
     @Transactional(readOnly = true)
     public Setting getSettingByName(String name) throws ServiceException {
@@ -104,12 +73,12 @@ public class SettingsService {
     public List<Setting> getSettingsByTool(Tool tool) throws ServiceException {
         List<Setting> result;
         switch (tool) {
-        case ELASTICSEARCH:
-            result = elasticsearchService.getSettings();
-            break;
-        default:
-            result = settingsMapper.getSettingsByTool(tool);
-            break;
+            case ELASTICSEARCH:
+                result = getElasticsearchService().getSettings();
+                break;
+            default:
+                result = settingsMapper.getSettingsByTool(tool);
+                break;
         }
         return result;
     }
@@ -130,7 +99,7 @@ public class SettingsService {
     }
 
     public boolean isConnected(Tool tool) {
-        return tool != null && !tool.equals(Tool.CRYPTO) && getServiceByTool(tool).isEnabledAndConnected(tool);
+        return tool != null && !tool.equals(Tool.CRYPTO) && integrationService.getServiceByTool(tool).isEnabledAndConnected();
     }
 
     @Transactional(readOnly = true)
@@ -146,7 +115,7 @@ public class SettingsService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void updateSetting(Setting setting) throws Exception {
+    public void updateSetting(Setting setting) throws ServiceException {
         setting.setValue(StringUtils.isBlank(setting.getValue() != null ? setting.getValue().trim() : null) ? null : setting.getValue());
         settingsMapper.updateSetting(setting);
     }
@@ -164,7 +133,7 @@ public class SettingsService {
             setting.setFile(fileBytes);
             setting.setValue(originalFileName);
             updateSetting(setting);
-            getServiceByTool(setting.getTool()).init();
+            integrationService.getServiceByTool(setting.getTool()).init();
             notifyToolReinitiated(setting.getTool(), TenancyContext.getTenantName());
         }
     }
@@ -172,6 +141,7 @@ public class SettingsService {
     @Transactional(rollbackFor = Exception.class)
     public void reEncrypt() throws Exception {
         List<Setting> settings = getSettingsByEncrypted(true);
+        CryptoService cryptoService = getCryptoMQService();
         for (Setting setting : settings) {
             String decValue = cryptoService.decrypt(setting.getValue());
             setting.setValue(decValue);
@@ -185,24 +155,8 @@ public class SettingsService {
         }
     }
 
-    /**
-     * Sends message to broker to notify about changed integration.
-     * 
-     * @param tool that was re-initiated
-     * @param tenant whose integration was updated
-     */
-    public void notifyToolReinitiated(Tool tool, String tenant) {
-        eventPushService.convertAndSend(EventPushService.Type.SETTINGS, new ReinitEventMessage(tenant, rabbitMQService.getSettingQueueName(), tool));
-        getServiceByTool(tool).init();
-    }
-
-    @RabbitListener(queues = "#{settingsQueue.name}")
-    public void process(Message message) {
-        ReinitEventMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
-        if (! rabbitMQService.isSettingQueueConsumer(rm.getQueueName()) && getServiceByTool(rm.getTool()) != null) {
-            TenancyContext.setTenantName(rm.getTenancy());
-            getServiceByTool(rm.getTool()).init();
-        }
+    private CryptoService getCryptoMQService() {
+        return integrationService.getServiceByTool(Tool.CRYPTO);
     }
     
     @Transactional(readOnly = true)
@@ -211,43 +165,31 @@ public class SettingsService {
         return settingsMapper.getPostgresVersion();
     }
 
-    @SuppressWarnings("rawtypes")
-    public IJMXService getServiceByTool(Tool tool) {
-        IJMXService service = null;
-        switch (tool) {
-        case GOOGLE:
-            service = googleService;
-            break;
-        case LDAP:
-            service = ldapService;
-            break;
-        case ELASTICSEARCH:
-            service = elasticsearchService;
-            break;
-        case JIRA:
-            service = jiraService;
-            break;
-        case JENKINS:
-            service = jenkinsService;
-            break;
-        case SLACK:
-            service = slackService;
-            break;
-        case CRYPTO:
-            service = cryptoService;
-            break;
-        case EMAIL:
-            service = emailTask;
-            break;
-        case AMAZON:
-            service = amazonService;
-            break;
-        case RABBITMQ:
-            service = rabbitMQService;
-            break;
-        default:
-            break;
+    /**
+     * Sends message to broker to notify about changed integration.
+     *
+     * @param tool that was re-initiated
+     * @param tenant whose integration was updated
+     */
+    public void notifyToolReinitiated(Tool tool, String tenant) {
+        eventPushService.convertAndSend(EventPushService.Type.SETTINGS, new ReinitEventMessage(tenant, getRabbitMQService().getSettingQueueName(), tool));
+        integrationService.getServiceByTool(tool).init();
+    }
+
+    @RabbitListener(queues = "#{settingsQueue.name}")
+    public void process(Message message) {
+        ReinitEventMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
+        if (! getRabbitMQService().isSettingQueueConsumer(rm.getQueueName()) && integrationService.getServiceByTool(rm.getTool()) != null) {
+            TenancyContext.setTenantName(rm.getTenancy());
+            integrationService.getServiceByTool(rm.getTool()).init();
         }
-        return service;
+    }
+
+    private ElasticsearchService getElasticsearchService() {
+        return integrationService.getServiceByTool(Tool.ELASTICSEARCH);
+    }
+
+    private RabbitMQService getRabbitMQService() {
+        return integrationService.getServiceByTool(Tool.RABBITMQ);
     }
 }

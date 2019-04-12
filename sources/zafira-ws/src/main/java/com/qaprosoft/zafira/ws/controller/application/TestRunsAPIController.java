@@ -79,8 +79,8 @@ import com.qaprosoft.zafira.services.services.application.TestService;
 import com.qaprosoft.zafira.services.services.application.TestSuiteService;
 import com.qaprosoft.zafira.services.services.application.UserService;
 import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
-import com.qaprosoft.zafira.services.services.application.jmx.JenkinsService;
-import com.qaprosoft.zafira.services.services.application.jmx.google.models.TestRunSpreadsheetService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.google.models.TestRunSpreadsheetService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
