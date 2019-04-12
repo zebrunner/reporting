@@ -17,9 +17,11 @@ package com.qaprosoft.zafira.services.services.application.integration.impl;
 
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.KEY;
 import static com.qaprosoft.zafira.models.db.Setting.Tool.CRYPTO;
+import static com.qaprosoft.zafira.services.services.application.integration.context.CryptoContext.CryptoAdditionalProperty.SALT;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.crypto.KeyGenerator;
@@ -30,7 +32,6 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.qaprosoft.zafira.models.db.Setting;
@@ -42,53 +43,31 @@ import org.springframework.stereotype.Component;
 @Component
 public class CryptoService extends AbstractIntegration<CryptoContext> {
 
-    private static final Logger LOGGER = Logger.getLogger(CryptoService.class);
-
     private final SettingsService settingsService;
     private final String salt;
 
     public CryptoService(SettingsService settingsService,
                          @Value("${zafira.crypto_salt}") String salt) {
-        super(CRYPTO);
+        super(settingsService, CRYPTO, CryptoContext.class);
         this.settingsService = settingsService;
         this.salt = salt;
     }
 
     @Override
     public void init() {
-
-        String type = null;
-        int size = 0;
-        String key = null;
-
-        List<Setting> cryptoSettings;
-        try {
-            cryptoSettings = settingsService.getSettingsByTool(CRYPTO);
-
-            for (Setting setting : cryptoSettings) {
-
-                switch (Setting.SettingType.valueOf(setting.getName())) {
-
-                case CRYPTO_KEY_TYPE:
-                    type = setting.getValue();
-                    break;
-                case CRYPTO_KEY_SIZE:
-                    size = Integer.valueOf(setting.getValue());
-                    break;
-                default:
-                    break;
-                }
-            }
-
-            putContext(new CryptoContext(type, size, key, this.salt));
-
-            key = getKey().orElseThrow(() ->
-                    new IntegrationException("Create an integration context before key generating"));
+        super.init();
+        String key = getKey().orElseThrow(() ->
+                new IntegrationException("Create an integration context before key generating"));
+        if(context().getBasicTextEncryptor() == null) {
             initCryptoTool(key);
-
-        } catch (Exception e) {
-            LOGGER.error(e);
         }
+    }
+
+    @Override
+    public Map<CryptoContext.CryptoAdditionalProperty, String> additionalContextProperties() {
+        Map<CryptoContext.CryptoAdditionalProperty, String> additionalProperties = new HashMap<>();
+        additionalProperties.put(SALT, salt);
+        return additionalProperties;
     }
 
     private void initCryptoTool(String key) {
@@ -103,15 +82,15 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
         }
     }
 
-    public String encrypt(String strToEncrypt) throws Exception {
+    public String encrypt(String strToEncrypt) {
         return context().getBasicTextEncryptor().encrypt(strToEncrypt);
     }
 
-    public String decrypt(String strToDecrypt) throws Exception {
+    public String decrypt(String strToDecrypt) {
         return context().getBasicTextEncryptor().decrypt(strToDecrypt);
     }
 
-    public Optional<String> getKey() throws Exception {
+    public Optional<String> getKey() {
         return mapContext(context -> {
             String result = settingsService.getSettingByType(KEY).getValue();
             if (StringUtils.isBlank(result)) {

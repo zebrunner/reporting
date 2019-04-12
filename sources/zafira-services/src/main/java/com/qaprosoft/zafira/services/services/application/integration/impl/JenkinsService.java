@@ -34,8 +34,6 @@ import java.util.stream.Collectors;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -45,7 +43,6 @@ import com.offbytwo.jenkins.model.FolderJob;
 import com.offbytwo.jenkins.model.JobWithDetails;
 import com.offbytwo.jenkins.model.QueueReference;
 import com.qaprosoft.zafira.models.db.Job;
-import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.context.JenkinsContext;
@@ -54,68 +51,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class JenkinsService extends AbstractIntegration<JenkinsContext> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JenkinsService.class);
-
     private static final String[] REQUIRED_ARGS = new String[] {"scmURL", "branch", "suite", "overrideFields"};
     private static final String FOLDER_REGEX = ".+job\\/.+\\/job.+";
 
-    private final SettingsService settingsService;
-    private final CryptoService cryptoService;
-
     public JenkinsService(SettingsService settingsService, CryptoService cryptoService) {
-        super(JENKINS);
-        this.settingsService = settingsService;
-        this.cryptoService = cryptoService;
-    }
-
-    @Override
-    public void init() {
-        String url = null;
-        String username = null;
-        String passwordOrApiToken = null;
-        String launcherJobName = null;
-        boolean enabled = false;
-
-        try {
-            List<Setting> jenkinsSettings = settingsService.getSettingsByTool(JENKINS);
-            for (Setting setting : jenkinsSettings) {
-                if (setting.isEncrypted()) {
-                    setting.setValue(cryptoService.decrypt(setting.getValue()));
-                }
-                switch (Setting.SettingType.valueOf(setting.getName())) {
-                case JENKINS_URL:
-                    url = setting.getValue();
-                    break;
-                case JENKINS_USER:
-                    username = setting.getValue();
-                    break;
-                case JENKINS_API_TOKEN_OR_PASSWORD:
-                    passwordOrApiToken = setting.getValue();
-                    break;
-                case JENKINS_LAUNCHER_JOB_NAME:
-                    launcherJobName = setting.getValue();
-                    break;
-                case JENKINS_ENABLED:
-                    enabled = Boolean.valueOf(setting.getValue());
-                    break;
-                default:
-                    break;
-                }
-            }
-            init(url, username, passwordOrApiToken, launcherJobName, enabled);
-        } catch (Exception e) {
-            LOGGER.error("Setting does not exist", e);
-        }
-    }
-
-    public void init(String url, String username, String passwordOrApiToken, String launcherJobName, Boolean enabled) {
-        try {
-            if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(passwordOrApiToken)) {
-                putContext(new JenkinsContext(url, username, passwordOrApiToken, launcherJobName, enabled));
-            }
-        } catch (Exception e) {
-            LOGGER.error("Unable to initialize Jenkins integration: " + e.getMessage());
-        }
+        super(settingsService, cryptoService, JENKINS, JenkinsContext.class);
     }
 
     public boolean rerunJob(Job ciJob, Integer buildNumber, boolean rerunFailures) {

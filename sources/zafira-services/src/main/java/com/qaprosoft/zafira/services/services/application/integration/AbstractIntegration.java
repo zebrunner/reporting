@@ -16,14 +16,105 @@
 package com.qaprosoft.zafira.services.services.application.integration;
 
 import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.services.exceptions.IntegrationException;
+import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.context.AbstractContext;
+import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractIntegration<T extends AbstractContext> implements Integration<T> {
 
+    protected static final Logger LOGGER = Logger.getLogger(AbstractIntegration.class);
+
+    private final SettingsService settingsService;
+    private final CryptoService cryptoService;
     private final Setting.Tool tool;
+    private Class<T> contextClass;
 
     public AbstractIntegration(Setting.Tool tool) {
+        this(null, null, tool, null);
+    }
+
+    public AbstractIntegration(SettingsService settingsService, Setting.Tool tool, Class<T> contextClass) {
+        this(settingsService, null, tool, contextClass);
+    }
+
+    public AbstractIntegration(SettingsService settingsService, CryptoService cryptoService, Setting.Tool tool, Class<T> contextClass) {
+        this.settingsService = settingsService;
+        this.cryptoService = cryptoService;
         this.tool = tool;
+        this.contextClass = contextClass;
+    }
+
+    public void init() {
+        if(settingsService != null && contextClass != null) {
+            try {
+                List<Setting> settings = settingsService.getSettingsByTool(tool);
+                boolean hasBinarySetting = hasBinarySetting(settings);
+                Map<Setting.SettingType, Object> mappedSettings = new HashMap<>();
+                settings.forEach(setting -> {
+                    Setting.SettingType toolSetting = Setting.SettingType.valueOf(setting.getName());
+                    if(toolSetting.isRequired() && StringUtils.isBlank(setting.getValue())) {
+                        throw new IntegrationException("Integration tool '" + tool + "' data is malformed." +
+                                "Setting '" + setting.getName() + "' is required");
+                    }
+                    if (setting.isEncrypted()) {
+                        setting.setValue(mapEncrypted(setting));
+                    }
+                    if (!ArrayUtils.isEmpty(setting.getFile())) {
+                        mappedSettings.put(toolSetting, setting);
+                    }
+                    Object value = hasBinarySetting ? setting : setting.getValue();
+                    mappedSettings.put(toolSetting, value);
+                });
+                T context = createContextInstance(mappedSettings);
+                putContext(context);
+            } catch (InstantiationException e) {
+                throw new IntegrationException(e.getMessage(), e);
+            } catch (Exception e) {
+                LOGGER.error("Unable to initialize '" + tool + "' settings", e);
+            }
+        }
+    }
+
+    @Override
+    public Map<? extends AdditionalProperty, String> additionalContextProperties() {
+        return null;
+    }
+
+    private T createContextInstance(Map<Setting.SettingType, Object> settings) throws InstantiationException {
+        T context = null;
+        try {
+            Map<? extends AdditionalProperty, String> additionalProperties = additionalContextProperties();
+            if(additionalProperties != null) {
+                Constructor<T> mainConstructor = contextClass.getConstructor(Map.class, Map.class);
+                context = mainConstructor.newInstance(settings, additionalProperties);
+            } else {
+                Constructor<T> mainConstructor = contextClass.getConstructor(Map.class);
+                context = mainConstructor.newInstance(settings);
+            }
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new InstantiationException("Cannot create context instance");
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return context;
+    }
+
+    private String mapEncrypted(Setting setting) {
+        return setting.isEncrypted() ? cryptoService.decrypt(setting.getValue()) : setting.getValue();
+    }
+
+    private boolean hasBinarySetting(List<Setting> settings) {
+        return settings.stream().anyMatch(setting -> ! ArrayUtils.isEmpty(setting.getFile()));
     }
 
     @Override

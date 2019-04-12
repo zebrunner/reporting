@@ -15,10 +15,12 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.context;
 
+import com.qaprosoft.zafira.models.db.Setting;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.amqp.rabbit.connection.ConnectionListener;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -31,9 +33,15 @@ public class RabbitMQContext extends AbstractContext
     private Connection connection;
     private CompletableFuture<Connection> connectionCompletableFuture;
 
-    public RabbitMQContext(String host, String port, String username, String password, boolean enabled)
+    public RabbitMQContext(Map<Setting.SettingType, String> settings)
     {
-        super(enabled);
+        super(settings, settings.get(Setting.SettingType.RABBITMQ_ENABLED));
+
+        String host = settings.get(Setting.SettingType.RABBITMQ_HOST);
+        String port = settings.get(Setting.SettingType.RABBITMQ_PORT);
+        String username = settings.get(Setting.SettingType.RABBITMQ_USER);
+        String password = settings.get(Setting.SettingType.RABBITMQ_PASSWORD);
+
         this.cachingConnectionFactory = new CachingConnectionFactory(host, Integer.parseInt(port));
         this.cachingConnectionFactory.setUsername(username);
         this.cachingConnectionFactory.setPassword(password);

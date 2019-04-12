@@ -75,23 +75,33 @@ public class Setting extends AbstractEntity {
 	public enum SettingType {
 		GOOGLE_CLIENT_SECRET_ORIGIN, GOOGLE_ENABLED,
 		JIRA_URL, JIRA_USER, JIRA_PASSWORD(true), JIRA_CLOSED_STATUS, JIRA_ENABLED,
-		JENKINS_URL, JENKINS_USER, JENKINS_API_TOKEN_OR_PASSWORD(true), JENKINS_LAUNCHER_JOB_NAME, JENKINS_ENABLED,
+		JENKINS_URL, JENKINS_USER, JENKINS_API_TOKEN_OR_PASSWORD(true), JENKINS_LAUNCHER_JOB_NAME(false, false), JENKINS_ENABLED,
 		SLACK_WEB_HOOK_URL, SLACK_NOTIF_CHANNEL_EXAMPLE, SLACK_ENABLED,
-		EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_FROM_ADDRESS, EMAIL_PASSWORD(true), EMAIL_ENABLED,
+		EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_FROM_ADDRESS(false, false), EMAIL_PASSWORD(true), EMAIL_ENABLED,
 		AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY(true), AMAZON_REGION, AMAZON_BUCKET, AMAZON_ENABLED,
 		LDAP_DN, LDAP_SEARCH_FILTER, LDAP_URL, LDAP_MANAGER_USER, LDAP_MANAGER_PASSWORD(true), LDAP_ENABLED,
 		CRYPTO_KEY_TYPE, CRYPTO_ALGORITHM, CRYPTO_KEY_SIZE, KEY,
 		RABBITMQ_HOST, RABBITMQ_PORT, RABBITMQ_USER, RABBITMQ_PASSWORD(true), RABBITMQ_ENABLED,
 		COMPANY_LOGO_URL;
 
+		private final Boolean required;
 		private final Boolean encrypted;
 
 		SettingType() {
-			this(false);
+			this(true, false);
 		}
 
 		SettingType(Boolean encrypted) {
+			this(true, encrypted);
+		}
+
+		SettingType(Boolean required, Boolean encrypted) {
+			this.required = required;
 			this.encrypted = encrypted;
+		}
+
+		public Boolean isRequired() {
+			return required;
 		}
 
 		public Boolean isEncrypted() {

@@ -17,8 +17,10 @@ package com.qaprosoft.zafira.services.services.application.integration.context;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 import com.offbytwo.jenkins.JenkinsServer;
+import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.util.JenkinsClient;
 import com.qaprosoft.zafira.services.util.JenkinsConfig;
 
@@ -30,9 +32,14 @@ public class JenkinsContext extends AbstractContext {
     private String launcherJobName;
     private String jenkinsHost;
 
-    public JenkinsContext(String url, String username, String passwordOrApiToken, String launcherJobName, boolean enabled) {
-        super(enabled);
+    public JenkinsContext(Map<Setting.SettingType, String> settings) {
+        super(settings, settings.get(Setting.SettingType.JENKINS_ENABLED));
         try {
+            String username = settings.get(Setting.SettingType.JENKINS_USER);
+            String passwordOrApiToken = settings.get(Setting.SettingType.JENKINS_API_TOKEN_OR_PASSWORD);
+            String url = settings.get(Setting.SettingType.JENKINS_URL);
+            String launcherJobName = settings.get(Setting.SettingType.JENKINS_LAUNCHER_JOB_NAME);
+
             JenkinsConfig config = new JenkinsConfig(username, passwordOrApiToken, HTTP_TIMEOUT);
             this.jenkinsServer = new JenkinsServer(new JenkinsClient(new URI(url), config));
             this.launcherJobName = launcherJobName;

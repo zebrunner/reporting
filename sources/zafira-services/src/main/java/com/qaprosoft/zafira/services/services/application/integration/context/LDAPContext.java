@@ -15,9 +15,12 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.context;
 
+import com.qaprosoft.zafira.models.db.Setting;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
+
+import java.util.Map;
 
 public class LDAPContext extends AbstractContext {
 
@@ -25,8 +28,15 @@ public class LDAPContext extends AbstractContext {
     private BindAuthenticator bindAuthenticator;
     private FilterBasedLdapUserSearch filterBasedLdapUserSearch;
 
-    public LDAPContext(String dn, String searchFilter, String url, String managerUser, String managerPassword, boolean enabled) {
-        super(enabled);
+    public LDAPContext(Map<Setting.SettingType, String> settings) {
+        super(settings, settings.get(Setting.SettingType.LDAP_ENABLED));
+
+        String url = settings.get(Setting.SettingType.LDAP_URL);
+        String managerUser = settings.get(Setting.SettingType.LDAP_MANAGER_USER);
+        String managerPassword = settings.get(Setting.SettingType.LDAP_MANAGER_PASSWORD);
+        String dn = settings.get(Setting.SettingType.LDAP_DN);
+        String searchFilter = settings.get(Setting.SettingType.LDAP_SEARCH_FILTER);
+
         this.ldapContextSource = new LdapContextSource();
         this.ldapContextSource.setUrl(url);
         this.ldapContextSource.setUserDn(managerUser);

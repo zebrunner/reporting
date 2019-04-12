@@ -15,6 +15,7 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.context;
 
+import com.qaprosoft.zafira.models.db.Setting;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
@@ -23,6 +24,8 @@ import org.apache.http.params.HttpParams;
 import net.rcarz.jiraclient.BasicCredentials;
 import net.rcarz.jiraclient.JiraClient;
 
+import java.util.Map;
+
 @SuppressWarnings("deprecation")
 public class JiraContext extends AbstractContext
 {
@@ -30,9 +33,14 @@ public class JiraContext extends AbstractContext
     private BasicCredentials credentials;
     private JiraClient jiraClient;
 
-    public JiraContext(String url, String username, String password, boolean enabled)
+    public JiraContext(Map<Setting.SettingType, String> settings)
     {
-        super(enabled);
+        super(settings, settings.get(Setting.SettingType.JIRA_ENABLED));
+
+        String url = settings.get(Setting.SettingType.JIRA_URL);
+        String username = settings.get(Setting.SettingType.JIRA_USER);
+        String password = settings.get(Setting.SettingType.JIRA_PASSWORD);
+
         this.credentials = new BasicCredentials(username, password);
         this.jiraClient = new JiraClient(url, credentials);
         final HttpParams httpParams = new BasicHttpParams();

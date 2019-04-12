@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.services.services.application.integration.context;
 
 import com.amazonaws.ClientConfiguration;
+import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
@@ -23,20 +24,37 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
+import com.qaprosoft.zafira.models.db.Setting;
 
-public class AmazonContext extends AbstractContext
-{
+import java.util.Map;
+
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.AMAZON_ACCESS_KEY;
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.AMAZON_BUCKET;
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.AMAZON_ENABLED;
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.AMAZON_REGION;
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.AMAZON_SECRET_KEY;
+
+public class AmazonContext extends AbstractContext {
 
     private AmazonS3 amazonS3;
     private AWSSecurityTokenService awsSecurityTokenService;
     private BasicAWSCredentials basicAWSCredentials;
     private String s3Bucket;
 
-    public AmazonContext(String accessKey, String privateKey, String region, String s3Bucket, ClientConfiguration clientConfiguration, boolean enabled)
-    {
-        super(enabled);
-        this.s3Bucket = s3Bucket;
-        this.basicAWSCredentials = new BasicAWSCredentials(accessKey, privateKey);
+    public AmazonContext(Map<Setting.SettingType, String> settings) {
+        super(settings, settings.get(AMAZON_ENABLED));
+
+        String accessKey = settings.get(AMAZON_ACCESS_KEY);
+        String secretKey = settings.get(AMAZON_SECRET_KEY);
+        String bucket = settings.get(AMAZON_BUCKET);
+        String region = settings.get(AMAZON_REGION);
+
+        ClientConfiguration clientConfiguration = new ClientConfiguration();
+        clientConfiguration.setMaxConnections(100);
+        clientConfiguration.setProtocol(Protocol.HTTPS);
+
+        this.s3Bucket = bucket;
+        this.basicAWSCredentials = new BasicAWSCredentials(accessKey, secretKey);
         this.amazonS3 = AmazonS3ClientBuilder.standard()
                 .withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials))
                 .withRegion(Regions.fromName(region))

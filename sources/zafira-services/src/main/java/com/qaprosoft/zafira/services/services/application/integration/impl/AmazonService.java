@@ -28,11 +28,8 @@ import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.amazonaws.ClientConfiguration;
 import com.amazonaws.internal.SdkBufferedInputStream;
 import com.amazonaws.services.s3.internal.Mimetypes;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -44,7 +41,6 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.securitytoken.model.Credentials;
 import com.amazonaws.services.securitytoken.model.GetSessionTokenRequest;
 import com.amazonaws.services.securitytoken.model.GetSessionTokenResult;
-import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.services.exceptions.AWSException;
@@ -56,75 +52,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class AmazonService extends AbstractIntegration<AmazonContext> {
 
-    private static final Logger LOGGER = Logger.getLogger(AmazonService.class);
-
     private static final String FILE_PATH_SEPARATOR = "/";
 
-    private final SettingsService settingsService;
-    private final CryptoService cryptoService;
-    private final ClientConfiguration clientConfiguration;
     private final URLResolver urlResolver;
 
     @Value("${zafira.multitenant}")
     private Boolean multitenant;
 
-    public AmazonService(SettingsService settingsService, CryptoService cryptoService, ClientConfiguration clientConfiguration, URLResolver urlResolver) {
-        super(AMAZON);
-        this.settingsService = settingsService;
-        this.cryptoService = cryptoService;
-        this.clientConfiguration = clientConfiguration;
+    public AmazonService(SettingsService settingsService, CryptoService cryptoService, URLResolver urlResolver) {
+        super(settingsService, cryptoService, AMAZON, AmazonContext.class);
         this.urlResolver = urlResolver;
-    }
-
-    @Override
-    public void init() {
-        String accessKey = null;
-        String privateKey = null;
-        String region = null;
-        String bucket = null;
-        Boolean enabled = false;
-
-        try {
-            List<Setting> amazonSettings = settingsService.getSettingsByTool(AMAZON);
-            for (Setting setting : amazonSettings) {
-                if (setting.isEncrypted()) {
-                    setting.setValue(cryptoService.decrypt(setting.getValue()));
-                }
-                switch (Setting.SettingType.valueOf(setting.getName())) {
-                case AMAZON_ACCESS_KEY:
-                    accessKey = setting.getValue();
-                    break;
-                case AMAZON_SECRET_KEY:
-                    privateKey = setting.getValue();
-                    break;
-                case AMAZON_REGION:
-                    region = setting.getValue();
-                    break;
-                case AMAZON_BUCKET:
-                    bucket = setting.getValue();
-                    break;
-                case AMAZON_ENABLED:
-                    enabled = Boolean.valueOf(setting.getValue());
-                    break;
-                default:
-                    break;
-                }
-            }
-            init(accessKey, privateKey, region, bucket, enabled);
-        } catch (Exception e) {
-            LOGGER.error("Setting does not exist", e);
-        }
-    }
-
-    public void init(String accessKey, String privateKey, String region, String bucket, Boolean enabled) {
-        try {
-            if (!StringUtils.isBlank(accessKey) && !StringUtils.isBlank(privateKey) && !StringUtils.isBlank(region)
-                    && !StringUtils.isBlank(bucket)) {
-                putContext(new AmazonContext(accessKey, privateKey, region, bucket, clientConfiguration, enabled));
-            }
-        } catch (Exception e) {
-            LOGGER.error("Unable to initialize Amazon integration: " + e.getMessage());
-        }
     }
 
     @Override

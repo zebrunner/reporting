@@ -15,9 +15,11 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.context;
 
+import com.qaprosoft.zafira.models.db.Setting;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
+import java.util.Map;
 import java.util.Properties;
 
 public class EmailContext extends AbstractContext
@@ -27,9 +29,16 @@ public class EmailContext extends AbstractContext
     private String fromAddress;
     private Boolean isConnected;
 
-    public EmailContext(String host, int port, String user, String fromAddress, String password, boolean enabled)
+    public EmailContext(Map<Setting.SettingType, String> settings)
     {
-        super(enabled);
+        super(settings, settings.get(Setting.SettingType.EMAIL_ENABLED));
+
+        String host = settings.get(Setting.SettingType.EMAIL_HOST);
+        int port = Integer.valueOf(settings.get(Setting.SettingType.EMAIL_PORT));
+        String user = settings.get(Setting.SettingType.EMAIL_USER);
+        String password = settings.get(Setting.SettingType.EMAIL_PASSWORD);
+        String fromAddress = settings.get(Setting.SettingType.EMAIL_FROM_ADDRESS);
+
         this.javaMailSender = new JavaMailSenderImpl();
         ((JavaMailSenderImpl) this.javaMailSender).setDefaultEncoding("UTF-8");
         ((JavaMailSenderImpl) this.javaMailSender).setJavaMailProperties(new Properties()

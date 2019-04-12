@@ -15,19 +15,40 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.context;
 
+import com.qaprosoft.zafira.models.db.Setting;
 import org.apache.log4j.Logger;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class AbstractContext {
 
     protected static final Logger LOGGER = Logger.getLogger(AbstractContext.class);
 
+    private Map<Setting.SettingType, Object> settings;
     private final Boolean enabled;
 
-    public AbstractContext(Boolean enabled) {
+    public AbstractContext(Map<Setting.SettingType, String> settings, String enabled) {
+        this(settings, Boolean.valueOf(enabled));
+    }
+
+    public AbstractContext(Map<Setting.SettingType, String> settings, Boolean enabled) {
+        if(settings != null) {
+            this.settings = new HashMap<>(settings);
+        }
         this.enabled = enabled;
+    }
+
+    public void setSettings(Map<Setting.SettingType, Object> settings) {
+        this.settings = settings;
+    }
+
+    public Map<Setting.SettingType, Object> getSettings() {
+        return settings;
     }
 
     public Boolean isEnabled() {
         return enabled;
     }
+
 }

@@ -15,25 +15,25 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
-import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_ENABLED;
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_WEB_HOOK_URL;
 import static com.qaprosoft.zafira.models.db.Setting.Tool.SLACK;
+import static com.qaprosoft.zafira.services.services.application.integration.context.SlackContext.SlackAdditionalProperty.AUTHOR;
+import static com.qaprosoft.zafira.services.services.application.integration.context.SlackContext.SlackAdditionalProperty.IMAGE;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.HttpStatusCodes;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
 import com.qaprosoft.zafira.services.services.application.integration.context.SlackContext;
@@ -45,8 +45,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SlackService extends AbstractIntegration<SlackContext> {
-
-    private static final Logger LOGGER = Logger.getLogger(SlackService.class);
 
     private final static String RESULTS_PATTERN = "Passed: %d, Failed: %d, Known Issues: %d, Skipped: %d";
     private final static String INFO_PATTERN = "%1$s\n<%2$s|Open in Zafira>  |  <%3$s|Open in Jenkins>";
@@ -66,7 +64,7 @@ public class SlackService extends AbstractIntegration<SlackContext> {
                         CryptoService cryptoService,
                         @Value("${zafira.slack.image}") String image,
                         @Value("${zafira.slack.author}") String author) {
-        super(SLACK);
+        super(settingsService, cryptoService, SLACK, SlackContext.class);
         this.urlResolver = urlResolver;
         this.jenkinsService = jenkinsService;
         this.settingsService = settingsService;
@@ -76,12 +74,11 @@ public class SlackService extends AbstractIntegration<SlackContext> {
     }
 
     @Override
-    public void init() {
-        try {
-            init(author, image);
-        } catch (Exception e) {
-            LOGGER.error("Setting does not exist", e);
-        }
+    public Map<SlackContext.SlackAdditionalProperty, String> additionalContextProperties() {
+        Map<SlackContext.SlackAdditionalProperty, String> additionalProperties = new HashMap<>();
+        additionalProperties.put(AUTHOR, author);
+        additionalProperties.put(IMAGE, image);
+        return additionalProperties;
     }
 
     @Override
@@ -98,18 +95,6 @@ public class SlackService extends AbstractIntegration<SlackContext> {
             }
             return result;
         }).orElse(false);
-    }
-
-    public void init(String author, String picPath) throws ServiceException {
-        String wH = getWebhook();
-        if (wH != null) {
-            try {
-                Setting enabledSetting = settingsService.getSettingByName(SLACK_ENABLED.name());
-                putContext(new SlackContext(wH, author, picPath, Boolean.valueOf(enabledSetting.getValue())));
-            } catch (IllegalArgumentException e) {
-                LOGGER.info("Webhook url is not provided");
-            }
-        }
     }
 
     public void sendStatusOnFinish(TestRun testRun) {

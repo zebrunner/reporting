@@ -15,8 +15,12 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.context;
 
+import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleDriveService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleSpreadsheetsService;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class GoogleContext extends AbstractContext
 {
@@ -27,8 +31,13 @@ public class GoogleContext extends AbstractContext
     private GoogleDriveService driveService;
     private GoogleSpreadsheetsService spreadsheetsService;
 
-    public GoogleContext(byte[] credsFile, String credsFileOriginName, boolean enabled) {
-        super(enabled);
+    public GoogleContext(Map<Setting.SettingType, Setting> settings) {
+        super(null, settings.get(Setting.SettingType.GOOGLE_ENABLED).getValue());
+        setSettings(new HashMap<>(settings));
+
+        byte[] credsFile = settings.get(Setting.SettingType.GOOGLE_CLIENT_SECRET_ORIGIN).getFile();
+        String credsFileOriginName = settings.get(Setting.SettingType.GOOGLE_CLIENT_SECRET_ORIGIN).getValue();
+
         this.credsFile = credsFile;
         this.credsFileOriginName = credsFileOriginName;
         this.driveService = new GoogleDriveService(credsFile);

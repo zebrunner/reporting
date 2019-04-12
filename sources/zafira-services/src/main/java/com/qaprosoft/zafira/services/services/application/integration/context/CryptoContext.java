@@ -15,7 +15,15 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.context;
 
+import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.services.exceptions.IntegrationException;
+import com.qaprosoft.zafira.services.services.application.integration.AdditionalProperty;
+import org.apache.commons.lang3.StringUtils;
 import org.jasypt.util.text.BasicTextEncryptor;
+
+import java.util.Map;
+
+import static com.qaprosoft.zafira.services.services.application.integration.context.CryptoContext.CryptoAdditionalProperty.SALT;
 
 public class CryptoContext extends AbstractContext
 {
@@ -24,17 +32,29 @@ public class CryptoContext extends AbstractContext
     private int size;
     private String key;
     private String salt;
+    private String cryptoAlgorithm;
     private BasicTextEncryptor basicTextEncryptor;
 
-    public CryptoContext(String type, int size, String key, String salt)
+    public CryptoContext(Map<Setting.SettingType, String> settings, Map<CryptoAdditionalProperty, String> additionalProperties)
     {
-        super(true);
+        super(settings, true);
+
+        String type = settings.get(Setting.SettingType.CRYPTO_KEY_TYPE);
+        int size = Integer.valueOf(settings.get(Setting.SettingType.CRYPTO_KEY_SIZE));
+        String key = settings.get(Setting.SettingType.KEY);
+        String salt = additionalProperties.get(SALT);
+        this.cryptoAlgorithm = settings.get(Setting.SettingType.CRYPTO_ALGORITHM);
         this.type = type;
         this.size = size;
         this.key = key;
         this.salt = salt;
-        this.basicTextEncryptor = new BasicTextEncryptor();
-        this.basicTextEncryptor.setPassword(key + salt);
+        if(!StringUtils.isBlank(key) && !StringUtils.isBlank(salt)) {
+            initEncryptor();
+        }
+    }
+
+    public enum CryptoAdditionalProperty implements AdditionalProperty {
+        SALT
     }
 
     public String getType()
@@ -65,6 +85,7 @@ public class CryptoContext extends AbstractContext
     public void setKey(String key)
     {
         this.key = key;
+        initEncryptor();
     }
 
     public String getSalt()
@@ -75,6 +96,15 @@ public class CryptoContext extends AbstractContext
     public void setSalt(String salt)
     {
         this.salt = salt;
+        initEncryptor();
+    }
+
+    public String getCryptoAlgorithm() {
+        return cryptoAlgorithm;
+    }
+
+    public void setCryptoAlgorithm(String cryptoAlgorithm) {
+        this.cryptoAlgorithm = cryptoAlgorithm;
     }
 
     public BasicTextEncryptor getBasicTextEncryptor()
@@ -85,5 +115,15 @@ public class CryptoContext extends AbstractContext
     public void setBasicTextEncryptor(BasicTextEncryptor basicTextEncryptor)
     {
         this.basicTextEncryptor = basicTextEncryptor;
+    }
+
+    private void initEncryptor() {
+        if(StringUtils.isBlank(key) || StringUtils.isBlank(salt)) {
+            throw new IntegrationException("Crypto key and salt must not be empty");
+        }
+        if(basicTextEncryptor == null) {
+            basicTextEncryptor = new BasicTextEncryptor();
+        }
+        basicTextEncryptor.setPassword(key + salt);
     }
 }

@@ -19,6 +19,7 @@ import com.qaprosoft.zafira.models.db.Setting.Tool;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.services.application.integration.context.AbstractContext;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -29,6 +30,8 @@ public interface Integration<T extends AbstractContext> {
     boolean isConnected();
 
     Tool getTool();
+
+    Map<? extends AdditionalProperty, String> additionalContextProperties();
 
     default Optional<T> getContext() {
         return IntegrationTenancyStorage.getContext(getTool());
