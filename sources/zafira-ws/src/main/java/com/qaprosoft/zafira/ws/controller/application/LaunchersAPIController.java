@@ -128,13 +128,4 @@ public class LaunchersAPIController extends AbstractController {
     public void build(@RequestBody @Valid LauncherType launcherType) throws ServiceException, IOException {
         launcherService.buildLauncherJob(mapper.map(launcherType, Launcher.class), userService.getNotNullUserById(getPrincipalId()));
     }
-
-    @ResponseStatusDetails
-    @ApiOperation(value = "Build job with launcher", nickname = "build", httpMethod = "GET")
-    @ResponseStatus(HttpStatus.OK)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @RequestMapping(value = "sync", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void sync(@RequestParam String repo) throws ServiceException {
-        launcherService.syncRepo(repo);
-    }
 }
