@@ -26,6 +26,7 @@ public class WidgetTemplateParameter {
     private String valuesQuery;
     private Object value;
     private Boolean multiple;
+    private Boolean hidden;
     private Boolean required;
 
     public List<Object> getValues() {
@@ -58,6 +59,14 @@ public class WidgetTemplateParameter {
 
     public void setMultiple(Boolean multiple) {
         this.multiple = multiple;
+    }
+    
+    public Boolean getHidden() {
+        return hidden;
+    }
+
+    public void setHidden(Boolean hidden) {
+        this.hidden = hidden;
     }
 
     public Boolean getRequired() {

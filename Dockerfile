@@ -1,7 +1,14 @@
+FROM maven:3.6.0-jdk-8 as build-stage
+
+WORKDIR /app
+COPY ./sources/ /app/
+COPY ./tools/maven/settings.xml ${MAVEN_CONFIG}/
+RUN mvn clean install -P zafira -pl '!zafira-tests,!zafira-batch-services'
+
 FROM tomcat:7-jre8
 
-ARG SERVICE_VER
-ARG CLIENT_VER
+ARG SERVICE_VER=1.0-SNAPSHOT
+ARG CLIENT_VER=1.0-SNAPSHOT
 
 ENV ZAFIRA_SERVICE_VERSION=${SERVICE_VER}
 ENV ZAFIRA_CLIENT_VERSION=${CLIENT_VER}
@@ -15,6 +22,8 @@ ENV ZAFIRA_GROUP="Super admins"
 ENV ZAFIRA_JDBC_URL=jdbc:postgresql://localhost:5432/postgres
 ENV ZAFIRA_JDBC_USER=postgres
 ENV ZAFIRA_JDBC_PASS=postgres
+
+ENV ZAFIRA_DEBUG_MODE=false
 
 ENV ZAFIRA_JWT_TOKEN=AUwMLdWFBtUHVgvjFfMmAEadXqZ6HA4dKCiCmjgCXxaZ4ZO8od
 ENV ZAFIRA_CRYPTO_SALT=TDkxalR4T3EySGI0T0YyMitScmkxWDlsUXlPV2R4OEZ1b2kyL1VJeFVHST0=
@@ -53,8 +62,7 @@ ENV ZAFIRA_GITHUB_CLIENT_SECRET=
 RUN apt-get update && apt-get install zip
 RUN mkdir ${CATALINA_HOME}/shared
 
-COPY sources/zafira-ws/target/zafira-ws.war ${CATALINA_HOME}/temp/
-COPY sources/zafira-web/target/zafira.war ${CATALINA_HOME}/temp/
+COPY --from=build-stage /app/zafira-ws/target/zafira-ws.war ${CATALINA_HOME}/temp/
 COPY tools/newrelic.zip ${CATALINA_HOME}/temp/
 COPY entrypoint.sh /
 
