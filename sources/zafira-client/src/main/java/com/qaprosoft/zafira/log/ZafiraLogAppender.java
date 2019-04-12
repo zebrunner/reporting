@@ -50,6 +50,8 @@ import com.rabbitmq.client.ConnectionFactory;
  */
 public class ZafiraLogAppender extends AppenderSkeleton
 {
+
+	private static final ZafiraSingleton ZAFIRA_INSTANCE = ZafiraSingleton.INSTANCE;
 	private static final String ZAFIRA_PROPERTIES = "zafira.properties";
 
 	private ConnectionFactory factory = new ConnectionFactory();
@@ -419,8 +421,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 			config.addConfiguration(new SystemConfiguration());
 			config.addConfiguration(new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
 				    					  .configure(new Parameters().properties().setFileName(ZAFIRA_PROPERTIES)).getConfiguration());
-			
-			if(ZafiraSingleton.INSTANCE.isRunning()) {
+
+			if(ZAFIRA_INSTANCE.isRunning()) {
 				// Queue referenced to ci_run_id
 				this.routingKey = config.getString("ci_run_id", null);
 				if(StringUtils.isEmpty(routingKey))
@@ -429,7 +431,7 @@ public class ZafiraLogAppender extends AppenderSkeleton
 					System.setProperty("ci_run_id", routingKey);
 				}
 				
-				Response<List<HashMap<String, String>>> rs = ZafiraSingleton.INSTANCE.getClient().getToolSettings("RABBITMQ", true);
+				Response<List<HashMap<String, String>>> rs = ZAFIRA_INSTANCE.getClient().getToolSettings("RABBITMQ", true);
 				if(rs.getStatus() == 200)
 				{
 					List<HashMap<String, String>> settings = rs.getObject();
