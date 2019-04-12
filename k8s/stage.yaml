@@ -15,6 +15,8 @@ spec:
       labels:
         app: zafira
     spec:
+      nodeSelector:
+        app: zafira
       containers:
       - env:
         envFrom:
