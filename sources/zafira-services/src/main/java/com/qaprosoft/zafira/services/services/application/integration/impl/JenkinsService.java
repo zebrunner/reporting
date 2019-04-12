@@ -286,5 +286,4 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
             return false;
         }
     }
-
 }
