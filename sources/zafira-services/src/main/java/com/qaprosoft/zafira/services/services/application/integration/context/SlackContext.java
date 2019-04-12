@@ -16,7 +16,6 @@
 package com.qaprosoft.zafira.services.services.application.integration.context;
 
 import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.services.services.application.integration.AdditionalProperty;
 import in.ashwanthkumar.slack.webhook.Slack;
 
 import java.util.Map;

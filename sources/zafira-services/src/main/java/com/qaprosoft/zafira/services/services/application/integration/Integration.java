@@ -18,6 +18,7 @@ package com.qaprosoft.zafira.services.services.application.integration;
 import com.qaprosoft.zafira.models.db.Setting.Tool;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.services.application.integration.context.AbstractContext;
+import com.qaprosoft.zafira.services.services.application.integration.context.AdditionalProperty;
 
 import java.util.Map;
 import java.util.Optional;
