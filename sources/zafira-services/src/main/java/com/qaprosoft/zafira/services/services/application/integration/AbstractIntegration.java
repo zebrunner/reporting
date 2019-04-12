@@ -55,6 +55,7 @@ public abstract class AbstractIntegration<T extends AbstractContext> implements 
         this.contextClass = contextClass;
     }
 
+    @Override
     public void init() {
         if(settingsService != null && contextClass != null) {
             try {

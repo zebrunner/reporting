@@ -44,18 +44,19 @@ public class MailSender extends AbstractIntegration<EmailContext> {
 
     @Override
     public boolean isConnected() {
-        return isContextConnected().orElseGet(() -> {
+        return obtainConnectedStatus().orElseGet(() -> {
             boolean connected = false;
-            JavaMailSenderImpl sender = getJavaMailSenderImpl().orElse(null);
-            if (sender != null) {
+            Optional<JavaMailSenderImpl> maybeSender = getJavaMailSenderImpl();
+            if (maybeSender.isPresent()) {
                 try {
-                    sender.testConnection();
+                    maybeSender.get().testConnection();
                     connected = true;
                 } catch (MessagingException e) {
                     // Will be thrown when SMTP not configured properly
                 }
+            } else {
+                setConnected(connected);
             }
-            setConnected(connected);
             return connected;
         });
     }
@@ -72,7 +73,11 @@ public class MailSender extends AbstractIntegration<EmailContext> {
         getContext().ifPresent(context -> context().setConnected(isConnected));
     }
 
-    private Optional<Boolean> isContextConnected() {
+    /**
+     *
+     * @return
+     */
+    private Optional<Boolean> obtainConnectedStatus() {
         return mapContext(EmailContext::isConnected);
     }
 
