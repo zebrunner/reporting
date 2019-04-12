@@ -15,93 +15,85 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import static com.qaprosoft.zafira.models.db.Setting.Tool.EMAIL;
-
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
-import java.util.concurrent.Executors;
 
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.qaprosoft.zafira.models.db.Attachment;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.application.emails.AsynSendEmailTask;
+import com.qaprosoft.zafira.services.services.application.integration.impl.MailSender;
 import com.qaprosoft.zafira.services.services.application.emails.IEmailMessage;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 
 import javax.mail.MessagingException;
 
-@Service
-public class EmailService
-{
+@Component
+public class EmailService {
+
 	private static final Logger LOGGER = Logger.getLogger(EmailService.class);
 
-	@Autowired
-	private FreemarkerUtil freemarkerUtil;
+	private final MailSender mailSender;
+	private final FreemarkerUtil freemarkerUtil;
+	private final EmailValidator validator;
 
-	/*@Autowired
-	private AutowireCapableBeanFactory autowireizer;*/
+	public EmailService(MailSender mailSender, FreemarkerUtil freemarkerUtil) {
+		this.mailSender = mailSender;
+		this.freemarkerUtil = freemarkerUtil;
+		this.validator = EmailValidator.getInstance();
+	}
 
-	@Autowired
-	private AsynSendEmailTask emailTask;
-	
-	private static final EmailValidator validator = EmailValidator.getInstance();
+	public String sendEmail(final IEmailMessage message, final String... emails) throws ServiceException {
 
-	public String sendEmail(final IEmailMessage message, final String... emails) throws ServiceException
-	{
-
-		if(! emailTask.isEnabledAndConnected(EMAIL))
-		{
+		if(! mailSender.isEnabledAndConnected()) {
 			return null;
 		}
 
 		final String text = freemarkerUtil.getFreeMarkerTemplateContent(message.getType().getTemplateName(), message);
+		final String[] recipients = processRecipients(emails);
 
-		synchronized (emailTask) {
-			final String[] recipients = processRecipients(emails);
-
-			if (!ArrayUtils.isEmpty(recipients)) {
-				final MimeMessagePreparator preparator = mimeMessage -> {
-					boolean hasAttachments = message.getAttachments() != null;
-
-					MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachments);
-					msg.setSubject(message.getSubject());
-					msg.setTo(recipients);
-					msgSetFrom(msg);
-					msg.setText(text, true);
-					if (hasAttachments) {
-						for (Attachment attachment : message.getAttachments()) {
-							msg.addAttachment(attachment.getName() + "." + FilenameUtils.getExtension(attachment.getFile().getName()), attachment.getFile());
-							msg.addInline(attachment.getName().replaceAll(" ", "_"), attachment.getFile());
-						}
+		if (!ArrayUtils.isEmpty(recipients)) {
+			final MimeMessagePreparator preparator = mimeMessage -> {
+				boolean hasAttachments = message.getAttachments() != null;
+				MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachments);
+				msg.setSubject(message.getSubject());
+				msg.setTo(recipients);
+				msgSetFrom(msg);
+				msg.setText(text, true);
+				if (hasAttachments) {
+					for (Attachment attachment : message.getAttachments()) {
+						msg.addAttachment(attachment.getName() + "." + FilenameUtils.getExtension(attachment.getFile().getName()), attachment.getFile());
+						msg.addInline(attachment.getName().replaceAll(" ", "_"), attachment.getFile());
 					}
-				};
-				this.emailTask.setPreparator(preparator);
-				//autowireizer.autowireBean(this.emailTask);
-				Executors.newSingleThreadExecutor().execute(this.emailTask);
-			}
+				}
+			};
+			this.mailSender.send(preparator);
 		}
 		return text;
 	}
 
 	private void msgSetFrom(MimeMessageHelper msg) throws UnsupportedEncodingException, MessagingException {
-		if(! StringUtils.isBlank(this.emailTask.getFromAddress())) {
-			msg.setFrom(this.emailTask.getFromAddress(), this.emailTask.getJavaMailSenderImpl().getUsername());
+		JavaMailSenderImpl javaMailSender = mailSender.getJavaMailSenderImpl()
+													  .orElseThrow(() -> new ForbiddenOperationException("Unable to retrieve sender address"));
+		String fromAddress = mailSender.getFromAddress()
+									   .orElseThrow(() -> new ForbiddenOperationException("Unable to retrieve sender address"));
+		if(! StringUtils.isBlank(fromAddress)) {
+			msg.setFrom(fromAddress, javaMailSender.getUsername());
 		} else {
-			msg.setFrom(this.emailTask.getJavaMailSenderImpl().getUsername());
+			msg.setFrom(javaMailSender.getUsername());
 		}
 	}
 	
-	private String [] processRecipients(String ... emails)
-	{
+	private String [] processRecipients(String ... emails) {
 		return Arrays.stream(emails).filter(email -> {
 			boolean isValid = validator.isValid(email);
 			if(! isValid) {

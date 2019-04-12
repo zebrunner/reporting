@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import com.qaprosoft.zafira.models.dto.CreateLauncherParamsType;
 import com.qaprosoft.zafira.services.exceptions.ScmAccountNotFoundException;
 import org.json.JSONObject;
+import com.qaprosoft.zafira.services.services.application.integration.context.JenkinsContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ import com.qaprosoft.zafira.models.db.Launcher;
 import com.qaprosoft.zafira.models.db.ScmAccount;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.application.jmx.JenkinsService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
 import com.qaprosoft.zafira.services.services.application.scm.ScmAccountService;
 import com.qaprosoft.zafira.services.services.auth.JWTService;
 
@@ -65,22 +66,24 @@ public class LauncherService {
 
     @Transactional(rollbackFor = Exception.class)
     public Launcher createLauncher(Launcher launcher, User owner) throws ServiceException {
-        if (jenkinsService.getContext() == null) {
-            throw new ServiceException("Jenkins is not initialized.");
-        }
-        String jenkinsHost = jenkinsService.getContext().getJenkinsHost();
-        String launcherJobName = jenkinsService.getContext().getLauncherJobName();
-        String launcherJobUrl = jenkinsHost + "/job/" + launcher.getScmAccount().getOrganizationName() + "/job/" + launcherJobName;
-        Job job = jobsService.getJobByJobURL(launcherJobUrl);
-        if (job == null) {
-            job = jenkinsService.getJobByUrl(launcherJobUrl);
-            if(job != null) {
-                job.setJenkinsHost(jenkinsHost);
-                job.setUser(owner);
-                jobsService.createJob(job);
+        if(jenkinsService.isConnected()) {
+            JenkinsContext context = jenkinsService.context();
+            String launcherJobName = context.getLauncherJobName();
+            if (launcherJobName != null) {
+                String jenkinsHost = context.getJenkinsHost();
+                String launcherJobUrl = jenkinsHost + "/job/" + launcher.getScmAccount().getOrganizationName() + "/job/" + launcherJobName;
+                Job job = jobsService.getJobByJobURL(launcherJobUrl);
+                if (job == null) {
+                    job = jenkinsService.getJobByUrl(launcherJobUrl).orElse(null);
+                    if(job != null) {
+                        job.setJenkinsHost(jenkinsHost);
+                        job.setUser(owner);
+                        jobsService.createJob(job);
+                    }
+                }
+                launcher.setJob(job);
             }
         }
-        launcher.setJob(job);
         launcherMapper.createLauncher(launcher);
         return launcher;
     }
@@ -165,10 +168,4 @@ public class LauncherService {
         
         jenkinsService.buildJob(job, jobParameters);
     }
-
-    public void syncRepo(String repo) throws ServiceException {
-        Job job = jobsService.getJobByName("onPush-" + repo);
-        jenkinsService.buildJob(job, jenkinsService.getOnPushBuildParameters(job));
-    }
-
 }

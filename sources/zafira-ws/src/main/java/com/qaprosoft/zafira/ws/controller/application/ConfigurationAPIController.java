@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.qaprosoft.zafira.models.db.Setting;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,9 +37,9 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.ProjectService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
 import com.qaprosoft.zafira.services.services.application.VersionService;
-import com.qaprosoft.zafira.services.services.application.jmx.JenkinsService;
-import com.qaprosoft.zafira.services.services.application.jmx.JiraService;
-import com.qaprosoft.zafira.services.services.application.jmx.SlackService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.JiraService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.SlackService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
@@ -48,10 +47,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-
-import static com.qaprosoft.zafira.models.db.Setting.Tool.JENKINS;
-import static com.qaprosoft.zafira.models.db.Setting.Tool.JIRA;
-import static com.qaprosoft.zafira.models.db.Setting.Tool.SLACK;
 
 @Controller
 @Api(value = "Configuration API")
@@ -109,7 +104,7 @@ public class ConfigurationAPIController extends AbstractController {
     public @ResponseBody Map<String, Object> getJenkinsConfig() throws ServiceException
     {
         Map<String, Object> config = new HashMap<>();
-        config.put("connected", jenkinsService.isEnabledAndConnected(JENKINS));
+        config.put("connected", jenkinsService.isEnabledAndConnected());
         return config;
     }
 
@@ -121,7 +116,7 @@ public class ConfigurationAPIController extends AbstractController {
     public @ResponseBody Map<String, Object> getJiraConfig() throws ServiceException
     {
         Map<String, Object> config = new HashMap<>();
-        config.put("connected", jiraService.isEnabledAndConnected(JIRA));
+        config.put("connected", jiraService.isEnabledAndConnected());
         return config;
     }
 
@@ -134,7 +129,7 @@ public class ConfigurationAPIController extends AbstractController {
     {
         Map<String, Object> config = new HashMap<>();
         TestRun tr = testRunService.getTestRunByIdFull(id);
-        if (slackService.getWebhook() != null && StringUtils.isNotEmpty(tr.getSlackChannels()) && slackService.isEnabledAndConnected(SLACK))
+        if (slackService.getWebhook() != null && StringUtils.isNotEmpty(tr.getSlackChannels()) && slackService.isEnabledAndConnected())
         {
             config.put("available", true);
         }
@@ -153,7 +148,7 @@ public class ConfigurationAPIController extends AbstractController {
     public @ResponseBody Map<String, Object> isSlackAvailable() throws ServiceException
     {
         Map<String, Object> config = new HashMap<>();
-        if (slackService.getWebhook() != null && slackService.isEnabledAndConnected(SLACK))
+        if (slackService.getWebhook() != null && slackService.isEnabledAndConnected())
         {
             config.put("available", true);
         }

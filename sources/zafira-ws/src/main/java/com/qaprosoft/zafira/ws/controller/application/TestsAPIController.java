@@ -21,6 +21,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import com.qaprosoft.zafira.models.db.*;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import org.dozer.Mapper;
@@ -53,7 +54,7 @@ import com.qaprosoft.zafira.services.services.application.TestMetricService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
 import com.qaprosoft.zafira.services.services.application.TestService;
 import com.qaprosoft.zafira.services.services.application.WorkItemService;
-import com.qaprosoft.zafira.services.services.application.jmx.JiraService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.JiraService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;
@@ -63,8 +64,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import net.rcarz.jiraclient.Issue;
 import springfox.documentation.annotations.ApiIgnore;
-
-import static com.qaprosoft.zafira.models.db.Setting.Tool.JIRA;
 
 @Controller
 @Api(value = "Tests API")
@@ -279,7 +278,7 @@ public class TestsAPIController extends AbstractController
 	@RequestMapping(value = "jira/{issue}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Issue getJiraIssue(@PathVariable(value = "issue") String issue)
 	{
-		return jiraService.getIssue(issue);
+		return jiraService.getIssue(issue).orElseThrow(() -> new ForbiddenOperationException("Unable to retrieve jira issue"));
 	}
 
 	@ApiIgnore
@@ -289,7 +288,7 @@ public class TestsAPIController extends AbstractController
 	@RequestMapping(value = "jira/connect", method = RequestMethod.GET)
 	public @ResponseBody boolean getConnectionToJira()
 	{
-		return jiraService.isEnabledAndConnected(JIRA);
+		return jiraService.isEnabledAndConnected();
 	}
 	
 	@ResponseStatusDetails

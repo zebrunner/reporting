@@ -18,6 +18,10 @@ package com.qaprosoft.zafira.client;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.ws.rs.core.MediaType;
 
@@ -99,12 +103,11 @@ public class  ZafiraClient
 	private String authToken;
 	private String project = DEFAULT_PROJECT;
 
-	private AmazonS3 amazonClient;
+	private CompletableFuture<AmazonS3> amazonClient;
+	private CompletableFuture<Sheets> sheets;
+	private CompletableFuture<TenantType> tenantType;
+
 	private SessionCredentials amazonS3SessionCredentials;
-
-	private Sheets sheets;
-
-	private TenantType tenantType;
 	
 	public ZafiraClient(String serviceURL)
 	{
@@ -1024,11 +1027,11 @@ public class  ZafiraClient
 	public String uploadFile(File file, Integer expiresIn, String keyPrefix) throws Exception
 	{
 		String filePath = null;
-		if(this.amazonClient != null && this.tenantType != null && ! StringUtils.isBlank(this.tenantType.getTenant()))
+		if(getAmazonClient() != null && getTenantType() != null && ! StringUtils.isBlank(getTenantType().getTenant()))
 		{
 			String fileName = RandomStringUtils.randomAlphanumeric(20) + "." + FilenameUtils.getExtension(file.getName());
 			String relativeKey = keyPrefix + fileName;
-			String key = tenantType.getTenant() + relativeKey;
+			String key = getTenantType().getTenant() + relativeKey;
 
 			try (SdkBufferedInputStream stream = new SdkBufferedInputStream(new FileInputStream(file), (int) (file.length() + 100))) {
 				String type = Mimetypes.getInstance().getMimetype(file.getName());
@@ -1038,11 +1041,11 @@ public class  ZafiraClient
 				metadata.setContentLength(file.length());
 
 				PutObjectRequest putRequest = new PutObjectRequest(this.amazonS3SessionCredentials.getBucket(), key, stream, metadata);
-				this.amazonClient.putObject(putRequest);
-				CannedAccessControlList controlList = this.tenantType.isMultitenant() ? CannedAccessControlList.Private : CannedAccessControlList.PublicRead;
-				this.amazonClient.setObjectAcl(this.amazonS3SessionCredentials.getBucket(), key, controlList);
+				getAmazonClient().putObject(putRequest);
+				CannedAccessControlList controlList = getTenantType().isMultitenant() ? CannedAccessControlList.Private : CannedAccessControlList.PublicRead;
+				getAmazonClient().setObjectAcl(this.amazonS3SessionCredentials.getBucket(), key, controlList);
 
-				filePath = this.tenantType.isMultitenant() ? getServiceURL() + relativeKey : getFilePath(key);
+				filePath = getTenantType().isMultitenant() ? getServiceURL() + relativeKey : getFilePath(key);
 
 			} catch (Exception e)
 			{
@@ -1057,36 +1060,39 @@ public class  ZafiraClient
 	}
 
 	public String getServiceURL() {
-		return this.tenantType.getServiceUrl();
+		return getTenantType().getServiceUrl();
 	}
 
 	private String getFilePath(String key) {
-		return this.amazonClient.getUrl(this.amazonS3SessionCredentials.getBucket(), key).toString();
+		return getAmazonClient().getUrl(this.amazonS3SessionCredentials.getBucket(), key).toString();
 	}
 
 	/**
 	 * Registers Amazon S3 client
-	 * @throws Exception throws if credentials are invalid or bucket is not exist
 	 */
-	void initAmazonS3Client() throws Exception
+	void initAmazonS3Client()
 	{
-		this.amazonS3SessionCredentials = getAmazonSessionCredentials().getObject();
-		if(this.amazonS3SessionCredentials != null)
-		{
-			try
+		this.amazonClient = CompletableFuture.supplyAsync(() -> {
+			this.amazonS3SessionCredentials = getAmazonSessionCredentials().getObject();
+			AmazonS3 client = null;
+			if(this.amazonS3SessionCredentials != null)
 			{
-				this.amazonClient = AmazonS3ClientBuilder.standard()
-						.withCredentials(new AWSStaticCredentialsProvider(new BasicSessionCredentials(this.amazonS3SessionCredentials.getAccessKeyId(), this.amazonS3SessionCredentials.getSecretAccessKey(), this.amazonS3SessionCredentials.getSessionToken())))
-						.withRegion(Regions.fromName(this.amazonS3SessionCredentials.getRegion())).build();
-				if(! this.amazonClient.doesBucketExistV2(this.amazonS3SessionCredentials.getBucket()))
+				try
 				{
-					throw new Exception(String.format("Amazon S3 bucket with name '%s' doesn't exist.", this.amazonS3SessionCredentials.getBucket()));
+					client = AmazonS3ClientBuilder.standard()
+												  .withCredentials(new AWSStaticCredentialsProvider(new BasicSessionCredentials(this.amazonS3SessionCredentials.getAccessKeyId(), this.amazonS3SessionCredentials.getSecretAccessKey(), this.amazonS3SessionCredentials.getSessionToken())))
+												  .withRegion(Regions.fromName(this.amazonS3SessionCredentials.getRegion())).build();
+					if(! client.doesBucketExistV2(this.amazonS3SessionCredentials.getBucket()))
+					{
+						throw new Exception(String.format("Amazon S3 bucket with name '%s' doesn't exist.", this.amazonS3SessionCredentials.getBucket()));
+					}
+				} catch (Exception e)
+				{
+					LOGGER.error("Amazon integration is invalid. Verify your credentials or region.", e);
 				}
-			} catch (Exception e)
-			{
-				throw new Exception("Amazon integration is invalid. Verify your credentials or region.", e);
 			}
-		}
+			return client;
+		});
 	}
 
 	/**
@@ -1117,22 +1123,26 @@ public class  ZafiraClient
 	public Optional<Sheets> getSpreadsheetService() {
 		if (!isAvailable())
 			LOGGER.error("Spreadsheet`s operations are unavailable until connection with Zafira is established!");
-	    return Optional.ofNullable(this.sheets);
+	    return Optional.ofNullable(getSheets());
     }
 
 	void initGoogleClient()
 	{
-		String accessToken = getGoogleSessionCredentials().getObject();
-		if(accessToken != null) {
-			try {
-				GoogleCredential googleCredential = new GoogleCredential().setAccessToken(accessToken);
-				this.sheets = new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), googleCredential)
-						.setApplicationName(UUID.randomUUID().toString())
-						.build();
-			} catch (Exception e) {
-				LOGGER.error("Google integration is invalid", e);
+		this.sheets = CompletableFuture.supplyAsync(() -> {
+			Sheets sheets = null;
+			String accessToken = getGoogleSessionCredentials().getObject();
+			if(accessToken != null) {
+				try {
+					GoogleCredential googleCredential = new GoogleCredential().setAccessToken(accessToken);
+					sheets = new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), googleCredential)
+							.setApplicationName(UUID.randomUUID().toString())
+							.build();
+				} catch (Exception e) {
+					LOGGER.error("Google integration is invalid", e);
+				}
 			}
-		}
+			return sheets;
+		});
 	}
 
 	/**
@@ -1160,9 +1170,9 @@ public class  ZafiraClient
 		return response;
 	}
 
-	protected void initTenant() throws Exception
+	void initTenant()
 	{
-		this.tenantType = getTenant().getObject();
+		this.tenantType = CompletableFuture.supplyAsync(() -> getTenant().getObject());
 	}
 
 	private Response<TenantType> getTenant()
@@ -1224,4 +1234,35 @@ public class  ZafiraClient
 		}
 		return response;
 	}
+
+	private AmazonS3 getAmazonClient() {
+		return getAsync(this.amazonClient);
+	}
+
+	private Sheets getSheets() {
+		return getAsync(this.sheets);
+	}
+
+	private TenantType getTenantType() {
+		return getAsync(this.tenantType);
+	}
+
+	private <I> I getAsync(CompletableFuture<I> async) {
+		I result = null;
+		if(async != null) {
+			try {
+				result = async.get(CONNECT_TIMEOUT, TimeUnit.MILLISECONDS);
+			} catch (InterruptedException | ExecutionException | TimeoutException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+		}
+		return result;
+	}
+
+	void onInit() {
+		initAmazonS3Client();
+		initGoogleClient();
+		initTenant();
+	}
+
 }

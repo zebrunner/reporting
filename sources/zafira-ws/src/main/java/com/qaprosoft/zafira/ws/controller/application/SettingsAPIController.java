@@ -17,9 +17,9 @@ package com.qaprosoft.zafira.ws.controller.application;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import com.qaprosoft.zafira.services.services.application.jmx.google.GoogleService;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,8 +44,8 @@ import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
-import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
-import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.AmazonService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
@@ -69,6 +69,9 @@ public class SettingsAPIController extends AbstractController
 
 	@Autowired
 	private SettingsService settingsService;
+
+	@Autowired
+	private IntegrationService integrationService;
 
 	@Autowired
 	private CryptoService cryptoService;
@@ -200,7 +203,7 @@ public class SettingsAPIController extends AbstractController
         settingsService.notifyToolReinitiated(tool, TenancyContext.getTenantName());
 		connectedTool.setName(tool.name());
 		connectedTool.setSettingList(settings);
-		connectedTool.setConnected(settingsService.getServiceByTool(tool).isEnabledAndConnected(tool));
+		connectedTool.setConnected(integrationService.getServiceByTool(tool).isEnabledAndConnected());
         return connectedTool;
 	}
 
@@ -210,7 +213,7 @@ public class SettingsAPIController extends AbstractController
 	@RequestMapping(value = "amazon/creds", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody SessionCredentials getSessionCredentials() throws ServiceException
 	{
-		return amazonService.getTemporarySessionCredentials(amazonTokenExpiration);
+		return amazonService.getTemporarySessionCredentials(amazonTokenExpiration).orElse(null);
 	}
 
 	@ApiOperation(value = "Get google session credentials", nickname = "getGoogleSessionCredentials", httpMethod = "GET", response = String.class)
