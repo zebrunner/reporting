@@ -236,9 +236,9 @@ public class TestRunService
 	}
 
 	@Transactional(readOnly = true)
-	public TestRun getLatestJobTestRunByBranchAndJobName(String branch, String jobName) throws ServiceException
+	public TestRun getLatestJobTestRunByBranchAndJobURL(String branch, String jobURL) throws ServiceException
 	{
-		return testRunMapper.getLatestJobTestRunByBranch(branch, jobsService.getJobByName(jobName).getId());
+		return testRunMapper.getLatestJobTestRunByBranch(branch, jobsService.getJobByJobURL(jobURL).getId());
 	}
 
 	@Transactional(rollbackFor = Exception.class)
@@ -249,8 +249,8 @@ public class TestRunService
 		TestRun existingRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
 		if(existingRun == null || Status.QUEUED.equals(existingRun.getStatus()))
 		{
-			testRun = getLatestJobTestRunByBranchAndJobName(queueTestRunParams.getBranch(),
-					queueTestRunParams.getJobName());
+			testRun = getLatestJobTestRunByBranchAndJobURL(queueTestRunParams.getBranch(),
+					queueTestRunParams.getJobUrl());
 			if (testRun != null)
 			{
 				Long latestTestRunId = testRun.getId();
