@@ -205,7 +205,6 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
     }
 
     private Optional<JobWithDetails> getJobByURL(String jobUrl) {
-        return mapContext(context -> {
             JobWithDetails job;
             try {
                 String folderUrl = jobUrl.substring(0, jobUrl.lastIndexOf("job/"));
@@ -213,13 +212,11 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
                 String jobName = path.getName(path.getNameCount() - 1).toString();
                 String folderName = path.getName(path.getNameCount() - 3).toString();
                 FolderJob folderJob = new FolderJob(folderName, folderUrl);
-//                com.google.common.base.Optional<FolderJob> folder = context.getJenkinsServer().getFolderJob(new com.offbytwo.jenkins.model.Job(folderName, folderUrl));
-                job = context.getJenkinsServer().getJob(folderJob, jobName);
+                job = context().getJenkinsServer().getJob(folderJob, jobName);
             } catch (IOException e) {
                 throw new RuntimeException(e.getMessage(), e);
             }
-            return job;
-        });
+            return Optional.of(job);
     }
 
     private Map<Integer, String> getLastLogStringsByCount(String log, Integer count, Integer fullCount) {
