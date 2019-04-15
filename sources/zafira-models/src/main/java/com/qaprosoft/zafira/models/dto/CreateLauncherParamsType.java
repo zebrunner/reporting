@@ -3,6 +3,7 @@ package com.qaprosoft.zafira.models.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ public class CreateLauncherParamsType implements Serializable
 {
 	private static final long serialVersionUID = -5754742673797369219L;
 
-	@NotEmpty(message = "{error.repo.required}")
+	@NotNull(message = "{error.repo.required}")
 	private String repo;
 
 	@NotEmpty(message = "{error.job.url.required}")
