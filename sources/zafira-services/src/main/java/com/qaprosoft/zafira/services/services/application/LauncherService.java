@@ -71,7 +71,10 @@ public class LauncherService {
             String launcherJobName = context.getLauncherJobName();
             if (launcherJobName != null) {
                 String jenkinsHost = context.getJenkinsHost();
-                String launcherJobUrl = jenkinsHost + "/job/" + launcher.getScmAccount().getOrganizationName() + "/job/" + launcherJobName;
+                String [] launcherJobNameValues = launcherJobName.split("-");
+                String launcherJobUrl = launcherJobNameValues.length > 1 ?
+                        jenkinsHost + "/job/" + launcherJobNameValues[0] + "/job/" + launcherJobNameValues[0] :
+                        jenkinsHost + "/job/" + launcherJobName;
                 Job job = jobsService.getJobByJobURL(launcherJobUrl);
                 if (job == null) {
                     job = jenkinsService.getJobByUrl(launcherJobUrl).orElse(null);
