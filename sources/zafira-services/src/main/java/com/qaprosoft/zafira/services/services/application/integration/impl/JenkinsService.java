@@ -209,8 +209,8 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
                 String jobName = jobUrl.substring(jobUrl.lastIndexOf("/") + 1);
                 String folderUrl = jobUrl.substring(0, jobUrl.lastIndexOf("/job/"));
                 String folderName = folderUrl.substring(folderUrl.lastIndexOf("/") + 1);
-                FolderJob folderJob = context.getJenkinsServer().getFolderJob(new com.offbytwo.jenkins.model.Job(folderName, folderUrl)).orNull();
-                job = context().getJenkinsServer().getJob(folderJob, jobName);
+                com.google.common.base.Optional<FolderJob> folder = context.getJenkinsServer().getFolderJob(new com.offbytwo.jenkins.model.Job(folderName, folderUrl));
+                job = context.getJenkinsServer().getJob(folder.orNull(), jobName);
             } catch (IOException e) {
                 throw new RuntimeException(e.getMessage(), e);
             }
