@@ -38,16 +38,8 @@ public class RabbitMQService extends AbstractIntegration<RabbitMQContext> {
         this.queues = queues;
     }
 
-    public Map<String, Queue> getQueues() {
-        return queues;
-    }
-
-    public Queue getQueueById(String id) {
+    private Queue getQueueById(String id) {
         return queues.get(id);
-    }
-
-    public String getSettingQueueName() {
-        return getQueueById(SETTINGS_QUEUE_NAME).getName();
     }
 
     public boolean isSettingQueueConsumer(String settingQueueName) {
