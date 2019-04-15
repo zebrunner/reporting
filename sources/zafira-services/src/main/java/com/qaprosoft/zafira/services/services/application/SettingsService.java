@@ -172,14 +172,14 @@ public class SettingsService {
      * @param tenant whose integration was updated
      */
     public void notifyToolReinitiated(Tool tool, String tenant) {
-        eventPushService.convertAndSend(EventPushService.Type.SETTINGS, new ReinitEventMessage(tenant, getRabbitMQService().getSettingQueueName(), tool));
+        eventPushService.convertAndSend(EventPushService.Type.SETTINGS, new ReinitEventMessage(tenant, tool));
         integrationService.getServiceByTool(tool).init();
     }
 
     @RabbitListener(queues = "#{settingsQueue.name}")
     public void process(Message message) {
         ReinitEventMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
-        if (! getRabbitMQService().isSettingQueueConsumer(rm.getQueueName()) && integrationService.getServiceByTool(rm.getTool()) != null) {
+        if (! getRabbitMQService().isSettingQueueConsumer(message.getMessageProperties().getConsumerQueue()) && integrationService.getServiceByTool(rm.getTool()) != null) {
             TenancyContext.setTenantName(rm.getTenancy());
             integrationService.getServiceByTool(rm.getTool()).init();
         }
@@ -192,4 +192,5 @@ public class SettingsService {
     private RabbitMQService getRabbitMQService() {
         return integrationService.getServiceByTool(Tool.RABBITMQ);
     }
+
 }
