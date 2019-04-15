@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class WidgetTemplateService {
@@ -61,7 +62,9 @@ public class WidgetTemplateService {
     }
 
     public List<WidgetTemplate> getProcessedWidgetTemplates() {
-        List<WidgetTemplate> widgetTemplates = getAllWidgetTemplates();
+        List<WidgetTemplate> widgetTemplates = getAllWidgetTemplates().stream()
+                                                                      .filter(widgetTemplate -> !widgetTemplate.getHidden())
+                                                                      .collect(Collectors.toList());
         widgetTemplates.forEach(this::executeWidgetTemplateParamsSQLQueries);
         return widgetTemplates;
     }

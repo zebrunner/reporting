@@ -14,6 +14,7 @@
 				WT.CHART_CONFIG AS WIDGET_TEMPLATE_CHART_CONFIG,
 				WT.PARAMS_CONFIG AS WIDGET_TEMPLATE_PARAMS_CONFIG,
 				WT.LEGEND_CONFIG AS WIDGET_TEMPLATE_LEGEND_CONFIG,
+				WT.HIDDEN AS WIDGET_TEMPLATE_HIDDEN,
 				WT.MODIFIED_AT AS WIDGET_TEMPLATE_MODIFIED_AT,
 				WT.CREATED_AT AS WIDGET_TEMPLATE_CREATED_AT
 			FROM
@@ -48,6 +49,7 @@
 		<result property="chartConfig" column="WIDGET_TEMPLATE_CHART_CONFIG"/>
 		<result property="paramsConfig" column="WIDGET_TEMPLATE_PARAMS_CONFIG"/>
 		<result property="legendConfig" column="WIDGET_TEMPLATE_LEGEND_CONFIG"/>
+		<result property="hidden" column="WIDGET_TEMPLATE_HIDDEN"/>
 		<result property="modifiedAt" column="WIDGET_TEMPLATE_MODIFIED_AT"/>
 		<result property="createdAt" column="WIDGET_TEMPLATE_CREATED_AT"/>
 	</resultMap>
