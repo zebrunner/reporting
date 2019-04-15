@@ -54,9 +54,8 @@ public class MailSender extends AbstractIntegration<EmailContext> {
                 } catch (MessagingException e) {
                     // Will be thrown when SMTP not configured properly
                 }
-            } else {
-                setConnected(connected);
             }
+            setConnected(connected);
             return connected;
         });
     }
