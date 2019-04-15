@@ -86,7 +86,7 @@ public class SettingsAPIController extends AbstractController
 	@ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "tool/{tool}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Setting> getSettingsByTool(@PathVariable(value="tool") String tool, @RequestParam(value = "decrypt", required = false, defaultValue="false") boolean decrypt) throws Exception
+	public @ResponseBody List<Setting> getSettingsByTool(@PathVariable(value="tool") String tool, @RequestParam(value = "decrypt", required = false) boolean decrypt) throws Exception
 	{
 		List<Setting> settings = settingsService.getSettingsByTool(Tool.valueOf(tool));
 		

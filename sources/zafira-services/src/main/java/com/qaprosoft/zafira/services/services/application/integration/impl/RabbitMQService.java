@@ -25,22 +25,25 @@ import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.context.RabbitMQContext;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Component
 public class RabbitMQService extends AbstractIntegration<RabbitMQContext> {
 
-    private final Queue settingsQueue;
+    private static final String SETTINGS_QUEUE_NAME = "settingsQueue";
+    private final Map<String, Queue> queues;
 
-    public RabbitMQService(SettingsService settingsService, CryptoService cryptoService, Queue settingsQueue) {
+    public RabbitMQService(SettingsService settingsService, CryptoService cryptoService, Map<String, Queue> queues) {
         super(settingsService, cryptoService, RABBITMQ, RabbitMQContext.class);
-        this.settingsQueue = settingsQueue;
+        this.queues = queues;
     }
 
-    public String getSettingQueueName() {
-        return this.settingsQueue.getName();
+    private Queue getQueueById(String id) {
+        return queues.get(id);
     }
 
     public boolean isSettingQueueConsumer(String settingQueueName) {
-        return settingQueueName.equals(getSettingQueueName());
+        return settingQueueName.equals(getQueueById(SETTINGS_QUEUE_NAME).getName());
     }
 
     @Override

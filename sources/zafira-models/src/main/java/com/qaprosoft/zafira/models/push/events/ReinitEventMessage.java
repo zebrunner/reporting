@@ -22,12 +22,10 @@ public class ReinitEventMessage extends EventMessage {
     private static final long serialVersionUID = 5300913238106855128L;
 
     private Setting.Tool tool;
-    private String queueName;
 
-    public ReinitEventMessage(String tenancy, String queueName, Setting.Tool tool) {
+    public ReinitEventMessage(String tenancy, Setting.Tool tool) {
         super(tenancy);
         this.tool = tool;
-        this.queueName = queueName;
     }
 
     public Setting.Tool getTool() {
@@ -38,11 +36,4 @@ public class ReinitEventMessage extends EventMessage {
         this.tool = tool;
     }
 
-    public String getQueueName() {
-        return queueName;
-    }
-
-    public void setQueueName(String queueName) {
-        this.queueName = queueName;
-    }
 }
