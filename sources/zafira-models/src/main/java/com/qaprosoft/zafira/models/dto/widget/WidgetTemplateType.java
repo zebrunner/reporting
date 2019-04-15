@@ -28,6 +28,7 @@ public class WidgetTemplateType extends AbstractType {
     private String chartConfig;
     private String paramsConfig;
     private String legendConfig;
+    private Boolean hidden;
 
     public String getName() {
         return name;
@@ -75,5 +76,13 @@ public class WidgetTemplateType extends AbstractType {
 
     public void setLegendConfig(String legendConfig) {
         this.legendConfig = legendConfig;
+    }
+
+    public Boolean getHidden() {
+        return hidden;
+    }
+
+    public void setHidden(Boolean hidden) {
+        this.hidden = hidden;
     }
 }
