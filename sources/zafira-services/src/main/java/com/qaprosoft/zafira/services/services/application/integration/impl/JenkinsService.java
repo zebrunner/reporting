@@ -212,8 +212,9 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
                 Path path = Paths.get(jobUrl);
                 String jobName = path.getName(path.getNameCount() - 1).toString();
                 String folderName = path.getName(path.getNameCount() - 3).toString();
-                com.google.common.base.Optional<FolderJob> folder = context.getJenkinsServer().getFolderJob(new com.offbytwo.jenkins.model.Job(folderName, folderUrl));
-                job = context.getJenkinsServer().getJob(folder.orNull(), jobName);
+                FolderJob folderJob = new FolderJob(folderName, folderUrl);
+//                com.google.common.base.Optional<FolderJob> folder = context.getJenkinsServer().getFolderJob(new com.offbytwo.jenkins.model.Job(folderName, folderUrl));
+                job = context.getJenkinsServer().getJob(folderJob, jobName);
             } catch (IOException e) {
                 throw new RuntimeException(e.getMessage(), e);
             }
