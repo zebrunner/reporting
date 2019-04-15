@@ -15,12 +15,17 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
+import com.qaprosoft.zafira.models.dto.ConnectedToolType;
 import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.util.EventPushService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -70,6 +75,14 @@ public class SettingsService {
     }
 
     @Transactional(readOnly = true)
+    public Map<Tool, Boolean> getToolsStatuses() {
+        Map<Tool, Boolean> toolSettings = new HashMap<>();
+        Arrays.stream(Tool.values()).filter(tool -> !tool.equals(Tool.CRYPTO)).forEach(tool ->
+                toolSettings.put(tool, integrationService.getServiceByTool(tool).isEnabledAndConnected()));
+        return toolSettings;
+    }
+
+    @Transactional(readOnly = true)
     public List<Setting> getSettingsByTool(Tool tool) throws ServiceException {
         List<Setting> result;
         switch (tool) {
@@ -93,25 +106,51 @@ public class SettingsService {
         return settingsMapper.getAllSettings();
     }
 
-    @Transactional(readOnly = true)
-    public List<Setting> getSettingsByIntegration(boolean isIntegrationTool) throws ServiceException {
-        return settingsMapper.getSettingsByIntegration(isIntegrationTool);
-    }
-
     public boolean isConnected(Tool tool) {
         return tool != null && !tool.equals(Tool.CRYPTO) && integrationService.getServiceByTool(tool).isEnabledAndConnected();
     }
 
     @Transactional(readOnly = true)
-    public List<Tool> getTools() {
-        return settingsMapper.getTools().stream()
-                .filter(tool -> tool != null && !tool.equals(Tool.CRYPTO))
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
     public String getSettingValue(Setting.SettingType type) throws ServiceException {
         return getSettingByName(type.name()).getValue();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public ConnectedToolType updateSettings(List<Setting> settings) throws ServiceException {
+        ConnectedToolType connectedTool = null;
+        if (!CollectionUtils.isEmpty(settings)) {
+            Tool tool = settings.get(0).getTool();
+            settings.forEach(setting -> {
+                if (!tool.equals(setting.getTool())) {
+                    throw new ForbiddenOperationException("Unable to update settings");
+                }
+            });
+            connectedTool = new ConnectedToolType();
+            CryptoService cryptoService = integrationService.getServiceByTool(Tool.CRYPTO);
+            settings.forEach(setting -> {
+                Setting dbSetting = getSettingByName(setting.getName());
+                if (!dbSetting.getTool().equals(setting.getTool())) {
+                    throw new ForbiddenOperationException("Unable to update settings");
+                }
+                if (setting.isValueForEncrypting()) {
+                    if (StringUtils.isBlank(setting.getValue())) {
+                        setting.setEncrypted(false);
+                    } else {
+                        if (!setting.getValue().equals(dbSetting.getValue())) {
+                            setting.setValue(cryptoService.encrypt(setting.getValue()));
+                            setting.setEncrypted(true);
+                        }
+                    }
+                }
+                setting.setEncrypted(dbSetting.isEncrypted());
+                updateSetting(setting);
+            });
+            notifyToolReinitiated(tool, TenancyContext.getTenantName());
+            connectedTool.setName(tool.name());
+            connectedTool.setSettingList(settings);
+            connectedTool.setConnected(integrationService.getServiceByTool(tool).isEnabledAndConnected());
+        }
+        return connectedTool;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -129,7 +168,7 @@ public class SettingsService {
     @Transactional(rollbackFor = Exception.class)
     public void createSettingFile(byte[] fileBytes, String originalFileName, Tool tool, String settingName) throws Exception {
         Setting setting = getSettingsByTool(tool).stream().filter(s -> s.getName().equals(settingName)).findFirst().orElse(null);
-        if(setting != null) {
+        if (setting != null) {
             setting.setFile(fileBytes);
             setting.setValue(originalFileName);
             updateSetting(setting);
@@ -158,17 +197,16 @@ public class SettingsService {
     private CryptoService getCryptoMQService() {
         return integrationService.getServiceByTool(Tool.CRYPTO);
     }
-    
+
     @Transactional(readOnly = true)
-    public String getPostgresVersion() throws ServiceException
-    {
+    public String getPostgresVersion() throws ServiceException {
         return settingsMapper.getPostgresVersion();
     }
 
     /**
      * Sends message to broker to notify about changed integration.
      *
-     * @param tool that was re-initiated
+     * @param tool   that was re-initiated
      * @param tenant whose integration was updated
      */
     public void notifyToolReinitiated(Tool tool, String tenant) {
@@ -179,7 +217,7 @@ public class SettingsService {
     @RabbitListener(queues = "#{settingsQueue.name}")
     public void process(Message message) {
         ReinitEventMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
-        if (! getRabbitMQService().isSettingQueueConsumer(message.getMessageProperties().getConsumerQueue()) && integrationService.getServiceByTool(rm.getTool()) != null) {
+        if (!getRabbitMQService().isSettingQueueConsumer(message.getMessageProperties().getConsumerQueue()) && integrationService.getServiceByTool(rm.getTool()) != null) {
             TenancyContext.setTenantName(rm.getTenancy());
             integrationService.getServiceByTool(rm.getTool()).init();
         }

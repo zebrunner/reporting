@@ -34,7 +34,7 @@ public class Setting extends AbstractEntity {
 	private byte[] file;
 
 	public enum Tool {
-		RABBITMQ(SettingType.RABBITMQ_ENABLED, SettingType.RABBITMQ_HOST, SettingType.RABBITMQ_PORT, SettingType.RABBITMQ_USER, SettingType.RABBITMQ_PASSWORD),
+		RABBITMQ(true, SettingType.RABBITMQ_ENABLED, SettingType.RABBITMQ_HOST, SettingType.RABBITMQ_PORT, SettingType.RABBITMQ_USER, SettingType.RABBITMQ_PASSWORD),
 		GOOGLE(SettingType.GOOGLE_CLIENT_SECRET_ORIGIN, SettingType.GOOGLE_ENABLED),
 		JIRA(SettingType.JIRA_URL, SettingType.JIRA_USER, SettingType.JIRA_PASSWORD, SettingType.JIRA_CLOSED_STATUS, SettingType.JIRA_ENABLED),
 		ELASTICSEARCH,
@@ -47,6 +47,7 @@ public class Setting extends AbstractEntity {
 
 		private final List<SettingType> toolSettings;
 		private int priority;
+		private boolean decrypt;
 
 		Tool(SettingType... toolSettings) {
 			this.toolSettings = Arrays.asList(toolSettings);
@@ -57,12 +58,21 @@ public class Setting extends AbstractEntity {
 			this.toolSettings = Arrays.asList(toolSettings);
 		}
 
+		Tool(boolean decrypt, SettingType... toolSettings) {
+			this(toolSettings);
+			this.decrypt = decrypt;
+		}
+
 		public List<SettingType> getToolSettings() {
 			return toolSettings;
 		}
 
 		public int getPriority() {
 			return priority;
+		}
+
+		public boolean isDecrypt() {
+			return decrypt;
 		}
 
 		public static Tool[] getValues() {
@@ -158,10 +168,7 @@ public class Setting extends AbstractEntity {
 	}
 
 	public boolean isValueForEncrypting() {
-		if(this.tool == null) {
-			return false;
-		}
-		return SettingType.valueOf(this.name).isEncrypted();
+		return this.tool != null && SettingType.valueOf(this.name).isEncrypted();
 	}
 
 }

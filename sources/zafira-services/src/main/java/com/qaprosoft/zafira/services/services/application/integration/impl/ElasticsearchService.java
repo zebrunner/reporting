@@ -176,8 +176,7 @@ public class ElasticsearchService extends AbstractIntegration
 	}
 
 	@Override
-	public void init()
-	{
+	public void init() {
 	}
 
 	@Override
