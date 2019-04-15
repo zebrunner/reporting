@@ -73,7 +73,7 @@ public class LauncherService {
                 String jenkinsHost = context.getJenkinsHost();
                 String [] launcherJobNameValues = launcherJobName.split("-");
                 String launcherJobUrl = launcherJobNameValues.length > 1 ?
-                        jenkinsHost + "/job/" + launcherJobNameValues[0] + "/job/" + launcherJobNameValues[0] :
+                        jenkinsHost + "/job/" + launcherJobNameValues[0] + "/job/" + launcherJobNameValues[1] :
                         jenkinsHost + "/job/" + launcherJobName;
                 Job job = jobsService.getJobByJobURL(launcherJobUrl);
                 if (job == null) {
