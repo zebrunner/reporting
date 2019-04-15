@@ -21,6 +21,8 @@ import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterC
 import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterClass.STRING;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -206,9 +208,10 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
         return mapContext(context -> {
             JobWithDetails job;
             try {
-                String jobName = jobUrl.substring(jobUrl.lastIndexOf("/") + 1);
-                String folderUrl = jobUrl.substring(0, jobUrl.lastIndexOf("/job/"));
-                String folderName = folderUrl.substring(folderUrl.lastIndexOf("/") + 1);
+                String folderUrl = jobUrl.substring(0, jobUrl.lastIndexOf("job/"));
+                Path path = Paths.get(jobUrl);
+                String jobName = path.getName(path.getNameCount() - 1).toString();
+                String folderName = path.getName(path.getNameCount() - 3).toString();
                 com.google.common.base.Optional<FolderJob> folder = context.getJenkinsServer().getFolderJob(new com.offbytwo.jenkins.model.Job(folderName, folderUrl));
                 job = context.getJenkinsServer().getJob(folder.orNull(), jobName);
             } catch (IOException e) {
