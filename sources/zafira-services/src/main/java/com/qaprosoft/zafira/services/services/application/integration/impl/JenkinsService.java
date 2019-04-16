@@ -21,6 +21,8 @@ import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterC
 import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterClass.STRING;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,8 +53,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class JenkinsService extends AbstractIntegration<JenkinsContext> {
 
-    private static final String[] REQUIRED_ARGS = new String[] {"scmURL", "branch", "suite", "overrideFields"};
-    private static final String FOLDER_REGEX = ".+job\\/.+\\/job.+";
+    private static final String[] REQUIRED_ARGS = new String[] {"scmURL", "branch", "overrideFields"};
+
+    private final String FOLDER_REGEX = ".+job\\/.+\\/job.+";
 
     public JenkinsService(SettingsService settingsService, CryptoService cryptoService) {
         super(settingsService, cryptoService, JENKINS, JenkinsContext.class);
@@ -186,19 +189,31 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
     }
 
     private Optional<JobWithDetails> getJobWithDetails(Job ciJob) {
+        return ciJob.getJobURL().matches(FOLDER_REGEX) ? getJobByURL(ciJob.getJobURL()) : getJobByName(ciJob.getName());
+    }
+
+    private Optional<JobWithDetails> getJobByName(String jobName) {
         return mapContext(context -> {
             JobWithDetails job;
             try {
-                if (ciJob.getJobURL().matches(FOLDER_REGEX)) {
-                    String jobUrl = ciJob.getJobURL();
-                    String folderUrl = jobUrl.substring(0, jobUrl.lastIndexOf("/job/"));
-                    String[] folderNameValues = jobUrl.split("/job/");
-                    String folderName = folderNameValues[folderNameValues.length - 2];
-                    com.google.common.base.Optional<FolderJob> folder = context.getJenkinsServer().getFolderJob(new com.offbytwo.jenkins.model.Job(folderName, folderUrl));
-                    job = context.getJenkinsServer().getJob(folder.orNull(), ciJob.getName());
-                } else {
-                    job = context.getJenkinsServer().getJob(ciJob.getName());
-                }
+                job = context.getJenkinsServer().getJob(jobName);
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+            return job;
+        });
+    }
+
+    private Optional<JobWithDetails> getJobByURL(String jobUrl) {
+        return mapContext(context -> {
+            JobWithDetails job;
+            try {
+                String folderUrl = jobUrl.substring(0, jobUrl.lastIndexOf("job/"));
+                Path path = Paths.get(jobUrl);
+                String jobName = path.getName(path.getNameCount() - 1).toString();
+                String folderName = path.getName(path.getNameCount() - 3).toString();
+                FolderJob folderJob = new FolderJob(folderName, folderUrl);
+                job = context().getJenkinsServer().getJob(folderJob, jobName);
             } catch (IOException e) {
                 throw new RuntimeException(e.getMessage(), e);
             }
@@ -247,16 +262,12 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
         return params;
     }
 
-    public Optional<Job> getJob(String jobName) {
+    public Optional<Job> getJobByUrl(String jobUrl) {
         return mapContext(context -> {
             Job job = null;
-            try {
-                JobWithDetails jobWithDetails = context.getJenkinsServer().getJob(jobName);
-                if(jobWithDetails != null && jobWithDetails.getUrl() != null) {
-                    job = new Job(jobName, jobWithDetails.getUrl());
-                }
-            } catch (IOException e) {
-                LOGGER.error("Unable to get job by name '" + jobName + "'. " + e.getMessage(), e);
+            JobWithDetails jobWithDetails = getJobByURL(jobUrl).orElse(null);
+            if(jobWithDetails != null && jobWithDetails.getUrl() != null) {
+                job = new Job(jobWithDetails.getDisplayName(), jobWithDetails.getUrl().replaceAll("/$",""));
             }
             return job;
         });
@@ -278,5 +289,4 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
             return false;
         }
     }
-
 }

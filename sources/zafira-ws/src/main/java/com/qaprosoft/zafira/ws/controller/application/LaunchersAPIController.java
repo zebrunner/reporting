@@ -21,19 +21,14 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.models.dto.CreateLauncherParamsType;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import com.qaprosoft.zafira.models.db.Launcher;
 import com.qaprosoft.zafira.models.db.User;
@@ -73,6 +68,16 @@ public class LaunchersAPIController extends AbstractController {
     public @ResponseBody LauncherType createLauncher(@RequestBody @Valid LauncherType launcherType) throws ServiceException {
         User owner = new User(getPrincipalId());
         return mapper.map(launcherService.createLauncher(mapper.map(launcherType, Launcher.class), owner), LauncherType.class);
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Create launcher from Jenkins", nickname = "createLauncherFromJenkins", httpMethod = "POST", response = LauncherType.class)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @RequestMapping(value = "create", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody LauncherType createLauncherFromJenkins(@RequestBody @Valid CreateLauncherParamsType createLauncherParamsType) throws ServiceException {
+        User owner = new User(getPrincipalId());
+        return mapper.map(launcherService.createLauncherForJob(createLauncherParamsType, owner), LauncherType.class);
     }
 
     @ResponseStatusDetails

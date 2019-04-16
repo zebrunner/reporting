@@ -25,6 +25,8 @@ public interface ScmAccountMapper {
 
     ScmAccount getScmAccountById(Long id);
 
+    ScmAccount getScmAccountByRepo(String repo);
+
     List<ScmAccount> getAllScmAccounts();
 
     void updateScmAccount(ScmAccount scmAccount);
