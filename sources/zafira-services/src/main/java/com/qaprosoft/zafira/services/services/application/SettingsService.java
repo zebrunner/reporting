@@ -152,7 +152,7 @@ public class SettingsService {
             String decValue = cryptoService.decrypt(setting.getValue());
             setting.setValue(decValue);
         }
-        cryptoService.generateKey(true);
+        cryptoService.regenerateKey();
         notifyToolReinitiated(Tool.CRYPTO, TenancyContext.getTenantName());
         for (Setting setting : settings) {
             String encValue = cryptoService.encrypt(setting.getValue());
