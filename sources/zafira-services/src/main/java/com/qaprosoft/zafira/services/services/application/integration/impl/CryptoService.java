@@ -102,6 +102,10 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
     }
 
     public void generateKey() throws ServiceException {
+        generateKey(false);
+    }
+
+    public void generateKey(boolean reinit) throws ServiceException {
         String key = null;
         try {
             if(! mapContext(CryptoContext::getType).isPresent()) {
@@ -115,6 +119,9 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
         }
         Setting keySetting = settingsService.getSettingByType(KEY);
         keySetting.setValue(key);
+        if(reinit) {
+            context().setKey(key);
+        }
         settingsService.updateSetting(keySetting);
     }
 

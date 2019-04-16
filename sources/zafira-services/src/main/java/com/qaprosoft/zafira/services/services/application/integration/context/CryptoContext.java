@@ -120,9 +120,7 @@ public class CryptoContext extends AbstractContext
         if(StringUtils.isBlank(key) || StringUtils.isBlank(salt)) {
             throw new IntegrationException("Crypto key and salt must not be empty");
         }
-        if(basicTextEncryptor == null) {
-            basicTextEncryptor = new BasicTextEncryptor();
-        }
+        basicTextEncryptor = new BasicTextEncryptor();
         basicTextEncryptor.setPassword(key + salt);
     }
 }
