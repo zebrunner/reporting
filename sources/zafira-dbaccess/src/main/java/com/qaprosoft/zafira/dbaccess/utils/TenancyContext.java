@@ -31,7 +31,7 @@ public class TenancyContext {
     }
 
     public static String getTenantName() {
-    		String tenantName = tenant.get();
+        String tenantName = tenant.get();
         return tenantName != null ? tenantName : Tenancy.getDefaultTenant();
     }
 }

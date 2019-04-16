@@ -65,6 +65,7 @@ public abstract class AbstractIntegration<T extends AbstractContext> implements 
                 settings.forEach(setting -> {
                     Setting.SettingType toolSetting = Setting.SettingType.valueOf(setting.getName());
                     if(toolSetting.isRequired() && StringUtils.isBlank(setting.getValue())) {
+                        removeContext();
                         throw new IntegrationException("Integration tool '" + tool + "' data is malformed." +
                                 "Setting '" + setting.getName() + "' is required");
                     }

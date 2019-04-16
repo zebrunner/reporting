@@ -185,20 +185,18 @@ public class SettingsAPIController extends AbstractController
 		ConnectedToolType connectedTool = new ConnectedToolType();
         Tool tool = settings.get(0).getTool();
         for(Setting setting : settings) {
-			if (setting.isValueForEncrypting()) {
-			    if(StringUtils.isBlank(setting.getValue())){
+            if (setting.isValueForEncrypting()) {
+                if (StringUtils.isBlank(setting.getValue())) {
                     setting.setEncrypted(false);
-                }
-                else
-                {
+                } else {
                     Setting dbSetting = settingsService.getSettingByName(setting.getName());
-                    if(!setting.getValue().equals(dbSetting.getValue())){
+                    if (!setting.getValue().equals(dbSetting.getValue())) {
                         setting.setValue(cryptoService.encrypt(setting.getValue()));
                         setting.setEncrypted(true);
                     }
                 }
-			}
-            settingsService.updateSetting(setting);
+            }
+            settingsService.updateIntegrationSetting(setting);
 		}
         settingsService.notifyToolReinitiated(tool, TenancyContext.getTenantName());
 		connectedTool.setName(tool.name());

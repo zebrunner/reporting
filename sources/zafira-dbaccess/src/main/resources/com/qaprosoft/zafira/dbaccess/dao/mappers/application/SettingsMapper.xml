@@ -145,6 +145,18 @@
 		]]>
 	</update>
 
+	<update id="updateIntegrationSetting">
+		<![CDATA[
+			UPDATE
+			    SETTINGS
+			SET
+				VALUE = #{value},
+				FILE = #{file, jdbcType=BINARY}
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+
 	<sql id="deleteSetting">
 		<![CDATA[
 			DELETE FROM SETTINGS
