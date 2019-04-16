@@ -1,0 +1,7 @@
+SET SCHEMA 'management';
+
+select check_version(115);
+
+ALTER TABLE WIDGET_TEMPLATES ADD COLUMN HIDDEN BOOLEAN NOT NULL DEFAULT FALSE;
+
+select add_version(115);

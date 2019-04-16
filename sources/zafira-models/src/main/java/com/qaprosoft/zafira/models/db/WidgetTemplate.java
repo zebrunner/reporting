@@ -26,6 +26,7 @@ public class WidgetTemplate extends AbstractEntity {
     private String chartConfig;
     private String paramsConfig;
     private String legendConfig;
+    private Boolean hidden;
 
     public enum Type {
         PIE, LINE, BAR, TABLE, OTHER
@@ -86,4 +87,13 @@ public class WidgetTemplate extends AbstractEntity {
     public void setLegendConfig(String legendConfig) {
         this.legendConfig = legendConfig;
     }
+
+    public Boolean getHidden() {
+        return hidden;
+    }
+
+    public void setHidden(Boolean hidden) {
+        this.hidden = hidden;
+    }
+
 }
