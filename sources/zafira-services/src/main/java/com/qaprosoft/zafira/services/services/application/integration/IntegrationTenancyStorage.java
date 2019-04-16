@@ -71,7 +71,7 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
     @Override
     public void initDb() {
         try {
-            cryptoService.getKey();
+            cryptoService.init();
             for(Setting setting : settingsService.getAllSettings()) {
                 if(setting.isValueForEncrypting() && !setting.isEncrypted()) {
                     setting.setValue(cryptoService.encrypt(setting.getValue()));
