@@ -95,6 +95,14 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
         }
     }
 
+    public synchronized static void removeContext(Setting.Tool tool) {
+        Map<String, ? extends AbstractContext> context = tenancyEntity.get(tool);
+        String tenantName = TenancyContext.getTenantName();
+        if(context != null && context.get(tenantName) != null) {
+            context.remove(tenantName);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public static <T> Optional<T> getContext(Setting.Tool tool) {
         Map<String, ? extends AbstractContext> clientMap = tenancyEntity.get(tool);

@@ -50,6 +50,10 @@ public interface Integration<T extends AbstractContext> {
         IntegrationTenancyStorage.putContext(getTool(), t);
     }
 
+    default void removeContext() {
+        IntegrationTenancyStorage.removeContext(getTool());
+    }
+
     default boolean isEnabledAndConnected() {
         return isEnabled() && isConnected();
     }

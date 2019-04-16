@@ -41,6 +41,8 @@ public interface SettingsMapper
 
 	void updateSetting(Setting setting);
 
+	void updateIntegrationSetting(Setting setting);
+
 	void deleteSetting(Setting setting);
 
 	void deleteSettingById(long id);
