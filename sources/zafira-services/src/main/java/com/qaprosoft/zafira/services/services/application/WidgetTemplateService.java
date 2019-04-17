@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.management.WidgetTemplateMapper;
 import com.qaprosoft.zafira.models.db.WidgetTemplate;
 import com.qaprosoft.zafira.models.dto.widget.WidgetTemplateParameter;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.util.SQLUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,25 +63,49 @@ public class WidgetTemplateService {
         return widgetTemplateMapper.getAllWidgetTemplates();
     }
 
-    public List<WidgetTemplate> getProcessedWidgetTemplates() {
+    public List<WidgetTemplate> getWidgetTemplates() {
         List<WidgetTemplate> widgetTemplates = getAllWidgetTemplates().stream()
                                                                       .filter(widgetTemplate -> !widgetTemplate.getHidden())
+                                                                      .peek(this::clearRedundantParamsValues)
                                                                       .collect(Collectors.toList());
-        widgetTemplates.forEach(this::executeWidgetTemplateParamsSQLQueries);
         return widgetTemplates;
     }
 
-    public void executeWidgetTemplateParamsSQLQueries(WidgetTemplate widgetTemplate) {
-        if(widgetTemplate != null && ! StringUtils.isBlank(widgetTemplate.getParamsConfig())) {
-            widgetTemplate.setParamsConfig(processParameters(widgetTemplate.getParamsConfig()));
+    public WidgetTemplate prepareWidgetTemplate(WidgetTemplate widgetTemplate) {
+        if(widgetTemplate == null) {
+            throw new ForbiddenOperationException("Unable to prepare widget template data");
+        }
+        executeWidgetTemplateParamsSQLQueries(widgetTemplate);
+        return widgetTemplate;
+    }
+
+    public void clearRedundantParamsValues(WidgetTemplate widgetTemplate) {
+        if(widgetTemplate != null) {
+            widgetTemplate.setParamsConfig(processParameters(widgetTemplate.getParamsConfig(), parameter -> {
+                if(parameter.getValuesQuery() != null && parameter.getValues() == null) {
+                    parameter.setValues(new ArrayList<>());
+                }
+                parameter.setValuesQuery(null);
+            }));
         }
     }
 
-    private String processParameters(String paramsConfig) {
+    public WidgetTemplate prepareWidgetTemplateById(Long id) {
+        WidgetTemplate widgetTemplate = widgetTemplateMapper.getWidgetTemplateById(id);
+        return prepareWidgetTemplate(widgetTemplate);
+    }
+
+    private void executeWidgetTemplateParamsSQLQueries(WidgetTemplate widgetTemplate) {
+        if(widgetTemplate != null && ! StringUtils.isBlank(widgetTemplate.getParamsConfig())) {
+            widgetTemplate.setParamsConfig(processParameters(widgetTemplate.getParamsConfig(), this::processParameter));
+        }
+    }
+
+    private String processParameters(String paramsConfig, Consumer<WidgetTemplateParameter> parameterConsumer) {
         String result = null;
         try {
             Map<String, WidgetTemplateParameter> params = mapper.readValue(paramsConfig, new TypeReference<Map<String, WidgetTemplateParameter>>() {});
-            params.forEach((name, parameter) -> processParameter(parameter));
+            params.forEach((name, parameter) -> parameterConsumer.accept(parameter));
             result = mapper.writeValueAsString(params);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
