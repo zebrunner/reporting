@@ -105,7 +105,7 @@ public abstract class AbstractIntegration<T extends AbstractContext> implements 
                 context = mainConstructor.newInstance(settings);
             }
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new InstantiationException("Cannot create context instance");
+            throw new InstantiationException("Cannot create context instance. " + e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
