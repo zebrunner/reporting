@@ -1,0 +1,7 @@
+SET SCHEMA 'zafira';
+
+select check_version(115);
+
+ALTER TABLE TEST_CASES ALTER COLUMN TEST_METHOD TYPE varchar(255);
+
+select add_version(115);
