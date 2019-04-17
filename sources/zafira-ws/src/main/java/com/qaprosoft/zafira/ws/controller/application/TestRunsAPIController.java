@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import static com.qaprosoft.zafira.services.services.application.FilterService.Template.TEST_RUN_COUNT_TEMPLATE;
 import static com.qaprosoft.zafira.services.services.application.FilterService.Template.TEST_RUN_TEMPLATE;
 
 import java.io.IOException;
@@ -257,10 +256,8 @@ public class TestRunsAPIController extends AbstractController {
 		FilterType filterType = filterId != null ? mapper.map(filterService.getFilterById(filterId), FilterType.class)
 				: null;
 		if (filterType != null) {
-			sc.setFilterSearchCriteria(new FilterSearchCriteria());
-			sc.getFilterSearchCriteria().setFilterTemplate(filterService.getTemplate(filterType, TEST_RUN_TEMPLATE));
-			sc.getFilterSearchCriteria()
-					.setFilterSearchCountTemplate(filterService.getTemplate(filterType, TEST_RUN_COUNT_TEMPLATE));
+			String whereClause = filterService.getTemplate(filterType, TEST_RUN_TEMPLATE);
+			sc.setFilterSearchCriteria(new FilterSearchCriteria(whereClause));
 		}
 		return testRunService.searchTestRuns(sc);
 	}
