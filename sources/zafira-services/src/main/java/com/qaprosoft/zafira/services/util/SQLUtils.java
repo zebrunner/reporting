@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,13 +46,6 @@ public class SQLUtils {
                 result = widgetService.executeSQL(sql);
             } catch(Exception e) {
                 result = new ArrayList<>();
-                result.add(new HashMap<String, Object>() {
-					private static final long serialVersionUID = -2238288036119057961L;
-
-					{
-                        put(null, sql);
-                    }
-                });
                 LOGGER.debug("String starts with 'select' but is not" + " sql or is not valid: '" + sql + "'");
             }
         }
