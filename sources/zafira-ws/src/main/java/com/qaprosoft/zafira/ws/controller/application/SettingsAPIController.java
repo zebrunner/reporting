@@ -15,27 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import java.io.IOException;
-import java.util.List;
-
-import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
-import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.Setting.Tool;
@@ -44,147 +23,149 @@ import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.AmazonService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@Api(value = "Settings API")
+import java.io.IOException;
+import java.util.List;
+
+@Api("Settings API")
 @CrossOrigin
-@RequestMapping("api/settings")
-public class SettingsAPIController extends AbstractController
-{
+@RequestMapping(path = "api/settings", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController
+public class SettingsAPIController extends AbstractController {
 
-	@Autowired
-	private AmazonService amazonService;
+    @Autowired
+    private AmazonService amazonService;
 
-	@Autowired
-	private GoogleService googleService;
+    @Autowired
+    private GoogleService googleService;
 
-	@Autowired
-	private SettingsService settingsService;
+    @Autowired
+    private SettingsService settingsService;
 
-	@Autowired
-	private IntegrationService integrationService;
+    @Autowired
+    private IntegrationService integrationService;
 
-	@Autowired
-	private CryptoService cryptoService;
+    @Autowired
+    private CryptoService cryptoService;
 
-	@Value("${zafira.amazon.token.expiration}")
-	private Integer amazonTokenExpiration;
+    @Value("${zafira.amazon.token.expiration}")
+    private Integer amazonTokenExpiration;
 
-	@Value("${zafira.google.token.expiration}")
-	private Long googleTokenExpiration;
-
-	@ResponseStatusDetails
-	@ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", httpMethod = "GET", response = List.class)
-	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "tool/{tool}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Setting> getSettingsByTool(@PathVariable(value="tool") String tool, @RequestParam(value = "decrypt", required = false) boolean decrypt) throws Exception
-	{
-		List<Setting> settings = settingsService.getSettingsByTool(Tool.valueOf(tool));
-		
-		if(decrypt) {
-			// TODO: think about tools allowed for decryption
-			if(!Tool.RABBITMQ.name().equals(tool)) {
-				throw new ForbiddenOperationException();
-			}
-			for(Setting setting : settings) {
-				if(setting.isEncrypted()) {
-					setting.setValue(cryptoService.decrypt(setting.getValue()));
-					setting.setEncrypted(false);
-				}
-			}
-		}
-		
-        return settings;
-	}
+    @Value("${zafira.google.token.expiration}")
+    private Long googleTokenExpiration;
 
     @ResponseStatusDetails
-    @ResponseStatus(HttpStatus.OK)
-    @ApiImplicitParams(
-            { @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", httpMethod = "GET", response = List.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @GetMapping("/tool/{tool}")
+    public List<Setting> getSettingsByTool(
+            @PathVariable("tool") String tool,
+            @RequestParam(value = "decrypt", required = false) boolean decrypt
+    ) {
+        List<Setting> settings = settingsService.getSettingsByTool(Tool.valueOf(tool));
+
+        if (decrypt) {
+            // TODO: think about tools allowed for decryption
+            if (!Tool.RABBITMQ.name().equals(tool)) {
+                throw new ForbiddenOperationException();
+            }
+            for (Setting setting : settings) {
+                if (setting.isEncrypted()) {
+                    setting.setValue(cryptoService.decrypt(setting.getValue()));
+                    setting.setEncrypted(false);
+                }
+            }
+        }
+
+        return settings;
+    }
+
+    @ResponseStatusDetails
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @ApiOperation(value = "Get tools", nickname = "getTools", httpMethod = "GET", response = List.class)
-    @RequestMapping(value = "tools", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Tool> getTools() throws ServiceException
-    {
+    @GetMapping("/tools")
+    public List<Tool> getTools() throws ServiceException {
         return settingsService.getTools();
     }
 
-	@ResponseStatusDetails
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Is tool connected", nickname = "isToolConnected", httpMethod = "GET", response = Boolean.class)
-	@RequestMapping(value = "tools/{name}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Boolean isToolConnected(@PathVariable(value = "name") Tool tool) throws ServiceException
-	{
-		return settingsService.isConnected(tool);
-	}
+    @ResponseStatusDetails
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiOperation(value = "Is tool connected", nickname = "isToolConnected", httpMethod = "GET", response = Boolean.class)
+    @GetMapping("/tools/{name}")
+    public Boolean isToolConnected(@PathVariable("name") Tool tool) throws ServiceException {
+        return settingsService.isConnected(tool);
+    }
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Get company logo URL", nickname = "getSettingValue", httpMethod = "GET", response = Setting.class)
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "companyLogo", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Setting getCompanyLogoURL() throws ServiceException
-	{
-		return settingsService.getSettingByName(Setting.SettingType.COMPANY_LOGO_URL.name());
-	}
+    @ResponseStatusDetails
+    @ApiOperation(value = "Get company logo URL", nickname = "getSettingValue", httpMethod = "GET", response = Setting.class)
+    @GetMapping("/companyLogo")
+    public Setting getCompanyLogoURL() throws ServiceException {
+        return settingsService.getSettingByName(Setting.SettingType.COMPANY_LOGO_URL.name());
+    }
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Delete setting", nickname = "deleteSetting", httpMethod = "DELETE")
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('MODIFY_INTEGRATIONS')")
-	@RequestMapping(value = "{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void deleteSetting(@PathVariable(value = "id") long id) throws ServiceException
-	{
-		settingsService.deleteSettingById(id);
-	}
+    @ResponseStatusDetails
+    @ApiOperation(value = "Delete setting", nickname = "deleteSetting", httpMethod = "DELETE")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PreAuthorize("hasPermission('MODIFY_INTEGRATIONS')")
+    @DeleteMapping("/{id}")
+    public void deleteSetting(@PathVariable("id") long id) throws ServiceException {
+        settingsService.deleteSettingById(id);
+    }
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Create setting", nickname = "createSetting", httpMethod = "POST", response = Setting.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('MODIFY_INTEGRATIONS')")
-	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Setting createSetting(@RequestBody Setting setting) throws Exception
-	{
-		return settingsService.createSetting(setting);
-	}
+    @ResponseStatusDetails
+    @ApiOperation(value = "Create setting", nickname = "createSetting", httpMethod = "POST", response = Setting.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PreAuthorize("hasPermission('MODIFY_INTEGRATIONS')")
+    @PostMapping()
+    public Setting createSetting(@RequestBody Setting setting) throws Exception {
+        return settingsService.createSetting(setting);
+    }
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Edit setting", nickname = "editSetting", httpMethod = "PUT", response = Setting.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('MODIFY_INTEGRATIONS') or (#setting.name == 'COMPANY_LOGO_URL' and hasRole('ROLE_ADMIN'))")
-	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody void editSetting(@RequestBody Setting setting) throws Exception
-	{
-		settingsService.updateSetting(setting);
-	}
+    @ResponseStatusDetails
+    @ApiOperation(value = "Edit setting", nickname = "editSetting", httpMethod = "PUT", response = Setting.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PreAuthorize("hasPermission('MODIFY_INTEGRATIONS') or (#setting.name == 'COMPANY_LOGO_URL' and hasRole('ROLE_ADMIN'))")
+    @PutMapping()
+    public void editSetting(@RequestBody Setting setting) {
+        settingsService.updateSetting(setting);
+    }
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Edit settings", nickname = "editSettings", httpMethod = "PUT", response = List.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('MODIFY_INTEGRATIONS')")
-	@RequestMapping(value = "tool", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ConnectedToolType editSettings(@RequestBody List<Setting> settings) throws Exception
-	{
-		ConnectedToolType connectedTool = new ConnectedToolType();
+    @ResponseStatusDetails
+    @ApiOperation(value = "Edit settings", nickname = "editSettings", httpMethod = "PUT", response = List.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PreAuthorize("hasPermission('MODIFY_INTEGRATIONS')")
+    @PutMapping("/tool")
+    public ConnectedToolType editSettings(@RequestBody List<Setting> settings) {
+        ConnectedToolType connectedTool = new ConnectedToolType();
         Tool tool = settings.get(0).getTool();
-        for(Setting setting : settings) {
+        for (Setting setting : settings) {
             if (setting.isValueForEncrypting()) {
                 if (StringUtils.isBlank(setting.getValue())) {
                     setting.setEncrypted(false);
@@ -197,40 +178,36 @@ public class SettingsAPIController extends AbstractController
                 }
             }
             settingsService.updateIntegrationSetting(setting);
-		}
+        }
         settingsService.notifyToolReinitiated(tool, TenancyContext.getTenantName());
-		connectedTool.setName(tool.name());
-		connectedTool.setSettingList(settings);
-		connectedTool.setConnected(integrationService.getServiceByTool(tool).isEnabledAndConnected());
+        connectedTool.setName(tool.name());
+        connectedTool.setSettingList(settings);
+        connectedTool.setConnected(integrationService.getServiceByTool(tool).isEnabledAndConnected());
         return connectedTool;
-	}
+    }
 
-	@ApiOperation(value = "Get amazon session credentials", nickname = "getSessionCredentials", httpMethod = "GET", response = SessionCredentials.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-	@RequestMapping(value = "amazon/creds", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody SessionCredentials getSessionCredentials() throws ServiceException
-	{
-		return amazonService.getTemporarySessionCredentials(amazonTokenExpiration).orElse(null);
-	}
+    @ApiOperation(value = "Get amazon session credentials", nickname = "getSessionCredentials", httpMethod = "GET", response = SessionCredentials.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @GetMapping("/amazon/creds")
+    public SessionCredentials getSessionCredentials() throws ServiceException {
+        return amazonService.getTemporarySessionCredentials(amazonTokenExpiration)
+                            .orElse(null); // wtf, Bogdan?
+    }
 
-	@ApiOperation(value = "Get google session credentials", nickname = "getGoogleSessionCredentials", httpMethod = "GET", response = String.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-	@RequestMapping(value = "google/creds", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody String getGoogleSessionCredentials() throws ServiceException, IOException {
-		return googleService.getTemporaryAccessToken(googleTokenExpiration);
-	}
+    @ApiOperation(value = "Get google session credentials", nickname = "getGoogleSessionCredentials", httpMethod = "GET", response = String.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @GetMapping(path = "/google/creds", produces = MediaType.TEXT_PLAIN_VALUE)
+    public String getGoogleSessionCredentials() throws ServiceException, IOException {
+        return googleService.getTemporaryAccessToken(googleTokenExpiration);
+    }
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Generate key", nickname = "generateKey", code = 201, httpMethod = "POST")
-	@ResponseStatus(HttpStatus.CREATED)
-	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_INTEGRATIONS')")
-	@RequestMapping(value = "key/regenerate", method = RequestMethod.POST)
-	public void reEncrypt() throws Exception
-	{
-		settingsService.reEncrypt();
-	}
+    @ResponseStatusDetails
+    @ApiOperation(value = "Generate key", nickname = "generateKey", code = 201, httpMethod = "POST")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_INTEGRATIONS')")
+    @PostMapping("/key/regenerate")
+    public void reEncrypt() throws Exception {
+        settingsService.reEncrypt();
+    }
 }
