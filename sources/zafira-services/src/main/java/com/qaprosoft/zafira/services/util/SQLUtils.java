@@ -60,10 +60,12 @@ public class SQLUtils {
     public List<Object> getSingleRowResult(String sql) {
         List<Map<String, Object>> multiRowResult = getResult(sql);
         List<Object> result = new ArrayList<>();
-        if(multiRowResult != null && !multiRowResult.isEmpty() && multiRowResult.get(0) != null && multiRowResult.get(0).keySet().size() == 1) {
+        if(multiRowResult != null && !multiRowResult.isEmpty() && multiRowResult.get(0).keySet().size() == 1) {
             multiRowResult.forEach(resultItem -> {
-                for (String key : resultItem.keySet()) {
-                    result.add(resultItem.get(key));
+                if(resultItem != null) {
+                    for (String key : resultItem.keySet()) {
+                        result.add(resultItem.get(key));
+                    }
                 }
             });
         }
