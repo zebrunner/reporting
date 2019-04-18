@@ -60,7 +60,7 @@ public class SQLUtils {
     public List<Object> getSingleRowResult(String sql) {
         List<Map<String, Object>> multiRowResult = getResult(sql);
         List<Object> result = new ArrayList<>();
-        if(multiRowResult != null && multiRowResult.size() > 0 && multiRowResult.get(0).keySet().size() == 1) {
+        if(multiRowResult != null && multiRowResult.size() > 0 && multiRowResult.get(0) != null && multiRowResult.get(0).keySet().size() == 1) {
             multiRowResult.forEach(resultItem -> result.add(resultItem.get(resultItem.keySet().iterator().next())));
         }
         return result;
