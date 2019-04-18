@@ -15,295 +15,68 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import com.qaprosoft.zafira.services.exceptions.*;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.validation.BindException;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 import com.qaprosoft.zafira.models.dto.auth.UserGrantedAuthority;
-import com.qaprosoft.zafira.models.dto.errors.AdditionalErrorData;
-import com.qaprosoft.zafira.models.dto.errors.Error;
-import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
-import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
-public abstract class AbstractController
-{
+public abstract class AbstractController {
 
-	private static final String INTERNAL_SERVER_ERROR_MSG = "Unexpected error has occurred. Please try again later.";
+    private static final String TEST_RUNS_WEBSOCKET_PATH = "/topic/%s.testRuns";
 
-	protected static final String TEST_RUNS_WEBSOCKET_PATH = "/topic/%s.testRuns";
-	
-	private static final String TESTS_WEBSOCKET_PATH = "/topic/%s.testRuns.%s.tests";
+    private static final String TESTS_WEBSOCKET_PATH = "/topic/%s.testRuns.%s.tests";
 
-	protected static final String STATISTICS_WEBSOCKET_PATH = "/topic/%s.statistics";
+    private static final String STATISTICS_WEBSOCKET_PATH = "/topic/%s.statistics";
 
-	@Resource(name = "messageSource")
-	protected MessageSource messageSource;
-
-	@Value("${zafira.debugMode:false}")
-	protected Boolean debugMode;
-	
-	protected String getStatisticsWebsocketPath()
-	{
-		return String.format(STATISTICS_WEBSOCKET_PATH, TenancyContext.getTenantName());
-	}
-	
-	protected String getTestRunsWebsocketPath()
-	{
-		return String.format(TEST_RUNS_WEBSOCKET_PATH, TenancyContext.getTenantName());
-	}
-
-	protected String getTestsWebsocketPath(Long testRunId)
-	{
-		return String.format(TESTS_WEBSOCKET_PATH, TenancyContext.getTenantName(), testRunId);
-	}
-	
-	protected JwtUserType getPrincipal()
-	{
-		Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		return user instanceof JwtUserType ? (JwtUserType) user : null;
-	}
-	
-	protected Long getPrincipalId()
-	{
-		JwtUserType user = getPrincipal();
-		return user != null ? user.getId() : 0;
-	}
-	
-	protected String getPrincipalName()
-	{
-		UserDetails user = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-		return user != null ? user.getUsername() : "";
-	}
-	
-	protected boolean isAdmin()
-	{
-		return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
-				.anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
-	}
-
-	protected boolean hasPermission(Permission.Name name)
-	{
-		return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
-				.flatMap(grantedAuthority -> ((UserGrantedAuthority) grantedAuthority).getPermissions().stream())
-				.anyMatch(permission -> permission.equalsIgnoreCase(name.name()));
-	}
-
-	protected boolean isNumber(String stringValue) {
-		return stringValue.matches("\\d+");
-	}
-
-	protected boolean isAuthenticated() {
-		return SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
-	}
-	
-	@ExceptionHandler(JobNotFoundException.class)
-	@ResponseStatus(HttpStatus.NOT_FOUND)
-	@ResponseBody
-	public ErrorResponse handleJobNotFoundException(JobNotFoundException e)
-	{
-		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.JOB_NOT_FOUND));
-		return result;
-	}
-	
-	@ExceptionHandler(TestRunNotFoundException.class)
-	@ResponseStatus(HttpStatus.NOT_FOUND)
-	@ResponseBody
-	public ErrorResponse handleTestRunNotFoundException(TestRunNotFoundException e)
-	{
-		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.TEST_RUN_NOT_FOUND));
-		return result;
-	}
-	
-	@ExceptionHandler(TestNotFoundException.class)
-	@ResponseStatus(HttpStatus.NOT_FOUND)
-	@ResponseBody
-	public ErrorResponse handleTestNotFoundException(TestNotFoundException e)
-	{
-		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.TEST_RUN_NOT_FOUND));
-		return result;
-	}
-	
-	@ExceptionHandler(InvalidTestRunException.class)
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ResponseBody
-	public ErrorResponse handleInvalidTestRunException(InvalidTestRunException e)
-	{
-		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.INVALID_TEST_RUN));
-		return result;
-	}
-	
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public ErrorResponse handleMethodArgumentNotValidException(Exception e)
-	{
-		ErrorResponse result = new ErrorResponse();
-		BindingResult bindingResult = null;
-
-		result.setError(new Error(ErrorCode.VALIDATION_ERROR));
-
-		if (e instanceof MethodArgumentNotValidException)
-		{
-			bindingResult = ((MethodArgumentNotValidException) e).getBindingResult();
-		} else if (e instanceof BindException)
-		{
-			bindingResult = ((BindException) e).getBindingResult();
-		}
-
-		if (null != bindingResult)
-		{
-			List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-
-			for (FieldError fieldError : fieldErrors)
-			{
-				Error error = new Error(ErrorCode.INVALID_VALUE, fieldError.getField(), fieldError.getDefaultMessage());
-
-				Object rejectedValue = fieldError.getRejectedValue();
-
-				if ((rejectedValue instanceof String) || (rejectedValue instanceof Number))
-				{
-					AdditionalErrorData additionalErrorData = new AdditionalErrorData();
-
-					additionalErrorData.setValue(rejectedValue);
-					error.setAdditional(additionalErrorData);
-				}
-
-				result.getValidationErrors().add(error);
-			}
-		}
-
-		return result;
-    }
-	
-	@ExceptionHandler(UnableToRebuildCIJobException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public ErrorResponse handleUnableToRebuildCIJobException(UnableToRebuildCIJobException e) 
-	{
-		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.TEST_RUN_NOT_REBUILT));
-		return result;
-    }
-	
-	@ExceptionHandler(BadCredentialsException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ResponseBody
-    public ErrorResponse handleBadCredentialsException(BadCredentialsException e) 
-	{
-		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.UNAUTHORIZED));
-		return result;
-    }
-	
-	@ExceptionHandler(ForbiddenOperationException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ResponseBody
-    public ErrorResponse handleForbiddenOperationException(ForbiddenOperationException e) 
-	{
-		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.FORBIDDENT, null, e.isShowMessage() ? e.getMessage() : null));
-		return result;
-    }
-	
-	@ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public ErrorResponse handleUserNotFoundException(UserNotFoundException e) 
-	{
-		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.USER_NOT_FOUND));
-		return result;
+    protected String getStatisticsWebsocketPath() {
+        return String.format(STATISTICS_WEBSOCKET_PATH, TenancyContext.getTenantName());
     }
 
-	@ExceptionHandler(IntegrationException.class)
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ResponseBody
-	public ErrorResponse handleIntegrationException(IntegrationException e)
-	{
-		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.INTEGRATION_UNAVAILABLE));
-		return result;
-	}
-
-	@ExceptionHandler(EntityAlreadyExistsException.class)
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ResponseBody
-	public ErrorResponse handleEntityIsAlreadyExistsException(EntityAlreadyExistsException e)
-	{
-		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.ENTITY_ALREADY_EXISTS, e.getFieldName(), e.getMessage()));
-		return result;
-	}
-
-	@ExceptionHandler(EntityNotExistsException.class)
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ResponseBody
-	public ErrorResponse handleEntityIsNotExistsException(EntityNotExistsException e)
-	{
-		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.ENTITY_NOT_EXISTS, e.getMessage()));
-		return result;
-	}
-	
-	@ExceptionHandler(ProjectNotFoundException.class)
-	@ResponseStatus(HttpStatus.NOT_FOUND)
-	@ResponseBody
-	public ErrorResponse handleProjectNotFoundException(ProjectNotFoundException e)
-	{
-		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.PROJECT_NOT_EXISTS, e.getMessage()));
-		return result;
-	}
-	
-	@ExceptionHandler(UnhealthyStateException.class)
-    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
-    @ResponseBody
-    public ErrorResponse handleUnhealthyStateException(UnhealthyStateException e) 
-	{
-		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.UNHEALTHY_STATUS, "reason", e.getMessage()));
-		return result;
+    protected String getTestRunsWebsocketPath() {
+        return String.format(TEST_RUNS_WEBSOCKET_PATH, TenancyContext.getTenantName());
     }
 
-	@ExceptionHandler(Exception.class)
-	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	@ResponseBody
-	public Object handleOtherException(Exception e) throws ServiceException {
-		if(this.debugMode) {
-			throw new ServiceException(e);
-		}
-		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG));
-		return result;
-	}
+    protected String getTestsWebsocketPath(Long testRunId) {
+        return String.format(TESTS_WEBSOCKET_PATH, TenancyContext.getTenantName(), testRunId);
+    }
 
-	protected void checkCurrentUserAccess(long userId) throws ForbiddenOperationException
-	{
-		if(!isAdmin() && userId != getPrincipalId())
-		{
-			throw new ForbiddenOperationException();
-		}
-	}
+    protected JwtUserType getPrincipal() {
+        Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user instanceof JwtUserType ? (JwtUserType) user : null;
+    }
+
+    protected Long getPrincipalId() {
+        JwtUserType user = getPrincipal();
+        return user != null ? user.getId() : 0;
+    }
+
+    protected String getPrincipalName() {
+        UserDetails user = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        return user != null ? user.getUsername() : "";
+    }
+
+    protected boolean isAdmin() {
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                                    .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+    }
+
+    protected boolean hasPermission(Permission.Name name) {
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                                    .flatMap(grantedAuthority -> ((UserGrantedAuthority) grantedAuthority).getPermissions().stream())
+                                    .anyMatch(permission -> permission.equalsIgnoreCase(name.name()));
+    }
+
+    protected boolean isNumber(String stringValue) {
+        return stringValue.matches("\\d+");
+    }
+
+    protected void checkCurrentUserAccess(long userId) throws ForbiddenOperationException {
+        if (!isAdmin() && userId != getPrincipalId()) {
+            throw new ForbiddenOperationException();
+        }
+    }
+
 }

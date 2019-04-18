@@ -15,13 +15,13 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.security.expressions;
 
-import java.io.Serializable;
-import java.util.Arrays;
-
-import org.springframework.security.core.Authentication;
-
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 import com.qaprosoft.zafira.models.dto.auth.UserGrantedAuthority;
+import org.springframework.security.core.Authentication;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.function.Predicate;
 
 /**
  * Checks user permissions
@@ -71,10 +71,10 @@ public class UserPermissionEvaluator implements IUserPermissionEvaluator
 		return hasPermission(authentication, targetType, permission);
 	}
 
-	private boolean checkAuthority(Authentication authentication, EvaluatorComparator evaluatorComparator)
+	private boolean checkAuthority(Authentication authentication, Predicate<String> permissionsPredicate)
 	{
 		return authentication.getAuthorities().stream()
 				.flatMap(grantedAuthority -> ((UserGrantedAuthority)grantedAuthority).getPermissions().stream())
-				.anyMatch(evaluatorComparator::contains);
+				.anyMatch(permissionsPredicate);
 	}
 }
