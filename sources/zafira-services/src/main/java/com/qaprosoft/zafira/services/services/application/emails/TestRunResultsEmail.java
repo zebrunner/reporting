@@ -157,4 +157,5 @@ public class TestRunResultsEmail implements IEmailMessage
 	{
 		return null;
 	}
+
 }

@@ -21,24 +21,20 @@ import java.util.List;
 
 public abstract class AbstractEmail implements IEmailMessage {
 
-    private String subject;
-    private String zafiraLogoURL;
-    private String companyLogoURL;
-    private String workspaceURL;
+    private final String subject;
+    private final String zafiraLogoURL;
+    private final String workspaceURL;
+    private final EmailType type;
 
-    protected AbstractEmail(String subject, String zafiraLogoURL, String companyLogoURL, String workspaceURL) {
+    protected AbstractEmail(String subject, EmailType type, String zafiraLogoURL, String workspaceURL) {
         this.subject = subject;
+        this.type = type;
         this.zafiraLogoURL = zafiraLogoURL;
-        this.companyLogoURL = companyLogoURL;
         this.workspaceURL = workspaceURL;
     }
 
     public String getZafiraLogoURL() {
         return zafiraLogoURL;
-    }
-
-    public String getCompanyLogoURL() {
-        return companyLogoURL;
     }
 
     public String getWorkspaceURL() {
@@ -57,7 +53,7 @@ public abstract class AbstractEmail implements IEmailMessage {
 
     @Override
     public EmailType getType() {
-        return null;
+        return type;
     }
 
     @Override

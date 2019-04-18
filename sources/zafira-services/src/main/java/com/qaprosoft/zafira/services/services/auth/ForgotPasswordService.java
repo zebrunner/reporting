@@ -15,19 +15,16 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.auth;
 
-import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.EmailType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.EmailService;
-import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.UserService;
-import com.qaprosoft.zafira.services.services.application.emails.password.ForgotPasswordEmail;
+import com.qaprosoft.zafira.services.services.application.emails.ForgotPasswordEmail;
 import com.qaprosoft.zafira.services.services.application.emails.AbstractEmail;
-import com.qaprosoft.zafira.services.services.application.emails.password.ForgotPasswordLdapEmail;
+import com.qaprosoft.zafira.services.services.application.emails.ForgotPasswordLdapEmail;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,31 +32,32 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ForgotPasswordService {
 
-    @Value("${zafira.slack.image}")
-    private String zafiraLogoURL;
+    private final String zafiraLogoURL;
+    private final URLResolver urlResolver;
+    private final EmailService emailService;
+    private final UserService userService;
 
-    @Autowired
-    private URLResolver urlResolver;
-
-    @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private SettingsService settingsService;
-
-    @Autowired
-    private UserService userService;
+    public ForgotPasswordService(@Value("${zafira.slack.image}") String zafiraLogoURL,
+                                 URLResolver urlResolver,
+                                 EmailService emailService,
+                                 UserService userService) {
+        this.zafiraLogoURL = zafiraLogoURL;
+        this.urlResolver = urlResolver;
+        this.emailService = emailService;
+        this.userService = userService;
+    }
 
     @Transactional(rollbackFor = Exception.class)
     public void sendForgotPasswordEmail(EmailType emailType, User user) throws ServiceException {
         AbstractEmail emailMessage;
-        if(user.getSource().equals(User.Source.INTERNAL)) {
+        if(User.Source.INTERNAL.equals(user.getSource())) {
             String token = RandomStringUtils.randomAlphanumeric(50);
             userService.updateResetToken(token, user.getId());
-            emailMessage = new ForgotPasswordEmail(token, zafiraLogoURL, settingsService.getSettingValue(Setting.SettingType.COMPANY_LOGO_URL), urlResolver.buildWebURL());
+            emailMessage = new ForgotPasswordEmail(token, zafiraLogoURL, urlResolver.buildWebURL());
         } else {
-            emailMessage = new ForgotPasswordLdapEmail(zafiraLogoURL, settingsService.getSettingValue(Setting.SettingType.COMPANY_LOGO_URL), urlResolver.buildWebURL());
+            emailMessage = new ForgotPasswordLdapEmail(zafiraLogoURL, urlResolver.buildWebURL());
         }
         emailService.sendEmail(emailMessage, emailType.getEmail());
     }
+
 }

@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.emails;
 
-public class UserInviteEmail extends AbstractEmail {
+public class UserInviteLdapEmail extends AbstractEmail {
 
     private static final String SUBJECT = "Join workspace";
 
@@ -23,8 +23,8 @@ public class UserInviteEmail extends AbstractEmail {
     private final String zafiraLogoURL;
     private final String workspaceURL;
 
-    public UserInviteEmail(String token, String zafiraLogoURL, String workspaceURL) {
-        super(SUBJECT, EmailType.USER_INVITE, zafiraLogoURL, workspaceURL);
+    public UserInviteLdapEmail(String token, String zafiraLogoURL, String workspaceURL) {
+        super(SUBJECT, EmailType.USER_INVITE_LDAP, zafiraLogoURL, workspaceURL);
         this.token = token;
         this.zafiraLogoURL = zafiraLogoURL;
         this.workspaceURL = workspaceURL;
