@@ -6,7 +6,7 @@
   <meta name="x-apple-disable-message-reformatting"> 
   <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
   <meta content="telephone=no" name="format-detection"> 
-  <title>zfr-password-reset-ldap</title> 
+  <title>zfr-invitatiion</title> 
   <!--[if (mso 16)]>
     <style type="text/css">
     a {text-decoration: none;}
@@ -52,6 +52,13 @@ a[x-apple-data-detectors] {
 	max-height:0;
 	line-height:0;
 	mso-hide:all;
+}
+td .es-button-border:hover .es-button-1555487122402 {
+	background:rgb(47, 207, 191)!important;
+	border-color:rgb(47, 207, 191)!important;
+}
+td .es-button-border-1555487122413:hover {
+	background:rgb(47, 207, 191)!important;
 }
 </style> 
  </head> 
@@ -112,10 +119,50 @@ a[x-apple-data-detectors] {
                   <td width="560" align="center" valign="top" style="padding:0;Margin:0;"> 
                    <table cellpadding="0" cellspacing="0" width="100%" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;"> 
                      <tr style="border-collapse:collapse;"> 
-                      <td align="left" style="padding:0;Margin:0;padding-top:20px;padding-bottom:20px;"> <h2 style="Margin:0;line-height:24px;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:20px;font-style:normal;font-weight:normal;color:#333333;text-align:center;">Password reset</h2> </td> 
+                      <td align="left" style="padding:0;Margin:0;padding-top:20px;padding-bottom:20px;"> <h2 style="Margin:0;line-height:24px;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:20px;font-style:normal;font-weight:normal;color:#333333;text-align:center;">Join workspace</h2> </td> 
                      </tr> 
                      <tr style="border-collapse:collapse;"> 
-                      <td align="center" class="es-m-txt-c" style="padding:0;Margin:0;"> <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:16px;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:32px;color:#333333;">You was&nbsp;invited as LDAP user,</p><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:16px;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:32px;color:#333333;">ask your system administrator for password reset.</p> </td> 
+                      <td align="center" class="es-m-txt-c" style="padding:0;Margin:0;"> <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:16px;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:32px;color:#333333;">You was invited to join <strong>${workspaceURL?split("://")[1]?split("/")[0]}</strong> workspace.</p><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:16px;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:32px;color:#333333;">Click the button below to start collaborating.</p> </td>
+                     </tr> 
+                   </table> </td> 
+                 </tr> 
+               </table> </td> 
+             </tr> 
+           </table> </td> 
+         </tr> 
+       </table> 
+       <table cellpadding="0" cellspacing="0" class="es-content" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%;"> 
+         <tr style="border-collapse:collapse;"> 
+          <td align="center" style="padding:0;Margin:0;"> 
+           <table class="es-content-body" align="center" cellpadding="0" cellspacing="0" width="600" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:#FFFFFF;"> 
+             <tr style="border-collapse:collapse;"> 
+              <td align="left" style="padding:0;Margin:0;"> 
+               <table cellpadding="0" cellspacing="0" width="100%" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;"> 
+                 <tr style="border-collapse:collapse;"> 
+                  <td width="600" align="center" valign="top" style="padding:0;Margin:0;"> 
+                   <table cellpadding="0" cellspacing="0" width="100%" bgcolor="transparent" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:transparent;"> 
+                     <tr style="border-collapse:collapse;"> 
+                      <td align="center" style="Margin:0;padding-left:10px;padding-right:10px;padding-top:20px;padding-bottom:20px;"> <span class="es-button-border es-button-border-1555487122413" style="border-style:solid;border-color:#2CB543;background:#26A69A;border-width:0px;display:inline-block;border-radius:4px;width:auto;"> <a href="${workspaceURL}/signup?token=${token}" class="es-button es-button-1555487122402" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:14px;color:#FFFFFF;border-style:solid;border-color:#26A69A;border-width:10px 20px;display:inline-block;background:#26A69A;border-radius:4px;font-weight:bold;font-style:normal;line-height:17px;width:auto;text-align:center;">Join now</a> </span> </td>
+                     </tr> 
+                   </table> </td> 
+                 </tr> 
+               </table> </td> 
+             </tr> 
+           </table> </td> 
+         </tr> 
+       </table> 
+       <table cellpadding="0" cellspacing="0" class="es-content" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%;"> 
+         <tr style="border-collapse:collapse;"> 
+          <td align="center" style="padding:0;Margin:0;"> 
+           <table class="es-content-body" align="center" cellpadding="0" cellspacing="0" width="600" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:#FFFFFF;"> 
+             <tr style="border-collapse:collapse;"> 
+              <td align="left" style="Margin:0;padding-left:20px;padding-right:20px;padding-top:25px;padding-bottom:40px;"> 
+               <table cellpadding="0" cellspacing="0" width="100%" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;"> 
+                 <tr style="border-collapse:collapse;"> 
+                  <td width="560" align="center" valign="top" style="padding:0;Margin:0;"> 
+                   <table cellpadding="0" cellspacing="0" width="100%" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;"> 
+                     <tr style="border-collapse:collapse;"> 
+                      <td align="center" class="es-m-txt-c" style="padding:0;Margin:0;"> <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:14px;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;color:#333333;"><span style="color:#808080;">Use the link</span> <a target="_blank" href="${workspaceURL}/signup?token=${token}" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:14px;text-decoration:underline;color:#3D85C6;">${workspaceURL}</a>&nbsp;<span style="color:#808080;">if the button is not clickable.</span></p> </td>
                      </tr> 
                    </table> </td> 
                  </tr> 

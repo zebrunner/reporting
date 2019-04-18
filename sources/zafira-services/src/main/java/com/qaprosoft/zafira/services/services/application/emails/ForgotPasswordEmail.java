@@ -15,31 +15,19 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.emails;
 
-public class UserInviteEmail extends AbstractEmail {
+public class ForgotPasswordEmail extends AbstractEmail {
 
-    private static final String SUBJECT = "Join workspace";
+    private static final String SUBJECT = "Password reset";
 
     private final String token;
-    private final String zafiraLogoURL;
-    private final String workspaceURL;
 
-    public UserInviteEmail(String token, String zafiraLogoURL, String workspaceURL) {
-        super(SUBJECT, EmailType.USER_INVITE, zafiraLogoURL, workspaceURL);
+    public ForgotPasswordEmail(String token, String zafiraLogoURL, String workspaceURL) {
+        super(SUBJECT, EmailType.FORGOT_PASSWORD, zafiraLogoURL, workspaceURL);
         this.token = token;
-        this.zafiraLogoURL = zafiraLogoURL;
-        this.workspaceURL = workspaceURL;
     }
 
     public String getToken() {
         return token;
-    }
-
-    public String getZafiraLogoURL() {
-        return zafiraLogoURL;
-    }
-
-    public String getWorkspaceURL() {
-        return workspaceURL;
     }
 
 }
