@@ -18,18 +18,18 @@ package com.qaprosoft.zafira.services.services.application;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.InvitationMapper;
 import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.Invitation;
-import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.EntityAlreadyExistsException;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.application.emails.IEmailMessage;
 import com.qaprosoft.zafira.services.services.application.emails.UserInviteEmail;
+import com.qaprosoft.zafira.services.services.application.emails.UserInviteLdapEmail;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,32 +38,33 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 import static com.qaprosoft.zafira.models.db.Group.Role.ROLE_ADMIN;
+import static com.qaprosoft.zafira.models.db.User.Source.LDAP;
 
 @Service
 public class InvitationService {
 
     private static final Logger LOGGER = Logger.getLogger(InvitationService.class);
 
-    @Value("${zafira.slack.image}")
-    private String zafiraLogoURL;
+    private final String zafiraLogoURL;
+    private final URLResolver urlResolver;
+    private final InvitationMapper invitationMapper;
+    private final EmailService emailService;
+    private final UserService userService;
+    private final GroupService groupService;
 
-    @Autowired
-    private URLResolver urlResolver;
-
-    @Autowired
-    private InvitationMapper invitationMapper;
-
-    @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private GroupService groupService;
-
-    @Autowired
-    private SettingsService settingsService;
+    public InvitationService(@Value("${zafira.slack.image}") String zafiraLogoURL,
+                             URLResolver urlResolver,
+                             InvitationMapper invitationMapper,
+                             EmailService emailService,
+                             UserService userService,
+                             GroupService groupService) {
+        this.zafiraLogoURL = zafiraLogoURL;
+        this.urlResolver = urlResolver;
+        this.invitationMapper = invitationMapper;
+        this.emailService = emailService;
+        this.userService = userService;
+        this.groupService = groupService;
+    }
 
     @Transactional(rollbackFor = Exception.class)
     public Invitation createInvitation(Long principalId, Invitation invitation, boolean checkExisting, boolean force) throws ServiceException {
@@ -193,7 +194,10 @@ public class InvitationService {
     }
 
     private void sendEmail(Invitation invitation) throws ServiceException {
-        UserInviteEmail userInviteEmail = new UserInviteEmail(invitation.getToken(), zafiraLogoURL, settingsService.getSettingValue(Setting.SettingType.COMPANY_LOGO_URL), urlResolver.buildWebURL(), invitation.getSource());
+        IEmailMessage userInviteEmail = LDAP.equals(invitation.getSource()) ?
+                new UserInviteEmail(invitation.getToken(), zafiraLogoURL, urlResolver.buildWebURL()) :
+                new UserInviteLdapEmail(invitation.getToken(), zafiraLogoURL, urlResolver.buildWebURL());
         emailService.sendEmail(userInviteEmail, invitation.getEmail());
     }
+
 }

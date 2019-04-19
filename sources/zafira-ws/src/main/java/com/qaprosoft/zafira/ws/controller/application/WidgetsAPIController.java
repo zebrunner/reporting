@@ -96,7 +96,8 @@ public class WidgetsAPIController extends AbstractController
 			if(widgetTemplate == null) {
 				throw new ServiceException("Unable to create chart. Template with id " + widget.getWidgetTemplate().getId() + " does not exist.");
 			}
-			widgetTemplateService.executeWidgetTemplateParamsSQLQueries(widgetTemplate);
+			widgetTemplateService.clearRedundantParamsValues(widgetTemplate);
+			//widgetTemplateService.executeWidgetTemplateParamsSQLQueries(widgetTemplate);
 			widget.setWidgetTemplate(mapper.map(widgetTemplate, WidgetTemplateType.class));
 			widget.setType(widgetTemplate.getType().name());
 		}
@@ -140,7 +141,8 @@ public class WidgetsAPIController extends AbstractController
 			if(widgetTemplate == null) {
 				throw new ServiceException("Unable to update widget. Widget template does not exist");
 			}
-			widgetTemplateService.executeWidgetTemplateParamsSQLQueries(widgetTemplate);
+			widgetTemplateService.clearRedundantParamsValues(widgetTemplate);
+			//widgetTemplateService.executeWidgetTemplateParamsSQLQueries(widgetTemplate);
 			widget.setWidgetTemplate(mapper.map(widgetTemplate, WidgetTemplateType.class));
 		}
 		return widgetService.updateWidget(mapper.map(widget, Widget.class));
@@ -220,7 +222,8 @@ public class WidgetsAPIController extends AbstractController
 	public @ResponseBody List<WidgetType> getAllWidgets() throws ServiceException
 	{
 		return widgetService.getAllWidgets().stream().map(widget -> {
-		    widgetTemplateService.executeWidgetTemplateParamsSQLQueries(widget.getWidgetTemplate());
+			widgetTemplateService.clearRedundantParamsValues(widget.getWidgetTemplate());
+		    //widgetTemplateService.executeWidgetTemplateParamsSQLQueries(widget.getWidgetTemplate());
 		    return mapper.map(widget, WidgetType.class);
         }).collect(Collectors.toList());
 	}
@@ -233,7 +236,18 @@ public class WidgetsAPIController extends AbstractController
 	@RequestMapping(value = "templates", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<WidgetTemplateType> getAllWidgetTemplates() throws ServiceException
 	{
-		return widgetTemplateService.getProcessedWidgetTemplates().stream().map(widgetTemplate -> mapper.map(widgetTemplate, WidgetTemplateType.class)).collect(Collectors.toList());
+		return widgetTemplateService.getWidgetTemplates().stream().map(widgetTemplate -> mapper.map(widgetTemplate, WidgetTemplateType.class)).collect(Collectors.toList());
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Prepare widget template data by id", nickname = "prepareWidgetTemplateById", httpMethod = "GET", response = WidgetTemplateType.class)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "templates/{id}/prepare", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody WidgetTemplateType prepareWidgetTemplate(@PathVariable(value = "id") Long id) throws ServiceException
+	{
+		return mapper.map(widgetTemplateService.prepareWidgetTemplateById(id), WidgetTemplateType.class);
 	}
 
 	@ResponseStatusDetails

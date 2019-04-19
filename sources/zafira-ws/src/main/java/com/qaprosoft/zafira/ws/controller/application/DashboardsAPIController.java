@@ -97,7 +97,8 @@ public class DashboardsAPIController extends AbstractController
 	{
 		Dashboard dashboard = dashboardService.getDashboardById(id);
 		dashboard.getWidgets().forEach(widget -> {
-			widgetTemplateService.executeWidgetTemplateParamsSQLQueries(widget.getWidgetTemplate());
+			widgetTemplateService.clearRedundantParamsValues(widget.getWidgetTemplate());
+			//widgetTemplateService.executeWidgetTemplateParamsSQLQueries(widget.getWidgetTemplate());
 		});
 		return mapper.map(dashboard, DashboardType.class);
 	}
