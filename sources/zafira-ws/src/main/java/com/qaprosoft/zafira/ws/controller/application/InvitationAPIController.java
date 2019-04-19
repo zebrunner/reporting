@@ -29,19 +29,25 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
 
-@Controller
-@Api(value = "Invites API")
+@Api("Invites API")
 @CrossOrigin
-@RequestMapping("api/invitations")
+@RequestMapping(path = "api/invitations", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController
 public class InvitationAPIController extends AbstractController {
 
     @Autowired
@@ -52,31 +58,31 @@ public class InvitationAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Invite users", nickname = "inviteUsers", httpMethod = "POST", response = List.class)
-    @ResponseStatus(HttpStatus.OK)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('INVITE_USERS')")
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Invitation> inviteUsers(@Valid @RequestBody InvitationListType invitations) throws ServiceException {
-        return invitationService.createInvitations(getPrincipalId(), invitations.getInvitationTypes().stream().map(invitationType -> mapper.map(invitationType, Invitation.class)).toArray(Invitation[]::new));
+    @PostMapping()
+    public List<Invitation> inviteUsers(@Valid @RequestBody InvitationListType invitationList) throws ServiceException {
+        Invitation[] invitations = invitationList.getInvitationTypes().stream()
+                                                 .map(invitationType -> mapper.map(invitationType, Invitation.class))
+                                                 .toArray(Invitation[]::new);
+        return invitationService.createInvitations(getPrincipalId(), invitations);
     }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Retry invite user", nickname = "retryInviteUser", httpMethod = "POST", response = Invitation.class)
-    @ResponseStatus(HttpStatus.OK)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('INVITE_USERS')")
-    @RequestMapping(value = "retry", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Invitation retryInviteUser(@Valid @RequestBody InvitationType invitation) throws ServiceException {
+    @PostMapping("/retry")
+    public Invitation retryInviteUser(@Valid @RequestBody InvitationType invitation) throws ServiceException {
         return invitationService.retryInvitation(getPrincipalId(), invitation.getEmail());
     }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get invitation", nickname = "getInvitation", httpMethod = "GET", response = InvitationType.class)
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "info", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody InvitationType getInvitation(@RequestParam(value = "token") String token) throws ServiceException {
+    @GetMapping("/info")
+    public InvitationType getInvitation(@RequestParam("token") String token) throws ServiceException {
         Invitation invitation = invitationService.getInvitationByToken(token);
-        if(invitation == null || ! invitation.isValid()) {
+        if (invitation == null || !invitation.isValid()) {
             throw new ForbiddenOperationException();
         }
         return mapper.map(invitation, InvitationType.class);
@@ -84,25 +90,24 @@ public class InvitationAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get all invitations", nickname = "getAllInvitations", httpMethod = "GET", response = List.class)
-    @ResponseStatus(HttpStatus.OK)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasAnyPermission('INVITE_USERS', 'MODIFY_INVITATIONS')")
-    @RequestMapping(value = "all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Invitation> getAllInvitations() throws ServiceException {
+    @GetMapping("/all")
+    public List<Invitation> getAllInvitations() throws ServiceException {
         return invitationService.getAllInvitations();
     }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Delete invitation", nickname = "deleteInvitationById", httpMethod = "DELETE")
-    @ResponseStatus(HttpStatus.OK)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_INVITATIONS')")
-    @RequestMapping(value = "{idOrEmail}", method = RequestMethod.DELETE)
-    public void deleteInvitation(@PathVariable(value = "idOrEmail") String idOrEmail) throws ServiceException {
-        if(isNumber(idOrEmail)) {
+    @DeleteMapping("/{idOrEmail}")
+    public void deleteInvitation(@PathVariable("idOrEmail") String idOrEmail) throws ServiceException {
+        if (isNumber(idOrEmail)) {
             invitationService.deleteInvitation(Long.valueOf(idOrEmail));
         } else {
             invitationService.deleteInvitation(idOrEmail);
         }
     }
+
 }

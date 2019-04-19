@@ -15,108 +15,89 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import java.util.List;
-
-import javax.validation.Valid;
-
-import com.qaprosoft.zafira.ws.controller.AbstractController;
-import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 import com.qaprosoft.zafira.models.db.View;
 import com.qaprosoft.zafira.models.dto.ViewType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.ViewService;
+import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.dozer.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@Api(value = "Views API")
+import javax.validation.Valid;
+import java.util.List;
+
+@Api("Views API")
 @CrossOrigin
-@RequestMapping("api/views")
-public class ViewsAPIController extends AbstractController
-{
+@RequestMapping(path = "api/views", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController
+public class ViewsAPIController extends AbstractController {
 
-	@Autowired
-	private Mapper mapper;
+    @Autowired
+    private Mapper mapper;
 
-	@Autowired
-	private ViewService viewService;
+    @Autowired
+    private ViewService viewService;
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Get view", nickname = "getViewById", httpMethod = "GET", response = View.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasAnyPermission('VIEW_TEST_RUN_VIEWS', 'MODIFY_TEST_RUN_VIEWS')")
-	@RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody View getViewById(@PathVariable(value = "id") long id) throws ServiceException
-	{
-		return viewService.getViewById(id);
-	}
+    @ResponseStatusDetails
+    @ApiOperation(value = "Get view", nickname = "getViewById", httpMethod = "GET", response = View.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PreAuthorize("hasAnyPermission('VIEW_TEST_RUN_VIEWS', 'MODIFY_TEST_RUN_VIEWS')")
+    @GetMapping("/{id}")
+    public View getViewById(@PathVariable("id") long id) throws ServiceException {
+        return viewService.getViewById(id);
+    }
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Get all views", nickname = "getAllViews", httpMethod = "GET", response = List.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasAnyPermission('VIEW_TEST_RUN_VIEWS', 'MODIFY_TEST_RUN_VIEWS')")
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<View> getAllViews(@RequestParam(value = "projectId", required = false) Long projectId)
-			throws ServiceException
-	{
-		return viewService.getAllViews(projectId);
-	}
+    @ResponseStatusDetails
+    @ApiOperation(value = "Get all views", nickname = "getAllViews", httpMethod = "GET", response = List.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PreAuthorize("hasAnyPermission('VIEW_TEST_RUN_VIEWS', 'MODIFY_TEST_RUN_VIEWS')")
+    @GetMapping()
+    public List<View> getAllViews(@RequestParam(value = "projectId", required = false) Long projectId) throws ServiceException {
+        return viewService.getAllViews(projectId);
+    }
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Create view", nickname = "createView", httpMethod = "POST", response = ViewType.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('MODIFY_TEST_RUN_VIEWS')")
-	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ViewType createView(@RequestBody @Valid ViewType view) throws ServiceException
-	{
-		return mapper.map(viewService.createView(mapper.map(view, View.class)), ViewType.class);
-	}
+    @ResponseStatusDetails
+    @ApiOperation(value = "Create view", nickname = "createView", httpMethod = "POST", response = ViewType.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PreAuthorize("hasPermission('MODIFY_TEST_RUN_VIEWS')")
+    @PostMapping()
+    public ViewType createView(@RequestBody @Valid ViewType view) throws ServiceException {
+        return mapper.map(viewService.createView(mapper.map(view, View.class)), ViewType.class);
+    }
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Update view", nickname = "updateView", httpMethod = "PUT", response = ViewType.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('MODIFY_TEST_RUN_VIEWS')")
-	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ViewType updateView(@RequestBody @Valid ViewType view) throws ServiceException
-	{
-		return mapper.map(viewService.updateView(mapper.map(view, View.class)), ViewType.class);
-	}
+    @ResponseStatusDetails
+    @ApiOperation(value = "Update view", nickname = "updateView", httpMethod = "PUT", response = ViewType.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PreAuthorize("hasPermission('MODIFY_TEST_RUN_VIEWS')")
+    @PutMapping()
+    public ViewType updateView(@RequestBody @Valid ViewType view) throws ServiceException {
+        return mapper.map(viewService.updateView(mapper.map(view, View.class)), ViewType.class);
+    }
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Delete view", nickname = "deleteViewById", httpMethod = "DELETE")
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('MODIFY_TEST_RUN_VIEWS')")
-	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-	public void deleteView(@PathVariable(value = "id") long id) throws ServiceException
-	{
-		viewService.deleteViewById(id);
-	}
+    @ResponseStatusDetails
+    @ApiOperation(value = "Delete view", nickname = "deleteViewById", httpMethod = "DELETE")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PreAuthorize("hasPermission('MODIFY_TEST_RUN_VIEWS')")
+    @DeleteMapping("/{id}")
+    public void deleteView(@PathVariable("id") long id) throws ServiceException {
+        viewService.deleteViewById(id);
+    }
+
 }
