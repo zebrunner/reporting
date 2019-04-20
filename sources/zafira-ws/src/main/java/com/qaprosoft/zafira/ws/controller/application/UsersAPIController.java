@@ -117,7 +117,7 @@ public class UsersAPIController extends AbstractController {
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PutMapping("/profile")
     public UserType updateUserProfile(@Valid @RequestBody UserType user) throws ServiceException {
-        checkCurrentUserAccess(user.getId());
+        user.setId(getPrincipalId()); // set logged in user id to avoid request body substitution
         UserType userType = mapper.map(userService.updateUser(mapper.map(user, User.class)), UserType.class);
         userType.setRoles(user.getRoles());
         userType.setPreferences(user.getPreferences());
@@ -141,7 +141,7 @@ public class UsersAPIController extends AbstractController {
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PutMapping("/password")
     public void updateUserPassword(@Valid @RequestBody PasswordChangingType password) throws ServiceException {
-        checkCurrentUserAccess(password.getUserId());
+        password.setUserId(getPrincipalId()); // set logged in user id to avoid request body substitution
         userService.updateUserPassword(password, isAdmin() && password.getOldPassword() == null);
     }
 

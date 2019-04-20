@@ -103,9 +103,9 @@ public class InvitationAPIController extends AbstractController {
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_INVITATIONS')")
     @DeleteMapping("/{idOrEmail}")
     public void deleteInvitation(@PathVariable("idOrEmail") String idOrEmail) throws ServiceException {
-        if (isNumber(idOrEmail)) {
+        if (idOrEmail.matches("\\d+")) { // check if number
             invitationService.deleteInvitation(Long.valueOf(idOrEmail));
-        } else {
+        } else { // otherwise treat as email
             invitationService.deleteInvitation(idOrEmail);
         }
     }

@@ -19,7 +19,6 @@ import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 import com.qaprosoft.zafira.models.dto.auth.UserGrantedAuthority;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -43,7 +42,7 @@ public abstract class AbstractController {
         return String.format(TESTS_WEBSOCKET_PATH, TenancyContext.getTenantName(), testRunId);
     }
 
-    protected JwtUserType getPrincipal() {
+    private JwtUserType getPrincipal() {
         Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return user instanceof JwtUserType ? (JwtUserType) user : null;
     }
@@ -67,16 +66,6 @@ public abstract class AbstractController {
         return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
                                     .flatMap(grantedAuthority -> ((UserGrantedAuthority) grantedAuthority).getPermissions().stream())
                                     .anyMatch(permission -> permission.equalsIgnoreCase(name.name()));
-    }
-
-    protected boolean isNumber(String stringValue) {
-        return stringValue.matches("\\d+");
-    }
-
-    protected void checkCurrentUserAccess(long userId) throws ForbiddenOperationException {
-        if (!isAdmin() && userId != getPrincipalId()) {
-            throw new ForbiddenOperationException();
-        }
     }
 
 }
