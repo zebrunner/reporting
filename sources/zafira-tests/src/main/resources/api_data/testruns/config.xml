@@ -2,7 +2,7 @@
 <config>
     <arg unique="false">
         <key>url</key>
-        <value>http://demo.qaprosoft.com</value>
+        <value>http://localhost/app</value>
     </arg>
     <arg unique="false">
         <key>env</key>
