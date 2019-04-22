@@ -77,7 +77,7 @@ public class SettingsService {
     @Transactional(readOnly = true)
     public Map<Tool, Boolean> getToolsStatuses() {
         Map<Tool, Boolean> toolSettings = new HashMap<>();
-        Arrays.stream(Tool.values()).filter(tool -> !tool.equals(Tool.CRYPTO)).forEach(tool ->
+        Arrays.stream(Tool.values()).filter(tool -> !Arrays.asList(Tool.CRYPTO, Tool.ELASTICSEARCH).contains(tool)).forEach(tool ->
                 toolSettings.put(tool, integrationService.getServiceByTool(tool).isEnabledAndConnected()));
         return toolSettings;
     }
