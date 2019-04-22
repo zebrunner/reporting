@@ -18,8 +18,8 @@ package com.qaprosoft.zafira.ws.controller.application;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
-import com.qaprosoft.zafira.models.dto.tag.IntegrationTag;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationDataType;
+import com.qaprosoft.zafira.models.dto.tag.IntegrationTag;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TagService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
@@ -32,23 +32,25 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.xml.bind.JAXBException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-@Controller
-@Api(value = "Tags operations")
-@RequestMapping("api/tags")
-public class TagsAPIController extends AbstractController
-{
-	@Autowired
-	private TagService tagService;
+@Api("Tags operations")
+@RequestMapping(path = "api/tags", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController
+public class TagsAPIController extends AbstractController {
+
+    @Autowired
+    private TagService tagService;
 
     @Autowired
     private TestRunService testRunService;
@@ -57,21 +59,23 @@ public class TagsAPIController extends AbstractController
     private URLResolver urlResolver;
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Get integration info", nickname = "getTestIntegrationInfo", code = 200, httpMethod = "GET", response = IntegrationDataType.class)
-    @ResponseStatus(HttpStatus.OK)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @RequestMapping(value = "{ciRunId}/integration", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    IntegrationDataType getIntegrationInfo(@PathVariable(value = "ciRunId") String ciRunId, @RequestParam(value = "integrationTag") IntegrationTag integrationTag) throws ServiceException, JAXBException {
+    @ApiOperation(value = "Get integration info", nickname = "getTestIntegrationInfo", httpMethod = "GET", response = IntegrationDataType.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @GetMapping("/{ciRunId}/integration")
+    public IntegrationDataType getIntegrationInfo(
+            @PathVariable("ciRunId") String ciRunId,
+            @RequestParam("integrationTag") IntegrationTag integrationTag
+    ) throws ServiceException, JAXBException {
         IntegrationDataType integrationData = new IntegrationDataType();
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
-        if (testRun != null){
+
+        if (testRun != null) {
             tagService.setTestInfoByIntegrationTag(ciRunId, integrationTag, integrationData);
 
             //finishedAt value generation based on startedAt & elapsed
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(testRun.getStartedAt());
-            if(testRun.getElapsed() != null){
+            if (testRun.getElapsed() != null) {
                 calendar.add(Calendar.SECOND, testRun.getElapsed());
             }
 
@@ -84,32 +88,31 @@ public class TagsAPIController extends AbstractController
 
             //ConfigXML parsing for TestRunName generation
             Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
-            Map <String, String> configMap = new HashMap<>();
-            for (Argument arg : configuration.getArg())
-            {
+            Map<String, String> configMap = new HashMap<>();
+            for (Argument arg : configuration.getArg()) {
                 configMap.put(arg.getKey(), arg.getValue());
             }
 
             integrationData.setTestRunName(testRun.getName(configMap));
 
             //IntegrationType-specific properties adding
-            switch (integrationTag){
+            switch (integrationTag) {
                 case TESTRAIL_TESTCASE_UUID:
                     configuration.getArg().forEach(arg -> {
-                        if(arg.getKey().contains("testrail_assignee")){
+                        if (arg.getKey().contains("testrail_assignee")) {
                             integrationData.getCustomParams().put("assignee", arg.getValue());
-                        } else if (arg.getKey().contains("testrail_milestone")){
+                        } else if (arg.getKey().contains("testrail_milestone")) {
                             integrationData.getCustomParams().put("milestone", arg.getValue());
-                        } else if (arg.getKey().contains("testrail_run_name")){
+                        } else if (arg.getKey().contains("testrail_run_name")) {
                             integrationData.getCustomParams().put("testrail_run_name", arg.getValue());
                         }
                     });
                     break;
                 case QTEST_TESTCASE_UUID:
                     configuration.getArg().forEach(arg -> {
-                        if(arg.getKey().contains("qtest_cycle_name")){
+                        if (arg.getKey().contains("qtest_cycle_name")) {
                             integrationData.getCustomParams().put("cycle_name", arg.getValue());
-                        } else if (arg.getKey().contains("qtest_suite_name") && !StringUtils.isEmpty(arg.getValue())){
+                        } else if (arg.getKey().contains("qtest_suite_name") && !StringUtils.isEmpty(arg.getValue())) {
                             integrationData.setTestRunName(arg.getValue());
                         }
                     });
@@ -117,4 +120,5 @@ public class TagsAPIController extends AbstractController
         }
         return integrationData;
     }
+
 }

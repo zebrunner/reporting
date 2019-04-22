@@ -15,39 +15,37 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import java.util.List;
-
+import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.ws.controller.AbstractController;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
-import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.GroupService;
+import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@Api(value = "Groups API")
+import java.util.List;
+
+@Api("Groups API")
 @CrossOrigin
-@RequestMapping("api/groups")
+@RequestMapping(path = "api/groups", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController
 public class GroupsAPIController extends AbstractController {
 
     @Autowired
@@ -55,91 +53,81 @@ public class GroupsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create group", nickname = "createGroup", httpMethod = "POST", response = Group.class)
-    @ResponseStatus(HttpStatus.OK)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Group createGroup(@RequestBody Group group) throws ServiceException
-    {
+    @PostMapping()
+    public Group createGroup(@RequestBody Group group) throws ServiceException {
         return groupService.createGroup(group);
     }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Add permissions to group", nickname = "addPermissionsToGroup", httpMethod = "POST", response = Group.class)
-    @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
-    @RequestMapping(value = "permissions", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Group addPermissionsToGroup(@RequestBody Group group) throws ServiceException
-    {
+    @PostMapping("/permissions")
+    public Group addPermissionsToGroup(@RequestBody Group group) throws ServiceException {
         return groupService.addPermissionsToGroup(group);
     }
 
     @ResponseStatusDetails
-    @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @ApiOperation(value = "Get group", nickname = "getGroup", httpMethod = "GET", response = Group.class)
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
-    @RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Group getGroup(@PathVariable(value = "id") long id) throws ServiceException
-    {
+    @GetMapping("/{id}")
+    public Group getGroup(@PathVariable("id") long id) throws ServiceException {
         return groupService.getGroupById(id);
     }
 
     @ResponseStatusDetails
-    @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @ApiOperation(value = "Get all groups", nickname = "getAllGroups", httpMethod = "GET", response = List.class)
-    @RequestMapping(value = "all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/all")
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS') or #isPublic")
-    public @ResponseBody List<Group> getAllGroups(@RequestParam(value = "public", required = false) boolean isPublic) throws ServiceException
-    {
+    public List<Group> getAllGroups(@RequestParam(name = "public", required = false) boolean isPublic) throws ServiceException {
         return groupService.getAllGroups(isPublic);
     }
 
     @ResponseStatusDetails
-    @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @ApiOperation(value = "Get groups count", nickname = "getGroupsCount", httpMethod = "GET", response = Integer.class)
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
-    @RequestMapping(value = "count", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Integer getGroupsCount() throws ServiceException
-    {
+    @GetMapping("/count")
+    public Integer getGroupsCount() throws ServiceException {
         return groupService.getGroupsCount();
     }
 
     @ResponseStatusDetails
-    @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @ApiOperation(value = "Get roles", nickname = "getRoles", httpMethod = "GET", response = List.class)
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
-    @RequestMapping(value = "roles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Group.Role> getRoles() throws ServiceException
-    {
+    @GetMapping("/roles")
+    public List<Group.Role> getRoles() throws ServiceException {
         return GroupService.getRoles();
     }
 
     @ResponseStatusDetails
-    @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @ApiOperation(value = "Update group", nickname = "updateGroup", httpMethod = "PUT", response = Group.class)
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
-    @RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Group updateGroup(@RequestBody Group group) throws ServiceException
-    {
+    @PutMapping()
+    public Group updateGroup(@RequestBody Group group) throws ServiceException {
         return groupService.updateGroup(group);
     }
 
     @ResponseStatusDetails
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @ApiOperation(value = "Delete group", nickname = "deleteGroup", httpMethod = "DELETE")
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-    public void deleteGroup(@PathVariable(value = "id") long id) throws ServiceException
-    {
+    @DeleteMapping("/{id}")
+    public void deleteGroup(@PathVariable("id") long id) throws ServiceException {
         Group group = groupService.getGroupById(id);
-        if(group == null) {
+        if (group == null) {
             throw new EntityNotExistsException(Group.class, false);
         }
-        if(group.getUsers().size() > 0) {
+        if (group.getUsers().size() > 0) {
             throw new ForbiddenOperationException("It's necessary to clear the group initially.", true);
         }
         groupService.deleteGroup(id);
     }
+
 }
