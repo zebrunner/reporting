@@ -1,50 +1,75 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:websocket="http://www.springframework.org/schema/websocket"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:websocket="http://www.springframework.org/schema/websocket"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd
-                           http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd">
+                           http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket-4.3.xsd
+                           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
 
-	<context:annotation-config />
-	
-	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<array>
-				<value>classpath:environment.properties</value>
-			</array>
-		</property>
-		<property name="systemPropertiesModeName">
-			<value>SYSTEM_PROPERTIES_MODE_OVERRIDE</value>
-		</property>
-	</bean>
+    <context:annotation-config/>
 
-	<util:properties id="environmentProperties" location="classpath:environment.properties" />
+    <mvc:annotation-driven/>
 
-	<import resource="spring/util.xml" />
-	<import resource="spring/mvc.xml" />
+    <context:component-scan base-package="com.qaprosoft.zafira.ws"/>
 
-	<import resource="classpath:zafira-models.xml" />
-	<import resource="classpath:zafira-app-dbaccess.xml" />
-	<import resource="classpath:zafira-mng-dbaccess.xml" />
-	<import resource="classpath:zafira-services.xml" />
+    <context:property-placeholder location="classpath:environment.properties"/>
 
-	<!--websocket:message-broker application-destination-prefix="/websocket">
-		<websocket:stomp-endpoint path="/websockets" allowed-origins="*">
-			<websocket:sockjs />
-		</websocket:stomp-endpoint>
-		<websocket:simple-broker prefix="/topic" />
-	</websocket:message-broker-->
+    <mvc:annotation-driven validator="validator"/>
 
-	<websocket:message-broker>
-		<websocket:stomp-endpoint path="/api/websockets" allowed-origins="*">
-			<websocket:sockjs />
-		</websocket:stomp-endpoint>
-		<websocket:stomp-broker-relay prefix="/topic" relay-host="${zafira.rabbitmq.stomp.host}" relay-port="${zafira.rabbitmq.stomp.port}" 
-			client-login="${zafira.rabbitmq.user}" client-passcode="${zafira.rabbitmq.pass}"
-			system-login="${zafira.rabbitmq.user}" system-passcode="${zafira.rabbitmq.pass}" />
-	</websocket:message-broker>
-	
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <array>
+                <value>classpath:environment.properties</value>
+            </array>
+        </property>
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+    </bean>
+
+    <util:properties id="environmentProperties" location="classpath:environment.properties"/>
+
+    <import resource="classpath:zafira-models.xml"/>
+    <import resource="classpath:zafira-app-dbaccess.xml"/>
+    <import resource="classpath:zafira-mng-dbaccess.xml"/>
+    <import resource="classpath:zafira-services.xml"/>
+
+    <websocket:message-broker>
+        <websocket:stomp-endpoint path="/api/websockets" allowed-origins="*">
+            <websocket:sockjs/>
+        </websocket:stomp-endpoint>
+        <websocket:stomp-broker-relay prefix="/topic" relay-host="${zafira.rabbitmq.stomp.host}"
+                                      relay-port="${zafira.rabbitmq.stomp.port}"
+                                      client-login="${zafira.rabbitmq.user}" client-passcode="${zafira.rabbitmq.pass}"
+                                      system-login="${zafira.rabbitmq.user}" system-passcode="${zafira.rabbitmq.pass}"/>
+    </websocket:message-broker>
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+
+    <bean id="mapper" class="com.qaprosoft.zafira.ws.util.dozer.NullSafeDozerBeanMapper">
+        <property name="mappingFiles">
+            <list>
+                <value>dozer/Filter-dozer-mapping.xml</value>
+                <value>dozer/Launcher-dozer-mapping.xml</value>
+                <value>dozer/TestSuite-dozer-mapping.xml</value>
+                <value>dozer/TestCase-dozer-mapping.xml</value>
+                <value>dozer/Test-dozer-mapping.xml</value>
+                <value>dozer/Job-dozer-mapping.xml</value>
+                <value>dozer/Monitor-dozer-mapping.xml</value>
+                <value>dozer/TestRun-dozer-mapping.xml</value>
+                <value>dozer/User-dozer-mapping.xml</value>
+                <value>dozer/Project-dozer-mapping.xml</value>
+                <value>dozer/TestArtifact-dozer-mapping.xml</value>
+                <value>dozer/Tenancy-dozer-mapping.xml</value>
+                <value>dozer/Invitation-dozer-mapping.xml</value>
+                <value>dozer/ScmAccount-dozer-mapping.xml</value>
+                <value>dozer/Tag-dozer-mapping.xml</value>
+                <value>dozer/WidgetTemplate-dozer-mapping.xml</value>
+            </list>
+        </property>
+    </bean>
+
 </beans>
