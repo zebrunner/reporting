@@ -38,6 +38,9 @@
 	
 	<select id="getAllWidgetTemplates" resultMap="WidgetTemplateResultMap">
 		<include refid="getWidgetTemplate" />
+		<![CDATA[
+			ORDER BY NAME
+		]]>
 	</select>
 
 	<resultMap type="com.qaprosoft.zafira.models.db.WidgetTemplate" id="WidgetTemplateResultMap" autoMapping="false">
