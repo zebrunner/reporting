@@ -43,7 +43,7 @@ public abstract class AbstractController {
         return String.format(TESTS_WEBSOCKET_PATH, TenancyContext.getTenantName(), testRunId);
     }
 
-    protected JwtUserType getPrincipal() {
+    private JwtUserType getPrincipal() {
         Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return user instanceof JwtUserType ? (JwtUserType) user : null;
     }
@@ -67,10 +67,6 @@ public abstract class AbstractController {
         return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
                                     .flatMap(grantedAuthority -> ((UserGrantedAuthority) grantedAuthority).getPermissions().stream())
                                     .anyMatch(permission -> permission.equalsIgnoreCase(name.name()));
-    }
-
-    protected boolean isNumber(String stringValue) {
-        return stringValue.matches("\\d+");
     }
 
     protected void checkCurrentUserAccess(long userId) throws ForbiddenOperationException {
