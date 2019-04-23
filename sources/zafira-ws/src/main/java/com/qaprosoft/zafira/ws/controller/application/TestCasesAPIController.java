@@ -15,112 +15,106 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
-import javax.validation.Valid;
-
-import com.qaprosoft.zafira.models.db.TestMetric;
-import com.qaprosoft.zafira.services.services.application.TestMetricService;
-import com.qaprosoft.zafira.ws.controller.AbstractController;
-import org.apache.commons.lang3.ArrayUtils;
-import org.dozer.Mapper;
-import org.dozer.MappingException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestCaseSearchCriteria;
 import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.db.TestCase;
+import com.qaprosoft.zafira.models.db.TestMetric;
 import com.qaprosoft.zafira.models.dto.TestCaseType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.ProjectService;
 import com.qaprosoft.zafira.services.services.application.TestCaseService;
+import com.qaprosoft.zafira.services.services.application.TestMetricService;
+import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.ArrayUtils;
+import org.dozer.Mapper;
+import org.dozer.MappingException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@Api(value = "Test cases API")
-@RequestMapping("api/tests/cases")
-public class TestCasesAPIController extends AbstractController
-{
-	@Autowired
-	private Mapper mapper;
-	
-	@Autowired
-	private TestCaseService testCaseService;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
-	@Autowired
-	private TestMetricService testMetricService;
-	
-	@Autowired
-	private ProjectService projectService;
-	
-	@ResponseStatusDetails
-	@ApiOperation(value = "Search test cases", nickname = "searchTestCases", httpMethod = "POST", response = SearchResult.class)
-	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value="search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody SearchResult<TestCase> searchTestCases(@Valid @RequestBody TestCaseSearchCriteria sc) throws ServiceException
-	{
-		return testCaseService.searchTestCases(sc);
-	}
+@Api("Test cases API")
+@RequestMapping(path = "api/tests/cases", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController
+public class TestCasesAPIController extends AbstractController {
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Get test metrics by test case id", nickname = "getTestMetricsByTestCaseId", httpMethod = "GET", response = Map.class)
-	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value="{id}/metrics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, List<TestMetric>> getTestMetricsByTestCaseId(@PathVariable(value = "id") Long id) throws ServiceException
-	{
-		return testMetricService.getTestMetricsByTestCaseId(id);
-	}
+    @Autowired
+    private Mapper mapper;
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Create test case", nickname = "createTestCase", httpMethod = "POST",  response = TestCaseType.class)
-	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestCaseType createTestCase(@RequestBody @Valid TestCaseType testCase, @RequestHeader(value="Project", required=false) String projectName) throws ServiceException, MappingException, ExecutionException
-	{
-		TestCase tc = mapper.map(testCase, TestCase.class);
-		tc.setProject(projectService.getProjectByName(projectName));
-		return mapper.map(testCaseService.createOrUpdateCase(tc), TestCaseType.class);
-	}
+    @Autowired
+    private TestCaseService testCaseService;
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Create multiple test cases", nickname = "createTestCases", httpMethod = "POST", response = TestCaseType[].class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value="batch", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestCaseType [] createTestCases(@RequestBody @Valid TestCaseType [] tcs, @RequestHeader(value="Project", required=false) String projectName) throws ServiceException, ExecutionException
-	{
-		if(!ArrayUtils.isEmpty(tcs))
-		{
-			Project project = projectService.getProjectByName(projectName);
-			TestCase [] testCases = new TestCase[tcs.length];
-			for(int i = 0; i < tcs.length; i++)
-			{
-				testCases[i] = mapper.map(tcs[i], TestCase.class);
-				testCases[i].setProject(project);
-			}
-			testCases = testCaseService.createOrUpdateCases(testCases);
-			for(int i = 0; i < testCases.length; i++)
-			{
-				tcs[i] = mapper.map(testCases[i], TestCaseType.class);
-			}
-			return tcs;
-		}
-		else
-		{
-			return new TestCaseType[0]; 
-		}
-	}
+    @Autowired
+    private TestMetricService testMetricService;
+
+    @Autowired
+    private ProjectService projectService;
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Search test cases", nickname = "searchTestCases", httpMethod = "POST", response = SearchResult.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PostMapping("/search")
+    public SearchResult<TestCase> searchTestCases(@Valid @RequestBody TestCaseSearchCriteria sc) throws ServiceException {
+        return testCaseService.searchTestCases(sc);
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Get test metrics by test case id", nickname = "getTestMetricsByTestCaseId", httpMethod = "GET", response = Map.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @GetMapping("/{id}/metrics")
+    public Map<String, List<TestMetric>> getTestMetricsByTestCaseId(@PathVariable("id") Long id) throws ServiceException {
+        return testMetricService.getTestMetricsByTestCaseId(id);
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Create test case", nickname = "createTestCase", httpMethod = "POST", response = TestCaseType.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PostMapping()
+    public TestCaseType createTestCase(
+            @RequestBody @Valid TestCaseType testCase,
+            @RequestHeader(value = "Project", required = false) String projectName
+    ) throws ServiceException, MappingException, ExecutionException {
+        TestCase tc = mapper.map(testCase, TestCase.class);
+        tc.setProject(projectService.getProjectByName(projectName));
+        return mapper.map(testCaseService.createOrUpdateCase(tc), TestCaseType.class);
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Create multiple test cases", nickname = "createTestCases", httpMethod = "POST", response = TestCaseType[].class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PostMapping("/batch")
+    public TestCaseType[] createTestCases(@RequestBody @Valid TestCaseType[] tcs, @RequestHeader(value = "Project", required = false) String projectName) throws ServiceException, ExecutionException {
+        if (!ArrayUtils.isEmpty(tcs)) {
+            Project project = projectService.getProjectByName(projectName);
+            TestCase[] testCases = new TestCase[tcs.length];
+            for (int i = 0; i < tcs.length; i++) {
+                testCases[i] = mapper.map(tcs[i], TestCase.class);
+                testCases[i].setProject(project);
+            }
+            testCases = testCaseService.createOrUpdateCases(testCases);
+            for (int i = 0; i < testCases.length; i++) {
+                tcs[i] = mapper.map(testCases[i], TestCaseType.class);
+            }
+            return tcs;
+        } else {
+            return new TestCaseType[0];
+        }
+    }
+
 }

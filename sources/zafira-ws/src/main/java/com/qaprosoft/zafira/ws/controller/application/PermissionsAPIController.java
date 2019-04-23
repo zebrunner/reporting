@@ -15,47 +15,40 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.PermissionService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@Api(value = "Permissions API")
+import java.util.List;
+
+@Api("Permissions API")
 @CrossOrigin
-@RequestMapping("api/permissions")
-public class PermissionsAPIController
-{
+@RequestMapping(path = "api/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController
+public class PermissionsAPIController {
 
-	@Autowired
-	private PermissionService permissionService;
+    @Autowired
+    private PermissionService permissionService;
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Get all permissions", nickname = "getAllPermissions", httpMethod = "GET", response = List.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Permission> getAllPermissions() throws ServiceException
-	{
-		return permissionService.getAllPermissions();
-	}
+    @ResponseStatusDetails
+    @ApiOperation(value = "Get all permissions", nickname = "getAllPermissions", httpMethod = "GET", response = List.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
+    @GetMapping()
+    public List<Permission> getAllPermissions() throws ServiceException {
+        return permissionService.getAllPermissions();
+    }
+
 }
