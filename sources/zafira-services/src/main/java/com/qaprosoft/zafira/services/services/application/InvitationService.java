@@ -16,6 +16,8 @@
 package com.qaprosoft.zafira.services.services.application;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.InvitationMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.BaseSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.Invitation;
 import com.qaprosoft.zafira.models.db.User;
@@ -163,6 +165,21 @@ public class InvitationService {
     @Transactional(readOnly = true)
     public List<Invitation> getAllInvitations() {
         return invitationMapper.getAllInvitations();
+    }
+
+    @Transactional(readOnly = true)
+    public SearchResult<Invitation> search(BaseSearchCriteria sc) {
+        List<Invitation> invitations = invitationMapper.search(sc);
+        Integer totalCount = invitationMapper.searchCount(sc);
+
+        SearchResult<Invitation> sr = new SearchResult<>();
+        sr.setPage(sc.getPage());
+        sr.setPageSize(sc.getPageSize());
+        sr.setSortOrder(sc.getSortOrder());
+
+        sr.setResults(invitations);
+        sr.setTotalResults(totalCount);
+        return sr;
     }
 
     @Transactional(rollbackFor = Exception.class)

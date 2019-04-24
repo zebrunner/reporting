@@ -204,10 +204,10 @@ public class TestRunPageTest extends AbstractTest
 	public void verifySendAsEmailTest()
 	{
 		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 25);
-		String email = userMapper.getUserSearchCount(new UserSearchCriteria()) > 2 ? userMapper.searchUsers(new UserSearchCriteria()
+		String email = userMapper.getUserSearchCount(new UserSearchCriteria(), false) > 2 ? userMapper.searchUsers(new UserSearchCriteria()
 		{
 			{
-				setId(3L);
+				setQuery("3");
 			}
 		}, false).get(0).getEmail() : new UserAPIService().createUsers(2).get(0).getEmail();
 		testRunPage = (TestRunPage) testRunPage.reload();

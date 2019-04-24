@@ -254,7 +254,7 @@ public class UserService implements TenancyDbInitial {
         results.setPageSize(sc.getPageSize());
         results.setSortOrder(sc.getSortOrder());
         results.setResults(userMapper.searchUsers(sc, publicDetails));
-        results.setTotalResults(userMapper.getUserSearchCount(sc));
+        results.setTotalResults(userMapper.getUserSearchCount(sc, publicDetails));
         return results;
     }
 

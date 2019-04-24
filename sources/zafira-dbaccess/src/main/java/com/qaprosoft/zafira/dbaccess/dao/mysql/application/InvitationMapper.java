@@ -15,7 +15,9 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.BaseSearchCriteria;
 import com.qaprosoft.zafira.models.db.Invitation;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -34,4 +36,9 @@ public interface InvitationMapper
 	void deleteInvitationById(Long id);
 
 	void deleteInvitationByEmail(String email);
+
+	List<Invitation> search(@Param("sc") BaseSearchCriteria sc);
+
+	Integer searchCount(@Param("sc") BaseSearchCriteria sc);
+
 }

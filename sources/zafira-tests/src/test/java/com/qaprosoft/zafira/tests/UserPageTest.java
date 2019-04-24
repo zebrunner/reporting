@@ -243,7 +243,7 @@ public class UserPageTest extends AbstractTest
 		completableFuture.get();
 		userPage.reload();
 		userPage.waitUntilPageIsLoaded();
-		int totalCount = userMapper.getUserSearchCount(new UserSearchCriteria());
+		int totalCount = userMapper.getUserSearchCount(new UserSearchCriteria(), false);
 		Assert.assertEquals(userPage.getPaginationBlock().getCountOfPageElementsText(), String.format(COUNT_OF_PAGE_ELEMENTS, 1, 20, totalCount), "Count of user menu buttons is not 20");
 		userPageService.goToNextPage();
 		Assert.assertEquals(userPageService.getUserTableRowsCount(), 20, "Count of user menu buttons is not 20");

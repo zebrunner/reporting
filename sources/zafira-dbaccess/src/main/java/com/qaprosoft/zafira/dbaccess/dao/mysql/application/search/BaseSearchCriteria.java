@@ -15,39 +15,25 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application.search;
 
-import java.util.Date;
+public class BaseSearchCriteria extends SearchCriteria {
 
-public class UserSearchCriteria extends BaseSearchCriteria implements DateSearchCriteria
-{
+    private String query;
+    private String orderBy;
 
-	private Date date;
-	private Date fromDate;
-	private Date toDate;
+    public String getQuery() {
+        return query;
+    }
 
-	public Date getDate()
-	{
-		return date;
-	}
+    public void setQuery(String query) {
+        this.query = query;
+    }
 
-	public void setDate(Date date)
-	{
-		this.date = date;
-	}
+    public String getOrderBy() {
+        return orderBy;
+    }
 
-	public Date getFromDate() {
-		return fromDate;
-	}
-
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
-
-	public Date getToDate() {
-		return toDate;
-	}
-
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
+    public void setOrderBy(String orderBy) {
+        this.orderBy = orderBy;
+    }
 
 }

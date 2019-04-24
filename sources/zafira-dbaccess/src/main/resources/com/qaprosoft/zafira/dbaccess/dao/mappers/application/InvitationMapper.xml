@@ -30,6 +30,12 @@
 				U.USERNAME AS USER_USERNAME,
 				I.MODIFIED_AT AS INVITATION_MODIFIED_AT,
 				I.CREATED_AT AS INVITATION_CREATED_AT
+		]]>
+		<include refid="getInvitationFromClause"/>
+	</sql>
+
+	<sql id="getInvitationFromClause">
+		<![CDATA[
 			FROM
 				INVITATIONS I
 			LEFT JOIN
@@ -55,6 +61,35 @@
 
 	<select id="getAllInvitations" resultMap="InvitationResultMap">
 		<include refid="getInvitation" />
+	</select>
+
+	<sql id="searchWhereClause">
+		<if test="null != sc.query">
+			<![CDATA[
+				WHERE
+				   LOWER(I.EMAIL) LIKE LOWER(CONCAT('%', #{sc.query}, '%'))
+				   OR I.STATUS = #{sc.query}
+				   OR I.SOURCE = #{sc.query}
+			]]>
+		</if>
+	</sql>
+
+	<select id="search" resultMap="InvitationResultMap">
+		<include refid="getInvitation" />
+		<include refid="searchWhereClause"/>
+		<![CDATA[
+			ORDER BY I.ID
+			LIMIT #{sc.pageSize} OFFSET #{sc.offset}
+		]]>
+	</select>
+
+	<select id="searchCount" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT
+				COUNT(*)
+		]]>
+		<include refid="getInvitationFromClause"/>
+		<include refid="searchWhereClause"/>
 	</select>
 
 	<sql id="deleteInvitationSql">
