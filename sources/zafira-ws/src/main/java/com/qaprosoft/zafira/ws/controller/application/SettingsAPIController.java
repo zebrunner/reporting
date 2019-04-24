@@ -49,9 +49,11 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Api("Settings API")
 @CrossOrigin
+@RestController
 @RequestMapping("api/settings")
 public class SettingsAPIController extends AbstractController {
 
