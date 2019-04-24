@@ -13,22 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.ws.util.dozer;
+package com.qaprosoft.zafira.services.services.application.emails;
 
-import java.util.ArrayList;
-import java.util.List;
+public class ForgotPasswordEmail extends AbstractEmail {
 
-import org.dozer.Mapper;
+    private static final String SUBJECT = "Password reset";
 
-public class DozerCollectionUtils
-{
-	public static <T, U> List<U> mapListToList(List<T> sourceList, Class<U> destinationClass, Mapper mapper)
-	{
-		List<U> destinationList = new ArrayList<>();
-		for (T sourceObject : sourceList)
-		{
-			destinationList.add(mapper.map(sourceObject, destinationClass));
-		}
-		return destinationList;
-	}
+    private final String token;
+
+    public ForgotPasswordEmail(String token, String zafiraLogoURL, String workspaceURL) {
+        super(SUBJECT, EmailType.FORGOT_PASSWORD, zafiraLogoURL, workspaceURL);
+        this.token = token;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
 }

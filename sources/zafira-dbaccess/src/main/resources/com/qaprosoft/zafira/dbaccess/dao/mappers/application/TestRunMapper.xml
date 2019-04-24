@@ -233,12 +233,8 @@
 		]]>
 	</select>
 
-	<sql id="filterTemplate">
-		${filterSearchCriteria.filterTemplate}
-	</sql>
-
-	<sql id="filterSearchCountTemplate">
-		${filterSearchCriteria.filterSearchCountTemplate}
+	<sql id="filterWhereClause">
+		${filterSearchCriteria.filterWhereClause}
 	</sql>
 
 	<sql id="testRunSearchWhereClause">
@@ -321,12 +317,12 @@
 	</sql>
 
 	<select id="searchTestRuns" resultMap="TestRunResultMap">
+		<include refid="getTestRunFull" />
 		<choose>
 			<when test="null != filterSearchCriteria">
-				<include refid="filterTemplate"/>
+				<include refid="filterWhereClause"/>
 			</when>
 			<otherwise>
-				<include refid="getTestRunFull" />
 				<include refid="testRunSearchWhereClause"/>
 			</otherwise>
 		</choose>
@@ -346,17 +342,17 @@
 	</select>
 
 	<select id="getTestRunsSearchCount" resultType="java.lang.Integer">
-		<choose>
-			<when test="null != filterSearchCriteria">
-				<include refid="filterSearchCountTemplate"/>
-			</when>
-			<otherwise>
-			<![CDATA[
+		<![CDATA[
 				SELECT
 					COUNT(*)
 			]]>
-			<include refid="testRunFullJoinPart"/>
-			<include refid="testRunSearchWhereClause"/>
+		<include refid="testRunFullJoinPart"/>
+		<choose>
+			<when test="null != filterSearchCriteria">
+				<include refid="filterWhereClause"/>
+			</when>
+			<otherwise>
+				<include refid="testRunSearchWhereClause"/>
 			</otherwise>
 		</choose>
     </select>

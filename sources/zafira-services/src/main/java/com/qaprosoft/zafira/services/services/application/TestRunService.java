@@ -80,11 +80,19 @@ public class TestRunService
 	public static final String DEFAULT_PROJECT = "UNKNOWN";
 
 	public enum FailureCause {
-		UNRECOGNIZED_FAILURE,
-		COMPILATION_FAILURE,
-		TIMED_OUT,
-		BUILD_FAILURE,
-		ABORTED
+		UNRECOGNIZED_FAILURE("UNRECOGNIZED FAILURE"),
+		COMPILATION_FAILURE("COMPILATION FAILURE"),
+		TIMED_OUT("TIMED OUT"),
+		BUILD_FAILURE("BUILD FAILURE"),
+		ABORTED("ABORTED");
+
+		private String cause;
+		public String getCause() {
+			return this.cause;
+		}
+		FailureCause(String cause) {
+			this.cause = cause;
+		}
 	}
 
 	@Autowired
@@ -228,9 +236,9 @@ public class TestRunService
 	}
 
 	@Transactional(readOnly = true)
-	public TestRun getLatestJobTestRunByBranchAndJobName(String branch, String jobName) throws ServiceException
+	public TestRun getLatestJobTestRunByBranchAndJobURL(String branch, String jobURL) throws ServiceException
 	{
-		return testRunMapper.getLatestJobTestRunByBranch(branch, jobsService.getJobByName(jobName).getId());
+		return testRunMapper.getLatestJobTestRunByBranch(branch, jobsService.getJobByJobURL(jobURL).getId());
 	}
 
 	@Transactional(rollbackFor = Exception.class)
@@ -241,8 +249,8 @@ public class TestRunService
 		TestRun existingRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
 		if(existingRun == null || Status.QUEUED.equals(existingRun.getStatus()))
 		{
-			testRun = getLatestJobTestRunByBranchAndJobName(queueTestRunParams.getBranch(),
-					queueTestRunParams.getJobName());
+			testRun = getLatestJobTestRunByBranchAndJobURL(queueTestRunParams.getBranch(),
+					queueTestRunParams.getJobUrl());
 			if (testRun != null)
 			{
 				Long latestTestRunId = testRun.getId();
@@ -465,7 +473,7 @@ public class TestRunService
 			{
 				for (Test test : tests)
 				{
-					if (IN_PROGRESS.equals(test.getStatus()) || QUEUED.equals(test.getStatus()))
+					if (IN_PROGRESS.equals(test.getStatus()))
 					{
 						testService.skipTest(test);
 					}
@@ -616,7 +624,9 @@ public class TestRunService
     {
         boolean failure = false;
         if(StringUtils.isNotEmpty(comments)){
-            if(comments.contains(FailureCause.BUILD_FAILURE.name()) || comments.contains(FailureCause.COMPILATION_FAILURE.name())){
+            if(comments.contains(FailureCause.BUILD_FAILURE.getCause()) ||
+					comments.contains(FailureCause.COMPILATION_FAILURE.getCause()) ||
+					comments.contains(FailureCause.UNRECOGNIZED_FAILURE.getCause())){
                 failure = true;
             }
         }

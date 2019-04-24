@@ -31,10 +31,15 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -44,50 +49,55 @@ import java.util.List;
 
 import static com.qaprosoft.zafira.models.dto.aws.FileUploadType.Type;
 
-@Api(value = "Upload files API")
-@Controller
+@Api("Upload files API")
 @CrossOrigin
-@RequestMapping("api/upload")
-public class UploadController extends AbstractController
-{
+@RequestMapping(path = "api/upload", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController
+public class UploadController extends AbstractController {
 
-	@Autowired
-	private AmazonService amazonService;
+    @Autowired
+    private AmazonService amazonService;
 
-	@Autowired
-	private SettingsService settingsService;
+    @Autowired
+    private SettingsService settingsService;
 
-	@Autowired
-	private EmailService emailService;
+    @Autowired
+    private EmailService emailService;
 
-	@ApiOperation(value = "Upload file", nickname = "uploadFile", httpMethod = "POST", response = String.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody String uploadFile(@RequestHeader(value = "FileType") Type type,
-			@RequestParam(value = "file") MultipartFile file) throws ServiceException
-	{
-		return String.format("{\"url\": \"%s\"}", amazonService.saveFile(new FileUploadType(file, type)));
-	}
+    @ApiOperation(value = "Upload file", nickname = "uploadFile", httpMethod = "POST", response = String.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PostMapping()
+    public String uploadFile(@RequestHeader("FileType") Type type, @RequestParam("file") MultipartFile file) throws ServiceException {
+        return String.format("{\"url\": \"%s\"}", amazonService.saveFile(new FileUploadType(file, type)));
+    }
 
-	@ApiOperation(value = "Upload setting file", nickname = "uploadSettingFile", httpMethod = "POST", response = String.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-	@RequestMapping(value = "setting/{tool}/{settingName}", method = RequestMethod.POST)
-	public void uploadSettingFile(@RequestParam(value = "file") MultipartFile file, @PathVariable(value = "tool") Setting.Tool tool,
-								  @PathVariable(value = "settingName") String settingName) throws Exception {
-		settingsService.createSettingFile(file.getBytes(), file.getOriginalFilename(), tool, settingName);
-	}
+    @ApiOperation(value = "Upload setting file", nickname = "uploadSettingFile", httpMethod = "POST", response = String.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PostMapping("/setting/{tool}/{settingName}")
+    public void uploadSettingFile(
+            @RequestParam("file") MultipartFile file,
+            @PathVariable("tool") Setting.Tool tool,
+            @PathVariable("settingName") String settingName
+    ) throws Exception {
+        settingsService.createSettingFile(file.getBytes(), file.getOriginalFilename(), tool, settingName);
+    }
 
-	@ApiOperation(value = "Send image by email", nickname = "sendImageByEmail", httpMethod = "POST")
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-	@RequestMapping(value = "email", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void sendImageByEmail(@RequestParam(value = "file") MultipartFile file, @ModelAttribute EmailType email) throws ServiceException, IOException {
-		List<Attachment> attachments = new ArrayList<>();
-		File attachment = File.createTempFile(FilenameUtils.getName(file.getOriginalFilename()), "." + FilenameUtils.getExtension(file.getOriginalFilename()));
-		file.transferTo(attachment);
-		attachments.add(new Attachment(email.getSubject(), attachment));
-		emailService.sendEmail(new CommonEmail(email.getSubject(), email.getText(), attachments), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
-	}
+    @ApiOperation(value = "Send image by email", nickname = "sendImageByEmail", httpMethod = "POST")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PostMapping("/email")
+    public void sendImageByEmail(@RequestParam("file") MultipartFile file, @ModelAttribute EmailType email) throws ServiceException, IOException {
+        List<Attachment> attachments = new ArrayList<>();
+        File attachment = File.createTempFile(
+                FilenameUtils.getName(file.getOriginalFilename()),
+                "." + FilenameUtils.getExtension(file.getOriginalFilename())
+        );
+        file.transferTo(attachment);
+        attachments.add(new Attachment(email.getSubject(), attachment));
+        emailService.sendEmail(new CommonEmail(email.getSubject(), email.getText(), attachments), email.getRecipients()
+                                                                                                       .trim()
+                                                                                                       .replaceAll(",", " ")
+                                                                                                       .replaceAll(";", " ")
+                                                                                                       .split(" "));
+    }
+
 }

@@ -15,158 +15,155 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.Valid;
-import javax.ws.rs.QueryParam;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
+import com.qaprosoft.zafira.models.db.AbstractEntity;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.JobView;
 import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.JobType;
+import com.qaprosoft.zafira.models.dto.JobUrlType;
 import com.qaprosoft.zafira.models.dto.JobViewType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.JobsService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
+import com.qaprosoft.zafira.services.services.application.UserService;
+import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections4.CollectionUtils;
+import org.dozer.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@Api(value = "Jobs API")
+import javax.validation.Valid;
+import javax.ws.rs.QueryParam;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@Api("Jobs API")
 @CrossOrigin
-@RequestMapping("api/jobs")
-public class JobsAPIController
-{
+@RequestMapping(path = "api/jobs", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController
+public class JobsAPIController extends AbstractController {
 
-	@Autowired
-	private Mapper mapper;
+    @Autowired
+    private Mapper mapper;
 
-	@Autowired
-	private JobsService jobsService;
+    @Autowired
+    private JobsService jobsService;
 
-	@Autowired
-	private TestRunService testRunService;
+    @Autowired
+    private TestRunService testRunService;
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Create job", nickname = "createJob", httpMethod = "POST", response = JobType.class)
-	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody JobType createJob(@RequestBody @Valid JobType job,
-			@RequestHeader(value = "Project", required = false) String project) throws
-			ServiceException
-	{
-		return mapper.map(jobsService.createOrUpdateJob(mapper.map(job, Job.class)), JobType.class);
-	}
+    @Autowired
+    private UserService userService;
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Get all jobs", nickname = "getAllJobs", httpMethod = "GET", response = List.class)
-	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Job> getAllJobs() throws ServiceException
-	{
-		return jobsService.getAllJobs();
-	}
+    @ResponseStatusDetails
+    @ApiOperation(value = "Create job", nickname = "createJob", httpMethod = "POST", response = JobType.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PostMapping()
+    public JobType createJob(@RequestBody @Valid JobType job) throws ServiceException {
+        return mapper.map(jobsService.createOrUpdateJob(mapper.map(job, Job.class)), JobType.class);
+    }
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Get latest job test runs", nickname = "getLatestJobTestRuns", httpMethod = "POST", response = Map.class)
-	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "views/{id}/tests/runs", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<Long, TestRun> getLatestJobTestRuns(@QueryParam("env") String env,
-			@RequestBody @Valid List<JobViewType> jobViews) throws ServiceException
-	{
-		List<Long> jobIds = new ArrayList<>();
-		for (JobViewType jobView : jobViews)
-		{
-			jobIds.add(jobView.getJob().getId());
-		}
-		return testRunService.getLatestJobTestRuns(env, jobIds);
-	}
+    @ResponseStatusDetails
+    @ApiOperation(value = "Create job by url", nickname = "createJobByUrl", httpMethod = "POST", response = JobType.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PostMapping("/url")
+    public JobType createJobByUrl(@RequestBody @Valid JobUrlType jobUrl) throws ServiceException {
+        User user = userService.getUserById(getPrincipalId());
+        return mapper.map(jobsService.createOrUpdateJobByURL(jobUrl.getJobUrlValue(), user), JobType.class);
+    }
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Create job view", nickname = "createJobViews", httpMethod = "POST", response = List.class)
-	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "views", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Secured({ "ROLE_ADMIN" })
-	public @ResponseBody List<JobViewType> createJobViews(@RequestBody @Valid List<JobViewType> jobViews)
-			throws ServiceException
-	{
-		for (JobViewType jobView : jobViews)
-		{
-			jobView = mapper.map(jobsService.createJobView(mapper.map(jobView, JobView.class)), JobViewType.class);
-		}
-		return jobViews;
-	}
+    @ResponseStatusDetails
+    @ApiOperation(value = "Get all jobs", nickname = "getAllJobs", httpMethod = "GET", response = List.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @GetMapping()
+    public List<Job> getAllJobs() throws ServiceException {
+        return jobsService.getAllJobs();
+    }
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Update job view", nickname = "updateJobViews", httpMethod = "PUT", response = List.class)
-	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "views/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Secured({ "ROLE_ADMIN" })
-	public @ResponseBody List<JobViewType> updateJobViews(@RequestBody @Valid List<JobViewType> jobViews,
-			@PathVariable(value = "id") long viewId, @QueryParam("env") String env) throws ServiceException
-	{
-		if (!CollectionUtils.isEmpty(jobViews))
-		{
-			jobsService.deleteJobViews(viewId, env);
-			for (JobViewType jobView : jobViews)
-			{
-				jobView = mapper.map(jobsService.createJobView(mapper.map(jobView, JobView.class)), JobViewType.class);
-			}
-		}
-		return jobViews;
-	}
+    @ResponseStatusDetails
+    @ApiOperation(value = "Get latest job test runs", nickname = "getLatestJobTestRuns", httpMethod = "POST", response = Map.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PostMapping("/views/{id}/tests/runs")
+    public Map<Long, TestRun> getLatestJobTestRuns(@QueryParam("env") String env, @RequestBody @Valid List<JobViewType> jobViews) throws ServiceException {
+        List<Long> jobIds = jobViews.stream()
+                                    .map(JobViewType::getJob)
+                                    .map(AbstractEntity::getId)
+                                    .collect(Collectors.toList());
+        return testRunService.getLatestJobTestRuns(env, jobIds);
+    }
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Get job views", nickname = "getJobViews", httpMethod = "GET", response = Map.class)
-	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "views/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, List<JobViewType>> getJobViews(@PathVariable(value = "id") long id)
-			throws ServiceException
-	{
-		Map<String, List<JobViewType>> jobViews = new LinkedHashMap<>();
-		for (JobView jobView : jobsService.getJobViewsByViewId(id))
-		{
-			if (!jobViews.containsKey(jobView.getEnv()))
-			{
-				jobViews.put(jobView.getEnv(), new ArrayList<>());
-			}
-			jobViews.get(jobView.getEnv()).add(mapper.map(jobView, JobViewType.class));
-		}
-		return jobViews;
-	}
+    @ResponseStatusDetails
+    @ApiOperation(value = "Create job view", nickname = "createJobViews", httpMethod = "POST", response = List.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PostMapping("/views")
+    @Secured({"ROLE_ADMIN"})
+    public List<JobViewType> createJobViews(@RequestBody @Valid List<JobViewType> jobViews) throws ServiceException {
+        for (JobViewType jobView : jobViews) {
+            jobView = mapper.map(jobsService.createJobView(mapper.map(jobView, JobView.class)), JobViewType.class);
+        }
+        return jobViews;
+    }
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Delete job views", nickname = "deleteJobViews", httpMethod = "DELETE")
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "views/{id}", method = RequestMethod.DELETE)
-	public void deleteJobViews(@PathVariable(value = "id") long viewId, @QueryParam("env") String env)
-			throws ServiceException
-	{
-		jobsService.deleteJobViews(viewId, env);
-	}
+    @ResponseStatusDetails
+    @ApiOperation(value = "Update job view", nickname = "updateJobViews", httpMethod = "PUT", response = List.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PutMapping("/views/{id}")
+    @Secured({"ROLE_ADMIN"})
+    public List<JobViewType> updateJobViews(
+            @RequestBody @Valid List<JobViewType> jobViews,
+            @PathVariable("id") long viewId,
+            @QueryParam("env") String env
+    ) throws ServiceException {
+        if (!CollectionUtils.isEmpty(jobViews)) {
+            jobsService.deleteJobViews(viewId, env);
+            for (JobViewType jobView : jobViews) {
+                jobView = mapper.map(jobsService.createJobView(mapper.map(jobView, JobView.class)), JobViewType.class);
+            }
+        }
+        return jobViews;
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Get job views", nickname = "getJobViews", httpMethod = "GET", response = Map.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @GetMapping("/views/{id}")
+    public Map<String, List<JobViewType>> getJobViews(@PathVariable("id") long id)
+            throws ServiceException {
+        Map<String, List<JobViewType>> jobViews = new LinkedHashMap<>();
+        for (JobView jobView : jobsService.getJobViewsByViewId(id)) {
+            if (!jobViews.containsKey(jobView.getEnv())) {
+                jobViews.put(jobView.getEnv(), new ArrayList<>());
+            }
+            jobViews.get(jobView.getEnv()).add(mapper.map(jobView, JobViewType.class));
+        }
+        return jobViews;
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Delete job views", nickname = "deleteJobViews", httpMethod = "DELETE")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @DeleteMapping("views/{id}")
+    public void deleteJobViews(@PathVariable("id") long viewId, @QueryParam("env") String env) throws ServiceException {
+        jobsService.deleteJobViews(viewId, env);
+    }
+
 }

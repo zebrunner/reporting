@@ -65,6 +65,7 @@ public abstract class AbstractIntegration<T extends AbstractContext> implements 
                 settings.forEach(setting -> {
                     Setting.SettingType toolSetting = Setting.SettingType.valueOf(setting.getName());
                     if(toolSetting.isRequired() && StringUtils.isBlank(setting.getValue())) {
+                        removeContext();
                         throw new IntegrationException("Integration tool '" + tool + "' data is malformed." +
                                 "Setting '" + setting.getName() + "' is required");
                     }
@@ -104,7 +105,7 @@ public abstract class AbstractIntegration<T extends AbstractContext> implements 
                 context = mainConstructor.newInstance(settings);
             }
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new InstantiationException("Cannot create context instance");
+            throw new InstantiationException("Cannot create context instance. " + e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

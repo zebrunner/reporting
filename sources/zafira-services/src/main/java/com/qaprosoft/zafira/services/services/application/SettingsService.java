@@ -160,6 +160,12 @@ public class SettingsService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public void updateIntegrationSetting(Setting setting) throws ServiceException {
+        setting.setValue(StringUtils.isBlank(setting.getValue() != null ? setting.getValue().trim() : null) ? null : setting.getValue());
+        settingsMapper.updateIntegrationSetting(setting);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public Setting createSetting(Setting setting) throws Exception {
         settingsMapper.createSetting(setting);
         return setting;
@@ -185,7 +191,7 @@ public class SettingsService {
             String decValue = cryptoService.decrypt(setting.getValue());
             setting.setValue(decValue);
         }
-        cryptoService.generateKey();
+        cryptoService.regenerateKey();
         notifyToolReinitiated(Tool.CRYPTO, TenancyContext.getTenantName());
         for (Setting setting : settings) {
             String encValue = cryptoService.encrypt(setting.getValue());

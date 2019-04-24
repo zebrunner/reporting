@@ -24,7 +24,7 @@ public class QueueTestRunParamsType implements Serializable
 {
 	private static final long serialVersionUID = 5893913105698710480L;
 
-	private String jobName;
+	private String jobUrl;
 	private String branch;
 	private String env;
 	private String ciRunId;
@@ -33,14 +33,14 @@ public class QueueTestRunParamsType implements Serializable
 	private String buildNumber;
 	private String project;
 
-	public String getJobName()
+	public String getJobUrl()
 	{
-		return jobName;
+		return jobUrl;
 	}
 
-	public void setJobName(String jobName)
+	public void setJobUrl(String jobUrl)
 	{
-		this.jobName = jobName;
+		this.jobUrl = jobUrl;
 	}
 
 	public String getBranch()

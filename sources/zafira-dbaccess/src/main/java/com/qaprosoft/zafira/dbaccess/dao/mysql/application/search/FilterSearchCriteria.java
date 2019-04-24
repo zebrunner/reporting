@@ -2,22 +2,17 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql.application.search;
 
 public class FilterSearchCriteria {
 
-    private String filterTemplate;
-    private String filterSearchCountTemplate;
+    private String filterWhereClause;
 
-    public String getFilterTemplate() {
-        return filterTemplate;
+    public FilterSearchCriteria(String filterWhereClause) {
+        this.filterWhereClause = filterWhereClause;
     }
 
-    public void setFilterTemplate(String filterTemplate) {
-        this.filterTemplate = filterTemplate;
+    public String getFilterWhereClause() {
+        return filterWhereClause;
     }
 
-    public String getFilterSearchCountTemplate() {
-        return filterSearchCountTemplate;
-    }
-
-    public void setFilterSearchCountTemplate(String filterSearchCountTemplate) {
-        this.filterSearchCountTemplate = filterSearchCountTemplate;
+    public void setFilterWhereClause(String filterWhereClause) {
+        this.filterWhereClause = filterWhereClause;
     }
 }

@@ -41,6 +41,11 @@ public class ScmAccountService {
     }
 
     @Transactional(readOnly = true)
+    public ScmAccount getScmAccountByRepo(String repo) {
+        return scmAccountMapper.getScmAccountByRepo(repo);
+    }
+
+    @Transactional(readOnly = true)
     public List<ScmAccount> getAllScmAccounts() {
         return scmAccountMapper.getAllScmAccounts();
     }

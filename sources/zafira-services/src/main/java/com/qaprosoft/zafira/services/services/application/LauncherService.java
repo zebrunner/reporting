@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.qaprosoft.zafira.models.dto.CreateLauncherParamsType;
+import com.qaprosoft.zafira.services.exceptions.ScmAccountNotFoundException;
+import org.json.JSONObject;
 import com.qaprosoft.zafira.services.services.application.integration.context.JenkinsContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -67,11 +70,13 @@ public class LauncherService {
             JenkinsContext context = jenkinsService.context();
             String launcherJobName = context.getLauncherJobName();
             if (launcherJobName != null) {
-                Job job = jobsService.getJobByName(launcherJobName);
-                if(job == null) {
-                    job = jenkinsService.getJob(launcherJobName).orElse(null);
-                    if (job != null) {
-                        job.setJenkinsHost(context.getJenkinsHost());
+                String jenkinsHost = context.getJenkinsHost();
+                String launcherJobUrl = Arrays.stream(launcherJobName.split("/")).collect(Collectors.joining("/job/", jenkinsHost + "/job/", ""));
+                Job job = jobsService.getJobByJobURL(launcherJobUrl);
+                if (job == null) {
+                    job = jenkinsService.getJobByUrl(launcherJobUrl).orElse(null);
+                    if(job != null) {
+                        job.setJenkinsHost(jenkinsHost);
                         job.setUser(owner);
                         jobsService.createJob(job);
                     }
@@ -83,9 +88,38 @@ public class LauncherService {
         return launcher;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public Launcher createLauncherForJob(CreateLauncherParamsType createLauncherParamsType, User owner) throws ServiceException {
+        String jobUrl = createLauncherParamsType.getJobUrl();
+        Job job = jobsService.getJobByJobURL(jobUrl);
+        if(job == null){
+            job = jobsService.createOrUpdateJobByURL(jobUrl, owner);
+        }
+        ScmAccount scmAccount = scmAccountService.getScmAccountByRepo(createLauncherParamsType.getRepo());
+        if(scmAccount == null)
+            throw new ScmAccountNotFoundException("Unable to find scm account for repo");
+        Launcher launcher = getLauncherByJobId(job.getId());
+        if(launcher == null){ launcher = new Launcher(); }
+        launcher.setModel(new JSONObject(createLauncherParamsType.getJobParameters()).toString());
+        if(launcher.getId() == null){
+            launcher.setJob(job);
+            launcher.setName(job.getName());
+            launcher.setScmAccount(scmAccount);
+            launcherMapper.createLauncher(launcher);
+        } else {
+            launcherMapper.updateLauncher(launcher);
+        }
+        return launcher;
+    }
+
     @Transactional(readOnly = true)
     public Launcher getLauncherById(Long id) throws ServiceException {
         return launcherMapper.getLauncherById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Launcher getLauncherByJobId(Long id) throws ServiceException {
+        return launcherMapper.getLauncherByJobId(id);
     }
 
     @Transactional(readOnly = true)

@@ -78,4 +78,5 @@ public class MonitorEmailMessageNotification implements IEmailMessage
 	{
 		return null;
 	}
+
 }

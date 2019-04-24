@@ -13,26 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.ws.servlet.listeners;
+package com.qaprosoft.zafira.services.services.application.emails;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
+public class ForgotPasswordLdapEmail extends AbstractEmail {
 
-import org.slf4j.LoggerFactory;
+    private static final String SUBJECT = "Password reset";
 
-import ch.qos.logback.classic.LoggerContext;
+    public ForgotPasswordLdapEmail(String zafiraLogoURL, String workspaceURL) {
+        super(SUBJECT, EmailType.FORGOT_PASSWORD_LDAP, zafiraLogoURL, workspaceURL);
+    }
 
-@WebListener
-public class LogbackJmxReaper implements ServletContextListener {
-	@Override
-	public void contextInitialized(ServletContextEvent sce) {
-	}
-
-	@Override
-	public void contextDestroyed(ServletContextEvent sce) {
-		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-
-		lc.stop();
-	}
 }

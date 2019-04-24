@@ -24,7 +24,7 @@
 				S.ID AS SCM_ID,
 				S.NAME AS SCM_NAME,
 				S.ACCESS_TOKEN AS SCM_ACCESS_TOKEN,
-				S.ORGANIZATION AS SCM_ORGANIOZATION,
+				S.ORGANIZATION AS SCM_ORGANIZATION,
 				S.REPO AS SCM_REPO,
 				S.AVATAR_URL AS SCM_AVATAR_URL,
 				S.REPOSITORY_URL AS SCM_REPOSITORY_URL,
@@ -40,6 +40,13 @@
         <include refid="getScmAccount" />
         <![CDATA[
 			WHERE S.ID = #{id};
+		]]>
+    </select>
+
+    <select id="getScmAccountByRepo" resultMap="ScmAccountResultMap">
+        <include refid="getScmAccount" />
+        <![CDATA[
+			WHERE S.REPO = #{repo};
 		]]>
     </select>
 

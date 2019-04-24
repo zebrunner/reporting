@@ -24,16 +24,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.Setting.Tool;
 import com.qaprosoft.zafira.models.dto.ConnectedToolType;
@@ -45,14 +42,15 @@ import com.qaprosoft.zafira.services.services.application.integration.impl.Amazo
 import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 
-@Controller
-@Api(value = "Settings API")
+@Api("Settings API")
 @CrossOrigin
 @RequestMapping("api/settings")
 public class SettingsAPIController extends AbstractController {
@@ -82,7 +80,7 @@ public class SettingsAPIController extends AbstractController {
     @ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", httpMethod = "GET", response = List.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-    @RequestMapping(value = "tool/{tool}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("tool/{tool}")
     public @ResponseBody
     List<Setting> getSettingsByTool(@PathVariable(value = "tool") Tool tool, @RequestParam(value = "decrypt", required = false) boolean decrypt) throws Exception {
         List<Setting> settings = settingsService.getSettingsByTool(tool);
@@ -106,7 +104,7 @@ public class SettingsAPIController extends AbstractController {
     @ApiOperation(value = "Get tools", nickname = "getTools", httpMethod = "GET", response = Map.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-    @RequestMapping(value = "tools", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("tools")
     public @ResponseBody
     Map<Tool, Boolean> getTools() {
         return settingsService.getToolsStatuses();
@@ -118,7 +116,7 @@ public class SettingsAPIController extends AbstractController {
     @ApiImplicitParams(
             {@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasPermission('MODIFY_INTEGRATIONS')")
-    @RequestMapping(value = "tools", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping("tools")
     public @ResponseBody
     ConnectedToolType updateSettings(@RequestBody List<Setting> settings) throws Exception {
         return settingsService.updateSettings(settings);
@@ -129,7 +127,7 @@ public class SettingsAPIController extends AbstractController {
     @ApiImplicitParams(
             {@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @ApiOperation(value = "Is tool connected", nickname = "isToolConnected", httpMethod = "GET", response = Boolean.class)
-    @RequestMapping(value = "tools/{name}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("tools/{name}")
     public @ResponseBody
     Boolean isToolConnected(@PathVariable(value = "name") Tool tool) throws ServiceException {
         return settingsService.isConnected(tool);
@@ -138,7 +136,7 @@ public class SettingsAPIController extends AbstractController {
     @ResponseStatusDetails
     @ApiOperation(value = "Get company logo URL", nickname = "getSettingValue", httpMethod = "GET", response = Setting.class)
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "companyLogo", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("companyLogo")
     public @ResponseBody
     Setting getCompanyLogoURL() throws ServiceException {
         return settingsService.getSettingByName(Setting.SettingType.COMPANY_LOGO_URL.name());
@@ -147,7 +145,7 @@ public class SettingsAPIController extends AbstractController {
     @ApiOperation(value = "Get amazon session credentials", nickname = "getSessionCredentials", httpMethod = "GET", response = SessionCredentials.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-    @RequestMapping(value = "amazon/creds", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("amazon/creds")
     public @ResponseBody
     SessionCredentials getSessionCredentials() throws ServiceException {
         return amazonService.getTemporarySessionCredentials(amazonTokenExpiration).orElse(null);
@@ -156,7 +154,7 @@ public class SettingsAPIController extends AbstractController {
     @ApiOperation(value = "Get google session credentials", nickname = "getGoogleSessionCredentials", httpMethod = "GET", response = String.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-    @RequestMapping(value = "google/creds", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @GetMapping(value = "google/creds", produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody
     String getGoogleSessionCredentials() throws ServiceException, IOException {
         return googleService.getTemporaryAccessToken(googleTokenExpiration);
@@ -168,7 +166,7 @@ public class SettingsAPIController extends AbstractController {
     @ApiImplicitParams(
             {@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_INTEGRATIONS')")
-    @RequestMapping(value = "key/regenerate", method = RequestMethod.POST)
+    @PostMapping("key/regenerate")
     public void reEncrypt() throws Exception {
         settingsService.reEncrypt();
     }

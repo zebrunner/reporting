@@ -15,36 +15,32 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
+import com.qaprosoft.zafira.models.dto.CertificationType;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.CertificationService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
-import com.qaprosoft.zafira.models.dto.CertificationType;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-
+import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
-@Controller
 @ApiIgnore
-@RequestMapping("api/certification")
-public class CertificationAPIController extends AbstractController
-{
+@RequestMapping(path = "api/certification", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController
+public class CertificationAPIController extends AbstractController {
 
-	@Autowired
-	private CertificationService certificationService;
+    @Autowired
+    private CertificationService certificationService;
 
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(path="details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody CertificationType getCertifcationDetails(@RequestParam(value="upstreamJobId") Long upstreamJobId, @RequestParam(value="upstreamJobBuildNumber") Integer upstreamJobBuildNumber) throws ServiceException
-	{
-		return certificationService.getCertificationDetails(upstreamJobId, upstreamJobBuildNumber);
-	}
+    @GetMapping("/details")
+    public CertificationType getCertifcationDetails(
+            @RequestParam("upstreamJobId") Long upstreamJobId,
+            @RequestParam("upstreamJobBuildNumber") Integer upstreamJobBuildNumber
+    ) throws ServiceException {
+        return certificationService.getCertificationDetails(upstreamJobId, upstreamJobBuildNumber);
+    }
+
 }

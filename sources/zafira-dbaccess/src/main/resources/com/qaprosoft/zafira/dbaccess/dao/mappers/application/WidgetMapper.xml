@@ -68,6 +68,9 @@
 	
 	<select id="getAllWidgets" resultMap="WidgetResultMap">
 		<include refid="getWidget" />
+		<![CDATA[
+			ORDER BY TITLE
+		]]>
 	</select>
 	
 	<select id="getWidgetById" resultMap="WidgetResultMap">

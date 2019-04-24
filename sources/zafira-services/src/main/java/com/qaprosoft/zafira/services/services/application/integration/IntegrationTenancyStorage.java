@@ -71,7 +71,7 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
     @Override
     public void initDb() {
         try {
-            cryptoService.getKey();
+            cryptoService.init();
             for(Setting setting : settingsService.getAllSettings()) {
                 if(setting.isValueForEncrypting() && !setting.isEncrypted()) {
                     setting.setValue(cryptoService.encrypt(setting.getValue()));
@@ -92,6 +92,14 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
             tenancyEntity.put(tool, typeMap);
         } else {
             ((Map<String, T>) tenancyEntity.get(tool)).put(TenancyContext.getTenantName(), t);
+        }
+    }
+
+    public synchronized static void removeContext(Setting.Tool tool) {
+        Map<String, ? extends AbstractContext> context = tenancyEntity.get(tool);
+        String tenantName = TenancyContext.getTenantName();
+        if(context != null && context.get(tenantName) != null) {
+            context.remove(tenantName);
         }
     }
 

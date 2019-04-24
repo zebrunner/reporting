@@ -94,19 +94,18 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
         return mapContext(context -> {
             String result = settingsService.getSettingByType(KEY).getValue();
             if (StringUtils.isBlank(result)) {
-                generateKey();
-                result = settingsService.getSettingByType(KEY).getValue();
+                result = generateKey();
             }
             return result;
         });
     }
 
-    public void generateKey() throws ServiceException {
+    public String generateKey() throws ServiceException {
         String key = null;
         try {
             if(! mapContext(CryptoContext::getType).isPresent()) {
                 init();
-                return;
+                return null;
             }
             key = new String(Base64
                     .encodeBase64(generateKey(context().getType(), context().getSize()).getEncoded()));
@@ -116,6 +115,12 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
         Setting keySetting = settingsService.getSettingByType(KEY);
         keySetting.setValue(key);
         settingsService.updateSetting(keySetting);
+        return key;
+    }
+
+    public void regenerateKey() {
+        String key = generateKey();
+        context().setKey(key);
     }
 
     public String getSalt() {
