@@ -26,7 +26,7 @@ public class TenantType implements Serializable {
 
 	private String tenant;
 	private String serviceUrl;
-	private Boolean multitenant;
+	private boolean artifactsProxy;
 
 	public TenantType() {
 	}
@@ -35,10 +35,10 @@ public class TenantType implements Serializable {
 		this.tenant = tenant;
 	}
 
-	public TenantType(String tenant, String serviceUrl, Boolean multitenant) {
+	public TenantType(String tenant, String serviceUrl, Boolean artifactsProxy) {
 		this.tenant = tenant;
 		this.serviceUrl = serviceUrl;
-		this.multitenant = multitenant;
+		this.artifactsProxy = artifactsProxy;
 	}
 
 	public String getTenant() {
@@ -57,11 +57,12 @@ public class TenantType implements Serializable {
 		this.serviceUrl = serviceUrl;
 	}
 
-	public boolean isMultitenant() {
-		return multitenant;
+	public boolean isArtifactsProxy() {
+		return artifactsProxy;
 	}
 
-	public void setMultitenant(boolean multitenant) {
-		this.multitenant = multitenant;
+	public void setArtifactsProxy(boolean artifactsProxy) {
+		this.artifactsProxy = artifactsProxy;
 	}
+
 }
