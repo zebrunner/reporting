@@ -26,7 +26,7 @@ public class TenantType implements Serializable {
 
 	private String tenant;
 	private String serviceUrl;
-	private boolean artifactsProxy;
+	private boolean useArtifactsProxy;
 
 	public TenantType() {
 	}
@@ -35,10 +35,10 @@ public class TenantType implements Serializable {
 		this.tenant = tenant;
 	}
 
-	public TenantType(String tenant, String serviceUrl, Boolean artifactsProxy) {
+	public TenantType(String tenant, String serviceUrl, Boolean useArtifactsProxy) {
 		this.tenant = tenant;
 		this.serviceUrl = serviceUrl;
-		this.artifactsProxy = artifactsProxy;
+		this.useArtifactsProxy = useArtifactsProxy;
 	}
 
 	public String getTenant() {
@@ -57,12 +57,12 @@ public class TenantType implements Serializable {
 		this.serviceUrl = serviceUrl;
 	}
 
-	public boolean isArtifactsProxy() {
-		return artifactsProxy;
+	public boolean useArtifactsProxy() {
+		return useArtifactsProxy;
 	}
 
-	public void setArtifactsProxy(boolean artifactsProxy) {
-		this.artifactsProxy = artifactsProxy;
+	public void setUseArtifactsProxy(boolean useArtifactsProxy) {
+		this.useArtifactsProxy = useArtifactsProxy;
 	}
 
 }

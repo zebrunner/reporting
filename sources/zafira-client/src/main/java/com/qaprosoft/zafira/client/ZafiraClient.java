@@ -1042,10 +1042,10 @@ public class  ZafiraClient
 
 				PutObjectRequest putRequest = new PutObjectRequest(this.amazonS3SessionCredentials.getBucket(), key, stream, metadata);
 				getAmazonClient().putObject(putRequest);
-				CannedAccessControlList controlList = getTenantType().isArtifactsProxy() ? CannedAccessControlList.Private : CannedAccessControlList.PublicRead;
+				CannedAccessControlList controlList = getTenantType().useArtifactsProxy() ? CannedAccessControlList.Private : CannedAccessControlList.PublicRead;
 				getAmazonClient().setObjectAcl(this.amazonS3SessionCredentials.getBucket(), key, controlList);
 
-				filePath = getTenantType().isArtifactsProxy() ? getServiceURL() + relativeKey : getFilePath(key);
+				filePath = getTenantType().useArtifactsProxy() ? getServiceURL() + relativeKey : getFilePath(key);
 
 			} catch (Exception e)
 			{
