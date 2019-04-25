@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql.application.search;
 
 import java.util.Date;
 
-public class UserSearchCriteria extends BaseSearchCriteria implements DateSearchCriteria
+public class UserSearchCriteria extends SearchCriteria implements DateSearchCriteria
 {
 
 	private Date date;

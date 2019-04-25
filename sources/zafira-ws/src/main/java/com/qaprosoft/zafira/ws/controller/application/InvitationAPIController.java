@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.BaseSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.models.db.Invitation;
 import com.qaprosoft.zafira.models.dto.auth.InvitationListType;
@@ -109,7 +109,7 @@ public class InvitationAPIController extends AbstractController {
                                                @RequestParam(value = "pageSize", required = false) String pageSize,
                                                @RequestParam(value = "orderBy", required = false) String orderBy,
                                                @RequestParam(value = "sortOrder", required = false) String sortOrder,
-                                               BaseSearchCriteria sc) throws ServiceException {
+                                               SearchCriteria sc) throws ServiceException {
         return invitationService.search(sc);
     }
 

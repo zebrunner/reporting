@@ -16,7 +16,7 @@
 package com.qaprosoft.zafira.services.services.application;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.InvitationMapper;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.BaseSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.Invitation;
@@ -168,7 +168,7 @@ public class InvitationService {
     }
 
     @Transactional(readOnly = true)
-    public SearchResult<Invitation> search(BaseSearchCriteria sc) {
+    public SearchResult<Invitation> search(SearchCriteria sc) {
         List<Invitation> invitations = invitationMapper.search(sc);
         Integer totalCount = invitationMapper.searchCount(sc);
 
