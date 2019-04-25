@@ -112,6 +112,10 @@
 
     <select id="getGroupsCount" resultType="java.lang.Integer">
         <include refid="getCount" />
+        <![CDATA[
+			WHERE
+              G.INVITABLE = TRUE
+		]]>
     </select>
 
     <select id="getAllGroups" resultMap="GroupResultMap">

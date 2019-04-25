@@ -101,74 +101,42 @@
 
 	<sql id="searchDetails">
 		<![CDATA[
-			U.ID AS USER_ID,
-			U.USERNAME AS USER_USERNAME,
-			U.PASSWORD AS USER_PASSWORD,
-			U.FIRST_NAME AS USER_FIRST_NAME,
-			U.LAST_NAME AS USER_LAST_NAME,
-			U.EMAIL AS USER_EMAIL,
-			U.SOURCE AS USER_SOURCE,
-			U.STATUS AS USER_STATUS,
-			U.COVER_PHOTO_URL AS USER_COVER_PHOTO_URL,
-			U.LAST_LOGIN AS USER_LAST_LOGIN,
-			U.MODIFIED_AT AS USER_MODIFIED_AT,
-			U.CREATED_AT AS USER_CREATED_AT
-		]]>
-	</sql>
-
-	<sql id="searchPublicDetails">
-		<![CDATA[
-			U.ID AS USER_ID,
-			U.USERNAME AS USER_USERNAME,
-			U.FIRST_NAME AS USER_FIRST_NAME,
-			U.LAST_NAME AS USER_LAST_NAME,
-			U.EMAIL AS USER_EMAIL,
-			U.COVER_PHOTO_URL AS USER_COVER_PHOTO_URL
-		]]>
-	</sql>
-	
-	<select id="searchUsers" resultMap="UserResultMap">
-		<![CDATA[
 			SELECT
-		]]>
-		<if test="publicDetails">
-			<include refid="searchPublicDetails" />
-		</if>
-		<if test="! publicDetails">
-			<include refid="searchDetails" />
-		</if>
-		<![CDATA[
+				U.ID AS USER_ID,
+				U.USERNAME AS USER_USERNAME,
+				U.PASSWORD AS USER_PASSWORD,
+				U.FIRST_NAME AS USER_FIRST_NAME,
+				U.LAST_NAME AS USER_LAST_NAME,
+				U.EMAIL AS USER_EMAIL,
+				U.SOURCE AS USER_SOURCE,
+				U.STATUS AS USER_STATUS,
+				U.COVER_PHOTO_URL AS USER_COVER_PHOTO_URL,
+				U.LAST_LOGIN AS USER_LAST_LOGIN,
+				U.MODIFIED_AT AS USER_MODIFIED_AT,
+				U.CREATED_AT AS USER_CREATED_AT
 			FROM
 				USERS U
 		]]>
+		<include refid="searchDetailsWhereClause"/>
+	</sql>
+
+	<sql id="searchDetailsWhereClause">
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
-			<if test="null != sc.id">
-	            <![CDATA[
-	               AND U.ID = #{sc.id}
-	            ]]>
-			</if>
-			<if test="null != sc.username">
-	            <![CDATA[
-	               AND LOWER(U.USERNAME) LIKE LOWER(CONCAT(#{sc.username}, '%'))
-	            ]]>
-			</if>
-			<if test="null != sc.email">
-	            <![CDATA[
-	               AND LOWER(U.EMAIL) LIKE LOWER(CONCAT(#{sc.email}, '%'))
-	            ]]>
-			</if>
-			<if test="null != sc.firstLastName">
-	            <![CDATA[
-	               AND LOWER(CONCAT(U.FIRST_NAME, ' ', U.LAST_NAME)) LIKE LOWER(CONCAT('%', #{sc.firstLastName}, '%'))
-	            ]]>
-			</if>
-			<if test="null != sc.status">
+			<if test="null != sc.query">
 				<![CDATA[
-	               AND U.STATUS = #{sc.status}
+	               OR (
+	                   U.ID::TEXT = #{sc.query}
+					   OR LOWER(U.USERNAME) LIKE LOWER(CONCAT('%', #{sc.query}, '%'))
+					   OR LOWER(U.EMAIL) LIKE LOWER(CONCAT('%', #{sc.query}, '%'))
+					   OR LOWER(U.FIRST_NAME) LIKE LOWER(CONCAT('%', #{sc.query}, '%'))
+					   OR LOWER(U.LAST_NAME) LIKE LOWER(CONCAT('%', #{sc.query}, '%'))
+					   OR U.STATUS = #{sc.query}
+					   OR U.SOURCE = #{sc.query}
+	                 )
 	            ]]>
 			</if>
 			<if test="null != sc.date">
-	            <![CDATA[
+				<![CDATA[
 	               AND U.CREATED_AT::date = #{sc.date}::date
 	            ]]>
 			</if>
@@ -183,6 +151,40 @@
 	            ]]>
 			</if>
 		</trim>
+	</sql>
+
+	<sql id="searchPublicDetails">
+		<![CDATA[
+			SELECT
+				U.ID AS USER_ID,
+				U.USERNAME AS USER_USERNAME,
+				U.FIRST_NAME AS USER_FIRST_NAME,
+				U.LAST_NAME AS USER_LAST_NAME,
+				U.EMAIL AS USER_EMAIL,
+				U.COVER_PHOTO_URL AS USER_COVER_PHOTO_URL
+			FROM
+				USERS U
+		]]>
+		<include refid="searchPublicDetailsWhereClause"/>
+	</sql>
+
+	<sql id="searchPublicDetailsWhereClause">
+		<if test="null != sc.query">
+			<![CDATA[
+			   WHERE
+				   LOWER(U.USERNAME) LIKE LOWER(CONCAT('%', #{sc.query}, '%'))
+				   OR LOWER(U.EMAIL) LIKE LOWER(CONCAT('%', #{sc.query}, '%'))
+	        ]]>
+		</if>
+	</sql>
+	
+	<select id="searchUsers" resultMap="UserResultMap">
+		<if test="publicDetails">
+			<include refid="searchPublicDetails" />
+		</if>
+		<if test="! publicDetails">
+			<include refid="searchDetails" />
+		</if>
 		<![CDATA[
 			ORDER BY CASE WHEN U.PASSWORD IS NULL OR U.PASSWORD = '' THEN 0 ELSE 1 END DESC, U.USERNAME
 			LIMIT #{sc.pageSize} OFFSET #{sc.offset}
@@ -196,53 +198,12 @@
 		FROM 
 			USERS U
 		]]>
-		<trim prefix="WHERE" prefixOverrides="AND |OR ">
-			<if test="null != id">
-	            <![CDATA[
-	               AND U.ID = #{id}
-	            ]]>
-			</if>
-			<if test="null != username">
-	            <![CDATA[
-	               AND LOWER(U.USERNAME) LIKE LOWER(CONCAT(#{username}, '%')) 
-	            ]]>
-			</if>
-			<if test="null != firstLastName">
-	            <![CDATA[
-	               AND LOWER(CONCAT(U.FIRST_NAME, ' ', U.LAST_NAME)) LIKE LOWER(CONCAT('%', #{firstLastName}, '%')) 
-	            ]]>
-			</if>
-			<if test="null != status">
-				<![CDATA[
-	               AND U.STATUS = #{status}
-	            ]]>
-			</if>
-			<if test="null != email">
-	            <![CDATA[
-	               AND LOWER(U.EMAIL) LIKE LOWER(CONCAT(#{email}, '%')) 
-	            ]]>
-			</if>
-			<if test="null != date">
-	            <![CDATA[
-	               AND U.CREATED_AT::date = #{date}::date
-	            ]]>
-			</if>
-			<if test="null != fromDate">
-				<![CDATA[
-	               AND U.CREATED_AT::date >= #{fromDate}::date
-	            ]]>
-			</if>
-			<if test="null != toDate">
-				<![CDATA[
-	               AND U.CREATED_AT::date <= #{toDate}::date
-	            ]]>
-			</if>
-			<if test="null != groupName">
-				<![CDATA[
-	               AND LOWER(G.NAME) LIKE LOWER(CONCAT(#{groupName}, '%'))
-	            ]]>
-			</if>
-		</trim>
+		<if test="publicDetails">
+			<include refid="searchPublicDetailsWhereClause" />
+		</if>
+		<if test="! publicDetails">
+			<include refid="searchDetailsWhereClause" />
+		</if>
 	</select>
 
 	<update id="updateUser">
