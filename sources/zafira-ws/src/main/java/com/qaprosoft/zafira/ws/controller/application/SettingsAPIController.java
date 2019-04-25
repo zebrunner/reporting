@@ -119,7 +119,7 @@ public class SettingsAPIController extends AbstractController {
 
     @ApiOperation(value = "Upload setting file", nickname = "uploadSettingFile", httpMethod = "POST", response = ConnectedToolType.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-    @PostMapping(value = "/tools")
+    @PostMapping("/tools")
     public ConnectedToolType uploadSettingFile(@RequestParam("tool") Tool tool,
                                                @RequestParam("name") String name,
                                                @RequestParam("file") MultipartFile file) throws Exception {
@@ -130,7 +130,7 @@ public class SettingsAPIController extends AbstractController {
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @ApiOperation(value = "Is tool connected", nickname = "isToolConnected", httpMethod = "GET", response = Boolean.class)
     @GetMapping("tools/{name}")
-    public Boolean isToolConnected(@PathVariable(value = "name") Tool tool) throws ServiceException {
+    public Boolean isToolConnected(@PathVariable("name") Tool tool) throws ServiceException {
         return settingsService.isConnected(tool);
     }
 
@@ -150,7 +150,7 @@ public class SettingsAPIController extends AbstractController {
 
     @ApiOperation(value = "Get google session credentials", nickname = "getGoogleSessionCredentials", httpMethod = "GET", response = String.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-    @GetMapping(value = "google/creds", produces = MediaType.TEXT_PLAIN_VALUE)
+    @GetMapping(path = "google/creds", produces = MediaType.TEXT_PLAIN_VALUE)
     public String getGoogleSessionCredentials() throws ServiceException, IOException {
         return googleService.getTemporaryAccessToken(googleTokenExpiration);
     }
