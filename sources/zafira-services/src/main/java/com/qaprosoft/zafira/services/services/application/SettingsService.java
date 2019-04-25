@@ -15,12 +15,18 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.qaprosoft.zafira.models.dto.ConnectedToolType;
 import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.util.EventPushService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -41,6 +47,10 @@ import com.qaprosoft.zafira.services.services.application.integration.impl.Rabbi
 
 @Service
 public class SettingsService {
+
+    private static final String ERR_MSG_MULTIPLE_TOOLS_UPDATE = "Unable to update settings for multiple tools at once";
+    private static final String ERR_MSG_NOT_EXISTS_SETTING_UPDATE = "Unable to update not existing setting '%s'";
+    private static final String ERR_MSG_INCORRECT_TOOL_SETTING_UPDATE = "Unable to update '%s': setting does not belong to specified tool '%s'";
 
     private final SettingsMapper settingsMapper;
     private final IntegrationService integrationService;
@@ -70,6 +80,13 @@ public class SettingsService {
     }
 
     @Transactional(readOnly = true)
+    public Map<Tool, Boolean> getToolsStatuses() {
+        return Arrays.stream(Tool.values())
+              .filter(tool -> !Arrays.asList(Tool.CRYPTO, Tool.ELASTICSEARCH).contains(tool))
+              .collect(Collectors.toMap(tool -> tool, tool -> integrationService.getServiceByTool(tool).isEnabledAndConnected()));
+    }
+
+    @Transactional(readOnly = true)
     public List<Setting> getSettingsByTool(Tool tool) throws ServiceException {
         List<Setting> result;
         switch (tool) {
@@ -93,25 +110,32 @@ public class SettingsService {
         return settingsMapper.getAllSettings();
     }
 
-    @Transactional(readOnly = true)
-    public List<Setting> getSettingsByIntegration(boolean isIntegrationTool) throws ServiceException {
-        return settingsMapper.getSettingsByIntegration(isIntegrationTool);
-    }
-
     public boolean isConnected(Tool tool) {
         return tool != null && !tool.equals(Tool.CRYPTO) && integrationService.getServiceByTool(tool).isEnabledAndConnected();
     }
 
     @Transactional(readOnly = true)
-    public List<Tool> getTools() {
-        return settingsMapper.getTools().stream()
-                .filter(tool -> tool != null && !tool.equals(Tool.CRYPTO))
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
     public String getSettingValue(Setting.SettingType type) throws ServiceException {
         return getSettingByName(type.name()).getValue();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public ConnectedToolType updateSettings(List<Setting> settings) throws ServiceException {
+        ConnectedToolType connectedTool = null;
+        if (!CollectionUtils.isEmpty(settings)) {
+            Tool tool = settings.get(0).getTool();
+            validateSettingsOwns(settings, tool);
+            settings.forEach(setting -> {
+                decryptSetting(setting);
+                updateSetting(setting);
+            });
+            notifyToolReinitiated(tool, TenancyContext.getTenantName());
+            connectedTool = new ConnectedToolType();
+            connectedTool.setName(tool);
+            connectedTool.setSettingList(settings);
+            connectedTool.setConnected(integrationService.getServiceByTool(tool).isEnabledAndConnected());
+        }
+        return connectedTool;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -133,15 +157,20 @@ public class SettingsService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void createSettingFile(byte[] fileBytes, String originalFileName, Tool tool, String settingName) throws Exception {
-        Setting setting = getSettingsByTool(tool).stream().filter(s -> s.getName().equals(settingName)).findFirst().orElse(null);
-        if(setting != null) {
-            setting.setFile(fileBytes);
-            setting.setValue(originalFileName);
-            updateSetting(setting);
-            integrationService.getServiceByTool(setting.getTool()).init();
-            notifyToolReinitiated(setting.getTool(), TenancyContext.getTenantName());
+    public ConnectedToolType createSettingFile(byte[] fileBytes, String originalFileName, String name, Tool tool) throws Exception {
+        Setting dbSetting = getSettingByNameSafely(name, tool);
+        if (dbSetting != null) {
+            dbSetting.setFile(fileBytes);
+            dbSetting.setValue(originalFileName);
+            updateSetting(dbSetting);
+            integrationService.getServiceByTool(dbSetting.getTool()).init();
+            notifyToolReinitiated(dbSetting.getTool(), TenancyContext.getTenantName());
         }
+        ConnectedToolType connectedToolType = new ConnectedToolType();
+        connectedToolType.setName(dbSetting.getTool());
+        connectedToolType.setSettingList(Collections.singletonList(dbSetting));
+        connectedToolType.setConnected(integrationService.getServiceByTool(dbSetting.getTool()).isEnabledAndConnected());
+        return connectedToolType;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -164,17 +193,16 @@ public class SettingsService {
     private CryptoService getCryptoMQService() {
         return integrationService.getServiceByTool(Tool.CRYPTO);
     }
-    
+
     @Transactional(readOnly = true)
-    public String getPostgresVersion() throws ServiceException
-    {
+    public String getPostgresVersion() throws ServiceException {
         return settingsMapper.getPostgresVersion();
     }
 
     /**
      * Sends message to broker to notify about changed integration.
      *
-     * @param tool that was re-initiated
+     * @param tool   that was re-initiated
      * @param tenant whose integration was updated
      */
     public void notifyToolReinitiated(Tool tool, String tenant) {
@@ -185,10 +213,45 @@ public class SettingsService {
     @RabbitListener(queues = "#{settingsQueue.name}")
     public void process(Message message) {
         ReinitEventMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
-        if (! getRabbitMQService().isSettingQueueConsumer(message.getMessageProperties().getConsumerQueue()) && integrationService.getServiceByTool(rm.getTool()) != null) {
+        if (!getRabbitMQService().isSettingQueueConsumer(message.getMessageProperties().getConsumerQueue()) && integrationService.getServiceByTool(rm.getTool()) != null) {
             TenancyContext.setTenantName(rm.getTenancy());
             integrationService.getServiceByTool(rm.getTool()).init();
         }
+    }
+
+    private void decryptSetting(Setting setting) {
+        Setting dbSetting = getSettingByNameSafely(setting.getName(), setting.getTool());
+        setting.setEncrypted(dbSetting.isEncrypted());
+        if (dbSetting.isValueForEncrypting()) {
+            if (StringUtils.isBlank(setting.getValue())) {
+                setting.setEncrypted(false);
+            } else {
+                if (!setting.getValue().equals(dbSetting.getValue())) {
+                    CryptoService cryptoService = integrationService.getServiceByTool(Tool.CRYPTO);
+                    setting.setValue(cryptoService.encrypt(setting.getValue()));
+                    setting.setEncrypted(true);
+                }
+            }
+        }
+    }
+
+    private Setting getSettingByNameSafely(String name, Tool tool) {
+        Setting setting = getSettingByName(name);
+        if (setting == null) {
+            throw new ForbiddenOperationException(String.format(ERR_MSG_NOT_EXISTS_SETTING_UPDATE, name));
+        }
+        if (!setting.getTool().equals(tool)) {
+            throw new ForbiddenOperationException(String.format(ERR_MSG_INCORRECT_TOOL_SETTING_UPDATE, setting.getName(), tool));
+        }
+        return setting;
+    }
+
+    private void validateSettingsOwns(List<Setting> settings, Tool tool) {
+        settings.forEach(setting -> {
+            if (!tool.equals(setting.getTool())) {
+                throw new ForbiddenOperationException(ERR_MSG_MULTIPLE_TOOLS_UPDATE);
+            }
+        });
     }
 
     private ElasticsearchService getElasticsearchService() {
