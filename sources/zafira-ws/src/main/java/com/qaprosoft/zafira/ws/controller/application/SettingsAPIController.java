@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.Setting.Tool;
@@ -50,11 +49,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Api("Settings API")
 @CrossOrigin
 @RestController
-@RequestMapping("api/settings")
+@RequestMapping(path = "api/settings", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SettingsAPIController extends AbstractController {
 
     private final AmazonService amazonService;
@@ -82,8 +82,7 @@ public class SettingsAPIController extends AbstractController {
     @ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping("tool/{tool}")
-    public @ResponseBody
-    List<Setting> getSettingsByTool(@PathVariable("tool") Tool tool, @RequestParam(value = "decrypt", required = false) boolean decrypt) throws Exception {
+    public List<Setting> getSettingsByTool(@PathVariable("tool") Tool tool, @RequestParam(value = "decrypt", required = false) boolean decrypt) throws Exception {
         List<Setting> settings = settingsService.getSettingsByTool(tool);
 
         if (decrypt) {
@@ -105,61 +104,61 @@ public class SettingsAPIController extends AbstractController {
     @ApiOperation(value = "Get tools", nickname = "getTools", httpMethod = "GET", response = Map.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping("tools")
-    public @ResponseBody
-    Map<Tool, Boolean> getTools() {
+    public Map<Tool, Boolean> getTools() {
         return settingsService.getToolsStatuses();
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Update settings", nickname = "settings", httpMethod = "PUT", response = List.class)
-    @ApiImplicitParams(
-            {@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiOperation(value = "Update settings", nickname = "settings", httpMethod = "PUT", response = ConnectedToolType.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasPermission('MODIFY_INTEGRATIONS')")
-    @PutMapping("tools")
-    public @ResponseBody
-    ConnectedToolType updateSettings(@RequestBody List<Setting> settings) throws Exception {
+    @PutMapping("/tools")
+    public ConnectedToolType updateSettings(@RequestBody List<Setting> settings) throws Exception {
         return settingsService.updateSettings(settings);
     }
 
+    @ApiOperation(value = "Upload setting file", nickname = "uploadSettingFile", httpMethod = "POST", response = ConnectedToolType.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PostMapping(value = "/tools")
+    public ConnectedToolType uploadSettingFile(@RequestParam("tool") Tool tool,
+                                               @RequestParam("name") String name,
+                                               @RequestParam("file") MultipartFile file) throws Exception {
+        return settingsService.createSettingFile(file.getBytes(), file.getOriginalFilename(), name, tool);
+    }
+
     @ResponseStatusDetails
-    @ApiImplicitParams(
-            {@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @ApiOperation(value = "Is tool connected", nickname = "isToolConnected", httpMethod = "GET", response = Boolean.class)
     @GetMapping("tools/{name}")
-    public @ResponseBody
-    Boolean isToolConnected(@PathVariable(value = "name") Tool tool) throws ServiceException {
+    public Boolean isToolConnected(@PathVariable(value = "name") Tool tool) throws ServiceException {
         return settingsService.isConnected(tool);
     }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get company logo URL", nickname = "getSettingValue", httpMethod = "GET", response = Setting.class)
     @GetMapping("companyLogo")
-    public @ResponseBody
-    Setting getCompanyLogoURL() throws ServiceException {
+    public Setting getCompanyLogoURL() throws ServiceException {
         return settingsService.getSettingByName(Setting.SettingType.COMPANY_LOGO_URL.name());
     }
 
     @ApiOperation(value = "Get amazon session credentials", nickname = "getSessionCredentials", httpMethod = "GET", response = SessionCredentials.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping("amazon/creds")
-    public @ResponseBody
-    SessionCredentials getSessionCredentials() throws ServiceException {
+    public SessionCredentials getSessionCredentials() throws ServiceException {
         return amazonService.getTemporarySessionCredentials(amazonTokenExpiration).orElse(null);
     }
 
     @ApiOperation(value = "Get google session credentials", nickname = "getGoogleSessionCredentials", httpMethod = "GET", response = String.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping(value = "google/creds", produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody
-    String getGoogleSessionCredentials() throws ServiceException, IOException {
+    public String getGoogleSessionCredentials() throws ServiceException, IOException {
         return googleService.getTemporaryAccessToken(googleTokenExpiration);
     }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Generate key", nickname = "generateKey", code = 201, httpMethod = "POST")
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiImplicitParams(
-            {@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_INTEGRATIONS')")
     @PostMapping("key/regenerate")
     public void reEncrypt() throws Exception {

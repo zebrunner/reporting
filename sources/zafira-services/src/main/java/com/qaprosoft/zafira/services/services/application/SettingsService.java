@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.services.services.application;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -130,7 +131,7 @@ public class SettingsService {
             });
             notifyToolReinitiated(tool, TenancyContext.getTenantName());
             connectedTool = new ConnectedToolType();
-            connectedTool.setName(tool.name());
+            connectedTool.setName(tool);
             connectedTool.setSettingList(settings);
             connectedTool.setConnected(integrationService.getServiceByTool(tool).isEnabledAndConnected());
         }
@@ -156,15 +157,20 @@ public class SettingsService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void createSettingFile(byte[] fileBytes, String originalFileName, Tool tool, String settingName) throws Exception {
-        Setting setting = getSettingsByTool(tool).stream().filter(s -> s.getName().equals(settingName)).findFirst().orElse(null);
-        if (setting != null) {
-            setting.setFile(fileBytes);
-            setting.setValue(originalFileName);
-            updateSetting(setting);
-            integrationService.getServiceByTool(setting.getTool()).init();
-            notifyToolReinitiated(setting.getTool(), TenancyContext.getTenantName());
+    public ConnectedToolType createSettingFile(byte[] fileBytes, String originalFileName, String name, Tool tool) throws Exception {
+        Setting dbSetting = getSettingByNameSafely(name, tool);
+        if (dbSetting != null) {
+            dbSetting.setFile(fileBytes);
+            dbSetting.setValue(originalFileName);
+            updateSetting(dbSetting);
+            integrationService.getServiceByTool(dbSetting.getTool()).init();
+            notifyToolReinitiated(dbSetting.getTool(), TenancyContext.getTenantName());
         }
+        ConnectedToolType connectedToolType = new ConnectedToolType();
+        connectedToolType.setName(dbSetting.getTool());
+        connectedToolType.setSettingList(Collections.singletonList(dbSetting));
+        connectedToolType.setConnected(integrationService.getServiceByTool(dbSetting.getTool()).isEnabledAndConnected());
+        return connectedToolType;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -231,7 +237,7 @@ public class SettingsService {
 
     private Setting getSettingByNameSafely(String name, Tool tool) {
         Setting setting = getSettingByName(name);
-        if(setting == null) {
+        if (setting == null) {
             throw new ForbiddenOperationException(String.format(ERR_MSG_NOT_EXISTS_SETTING_UPDATE, name));
         }
         if (!setting.getTool().equals(tool)) {
