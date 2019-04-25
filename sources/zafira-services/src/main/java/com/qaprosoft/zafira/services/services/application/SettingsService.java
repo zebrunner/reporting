@@ -16,9 +16,9 @@
 package com.qaprosoft.zafira.services.services.application;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.qaprosoft.zafira.models.dto.ConnectedToolType;
 import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
@@ -46,6 +46,10 @@ import com.qaprosoft.zafira.services.services.application.integration.impl.Rabbi
 
 @Service
 public class SettingsService {
+
+    private static final String ERR_MSG_MULTIPLE_TOOLS_UPDATE = "Unable to update settings for multiple tools at once";
+    private static final String ERR_MSG_NOT_EXISTS_SETTING_UPDATE = "Unable to update not existing setting '%s'";
+    private static final String ERR_MSG_INCORRECT_TOOL_SETTING_UPDATE = "Unable to update '%s': setting does not belong to specified tool '%s'";
 
     private final SettingsMapper settingsMapper;
     private final IntegrationService integrationService;
@@ -76,10 +80,9 @@ public class SettingsService {
 
     @Transactional(readOnly = true)
     public Map<Tool, Boolean> getToolsStatuses() {
-        Map<Tool, Boolean> toolSettings = new HashMap<>();
-        Arrays.stream(Tool.values()).filter(tool -> !Arrays.asList(Tool.CRYPTO, Tool.ELASTICSEARCH).contains(tool)).forEach(tool ->
-                toolSettings.put(tool, integrationService.getServiceByTool(tool).isEnabledAndConnected()));
-        return toolSettings;
+        return Arrays.stream(Tool.values())
+              .filter(tool -> !Arrays.asList(Tool.CRYPTO, Tool.ELASTICSEARCH).contains(tool))
+              .collect(Collectors.toMap(tool -> tool, tool -> integrationService.getServiceByTool(tool).isEnabledAndConnected()));
     }
 
     @Transactional(readOnly = true)
@@ -120,32 +123,13 @@ public class SettingsService {
         ConnectedToolType connectedTool = null;
         if (!CollectionUtils.isEmpty(settings)) {
             Tool tool = settings.get(0).getTool();
+            validateSettingsOwns(settings, tool);
             settings.forEach(setting -> {
-                if (!tool.equals(setting.getTool())) {
-                    throw new ForbiddenOperationException("Unable to update settings");
-                }
-            });
-            connectedTool = new ConnectedToolType();
-            CryptoService cryptoService = integrationService.getServiceByTool(Tool.CRYPTO);
-            settings.forEach(setting -> {
-                Setting dbSetting = getSettingByName(setting.getName());
-                if (!dbSetting.getTool().equals(setting.getTool())) {
-                    throw new ForbiddenOperationException("Unable to update settings");
-                }
-                if (setting.isValueForEncrypting()) {
-                    if (StringUtils.isBlank(setting.getValue())) {
-                        setting.setEncrypted(false);
-                    } else {
-                        if (!setting.getValue().equals(dbSetting.getValue())) {
-                            setting.setValue(cryptoService.encrypt(setting.getValue()));
-                            setting.setEncrypted(true);
-                        }
-                    }
-                }
-                setting.setEncrypted(dbSetting.isEncrypted());
+                decryptSetting(setting);
                 updateSetting(setting);
             });
             notifyToolReinitiated(tool, TenancyContext.getTenantName());
+            connectedTool = new ConnectedToolType();
             connectedTool.setName(tool.name());
             connectedTool.setSettingList(settings);
             connectedTool.setConnected(integrationService.getServiceByTool(tool).isEnabledAndConnected());
@@ -227,6 +211,41 @@ public class SettingsService {
             TenancyContext.setTenantName(rm.getTenancy());
             integrationService.getServiceByTool(rm.getTool()).init();
         }
+    }
+
+    private void decryptSetting(Setting setting) {
+        Setting dbSetting = getSettingByNameSafely(setting.getName(), setting.getTool());
+        setting.setEncrypted(dbSetting.isEncrypted());
+        if (dbSetting.isValueForEncrypting()) {
+            if (StringUtils.isBlank(setting.getValue())) {
+                setting.setEncrypted(false);
+            } else {
+                if (!setting.getValue().equals(dbSetting.getValue())) {
+                    CryptoService cryptoService = integrationService.getServiceByTool(Tool.CRYPTO);
+                    setting.setValue(cryptoService.encrypt(setting.getValue()));
+                    setting.setEncrypted(true);
+                }
+            }
+        }
+    }
+
+    private Setting getSettingByNameSafely(String name, Tool tool) {
+        Setting setting = getSettingByName(name);
+        if(setting == null) {
+            throw new ForbiddenOperationException(String.format(ERR_MSG_NOT_EXISTS_SETTING_UPDATE, name));
+        }
+        if (!setting.getTool().equals(tool)) {
+            throw new ForbiddenOperationException(String.format(ERR_MSG_INCORRECT_TOOL_SETTING_UPDATE, setting.getName(), tool));
+        }
+        return setting;
+    }
+
+    private void validateSettingsOwns(List<Setting> settings, Tool tool) {
+        settings.forEach(setting -> {
+            if (!tool.equals(setting.getTool())) {
+                throw new ForbiddenOperationException(ERR_MSG_MULTIPLE_TOOLS_UPDATE);
+            }
+        });
     }
 
     private ElasticsearchService getElasticsearchService() {

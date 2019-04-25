@@ -80,11 +80,10 @@ public class SettingsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", httpMethod = "GET", response = List.class)
-    @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping("tool/{tool}")
     public @ResponseBody
-    List<Setting> getSettingsByTool(@PathVariable(value = "tool") Tool tool, @RequestParam(value = "decrypt", required = false) boolean decrypt) throws Exception {
+    List<Setting> getSettingsByTool(@PathVariable("tool") Tool tool, @RequestParam(value = "decrypt", required = false) boolean decrypt) throws Exception {
         List<Setting> settings = settingsService.getSettingsByTool(tool);
 
         if (decrypt) {
@@ -104,7 +103,6 @@ public class SettingsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get tools", nickname = "getTools", httpMethod = "GET", response = Map.class)
-    @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping("tools")
     public @ResponseBody
@@ -114,7 +112,6 @@ public class SettingsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Update settings", nickname = "settings", httpMethod = "PUT", response = List.class)
-    @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             {@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasPermission('MODIFY_INTEGRATIONS')")
@@ -125,7 +122,6 @@ public class SettingsAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             {@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @ApiOperation(value = "Is tool connected", nickname = "isToolConnected", httpMethod = "GET", response = Boolean.class)
@@ -137,7 +133,6 @@ public class SettingsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get company logo URL", nickname = "getSettingValue", httpMethod = "GET", response = Setting.class)
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping("companyLogo")
     public @ResponseBody
     Setting getCompanyLogoURL() throws ServiceException {
@@ -145,7 +140,6 @@ public class SettingsAPIController extends AbstractController {
     }
 
     @ApiOperation(value = "Get amazon session credentials", nickname = "getSessionCredentials", httpMethod = "GET", response = SessionCredentials.class)
-    @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping("amazon/creds")
     public @ResponseBody
@@ -154,7 +148,6 @@ public class SettingsAPIController extends AbstractController {
     }
 
     @ApiOperation(value = "Get google session credentials", nickname = "getGoogleSessionCredentials", httpMethod = "GET", response = String.class)
-    @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping(value = "google/creds", produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody
