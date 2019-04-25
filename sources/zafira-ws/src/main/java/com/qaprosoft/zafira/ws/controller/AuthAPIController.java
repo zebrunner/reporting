@@ -105,14 +105,14 @@ public class AuthAPIController extends AbstractController {
     @Value("${zafira.admin.username}")
     private String adminUsername;
 
-    @Value("${zafira.multitenant}")
-    private Boolean multitenant;
+    @Value("${zafira.artifacts.useProxy:false}")
+    private boolean useArtifactsProxy;
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get current tenant", nickname = "getTenant", httpMethod = "GET", response = String.class)
     @GetMapping("/tenant")
     public TenantType getTenant() {
-        return new TenantType(TenancyContext.getTenantName(), urlResolver.getServiceURL(), multitenant);
+        return new TenantType(TenancyContext.getTenantName(), urlResolver.getServiceURL(), useArtifactsProxy);
     }
 
     @ResponseStatusDetails

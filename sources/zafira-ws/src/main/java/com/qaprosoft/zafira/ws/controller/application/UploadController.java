@@ -16,12 +16,10 @@
 package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.Attachment;
-import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.dto.EmailType;
 import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.EmailService;
-import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.emails.CommonEmail;
 import com.qaprosoft.zafira.services.services.application.integration.impl.AmazonService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
@@ -34,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,9 +56,6 @@ public class UploadController extends AbstractController {
     private AmazonService amazonService;
 
     @Autowired
-    private SettingsService settingsService;
-
-    @Autowired
     private EmailService emailService;
 
     @ApiOperation(value = "Upload file", nickname = "uploadFile", httpMethod = "POST", response = String.class)
@@ -69,17 +63,6 @@ public class UploadController extends AbstractController {
     @PostMapping()
     public String uploadFile(@RequestHeader("FileType") Type type, @RequestParam("file") MultipartFile file) throws ServiceException {
         return String.format("{\"url\": \"%s\"}", amazonService.saveFile(new FileUploadType(file, type)));
-    }
-
-    @ApiOperation(value = "Upload setting file", nickname = "uploadSettingFile", httpMethod = "POST", response = String.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-    @PostMapping("/setting/{tool}/{settingName}")
-    public void uploadSettingFile(
-            @RequestParam("file") MultipartFile file,
-            @PathVariable("tool") Setting.Tool tool,
-            @PathVariable("settingName") String settingName
-    ) throws Exception {
-        settingsService.createSettingFile(file.getBytes(), file.getOriginalFilename(), tool, settingName);
     }
 
     @ApiOperation(value = "Send image by email", nickname = "sendImageByEmail", httpMethod = "POST")

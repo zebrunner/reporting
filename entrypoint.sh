@@ -79,6 +79,7 @@ echo zafira.crypto_salt=$ZAFIRA_CRYPTO_SALT >> $CATALINA_HOME/conf/catalina.prop
 echo zafira.scm.github.client.id=$ZAFIRA_GITHUB_CLIENT_ID >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.scm.github.client.secret=$ZAFIRA_GITHUB_CLIENT_SECRET >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.debugMode=$ZAFIRA_DEBUG_MODE >> $CATALINA_HOME/conf/catalina.properties
+echo zafira.artifacts.useProxy=$ZAFIRA_ARTIFACTS_USE_PROXY >> $CATALINA_HOME/conf/catalina.properties
 # Shared folder for RSA keys usage
 echo shared.loader=/usr/local/tomcat/shared >> $CATALINA_HOME/conf/catalina.properties
 
