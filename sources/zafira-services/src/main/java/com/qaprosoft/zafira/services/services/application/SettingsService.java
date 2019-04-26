@@ -21,12 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.qaprosoft.zafira.models.dto.ConnectedToolType;
-import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
-import com.qaprosoft.zafira.services.util.EventPushService;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -40,10 +35,15 @@ import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.Setting.SettingType;
 import com.qaprosoft.zafira.models.db.Setting.Tool;
+import com.qaprosoft.zafira.models.dto.ConnectedToolType;
+import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.ElasticsearchService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.RabbitMQService;
+import com.qaprosoft.zafira.services.util.EventPushService;
 
 @Service
 public class SettingsService {
