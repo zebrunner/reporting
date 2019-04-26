@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.configurations;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -29,6 +30,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfiguration {
 
+    @Value("${zafira.debugMode:false}")
+    private boolean debugMode;
+
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -37,6 +41,7 @@ public class SwaggerConfiguration {
                 .apis(RequestHandlerSelectors.basePackage("com.qaprosoft.zafira.ws"))
                 .paths(PathSelectors.ant("/**"))
                 .build()
+                .enable(debugMode)
                 .apiInfo(apiInfo());
     }
 

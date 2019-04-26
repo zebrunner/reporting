@@ -122,14 +122,14 @@ public class AuthAPIController extends AbstractController {
         AuthTokenType authToken;
         try {
             Authentication authentication;
-            User user = userService.getUserByUsername(credentials.getUsername());
+            User user = userService.getUserByUsernameOrEmail(credentials.getUsername());
 
             final AuthenticationManager authenticationManager = user == null
                     || user.getSource().equals(User.Source.LDAP) ? authenticationLdapManager : authenticationInternalManager;
 
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword()));
 
-            user = userService.getUserByUsername(credentials.getUsername());
+            user = userService.getUserByUsernameOrEmail(credentials.getUsername());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 

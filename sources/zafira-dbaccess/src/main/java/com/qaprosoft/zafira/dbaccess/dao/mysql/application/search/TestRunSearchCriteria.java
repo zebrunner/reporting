@@ -25,11 +25,8 @@ public class TestRunSearchCriteria extends SearchCriteria implements DateSearchC
 {
 	private Long id;
 	private Long testSuiteId;
-	private String testSuite;
-	private String executionURL;
 	private String environment;
 	private String platform;
-	private String appVersion;
 	private Date date;
 	private Date fromDate;
 	private Date toDate;
@@ -60,26 +57,6 @@ public class TestRunSearchCriteria extends SearchCriteria implements DateSearchC
 	public void setTestSuiteId(Long testSuiteId)
 	{
 		this.testSuiteId = testSuiteId;
-	}
-
-	public String getTestSuite()
-	{
-		return testSuite;
-	}
-
-	public void setTestSuite(String testSuite)
-	{
-		this.testSuite = testSuite;
-	}
-
-	public String getExecutionURL()
-	{
-		return executionURL;
-	}
-
-	public void setExecutionURL(String executionURL)
-	{
-		this.executionURL = executionURL;
 	}
 
 	public String getEnvironment()
@@ -150,16 +127,6 @@ public class TestRunSearchCriteria extends SearchCriteria implements DateSearchC
 	public void setStatus(Status status)
 	{
 		this.status = status;
-	}
-
-	public String getAppVersion()
-	{
-		return appVersion;
-	}
-
-	public void setAppVersion(String appVersion)
-	{
-		this.appVersion = appVersion;
 	}
 
 	public Boolean getReviewed() 

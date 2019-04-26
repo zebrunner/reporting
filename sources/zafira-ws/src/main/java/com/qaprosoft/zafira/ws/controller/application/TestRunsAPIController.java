@@ -237,17 +237,22 @@ public class TestRunsAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
+    @ApiOperation(value = "Search test runs", nickname = "searchTestRuns", httpMethod = "GET", response = SearchResult.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-    @ApiOperation(value = "Search test runs", nickname = "searchTestRuns", httpMethod = "POST", response = SearchResult.class)
-    @PostMapping("/search")
-    public SearchResult<TestRun> searchTestRuns(
-            @RequestParam(value = "filterId", required = false) Long filterId, @RequestBody TestRunSearchCriteria sc
-    ) throws ServiceException {
-        FilterType filterType = filterId != null ? mapper.map(filterService.getFilterById(filterId), FilterType.class)
-                : null;
-        if (filterType != null) {
-            String whereClause = filterService.getTemplate(filterType, TEST_RUN_TEMPLATE);
-            sc.setFilterSearchCriteria(new FilterSearchCriteria(whereClause));
+    @GetMapping("/search")
+    public SearchResult<TestRun> searchTestRuns(@RequestParam(value = "query", required = false) String query,
+                                                @RequestParam(value = "page", required = false) String page,
+                                                @RequestParam(value = "pageSize", required = false) String pageSize,
+                                                @RequestParam(value = "orderBy", required = false) String orderBy,
+                                                @RequestParam(value = "sortOrder", required = false) String sortOrder,
+                                                TestRunSearchCriteria sc,
+                                                @RequestParam(value = "filterId", required = false) Long filterId) throws ServiceException {
+        if (filterId != null) {
+            FilterType filterType = mapper.map(filterService.getFilterById(filterId), FilterType.class);
+            if(filterType != null) {
+                String whereClause = filterService.getTemplate(filterType, TEST_RUN_TEMPLATE);
+                sc.setFilterSearchCriteria(new FilterSearchCriteria(whereClause));
+            }
         }
         return testRunService.searchTestRuns(sc);
     }
