@@ -57,12 +57,11 @@ public class TenantType implements Serializable {
 		this.serviceUrl = serviceUrl;
 	}
 
-	public boolean useArtifactsProxy() {
+	public boolean isUseArtifactsProxy() {
 		return useArtifactsProxy;
 	}
 
 	public void setUseArtifactsProxy(boolean useArtifactsProxy) {
 		this.useArtifactsProxy = useArtifactsProxy;
 	}
-
 }
