@@ -181,7 +181,7 @@ public class UserType extends AbstractType
 	@AssertTrue(message = "Email confirmation not matching")
 	@JsonIgnore
 	public boolean isEmailConfirmationValid() {
-		return this.email != null || new EmailValidator().isValid(this.email, null);
+		return this.email == null || new EmailValidator().isValid(this.email, null);
 	}
 
 }
