@@ -241,77 +241,71 @@
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="null != id">
 				<![CDATA[
-						   AND TR.ID = #{id}
-						]]>
+				   AND TR.ID = #{id}
+				]]>
 			</if>
-			<if test="null != testSuite">
+			<if test="null != query">
 				<![CDATA[
-						   AND LOWER(TS.NAME) LIKE LOWER(CONCAT('%', #{testSuite}, '%'))
-						]]>
+					AND (
+				   		LOWER(TS.NAME) LIKE LOWER(CONCAT('%', #{query}, '%'))
+				   		OR LOWER(CONCAT(J.JOB_URL, '/', TR.BUILD_NUMBER)) LIKE LOWER(CONCAT('%', #{query}, '%'))
+				   		OR LOWER(TR.APP_VERSION) LIKE LOWER(CONCAT('%', #{query}, '%'))
+			   		)
+				]]>
 			</if>
 			<if test="null != testSuiteId">
 				<![CDATA[
-						   AND TS.ID = #{testSuiteId}
-						]]>
-			</if>
-			<if test="null != executionURL">
-				<![CDATA[
-						   AND LOWER(CONCAT(J.JOB_URL, '/', TR.BUILD_NUMBER)) LIKE LOWER(CONCAT('%', #{executionURL}, '%'))
-						]]>
+				   AND TS.ID = #{testSuiteId}
+				]]>
 			</if>
 			<if test="null != environment">
 				<![CDATA[
-						   AND LOWER(TR.ENV) = LOWER(#{environment})
-						]]>
+				   AND LOWER(TR.ENV) = LOWER(#{environment})
+				]]>
 			</if>
 			<if test="null != platform">
 				<![CDATA[
-						   AND LOWER(TR.PLATFORM) = LOWER(#{platform})
-						]]>
-			</if>
-			<if test="null != appVersion">
-				<![CDATA[
-						   AND LOWER(TR.APP_VERSION) LIKE LOWER(CONCAT('%', #{appVersion}, '%'))
-						]]>
+				   AND LOWER(TR.PLATFORM) = LOWER(#{platform})
+				]]>
 			</if>
 			<if test="null != date">
 				<![CDATA[
-						   AND TR.STARTED_AT BETWEEN #{date}::timestamp AND #{date}::timestamp + '24:00:00'::interval
-						]]>
+				   AND TR.STARTED_AT BETWEEN #{date}::timestamp AND #{date}::timestamp + '24:00:00'::interval
+				]]>
 			</if>
 			<if test="null != fromDate">
 				<![CDATA[
-						   AND TR.STARTED_AT::date >= #{fromDate}::date
-						]]>
+				   AND TR.STARTED_AT::date >= #{fromDate}::date
+				]]>
 			</if>
 			<if test="null != toDate">
 				<![CDATA[
-						   AND TR.STARTED_AT::date <= #{toDate}::date
-						]]>
+				   AND TR.STARTED_AT::date <= #{toDate}::date
+				]]>
 			</if>
 			<if test="null != projects">
 				<foreach item="project" index="index" collection="projects" open="AND (" separator=" OR " close=")">
 					<if test="null != project.id">
 						<![CDATA[
-										TR.PROJECT_ID = #{project.id}
-								]]>
+							TR.PROJECT_ID = #{project.id}
+						]]>
 					</if>
 				</foreach>
 			</if>
 			<if test="null != status">
 				<![CDATA[
-						   AND TR.STATUS = #{status}
-						]]>
+				   AND TR.STATUS = #{status}
+				]]>
 			</if>
 			<if test="null == status and null == id">
 				<![CDATA[
-						   AND TR.STATUS <> 'QUEUED'
-						]]>
+				   AND TR.STATUS <> 'QUEUED'
+				]]>
 			</if>
 			<if test="null != reviewed">
 				<![CDATA[
-						   AND TR.REVIEWED = #{reviewed}
-						]]>
+				   AND TR.REVIEWED = #{reviewed}
+				]]>
 			</if>
 		</trim>
 	</sql>
