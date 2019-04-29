@@ -110,7 +110,7 @@ public class SlackService extends AbstractIntegration<SlackContext> {
     private void sendNotification(TestRun tr, String customizedMessage) {
         String channels = tr.getSlackChannels();
         if (StringUtils.isNotEmpty(channels)) {
-            String zafiraUrl = urlResolver.buildWebURL() + "/#!/tests/runs/" + tr.getId();
+            String zafiraUrl = urlResolver.buildWebURL() + "/tests/runs/" + tr.getId();
             String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber();
             String attachmentColor = determineColor(tr);
             String mainMessage = customizedMessage + String.format(INFO_PATTERN, buildRunInfo(tr), zafiraUrl, jenkinsUrl);

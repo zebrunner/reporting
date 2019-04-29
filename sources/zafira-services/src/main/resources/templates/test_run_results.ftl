@@ -81,7 +81,7 @@
                 <td>Test job URL:</td>
                 <td>
                     <#if configuration['zafira_service_url']?? && (configuration['zafira_service_url'] != 'NULL') && (configuration['zafira_service_url'] != '')>
-                        <a href="${configuration['zafira_service_url']}/#!/tests/runs/${testRun.id?c}">Zafira</a>
+                        <a href="${configuration['zafira_service_url']}/tests/runs/${testRun.id?c}">Zafira</a>
                     </#if>
                 </td>
             </tr>
@@ -219,7 +219,7 @@
 	                    </td>
                         <td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
                             <#if configuration['zafira_service_url']?? && (configuration['zafira_service_url'] != 'NULL') && (configuration['zafira_service_url'] != '')>
-                                <a href="${configuration['zafira_service_url']}/#!/tests/runs/${testRun.id?c}/info/${test.id?c}" style='color: white;'>Logs</a>
+                                <a href="${configuration['zafira_service_url']}/tests/runs/${testRun.id?c}/info/${test.id?c}" style='color: white;'>Logs</a>
                             </#if>
                         </td>
 	            	</tr>

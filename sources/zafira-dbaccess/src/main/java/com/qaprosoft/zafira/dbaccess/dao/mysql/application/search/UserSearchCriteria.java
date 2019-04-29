@@ -15,51 +15,14 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application.search;
 
-import com.qaprosoft.zafira.models.db.User;
-
 import java.util.Date;
 
 public class UserSearchCriteria extends SearchCriteria implements DateSearchCriteria
 {
-	private Long id;
-	private String username;
-	private String firstLastName;
-	private String email;
+
 	private Date date;
-	private String groupName;
 	private Date fromDate;
 	private Date toDate;
-	private User.Status status;
-
-	public Long getId()
-	{
-		return id;
-	}
-
-	public void setId(Long id)
-	{
-		this.id = id;
-	}
-
-	public String getUsername()
-	{
-		return username;
-	}
-
-	public void setUsername(String username)
-	{
-		this.username = username;
-	}
-
-	public String getEmail()
-	{
-		return email;
-	}
-
-	public void setEmail(String email)
-	{
-		this.email = email;
-	}
 
 	public Date getDate()
 	{
@@ -69,24 +32,6 @@ public class UserSearchCriteria extends SearchCriteria implements DateSearchCrit
 	public void setDate(Date date)
 	{
 		this.date = date;
-	}
-
-	public String getFirstLastName()
-	{
-		return firstLastName;
-	}
-
-	public void setFirstLastName(String firstLastName)
-	{
-		this.firstLastName = firstLastName;
-	}
-
-	public String getGroupName() {
-		return groupName;
-	}
-
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
 	}
 
 	public Date getFromDate() {
@@ -105,11 +50,4 @@ public class UserSearchCriteria extends SearchCriteria implements DateSearchCrit
 		this.toDate = toDate;
 	}
 
-	public User.Status getStatus() {
-		return status;
-	}
-
-	public void setStatus(User.Status status) {
-		this.status = status;
-	}
 }

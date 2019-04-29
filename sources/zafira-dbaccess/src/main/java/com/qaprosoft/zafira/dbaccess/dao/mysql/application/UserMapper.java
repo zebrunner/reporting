@@ -51,5 +51,5 @@ public interface UserMapper
 
 	List<User> searchUsers(@Param("sc") UserSearchCriteria sc, @Param("publicDetails") Boolean publicDetails);
 
-	Integer getUserSearchCount(UserSearchCriteria sc);
+	Integer getUserSearchCount(@Param("sc") UserSearchCriteria sc, @Param("publicDetails") Boolean publicDetails);
 }

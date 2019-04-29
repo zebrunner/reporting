@@ -33,7 +33,7 @@ import static org.testng.Assert.*;
 public class SeleniumServiceTest {
     @Test
     public void testCaptureScreenshoots() throws Exception {
-        String url = "http://localhost:3000/#!/dashboards";
+        String url = "http://localhost:3000/dashboards";
         List<String> urls = new ArrayList<>();
         urls.add(url);
         String domain = "localhost";

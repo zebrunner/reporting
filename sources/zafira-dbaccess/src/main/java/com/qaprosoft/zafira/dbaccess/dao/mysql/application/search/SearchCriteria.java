@@ -23,6 +23,9 @@ import java.util.List;
 public class SearchCriteria
 {
 	public enum SortOrder {ASC, DESC}
+
+	private String query;
+	private String orderBy;
 	
 	// Pages are zero-based
 	private Integer page = 1;
@@ -31,6 +34,22 @@ public class SearchCriteria
 	private List<Project> projects;
 	
 	private SortOrder sortOrder = SortOrder.ASC;
+
+	public String getQuery() {
+		return query;
+	}
+
+	public void setQuery(String query) {
+		this.query = query;
+	}
+
+	public String getOrderBy() {
+		return orderBy;
+	}
+
+	public void setOrderBy(String orderBy) {
+		this.orderBy = orderBy;
+	}
 
 	public Integer getPage()
 	{

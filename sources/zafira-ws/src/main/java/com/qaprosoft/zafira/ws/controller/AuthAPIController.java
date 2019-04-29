@@ -105,14 +105,14 @@ public class AuthAPIController extends AbstractController {
     @Value("${zafira.admin.username}")
     private String adminUsername;
 
-    @Value("${zafira.multitenant}")
-    private Boolean multitenant;
+    @Value("${zafira.artifacts.useProxy:false}")
+    private boolean useArtifactsProxy;
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get current tenant", nickname = "getTenant", httpMethod = "GET", response = String.class)
     @GetMapping("/tenant")
     public TenantType getTenant() {
-        return new TenantType(TenancyContext.getTenantName(), urlResolver.getServiceURL(), multitenant);
+        return new TenantType(TenancyContext.getTenantName(), urlResolver.getServiceURL(), useArtifactsProxy);
     }
 
     @ResponseStatusDetails
@@ -122,14 +122,14 @@ public class AuthAPIController extends AbstractController {
         AuthTokenType authToken;
         try {
             Authentication authentication;
-            User user = userService.getUserByUsername(credentials.getUsername());
+            User user = userService.getUserByUsernameOrEmail(credentials.getUsername());
 
             final AuthenticationManager authenticationManager = user == null
                     || user.getSource().equals(User.Source.LDAP) ? authenticationLdapManager : authenticationInternalManager;
 
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword()));
 
-            user = userService.getUserByUsername(credentials.getUsername());
+            user = userService.getUserByUsernameOrEmail(credentials.getUsername());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 

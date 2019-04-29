@@ -20,163 +20,116 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.qaprosoft.zafira.models.db.Status;
+import org.springframework.format.annotation.DateTimeFormat;
 
-public class TestRunSearchCriteria extends SearchCriteria implements DateSearchCriteria
-{
-	private Long id;
-	private Long testSuiteId;
-	private String testSuite;
-	private String executionURL;
-	private String environment;
-	private String platform;
-	private String appVersion;
-	private Date date;
-	private Date fromDate;
-	private Date toDate;
-	private Status status;
-	private Boolean reviewed;
-	private FilterSearchCriteria filterSearchCriteria;
-	
-	public TestRunSearchCriteria()
-	{
-		super.setSortOrder(SortOrder.DESC);
-	}
+public class TestRunSearchCriteria extends SearchCriteria implements DateSearchCriteria {
 
-	public Long getId()
-	{
-		return id;
-	}
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private Date date;
 
-	public void setId(Long id)
-	{
-		this.id = id;
-	}
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private Date fromDate;
 
-	public Long getTestSuiteId()
-	{
-		return testSuiteId;
-	}
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private Date toDate;
 
-	public void setTestSuiteId(Long testSuiteId)
-	{
-		this.testSuiteId = testSuiteId;
-	}
+    private Long id;
+    private Long testSuiteId;
+    private String environment;
+    private String platform;
+    private Status status;
+    private Boolean reviewed;
+    private FilterSearchCriteria filterSearchCriteria;
 
-	public String getTestSuite()
-	{
-		return testSuite;
-	}
+    public TestRunSearchCriteria() {
+        super.setSortOrder(SortOrder.DESC);
+    }
 
-	public void setTestSuite(String testSuite)
-	{
-		this.testSuite = testSuite;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getExecutionURL()
-	{
-		return executionURL;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setExecutionURL(String executionURL)
-	{
-		this.executionURL = executionURL;
-	}
+    public Long getTestSuiteId() {
+        return testSuiteId;
+    }
 
-	public String getEnvironment()
-	{
-		return environment;
-	}
+    public void setTestSuiteId(Long testSuiteId) {
+        this.testSuiteId = testSuiteId;
+    }
 
-	public void setEnvironment(String environment)
-	{
-		this.environment = environment;
-	}
+    public String getEnvironment() {
+        return environment;
+    }
 
-	public String getPlatform()
-	{
-		return platform;
-	}
+    public void setEnvironment(String environment) {
+        this.environment = environment;
+    }
 
-	public void setPlatform(String platform)
-	{
-		this.platform = platform;
-	}
+    public String getPlatform() {
+        return platform;
+    }
 
-	public Date getDate()
-	{
-		return date;
-	}
+    public void setPlatform(String platform) {
+        this.platform = platform;
+    }
 
-	public void setDate(Date date)
-	{
-		this.date = date;
-	}
+    public Date getDate() {
+        return date;
+    }
 
-	public Date getFromDate()
-	{
-		return fromDate;
-	}
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
-	public void setFromDate(Date fromDate)
-	{
-		this.fromDate = fromDate;
-	}
-	
-	public void setFromDateString(String fromDate) throws ParseException
-	{
-		this.fromDate = new SimpleDateFormat("MM-dd-yyyy").parse(fromDate);
-	}
+    public Date getFromDate() {
+        return fromDate;
+    }
 
-	public Date getToDate()
-	{
-		return toDate;
-	}
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
 
-	public void setToDate(Date toDate)
-	{
-		this.toDate = toDate;
-	}
-	
-	public void setToDateString(String toDate) throws ParseException
-	{
-		this.toDate = new SimpleDateFormat("MM-dd-yyyy").parse(toDate);
-	}
+    public void setFromDateString(String fromDate) throws ParseException {
+        this.fromDate = new SimpleDateFormat("MM-dd-yyyy").parse(fromDate);
+    }
 
-	public Status getStatus()
-	{
-		return status;
-	}
+    public Date getToDate() {
+        return toDate;
+    }
 
-	public void setStatus(Status status)
-	{
-		this.status = status;
-	}
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
 
-	public String getAppVersion()
-	{
-		return appVersion;
-	}
+    public void setToDateString(String toDate) throws ParseException {
+        this.toDate = new SimpleDateFormat("MM-dd-yyyy").parse(toDate);
+    }
 
-	public void setAppVersion(String appVersion)
-	{
-		this.appVersion = appVersion;
-	}
+    public Status getStatus() {
+        return status;
+    }
 
-	public Boolean getReviewed() 
-	{
-		return reviewed;
-	}
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 
-	public void setReviewed(Boolean reviewed) 
-	{
-		this.reviewed = reviewed;
-	}
+    public Boolean getReviewed() {
+        return reviewed;
+    }
 
-	public FilterSearchCriteria getFilterSearchCriteria() {
-		return filterSearchCriteria;
-	}
+    public void setReviewed(Boolean reviewed) {
+        this.reviewed = reviewed;
+    }
 
-	public void setFilterSearchCriteria(FilterSearchCriteria filterSearchCriteria) {
-		this.filterSearchCriteria = filterSearchCriteria;
-	}
+    public FilterSearchCriteria getFilterSearchCriteria() {
+        return filterSearchCriteria;
+    }
+
+    public void setFilterSearchCriteria(FilterSearchCriteria filterSearchCriteria) {
+        this.filterSearchCriteria = filterSearchCriteria;
+    }
 }

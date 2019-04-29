@@ -22,6 +22,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -128,6 +129,12 @@ public class UserService implements TenancyDbInitial {
     @Transactional(readOnly = true)
     public User getUserByUsername(String username) throws ServiceException {
         return userMapper.getUserByUserName(username);
+    }
+
+    @Transactional(readOnly = true)
+    public User getUserByUsernameOrEmail(String usernameOrEmail) throws ServiceException {
+        boolean isEmail = new EmailValidator().isValid(usernameOrEmail, null);
+        return isEmail ? getUserByEmail(usernameOrEmail) : getUserByUsername(usernameOrEmail);
     }
 
     @Transactional(readOnly = true)
@@ -254,7 +261,7 @@ public class UserService implements TenancyDbInitial {
         results.setPageSize(sc.getPageSize());
         results.setSortOrder(sc.getSortOrder());
         results.setResults(userMapper.searchUsers(sc, publicDetails));
-        results.setTotalResults(userMapper.getUserSearchCount(sc));
+        results.setTotalResults(userMapper.getUserSearchCount(sc, publicDetails));
         return results;
     }
 

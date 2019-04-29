@@ -183,7 +183,7 @@ public class TestRunSpreadsheetService
 					{
 						testResult.add(
 								String.format("%s\n%s",
-										String.format(hyperLink, String.format("%s/#!/tests/runs/%d",
+										String.format(hyperLink, String.format("%s/tests/runs/%d",
 												getNotNullSpreadsheetValue(getConfigValueByName("zafira_service_url", testRun.getConfigXML())), testRun.getId()), "Zafira"),
 										String.format(hyperLink,
 												String.format("%s/%s/eTAF_Report", testRun.getJob().getJobURL(), testRun.getBuildNumber()), "Jenkins")));

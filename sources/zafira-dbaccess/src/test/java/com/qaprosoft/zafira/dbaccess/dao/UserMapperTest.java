@@ -144,7 +144,6 @@ public class UserMapperTest extends AbstractTestNGSpringContextTests
 			{ "createUser" })
 	public void addUserToGroup() {
 		UserSearchCriteria userSearchCriteria = new UserSearchCriteria();
-		userSearchCriteria.setGroupName(GROUP.getName());
 		USER.setUsername("n1" + KeyGenerator.getKey());
 		userMapper.createUser(USER);
 		groupMapper.createGroup(GROUP);
@@ -159,7 +158,6 @@ public class UserMapperTest extends AbstractTestNGSpringContextTests
 			{ IndexOutOfBoundsException.class })
 	public void deleteUserFromGroup() {
 		UserSearchCriteria userSearchCriteria = new UserSearchCriteria();
-		userSearchCriteria.setGroupName(GROUP.getName());
 		userMapper.deleteUserFromGroup(USER.getId(), GROUP.getId());
 		userMapper.searchUsers(userSearchCriteria, false);
 	}

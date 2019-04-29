@@ -30,6 +30,7 @@ import com.qaprosoft.zafira.models.dto.AbstractType;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 
 import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.Pattern;
 
 @JsonInclude(Include.NON_NULL)
 public class UserType extends AbstractType
@@ -37,6 +38,7 @@ public class UserType extends AbstractType
 	private static final long serialVersionUID = -6663692781158665080L;
 	
 	@NotEmpty(message = "Username required")
+	@Pattern(regexp = "[\\w-]+", message = "Invalid format")
 	private String username;
 	private String email;
 	private String firstName;
@@ -181,4 +183,5 @@ public class UserType extends AbstractType
 	public boolean isEmailConfirmationValid() {
 		return this.email == null || new EmailValidator().isValid(this.email, null);
 	}
+
 }

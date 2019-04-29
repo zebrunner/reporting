@@ -15,6 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.models.db.Invitation;
 import com.qaprosoft.zafira.models.dto.auth.InvitationListType;
 import com.qaprosoft.zafira.models.dto.auth.InvitationType;
@@ -95,6 +97,20 @@ public class InvitationAPIController extends AbstractController {
     @GetMapping("/all")
     public List<Invitation> getAllInvitations() throws ServiceException {
         return invitationService.getAllInvitations();
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Search invitations", nickname = "searchInvitations", httpMethod = "GET", response = List.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @PreAuthorize("hasRole('ROLE_ADMIN') and hasAnyPermission('INVITE_USERS', 'MODIFY_INVITATIONS')")
+    @GetMapping(value = "/search")
+    public SearchResult<Invitation> search(@RequestParam(value = "query", required = false) String query,
+                                           @RequestParam(value = "page", required = false) String page,
+                                           @RequestParam(value = "pageSize", required = false) String pageSize,
+                                           @RequestParam(value = "orderBy", required = false) String orderBy,
+                                           @RequestParam(value = "sortOrder", required = false) String sortOrder,
+                                           SearchCriteria sc) throws ServiceException {
+        return invitationService.search(sc);
     }
 
     @ResponseStatusDetails

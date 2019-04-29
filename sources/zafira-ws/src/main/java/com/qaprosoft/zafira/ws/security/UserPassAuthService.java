@@ -17,7 +17,6 @@ package com.qaprosoft.zafira.ws.security;
 
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,30 +26,28 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 
 @Component
-public class UserPassAuthService implements UserDetailsService
-{
-	@Autowired
-	private UserService userService;
+public class UserPassAuthService implements UserDetailsService {
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
-	{
-		User user;
-		try
-		{
-			user = userService.getUserByUsername(username);
-			if (user == null)
-			{
-				throw new Exception("Invalid user name " + username);
-			}
-			if(user.getStatus().equals(User.Status.INACTIVE)) {
-				throw new ForbiddenOperationException("User was blocked by admin.");
-			}
-		} 
-		catch (Exception e)
-		{
-			throw new UsernameNotFoundException("User not found", e);
-		}
-		return new JwtUserType(user.getId(), username, user.getPassword(), user.getGroups());
-	}
+    private final UserService userService;
+
+    public UserPassAuthService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user;
+        try {
+            user = userService.getUserByUsernameOrEmail(username);
+            if (user == null) {
+                throw new Exception("Invalid username or email " + username);
+            }
+            if (user.getStatus().equals(User.Status.INACTIVE)) {
+                throw new ForbiddenOperationException("User was blocked by admin.");
+            }
+        } catch (Exception e) {
+            throw new UsernameNotFoundException("User not found", e);
+        }
+        return new JwtUserType(user.getId(), username, user.getPassword(), user.getGroups());
+    }
 }
