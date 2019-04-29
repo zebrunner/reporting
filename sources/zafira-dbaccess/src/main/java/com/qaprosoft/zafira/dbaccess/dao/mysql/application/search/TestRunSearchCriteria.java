@@ -20,130 +20,116 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.qaprosoft.zafira.models.db.Status;
+import org.springframework.format.annotation.DateTimeFormat;
 
-public class TestRunSearchCriteria extends SearchCriteria implements DateSearchCriteria
-{
-	private Long id;
-	private Long testSuiteId;
-	private String environment;
-	private String platform;
-	private Date date;
-	private Date fromDate;
-	private Date toDate;
-	private Status status;
-	private Boolean reviewed;
-	private FilterSearchCriteria filterSearchCriteria;
-	
-	public TestRunSearchCriteria()
-	{
-		super.setSortOrder(SortOrder.DESC);
-	}
+public class TestRunSearchCriteria extends SearchCriteria implements DateSearchCriteria {
 
-	public Long getId()
-	{
-		return id;
-	}
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private Date date;
 
-	public void setId(Long id)
-	{
-		this.id = id;
-	}
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private Date fromDate;
 
-	public Long getTestSuiteId()
-	{
-		return testSuiteId;
-	}
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private Date toDate;
 
-	public void setTestSuiteId(Long testSuiteId)
-	{
-		this.testSuiteId = testSuiteId;
-	}
+    private Long id;
+    private Long testSuiteId;
+    private String environment;
+    private String platform;
+    private Status status;
+    private Boolean reviewed;
+    private FilterSearchCriteria filterSearchCriteria;
 
-	public String getEnvironment()
-	{
-		return environment;
-	}
+    public TestRunSearchCriteria() {
+        super.setSortOrder(SortOrder.DESC);
+    }
 
-	public void setEnvironment(String environment)
-	{
-		this.environment = environment;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getPlatform()
-	{
-		return platform;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setPlatform(String platform)
-	{
-		this.platform = platform;
-	}
+    public Long getTestSuiteId() {
+        return testSuiteId;
+    }
 
-	public Date getDate()
-	{
-		return date;
-	}
+    public void setTestSuiteId(Long testSuiteId) {
+        this.testSuiteId = testSuiteId;
+    }
 
-	public void setDate(Date date)
-	{
-		this.date = date;
-	}
+    public String getEnvironment() {
+        return environment;
+    }
 
-	public Date getFromDate()
-	{
-		return fromDate;
-	}
+    public void setEnvironment(String environment) {
+        this.environment = environment;
+    }
 
-	public void setFromDate(Date fromDate)
-	{
-		this.fromDate = fromDate;
-	}
-	
-	public void setFromDateString(String fromDate) throws ParseException
-	{
-		this.fromDate = new SimpleDateFormat("MM-dd-yyyy").parse(fromDate);
-	}
+    public String getPlatform() {
+        return platform;
+    }
 
-	public Date getToDate()
-	{
-		return toDate;
-	}
+    public void setPlatform(String platform) {
+        this.platform = platform;
+    }
 
-	public void setToDate(Date toDate)
-	{
-		this.toDate = toDate;
-	}
-	
-	public void setToDateString(String toDate) throws ParseException
-	{
-		this.toDate = new SimpleDateFormat("MM-dd-yyyy").parse(toDate);
-	}
+    public Date getDate() {
+        return date;
+    }
 
-	public Status getStatus()
-	{
-		return status;
-	}
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
-	public void setStatus(Status status)
-	{
-		this.status = status;
-	}
+    public Date getFromDate() {
+        return fromDate;
+    }
 
-	public Boolean getReviewed() 
-	{
-		return reviewed;
-	}
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
 
-	public void setReviewed(Boolean reviewed) 
-	{
-		this.reviewed = reviewed;
-	}
+    public void setFromDateString(String fromDate) throws ParseException {
+        this.fromDate = new SimpleDateFormat("MM-dd-yyyy").parse(fromDate);
+    }
 
-	public FilterSearchCriteria getFilterSearchCriteria() {
-		return filterSearchCriteria;
-	}
+    public Date getToDate() {
+        return toDate;
+    }
 
-	public void setFilterSearchCriteria(FilterSearchCriteria filterSearchCriteria) {
-		this.filterSearchCriteria = filterSearchCriteria;
-	}
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public void setToDateString(String toDate) throws ParseException {
+        this.toDate = new SimpleDateFormat("MM-dd-yyyy").parse(toDate);
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public Boolean getReviewed() {
+        return reviewed;
+    }
+
+    public void setReviewed(Boolean reviewed) {
+        this.reviewed = reviewed;
+    }
+
+    public FilterSearchCriteria getFilterSearchCriteria() {
+        return filterSearchCriteria;
+    }
+
+    public void setFilterSearchCriteria(FilterSearchCriteria filterSearchCriteria) {
+        this.filterSearchCriteria = filterSearchCriteria;
+    }
 }
