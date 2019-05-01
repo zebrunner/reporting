@@ -19,6 +19,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.FilterSearchCr
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
+import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestRun;
@@ -241,6 +242,7 @@ public class TestRunsAPIController extends AbstractController {
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping("/search")
     public SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc,
+                                                @RequestParam(value = "projectNames", required = false) List<String> projectNames,
                                                 @RequestParam(value = "filterId", required = false) Long filterId) throws ServiceException {
         if (filterId != null) {
             FilterType filterType = mapper.map(filterService.getFilterById(filterId), FilterType.class);
@@ -248,6 +250,10 @@ public class TestRunsAPIController extends AbstractController {
                 String whereClause = filterService.getTemplate(filterType, TEST_RUN_TEMPLATE);
                 sc.setFilterSearchCriteria(new FilterSearchCriteria(whereClause));
             }
+        }
+        if(projectNames != null) {
+            List<Project> projects = projectNames.stream().map(name -> projectService.getProjectByName(name)).collect(Collectors.toList());
+            sc.setProjects(projects);
         }
         return testRunService.searchTestRuns(sc);
     }
