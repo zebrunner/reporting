@@ -537,7 +537,12 @@ CREATE MATERIALIZED VIEW TOTAL_VIEW AS (
          date_trunc('month', TESTS.CREATED_AT) AS MONTH,
          date_trunc('month', TESTS.CREATED_AT) AS CREATED_AT,
          sum(EXTRACT(epoch FROM (TESTS.FINISH_TIME - TESTS.START_TIME)))::bigint as TOTAL_SECONDS,
-         sum(EXTRACT(epoch FROM(TESTS.FINISH_TIME - TESTS.START_TIME)))::bigint as TOTAL_ETA_SECONDS,
+         case 
+            when (date_trunc('month', TESTS.CREATED_AT) = date_trunc('month', current_date)) then 
+                ROUND(sum(EXTRACT(epoch FROM (TESTS.FINISH_TIME - TESTS.START_TIME)))/extract(day from current_date) * extract(day from date_trunc('day', date_trunc('month', current_date) + interval '1 month') - interval '1 day'))
+            else 
+                sum(EXTRACT(epoch FROM(TESTS.FINISH_TIME - TESTS.START_TIME)))::bigint 
+         end AS TOTAL_ETA_SECONDS,
          avg(TESTS.FINISH_TIME - TESTS.START_TIME) as AVG_TIME
   FROM TESTS INNER JOIN
     TEST_RUNS ON TESTS.TEST_RUN_ID = TEST_RUNS.ID INNER JOIN
