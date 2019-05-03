@@ -21,18 +21,16 @@ public class TenancyResponseEventMessage extends EventMessage {
 	
 	private String token;
     private String zafiraURL;
-    private String zafiraToken;
     private Boolean success;
 
     public TenancyResponseEventMessage(String tenancy) {
         super(tenancy);
     }
 
-    public TenancyResponseEventMessage(String tenancy, String token, String zafiraURL, String zafiraToken, Boolean success) {
+    public TenancyResponseEventMessage(String tenancy, String token, String zafiraURL, Boolean success) {
         super(tenancy);
         this.token = token;
         this.zafiraURL = zafiraURL;
-        this.zafiraToken = zafiraToken;
         this.success = success;
     }
 
@@ -46,14 +44,6 @@ public class TenancyResponseEventMessage extends EventMessage {
 
     public String getZafiraURL() {
         return zafiraURL;
-    }
-
-    public String getZafiraToken() {
-        return zafiraToken;
-    }
-
-    public void setZafiraToken(String zafiraToken) {
-        this.zafiraToken = zafiraToken;
     }
 
     public void setZafiraURL(String zafiraURL) {

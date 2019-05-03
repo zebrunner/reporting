@@ -23,8 +23,6 @@ import com.qaprosoft.zafira.models.push.events.EventMessage;
 import com.qaprosoft.zafira.models.push.events.TenancyResponseEventMessage;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.InvitationService;
-import com.qaprosoft.zafira.services.services.application.UserService;
-import com.qaprosoft.zafira.services.services.auth.JWTService;
 import com.qaprosoft.zafira.services.services.management.TenancyService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -51,12 +49,6 @@ public class TenancyInitializer {
 
     @Autowired
     private InvitationService invitationService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private JWTService jwtService;
 
     @Autowired
     private EventPushService<EventMessage> eventPushService;
@@ -92,7 +84,6 @@ public class TenancyInitializer {
             boolean success;
             EmailEventMessage eventMessage = new Gson().fromJson(new String(message.getBody()), EmailEventMessage.class);
             String tenancy = eventMessage.getTenancy();
-            String zafiraToken = jwtService.generateAccessToken(userService.getUserByUsername(userService.getAdminUsername()), tenancy);
             result = new TenancyResponseEventMessage(tenancy);
             try {
                 LOGGER.info("Tenancy with name '" + tenancy + "' DB initialization is starting....");
@@ -104,7 +95,6 @@ public class TenancyInitializer {
                         Invitation invitation = invitationService.createInitialInvitation(eventMessage.getEmail(), DEFAULT_USER_GROUP);
                         result.setToken(invitation.getToken());
                         result.setZafiraURL(urlResolver.buildWebURL());
-                        result.setZafiraToken(zafiraToken);
                     } catch (ServiceException e) {
                         LOGGER.error(e.getMessage(), e);
                     }
