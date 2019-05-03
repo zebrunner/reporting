@@ -100,7 +100,7 @@ public class LauncherService {
             throw new ScmAccountNotFoundException("Unable to find scm account for repo");
         Launcher launcher = getLauncherByJobId(job.getId());
         if(launcher == null){ launcher = new Launcher(); }
-        launcher.setModel(new JSONObject(createLauncherParamsType.getJobParameters()).toString());
+        launcher.setModel(createLauncherParamsType.getJobParameters());
         if(launcher.getId() == null){
             launcher.setJob(job);
             launcher.setName(job.getName());

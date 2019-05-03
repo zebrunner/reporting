@@ -18,7 +18,7 @@ public class CreateLauncherParamsType implements Serializable
 	@NotEmpty(message = "{error.job.url.required}")
 	private String jobUrl;
 
-	private Map <String, String> jobParameters;
+	private String jobParameters;
 
 	public String getRepo()
 	{
@@ -40,12 +40,12 @@ public class CreateLauncherParamsType implements Serializable
 		this.jobUrl = jobUrl;
 	}
 
-	public Map<String, String> getJobParameters()
+	public String getJobParameters()
 	{
 		return jobParameters;
 	}
 
-	public void setJobParameters(Map<String, String> jobParameters)
+	public void setJobParameters(String jobParameters)
 	{
 		this.jobParameters = jobParameters;
 	}
