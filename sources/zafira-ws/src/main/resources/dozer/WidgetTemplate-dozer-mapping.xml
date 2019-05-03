@@ -23,6 +23,10 @@
             <b>type</b>
         </field>
         <field>
+            <a>hidden</a>
+            <b>hidden</b>
+        </field>
+        <field>
             <a>chartConfig</a>
             <b>chartConfig</b>
         </field>

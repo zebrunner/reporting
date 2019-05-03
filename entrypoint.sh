@@ -46,7 +46,7 @@ if [ ! -z "$ZAFIRA_WEB_URL" ];
 then
 echo zafira.web.url=$ZAFIRA_WEB_URL >> $CATALINA_HOME/conf/catalina.properties
 else
-echo zafira.web.url=$ZAFIRA_URL/zafira >> $CATALINA_HOME/conf/catalina.properties
+echo zafira.web.url=$ZAFIRA_URL/app >> $CATALINA_HOME/conf/catalina.properties
 fi
 echo zafira.service.version=$ZAFIRA_SERVICE_VERSION >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.client.version=$ZAFIRA_CLIENT_VERSION >> $CATALINA_HOME/conf/catalina.properties
