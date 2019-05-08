@@ -166,7 +166,7 @@ public class TestService
 		existingTest.setStatus(test.getStatus());
 		existingTest.setRetry(test.getRetry());
 		existingTest.setTestConfig(testConfigService.createTestConfigForTest(test, configXML));
-	    addTags(test.getTags(), existingTest.getId());
+		addTags(test.getTags(), existingTest.getId());
 
 		// Wrap all additional test finalization logic to make sure status saved
 		try
