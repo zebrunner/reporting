@@ -272,7 +272,12 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				startedTest.setFinishTime(null);
 				startedTest.setStartTime(new Date().getTime());
 				startedTest.setCiTestId(getThreadCiTestId());
-				startedTest.setTags(configurator.getTestTags(result));
+				/*number of affected tickets when we register onTestStart all tags:
+				    https://github.com/qaprosoft/carina/issues/701
+				    https://github.com/qaprosoft/carina/issues/707
+				  We are going to move it onTestFinish to support static via annotations and dynamic via code tags generation 
+				*/				
+				// startedTest.setTags(configurator.getTestTags(result));
 				startedTest = zc.registerTestRestart(startedTest);
 			}
 			
@@ -286,7 +291,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				
 				String [] dependsOnMethods = result.getMethod().getMethodsDependedUpon();
 
-				startedTest = zc.registerTestStart(testName, group, Status.IN_PROGRESS, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods, getThreadCiTestId(), configurator.getTestTags(result));
+				startedTest = zc.registerTestStart(testName, group, Status.IN_PROGRESS, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods, getThreadCiTestId(), null);
 			}
 			
 			zc.registerWorkItems(startedTest.getId(), configurator.getTestWorkItems(result));
@@ -413,7 +418,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				
 				String [] dependsOnMethods = result.getMethod().getMethodsDependedUpon();
 				
-				test = zc.registerTestStart(testName, group, Status.SKIPPED, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods, getThreadCiTestId(), configurator.getTestTags(result));
+				test = zc.registerTestStart(testName, group, Status.SKIPPED, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods, getThreadCiTestId(), null);
 				threadTest.set(test);
 			}
 			
@@ -446,6 +451,8 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 		test.setConfigXML(convertToXML(configurator.getConfiguration()));
 		test.setArtifacts(configurator.getArtifacts(result));
 		configurator.clearArtifacts();
+		
+		configurator.getTestTags(result);
 		
 		String testDetails = "testId: %d; testCaseId: %d; testRunId: %d; name: %s; thread: %s; status: %s, finishTime: %s \n message: %s";
 		String logMessage = String.format(testDetails, test.getId(), test.getTestCaseId(), test.getTestRunId(), test.getName(), threadId, status, finishTime, message);
