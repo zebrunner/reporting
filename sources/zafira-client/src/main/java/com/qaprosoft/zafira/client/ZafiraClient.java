@@ -917,6 +917,7 @@ public class  ZafiraClient
 	 */
 	public TestType registerTestStart(String name, String group, Status status, String testArgs, Long testRunId, Long testCaseId, int retry, String configXML, String [] dependsOnMethods, String ciTestId, Set<TagType> tags)
 	{
+	    //TODO: remove "Set<TagType> tags" param later 
 		Long startTime = new Date().getTime();
 
 		String testDetails = "name: %s, status: %s, testArgs: %s, testRunId: %s, testCaseId: %s, startTime: %s, retry: %d";
@@ -926,7 +927,9 @@ public class  ZafiraClient
 
 		test.setCiTestId(ciTestId);
 		test.setTestGroup(group);
-		test.setTags(tags);
+		if (tags != null) {
+		    test.setTags(tags);
+		}
 		if(dependsOnMethods != null)
 		{
 			StringBuilder sb = new StringBuilder();
