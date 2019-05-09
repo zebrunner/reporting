@@ -272,12 +272,11 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				startedTest.setFinishTime(null);
 				startedTest.setStartTime(new Date().getTime());
 				startedTest.setCiTestId(getThreadCiTestId());
-				/*number of affected tickets when we register onTestStart all tags:
+				/* keep static tags registration onTestStart but add dynamic tags onTestFInish obligatory:
 				    https://github.com/qaprosoft/carina/issues/701
 				    https://github.com/qaprosoft/carina/issues/707
-				  We are going to move it onTestFinish to support static via annotations and dynamic via code tags generation 
 				*/				
-				// startedTest.setTags(configurator.getTestTags(result));
+				startedTest.setTags(configurator.getTestTags(result));
 				startedTest = zc.registerTestRestart(startedTest);
 			}
 			
@@ -291,7 +290,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				
 				String [] dependsOnMethods = result.getMethod().getMethodsDependedUpon();
 
-				startedTest = zc.registerTestStart(testName, group, Status.IN_PROGRESS, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods, getThreadCiTestId(), null);
+				startedTest = zc.registerTestStart(testName, group, Status.IN_PROGRESS, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods, getThreadCiTestId(), configurator.getTestTags(result));
 			}
 			
 			zc.registerWorkItems(startedTest.getId(), configurator.getTestWorkItems(result));
@@ -418,7 +417,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				
 				String [] dependsOnMethods = result.getMethod().getMethodsDependedUpon();
 				
-				test = zc.registerTestStart(testName, group, Status.SKIPPED, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods, getThreadCiTestId(), null);
+				test = zc.registerTestStart(testName, group, Status.SKIPPED, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods, getThreadCiTestId(), configurator.getTestTags(result));
 				threadTest.set(test);
 			}
 			
