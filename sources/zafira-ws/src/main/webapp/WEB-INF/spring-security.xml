@@ -1,95 +1,144 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:security="http://www.springframework.org/schema/security"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
-    <bean id="userAuthService" class="com.qaprosoft.zafira.ws.security.UserPassAuthService" depends-on="ldapProvider"/>
+	<bean id="userAuthService"
+		class="com.qaprosoft.zafira.ws.security.UserPassAuthService"
+		depends-on="ldapProvider" />
 
-    <bean id="passwordEncoder" class="org.jasypt.springsecurity3.authentication.encoding.PasswordEncoder">
-        <property name="passwordEncryptor" ref="passwordEncryptor"/>
-    </bean>
+	<bean id="passwordEncoder"
+		class="org.jasypt.springsecurity3.authentication.encoding.PasswordEncoder">
+		<property name="passwordEncryptor" ref="passwordEncryptor" />
+	</bean>
 
-    <bean id="ldapUserDetailsContextMapper" class="com.qaprosoft.zafira.ws.security.ldap.LDAPUserDetailsContextMapper"/>
+	<bean id="ldapUserDetailsContextMapper"
+		class="com.qaprosoft.zafira.ws.security.ldap.LDAPUserDetailsContextMapper" />
 
-    <bean id="ldapProvider" class="com.qaprosoft.zafira.ws.security.ldap.LDAPAuthenticationProvider">
-        <constructor-arg name="ldapUserDetailsContextMapper" ref="ldapUserDetailsContextMapper"/>
-    </bean>
+	<bean id="ldapProvider"
+		class="com.qaprosoft.zafira.ws.security.ldap.LDAPAuthenticationProvider">
+		<constructor-arg name="ldapUserDetailsContextMapper"
+			ref="ldapUserDetailsContextMapper" />
+	</bean>
 
-    <security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled">
-        <security:expression-handler ref="methodSecurityExpressionHandler"/>
-    </security:global-method-security>
+	<security:global-method-security
+		secured-annotations="enabled" pre-post-annotations="enabled">
+		<security:expression-handler
+			ref="methodSecurityExpressionHandler" />
+	</security:global-method-security>
 
-    <security:authentication-manager id="authenticationInternalManager">
-        <security:authentication-provider user-service-ref="userAuthService">
-            <security:password-encoder ref="passwordEncoder"/>
-        </security:authentication-provider>
-    </security:authentication-manager>
+	<security:authentication-manager
+		id="authenticationInternalManager">
+		<security:authentication-provider
+			user-service-ref="userAuthService">
+			<security:password-encoder
+				ref="passwordEncoder" />
+		</security:authentication-provider>
+	</security:authentication-manager>
 
-    <security:authentication-manager id="authenticationLdapManager">
-        <security:authentication-provider ref="ldapProvider"/>
-    </security:authentication-manager>
+	<security:authentication-manager
+		id="authenticationLdapManager">
+		<security:authentication-provider
+			ref="ldapProvider" />
+	</security:authentication-manager>
 
-    <bean id="authenticationTokenProcessingFilter"
-          class="com.qaprosoft.zafira.ws.security.filter.JwtTokenAuthenticationFilter"/>
+	<bean id="authenticationTokenProcessingFilter"
+		class="com.qaprosoft.zafira.ws.security.filter.JwtTokenAuthenticationFilter" />
 
-    <bean id="unauthorizedEntryPoint" class="com.qaprosoft.zafira.ws.security.filter.SecurityAuthenticationEntryPoint"/>
+	<bean id="unauthorizedEntryPoint"
+		class="com.qaprosoft.zafira.ws.security.filter.SecurityAuthenticationEntryPoint" />
 
-    <bean id="accessDeniedHandler" class="com.qaprosoft.zafira.ws.security.filter.RestAccessDeniedHandler"/>
+	<bean id="accessDeniedHandler"
+		class="com.qaprosoft.zafira.ws.security.filter.RestAccessDeniedHandler" />
 
-    <bean id="userPermissionEvaluator" class="com.qaprosoft.zafira.ws.security.expressions.UserPermissionEvaluator"/>
+	<bean id="userPermissionEvaluator"
+		class="com.qaprosoft.zafira.ws.security.expressions.UserPermissionEvaluator" />
 
-    <bean id="methodSecurityExpressionHandler"
-          class="com.qaprosoft.zafira.ws.security.expressions.RestMethodSecurityExpressionHandler">
-        <property name="permissionEvaluator" ref="userPermissionEvaluator"/>
-    </bean>
+	<bean id="methodSecurityExpressionHandler"
+		class="com.qaprosoft.zafira.ws.security.expressions.RestMethodSecurityExpressionHandler">
+		<property name="permissionEvaluator"
+			ref="userPermissionEvaluator" />
+	</bean>
 
-    <security:http pattern="/api/auth/login" security="none"/>
-    <security:http pattern="/api/config/**" security="none"/>
-    <security:http pattern="/api/auth/refresh" security="none"/>
-    <security:http pattern="/api/status/**" security="none"/>
-    <security:http pattern="/api/dashboards/email" security="none"/>
-    <security:http pattern="/api/settings/companyLogo" security="none"/>
-    <security:http pattern="/api/websockets/**" security="none"/>
-    <security:http pattern="/api/auth/tenant" security="none"/>
-    <security:http pattern="/api/invitations/info" security="none"/>
-    <security:http pattern="/api/auth/signup" security="none"/>
-    <security:http pattern="/api/auth/password/**" security="none"/>
+	<security:http pattern="/api/auth/login" security="none" />
+	<security:http pattern="/api/config/**" security="none" />
+	<security:http pattern="/api/auth/refresh"
+		security="none" />
+	<security:http pattern="/api/status/**" security="none" />
+	<security:http pattern="/api/dashboards/email"
+		security="none" />
+	<security:http pattern="/api/settings/companyLogo"
+		security="none" />
+	<security:http pattern="/api/websockets/**"
+		security="none" />
+	<security:http pattern="/api/auth/tenant" security="none" />
+	<security:http pattern="/api/invitations/info"
+		security="none" />
+	<security:http pattern="/api/auth/signup" security="none" />
+	<security:http pattern="/api/auth/password/**"
+		security="none" />
 
-    <!-- Protected API end-points -->
-    <security:http realm="Protected API" use-expressions="true" auto-config="false" create-session="stateless"
-                   entry-point-ref="unauthorizedEntryPoint">
+	<!-- Protected API end-points -->
+	<security:http realm="Protected API"
+		use-expressions="true" auto-config="false" create-session="stateless"
+		entry-point-ref="unauthorizedEntryPoint">
 
-        <security:csrf disabled="true"/>
+		<security:csrf disabled="true" />
 
-        <security:access-denied-handler ref="accessDeniedHandler"/>
+		<security:access-denied-handler
+			ref="accessDeniedHandler" />
 
-        <security:custom-filter ref="authenticationTokenProcessingFilter" after="EXCEPTION_TRANSLATION_FILTER"/>
+		<security:custom-filter
+			ref="authenticationTokenProcessingFilter"
+			after="EXCEPTION_TRANSLATION_FILTER" />
 
-        <security:intercept-url pattern="/api/auth/access" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/users/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/filters/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/profiles/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/tests/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/dashboards/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/widgets/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/projects/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/groups/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/permissions/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/devices/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/settings/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/jobs/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/certification/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/events/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/projects/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/slack/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/views/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/invitations/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/scm/**" access="isAuthenticated()"/>
-        <security:intercept-url pattern="/api/launchers/**" access="isAuthenticated()"/>
+		<security:intercept-url
+			pattern="/api/auth/access" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/users/**"
+			access="isAuthenticated()" />
+		<security:intercept-url
+			pattern="/api/filters/**" access="isAuthenticated()" />
+		<security:intercept-url
+			pattern="/api/profiles/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/tests/**"
+			access="isAuthenticated()" />
+		<security:intercept-url
+			pattern="/api/dashboards/**" access="isAuthenticated()" />
+		<security:intercept-url
+			pattern="/api/widgets/**" access="isAuthenticated()" />
+		<security:intercept-url
+			pattern="/api/projects/**" access="isAuthenticated()" />
+		<security:intercept-url
+			pattern="/api/groups/**" access="isAuthenticated()" />
+		<security:intercept-url
+			pattern="/api/permissions/**" access="isAuthenticated()" />
+		<security:intercept-url
+			pattern="/api/devices/**" access="isAuthenticated()" />
+		<security:intercept-url
+			pattern="/api/settings/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/jobs/**"
+			access="isAuthenticated()" />
+		<security:intercept-url
+			pattern="/api/certification/**" access="isAuthenticated()" />
+		<security:intercept-url
+			pattern="/api/events/**" access="isAuthenticated()" />
+		<security:intercept-url
+			pattern="/api/projects/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/slack/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/views/**"
+			access="isAuthenticated()" />
+		<security:intercept-url
+			pattern="/api/invitations/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/scm/**"
+			access="isAuthenticated()" />
+		<security:intercept-url
+			pattern="/api/launchers/**" access="isAuthenticated()" />
 
-    </security:http>
+	</security:http>
 
-    <bean id="tenancyFilter" class="com.qaprosoft.zafira.ws.security.filter.TenancyFilter"/>
+	<bean id="tenancyFilter"
+		class="com.qaprosoft.zafira.ws.security.filter.TenancyFilter" />
 
 </beans>

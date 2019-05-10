@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestArtifactMapper">
+<mapper
+	namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestArtifactMapper">
 
-	<insert id="createTestArtifact" useGeneratedKeys="true" keyProperty="id">
+	<insert id="createTestArtifact" useGeneratedKeys="true"
+		keyProperty="id">
 		<![CDATA[
 			INSERT INTO TEST_ARTIFACTS (NAME, LINK, EXPIRES_AT, TEST_ID)
 			VALUES (
@@ -29,22 +31,25 @@
 				TEST_ARTIFACTS TA
 		]]>
 	</sql>
-	
-	<select id="getTestArtifactById" resultMap="TestArtifactResultMap">
+
+	<select id="getTestArtifactById"
+		resultMap="TestArtifactResultMap">
 		<include refid="getTestArtifact" />
 		<![CDATA[
 			WHERE TA.ID = #{id};
 		]]>
 	</select>
 
-	<select id="getTestArtifactsByTestId" resultMap="TestArtifactResultMap">
+	<select id="getTestArtifactsByTestId"
+		resultMap="TestArtifactResultMap">
 		<include refid="getTestArtifact" />
 		<![CDATA[
 			WHERE TA.TEST_ID = #{testId};
 		]]>
 	</select>
 
-	<select id="getTestArtifactByNameAndTestId" resultMap="TestArtifactResultMap">
+	<select id="getTestArtifactByNameAndTestId"
+		resultMap="TestArtifactResultMap">
 		<include refid="getTestArtifact" />
 		<![CDATA[
 			WHERE TA.NAME = #{name} AND TA.TEST_ID = #{testId};
@@ -56,28 +61,28 @@
 			UPDATE
 			    TEST_ARTIFACTS
 		]]>
-			<set>
-				<if test="null != name">
+		<set>
+			<if test="null != name">
 		            <![CDATA[
 		               NAME = #{name},
 		            ]]>
-				</if>
-				<if test="null != link">
+			</if>
+			<if test="null != link">
 		            <![CDATA[
 		               LINK = #{link},
 		            ]]>
-				</if>
-				<if test="null != testId">
+			</if>
+			<if test="null != testId">
 		            <![CDATA[
 		               TEST_ID = #{testId},
 		            ]]>
-				</if>
-				<if test="null != expiresAt">
+			</if>
+			<if test="null != expiresAt">
 		            <![CDATA[
 		               EXPIRES_AT = #{expiresAt}
 		            ]]>
-				</if>
-			</set>
+			</if>
+		</set>
 		<![CDATA[
 			WHERE
 			    ID = #{id}
@@ -96,7 +101,7 @@
 			WHERE ID = #{id}
 		]]>
 	</delete>
-	
+
 	<delete id="deleteTestArtifactsByTestId">
 		<include refid="deleteTestArtifact" />
 		<![CDATA[
@@ -104,13 +109,15 @@
 		]]>
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.TestArtifact" id="TestArtifactResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.TestArtifact"
+		id="TestArtifactResultMap" autoMapping="false">
 		<id column="TEST_ARTIFACT_ID" property="id" />
 		<result column="TEST_ARTIFACT_NAME" property="name" />
 		<result column="TEST_ARTIFACT_LINK" property="link" />
 		<result column="TEST_ARTIFACT_TEST_ID" property="testId" />
 		<result column="TEST_ARTIFACT_EXPIRES_AT" property="expiresAt" />
-		<result column="TEST_ARTIFACT_MODIFIED_AT" property="modifiedAt" />
+		<result column="TEST_ARTIFACT_MODIFIED_AT"
+			property="modifiedAt" />
 		<result column="TEST_ARTIFACT_CREATED_AT" property="createdAt" />
 	</resultMap>
 

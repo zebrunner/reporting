@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<mappings xmlns="http://dozer.sourceforge.net"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
 
 	<mapping type="bi-directional" wildcard="false">
@@ -50,7 +51,7 @@
 			<a>finishTime</a>
 			<b>finishTime</b>
 		</field>
-		
+
 		<field>
 			<a>retry</a>
 			<b>retry</b>
@@ -71,14 +72,14 @@
 			<a>dependsOnMethods</a>
 			<b>dependsOnMethods</b>
 		</field>
-		<field-exclude> 
-		  	<a>workItems</a> 
-		  	<b>workItems</b> 
+		<field-exclude>
+			<a>workItems</a>
+			<b>workItems</b>
 		</field-exclude>
 		<field>
 			<a>testClass</a>
 			<b>testClass</b>
-		</field>  
+		</field>
 		<field>
 			<a>artifacts</a>
 			<b>artifacts</b>

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.ViewMapper">
+<mapper
+	namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.ViewMapper">
 
-    <insert id="createView" useGeneratedKeys="true" keyProperty="id">
+	<insert id="createView" useGeneratedKeys="true" keyProperty="id">
         <![CDATA[
           INSERT
           INTO VIEWS (NAME, PROJECT_ID)
@@ -12,9 +13,9 @@
             #{project.id}
           )
         ]]>
-    </insert>
+	</insert>
 
-    <sql id="getView">
+	<sql id="getView">
         <![CDATA[
           SELECT
 	          V.ID AS VIEW_ID,
@@ -33,26 +34,26 @@
 	      ON
           	V.PROJECT_ID = P.ID
         ]]>
-    </sql>
+	</sql>
 
-    <select id="getViewById" resultMap="ViewResultMap">
-        <include refid="getView"/>
+	<select id="getViewById" resultMap="ViewResultMap">
+		<include refid="getView" />
         <![CDATA[
           WHERE
           V.ID = #{id}
         ]]>
-    </select>
+	</select>
 
-    <select id="getAllViews" resultMap="ViewResultMap">
-        <include refid="getView"/>
-        <if test="null != projectId">
+	<select id="getAllViews" resultMap="ViewResultMap">
+		<include refid="getView" />
+		<if test="null != projectId">
             <![CDATA[
                WHERE P.ID = #{projectId}
             ]]>
 		</if>
-    </select>
+	</select>
 
-    <update id="updateView">
+	<update id="updateView">
         <![CDATA[
           UPDATE
          	 VIEWS
@@ -62,23 +63,25 @@
           WHERE
 			 ID = #{id}
         ]]>
-    </update>
+	</update>
 
-    <delete id="deleteViewById">
+	<delete id="deleteViewById">
         <![CDATA[
           DELETE
           FROM VIEWS
           WHERE
           ID = #{id}
         ]]>
-    </delete>
+	</delete>
 
-    <resultMap id="ViewResultMap" type="com.qaprosoft.zafira.models.db.View" autoMapping="false">
-        <id property="id" column="VIEW_ID"/>
-        <result property="name" column="VIEW_NAME"/>
-        <result column="VIEW_MODIFIED_AT" property="modifiedAt" />
+	<resultMap id="ViewResultMap"
+		type="com.qaprosoft.zafira.models.db.View" autoMapping="false">
+		<id property="id" column="VIEW_ID" />
+		<result property="name" column="VIEW_NAME" />
+		<result column="VIEW_MODIFIED_AT" property="modifiedAt" />
 		<result column="VIEW_CREATED_AT" property="createdAt" />
-        <association property="project" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.ProjectMapper.ProjectResultMap"/>
-    </resultMap>
+		<association property="project"
+			resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.ProjectMapper.ProjectResultMap" />
+	</resultMap>
 
 </mapper>

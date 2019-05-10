@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.WidgetMapper">
+<mapper
+	namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.WidgetMapper">
 
-	<select id="executeSQL" parameterType="com.qaprosoft.zafira.dbaccess.utils.SQLAdapter" resultType="Hashmap">
+	<select id="executeSQL"
+		parameterType="com.qaprosoft.zafira.dbaccess.utils.SQLAdapter"
+		resultType="Hashmap">
 		<![CDATA[
 			${sql}
 		]]>
 	</select>
 
-	<select id="executeSQLTemplate" parameterType="com.qaprosoft.zafira.dbaccess.utils.SQLTemplateAdapter" resultType="Hashmap">
+	<select id="executeSQLTemplate"
+		parameterType="com.qaprosoft.zafira.dbaccess.utils.SQLTemplateAdapter"
+		resultType="Hashmap">
 		<![CDATA[
 			${sql}
 		]]>
 	</select>
-	
-	<insert id="createWidget" useGeneratedKeys="true" keyProperty="id">
+
+	<insert id="createWidget" useGeneratedKeys="true"
+		keyProperty="id">
 		<![CDATA[
 			INSERT INTO WIDGETS (TITLE, DESCRIPTION, PARAMS_CONFIG, LEGEND_CONFIG, WIDGET_TEMPLATE_ID, TYPE, REFRESHABLE)
 			VALUES (
@@ -29,7 +35,7 @@
 			)
 		]]>
 	</insert>
-	
+
 	<sql id="getWidget">
 		<![CDATA[
 			SELECT
@@ -66,59 +72,59 @@
 				W.WIDGET_TEMPLATE_ID = WT.ID
 		]]>
 	</sql>
-	
+
 	<select id="getAllWidgets" resultMap="WidgetResultMap">
 		<include refid="getWidget" />
 		<![CDATA[
 			ORDER BY TITLE
 		]]>
 	</select>
-	
+
 	<select id="getWidgetById" resultMap="WidgetResultMap">
 		<include refid="getWidget" />
 		<![CDATA[
 			WHERE W.ID = #{id};
 		]]>
 	</select>
-	
+
 	<update id="updateWidget">
 		<![CDATA[
 			UPDATE
 			    WIDGETS
 		]]>
-			<set>
-				<if test="null != title">
+		<set>
+			<if test="null != title">
 		            <![CDATA[
 		               TITLE = #{title},
 		            ]]>
-				</if>
-				<if test="null != description">
+			</if>
+			<if test="null != description">
 					<![CDATA[
 		               DESCRIPTION = #{description},
 		            ]]>
-				</if>
-				<if test="null != paramsConfig">
+			</if>
+			<if test="null != paramsConfig">
 					<![CDATA[
 		               PARAMS_CONFIG = #{paramsConfig},
 		            ]]>
-				</if>
-				<if test="null != legendConfig">
+			</if>
+			<if test="null != legendConfig">
 					<![CDATA[
 		               LEGEND_CONFIG = #{legendConfig},
 		            ]]>
-				</if>
-				<if test="null != refreshable">
+			</if>
+			<if test="null != refreshable">
 					<![CDATA[
 		               REFRESHABLE = #{refreshable}
 		            ]]>
-				</if>
-			</set>
+			</if>
+		</set>
 		<![CDATA[
 			WHERE
 			    ID = #{id}
 		]]>
 	</update>
-	
+
 	<sql id="deleteWidget">
 		<![CDATA[
 			DELETE FROM WIDGETS
@@ -131,9 +137,10 @@
 			WHERE ID = #{id}
 		]]>
 	</delete>
-	
-	
-	<resultMap type="com.qaprosoft.zafira.models.db.Widget" id="WidgetResultMap" autoMapping="false">
+
+
+	<resultMap type="com.qaprosoft.zafira.models.db.Widget"
+		id="WidgetResultMap" autoMapping="false">
 		<id column="WIDGET_ID" property="id" />
 		<result column="WIDGET_TITLE" property="title" />
 		<result column="WIDGET_DESCRIPTION" property="description" />
@@ -151,21 +158,31 @@
 		<result column="WIDGET_MODIFIED_AT" property="modifiedAt" />
 		<result column="WIDGET_CREATED_AT" property="createdAt" />
 
-		<association property="widgetTemplate" javaType="com.qaprosoft.zafira.models.db.WidgetTemplate" resultMap="WidgetTemplateResultMap"/>
+		<association property="widgetTemplate"
+			javaType="com.qaprosoft.zafira.models.db.WidgetTemplate"
+			resultMap="WidgetTemplateResultMap" />
 	</resultMap>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.WidgetTemplate" id="WidgetTemplateResultMap" autoMapping="false">
-		<id property="id" column="WIDGET_TEMPLATE_ID"/>
-		<result property="name" column="WIDGET_TEMPLATE_NAME"/>
-		<result property="description" column="WIDGET_TEMPLATE_DESCRIPTION"/>
-		<result property="type" column="WIDGET_TEMPLATE_TYPE"/>
-		<result property="hidden" column="WIDGET_TEMPLATE_HIDDEN"/>
-		<result property="sql" column="WIDGET_TEMPLATE_SQL"/>
-		<result property="chartConfig" column="WIDGET_TEMPLATE_CHART_CONFIG"/>
-		<result property="paramsConfig" column="WIDGET_TEMPLATE_PARAMS_CONFIG"/>
-		<result property="legendConfig" column="WIDGET_TEMPLATE_LEGEND_CONFIG"/>
-		<result property="modifiedAt" column="WIDGET_TEMPLATE_MODIFIED_AT"/>
-		<result property="createdAt" column="WIDGET_TEMPLATE_CREATED_AT"/>
+	<resultMap
+		type="com.qaprosoft.zafira.models.db.WidgetTemplate"
+		id="WidgetTemplateResultMap" autoMapping="false">
+		<id property="id" column="WIDGET_TEMPLATE_ID" />
+		<result property="name" column="WIDGET_TEMPLATE_NAME" />
+		<result property="description"
+			column="WIDGET_TEMPLATE_DESCRIPTION" />
+		<result property="type" column="WIDGET_TEMPLATE_TYPE" />
+		<result property="hidden" column="WIDGET_TEMPLATE_HIDDEN" />
+		<result property="sql" column="WIDGET_TEMPLATE_SQL" />
+		<result property="chartConfig"
+			column="WIDGET_TEMPLATE_CHART_CONFIG" />
+		<result property="paramsConfig"
+			column="WIDGET_TEMPLATE_PARAMS_CONFIG" />
+		<result property="legendConfig"
+			column="WIDGET_TEMPLATE_LEGEND_CONFIG" />
+		<result property="modifiedAt"
+			column="WIDGET_TEMPLATE_MODIFIED_AT" />
+		<result property="createdAt"
+			column="WIDGET_TEMPLATE_CREATED_AT" />
 	</resultMap>
 
 </mapper>

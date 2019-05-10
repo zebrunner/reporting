@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.ProjectMapper">
+<mapper
+	namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.ProjectMapper">
 
-	<insert id="createProject" useGeneratedKeys="true" keyProperty="id">
+	<insert id="createProject" useGeneratedKeys="true"
+		keyProperty="id">
 		<![CDATA[
 			INSERT INTO PROJECTS (NAME, DESCRIPTION)
 			VALUES (#{name},
@@ -23,21 +25,21 @@
 				PROJECTS P
 		]]>
 	</sql>
-	
+
 	<select id="getAllProjects" resultMap="ProjectResultMap">
 		<include refid="getProject" />
 		<![CDATA[
 			ORDER BY P.NAME;
 		]]>
 	</select>
-	
+
 	<select id="getProjectById" resultMap="ProjectResultMap">
 		<include refid="getProject" />
 		<![CDATA[
 			WHERE P.ID = #{id};
 		]]>
 	</select>
-	
+
 	<select id="getProjectByName" resultMap="ProjectResultMap">
 		<include refid="getProject" />
 		<![CDATA[
@@ -68,7 +70,8 @@
 		<include refid="deleteProject" />
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.Project" id="ProjectResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.Project"
+		id="ProjectResultMap" autoMapping="false">
 		<id column="PROJECT_ID" property="id" />
 		<result column="PROJECT_NAME" property="name" />
 		<result column="PROJECT_DESCRIPTION" property="description" />

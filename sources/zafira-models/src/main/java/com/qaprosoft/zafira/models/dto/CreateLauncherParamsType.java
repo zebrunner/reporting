@@ -1,11 +1,12 @@
 package com.qaprosoft.zafira.models.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import org.hibernate.validator.constraints.NotEmpty;
+import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.Map;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateLauncherParamsType implements Serializable

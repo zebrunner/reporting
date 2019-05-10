@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.JobMapper">
+<mapper
+	namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.JobMapper">
 
 	<insert id="createJob" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
@@ -29,7 +30,7 @@
 				JOBS J
 		]]>
 	</sql>
-	
+
 	<select id="getAllJobs" resultMap="JobResultMap">
 		<include refid="getJob" />
 	</select>
@@ -60,28 +61,28 @@
 			UPDATE
 			    JOBS
 		]]>
-			<set>
-				<if test="0 != user.id">
+		<set>
+			<if test="0 != user.id">
 		            <![CDATA[
 		               USER_ID = #{user.id},
 		            ]]>
-				</if>
-				<if test="null != name">
+			</if>
+			<if test="null != name">
 		            <![CDATA[
 		               NAME = #{name},
 		            ]]>
-				</if>
-				<if test="null != jobURL">
+			</if>
+			<if test="null != jobURL">
 		            <![CDATA[
 		               JOB_URL = #{jobURL},
 		            ]]>
-				</if>
-				<if test="null != jenkinsHost">
+			</if>
+			<if test="null != jenkinsHost">
 		            <![CDATA[
 		               JENKINS_HOST = #{jenkinsHost}
 		            ]]>
-				</if>
-			</set>
+			</if>
+		</set>
 		<![CDATA[
 			WHERE
 			    ID = #{id}
@@ -103,7 +104,8 @@
 		<include refid="deleteJob" />
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.Job" id="JobResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.Job"
+		id="JobResultMap" autoMapping="false">
 		<id column="JOB_ID" property="id" />
 		<result column="JOB_USER_ID" property="user.id" />
 		<result column="JOB_NAME" property="name" />

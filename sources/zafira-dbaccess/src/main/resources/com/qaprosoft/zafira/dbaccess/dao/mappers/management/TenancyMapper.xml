@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.management.TenancyMapper">
+<mapper
+	namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.management.TenancyMapper">
 
 	<sql id="getTenancy">
 		<![CDATA[
@@ -11,7 +12,7 @@
 				TENANCIES T
 		]]>
 	</sql>
-	
+
 	<select id="getAllTenancies" resultMap="TenancyResultMap">
 		<include refid="getTenancy" />
 	</select>
@@ -23,7 +24,8 @@
 		]]>
 	</select>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.Tenancy" id="TenancyResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.Tenancy"
+		id="TenancyResultMap" autoMapping="false">
 		<result column="TENANCY_NAME" property="name" />
 	</resultMap>
 

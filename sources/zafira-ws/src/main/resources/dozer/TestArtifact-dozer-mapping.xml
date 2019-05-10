@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<mappings xmlns="http://dozer.sourceforge.net"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
 
 	<mapping type="bi-directional" wildcard="false">
@@ -18,7 +19,8 @@
 			<a>link</a>
 			<b>link</b>
 		</field>
-		<field custom-converter="com.qaprosoft.zafira.ws.util.dozer.ExpirationDateConverter">
+		<field
+			custom-converter="com.qaprosoft.zafira.ws.util.dozer.ExpirationDateConverter">
 			<a>expiresIn</a>
 			<b>expiresAt</b>
 		</field>
@@ -27,5 +29,5 @@
 			<b>testId</b>
 		</field>
 	</mapping>
-	
+
 </mappings>

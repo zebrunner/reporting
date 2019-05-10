@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.InvitationMapper">
+<mapper
+	namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.InvitationMapper">
 
-	<insert id="createInvitation" useGeneratedKeys="true" keyProperty="id">
+	<insert id="createInvitation" useGeneratedKeys="true"
+		keyProperty="id">
 		<![CDATA[
 			INSERT INTO INVITATIONS (EMAIL, TOKEN, USER_ID, STATUS, GROUP_ID, SOURCE)
 			VALUES (
@@ -31,7 +33,7 @@
 				I.MODIFIED_AT AS INVITATION_MODIFIED_AT,
 				I.CREATED_AT AS INVITATION_CREATED_AT
 		]]>
-		<include refid="getInvitationFromClause"/>
+		<include refid="getInvitationFromClause" />
 	</sql>
 
 	<sql id="getInvitationFromClause">
@@ -52,7 +54,8 @@
 		]]>
 	</select>
 
-	<select id="getInvitationByEmail" resultMap="InvitationResultMap">
+	<select id="getInvitationByEmail"
+		resultMap="InvitationResultMap">
 		<include refid="getInvitation" />
 		<![CDATA[
 			WHERE I.EMAIL = #{email};
@@ -76,7 +79,7 @@
 
 	<select id="search" resultMap="InvitationResultMap">
 		<include refid="getInvitation" />
-		<include refid="searchWhereClause"/>
+		<include refid="searchWhereClause" />
 		<![CDATA[
 			ORDER BY I.ID
 			LIMIT #{sc.pageSize} OFFSET #{sc.offset}
@@ -88,8 +91,8 @@
 			SELECT
 				COUNT(*)
 		]]>
-		<include refid="getInvitationFromClause"/>
-		<include refid="searchWhereClause"/>
+		<include refid="getInvitationFromClause" />
+		<include refid="searchWhereClause" />
 	</select>
 
 	<sql id="deleteInvitationSql">
@@ -135,7 +138,8 @@
 		]]>
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.Invitation" id="InvitationResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.Invitation"
+		id="InvitationResultMap" autoMapping="false">
 		<id column="INVITATION_ID" property="id" />
 		<result column="INVITATION_EMAIL" property="email" />
 		<result column="INVITATION_TOKEN" property="token" />
@@ -145,7 +149,8 @@
 		<result column="INVITATION_USER_ID" property="createdById" />
 		<result column="INVITATION_MODIFIED_AT" property="modifiedAt" />
 		<result column="INVITATION_CREATED_AT" property="createdAt" />
-		<association property="createdBy" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserMapper.UserResultMap"/>
+		<association property="createdBy"
+			resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserMapper.UserResultMap" />
 	</resultMap>
 
 </mapper>

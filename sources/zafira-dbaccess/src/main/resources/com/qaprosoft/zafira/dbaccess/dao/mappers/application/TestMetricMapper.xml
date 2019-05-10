@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestMetricMapper">
+<mapper
+	namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestMetricMapper">
 
-	<insert id="createTestMetric" useGeneratedKeys="true" keyProperty="id">
+	<insert id="createTestMetric" useGeneratedKeys="true"
+		keyProperty="id">
 		<![CDATA[
 			INSERT INTO TEST_METRICS (OPERATION, ELAPSED, TEST_ID)
 			VALUES (
@@ -54,7 +56,8 @@
 		]]>
 	</select>
 
-	<select id="getTestMetricsByTestCaseIdAndEnv" resultMap="TestMetricResultMap">
+	<select id="getTestMetricsByTestCaseIdAndEnv"
+		resultMap="TestMetricResultMap">
 		<![CDATA[
 			SELECT
 			  TM.ID AS TEST_METRIC_ID,
@@ -79,7 +82,7 @@
 			  TR.ENV = #{env};
 		]]>
 	</select>
-	
+
 	<sql id="deleteTestMetric">
 		<![CDATA[
 			DELETE FROM TEST_METRICS
@@ -91,7 +94,8 @@
 		<include refid="deleteTestMetric" />
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.TestMetric" id="TestMetricResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.TestMetric"
+		id="TestMetricResultMap" autoMapping="false">
 		<id column="TEST_METRIC_ID" property="id" />
 		<result column="TEST_METRIC_OPERATION" property="operation" />
 		<result column="TEST_METRIC_ELAPSED" property="elapsed" />

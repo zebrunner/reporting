@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.GroupMapper">
-    <insert id="createGroup"  useGeneratedKeys="true" keyProperty="id">
+<mapper
+	namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.GroupMapper">
+	<insert id="createGroup" useGeneratedKeys="true"
+		keyProperty="id">
         <![CDATA[
           INSERT INTO GROUPS(NAME, ROLE)
           VALUES (
@@ -10,26 +12,27 @@
             #{role}
           )
         ]]>
-    </insert>
+	</insert>
 
-    <insert id="addPermissionsToGroup">
-        <if test="null != permissions and permissions.size() > 0">
+	<insert id="addPermissionsToGroup">
+		<if test="null != permissions and permissions.size() > 0">
             <![CDATA[
               INSERT INTO GROUP_PERMISSIONS(GROUP_ID, PERMISSION_ID)
               VALUES
             ]]>
-              <foreach item="permission" index="index" collection="permissions" open="" separator="," close=";">
+			<foreach item="permission" index="index"
+				collection="permissions" open="" separator="," close=";">
                     <![CDATA[
                         (
                             #{groupId},
                             #{permission.id}
                         )
                     ]]>
-              </foreach>
-        </if>
-    </insert>
+			</foreach>
+		</if>
+	</insert>
 
-    <sql id="getGroup">
+	<sql id="getGroup">
         <![CDATA[
 			SELECT
 				G.ID AS GROUP_ID,
@@ -72,9 +75,9 @@
             ON
                 P.ID = GP.PERMISSION_ID
 		]]>
-    </sql>
+	</sql>
 
-    <sql id="getPublicGroupsInfo">
+	<sql id="getPublicGroupsInfo">
         <![CDATA[
 			SELECT
 				G.ID AS GROUP_ID,
@@ -99,52 +102,52 @@
 			ON
 				UG.USER_ID = U.ID
 		]]>
-    </sql>
+	</sql>
 
-    <sql id="getCount">
+	<sql id="getCount">
         <![CDATA[
 			SELECT
 				COUNT(*)
 			FROM
 				GROUPS G
 		]]>
-    </sql>
+	</sql>
 
-    <select id="getGroupsCount" resultType="java.lang.Integer">
-        <include refid="getCount" />
+	<select id="getGroupsCount" resultType="java.lang.Integer">
+		<include refid="getCount" />
         <![CDATA[
 			WHERE
               G.INVITABLE = TRUE
 		]]>
-    </select>
+	</select>
 
-    <select id="getAllGroups" resultMap="GroupResultMap">
-        <if test="publicDetails">
-          <include refid="getPublicGroupsInfo"/>
+	<select id="getAllGroups" resultMap="GroupResultMap">
+		<if test="publicDetails">
+			<include refid="getPublicGroupsInfo" />
             <![CDATA[
 			  WHERE G.INVITABLE = TRUE;
 		    ]]>
-        </if>
-        <if test="! publicDetails">
-          <include refid="getGroup" />
-        </if>
-    </select>
+		</if>
+		<if test="! publicDetails">
+			<include refid="getGroup" />
+		</if>
+	</select>
 
-    <select id="getGroupById" resultMap="GroupResultMap">
-        <include refid="getGroup" />
+	<select id="getGroupById" resultMap="GroupResultMap">
+		<include refid="getGroup" />
         <![CDATA[
 			WHERE G.ID = #{id};
 		]]>
-    </select>
-    
-     <select id="getGroupByName" resultMap="GroupResultMap">
-        <include refid="getGroup" />
+	</select>
+
+	<select id="getGroupByName" resultMap="GroupResultMap">
+		<include refid="getGroup" />
         <![CDATA[
 			WHERE G.NAME = #{name};
 		]]>
-    </select>
-    
-    <select id="getPrimaryGroupByRole" resultMap="GroupResultMap">
+	</select>
+
+	<select id="getPrimaryGroupByRole" resultMap="GroupResultMap">
         <![CDATA[
         	SELECT
 				G.ID AS GROUP_ID,
@@ -160,73 +163,78 @@
 			ORDER BY ID ASC
 			LIMIT 1
 		]]>
-    </select>
+	</select>
 
-    <update id="updateGroup">
+	<update id="updateGroup">
         <![CDATA[
 			UPDATE
 			    GROUPS
 		]]>
-        <set>
-            <if test="null != name">
+		<set>
+			<if test="null != name">
                 <![CDATA[
 		               NAME = #{name},
 		            ]]>
-            </if>
-            <if test="null != role">
+			</if>
+			<if test="null != role">
                 <![CDATA[
 		               ROLE = #{role}
 		            ]]>
-            </if>
-        </set>
+			</if>
+		</set>
         <![CDATA[
 			WHERE
 			    ID = #{id}
 		]]>
-    </update>
+	</update>
 
-    <sql id="deleteGroup">
+	<sql id="deleteGroup">
         <![CDATA[
 			DELETE FROM GROUPS
 		]]>
-    </sql>
+	</sql>
 
-    <delete id="deleteGroup">
-        <include refid="deleteGroup" />
+	<delete id="deleteGroup">
+		<include refid="deleteGroup" />
         <![CDATA[
 			WHERE ID = #{id}
 		]]>
-    </delete>
+	</delete>
 
-    <delete id="deletePermissionFromGroup">
+	<delete id="deletePermissionFromGroup">
         <![CDATA[
             DELETE FROM GROUP_PERMISSIONS
 			    WHERE GROUP_ID = #{groupId} AND PERMISSION_ID = #{permissionId}
 		]]>
-    </delete>
+	</delete>
 
-    <resultMap type="com.qaprosoft.zafira.models.db.Group" id="GroupResultMap" autoMapping="false">
-        <id column="GROUP_ID" property="id" />
-        <result column="GROUP_NAME" property="name" />
-        <result column="GROUP_ROLE" property="role" />
-        <result column="GROUP_INVITABLE" property="invitable" />
+	<resultMap type="com.qaprosoft.zafira.models.db.Group"
+		id="GroupResultMap" autoMapping="false">
+		<id column="GROUP_ID" property="id" />
+		<result column="GROUP_NAME" property="name" />
+		<result column="GROUP_ROLE" property="role" />
+		<result column="GROUP_INVITABLE" property="invitable" />
 
-        <result column="GROUP_MODIFIED_AT" property="modifiedAt" />
-        <result column="GROUP_CREATED_AT" property="createdAt" />
-        <collection property="users" ofType="com.qaprosoft.zafira.models.db.User" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.GroupMapper.UserResultMap"/>
-        <collection property="permissions" javaType="java.util.Set" ofType="com.qaprosoft.zafira.models.db.Permission"
-                    resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.PermissionMapper.PermissionResultMap"/>
-    </resultMap>
+		<result column="GROUP_MODIFIED_AT" property="modifiedAt" />
+		<result column="GROUP_CREATED_AT" property="createdAt" />
+		<collection property="users"
+			ofType="com.qaprosoft.zafira.models.db.User"
+			resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.GroupMapper.UserResultMap" />
+		<collection property="permissions" javaType="java.util.Set"
+			ofType="com.qaprosoft.zafira.models.db.Permission"
+			resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.PermissionMapper.PermissionResultMap" />
+	</resultMap>
 
-    <resultMap type="com.qaprosoft.zafira.models.db.User" id="UserResultMap" autoMapping="false">
-        <id column="USER_ID" property="id" />
-        <result column="USER_USERNAME" property="username" />
-        <result column="USER_PASSWORD" property="password" />
-        <result column="USER_FIRST_NAME" property="firstName" />
-        <result column="USER_LAST_NAME" property="lastName" />
-        <result column="USER_EMAIL" property="email" />
-        <result column="USER_COVER_PHOTO_URL" property="photoURL" />
-        <result column="USER_MODIFIED_AT" property="modifiedAt" />
-        <result column="USER_CREATED_AT" property="createdAt" />
-    </resultMap>
+	<resultMap type="com.qaprosoft.zafira.models.db.User"
+		id="UserResultMap" autoMapping="false">
+		<id column="USER_ID" property="id" />
+		<result column="USER_USERNAME" property="username" />
+		<result column="USER_PASSWORD" property="password" />
+		<result column="USER_FIRST_NAME" property="firstName" />
+		<result column="USER_LAST_NAME" property="lastName" />
+		<result column="USER_EMAIL" property="email" />
+		<result column="USER_COVER_PHOTO_URL" property="photoURL" />
+		<result column="USER_MODIFIED_AT" property="modifiedAt" />
+		<result column="USER_CREATED_AT" property="createdAt" />
+	</resultMap>
 </mapper>

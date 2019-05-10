@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserMapper">
+<mapper
+	namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserMapper">
 
 	<insert id="createUser" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
@@ -117,7 +118,7 @@
 			FROM
 				USERS U
 		]]>
-		<include refid="searchDetailsWhereClause"/>
+		<include refid="searchDetailsWhereClause" />
 	</sql>
 
 	<sql id="searchDetailsWhereClause">
@@ -165,7 +166,7 @@
 			FROM
 				USERS U
 		]]>
-		<include refid="searchPublicDetailsWhereClause"/>
+		<include refid="searchPublicDetailsWhereClause" />
 	</sql>
 
 	<sql id="searchPublicDetailsWhereClause">
@@ -177,7 +178,7 @@
 	        ]]>
 		</if>
 	</sql>
-	
+
 	<select id="searchUsers" resultMap="UserResultMap">
 		<if test="publicDetails">
 			<include refid="searchPublicDetails" />
@@ -190,7 +191,7 @@
 			LIMIT #{sc.pageSize} OFFSET #{sc.offset}
 		]]>
 	</select>
-	
+
 	<select id="getUserSearchCount" resultType="java.lang.Integer">
 		<![CDATA[
 		SELECT 
@@ -211,49 +212,49 @@
 			UPDATE
 			    USERS
 		]]>
-			<set>
-				<if test="null != firstName">
+		<set>
+			<if test="null != firstName">
 		            <![CDATA[
 		               FIRST_NAME = #{firstName},
 		            ]]>
-				</if>
-				<if test="null != lastName">
+			</if>
+			<if test="null != lastName">
 		            <![CDATA[
 		               LAST_NAME = #{lastName},
 		            ]]>
-				</if>
-				<if test="null != email">
+			</if>
+			<if test="null != email">
 		            <![CDATA[
 		               EMAIL = #{email},
 		            ]]>
-				</if>
-				<if test="null != photoURL">
+			</if>
+			<if test="null != photoURL">
 					<![CDATA[
 		               COVER_PHOTO_URL = #{photoURL},
 		            ]]>
-				</if>
-				<if test="null != username">
+			</if>
+			<if test="null != username">
 		            <![CDATA[
 		               USERNAME = #{username},	
 		            ]]>
-				</if>
-				<if test="null != password">
+			</if>
+			<if test="null != password">
 		            <![CDATA[
 		               PASSWORD = #{password},	
 		            ]]>
-				</if>
-				<if test="null != lastLogin">
+			</if>
+			<if test="null != lastLogin">
 		            <![CDATA[
 		               LAST_LOGIN = #{lastLogin}	
 		            ]]>
-				</if>
-			</set>
+			</if>
+		</set>
 		<![CDATA[
 			WHERE
 			    ID = #{id}
 		]]>
 	</update>
-	
+
 	<update id="updateLastLoginDate">
 		<![CDATA[
 			UPDATE
@@ -302,7 +303,8 @@
 		<include refid="deleteUser" />
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.User" id="UserResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.User"
+		id="UserResultMap" autoMapping="false">
 		<id column="USER_ID" property="id" />
 		<result column="USER_USERNAME" property="username" />
 		<result column="USER_PASSWORD" property="password" />
@@ -315,8 +317,12 @@
 		<result column="USER_LAST_LOGIN" property="lastLogin" />
 		<result column="USER_MODIFIED_AT" property="modifiedAt" />
 		<result column="USER_CREATED_AT" property="createdAt" />
-		<collection property="groups" ofType="com.qaprosoft.zafira.models.db.Group" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.GroupMapper.GroupResultMap"/>
-		<collection property="preferences" ofType="com.qaprosoft.zafira.models.db.UserPreference" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserPreferenceMapper.UserPreferenceResultMap"/>
+		<collection property="groups"
+			ofType="com.qaprosoft.zafira.models.db.Group"
+			resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.GroupMapper.GroupResultMap" />
+		<collection property="preferences"
+			ofType="com.qaprosoft.zafira.models.db.UserPreference"
+			resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserPreferenceMapper.UserPreferenceResultMap" />
 	</resultMap>
 
 	<insert id="addUserToGroup">
@@ -332,9 +338,11 @@
 	<delete id="deleteUserFromGroup">
 		DELETE
 		FROM
-			USER_GROUPS
+		USER_GROUPS
 		WHERE
-			ID = (SELECT ID FROM USER_GROUPS WHERE USER_ID = #{userId} AND GROUP_ID = #{groupId})
+		ID = (SELECT ID FROM
+		USER_GROUPS WHERE USER_ID = #{userId} AND GROUP_ID
+		= #{groupId})
 	</delete>
 
 </mapper>

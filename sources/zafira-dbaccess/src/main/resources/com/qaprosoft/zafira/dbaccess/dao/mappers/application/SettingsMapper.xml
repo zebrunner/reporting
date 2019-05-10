@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.SettingsMapper">
+<mapper
+	namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.SettingsMapper">
 
-	<insert id="createSetting" useGeneratedKeys="true" keyProperty="id">
+	<insert id="createSetting" useGeneratedKeys="true"
+		keyProperty="id">
 		<![CDATA[
 			INSERT INTO SETTINGS (NAME, VALUE, IS_ENCRYPTED, TOOL, FILE)
 			VALUES (#{name},
@@ -30,27 +32,28 @@
 		]]>
 	</sql>
 
-    <select id="getAllSettings" resultMap="SettingResultMap">
-        <include refid="getSetting" />
+	<select id="getAllSettings" resultMap="SettingResultMap">
+		<include refid="getSetting" />
         <![CDATA[
 			ORDER BY S.NAME;
 		]]>
-    </select>
+	</select>
 
-	<select id="getSettingsByIntegration" resultMap="SettingResultMap">
-        <include refid="getSetting" />
-        <if test = "isIntegrationTool">
+	<select id="getSettingsByIntegration"
+		resultMap="SettingResultMap">
+		<include refid="getSetting" />
+		<if test="isIntegrationTool">
             <![CDATA[
                     WHERE S.TOOL IS NOT NULL
                     ORDER BY S.NAME;
             ]]>
-        </if>
-        <if test = "!isIntegrationTool">
+		</if>
+		<if test="!isIntegrationTool">
             <![CDATA[
                     WHERE S.TOOL IS NULL
                     ORDER BY S.NAME;
             ]]>
-        </if>
+		</if>
 	</select>
 
 
@@ -86,7 +89,8 @@
 		]]>
 	</select>
 
-	<select id="getTools" resultType="com.qaprosoft.zafira.models.db.Setting$Tool">
+	<select id="getTools"
+		resultType="com.qaprosoft.zafira.models.db.Setting$Tool">
 		<![CDATA[
 			SELECT
 				DISTINCT
@@ -101,7 +105,7 @@
 			LIMIT 10000
 		]]>
 	</select>
-	
+
 	<select id="getPostgresVersion" resultType="java.lang.String">
 		<![CDATA[
 		SELECT version();
@@ -114,31 +118,31 @@
 			    SETTINGS
 			SET
 		]]>
-			<if test = "value != null">
+		<if test="value != null">
 				<![CDATA[
 						VALUE = #{value},
 					]]>
-			</if>
-			<if test = "isEncrypted != null">
+		</if>
+		<if test="isEncrypted != null">
 				<![CDATA[
 						IS_ENCRYPTED = #{isEncrypted},
 					]]>
-			</if>
-			<if test = "tool != null">
+		</if>
+		<if test="tool != null">
 				<![CDATA[
 						TOOL = #{tool},
 					]]>
-			</if>
-			<if test = "file != null">
+		</if>
+		<if test="file != null">
 				<![CDATA[
 					FILE = #{file, jdbcType=BINARY},
 				]]>
-			</if>
-			<if test = "name != null">
+		</if>
+		<if test="name != null">
 				<![CDATA[
 						NAME = #{name}
 					]]>
-			</if>
+		</if>
 		<![CDATA[
 			WHERE
 			    ID = #{id}
@@ -172,15 +176,16 @@
 		<include refid="deleteSetting" />
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.Setting" id="SettingResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.Setting"
+		id="SettingResultMap" autoMapping="false">
 		<id column="SETTING_ID" property="id" />
 		<result column="SETTING_NAME" property="name" />
 		<result column="SETTING_VALUE" property="value" />
 		<result column="SETTING_MODIFIED_AT" property="modifiedAt" />
 		<result column="SETTING_CREATED_AT" property="createdAt" />
-        <result column="SETTING_IS_ENCRYPTED" property="isEncrypted" />
-        <result column="SETTING_TOOL" property="tool" />
-        <result column="SETTING_FILE" property="file" jdbcType="BINARY" />
+		<result column="SETTING_IS_ENCRYPTED" property="isEncrypted" />
+		<result column="SETTING_TOOL" property="tool" />
+		<result column="SETTING_FILE" property="file" jdbcType="BINARY" />
 	</resultMap>
 
 </mapper>

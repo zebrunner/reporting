@@ -1,7 +1,8 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 
-<suite verbose="1" name="Zafira Smoke Tests" parallel="tests" thread-count="5" data-provider-thread-count="5" annotations="JDK">
-	
+<suite verbose="1" name="Zafira Smoke Tests" parallel="tests"
+	thread-count="5" data-provider-thread-count="5" annotations="JDK">
+
 	<test name="Login with valid credentials">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.AuthTest">
@@ -16,14 +17,11 @@
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.TestRunPageTest">
 				<methods>
-					<include name="verifyNavigationTest"/>
+					<include name="verifyNavigationTest" />
 				</methods>
 			</class>
-			<!--<class name="com.qaprosoft.zafira.tests.TestRunViewPageTest">
-				<methods>
-					<include name="verifyViewTableCreationTest"/>
-				</methods>
-			</class>-->
+			<!--<class name="com.qaprosoft.zafira.tests.TestRunViewPageTest"> <methods> 
+				<include name="verifyViewTableCreationTest"/> </methods> </class> -->
 		</classes>
 	</test>
 
@@ -31,27 +29,21 @@
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.NavigationTest">
 				<methods>
-					<include name="verifyNavbarFunctionalityTest"/>
+					<include name="verifyNavbarFunctionalityTest" />
 				</methods>
 			</class>
 		</classes>
 	</test>
 
-	<!--<test parallel="false" name="Test run view tests">
-		<classes>
-			<class name="com.qaprosoft.zafira.tests.TestRunViewPageTest">
-				<methods>
-					<include name="verifyCreateTestRunViewTest"/>
-				</methods>
-			</class>
-		</classes>
-	</test>-->
+	<!--<test parallel="false" name="Test run view tests"> <classes> <class 
+		name="com.qaprosoft.zafira.tests.TestRunViewPageTest"> <methods> <include 
+		name="verifyCreateTestRunViewTest"/> </methods> </class> </classes> </test> -->
 
 	<test parallel="false" name="User tests">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.UserPageTest">
 				<methods>
-					<include name="verifyNavigationTest"/>
+					<include name="verifyNavigationTest" />
 				</methods>
 			</class>
 		</classes>
@@ -61,7 +53,7 @@
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.UserProfilePageTest">
 				<methods>
-					<include name="generateTokenTest"/>
+					<include name="generateTokenTest" />
 				</methods>
 			</class>
 		</classes>

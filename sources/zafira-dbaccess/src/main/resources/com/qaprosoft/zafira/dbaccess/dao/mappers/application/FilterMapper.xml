@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.FilterMapper">
+<mapper
+	namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.FilterMapper">
 
-    <insert id="createFilter" useGeneratedKeys="true" keyProperty="id">
+	<insert id="createFilter" useGeneratedKeys="true"
+		keyProperty="id">
         <![CDATA[
 
 			INSERT INTO FILTERS (NAME, DESCRIPTION, SUBJECT, PUBLIC_ACCESS, USER_ID)
@@ -15,22 +17,22 @@
 				#{userId}
 			)
         ]]>
-    </insert>
+	</insert>
 
-    <sql id="deleteFilter">
+	<sql id="deleteFilter">
         <![CDATA[
 
 			DELETE FROM FILTERS
 			WHERE ID = #{id}
 
         ]]>
-    </sql>
+	</sql>
 
-    <delete id="deleteFilterById">
-        <include refid="deleteFilter"/>
-    </delete>
+	<delete id="deleteFilterById">
+		<include refid="deleteFilter" />
+	</delete>
 
-    <update id="updateFilter">
+	<update id="updateFilter">
         <![CDATA[
 
 			UPDATE
@@ -44,10 +46,10 @@
 			    ID = #{id}
 
         ]]>
-    </update>
+	</update>
 
 
-    <sql id="getFilters">
+	<sql id="getFilters">
         <![CDATA[
 			SELECT
 				F.ID AS FILTER_ID,
@@ -62,56 +64,57 @@
 				FILTERS F
 
         ]]>
-    </sql>
+	</sql>
 
-    <select id="getFilterById" resultMap="FilterResultMap">
-        <include refid="getFilters"/>
+	<select id="getFilterById" resultMap="FilterResultMap">
+		<include refid="getFilters" />
         <![CDATA[
 			WHERE F.ID = #{id};
 		]]>
-    </select>
+	</select>
 
-    <select id="getFilterByName" resultMap="FilterResultMap">
-        <include refid="getFilters"/>
+	<select id="getFilterByName" resultMap="FilterResultMap">
+		<include refid="getFilters" />
         <![CDATA[
 			WHERE F.NAME = #{name};
 		]]>
-    </select>
+	</select>
 
 
-    <select id="getAllFilters" resultMap="FilterResultMap">
-        <include refid="getFilters"/>
-    </select>
+	<select id="getAllFilters" resultMap="FilterResultMap">
+		<include refid="getFilters" />
+	</select>
 
-    <select id="getAllPublicFilters" resultMap="FilterResultMap">
-        <include refid="getFilters"/>
+	<select id="getAllPublicFilters" resultMap="FilterResultMap">
+		<include refid="getFilters" />
         <![CDATA[
 			WHERE F.USER_ID = #{userId} OR F.PUBLIC_ACCESS = TRUE;
 		]]>
-    </select>
+	</select>
 
-    <sql id="getCount">
+	<sql id="getCount">
         <![CDATA[
 			SELECT
 				COUNT(*)
 			FROM
 				FILTERS
         ]]>
-    </sql>
+	</sql>
 
-    <select id="getFiltersCount" resultType="java.lang.Integer">
-        <include refid="getCount"/>
-    </select>
+	<select id="getFiltersCount" resultType="java.lang.Integer">
+		<include refid="getCount" />
+	</select>
 
-    <resultMap type="com.qaprosoft.zafira.models.db.Filter" id="FilterResultMap" autoMapping="false">
-        <id column="FILTER_ID" property="id"/>
-        <result column="FILTER_NAME" property="name"/>
-        <result column="FILTER_DESCRIPTION" property="description"/>
-        <result column="FILTER_SUBJECT" property="subject"/>
-        <result column="FILTER_PUBLIC_ACCESS" property="publicAccess"/>
-        <result column="FILTER_USER_ID" property="userId"/>
-        <result column="FILTER_MODIFIED_AT" property="modifiedAt"/>
-        <result column="FILTER_CREATED_AT" property="createdAt"/>
-    </resultMap>
+	<resultMap type="com.qaprosoft.zafira.models.db.Filter"
+		id="FilterResultMap" autoMapping="false">
+		<id column="FILTER_ID" property="id" />
+		<result column="FILTER_NAME" property="name" />
+		<result column="FILTER_DESCRIPTION" property="description" />
+		<result column="FILTER_SUBJECT" property="subject" />
+		<result column="FILTER_PUBLIC_ACCESS" property="publicAccess" />
+		<result column="FILTER_USER_ID" property="userId" />
+		<result column="FILTER_MODIFIED_AT" property="modifiedAt" />
+		<result column="FILTER_CREATED_AT" property="createdAt" />
+	</resultMap>
 
 </mapper>

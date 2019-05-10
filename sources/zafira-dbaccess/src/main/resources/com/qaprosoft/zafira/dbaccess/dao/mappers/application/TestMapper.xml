@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestMapper">
+<mapper
+	namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestMapper">
 
 	<insert id="createTest" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
@@ -27,7 +28,7 @@
 			)
 		]]>
 	</insert>
-	
+
 	<insert id="createTestWorkItem" useGeneratedKeys="true">
 		<![CDATA[
 			INSERT INTO TEST_WORK_ITEMS (TEST_ID, WORK_ITEM_ID)
@@ -42,7 +43,8 @@
 		<![CDATA[
           INSERT INTO TEST_TAGS (TAG_ID, TEST_ID) VALUES
         ]]>
-		<foreach item="tag" index="index" collection="tags" open="" separator="," close="">
+		<foreach item="tag" index="index" collection="tags" open=""
+			separator="," close="">
 			<![CDATA[
  		    (
  		    	#{tag.id},
@@ -231,7 +233,7 @@
 			WHERE T.NAME = #{name};
 		]]>
 	</select>
-	
+
 	<select id="getTestsByTestRunId" resultMap="TestResultMap">
 		<include refid="getTest" />
 		<![CDATA[
@@ -246,7 +248,8 @@
 		]]>
 	</select>
 
-	<select id="getTestsByTestRunIdAndStatus" resultMap="TestResultMap">
+	<select id="getTestsByTestRunIdAndStatus"
+		resultMap="TestResultMap">
 		<include refid="getTest" />
 		<![CDATA[
 			WHERE T.TEST_RUN_ID = #{testRunId} AND T.STATUS =  #{status};
@@ -259,7 +262,7 @@
 			WHERE WI.ID = #{workItemId};
 		]]>
 	</select>
-	
+
 	<select id="searchTests" resultMap="TestResultMap">
 		<include refid="getTest" />
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
@@ -267,7 +270,8 @@
 	            <![CDATA[
 	               AND T.TEST_RUN_ID IN
 	            ]]>
-	            <foreach item="testRunId" index="index" collection="testRunIds" open="(" separator="," close=")">
+				<foreach item="testRunId" index="index"
+					collection="testRunIds" open="(" separator="," close=")">
 					#{testRunId}
 				</foreach>
 			</if>
@@ -296,7 +300,7 @@
 			LIMIT #{pageSize} OFFSET #{offset}
 		]]>
 	</select>
-	
+
 	<select id="getTestsSearchCount" resultType="java.lang.Integer">
 	    <![CDATA[
             SELECT
@@ -304,12 +308,13 @@
             FROM
                 TESTS T
         ]]>
-        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="null != testRunIds and testRunIds.size > 0">
 	            <![CDATA[
 	               AND T.TEST_RUN_ID IN
 	            ]]>
-	            <foreach item="testRunId" index="index" collection="testRunIds" open="(" separator="," close=")">
+				<foreach item="testRunId" index="index"
+					collection="testRunIds" open="(" separator="," close=")">
 					#{testRunId}
 				</foreach>
 			</if>
@@ -324,8 +329,8 @@
 				]]>
 			</if>
 		</trim>
-    </select>
-	
+	</select>
+
 	<update id="updateTest">
 		<![CDATA[
 			UPDATE
@@ -362,7 +367,7 @@
 			    ID = #{id}
 		]]>
 	</update>
-	
+
 	<update id="updateTestsNeedRerun">
 		<![CDATA[
 			UPDATE
@@ -373,8 +378,9 @@
 				ID IN
 		]]>
 		<if test="null != ids and ids.size > 0">
-			<foreach item="id" index="index" collection="ids" open="(" separator="," close=");">
-					#{id}
+			<foreach item="id" index="index" collection="ids" open="("
+				separator="," close=");">
+				#{id}
 			</foreach>
 		</if>
 		<if test="null == ids or ids.size == 0">
@@ -382,7 +388,7 @@
 				(-1);
 			]]>
 		</if>
-	</update>	    
+	</update>
 
 	<sql id="deleteTest">
 		<![CDATA[
@@ -412,52 +418,70 @@
 			WHERE TEST_ID = #{testId}
 		]]>
 	</delete>
-	
-	<resultMap type="com.qaprosoft.zafira.models.db.Test" id="TestResultMap" autoMapping="false">
+
+	<resultMap type="com.qaprosoft.zafira.models.db.Test"
+		id="TestResultMap" autoMapping="false">
 		<id column="TEST_ID" property="id" />
 		<result column="TEST_NAME" property="name" />
 		<result column="TEST_STATUS" property="status" />
 		<result column="TEST_TEST_ARGS" property="testArgs" />
 		<result column="TEST_TEST_RUN_ID" property="testRunId" />
 		<result column="TEST_TEST_CASE_ID" property="testCaseId" />
-		<result column="TEST_TEST_GROUP" property="testGroup"/>
+		<result column="TEST_TEST_GROUP" property="testGroup" />
 		<result column="TEST_MESSAGE" property="message" />
-		<result column="TEST_MESSAGE_HASH_CODE" property="messageHashCode" />
+		<result column="TEST_MESSAGE_HASH_CODE"
+			property="messageHashCode" />
 		<result column="TEST_START_TIME" property="startTime" />
 		<result column="TEST_FINISH_TIME" property="finishTime" />
 		<result column="TEST_RETRY" property="retry" />
 		<result column="TEST_KNOWN_ISSUE" property="knownIssue" />
 		<result column="TEST_BLOCKER" property="blocker" />
 		<result column="TEST_NEED_RERUN" property="needRerun" />
-		<result column="TEST_DEPENDS_ON_METHODS" property="dependsOnMethods" />
+		<result column="TEST_DEPENDS_ON_METHODS"
+			property="dependsOnMethods" />
 		<result column="TEST_OWNER" property="owner" />
 		<result column="TEST_SECONDARY_OWNER" property="secondaryOwner" />
 		<result column="TEST_TEST_CLASS" property="testClass" />
 		<result column="TEST_CI_TEST_ID" property="ciTestId" />
 		<result column="TEST_MODIFIED_AT" property="modifiedAt" />
 		<result column="TEST_CREATED_AT" property="createdAt" />
-		
+
 		<result column="TEST_TEST_CONFIG_ID" property="testConfig.id" />
 		<result column="TEST_TEST_CONFIG_URL" property="testConfig.url" />
 		<result column="TEST_TEST_CONFIG_ENV" property="testConfig.env" />
-		<result column="TEST_TEST_CONFIG_PLATFORM" property="testConfig.platform" />
-		<result column="TEST_TEST_CONFIG_PLATFORM_VERSION" property="testConfig.platformVersion" />
-		<result column="TEST_TEST_CONFIG_BROWSER" property="testConfig.browser" />
-		<result column="TEST_TEST_CONFIG_BROWSER_VERSION" property="testConfig.browserVersion" />
-		<result column="TEST_TEST_CONFIG_APP_VERSION" property="testConfig.appVersion" />
-		<result column="TEST_TEST_CONFIG_LOCALE" property="testConfig.locale" />
-		<result column="TEST_TEST_CONFIG_LANGUAGE" property="testConfig.language" />
-		<result column="TEST_TEST_CONFIG_DEVICE" property="testConfig.device" />
-		<result column="TEST_TEST_CONFIG_MODIFIED_AT" property="testConfig.modifiedAt" />
-		<result column="TEST_TEST_CONFIG_CREATED_AT" property="testConfig.createdAt" />
+		<result column="TEST_TEST_CONFIG_PLATFORM"
+			property="testConfig.platform" />
+		<result column="TEST_TEST_CONFIG_PLATFORM_VERSION"
+			property="testConfig.platformVersion" />
+		<result column="TEST_TEST_CONFIG_BROWSER"
+			property="testConfig.browser" />
+		<result column="TEST_TEST_CONFIG_BROWSER_VERSION"
+			property="testConfig.browserVersion" />
+		<result column="TEST_TEST_CONFIG_APP_VERSION"
+			property="testConfig.appVersion" />
+		<result column="TEST_TEST_CONFIG_LOCALE"
+			property="testConfig.locale" />
+		<result column="TEST_TEST_CONFIG_LANGUAGE"
+			property="testConfig.language" />
+		<result column="TEST_TEST_CONFIG_DEVICE"
+			property="testConfig.device" />
+		<result column="TEST_TEST_CONFIG_MODIFIED_AT"
+			property="testConfig.modifiedAt" />
+		<result column="TEST_TEST_CONFIG_CREATED_AT"
+			property="testConfig.createdAt" />
 
-		<collection property="workItems" ofType="com.qaprosoft.zafira.models.db.WorkItem"
-					resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.WorkItemMapper.WorkItemResultMap"/>
+		<collection property="workItems"
+			ofType="com.qaprosoft.zafira.models.db.WorkItem"
+			resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.WorkItemMapper.WorkItemResultMap" />
 
-		<collection property="artifacts" ofType="com.qaprosoft.zafira.models.db.TestArtifact" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestArtifactMapper.TestArtifactResultMap"/>
+		<collection property="artifacts"
+			ofType="com.qaprosoft.zafira.models.db.TestArtifact"
+			resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestArtifactMapper.TestArtifactResultMap" />
 
-		<collection property="tags" ofType="com.qaprosoft.zafira.models.db.Tag" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.TagMapper.TagResultMap"/>
+		<collection property="tags"
+			ofType="com.qaprosoft.zafira.models.db.Tag"
+			resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.TagMapper.TagResultMap" />
 
 	</resultMap>
-	
+
 </mapper>
