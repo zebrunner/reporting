@@ -3,7 +3,7 @@ FROM maven:3.6.0-jdk-8 as build-stage
 WORKDIR /app
 COPY ./sources/ /app/
 COPY ./tools/maven/settings.xml ${MAVEN_CONFIG}/
-RUN mvn clean install -P zafira -pl '!zafira-tests,!zafira-batch-services'
+RUN mvn clean install -P zafira -pl '!zafira-batch-services'
 
 FROM tomcat:7-jre8
 
