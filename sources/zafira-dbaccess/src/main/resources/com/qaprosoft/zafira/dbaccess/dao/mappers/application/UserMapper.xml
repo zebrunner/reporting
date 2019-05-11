@@ -131,8 +131,8 @@
 					   OR LOWER(U.EMAIL) LIKE LOWER(CONCAT('%', #{sc.query}, '%'))
 					   OR LOWER(U.FIRST_NAME) LIKE LOWER(CONCAT('%', #{sc.query}, '%'))
 					   OR LOWER(U.LAST_NAME) LIKE LOWER(CONCAT('%', #{sc.query}, '%'))
-					   OR U.STATUS = #{sc.query}
-					   OR U.SOURCE = #{sc.query}
+					   OR LOWER(U.STATUS) LIKE LOWER(CONCAT('%', #{sc.query}, '%'))
+					   OR LOWER(U.SOURCE) LIKE LOWER(CONCAT('%', #{sc.query}, '%'))
 	                 )
 	            ]]>
 			</if>
