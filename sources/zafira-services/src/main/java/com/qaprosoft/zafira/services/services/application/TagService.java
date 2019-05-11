@@ -20,6 +20,8 @@ import com.qaprosoft.zafira.models.db.Tag;
 import com.qaprosoft.zafira.models.db.TestInfo;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationTag;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationDataType;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +50,7 @@ public class TagService {
     @Transactional(rollbackFor = Exception.class)
     public Set<Tag> createTags(Set<Tag> tags) {
         Set<Tag> result = new HashSet<>();
-        if (tags != null && tags.size() > 0) {
+        if (CollectionUtils.isNotEmpty(tags)) {
             result = tags.stream().map(this::createTag).collect(Collectors.toSet());
         }
         return result;

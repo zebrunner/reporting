@@ -272,7 +272,18 @@ public class TestRunService {
                 TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
                 for (Test test : tests) {
                     if (test.getStatus() != Status.QUEUED) {
-                        testService.createQueuedTest(test, queuedTestRun.getId());
+                        test.setId(null);
+                        test.setTestRunId(queuedTestRun.getId());
+                        test.setStatus(Status.QUEUED);
+                        test.setMessage(null);
+                        test.setKnownIssue(false);
+                        test.setBlocker(false);
+                        test.setDependsOnMethods(null);
+                        test.setTestConfig(null);
+                        test.setNeedRerun(true);
+                        test.setCiTestId(null);
+                        test.setTags(null);
+                        testService.createTest(test);
                     }
                 }
             }

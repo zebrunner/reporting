@@ -90,9 +90,10 @@ public class TestService {
 
             if ((test.getId() == null || test.getId() == 0)) {
                 createTest(test);
-                if (jiraIds != null) {
+
+                if (CollectionUtils.isNotEmpty(jiraIds)) {
                     for (String jiraId : jiraIds) {
-                        if (!StringUtils.isEmpty(jiraId)) {
+                        if (StringUtils.isNotEmpty(jiraId)) {
                             WorkItem workItem = workItemService.createOrGetWorkItem(new WorkItem(jiraId));
                             testMapper.createTestWorkItem(test, workItem);
                         }
@@ -101,6 +102,7 @@ public class TestService {
             } else {
                 updateTest(test);
             }
+            saveTags(test.getId(), test.getTags());
             testRunService.updateStatistics(test.getTestRunId(), test.getStatus());
         }
         // Existing test
@@ -112,6 +114,7 @@ public class TestService {
             test.setKnownIssue(false);
             test.setBlocker(false);
             updateTest(test);
+            saveTags(test.getId(), test.getTags());
             workItemService.deleteKnownIssuesByTestId(test.getId());
             testArtifactService.deleteTestArtifactsByTestId(test.getId());
         }
@@ -121,29 +124,6 @@ public class TestService {
     @Transactional(rollbackFor = Exception.class)
     public void createTest(Test test) throws ServiceException {
         testMapper.createTest(test);
-        addTags(test.getTags(), test.getId());
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void createQueuedTest(Test test, Long queuedTestRunId) throws ServiceException {
-        test.setId(null);
-        test.setTestRunId(queuedTestRunId);
-        test.setStatus(Status.QUEUED);
-        test.setMessage(null);
-        test.setKnownIssue(false);
-        test.setBlocker(false);
-        test.setDependsOnMethods(null);
-        test.setTestConfig(null);
-        test.setNeedRerun(true);
-        test.setCiTestId(null);
-        test.setTags(null);
-        createTest(test);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void updateQueuedTest(Test test, Long testRunId) throws ServiceException {
-        test.setTestRunId(testRunId);
-        testMapper.updateTest(test);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -154,7 +134,7 @@ public class TestService {
         existingTest.setStatus(test.getStatus());
         existingTest.setRetry(test.getRetry());
         existingTest.setTestConfig(testConfigService.createTestConfigForTest(test, configXML));
-        addTags(test.getTags(), existingTest.getId());
+        saveTags(test.getId(), test.getTags());
 
         // Wrap all additional test finalization logic to make sure status saved
         try {
@@ -313,7 +293,6 @@ public class TestService {
     @Transactional(rollbackFor = Exception.class)
     public Test updateTest(Test test) throws ServiceException {
         testMapper.updateTest(test);
-        updateTags(test.getTags(), test.getId());
         return test;
     }
 
@@ -428,7 +407,10 @@ public class TestService {
 
     @Transactional
     public void updateTestRerunFlags(TestRun testRun, List<Test> tests) {
-        List<Long> testIds = getTestIds(tests);
+        List<Long> testIds = new ArrayList<>();
+        for (Test test : tests) {
+            testIds.add(test.getId());
+        }
         testMapper.updateTestsNeedRerun(testIds, false);
 
         try {
@@ -494,18 +476,20 @@ public class TestService {
         }
     }
 
+    /**
+     * Adds set of tags to specified test.
+     * 
+     * @param testId - test ID for tags
+     * @param tags - set of tags
+     * @throws ServiceException
+     */
     @Transactional(rollbackFor = Exception.class)
-    public void updateTags(Set<Tag> tags, Long testId) throws ServiceException {
-        deleteTags(testId);
-        addTags(tags, testId);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void addTags(Set<Tag> tags, Long testId) throws ServiceException {
-        if (tags != null && tags.size() > 0) {
+    public void saveTags(Long testId, Set<Tag> tags) throws ServiceException {
+        if (CollectionUtils.isNotEmpty(tags)) {
             tags = tagService.createTags(tags);
             Set<Tag> tagsToAdd = tags.stream().filter(tag -> tag.getId() != null && tag.getId() != 0).collect(Collectors.toSet());
-            if (tagsToAdd.size() > 0) {
+            if (CollectionUtils.isNotEmpty(tagsToAdd)) {
+                deleteTags(testId);
                 testMapper.addTags(testId, tagsToAdd);
             }
         }
@@ -516,20 +500,12 @@ public class TestService {
         testMapper.deleteTag(testId, tagId);
     }
 
-    public int getTestMessageHashCode(String message) {
-        return message != null ? message.replaceAll("\\d+", "*").replaceAll("\\[.*\\]", "*").hashCode() : 0;
-    }
-
     @Transactional(rollbackFor = Exception.class)
     public void deleteTags(Long testId) {
         testMapper.deleteTags(testId);
     }
 
-    public List<Long> getTestIds(List<Test> tests) {
-        List<Long> testIds = new ArrayList<>();
-        for (Test test : tests) {
-            testIds.add(test.getId());
-        }
-        return testIds;
+    public int getTestMessageHashCode(String message) {
+        return message != null ? message.replaceAll("\\d+", "*").replaceAll("\\[.*\\]", "*").hashCode() : 0;
     }
 }
