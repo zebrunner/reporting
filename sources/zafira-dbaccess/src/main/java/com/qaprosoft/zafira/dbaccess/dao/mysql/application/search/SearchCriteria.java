@@ -21,10 +21,6 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 
 public class SearchCriteria {
-    public enum SortOrder {
-        ASC,
-        DESC
-    }
 
     private String query;
     private String orderBy;
@@ -34,6 +30,10 @@ public class SearchCriteria {
     // The very default page size, just not to get NPE'd
     private Integer pageSize = 20;
     private List<Project> projects;
+
+    public enum SortOrder {
+        ASC, DESC
+    }
 
     private SortOrder sortOrder = SortOrder.ASC;
 
@@ -90,4 +90,5 @@ public class SearchCriteria {
             this.projects = projects;
         }
     }
+
 }

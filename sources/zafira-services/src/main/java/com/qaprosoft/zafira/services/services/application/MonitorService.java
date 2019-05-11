@@ -16,7 +16,7 @@
 package com.qaprosoft.zafira.services.services.application;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.MonitorMapper;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.MonitorSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Monitor;
@@ -74,7 +74,7 @@ public class MonitorService {
     }
 
     @Transactional(readOnly = true)
-    public SearchResult<Monitor> searchMonitors(MonitorSearchCriteria sc) {
+    public SearchResult<Monitor> searchMonitors(SearchCriteria sc) {
         SearchResult<Monitor> searchResult = new SearchResult<>();
         searchResult.setPage(sc.getPage());
         searchResult.setPageSize(sc.getPageSize());

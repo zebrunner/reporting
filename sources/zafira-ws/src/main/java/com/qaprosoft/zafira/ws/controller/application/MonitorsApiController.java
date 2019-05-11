@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.MonitorSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.Monitor;
@@ -82,11 +82,11 @@ public class MonitorsApiController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Search monitors", nickname = "searchMonitors", httpMethod = "POST", response = SearchResult.class)
+    @ApiOperation(value = "Search monitors", nickname = "searchMonitors", httpMethod = "GET", response = SearchResult.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('VIEW_MONITORS')")
-    @PostMapping("/search")
-    public SearchResult<MonitorType> searchMonitors(@RequestBody MonitorSearchCriteria searchCriteria) {
+    @GetMapping("/search")
+    public SearchResult<MonitorType> searchMonitors(SearchCriteria searchCriteria) {
         SearchResult<Monitor> searchResult = monitorsService.searchMonitors(searchCriteria);
 
         SearchResult<MonitorType> result = new SearchResult<>();
