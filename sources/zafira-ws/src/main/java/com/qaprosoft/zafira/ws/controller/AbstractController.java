@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -60,13 +60,13 @@ public abstract class AbstractController {
 
     protected boolean isAdmin() {
         return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
-                                    .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
     }
 
     protected boolean hasPermission(Permission.Name name) {
         return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
-                                    .flatMap(grantedAuthority -> ((UserGrantedAuthority) grantedAuthority).getPermissions().stream())
-                                    .anyMatch(permission -> permission.equalsIgnoreCase(name.name()));
+                .flatMap(grantedAuthority -> ((UserGrantedAuthority) grantedAuthority).getPermissions().stream())
+                .anyMatch(permission -> permission.equalsIgnoreCase(name.name()));
     }
 
     protected void checkCurrentUserAccess(long userId) throws ForbiddenOperationException {

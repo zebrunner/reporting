@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,14 +29,14 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("org.jsonschema2pojo")
 @JsonPropertyOrder({
-    "connected",
-    "failover",
-    "manual",
-    "operator",
-    "roaming",
-    "state",
-    "subtype",
-    "type"
+        "connected",
+        "failover",
+        "manual",
+        "operator",
+        "roaming",
+        "state",
+        "subtype",
+        "type"
 })
 public class Network {
 
@@ -86,7 +86,7 @@ public class Network {
     /**
      * 
      * @return
-     *     The connected
+     *         The connected
      */
     @JsonProperty("connected")
     public Boolean getConnected() {
@@ -96,7 +96,7 @@ public class Network {
     /**
      * 
      * @param connected
-     *     The connected
+     *            The connected
      */
     @JsonProperty("connected")
     public void setConnected(Boolean connected) {
@@ -106,7 +106,7 @@ public class Network {
     /**
      * 
      * @return
-     *     The failover
+     *         The failover
      */
     @JsonProperty("failover")
     public Boolean getFailover() {
@@ -116,7 +116,7 @@ public class Network {
     /**
      * 
      * @param failover
-     *     The failover
+     *            The failover
      */
     @JsonProperty("failover")
     public void setFailover(Boolean failover) {
@@ -126,7 +126,7 @@ public class Network {
     /**
      * 
      * @return
-     *     The manual
+     *         The manual
      */
     @JsonProperty("manual")
     public Boolean getManual() {
@@ -136,7 +136,7 @@ public class Network {
     /**
      * 
      * @param manual
-     *     The manual
+     *            The manual
      */
     @JsonProperty("manual")
     public void setManual(Boolean manual) {
@@ -146,7 +146,7 @@ public class Network {
     /**
      * 
      * @return
-     *     The operator
+     *         The operator
      */
     @JsonProperty("operator")
     public String getOperator() {
@@ -156,7 +156,7 @@ public class Network {
     /**
      * 
      * @param operator
-     *     The operator
+     *            The operator
      */
     @JsonProperty("operator")
     public void setOperator(String operator) {
@@ -166,7 +166,7 @@ public class Network {
     /**
      * 
      * @return
-     *     The roaming
+     *         The roaming
      */
     @JsonProperty("roaming")
     public Boolean getRoaming() {
@@ -176,7 +176,7 @@ public class Network {
     /**
      * 
      * @param roaming
-     *     The roaming
+     *            The roaming
      */
     @JsonProperty("roaming")
     public void setRoaming(Boolean roaming) {
@@ -186,7 +186,7 @@ public class Network {
     /**
      * 
      * @return
-     *     The state
+     *         The state
      */
     @JsonProperty("state")
     public String getState() {
@@ -196,7 +196,7 @@ public class Network {
     /**
      * 
      * @param state
-     *     The state
+     *            The state
      */
     @JsonProperty("state")
     public void setState(String state) {
@@ -206,7 +206,7 @@ public class Network {
     /**
      * 
      * @return
-     *     The subtype
+     *         The subtype
      */
     @JsonProperty("subtype")
     public String getSubtype() {
@@ -216,7 +216,7 @@ public class Network {
     /**
      * 
      * @param subtype
-     *     The subtype
+     *            The subtype
      */
     @JsonProperty("subtype")
     public void setSubtype(String subtype) {
@@ -226,7 +226,7 @@ public class Network {
     /**
      * 
      * @return
-     *     The type
+     *         The type
      */
     @JsonProperty("type")
     public String getType() {
@@ -236,7 +236,7 @@ public class Network {
     /**
      * 
      * @param type
-     *     The type
+     *            The type
      */
     @JsonProperty("type")
     public void setType(String type) {

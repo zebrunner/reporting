@@ -34,7 +34,7 @@ public class DownloadAPIController extends AbstractController {
     private ServletContext context;
 
     @ResponseStatusDetails
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Download file by filename", nickname = "downloadFile", httpMethod = "GET")
     @GetMapping()
     public void downloadFile(HttpServletResponse response, @RequestParam("filename") String filename) throws IOException {
@@ -48,7 +48,7 @@ public class DownloadAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Check file is present in file system", nickname = "checkFilePresence", httpMethod = "GET")
     @GetMapping("/check")
     public boolean checkFilePresence(@RequestParam("filename") String filename) {

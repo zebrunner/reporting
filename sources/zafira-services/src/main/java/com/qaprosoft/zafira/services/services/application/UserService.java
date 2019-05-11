@@ -48,7 +48,7 @@ import com.qaprosoft.zafira.services.util.TenancyDbInitial;
 
 @Service
 public class UserService implements TenancyDbInitial {
-    
+
     private static final Logger LOGGER = Logger.getLogger(UserService.class);
 
     @Value("${zafira.admin.username}")
@@ -56,7 +56,7 @@ public class UserService implements TenancyDbInitial {
 
     @Value("${zafira.admin.password}")
     private String adminPassword;
-    
+
     @Value("${zafira.admin.group}")
     private String adminGroup;
 
@@ -95,7 +95,7 @@ public class UserService implements TenancyDbInitial {
                     user.setPassword(passwordEncryptor.encryptPassword(adminPassword));
                     createUser(user);
 
-                    Group group = groupService.getPrimaryGroupByRole(Role.ROLE_ADMIN);//groupService.getGroupByName(adminGroup);
+                    Group group = groupService.getPrimaryGroupByRole(Role.ROLE_ADMIN);// groupService.getGroupByName(adminGroup);
                     addUserToGroup(user, group.getId());
                     user.getGroups().add(group);
                     userPreferenceService.createDefaultUserPreferences(user.getId());
@@ -162,7 +162,7 @@ public class UserService implements TenancyDbInitial {
     @Transactional(rollbackFor = Exception.class)
     public void updateUserPassword(PasswordChangingType password, boolean forceUpdate) throws ServiceException {
         User user = getNotNullUserById(password.getUserId());
-        if(! forceUpdate && (password.getOldPassword() == null || ! passwordEncryptor.checkPassword(password.getOldPassword(), user.getPassword()))) {
+        if (!forceUpdate && (password.getOldPassword() == null || !passwordEncryptor.checkPassword(password.getOldPassword(), user.getPassword()))) {
             throw new ForbiddenOperationException();
         }
         updateUserPassword(user, password);
@@ -171,7 +171,7 @@ public class UserService implements TenancyDbInitial {
     @CacheEvict(value = "users", condition = "#password.userId != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #password.userId")
     @Transactional(rollbackFor = Exception.class)
     public void updateUserPassword(User user, PasswordChangingType password) throws ServiceException {
-        user =  user != null ? user : getNotNullUserById(password.getUserId());
+        user = user != null ? user : getNotNullUserById(password.getUserId());
         user.setPassword(passwordEncryptor.encryptPassword(password.getPassword()));
         updateUser(user);
     }

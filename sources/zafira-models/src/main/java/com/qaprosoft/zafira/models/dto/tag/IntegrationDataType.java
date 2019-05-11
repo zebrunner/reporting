@@ -9,8 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class IntegrationDataType
-{
+public class IntegrationDataType {
 
     private String projectId;
     private String suiteId;
@@ -56,23 +55,19 @@ public class IntegrationDataType
         this.testRunName = testRunName;
     }
 
-    public String getTestRunId()
-    {
+    public String getTestRunId() {
         return testRunId;
     }
 
-    public void setTestRunId(String testRunId)
-    {
+    public void setTestRunId(String testRunId) {
         this.testRunId = testRunId;
     }
 
-    public String getEnv()
-    {
+    public String getEnv() {
         return env;
     }
 
-    public void setEnv(String env)
-    {
+    public void setEnv(String env) {
         this.env = env;
     }
 
@@ -84,23 +79,19 @@ public class IntegrationDataType
         this.createdAfter = createdAfter;
     }
 
-    public Date getStartedAt()
-    {
+    public Date getStartedAt() {
         return startedAt;
     }
 
-    public void setStartedAt(Date startedAt)
-    {
+    public void setStartedAt(Date startedAt) {
         this.startedAt = startedAt;
     }
 
-    public Date getFinishedAt()
-    {
+    public Date getFinishedAt() {
         return finishedAt;
     }
 
-    public void setFinishedAt(Date finishedAt)
-    {
+    public void setFinishedAt(Date finishedAt) {
         this.finishedAt = finishedAt;
     }
 
@@ -112,13 +103,11 @@ public class IntegrationDataType
         this.customParams = customParams;
     }
 
-    public String getZafiraServiceUrl()
-    {
+    public String getZafiraServiceUrl() {
         return zafiraServiceUrl;
     }
 
-    public void setZafiraServiceUrl(String zafiraServiceUrl)
-    {
+    public void setZafiraServiceUrl(String zafiraServiceUrl) {
         this.zafiraServiceUrl = zafiraServiceUrl;
     }
 }

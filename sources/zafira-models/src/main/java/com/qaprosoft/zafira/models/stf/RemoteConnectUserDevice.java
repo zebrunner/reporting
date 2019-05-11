@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,28 +15,23 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.stf;
 
-public class RemoteConnectUserDevice
-{
-	private String remoteConnectUrl;
-	private String serial;
+public class RemoteConnectUserDevice {
+    private String remoteConnectUrl;
+    private String serial;
 
-	public String getRemoteConnectUrl()
-	{
-		return remoteConnectUrl;
-	}
+    public String getRemoteConnectUrl() {
+        return remoteConnectUrl;
+    }
 
-	public void setRemoteConnectUrl(String remoteConnectUrl)
-	{
-		this.remoteConnectUrl = remoteConnectUrl;
-	}
+    public void setRemoteConnectUrl(String remoteConnectUrl) {
+        this.remoteConnectUrl = remoteConnectUrl;
+    }
 
-	public String getSerial()
-	{
-		return serial;
-	}
+    public String getSerial() {
+        return serial;
+    }
 
-	public void setSerial(String serial)
-	{
-		this.serial = serial;
-	}
+    public void setSerial(String serial) {
+        this.serial = serial;
+    }
 }

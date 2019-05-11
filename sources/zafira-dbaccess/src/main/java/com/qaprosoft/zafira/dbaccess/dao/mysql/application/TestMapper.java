@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,43 +26,43 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSearchCrit
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.WorkItem;
 
-public interface TestMapper
-{
-	void createTest(Test test);
+public interface TestMapper {
+    void createTest(Test test);
 
-	void addTags(@Param(value = "testId") Long testId, @Param(value = "tags") Set<Tag> tags);
+    void addTags(@Param(value = "testId") Long testId, @Param(value = "tags") Set<Tag> tags);
 
-	Test getTestById(long id);
-	
-	List<Test> getTestsByTestRunId(long testRunId);
+    Test getTestById(long id);
 
-	List<Test> getTestsByTestRunCiRunId(String ciRunId);
+    List<Test> getTestsByTestRunId(long testRunId);
 
-	List<Test> getTestsByTestRunIdAndStatus(@Param("testRunId") long testRunId, @Param("status") Status status);
+    List<Test> getTestsByTestRunCiRunId(String ciRunId);
 
-	List<Test> getTestsByWorkItemId(long workItemId);
-	
-	void createTestWorkItem(@Param("test") Test test, @Param("workItem") WorkItem workItem);
+    List<Test> getTestsByTestRunIdAndStatus(@Param("testRunId") long testRunId, @Param("status") Status status);
 
-	void deleteTestWorkItemByWorkItemIdAndTestId(@Param("workItemId") long workItemId, @Param("testId") long testId);
+    List<Test> getTestsByWorkItemId(long workItemId);
 
-	void deleteTestWorkItemByTestIdAndWorkItemType(@Param("testId") long testId, @Param("type") WorkItem.Type type);
-	
-	void updateTest(Test test);
-	
-	void updateTestsNeedRerun(@Param("ids") List<Long> ids, @Param("rerun") boolean needRerun);
+    void createTestWorkItem(@Param("test") Test test, @Param("workItem") WorkItem workItem);
 
-	void deleteTestById(long id);
+    void deleteTestWorkItemByWorkItemIdAndTestId(@Param("workItemId") long workItemId, @Param("testId") long testId);
 
-	void deleteTestByTestRunIdAndNameAndStatus(@Param("testRunId") long testRunId, @Param("testName") String testName, @Param("status") Status status);
+    void deleteTestWorkItemByTestIdAndWorkItemType(@Param("testId") long testId, @Param("type") WorkItem.Type type);
 
-	void deleteTest(Test test);
+    void updateTest(Test test);
 
-	void deleteTag(@Param(value = "testId") Long testId, @Param(value = "tagId") Long tagId);
+    void updateTestsNeedRerun(@Param("ids") List<Long> ids, @Param("rerun") boolean needRerun);
 
-	void deleteTags(@Param(value = "testId") Long testId);
+    void deleteTestById(long id);
 
-	List<Test> searchTests(TestSearchCriteria sc);
-	
-	Integer getTestsSearchCount(TestSearchCriteria sc);
+    void deleteTestByTestRunIdAndNameAndStatus(@Param("testRunId") long testRunId, @Param("testName") String testName,
+            @Param("status") Status status);
+
+    void deleteTest(Test test);
+
+    void deleteTag(@Param(value = "testId") Long testId, @Param(value = "tagId") Long tagId);
+
+    void deleteTags(@Param(value = "testId") Long testId);
+
+    List<Test> searchTests(TestSearchCriteria sc);
+
+    Integer getTestsSearchCount(TestSearchCriteria sc);
 }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,54 +23,45 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "key", "value" })
-public class Argument
-{
-	@XmlElement(required = true)
-	protected String key;
+public class Argument {
+    @XmlElement(required = true)
+    protected String key;
 
-	@XmlAttribute(name = "unique")
-	protected boolean unique;
+    @XmlAttribute(name = "unique")
+    protected boolean unique;
 
-	@XmlElement(required = true)
-	protected String value;
-	
-	public Argument()
-	{
-	}
+    @XmlElement(required = true)
+    protected String value;
 
-	public Argument(String key, String value)
-	{
-		this.key = key;
-		this.value = value;
-	}
+    public Argument() {
+    }
 
-	public String getKey()
-	{
-		return key;
-	}
+    public Argument(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
 
-	public void setKey(String value)
-	{
-		this.key = value;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public String getValue()
-	{
-		return value;
-	}
+    public void setKey(String value) {
+        this.key = value;
+    }
 
-	public void setValue(String value)
-	{
-		this.value = value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public boolean getUnique()
-	{
-		return unique;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public void setUnique(boolean value)
-	{
-		this.unique = value;
-	}
+    public boolean getUnique() {
+        return unique;
+    }
+
+    public void setUnique(boolean value) {
+        this.unique = value;
+    }
 }

@@ -26,84 +26,77 @@ import com.qaprosoft.zafira.services.services.application.integration.impl.googl
 
 import java.io.IOException;
 
-public class GoogleDriveService extends AbstractGoogleService
-{
+public class GoogleDriveService extends AbstractGoogleService {
 
-	private Drive driveService;
+    private Drive driveService;
 
-	public GoogleDriveService(byte[] credsFile)
-	{
-		try
-		{
-			this.driveService = GoogleDriveAuthService.getService(credsFile);
-		} catch (IOException e)
-		{
-			LOGGER.error(e);
-		}
-	}
+    public GoogleDriveService(byte[] credsFile) {
+        try {
+            this.driveService = GoogleDriveAuthService.getService(credsFile);
+        } catch (IOException e) {
+            LOGGER.error(e);
+        }
+    }
 
-	public enum GranteeType
-	{
-		USER("user"), GROUP("group"), DOMAIN("domain"), ANYONE("anyone");
+    public enum GranteeType {
+        USER("user"),
+        GROUP("group"),
+        DOMAIN("domain"),
+        ANYONE("anyone");
 
-		private final String value;
+        private final String value;
 
-		GranteeType(String value)
-		{
-			this.value = value;
-		}
+        GranteeType(String value) {
+            this.value = value;
+        }
 
-		public String getValue()
-		{
-			return value;
-		}
-	}
+        public String getValue() {
+            return value;
+        }
+    }
 
-	public enum GranteeRoleType
-	{
-		ORGANIZER("organizer"), OWNER("owner"), WRITER("writer"), COMMENTER("commenter"), READER("reader");
+    public enum GranteeRoleType {
+        ORGANIZER("organizer"),
+        OWNER("owner"),
+        WRITER("writer"),
+        COMMENTER("commenter"),
+        READER("reader");
 
-		private final String value;
+        private final String value;
 
-		GranteeRoleType(String value)
-		{
-			this.value = value;
-		}
+        GranteeRoleType(String value) {
+            this.value = value;
+        }
 
-		public String getValue()
-		{
-			return value;
-		}
-	}
+        public String getValue() {
+            return value;
+        }
+    }
 
-	public void shareFile(String fileId, GranteeType granteeType, GranteeRoleType granteeRoleType, String email)
-	{
-		BatchRequest batch = new BatchRequest(getHttpTransport(), (HttpRequestInitializer) driveService.getGoogleClientRequestInitializer());
-		Permission userPermission = new Permission()
-				.setType(granteeType.getValue())
-				.setRole(granteeRoleType.getValue())
-				.setEmailAddress(email);
-		try
-		{
-			driveService.permissions().create(fileId, userPermission)
-					.setFields("id")
-					.queue(batch, new GoogleDriveJsonBatchCallback<Permission>());
-			batch.execute();
-		} catch (IOException e)
-		{
-			LOGGER.error(e);
-		}
-	}
+    public void shareFile(String fileId, GranteeType granteeType, GranteeRoleType granteeRoleType, String email) {
+        BatchRequest batch = new BatchRequest(getHttpTransport(), (HttpRequestInitializer) driveService.getGoogleClientRequestInitializer());
+        Permission userPermission = new Permission()
+                .setType(granteeType.getValue())
+                .setRole(granteeRoleType.getValue())
+                .setEmailAddress(email);
+        try {
+            driveService.permissions().create(fileId, userPermission)
+                    .setFields("id")
+                    .queue(batch, new GoogleDriveJsonBatchCallback<Permission>());
+            batch.execute();
+        } catch (IOException e) {
+            LOGGER.error(e);
+        }
+    }
 
-	private class GoogleDriveJsonBatchCallback<T> extends JsonBatchCallback<T>
-	{
-		@Override
-		public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) throws IOException {
-			LOGGER.error(e.getMessage());
-		}
+    private class GoogleDriveJsonBatchCallback<T> extends JsonBatchCallback<T> {
+        @Override
+        public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) throws IOException {
+            LOGGER.error(e.getMessage());
+        }
 
-		@Override
-		public void onSuccess(T t, HttpHeaders responseHeaders) throws IOException {
-		}
-	}
+        @Override
+        public void onSuccess(T t, HttpHeaders responseHeaders) throws IOException {
+        }
+    }
 }

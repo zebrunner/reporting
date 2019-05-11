@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,12 +29,12 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("org.jsonschema2pojo")
 @JsonPropertyOrder({
-    "developer",
-    "id",
-    "name",
-    "selected",
-    "system",
-    "type"
+        "developer",
+        "id",
+        "name",
+        "selected",
+        "system",
+        "type"
 })
 public class App {
 
@@ -74,7 +74,7 @@ public class App {
     /**
      * 
      * @return
-     *     The developer
+     *         The developer
      */
     @JsonProperty("developer")
     public String getDeveloper() {
@@ -84,7 +84,7 @@ public class App {
     /**
      * 
      * @param developer
-     *     The developer
+     *            The developer
      */
     @JsonProperty("developer")
     public void setDeveloper(String developer) {
@@ -94,7 +94,7 @@ public class App {
     /**
      * 
      * @return
-     *     The id
+     *         The id
      */
     @JsonProperty("id")
     public String getId() {
@@ -104,7 +104,7 @@ public class App {
     /**
      * 
      * @param id
-     *     The id
+     *            The id
      */
     @JsonProperty("id")
     public void setId(String id) {
@@ -114,7 +114,7 @@ public class App {
     /**
      * 
      * @return
-     *     The name
+     *         The name
      */
     @JsonProperty("name")
     public String getName() {
@@ -124,7 +124,7 @@ public class App {
     /**
      * 
      * @param name
-     *     The name
+     *            The name
      */
     @JsonProperty("name")
     public void setName(String name) {
@@ -134,7 +134,7 @@ public class App {
     /**
      * 
      * @return
-     *     The selected
+     *         The selected
      */
     @JsonProperty("selected")
     public Boolean getSelected() {
@@ -144,7 +144,7 @@ public class App {
     /**
      * 
      * @param selected
-     *     The selected
+     *            The selected
      */
     @JsonProperty("selected")
     public void setSelected(Boolean selected) {
@@ -154,7 +154,7 @@ public class App {
     /**
      * 
      * @return
-     *     The system
+     *         The system
      */
     @JsonProperty("system")
     public Boolean getSystem() {
@@ -164,7 +164,7 @@ public class App {
     /**
      * 
      * @param system
-     *     The system
+     *            The system
      */
     @JsonProperty("system")
     public void setSystem(Boolean system) {
@@ -174,7 +174,7 @@ public class App {
     /**
      * 
      * @return
-     *     The type
+     *         The type
      */
     @JsonProperty("type")
     public String getType() {
@@ -184,7 +184,7 @@ public class App {
     /**
      * 
      * @param type
-     *     The type
+     *            The type
      */
     @JsonProperty("type")
     public void setType(String type) {

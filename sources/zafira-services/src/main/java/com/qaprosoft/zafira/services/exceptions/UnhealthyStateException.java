@@ -16,7 +16,7 @@
 package com.qaprosoft.zafira.services.exceptions;
 
 public class UnhealthyStateException extends ServiceException {
-    
+
     private static final long serialVersionUID = -4946440978261903384L;
 
     public UnhealthyStateException() {

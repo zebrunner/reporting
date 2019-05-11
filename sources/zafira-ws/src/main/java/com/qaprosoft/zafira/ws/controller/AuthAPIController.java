@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -127,7 +127,8 @@ public class AuthAPIController extends AbstractController {
             final AuthenticationManager authenticationManager = user == null
                     || user.getSource().equals(User.Source.LDAP) ? authenticationLdapManager : authenticationInternalManager;
 
-            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword()));
+            authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword()));
 
             user = userService.getUserByUsernameOrEmail(credentials.getUsername());
 
@@ -240,7 +241,7 @@ public class AuthAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Generates access token", nickname = "accessToken", httpMethod = "GET", response = AuthTokenType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/access")
     public AccessTokenType accessToken() throws ServiceException {
         String token = jwtService.generateAccessToken(userService.getNotNullUserById(getPrincipalId()), TenancyContext.getTenantName());

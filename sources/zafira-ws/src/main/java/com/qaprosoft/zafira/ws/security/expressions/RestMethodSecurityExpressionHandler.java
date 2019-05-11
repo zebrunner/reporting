@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,26 +24,25 @@ import org.springframework.security.core.Authentication;
 
 /**
  * Allows access for {@link com.qaprosoft.zafira.ws.security.expressions.RestMethodSecurityExpressionRoot} (registers)
+ * 
  * @author Bogdan Rutskov
  */
-public class RestMethodSecurityExpressionHandler extends DefaultMethodSecurityExpressionHandler
-{
+public class RestMethodSecurityExpressionHandler extends DefaultMethodSecurityExpressionHandler {
 
-	private static final AuthenticationTrustResolver trustResolver;
+    private static final AuthenticationTrustResolver trustResolver;
 
-	static {
-		trustResolver = new AuthenticationTrustResolverImpl();
-	}
+    static {
+        trustResolver = new AuthenticationTrustResolverImpl();
+    }
 
-	@Override
-	protected MethodSecurityExpressionOperations createSecurityExpressionRoot(Authentication authentication,
-			MethodInvocation invocation)
-	{
-		RestMethodSecurityExpressionRoot root =
-				new RestMethodSecurityExpressionRoot(authentication, (UserPermissionEvaluator) getPermissionEvaluator());
-		root.setPermissionEvaluator(getPermissionEvaluator());
-		root.setTrustResolver(trustResolver);
-		root.setRoleHierarchy(getRoleHierarchy());
-		return root;
-	}
+    @Override
+    protected MethodSecurityExpressionOperations createSecurityExpressionRoot(Authentication authentication,
+            MethodInvocation invocation) {
+        RestMethodSecurityExpressionRoot root = new RestMethodSecurityExpressionRoot(authentication,
+                (UserPermissionEvaluator) getPermissionEvaluator());
+        root.setPermissionEvaluator(getPermissionEvaluator());
+        root.setTrustResolver(trustResolver);
+        root.setRoleHierarchy(getRoleHierarchy());
+        return root;
+    }
 }

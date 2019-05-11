@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,32 +22,27 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qaprosoft.zafira.models.db.AbstractEntity;
 
 @JsonInclude(Include.NON_NULL)
-public class ViewType extends AbstractEntity
-{
-	private static final long serialVersionUID = 8779340419016013263L;
+public class ViewType extends AbstractEntity {
+    private static final long serialVersionUID = 8779340419016013263L;
 
-	@NotNull
-	private String name;
-	@NotNull
-	private Long projectId;
+    @NotNull
+    private String name;
+    @NotNull
+    private Long projectId;
 
-	public String getName()
-	{
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name)
-	{
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Long getProjectId()
-	{
-		return projectId;
-	}
+    public Long getProjectId() {
+        return projectId;
+    }
 
-	public void setProjectId(Long projectId)
-	{
-		this.projectId = projectId;
-	}
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 }

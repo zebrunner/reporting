@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -68,7 +68,7 @@ public class TestCasesAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Search test cases", nickname = "searchTestCases", httpMethod = "POST", response = SearchResult.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/search")
     public SearchResult<TestCase> searchTestCases(@Valid @RequestBody TestCaseSearchCriteria sc) throws ServiceException {
         return testCaseService.searchTestCases(sc);
@@ -76,7 +76,7 @@ public class TestCasesAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get test metrics by test case id", nickname = "getTestMetricsByTestCaseId", httpMethod = "GET", response = Map.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/{id}/metrics")
     public Map<String, List<TestMetric>> getTestMetricsByTestCaseId(@PathVariable("id") Long id) throws ServiceException {
         return testMetricService.getTestMetricsByTestCaseId(id);
@@ -84,12 +84,11 @@ public class TestCasesAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create test case", nickname = "createTestCase", httpMethod = "POST", response = TestCaseType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping()
     public TestCaseType createTestCase(
             @RequestBody @Valid TestCaseType testCase,
-            @RequestHeader(value = "Project", required = false) String projectName
-    ) throws ServiceException, MappingException, ExecutionException {
+            @RequestHeader(value = "Project", required = false) String projectName) throws ServiceException, MappingException, ExecutionException {
         TestCase tc = mapper.map(testCase, TestCase.class);
         tc.setProject(projectService.getProjectByName(projectName));
         return mapper.map(testCaseService.createOrUpdateCase(tc), TestCaseType.class);
@@ -97,9 +96,10 @@ public class TestCasesAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create multiple test cases", nickname = "createTestCases", httpMethod = "POST", response = TestCaseType[].class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/batch")
-    public TestCaseType[] createTestCases(@RequestBody @Valid TestCaseType[] tcs, @RequestHeader(value = "Project", required = false) String projectName) throws ServiceException, ExecutionException {
+    public TestCaseType[] createTestCases(@RequestBody @Valid TestCaseType[] tcs,
+            @RequestHeader(value = "Project", required = false) String projectName) throws ServiceException, ExecutionException {
         if (!ArrayUtils.isEmpty(tcs)) {
             Project project = projectService.getProjectByName(projectName);
             TestCase[] testCases = new TestCase[tcs.length];

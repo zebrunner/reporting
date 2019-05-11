@@ -28,63 +28,52 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Set;
 
-public abstract class AbstractGoogleService
-{
+public abstract class AbstractGoogleService {
 
-	protected static final Logger LOGGER = Logger.getLogger(AbstractGoogleService.class);
+    protected static final Logger LOGGER = Logger.getLogger(AbstractGoogleService.class);
 
-	private static String APPLICATION_NAME = "zafira";
-	private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+    private static String APPLICATION_NAME = "zafira";
+    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
-	private static final Set<String> SCOPES = SheetsScopes.all();
+    private static final Set<String> SCOPES = SheetsScopes.all();
 
-	private static NetHttpTransport HTTP_TRANSPORT;
+    private static NetHttpTransport HTTP_TRANSPORT;
 
-	static
-	{
-		try
-		{
-			HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-		} catch (Exception e)
-		{
-			LOGGER.error(e.getMessage());
-		}
-	}
+    static {
+        try {
+            HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+    }
 
-	public static Credential authorize(byte[] credsFile, Long expirationTime) throws IOException
-	{
-		Credential credential = authorize(credsFile).setExpiresInSeconds(expirationTime);
-		credential.refreshToken();
-		return credential;
-	}
+    public static Credential authorize(byte[] credsFile, Long expirationTime) throws IOException {
+        Credential credential = authorize(credsFile).setExpiresInSeconds(expirationTime);
+        credential.refreshToken();
+        return credential;
+    }
 
-	public static Credential authorize(byte[] credsFile) throws IOException
-	{
-		return GoogleCredential.fromStream(new ByteArrayInputStream(credsFile)).createScoped(SCOPES);
-	}
+    public static Credential authorize(byte[] credsFile) throws IOException {
+        return GoogleCredential.fromStream(new ByteArrayInputStream(credsFile)).createScoped(SCOPES);
+    }
 
-	public static String getApplicationName()
-	{
-		return APPLICATION_NAME;
-	}
+    public static String getApplicationName() {
+        return APPLICATION_NAME;
+    }
 
-	public static void setApplicationName(String applicationName)
-	{
-		APPLICATION_NAME = applicationName;
-	}
+    public static void setApplicationName(String applicationName) {
+        APPLICATION_NAME = applicationName;
+    }
 
-	public static JsonFactory getJsonFactory()
-	{
-		return JSON_FACTORY;
-	}
+    public static JsonFactory getJsonFactory() {
+        return JSON_FACTORY;
+    }
 
-	public static Set<String> getScopes()
-	{
-		return SCOPES;
-	}
+    public static Set<String> getScopes() {
+        return SCOPES;
+    }
 
-	protected static NetHttpTransport getHttpTransport()
-	{
-		return HTTP_TRANSPORT;
-	}
+    protected static NetHttpTransport getHttpTransport() {
+        return HTTP_TRANSPORT;
+    }
 }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,37 +24,30 @@ import com.qaprosoft.zafira.models.db.Attribute;
  * 
  * @author akhursevich
  */
-public class SQLAdapter
-{
-	private String sql;
-	private List<Attribute> attributes;
-	
-	public SQLAdapter()
-	{
-	}
+public class SQLAdapter {
+    private String sql;
+    private List<Attribute> attributes;
 
-	public SQLAdapter(String sql)
-	{
-		this.sql = sql;
-	}
+    public SQLAdapter() {
+    }
 
-	public String getSql()
-	{
-		return sql;
-	}
+    public SQLAdapter(String sql) {
+        this.sql = sql;
+    }
 
-	public void setSql(String sql)
-	{
-		this.sql = sql;
-	}
+    public String getSql() {
+        return sql;
+    }
 
-	public List<Attribute> getAttributes()
-	{
-		return attributes;
-	}
+    public void setSql(String sql) {
+        this.sql = sql;
+    }
 
-	public void setAttributes(List<Attribute> attributes)
-	{
-		this.attributes = attributes;
-	}
+    public List<Attribute> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<Attribute> attributes) {
+        this.attributes = attributes;
+    }
 }

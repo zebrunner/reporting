@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,82 +20,74 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
-public class SearchCriteria
-{
-	public enum SortOrder {ASC, DESC}
+public class SearchCriteria {
+    public enum SortOrder {
+        ASC,
+        DESC
+    }
 
-	private String query;
-	private String orderBy;
-	
-	// Pages are zero-based
-	private Integer page = 1;
-	// The very default page size, just not to get NPE'd
-	private Integer pageSize = 20;
-	private List<Project> projects;
-	
-	private SortOrder sortOrder = SortOrder.ASC;
+    private String query;
+    private String orderBy;
 
-	public String getQuery() {
-		return query;
-	}
+    // Pages are zero-based
+    private Integer page = 1;
+    // The very default page size, just not to get NPE'd
+    private Integer pageSize = 20;
+    private List<Project> projects;
 
-	public void setQuery(String query) {
-		this.query = query;
-	}
+    private SortOrder sortOrder = SortOrder.ASC;
 
-	public String getOrderBy() {
-		return orderBy;
-	}
+    public String getQuery() {
+        return query;
+    }
 
-	public void setOrderBy(String orderBy) {
-		this.orderBy = orderBy;
-	}
+    public void setQuery(String query) {
+        this.query = query;
+    }
 
-	public Integer getPage()
-	{
-		return page;
-	}
+    public String getOrderBy() {
+        return orderBy;
+    }
 
-	public void setPage(Integer page)
-	{
-		this.page = page;
-	}
+    public void setOrderBy(String orderBy) {
+        this.orderBy = orderBy;
+    }
 
-	public Integer getPageSize()
-	{
-		return pageSize;
-	}
+    public Integer getPage() {
+        return page;
+    }
 
-	public void setPageSize(Integer pageSize)
-	{
-		this.pageSize = pageSize;
-	}
+    public void setPage(Integer page) {
+        this.page = page;
+    }
 
-	public Integer getOffset()
-	{
-		return (page - 1) * pageSize;
-	}
+    public Integer getPageSize() {
+        return pageSize;
+    }
 
-	public SortOrder getSortOrder()
-	{
-		return sortOrder;
-	}
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
 
-	public void setSortOrder(SortOrder sortOrder)
-	{
-		this.sortOrder = sortOrder;
-	}
+    public Integer getOffset() {
+        return (page - 1) * pageSize;
+    }
 
-	public List<Project> getProjects()
-	{
-		return projects;
-	}
+    public SortOrder getSortOrder() {
+        return sortOrder;
+    }
 
-	public void setProjects(List<Project> projects)
-	{
-		if(!CollectionUtils.isEmpty(projects))
-		{
-			this.projects = projects;
-		}
-	}
+    public void setSortOrder(SortOrder sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<Project> projects) {
+        if (!CollectionUtils.isEmpty(projects)) {
+            this.projects = projects;
+        }
+    }
 }

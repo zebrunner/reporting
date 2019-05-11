@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,34 +30,29 @@ import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 
 import java.util.Collection;
 
-public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper
-{
+public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper {
 
-	private static final Logger LOGGER = Logger.getLogger(LDAPUserDetailsContextMapper.class);
-	
-	@Autowired
-	private UserService userService;
+    private static final Logger LOGGER = Logger.getLogger(LDAPUserDetailsContextMapper.class);
 
-	@Override
-	public UserDetails mapUserFromContext(DirContextOperations operations, String username, Collection<? extends GrantedAuthority> authorities)
-	{
-		User user = null;
-		try
-		{
-			user = userService.getUserByUsername(username);
-			if(user == null) {
-				throw new ForbiddenOperationException();
-			}
-		} catch (ServiceException e)
-		{
-			LOGGER.error(e.getMessage(), e);
-		}
-		return new JwtUserType(user.getId(), username, user.getPassword(), user.getGroups());
-	}
+    @Autowired
+    private UserService userService;
 
-	@Override
-	public void mapUserToContext(UserDetails user, DirContextAdapter adapter)
-	{
-		// Do nothing
-	}
+    @Override
+    public UserDetails mapUserFromContext(DirContextOperations operations, String username, Collection<? extends GrantedAuthority> authorities) {
+        User user = null;
+        try {
+            user = userService.getUserByUsername(username);
+            if (user == null) {
+                throw new ForbiddenOperationException();
+            }
+        } catch (ServiceException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return new JwtUserType(user.getId(), username, user.getPassword(), user.getGroups());
+    }
+
+    @Override
+    public void mapUserToContext(UserDetails user, DirContextAdapter adapter) {
+        // Do nothing
+    }
 }

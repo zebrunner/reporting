@@ -34,6 +34,7 @@ public class LdapService extends AbstractIntegration<LDAPContext> {
     /**
      * Search user by username in ldap context
      * Throws an {@link com.qaprosoft.zafira.services.exceptions.IntegrationException} if integration is not configured
+     * 
      * @param username - username to search
      * @return - search info
      */
@@ -43,13 +44,11 @@ public class LdapService extends AbstractIntegration<LDAPContext> {
 
     @Override
     public boolean isConnected() {
-        try
-        {
+        try {
             LdapContextSource contextSource = context().getLdapContextSource();
             contextSource.getContext(contextSource.getUserDn(), contextSource.getPassword());
             return true;
-        } catch(Exception e)
-        {
+        } catch (Exception e) {
             return false;
         }
     }

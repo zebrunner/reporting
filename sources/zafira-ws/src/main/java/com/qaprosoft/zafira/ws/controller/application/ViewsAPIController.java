@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -57,7 +57,7 @@ public class ViewsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get view", nickname = "getViewById", httpMethod = "GET", response = View.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('VIEW_TEST_RUN_VIEWS', 'MODIFY_TEST_RUN_VIEWS')")
     @GetMapping("/{id}")
     public View getViewById(@PathVariable("id") long id) throws ServiceException {
@@ -66,7 +66,7 @@ public class ViewsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get all views", nickname = "getAllViews", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('VIEW_TEST_RUN_VIEWS', 'MODIFY_TEST_RUN_VIEWS')")
     @GetMapping()
     public List<View> getAllViews(@RequestParam(value = "projectId", required = false) Long projectId) throws ServiceException {
@@ -75,7 +75,7 @@ public class ViewsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create view", nickname = "createView", httpMethod = "POST", response = ViewType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_TEST_RUN_VIEWS')")
     @PostMapping()
     public ViewType createView(@RequestBody @Valid ViewType view) throws ServiceException {
@@ -84,7 +84,7 @@ public class ViewsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Update view", nickname = "updateView", httpMethod = "PUT", response = ViewType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_TEST_RUN_VIEWS')")
     @PutMapping()
     public ViewType updateView(@RequestBody @Valid ViewType view) throws ServiceException {
@@ -93,7 +93,7 @@ public class ViewsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Delete view", nickname = "deleteViewById", httpMethod = "DELETE")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_TEST_RUN_VIEWS')")
     @DeleteMapping("/{id}")
     public void deleteView(@PathVariable("id") long id) throws ServiceException {

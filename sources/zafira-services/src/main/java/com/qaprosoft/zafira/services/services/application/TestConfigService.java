@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,115 +38,94 @@ import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
-public class TestConfigService
-{
-	private static final Logger logger = Logger.getLogger(TestConfigService.class);
-	
-	@Autowired
-	private TestConfigMapper testConfigMapper;
-	
-	@Autowired
-	private TestRunService testRunService;
-	
-	private Unmarshaller unmarshaller;
-	
-	public TestConfigService()
-	{
-		JAXBContext context;
-		try
-		{
-			context = JAXBContext.newInstance(Configuration.class);
-			unmarshaller = context.createUnmarshaller();
-		} catch (JAXBException e)
-		{
-			throw new RuntimeException(e.getMessage());
-		}
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public void createTestConfig(TestConfig testConfig) throws ServiceException
-	{
-		testConfigMapper.createTestConfig(testConfig);
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public TestConfig createTestConfigForTest(Test test, String testConfigXML) throws ServiceException
-	{
-		TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
-		if(testRun == null)
-		{
-			throw new ServiceException("Test run not found!");
-		}
-		
-		List<Argument> testRunConfig = readConfigArgs(testRun.getConfigXML());
-		List<Argument> testConfig = readConfigArgs(testConfigXML);
-		
-		TestConfig config = new TestConfig().init(testRunConfig).init(testConfig);
+public class TestConfigService {
+    private static final Logger logger = Logger.getLogger(TestConfigService.class);
 
-		TestConfig existingTestConfig = searchTestConfig(config);
-		if(existingTestConfig != null)
-		{
-			config = existingTestConfig;
-		}
-		else
-		{
-			createTestConfig(config);
-		}
-		
-		return config;
-	}
+    @Autowired
+    private TestConfigMapper testConfigMapper;
 
-	@Transactional(rollbackFor = Exception.class)
-	public TestConfig createTestConfigForTestRun(String configXML) throws ServiceException
-	{
-		List<Argument> testRunConfig = readConfigArgs(configXML);
+    @Autowired
+    private TestRunService testRunService;
 
-		TestConfig config = new TestConfig().init(testRunConfig);
+    private Unmarshaller unmarshaller;
 
-		TestConfig existingTestConfig = searchTestConfig(config);
-		if(existingTestConfig != null)
-		{
-			config = existingTestConfig;
-		}
-		else
-		{
-			createTestConfig(config);
-		}
-		return config;
-	}
-	
-	@Transactional(readOnly = true)
-	public TestConfig getTestConfigById(long id) throws ServiceException
-	{
-		return testConfigMapper.getTestConfigById(id);
-	}
-	
-	@Transactional(readOnly = true)
-	public TestConfig searchTestConfig(TestConfig testConfig) throws ServiceException
-	{
-		return testConfigMapper.searchTestConfig(testConfig);
-	}
+    public TestConfigService() {
+        JAXBContext context;
+        try {
+            context = JAXBContext.newInstance(Configuration.class);
+            unmarshaller = context.createUnmarshaller();
+        } catch (JAXBException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 
-	@Transactional(rollbackFor = Exception.class)
-	public void deleteTestConfigById(long id) throws ServiceException
-	{
-		testConfigMapper.deleteTestConfigById(id);
-	}
-	
-	public List<Argument> readConfigArgs(String configXML)
-	{
-		List<Argument> args = new ArrayList<>();
-		try
-		{
-			if(!StringUtils.isEmpty(configXML))
-			{
-				Configuration config = (Configuration) unmarshaller.unmarshal(new ByteArrayInputStream(configXML.getBytes()));
-				args.addAll(config.getArg());
-			}
-		}
-		catch (Exception e) {
-			logger.error(e.getMessage());
-		}
-		return args;
-	}
+    @Transactional(rollbackFor = Exception.class)
+    public void createTestConfig(TestConfig testConfig) throws ServiceException {
+        testConfigMapper.createTestConfig(testConfig);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public TestConfig createTestConfigForTest(Test test, String testConfigXML) throws ServiceException {
+        TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
+        if (testRun == null) {
+            throw new ServiceException("Test run not found!");
+        }
+
+        List<Argument> testRunConfig = readConfigArgs(testRun.getConfigXML());
+        List<Argument> testConfig = readConfigArgs(testConfigXML);
+
+        TestConfig config = new TestConfig().init(testRunConfig).init(testConfig);
+
+        TestConfig existingTestConfig = searchTestConfig(config);
+        if (existingTestConfig != null) {
+            config = existingTestConfig;
+        } else {
+            createTestConfig(config);
+        }
+
+        return config;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public TestConfig createTestConfigForTestRun(String configXML) throws ServiceException {
+        List<Argument> testRunConfig = readConfigArgs(configXML);
+
+        TestConfig config = new TestConfig().init(testRunConfig);
+
+        TestConfig existingTestConfig = searchTestConfig(config);
+        if (existingTestConfig != null) {
+            config = existingTestConfig;
+        } else {
+            createTestConfig(config);
+        }
+        return config;
+    }
+
+    @Transactional(readOnly = true)
+    public TestConfig getTestConfigById(long id) throws ServiceException {
+        return testConfigMapper.getTestConfigById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public TestConfig searchTestConfig(TestConfig testConfig) throws ServiceException {
+        return testConfigMapper.searchTestConfig(testConfig);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteTestConfigById(long id) throws ServiceException {
+        testConfigMapper.deleteTestConfigById(id);
+    }
+
+    public List<Argument> readConfigArgs(String configXML) {
+        List<Argument> args = new ArrayList<>();
+        try {
+            if (!StringUtils.isEmpty(configXML)) {
+                Configuration config = (Configuration) unmarshaller.unmarshal(new ByteArrayInputStream(configXML.getBytes()));
+                args.addAll(config.getArg());
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        return args;
+    }
 }

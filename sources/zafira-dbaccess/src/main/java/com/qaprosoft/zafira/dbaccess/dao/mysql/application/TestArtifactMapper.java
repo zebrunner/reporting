@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,19 +20,18 @@ import java.util.List;
 import com.qaprosoft.zafira.models.db.TestArtifact;
 import org.apache.ibatis.annotations.Param;
 
-public interface TestArtifactMapper
-{
-	void createTestArtifact(TestArtifact testArtifact);
-	
-	TestArtifact getTestArtifactById(long id);
+public interface TestArtifactMapper {
+    void createTestArtifact(TestArtifact testArtifact);
 
-	List<TestArtifact> getTestArtifactsByTestId(long testId);
+    TestArtifact getTestArtifactById(long id);
 
-	TestArtifact getTestArtifactByNameAndTestId (@Param("name") String name,@Param("testId")  long testId);
+    List<TestArtifact> getTestArtifactsByTestId(long testId);
 
-	void updateTestArtifact(TestArtifact testArtifact);
+    TestArtifact getTestArtifactByNameAndTestId(@Param("name") String name, @Param("testId") long testId);
 
-	void deleteTestArtifactById(long id);
-	
-	void deleteTestArtifactsByTestId(long testId);
+    void updateTestArtifact(TestArtifact testArtifact);
+
+    void deleteTestArtifactById(long id);
+
+    void deleteTestArtifactsByTestId(long testId);
 }

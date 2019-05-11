@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,53 +26,45 @@ import java.util.List;
 import static com.qaprosoft.zafira.models.db.Permission.Name;
 
 @Service
-public class PermissionService
-{
+public class PermissionService {
 
-	@Autowired
-	private PermissionMapper permissionMapper;
+    @Autowired
+    private PermissionMapper permissionMapper;
 
-	@Transactional(rollbackFor = Exception.class)
-	public Permission createPermission(Permission permission)
-	{
-		permissionMapper.createPermission(permission);
-		return permission;
-	}
+    @Transactional(rollbackFor = Exception.class)
+    public Permission createPermission(Permission permission) {
+        permissionMapper.createPermission(permission);
+        return permission;
+    }
 
-	@Transactional(readOnly = true)
-	public Permission getPermissionById(Long id)
-	{
-		return permissionMapper.getPermissionById(id);
-	}
+    @Transactional(readOnly = true)
+    public Permission getPermissionById(Long id) {
+        return permissionMapper.getPermissionById(id);
+    }
 
-	@Transactional(readOnly = true)
-	public Permission getPermissionByName(Name name)
-	{
-		return permissionMapper.getPermissionByName(name);
-	}
+    @Transactional(readOnly = true)
+    public Permission getPermissionByName(Name name) {
+        return permissionMapper.getPermissionByName(name);
+    }
 
-	@Transactional(readOnly = true)
-	public List<Permission> getAllPermissions()
-	{
-		return permissionMapper.getAllPermissions();
-	}
+    @Transactional(readOnly = true)
+    public List<Permission> getAllPermissions() {
+        return permissionMapper.getAllPermissions();
+    }
 
-	@Transactional(rollbackFor = Exception.class)
-	public Permission updatePermission(Permission permission)
-	{
-		permissionMapper.updatePermission(permission);
-		return permission;
-	}
+    @Transactional(rollbackFor = Exception.class)
+    public Permission updatePermission(Permission permission) {
+        permissionMapper.updatePermission(permission);
+        return permission;
+    }
 
-	@Transactional(rollbackFor = Exception.class)
-	public void deletePermissionById(Long id)
-	{
-		permissionMapper.deletePermissionById(id);
-	}
+    @Transactional(rollbackFor = Exception.class)
+    public void deletePermissionById(Long id) {
+        permissionMapper.deletePermissionById(id);
+    }
 
-	@Transactional(rollbackFor = Exception.class)
-	public void deletePermissionByName(Name name)
-	{
-		permissionMapper.getPermissionByName(name);
-	}
+    @Transactional(rollbackFor = Exception.class)
+    public void deletePermissionByName(Name name) {
+        permissionMapper.getPermissionByName(name);
+    }
 }

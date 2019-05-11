@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -76,7 +76,7 @@ public class JobsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create job", nickname = "createJob", httpMethod = "POST", response = JobType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping()
     public JobType createJob(@RequestBody @Valid JobType job) throws ServiceException {
         return mapper.map(jobsService.createOrUpdateJob(mapper.map(job, Job.class)), JobType.class);
@@ -84,7 +84,7 @@ public class JobsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create job by url", nickname = "createJobByUrl", httpMethod = "POST", response = JobType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/url")
     public JobType createJobByUrl(@RequestBody @Valid JobUrlType jobUrl) throws ServiceException {
         User user = userService.getUserById(getPrincipalId());
@@ -93,7 +93,7 @@ public class JobsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get all jobs", nickname = "getAllJobs", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping()
     public List<Job> getAllJobs() throws ServiceException {
         return jobsService.getAllJobs();
@@ -101,21 +101,22 @@ public class JobsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get latest job test runs", nickname = "getLatestJobTestRuns", httpMethod = "POST", response = Map.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/views/{id}/tests/runs")
-    public Map<Long, TestRun> getLatestJobTestRuns(@QueryParam("env") String env, @RequestBody @Valid List<JobViewType> jobViews) throws ServiceException {
+    public Map<Long, TestRun> getLatestJobTestRuns(@QueryParam("env") String env, @RequestBody @Valid List<JobViewType> jobViews)
+            throws ServiceException {
         List<Long> jobIds = jobViews.stream()
-                                    .map(JobViewType::getJob)
-                                    .map(AbstractEntity::getId)
-                                    .collect(Collectors.toList());
+                .map(JobViewType::getJob)
+                .map(AbstractEntity::getId)
+                .collect(Collectors.toList());
         return testRunService.getLatestJobTestRuns(env, jobIds);
     }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create job view", nickname = "createJobViews", httpMethod = "POST", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/views")
-    @Secured({"ROLE_ADMIN"})
+    @Secured({ "ROLE_ADMIN" })
     public List<JobViewType> createJobViews(@RequestBody @Valid List<JobViewType> jobViews) throws ServiceException {
         for (JobViewType jobView : jobViews) {
             jobView = mapper.map(jobsService.createJobView(mapper.map(jobView, JobView.class)), JobViewType.class);
@@ -125,14 +126,13 @@ public class JobsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Update job view", nickname = "updateJobViews", httpMethod = "PUT", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PutMapping("/views/{id}")
-    @Secured({"ROLE_ADMIN"})
+    @Secured({ "ROLE_ADMIN" })
     public List<JobViewType> updateJobViews(
             @RequestBody @Valid List<JobViewType> jobViews,
             @PathVariable("id") long viewId,
-            @QueryParam("env") String env
-    ) throws ServiceException {
+            @QueryParam("env") String env) throws ServiceException {
         if (!CollectionUtils.isEmpty(jobViews)) {
             jobsService.deleteJobViews(viewId, env);
             for (JobViewType jobView : jobViews) {
@@ -144,7 +144,7 @@ public class JobsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get job views", nickname = "getJobViews", httpMethod = "GET", response = Map.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/views/{id}")
     public Map<String, List<JobViewType>> getJobViews(@PathVariable("id") long id)
             throws ServiceException {
@@ -160,7 +160,7 @@ public class JobsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Delete job views", nickname = "deleteJobViews", httpMethod = "DELETE")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @DeleteMapping("views/{id}")
     public void deleteJobViews(@PathVariable("id") long viewId, @QueryParam("env") String env) throws ServiceException {
         jobsService.deleteJobViews(viewId, env);

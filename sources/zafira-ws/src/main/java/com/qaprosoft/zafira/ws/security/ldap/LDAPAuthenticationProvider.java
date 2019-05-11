@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,8 +39,10 @@ import javax.servlet.ServletContext;
 import java.util.Collection;
 import java.util.Optional;
 
-/** Uses for load user from LDAP and recognize it.
+/**
+ * Uses for load user from LDAP and recognize it.
  * Need override LdapAuthenticationProvider cause superclass has private getAuthenticator only
+ * 
  * @author brutskov
  */
 public class LDAPAuthenticationProvider extends AbstractLdapAuthenticationProvider {
@@ -64,28 +66,26 @@ public class LDAPAuthenticationProvider extends AbstractLdapAuthenticationProvid
 
     /**
      * Uses the same logic as superclass
+     * 
      * @param authentication - authentication callback
      * @return context operation
      */
     @Override
     protected DirContextOperations doAuthentication(UsernamePasswordAuthenticationToken authentication) {
         LdapAuthenticator ldapAuthenticator = getAuthenticator();
-        if(ldapAuthenticator == null) {
+        if (ldapAuthenticator == null) {
             servletContext.log("Provide LDAP integration before");
             throw new InternalAuthenticationServiceException("Provide LDAP integration before");
         }
         try {
             return ldapAuthenticator.authenticate(authentication);
-        }
-        catch (PasswordPolicyException ppe) {
+        } catch (PasswordPolicyException ppe) {
             servletContext.log(ppe.getMessage(), ppe);
             throw new LockedException(this.messages.getMessage(ppe.getStatus().getErrorCode(), ppe.getStatus().getDefaultMessage()));
-        }
-        catch (UsernameNotFoundException notFound) {
+        } catch (UsernameNotFoundException notFound) {
             servletContext.log(notFound.getMessage(), notFound);
             throw new BadCredentialsException(this.messages.getMessage("LdapAuthenticationProvider.badCredentials", "Bad credentials"));
-        }
-        catch (NamingException ldapAccessFailure) {
+        } catch (NamingException ldapAccessFailure) {
             servletContext.log(ldapAccessFailure.getMessage(), ldapAccessFailure);
             throw new InternalAuthenticationServiceException(ldapAccessFailure.getMessage(), ldapAccessFailure);
         }
@@ -93,7 +93,7 @@ public class LDAPAuthenticationProvider extends AbstractLdapAuthenticationProvid
 
     private static LdapAuthenticator getAuthenticator() {
         Optional<LDAPContext> ldapContext = getContext();
-        return ldapContext.<LdapAuthenticator>map(LDAPContext::getBindAuthenticator).orElse(null);
+        return ldapContext.<LdapAuthenticator> map(LDAPContext::getBindAuthenticator).orElse(null);
     }
 
     private static Optional<LDAPContext> getContext() {

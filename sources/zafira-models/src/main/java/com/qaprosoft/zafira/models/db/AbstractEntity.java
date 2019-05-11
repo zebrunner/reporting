@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,43 +24,36 @@ import org.springframework.data.annotation.Transient;
  * 
  * @author Alex Khursevich
  */
-public abstract class AbstractEntity implements Serializable
-{
-	private static final long serialVersionUID = 6187567312503626298L;
+public abstract class AbstractEntity implements Serializable {
+    private static final long serialVersionUID = 6187567312503626298L;
 
-	private Long id;
-	@Transient
-	private Date modifiedAt;
-	@Transient
-	private Date createdAt;
+    private Long id;
+    @Transient
+    private Date modifiedAt;
+    @Transient
+    private Date createdAt;
 
-	public Long getId()
-	{
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id)
-	{
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Date getModifiedAt()
-	{
-		return modifiedAt;
-	}
+    public Date getModifiedAt() {
+        return modifiedAt;
+    }
 
-	public void setModifiedAt(Date modifiedAt)
-	{
-		this.modifiedAt = modifiedAt;
-	}
+    public void setModifiedAt(Date modifiedAt) {
+        this.modifiedAt = modifiedAt;
+    }
 
-	public Date getCreatedAt()
-	{
-		return createdAt;
-	}
+    public Date getCreatedAt() {
+        return createdAt;
+    }
 
-	public void setCreatedAt(Date createdAt)
-	{
-		this.createdAt = createdAt;
-	}
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 }

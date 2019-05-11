@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,204 +27,178 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qaprosoft.zafira.models.db.Group.Role;
 
 @JsonInclude(Include.NON_NULL)
-public class User extends AbstractEntity implements Comparable<User>
-{
-	private static final long serialVersionUID = 2720141152633805371L;
+public class User extends AbstractEntity implements Comparable<User> {
+    private static final long serialVersionUID = 2720141152633805371L;
 
-	private String username;
-	private String password;
-	private String email;
-	private String firstName;
-	private String lastName;
-	private String photoURL;
-	private List<Group> groups = new ArrayList<>();
-	private List<UserPreference> preferences = new ArrayList<>();
-	private Date lastLogin;
-	private String tenant;
-	private Source source;
-	private Status status;
-	private String resetToken;
+    private String username;
+    private String password;
+    private String email;
+    private String firstName;
+    private String lastName;
+    private String photoURL;
+    private List<Group> groups = new ArrayList<>();
+    private List<UserPreference> preferences = new ArrayList<>();
+    private Date lastLogin;
+    private String tenant;
+    private Source source;
+    private Status status;
+    private String resetToken;
 
-	public User()
-	{
-	}
+    public User() {
+    }
 
-	public enum Source {
-		INTERNAL, LDAP
-	}
+    public enum Source {
+        INTERNAL,
+        LDAP
+    }
 
-	public enum Status {
-		ACTIVE, INACTIVE
-	}
+    public enum Status {
+        ACTIVE,
+        INACTIVE
+    }
 
-	public User(long id)
-	{
-		super.setId(id);
-	}
+    public User(long id) {
+        super.setId(id);
+    }
 
-	public User(String username)
-	{
-		this.username = username;
-	}
+    public User(String username) {
+        this.username = username;
+    }
 
-	public String getUsername()
-	{
-		return username;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public void setUsername(String username)
-	{
-		this.username = username;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public String getPassword()
-	{
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setPassword(String password)
-	{
-		this.password = password;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public String getEmail()
-	{
-		return email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setEmail(String email)
-	{
-		this.email = email;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String getFirstName()
-	{
-		return firstName;
-	}
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public void setFirstName(String firstName)
-	{
-		this.firstName = firstName;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	public String getLastName()
-	{
-		return lastName;
-	}
+    public String getLastName() {
+        return lastName;
+    }
 
-	public void setLastName(String lastName)
-	{
-		this.lastName = lastName;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	public String getPhotoURL()
-	{
-		return photoURL;
-	}
+    public String getPhotoURL() {
+        return photoURL;
+    }
 
-	public void setPhotoURL(String photoURL)
-	{
-		this.photoURL = photoURL;
-	}
+    public void setPhotoURL(String photoURL) {
+        this.photoURL = photoURL;
+    }
 
-	public List<Group> getGroups()
-	{
-		return groups;
-	}
+    public List<Group> getGroups() {
+        return groups;
+    }
 
-	public void setGroups(List<Group> groups)
-	{
-		this.groups = groups;
-	}
+    public void setGroups(List<Group> groups) {
+        this.groups = groups;
+    }
 
-	public void setRoles(List<Role> roles)
-	{
-		// Do nothing just treak for dozer mapper
-	}
+    public void setRoles(List<Role> roles) {
+        // Do nothing just treak for dozer mapper
+    }
 
-	public List<Role> getRoles()
-	{
-		Set<Role> roles = new HashSet<>();
-		for (Group group : groups)
-		{
-			roles.add(group.getRole());
-		}
-		return new ArrayList<>(roles);
-	}
+    public List<Role> getRoles() {
+        Set<Role> roles = new HashSet<>();
+        for (Group group : groups) {
+            roles.add(group.getRole());
+        }
+        return new ArrayList<>(roles);
+    }
 
-	public Set<Permission> getPermissions()
-	{
-		return this.groups.stream().flatMap(group -> group.getPermissions().stream())
-				.collect(Collectors.toSet());
-	}
+    public Set<Permission> getPermissions() {
+        return this.groups.stream().flatMap(group -> group.getPermissions().stream())
+                .collect(Collectors.toSet());
+    }
 
-	public List<Group> getGrantedGroups()
-	{
-		this.groups.forEach(group -> {
-			group.setUsers(null);
-			group.setId(null);
-			group.setCreatedAt(null);
-			group.setModifiedAt(null);
-			group.getPermissions().forEach(permission -> permission.setId(null));
-		});
-		return this.groups;
-	}
+    public List<Group> getGrantedGroups() {
+        this.groups.forEach(group -> {
+            group.setUsers(null);
+            group.setId(null);
+            group.setCreatedAt(null);
+            group.setModifiedAt(null);
+            group.getPermissions().forEach(permission -> permission.setId(null));
+        });
+        return this.groups;
+    }
 
-	public List<UserPreference> getPreferences()
-	{
-		return preferences;
-	}
+    public List<UserPreference> getPreferences() {
+        return preferences;
+    }
 
-	public void setPreferences(List<UserPreference> preferences)
-	{
-		this.preferences = preferences;
-	}
+    public void setPreferences(List<UserPreference> preferences) {
+        this.preferences = preferences;
+    }
 
-	public Date getLastLogin()
-	{
-		return lastLogin;
-	}
+    public Date getLastLogin() {
+        return lastLogin;
+    }
 
-	public void setLastLogin(Date lastLogin)
-	{
-		this.lastLogin = lastLogin;
-	}
+    public void setLastLogin(Date lastLogin) {
+        this.lastLogin = lastLogin;
+    }
 
-	public String getTenant() {
-		return tenant;
-	}
+    public String getTenant() {
+        return tenant;
+    }
 
-	public void setTenant(String tenant) {
-		this.tenant = tenant;
-	}
+    public void setTenant(String tenant) {
+        this.tenant = tenant;
+    }
 
-	public Source getSource() {
-		return source;
-	}
+    public Source getSource() {
+        return source;
+    }
 
-	public void setSource(Source source) {
-		this.source = source;
-	}
+    public void setSource(Source source) {
+        this.source = source;
+    }
 
-	public Status getStatus() {
-		return status;
-	}
+    public Status getStatus() {
+        return status;
+    }
 
-	public void setStatus(Status status) {
-		this.status = status;
-	}
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 
-	public String getResetToken() {
-		return resetToken;
-	}
+    public String getResetToken() {
+        return resetToken;
+    }
 
-	public void setResetToken(String resetToken) {
-		this.resetToken = resetToken;
-	}
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
 
-	@Override
-	public int compareTo(User user)
-	{
-		return username.compareTo(user.getUsername());
-	}
+    @Override
+    public int compareTo(User user) {
+        return username.compareTo(user.getUsername());
+    }
 }

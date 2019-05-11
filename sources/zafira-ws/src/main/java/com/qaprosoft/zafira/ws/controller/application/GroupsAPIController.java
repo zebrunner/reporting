@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -53,7 +53,7 @@ public class GroupsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create group", nickname = "createGroup", httpMethod = "POST", response = Group.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
     @PostMapping()
     public Group createGroup(@RequestBody Group group) throws ServiceException {
@@ -62,7 +62,7 @@ public class GroupsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Add permissions to group", nickname = "addPermissionsToGroup", httpMethod = "POST", response = Group.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
     @PostMapping("/permissions")
     public Group addPermissionsToGroup(@RequestBody Group group) throws ServiceException {
@@ -70,7 +70,7 @@ public class GroupsAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Get group", nickname = "getGroup", httpMethod = "GET", response = Group.class)
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
     @GetMapping("/{id}")
@@ -79,7 +79,7 @@ public class GroupsAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Get all groups", nickname = "getAllGroups", httpMethod = "GET", response = List.class)
     @GetMapping("/all")
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS') or #isPublic")
@@ -88,7 +88,7 @@ public class GroupsAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Get groups count", nickname = "getGroupsCount", httpMethod = "GET", response = Integer.class)
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
     @GetMapping("/count")
@@ -97,7 +97,7 @@ public class GroupsAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Get roles", nickname = "getRoles", httpMethod = "GET", response = List.class)
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
     @GetMapping("/roles")
@@ -106,7 +106,7 @@ public class GroupsAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Update group", nickname = "updateGroup", httpMethod = "PUT", response = Group.class)
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
     @PutMapping()
@@ -115,7 +115,7 @@ public class GroupsAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Delete group", nickname = "deleteGroup", httpMethod = "DELETE")
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
     @DeleteMapping("/{id}")

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,100 +21,85 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
-public class TestArtifactType extends AbstractType
-{
-	private static final long serialVersionUID = 555233394837989532L;
-	
-	private String name;
-	
-	private String link;
-	
-	private Long testId;
+public class TestArtifactType extends AbstractType {
+    private static final long serialVersionUID = 555233394837989532L;
 
-	private Integer expiresIn;
+    private String name;
 
-	public TestArtifactType()
-	{
-	}
-	
-	public TestArtifactType(String name, String link)
-	{
-		this.name = name;
-		this.link = link;
-	}
-	
-	public TestArtifactType(Long testId, String name, String link) 
-	{
-		this.name = name;
-		this.link = link;
-		this.testId = testId;
-	}
+    private String link;
 
-	public TestArtifactType(String name, String link, Integer expiresIn)
-	{
-		this.name = name;
-		this.link = link;
-		this.expiresIn = expiresIn;
-	}
+    private Long testId;
 
-	public String getName()
-	{
-		return name;
-	}
+    private Integer expiresIn;
 
-	public void setName(String name)
-	{
-		this.name = name;
-	}
+    public TestArtifactType() {
+    }
 
-	public String getLink()
-	{
-		return link;
-	}
+    public TestArtifactType(String name, String link) {
+        this.name = name;
+        this.link = link;
+    }
 
-	public void setLink(String link)
-	{
-		this.link = link;
-	}
+    public TestArtifactType(Long testId, String name, String link) {
+        this.name = name;
+        this.link = link;
+        this.testId = testId;
+    }
 
-	public Long getTestId()
-	{
-		return testId;
-	}
+    public TestArtifactType(String name, String link, Integer expiresIn) {
+        this.name = name;
+        this.link = link;
+        this.expiresIn = expiresIn;
+    }
 
-	public void setTestId(Long testId)
-	{
-		this.testId = testId;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Integer getExpiresIn() 
-	{
-		return expiresIn;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	/**
-	 * Expiration interval after which test artifact will be removed.
-	 * @param expiresIn - interval in seconds
-	 */
-	public void setExpiresIn(Integer expiresIn) 
-	{
-		this.expiresIn = expiresIn;
-	}
+    public String getLink() {
+        return link;
+    }
 
-	@Override
-	public boolean equals(Object obj)
-	{
-		boolean equals = false;
-		if(obj instanceof TestArtifactType)
-		{
-			equals = this.name == ((TestArtifactType)obj).getName();
-		}
-		return equals;
-	}
-	
-	@Override
-	public int hashCode() 
-	{
-		return Objects.hash(name, link);
-	}
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public Long getTestId() {
+        return testId;
+    }
+
+    public void setTestId(Long testId) {
+        this.testId = testId;
+    }
+
+    public Integer getExpiresIn() {
+        return expiresIn;
+    }
+
+    /**
+     * Expiration interval after which test artifact will be removed.
+     * 
+     * @param expiresIn - interval in seconds
+     */
+    public void setExpiresIn(Integer expiresIn) {
+        this.expiresIn = expiresIn;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        boolean equals = false;
+        if (obj instanceof TestArtifactType) {
+            equals = this.name == ((TestArtifactType) obj).getName();
+        }
+        return equals;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, link);
+    }
 }

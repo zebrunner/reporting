@@ -57,8 +57,8 @@ public class SettingsService {
     private final EventPushService<ReinitEventMessage> eventPushService;
 
     public SettingsService(SettingsMapper settingsMapper,
-                           @Lazy IntegrationService integrationService,
-                           EventPushService<ReinitEventMessage> eventPushService) {
+            @Lazy IntegrationService integrationService,
+            EventPushService<ReinitEventMessage> eventPushService) {
         this.settingsMapper = settingsMapper;
         this.integrationService = integrationService;
         this.eventPushService = eventPushService;
@@ -82,20 +82,20 @@ public class SettingsService {
     @Transactional(readOnly = true)
     public Map<Tool, Boolean> getToolsStatuses() {
         return Arrays.stream(Tool.values())
-              .filter(tool -> !Arrays.asList(Tool.CRYPTO, Tool.ELASTICSEARCH).contains(tool))
-              .collect(Collectors.toMap(tool -> tool, tool -> integrationService.getServiceByTool(tool).isEnabledAndConnected()));
+                .filter(tool -> !Arrays.asList(Tool.CRYPTO, Tool.ELASTICSEARCH).contains(tool))
+                .collect(Collectors.toMap(tool -> tool, tool -> integrationService.getServiceByTool(tool).isEnabledAndConnected()));
     }
 
     @Transactional(readOnly = true)
     public List<Setting> getSettingsByTool(Tool tool) throws ServiceException {
         List<Setting> result;
         switch (tool) {
-            case ELASTICSEARCH:
-                result = getElasticsearchService().getSettings();
-                break;
-            default:
-                result = settingsMapper.getSettingsByTool(tool);
-                break;
+        case ELASTICSEARCH:
+            result = getElasticsearchService().getSettings();
+            break;
+        default:
+            result = settingsMapper.getSettingsByTool(tool);
+            break;
         }
         return result;
     }
@@ -202,7 +202,7 @@ public class SettingsService {
     /**
      * Sends message to broker to notify about changed integration.
      *
-     * @param tool   that was re-initiated
+     * @param tool that was re-initiated
      * @param tenant whose integration was updated
      */
     public void notifyToolReinitiated(Tool tool, String tenant) {
@@ -213,7 +213,8 @@ public class SettingsService {
     @RabbitListener(queues = "#{settingsQueue.name}")
     public void process(Message message) {
         ReinitEventMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
-        if (!getRabbitMQService().isSettingQueueConsumer(message.getMessageProperties().getConsumerQueue()) && integrationService.getServiceByTool(rm.getTool()) != null) {
+        if (!getRabbitMQService().isSettingQueueConsumer(message.getMessageProperties().getConsumerQueue())
+                && integrationService.getServiceByTool(rm.getTool()) != null) {
             TenancyContext.setTenantName(rm.getTenancy());
             integrationService.getServiceByTool(rm.getTool()).init();
         }

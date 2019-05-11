@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -68,7 +68,7 @@ public class ScmAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create SCM account", nickname = "createScmAccount", httpMethod = "POST", response = ScmAccountType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/accounts")
     public ScmAccountType createScmAccount(@Valid @RequestBody ScmAccountType scmAccountType) throws ServiceException {
         return mapper.map(scmAccountService.createScmAccount(mapper.map(scmAccountType, ScmAccount.class)), ScmAccountType.class);
@@ -76,7 +76,7 @@ public class ScmAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get SCM account by id", nickname = "getScmAccountById", httpMethod = "GET", response = ScmAccountType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/accounts/{id}")
     public ScmAccountType getScmAccountById(@PathVariable("id") Long id) throws ServiceException {
@@ -85,18 +85,18 @@ public class ScmAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get all SCM accounts", nickname = "getAllScmAccounts", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/accounts")
     public List<ScmAccountType> getAllScmAccounts() throws ServiceException {
         return scmAccountService.getAllScmAccounts().stream()
-                                .map(scmAccount -> mapper.map(scmAccount, ScmAccountType.class))
-                                .collect(Collectors.toList());
+                .map(scmAccount -> mapper.map(scmAccount, ScmAccountType.class))
+                .collect(Collectors.toList());
     }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Update SCM account", nickname = "updateScmAccount", httpMethod = "PUT", response = ScmAccountType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/accounts")
     public ScmAccountType updateScmAccount(@RequestBody @Valid ScmAccountType scmAccountType) throws ServiceException {
@@ -113,7 +113,7 @@ public class ScmAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Delete SCM account by id", nickname = "deleteScmAccountById", httpMethod = "DELETE")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/accounts/{id}")
     public void deleteScmAccountById(@PathVariable("id") Long id) throws ServiceException {
@@ -135,7 +135,8 @@ public class ScmAPIController extends AbstractController {
         if (StringUtils.isBlank(accessToken)) {
             throw new ForbiddenOperationException("Cannot recognize your authority");
         }
-        return mapper.map(scmAccountService.createScmAccount(new ScmAccount(accessToken, ScmAccount.Name.GITHUB, getPrincipalId())), ScmAccountType.class);
+        return mapper.map(scmAccountService.createScmAccount(new ScmAccount(accessToken, ScmAccount.Name.GITHUB, getPrincipalId())),
+                ScmAccountType.class);
     }
 
     @ResponseStatusDetails
@@ -154,8 +155,7 @@ public class ScmAPIController extends AbstractController {
     @GetMapping("/github/repositories/{scmId}")
     public List<Repository> getRepositories(
             @PathVariable("scmId") Long id,
-            @RequestParam(value = "org", required = false) String organizationName
-    ) throws IOException, ServiceException {
+            @RequestParam(value = "org", required = false) String organizationName) throws IOException, ServiceException {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(id);
         if (scmAccount == null) {
             throw new ForbiddenOperationException("Unable to list repositories");
@@ -163,13 +163,13 @@ public class ScmAPIController extends AbstractController {
 
         List<ScmAccount> allAccounts = scmAccountService.getAllScmAccounts();
         List<String> repositoryUrls = allAccounts.stream()
-                                                 .map(ScmAccount::getRepositoryURL)
-                                                 .collect(Collectors.toList());
+                .map(ScmAccount::getRepositoryURL)
+                .collect(Collectors.toList());
 
         List<Repository> repositories = gitHubService.getRepositories(scmAccount.getAccessToken(), organizationName);
         return repositories.stream()
-                           .filter(repository -> !repositoryUrls.contains(repository.getUrl()))
-                           .collect(Collectors.toList());
+                .filter(repository -> !repositoryUrls.contains(repository.getUrl()))
+                .collect(Collectors.toList());
     }
 
 }

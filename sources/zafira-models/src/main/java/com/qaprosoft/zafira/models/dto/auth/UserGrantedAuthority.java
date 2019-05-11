@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,44 +20,40 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Arrays;
 import java.util.Set;
 
-public class UserGrantedAuthority implements GrantedAuthority
-{
+public class UserGrantedAuthority implements GrantedAuthority {
 
-	private static final long serialVersionUID = 6435350258602099850L;
+    private static final long serialVersionUID = 6435350258602099850L;
 
-	private final String role;
-	private final Set<String> permissions;
+    private final String role;
+    private final Set<String> permissions;
 
-	public UserGrantedAuthority(String role, Set<String> permissions)
-	{
-		this.role = role;
-		this.permissions = permissions;
-	}
+    public UserGrantedAuthority(String role, Set<String> permissions) {
+        this.role = role;
+        this.permissions = permissions;
+    }
 
-	@Override
-	public String getAuthority()
-	{
-		return role;
-	}
+    @Override
+    public String getAuthority() {
+        return role;
+    }
 
-	public Set<String> getPermissions()
-	{
-		return permissions;
-	}
+    public Set<String> getPermissions() {
+        return permissions;
+    }
 
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
 
-		if (obj instanceof UserGrantedAuthority) {
-			return role.equals(((UserGrantedAuthority) obj).role) && ((UserGrantedAuthority) obj).permissions.containsAll(permissions);
-		}
+        if (obj instanceof UserGrantedAuthority) {
+            return role.equals(((UserGrantedAuthority) obj).role) && ((UserGrantedAuthority) obj).permissions.containsAll(permissions);
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public int hashCode() {
-		return this.role.hashCode() + Arrays.toString(this.permissions.toArray()).hashCode();
-	}
+    public int hashCode() {
+        return this.role.hashCode() + Arrays.toString(this.permissions.toArray()).hashCode();
+    }
 }

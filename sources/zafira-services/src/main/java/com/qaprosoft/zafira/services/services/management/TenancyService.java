@@ -46,7 +46,7 @@ public class TenancyService {
     }
 
     public void iterateItems(Runnable runnable) {
-        if(isMultitenant) {
+        if (isMultitenant) {
             iterateItems(tenancy -> runnable.run());
         } else {
             runnable.run();

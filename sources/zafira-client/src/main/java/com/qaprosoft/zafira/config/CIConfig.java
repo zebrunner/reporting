@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,112 +22,97 @@ import org.apache.commons.lang3.StringUtils;
  * 
  * @author akhursevich
  */
-public class CIConfig
-{
-	public enum BuildCasue { UPSTREAMTRIGGER, TIMERTRIGGER, MANUALTRIGGER, SCMTRIGGER }
-	
-	private String ciRunId;
-	private String ciUrl;
-	private Integer ciBuild;
-	private BuildCasue ciBuildCause;
-	private String ciParentUrl;
-	private Integer ciParentBuild;
-	
-	private String gitBranch;
-	private String gitCommit;
-	private String gitUrl;
+public class CIConfig {
+    public enum BuildCasue {
+        UPSTREAMTRIGGER,
+        TIMERTRIGGER,
+        MANUALTRIGGER,
+        SCMTRIGGER
+    }
 
-	public String getCiRunId()
-	{
-		return ciRunId;
-	}
+    private String ciRunId;
+    private String ciUrl;
+    private Integer ciBuild;
+    private BuildCasue ciBuildCause;
+    private String ciParentUrl;
+    private Integer ciParentBuild;
 
-	public void setCiRunId(String ciRunId)
-	{
-		this.ciRunId = ciRunId;
-	}
+    private String gitBranch;
+    private String gitCommit;
+    private String gitUrl;
 
-	public String getCiUrl()
-	{
-		return ciUrl;
-	}
+    public String getCiRunId() {
+        return ciRunId;
+    }
 
-	public void setCiUrl(String ciUrl)
-	{
-		this.ciUrl = StringUtils.removeEnd(ciUrl, "/");
-	}
+    public void setCiRunId(String ciRunId) {
+        this.ciRunId = ciRunId;
+    }
 
-	public Integer getCiBuild()
-	{
-		return ciBuild;
-	}
+    public String getCiUrl() {
+        return ciUrl;
+    }
 
-	public void setCiBuild(String ciBuild)
-	{
-		this.ciBuild = StringUtils.isEmpty(ciBuild) ? 0 : Integer.valueOf(ciBuild);
-	}
+    public void setCiUrl(String ciUrl) {
+        this.ciUrl = StringUtils.removeEnd(ciUrl, "/");
+    }
 
-	public BuildCasue getCiBuildCause()
-	{
-		return ciBuildCause;
-	}
+    public Integer getCiBuild() {
+        return ciBuild;
+    }
 
-	public void setCiBuildCause(String ciBuildCause)
-	{
-		if(ciBuildCause != null)
-		{
-			// HotFix for 'BuildCasue.UPSTREAMTRIGGER,UPSTREAMTRIGGER,UPSTREAMTRIGGER'
-			this.ciBuildCause = BuildCasue.valueOf(ciBuildCause.toUpperCase().split(",")[0]);
-		}
-	}
+    public void setCiBuild(String ciBuild) {
+        this.ciBuild = StringUtils.isEmpty(ciBuild) ? 0 : Integer.valueOf(ciBuild);
+    }
 
-	public String getCiParentUrl()
-	{
-		return ciParentUrl;
-	}
+    public BuildCasue getCiBuildCause() {
+        return ciBuildCause;
+    }
 
-	public void setCiParentUrl(String ciParentUrl)
-	{
-		this.ciParentUrl = StringUtils.removeEnd(ciParentUrl, "/");
-	}
+    public void setCiBuildCause(String ciBuildCause) {
+        if (ciBuildCause != null) {
+            // HotFix for 'BuildCasue.UPSTREAMTRIGGER,UPSTREAMTRIGGER,UPSTREAMTRIGGER'
+            this.ciBuildCause = BuildCasue.valueOf(ciBuildCause.toUpperCase().split(",")[0]);
+        }
+    }
 
-	public Integer getCiParentBuild()
-	{
-		return ciParentBuild;
-	}
+    public String getCiParentUrl() {
+        return ciParentUrl;
+    }
 
-	public void setCiParentBuild(String ciParentBuild)
-	{
-		this.ciParentBuild = StringUtils.isEmpty(ciParentBuild) ? 0 : Integer.valueOf(ciParentBuild);
-	}
+    public void setCiParentUrl(String ciParentUrl) {
+        this.ciParentUrl = StringUtils.removeEnd(ciParentUrl, "/");
+    }
 
-	public String getGitBranch()
-	{
-		return gitBranch;
-	}
+    public Integer getCiParentBuild() {
+        return ciParentBuild;
+    }
 
-	public void setGitBranch(String gitBranch)
-	{
-		this.gitBranch = gitBranch;
-	}
+    public void setCiParentBuild(String ciParentBuild) {
+        this.ciParentBuild = StringUtils.isEmpty(ciParentBuild) ? 0 : Integer.valueOf(ciParentBuild);
+    }
 
-	public String getGitCommit()
-	{
-		return gitCommit;
-	}
+    public String getGitBranch() {
+        return gitBranch;
+    }
 
-	public void setGitCommit(String gitCommit)
-	{
-		this.gitCommit = gitCommit;
-	}
+    public void setGitBranch(String gitBranch) {
+        this.gitBranch = gitBranch;
+    }
 
-	public String getGitUrl()
-	{
-		return gitUrl;
-	}
+    public String getGitCommit() {
+        return gitCommit;
+    }
 
-	public void setGitUrl(String gitUrl)
-	{
-		this.gitUrl = gitUrl;
-	}
+    public void setGitCommit(String gitCommit) {
+        this.gitCommit = gitCommit;
+    }
+
+    public String getGitUrl() {
+        return gitUrl;
+    }
+
+    public void setGitUrl(String gitUrl) {
+        this.gitUrl = gitUrl;
+    }
 }

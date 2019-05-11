@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,12 +20,13 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BuildParameterType extends AbstractType
-{
+public class BuildParameterType extends AbstractType {
     private static final long serialVersionUID = 3647801256222745555L;
 
     public enum BuildParameterClass {
-        STRING, BOOLEAN, HIDDEN
+        STRING,
+        BOOLEAN,
+        HIDDEN
     }
 
     public BuildParameterType() {

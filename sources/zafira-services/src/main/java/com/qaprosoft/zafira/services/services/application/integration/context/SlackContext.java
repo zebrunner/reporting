@@ -23,13 +23,11 @@ import java.util.Map;
 import static com.qaprosoft.zafira.services.services.application.integration.context.SlackContext.SlackAdditionalProperty.AUTHOR;
 import static com.qaprosoft.zafira.services.services.application.integration.context.SlackContext.SlackAdditionalProperty.IMAGE;
 
-public class SlackContext extends AbstractContext
-{
+public class SlackContext extends AbstractContext {
 
     private Slack slack;
 
-    public SlackContext(Map<Setting.SettingType, String> settings, Map<SlackAdditionalProperty, String> additionalSettings)
-    {
+    public SlackContext(Map<Setting.SettingType, String> settings, Map<SlackAdditionalProperty, String> additionalSettings) {
         super(settings, settings.get(Setting.SettingType.SLACK_ENABLED));
 
         String webHook = settings.get(Setting.SettingType.SLACK_WEB_HOOK_URL);
@@ -42,16 +40,15 @@ public class SlackContext extends AbstractContext
     }
 
     public enum SlackAdditionalProperty implements AdditionalProperty {
-        AUTHOR, IMAGE
+        AUTHOR,
+        IMAGE
     }
 
-    public Slack getSlack()
-    {
+    public Slack getSlack() {
         return slack;
     }
 
-    public void setSlack(Slack slack)
-    {
+    public void setSlack(Slack slack) {
         this.slack = slack;
     }
 }

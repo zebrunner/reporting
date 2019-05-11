@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,13 +29,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("org.jsonschema2pojo")
 @JsonPropertyOrder({
-    "health",
-    "level",
-    "scale",
-    "source",
-    "status",
-    "temp",
-    "voltage"
+        "health",
+        "level",
+        "scale",
+        "source",
+        "status",
+        "temp",
+        "voltage"
 })
 public class Battery {
 
@@ -80,7 +80,7 @@ public class Battery {
     /**
      * 
      * @return
-     *     The health
+     *         The health
      */
     @JsonProperty("health")
     public String getHealth() {
@@ -90,7 +90,7 @@ public class Battery {
     /**
      * 
      * @param health
-     *     The health
+     *            The health
      */
     @JsonProperty("health")
     public void setHealth(String health) {
@@ -100,7 +100,7 @@ public class Battery {
     /**
      * 
      * @return
-     *     The level
+     *         The level
      */
     @JsonProperty("level")
     public Double getLevel() {
@@ -110,7 +110,7 @@ public class Battery {
     /**
      * 
      * @param level
-     *     The level
+     *            The level
      */
     @JsonProperty("level")
     public void setLevel(Double level) {
@@ -120,7 +120,7 @@ public class Battery {
     /**
      * 
      * @return
-     *     The scale
+     *         The scale
      */
     @JsonProperty("scale")
     public Double getScale() {
@@ -130,7 +130,7 @@ public class Battery {
     /**
      * 
      * @param scale
-     *     The scale
+     *            The scale
      */
     @JsonProperty("scale")
     public void setScale(Double scale) {
@@ -140,7 +140,7 @@ public class Battery {
     /**
      * 
      * @return
-     *     The source
+     *         The source
      */
     @JsonProperty("source")
     public String getSource() {
@@ -150,7 +150,7 @@ public class Battery {
     /**
      * 
      * @param source
-     *     The source
+     *            The source
      */
     @JsonProperty("source")
     public void setSource(String source) {
@@ -160,7 +160,7 @@ public class Battery {
     /**
      * 
      * @return
-     *     The status
+     *         The status
      */
     @JsonProperty("status")
     public String getStatus() {
@@ -170,7 +170,7 @@ public class Battery {
     /**
      * 
      * @param status
-     *     The status
+     *            The status
      */
     @JsonProperty("status")
     public void setStatus(String status) {
@@ -180,7 +180,7 @@ public class Battery {
     /**
      * 
      * @return
-     *     The temp
+     *         The temp
      */
     @JsonProperty("temp")
     public Double getTemp() {
@@ -190,7 +190,7 @@ public class Battery {
     /**
      * 
      * @param temp
-     *     The temp
+     *            The temp
      */
     @JsonProperty("temp")
     public void setTemp(Double temp) {
@@ -200,7 +200,7 @@ public class Battery {
     /**
      * 
      * @return
-     *     The voltage
+     *         The voltage
      */
     @JsonProperty("voltage")
     public Double getVoltage() {
@@ -210,7 +210,7 @@ public class Battery {
     /**
      * 
      * @param voltage
-     *     The voltage
+     *            The voltage
      */
     @JsonProperty("voltage")
     public void setVoltage(Double voltage) {

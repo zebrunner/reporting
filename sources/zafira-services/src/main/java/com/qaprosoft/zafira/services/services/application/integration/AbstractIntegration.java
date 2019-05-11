@@ -57,14 +57,14 @@ public abstract class AbstractIntegration<T extends AbstractContext> implements 
 
     @Override
     public void init() {
-        if(settingsService != null && contextClass != null) {
+        if (settingsService != null && contextClass != null) {
             try {
                 List<Setting> settings = settingsService.getSettingsByTool(tool);
                 boolean hasBinarySetting = hasBinarySetting(settings);
                 Map<Setting.SettingType, Object> mappedSettings = new HashMap<>();
                 settings.forEach(setting -> {
                     Setting.SettingType toolSetting = Setting.SettingType.valueOf(setting.getName());
-                    if(toolSetting.isRequired() && StringUtils.isBlank(setting.getValue())) {
+                    if (toolSetting.isRequired() && StringUtils.isBlank(setting.getValue())) {
                         removeContext();
                         throw new IntegrationException("Integration tool '" + tool + "' data is malformed." +
                                 "Setting '" + setting.getName() + "' is required");
@@ -97,7 +97,7 @@ public abstract class AbstractIntegration<T extends AbstractContext> implements 
         T context = null;
         try {
             Map<? extends AdditionalProperty, String> additionalProperties = additionalContextProperties();
-            if(additionalProperties != null) {
+            if (additionalProperties != null) {
                 Constructor<T> mainConstructor = contextClass.getConstructor(Map.class, Map.class);
                 context = mainConstructor.newInstance(settings, additionalProperties);
             } else {
@@ -117,7 +117,7 @@ public abstract class AbstractIntegration<T extends AbstractContext> implements 
     }
 
     private boolean hasBinarySetting(List<Setting> settings) {
-        return settings.stream().anyMatch(setting -> ! ArrayUtils.isEmpty(setting.getFile()));
+        return settings.stream().anyMatch(setting -> !ArrayUtils.isEmpty(setting.getFile()));
     }
 
     @Override

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -63,7 +63,7 @@ public class MonitorsApiController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create monitor", nickname = "createMonitor", httpMethod = "POST", response = Monitor.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_MONITORS')")
     @PostMapping()
     public MonitorType createMonitor(@Valid @RequestBody MonitorType monitor) throws ServiceException {
@@ -72,19 +72,18 @@ public class MonitorsApiController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Check monitor", nickname = "checkMonitor", httpMethod = "POST", response = MonitorCheckType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_MONITORS')")
     @PostMapping("/check")
     public MonitorCheckType checkMonitor(
             @RequestParam(value = "check", required = false) Boolean check,
-            @Valid @RequestBody MonitorType monitor
-    ) throws ServiceException {
+            @Valid @RequestBody MonitorType monitor) throws ServiceException {
         return monitorsService.checkMonitor(mapper.map(monitor, Monitor.class), check);
     }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Search monitors", nickname = "searchMonitors", httpMethod = "POST", response = SearchResult.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('VIEW_MONITORS')")
     @PostMapping("/search")
     public SearchResult<MonitorType> searchMonitors(@RequestBody MonitorSearchCriteria searchCriteria) {
@@ -96,8 +95,8 @@ public class MonitorsApiController extends AbstractController {
         result.setPageSize(searchResult.getPageSize());
         result.setPage(searchResult.getPage());
         List<MonitorType> results = searchResult.getResults().stream()
-                                                   .map(monitor -> mapper.map(monitor, MonitorType.class))
-                                                   .collect(Collectors.toList());
+                .map(monitor -> mapper.map(monitor, MonitorType.class))
+                .collect(Collectors.toList());
         result.setResults(results);
 
         return result;
@@ -105,7 +104,7 @@ public class MonitorsApiController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Delete monitor", nickname = "deleteMonitor", httpMethod = "DELETE")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_MONITORS')")
     @DeleteMapping("/{id}")
     public void deleteMonitor(@PathVariable("id") long id) {
@@ -113,20 +112,19 @@ public class MonitorsApiController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Update monitor", nickname = "updateMonitor", httpMethod = "PUT", response = Group.class)
     @PreAuthorize("hasPermission('MODIFY_MONITORS')")
     @PutMapping()
     public MonitorType updateMonitor(
             @RequestParam(value = "switchJob", required = false) Boolean switchJob,
-            @Valid @RequestBody MonitorType monitor
-    ) throws ServiceException {
+            @Valid @RequestBody MonitorType monitor) throws ServiceException {
         return mapper.map(monitorsService.updateMonitor(mapper.map(monitor, Monitor.class), switchJob, true), MonitorType.class);
     }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get all monitors", nickname = "getAllMonitors", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('VIEW_MONITORS', 'MODIFY_MONITORS')")
     @GetMapping()
     public List<MonitorType> getAllMonitors() throws ServiceException {
@@ -139,7 +137,7 @@ public class MonitorsApiController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Get monitor by id", nickname = "getMonitorById", httpMethod = "GET", response = Monitor.class)
     @PreAuthorize("hasAnyPermission('VIEW_MONITORS', 'MODIFY_MONITORS')")
     @GetMapping("/{id}")
@@ -148,7 +146,7 @@ public class MonitorsApiController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Get monitors count", nickname = "getMonitorsCount", httpMethod = "GET", response = Integer.class)
     @PreAuthorize("hasAnyPermission('VIEW_MONITORS', 'MODIFY_MONITORS')")
     @GetMapping("/count")
@@ -157,4 +155,3 @@ public class MonitorsApiController extends AbstractController {
     }
 
 }
-

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,71 +25,57 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestArtifactMapper;
 import com.qaprosoft.zafira.models.db.TestArtifact;
 
 @Service
-public class TestArtifactService
-{
-	@Autowired
-	private TestArtifactMapper testArtifactMapper;
-	
-	@Transactional(rollbackFor = Exception.class)
-	public void createTestArtifact(TestArtifact testArtifact)
-	{
-		testArtifactMapper.createTestArtifact(testArtifact);
-	}
-	
-	@Transactional(readOnly = true)
-	public List<TestArtifact> getAllTestArtifacts(Long testId)
-	{
-		return testArtifactMapper.getTestArtifactsByTestId(testId);
-	}
-	
-	@Transactional(readOnly = true)
-	public TestArtifact getTestArtifactById(long id)
-	{
-		return testArtifactMapper.getTestArtifactById(id);
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public TestArtifact updateTestArtifact(TestArtifact testArtifact)
-	{
-		testArtifactMapper.updateTestArtifact(testArtifact);
-		return testArtifact;
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public void deleteTestArtifactById(Long id)
-	{
-		testArtifactMapper.deleteTestArtifactById(id);
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public void deleteTestArtifactsByTestId(Long testId)
-	{
-		testArtifactMapper.deleteTestArtifactsByTestId(testId);
-	}
+public class TestArtifactService {
+    @Autowired
+    private TestArtifactMapper testArtifactMapper;
 
-	@Transactional(readOnly = true)
-	public TestArtifact getTestArtifactByNameAndTestId(String name, long testId)
-	{
-		return testArtifactMapper.getTestArtifactByNameAndTestId(name, testId);
-	}
+    @Transactional(rollbackFor = Exception.class)
+    public void createTestArtifact(TestArtifact testArtifact) {
+        testArtifactMapper.createTestArtifact(testArtifact);
+    }
 
-	@Transactional(rollbackFor = Exception.class)
-	public TestArtifact createOrUpdateTestArtifact(TestArtifact newTestArtifact)
-	{
-		TestArtifact testArtifact = getTestArtifactByNameAndTestId(newTestArtifact.getName(), newTestArtifact.getTestId());
-		if(testArtifact == null)
-		{
-			createTestArtifact(newTestArtifact);
-		}
-		else if(!testArtifact.equals(newTestArtifact))
-		{
-			newTestArtifact.setId(testArtifact.getId());
-			updateTestArtifact(newTestArtifact);
-		}
-		else
-		{
-			newTestArtifact = testArtifact;
-		}
-		return newTestArtifact;
-	}
+    @Transactional(readOnly = true)
+    public List<TestArtifact> getAllTestArtifacts(Long testId) {
+        return testArtifactMapper.getTestArtifactsByTestId(testId);
+    }
+
+    @Transactional(readOnly = true)
+    public TestArtifact getTestArtifactById(long id) {
+        return testArtifactMapper.getTestArtifactById(id);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public TestArtifact updateTestArtifact(TestArtifact testArtifact) {
+        testArtifactMapper.updateTestArtifact(testArtifact);
+        return testArtifact;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteTestArtifactById(Long id) {
+        testArtifactMapper.deleteTestArtifactById(id);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteTestArtifactsByTestId(Long testId) {
+        testArtifactMapper.deleteTestArtifactsByTestId(testId);
+    }
+
+    @Transactional(readOnly = true)
+    public TestArtifact getTestArtifactByNameAndTestId(String name, long testId) {
+        return testArtifactMapper.getTestArtifactByNameAndTestId(name, testId);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public TestArtifact createOrUpdateTestArtifact(TestArtifact newTestArtifact) {
+        TestArtifact testArtifact = getTestArtifactByNameAndTestId(newTestArtifact.getName(), newTestArtifact.getTestId());
+        if (testArtifact == null) {
+            createTestArtifact(newTestArtifact);
+        } else if (!testArtifact.equals(newTestArtifact)) {
+            newTestArtifact.setId(testArtifact.getId());
+            updateTestArtifact(newTestArtifact);
+        } else {
+            newTestArtifact = testArtifact;
+        }
+        return newTestArtifact;
+    }
 }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,37 +22,36 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface DashboardMapper
-{
-	void createDashboard(Dashboard dashboard);
+public interface DashboardMapper {
+    void createDashboard(Dashboard dashboard);
 
-	Dashboard getDashboardById(Long id);
+    Dashboard getDashboardById(Long id);
 
-	Dashboard getDashboardByTitle (String title);
+    Dashboard getDashboardByTitle(String title);
 
-	Dashboard getDefaultDashboardByUserId(Long userId);
+    Dashboard getDefaultDashboardByUserId(Long userId);
 
-	List<Dashboard> getAllDashboards();
+    List<Dashboard> getAllDashboards();
 
-	void updateDashboard(Dashboard dashboard);
+    void updateDashboard(Dashboard dashboard);
 
-	void deleteDashboardById(long id);
+    void deleteDashboardById(long id);
 
-	void addDashboardWidget(@Param("dashboardId") Long dashboardId, @Param("widget") Widget widget);
+    void addDashboardWidget(@Param("dashboardId") Long dashboardId, @Param("widget") Widget widget);
 
-	void deleteDashboardWidget(@Param("dashboardId") Long dashboardId, @Param("widgetId") Long widgetId);
+    void deleteDashboardWidget(@Param("dashboardId") Long dashboardId, @Param("widgetId") Long widgetId);
 
-	void updateDashboardWidget(@Param("dashboardId") Long dashboardId, @Param("widget") Widget widget);
+    void updateDashboardWidget(@Param("dashboardId") Long dashboardId, @Param("widget") Widget widget);
 
-	List<Dashboard> getDashboardsByHidden(boolean hidden);
+    List<Dashboard> getDashboardsByHidden(boolean hidden);
 
-	List<Attribute> getAttributesByDashboardId(long dashboardId);
+    List<Attribute> getAttributesByDashboardId(long dashboardId);
 
-	Attribute getAttributeById(long attributeId);
+    Attribute getAttributeById(long attributeId);
 
-	void createDashboardAttribute(@Param("dashboardId") long dashboardId, @Param("attribute") Attribute attribute);
+    void createDashboardAttribute(@Param("dashboardId") long dashboardId, @Param("attribute") Attribute attribute);
 
-	void updateAttribute(Attribute attribute);
+    void updateAttribute(Attribute attribute);
 
-	void deleteDashboardAttributeById(long attributeId);
+    void deleteDashboardAttributeById(long attributeId);
 }

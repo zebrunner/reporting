@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,46 +27,45 @@ import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
 
+public interface TestRunMapper {
+    void createTestRun(TestRun testRun);
 
-public interface TestRunMapper
-{
-	void createTestRun(TestRun testRun);
+    TestRun getTestRunById(long id);
 
-	TestRun getTestRunById(long id);
-	
-	TestRun getTestRunByIdFull(long id);
-	
-	TestRun getTestRunByCiRunId(String ciRunId);
+    TestRun getTestRunByIdFull(long id);
 
-	TestRun getTestRunByCiRunIdFull(String ciRunId);
+    TestRun getTestRunByCiRunId(String ciRunId);
 
-	TestRun getLatestJobTestRunByBranch(@Param("branch") String branch, @Param("jobId") Long jobId);
+    TestRun getTestRunByCiRunIdFull(String ciRunId);
 
-	TestRunStatistics getTestRunStatistics(Long id);
+    TestRun getLatestJobTestRunByBranch(@Param("branch") String branch, @Param("jobId") Long jobId);
 
-	List<TestRun> getTestRunsForRerun(@Param("testSuiteId") long testSuiteId, @Param("jobId") long jobId, @Param("upstreamJobId") long upstreamJobId, @Param("upstreamBuildNumber") long upstreamBuildNumber, @Param("uniqueArgs") List<Argument> uniqueArgs);
-	
-	void updateTestRun(TestRun testRun);
+    TestRunStatistics getTestRunStatistics(Long id);
 
-	void deleteTestRunById(long id);
+    List<TestRun> getTestRunsForRerun(@Param("testSuiteId") long testSuiteId, @Param("jobId") long jobId, @Param("upstreamJobId") long upstreamJobId,
+            @Param("upstreamBuildNumber") long upstreamBuildNumber, @Param("uniqueArgs") List<Argument> uniqueArgs);
 
-	void deleteTestRun(TestRun testRun);
-	
-	List<TestRun> getTestRunsByStatusAndStartedBefore(@Param("status") Status status, @Param("startedBefore") Date startedBefore);
+    void updateTestRun(TestRun testRun);
 
-	List<TestRun> searchTestRuns(TestRunSearchCriteria sc);
+    void deleteTestRunById(long id);
 
-	List<TestRun> getTestRunsForSmartRerun(JobSearchCriteria sc);
-	
-	Integer getTestRunsSearchCount(TestRunSearchCriteria sc);
-	
-	Integer getTestRunEtaByTestSuiteId(long testRunId);
-	
-	List<TestRun> getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(@Param("jobId") Long jobId, @Param("buildNumber") Integer buildNumber);
-	
-	List<TestRun> getLatestJobTestRuns(@Param("env") String env, @Param("jobIds") List<Long> jobIds);
+    void deleteTestRun(TestRun testRun);
 
-	List<String> getEnvironments();
+    List<TestRun> getTestRunsByStatusAndStartedBefore(@Param("status") Status status, @Param("startedBefore") Date startedBefore);
 
-	List<String> getPlatforms();
+    List<TestRun> searchTestRuns(TestRunSearchCriteria sc);
+
+    List<TestRun> getTestRunsForSmartRerun(JobSearchCriteria sc);
+
+    Integer getTestRunsSearchCount(TestRunSearchCriteria sc);
+
+    Integer getTestRunEtaByTestSuiteId(long testRunId);
+
+    List<TestRun> getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(@Param("jobId") Long jobId, @Param("buildNumber") Integer buildNumber);
+
+    List<TestRun> getLatestJobTestRuns(@Param("env") String env, @Param("jobIds") List<Long> jobIds);
+
+    List<String> getEnvironments();
+
+    List<String> getPlatforms();
 }

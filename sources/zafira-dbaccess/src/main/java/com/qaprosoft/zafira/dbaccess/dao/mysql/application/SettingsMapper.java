@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,31 +21,30 @@ import com.qaprosoft.zafira.models.db.Setting;
 import org.apache.ibatis.annotations.Param;
 import static com.qaprosoft.zafira.models.db.Setting.*;
 
-public interface SettingsMapper
-{
-	void createSetting(Setting setting);
+public interface SettingsMapper {
+    void createSetting(Setting setting);
 
-	Setting getSettingById(long id);
+    Setting getSettingById(long id);
 
-	Setting getSettingByName(String name);
+    Setting getSettingByName(String name);
 
-	List<Setting> getSettingsByTool (Tool tool);
+    List<Setting> getSettingsByTool(Tool tool);
 
-	List<Setting> getSettingsByEncrypted (boolean isEncrypted);
+    List<Setting> getSettingsByEncrypted(boolean isEncrypted);
 
-	List<Setting> getAllSettings();
+    List<Setting> getAllSettings();
 
-	List<Setting> getSettingsByIntegration(@Param("isIntegrationTool") boolean isIntegrationTool);
+    List<Setting> getSettingsByIntegration(@Param("isIntegrationTool") boolean isIntegrationTool);
 
-	List<Tool> getTools();
+    List<Tool> getTools();
 
-	void updateSetting(Setting setting);
+    void updateSetting(Setting setting);
 
-	void updateIntegrationSetting(Setting setting);
+    void updateIntegrationSetting(Setting setting);
 
-	void deleteSetting(Setting setting);
+    void deleteSetting(Setting setting);
 
-	void deleteSettingById(long id);
-	
-	String getPostgresVersion();
+    void deleteSettingById(long id);
+
+    String getPostgresVersion();
 }

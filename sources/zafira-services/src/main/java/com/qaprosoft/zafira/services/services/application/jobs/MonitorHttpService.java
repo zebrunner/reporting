@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,61 +31,47 @@ public class MonitorHttpService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(MonitorHttpService.class);
 
-    public Integer getResponseCode(Monitor monitor)
-    {
+    public Integer getResponseCode(Monitor monitor) {
         int responseCode = 0;
 
         HttpClient httpClient = HttpClientBuilder.create().build();
-        switch (monitor.getHttpMethod())
-        {
-            case GET:
-            {
-                try
-                {
-                    HttpGet request = new HttpGet(monitor.getUrl());
-                    request.addHeader("Accept", "*/*");
-                    responseCode = httpClient.execute(request).getStatusLine().getStatusCode();
-                }
-                catch (Exception e)
-                {
-                    LOGGER.error(e.getMessage());
-                }
-                break;
+        switch (monitor.getHttpMethod()) {
+        case GET: {
+            try {
+                HttpGet request = new HttpGet(monitor.getUrl());
+                request.addHeader("Accept", "*/*");
+                responseCode = httpClient.execute(request).getStatusLine().getStatusCode();
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
             }
-            case PUT:
-            {
-                try
-                {
-                    HttpPut request = new HttpPut(monitor.getUrl());
-                    request.addHeader("Content-Type", "application/json");
-                    request.addHeader("Accept", "*/*");
-                    request.setEntity(new StringEntity(monitor.getRequestBody(), "UTF-8"));
-                    responseCode = httpClient.execute(request).getStatusLine().getStatusCode();
-                }
-                catch (Exception e)
-                {
-                    LOGGER.error(e.getMessage());
-                }
-                break;
+            break;
+        }
+        case PUT: {
+            try {
+                HttpPut request = new HttpPut(monitor.getUrl());
+                request.addHeader("Content-Type", "application/json");
+                request.addHeader("Accept", "*/*");
+                request.setEntity(new StringEntity(monitor.getRequestBody(), "UTF-8"));
+                responseCode = httpClient.execute(request).getStatusLine().getStatusCode();
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
             }
-            case POST:
-            {
-                try
-                {
-                    HttpPost request = new HttpPost(monitor.getUrl());
-                    request.addHeader("Content-Type", "application/json");
-                    request.addHeader("Accept", "*/*");
-                    request.setEntity(new StringEntity(monitor.getRequestBody(), "UTF-8"));
-                    responseCode = httpClient.execute(request).getStatusLine().getStatusCode();
-                }
-                catch (Exception e)
-                {
-                    LOGGER.error(e.getMessage());
-                }
-                break;
+            break;
+        }
+        case POST: {
+            try {
+                HttpPost request = new HttpPost(monitor.getUrl());
+                request.addHeader("Content-Type", "application/json");
+                request.addHeader("Accept", "*/*");
+                request.setEntity(new StringEntity(monitor.getRequestBody(), "UTF-8"));
+                responseCode = httpClient.execute(request).getStatusLine().getStatusCode();
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
             }
-            default:
-                break;
+            break;
+        }
+        default:
+            break;
         }
         return responseCode;
     }

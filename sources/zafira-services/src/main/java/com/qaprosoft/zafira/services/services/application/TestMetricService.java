@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,46 +28,37 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestMetricMapper;
 import com.qaprosoft.zafira.models.db.TestMetric;
 
 @Service
-public class TestMetricService
-{
-	private static final Logger LOGGER = Logger.getLogger(TestMetricService.class);
-	
-	@Autowired
-	private TestMetricMapper testMetricMapper;
+public class TestMetricService {
+    private static final Logger LOGGER = Logger.getLogger(TestMetricService.class);
 
-	@Transactional(readOnly = true)
-	public List<String> getEnvsByTestCaseId(Long testCaseId)
-	{
-		return testMetricMapper.getEnvsByTestCaseId(testCaseId);
-	}
+    @Autowired
+    private TestMetricMapper testMetricMapper;
 
-	@Transactional(readOnly = true)
-	public Map<String, List<TestMetric>> getTestMetricsByTestCaseId(Long testCaseId)
-	{
-		Map<String, List<TestMetric>> result = new HashMap<>();
-		getEnvsByTestCaseId(testCaseId).forEach(env -> {
-			List<TestMetric> testMetrics = testMetricMapper.getTestMetricsByTestCaseIdAndEnv(testCaseId, env);
-			result.put(env, testMetrics);
-		});
-		return result;
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public void createTestMetrics(Long testId, Map<String, Long> testMetrics)
-	{
-		try
-		{
-			if(testMetrics != null)
-			{
-				for(String key : testMetrics.keySet())
-				{
-					testMetricMapper.createTestMetric(new TestMetric(key, testMetrics.get(key), testId));
-				}
-			}
-		}
-		catch(Exception e)
-		{
-			LOGGER.error("Unable to register test metrics: " + e.getMessage());
-		}
-	}
+    @Transactional(readOnly = true)
+    public List<String> getEnvsByTestCaseId(Long testCaseId) {
+        return testMetricMapper.getEnvsByTestCaseId(testCaseId);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, List<TestMetric>> getTestMetricsByTestCaseId(Long testCaseId) {
+        Map<String, List<TestMetric>> result = new HashMap<>();
+        getEnvsByTestCaseId(testCaseId).forEach(env -> {
+            List<TestMetric> testMetrics = testMetricMapper.getTestMetricsByTestCaseIdAndEnv(testCaseId, env);
+            result.put(env, testMetrics);
+        });
+        return result;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void createTestMetrics(Long testId, Map<String, Long> testMetrics) {
+        try {
+            if (testMetrics != null) {
+                for (String key : testMetrics.keySet()) {
+                    testMetricMapper.createTestMetric(new TestMetric(key, testMetrics.get(key), testId));
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error("Unable to register test metrics: " + e.getMessage());
+        }
+    }
 }

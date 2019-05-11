@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,28 +17,23 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql.application.search;
 
 import java.util.List;
 
-public class SearchResult<T> extends SearchCriteria
-{
-	private List<T> results;
-	private Integer totalResults;
+public class SearchResult<T> extends SearchCriteria {
+    private List<T> results;
+    private Integer totalResults;
 
-	public List<T> getResults()
-	{
-		return results;
-	}
+    public List<T> getResults() {
+        return results;
+    }
 
-	public void setResults(List<T> results)
-	{
-		this.results = results;
-	}
+    public void setResults(List<T> results) {
+        this.results = results;
+    }
 
-	public Integer getTotalResults()
-	{
-		return totalResults;
-	}
+    public Integer getTotalResults() {
+        return totalResults;
+    }
 
-	public void setTotalResults(Integer totalResults)
-	{
-		this.totalResults = totalResults;
-	}
+    public void setTotalResults(Integer totalResults) {
+        this.totalResults = totalResults;
+    }
 }

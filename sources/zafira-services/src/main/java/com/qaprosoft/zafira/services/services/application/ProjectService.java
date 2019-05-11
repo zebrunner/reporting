@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,44 +30,38 @@ import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
-public class ProjectService
-{
-	@Autowired
-	private ProjectMapper projectMapper;
+public class ProjectService {
+    @Autowired
+    private ProjectMapper projectMapper;
 
-	@CachePut(value = "projects", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #project.name", condition = "#project != null && #project.name != null")
-	@Transactional(rollbackFor = Exception.class)
-	public Project createProject(Project project) throws ServiceException
-	{
-		projectMapper.createProject(project);
-		return project;
-	}
-	
-	@Transactional(readOnly = true)
-	public List<Project> getAllProjects() throws ServiceException
-	{
-		return projectMapper.getAllProjects();
-	}
-	
-	@Cacheable(value = "projects", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #name", condition = "#name != null")
-	@Transactional(readOnly = true)
-	public Project getProjectByName(String name) throws ServiceException
-	{
-		return !StringUtils.isEmpty(name) ? projectMapper.getProjectByName(name) : null;
-	}
+    @CachePut(value = "projects", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #project.name", condition = "#project != null && #project.name != null")
+    @Transactional(rollbackFor = Exception.class)
+    public Project createProject(Project project) throws ServiceException {
+        projectMapper.createProject(project);
+        return project;
+    }
 
-	@CacheEvict(value = "projects", allEntries=true)
-	@Transactional(rollbackFor = Exception.class)
-	public Project updateProject(Project project) throws ServiceException
-	{
-		projectMapper.updateProject(project);
-		return project;
-	}
+    @Transactional(readOnly = true)
+    public List<Project> getAllProjects() throws ServiceException {
+        return projectMapper.getAllProjects();
+    }
 
-	@CacheEvict(value = "projects", allEntries=true)
-	@Transactional(rollbackFor = Exception.class)
-	public void deleteProjectById(Long id) throws ServiceException
-	{
-		projectMapper.deleteProjectById(id);
-	}
+    @Cacheable(value = "projects", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #name", condition = "#name != null")
+    @Transactional(readOnly = true)
+    public Project getProjectByName(String name) throws ServiceException {
+        return !StringUtils.isEmpty(name) ? projectMapper.getProjectByName(name) : null;
+    }
+
+    @CacheEvict(value = "projects", allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
+    public Project updateProject(Project project) throws ServiceException {
+        projectMapper.updateProject(project);
+        return project;
+    }
+
+    @CacheEvict(value = "projects", allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteProjectById(Long id) throws ServiceException {
+        projectMapper.deleteProjectById(id);
+    }
 }

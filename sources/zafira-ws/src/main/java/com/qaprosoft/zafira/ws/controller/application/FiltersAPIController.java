@@ -43,7 +43,7 @@ public class FiltersAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create filter", nickname = "createFilter", httpMethod = "POST", response = FilterType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping()
     public FilterType createFilter(@RequestBody @Valid FilterType filterType) throws ServiceException {
         if (filterService.getFilterByName(filterType.getName()) != null) {
@@ -60,17 +60,17 @@ public class FiltersAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get all public filters", nickname = "getAllPublicFilters", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/all/public")
     public List<FilterType> getAllPublicFilters() throws ServiceException {
         return filterService.getAllPublicFilters(getPrincipalId()).stream()
-                            .map(filter -> mapper.map(filter, FilterType.class))
-                            .collect(Collectors.toList());
+                .map(filter -> mapper.map(filter, FilterType.class))
+                .collect(Collectors.toList());
     }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Update filter", nickname = "updateFilter", httpMethod = "PUT", response = FilterType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("isOwner(@filterService.getFilterById(#filterType.id), 'userId')")
     @PutMapping()
     public FilterType updateFilter(@RequestBody @Valid FilterType filterType) throws ServiceException {
@@ -80,7 +80,7 @@ public class FiltersAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Delete filter", nickname = "deleteFilter", httpMethod = "DELETE")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("isOwner(@filterService.getFilterById(#id), 'userId')")
     @DeleteMapping("/{id}")
     public void deleteFilter(@PathVariable("id") Long id) throws ServiceException {
@@ -89,7 +89,7 @@ public class FiltersAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get filter builder", nickname = "getBuilder", httpMethod = "GET", response = Subject.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/{name}/builder")
     public Subject getBuilder(@PathVariable("name") Subject.Name name) {
         return filterService.getStoredSubject(name);

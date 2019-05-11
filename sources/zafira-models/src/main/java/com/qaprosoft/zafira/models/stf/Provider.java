@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,8 +29,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("org.jsonschema2pojo")
 @JsonPropertyOrder({
-    "channel",
-    "name"
+        "channel",
+        "name"
 })
 public class Provider {
 
@@ -50,7 +50,7 @@ public class Provider {
     /**
      * 
      * @return
-     *     The channel
+     *         The channel
      */
     @JsonProperty("channel")
     public String getChannel() {
@@ -60,7 +60,7 @@ public class Provider {
     /**
      * 
      * @param channel
-     *     The channel
+     *            The channel
      */
     @JsonProperty("channel")
     public void setChannel(String channel) {
@@ -70,7 +70,7 @@ public class Provider {
     /**
      * 
      * @return
-     *     The name
+     *         The name
      */
     @JsonProperty("name")
     public String getName() {
@@ -80,7 +80,7 @@ public class Provider {
     /**
      * 
      * @param name
-     *     The name
+     *            The name
      */
     @JsonProperty("name")
     public void setName(String name) {

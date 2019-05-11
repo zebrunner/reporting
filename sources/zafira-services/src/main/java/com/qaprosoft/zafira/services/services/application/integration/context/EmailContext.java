@@ -22,15 +22,13 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import java.util.Map;
 import java.util.Properties;
 
-public class EmailContext extends AbstractContext
-{
+public class EmailContext extends AbstractContext {
 
     private JavaMailSender javaMailSender;
     private String fromAddress;
     private Boolean isConnected;
 
-    public EmailContext(Map<Setting.SettingType, String> settings)
-    {
+    public EmailContext(Map<Setting.SettingType, String> settings) {
         super(settings, settings.get(Setting.SettingType.EMAIL_ENABLED));
 
         String host = settings.get(Setting.SettingType.EMAIL_HOST);
@@ -41,8 +39,7 @@ public class EmailContext extends AbstractContext
 
         this.javaMailSender = new JavaMailSenderImpl();
         ((JavaMailSenderImpl) this.javaMailSender).setDefaultEncoding("UTF-8");
-        ((JavaMailSenderImpl) this.javaMailSender).setJavaMailProperties(new Properties()
-        {
+        ((JavaMailSenderImpl) this.javaMailSender).setJavaMailProperties(new Properties() {
             private static final long serialVersionUID = -7384945982042097581L;
             {
                 setProperty("mail.smtp.auth", "true");
@@ -56,23 +53,19 @@ public class EmailContext extends AbstractContext
         this.fromAddress = fromAddress;
     }
 
-    public JavaMailSender getJavaMailSender()
-    {
+    public JavaMailSender getJavaMailSender() {
         return javaMailSender;
     }
 
-    public void setJavaMailSender(JavaMailSender javaMailSender)
-    {
+    public void setJavaMailSender(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
     }
 
-    public String getFromAddress()
-    {
+    public String getFromAddress() {
         return fromAddress;
     }
 
-    public void setFromAddress(String fromAddress)
-    {
+    public void setFromAddress(String fromAddress) {
         this.fromAddress = fromAddress;
     }
 

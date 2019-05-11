@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -60,19 +60,19 @@ public class InvitationAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Invite users", nickname = "inviteUsers", httpMethod = "POST", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('INVITE_USERS')")
     @PostMapping()
     public List<Invitation> inviteUsers(@Valid @RequestBody InvitationListType invitationList) throws ServiceException {
         Invitation[] invitations = invitationList.getInvitationTypes().stream()
-                                                 .map(invitationType -> mapper.map(invitationType, Invitation.class))
-                                                 .toArray(Invitation[]::new);
+                .map(invitationType -> mapper.map(invitationType, Invitation.class))
+                .toArray(Invitation[]::new);
         return invitationService.createInvitations(getPrincipalId(), invitations);
     }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Retry invite user", nickname = "retryInviteUser", httpMethod = "POST", response = Invitation.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('INVITE_USERS')")
     @PostMapping("/retry")
     public Invitation retryInviteUser(@Valid @RequestBody InvitationType invitation) throws ServiceException {
@@ -92,7 +92,7 @@ public class InvitationAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get all invitations", nickname = "getAllInvitations", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasAnyPermission('INVITE_USERS', 'MODIFY_INVITATIONS')")
     @GetMapping("/all")
     public List<Invitation> getAllInvitations() throws ServiceException {
@@ -101,21 +101,21 @@ public class InvitationAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Search invitations", nickname = "searchInvitations", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasAnyPermission('INVITE_USERS', 'MODIFY_INVITATIONS')")
     @GetMapping(value = "/search")
     public SearchResult<Invitation> search(@RequestParam(value = "query", required = false) String query,
-                                           @RequestParam(value = "page", required = false) String page,
-                                           @RequestParam(value = "pageSize", required = false) String pageSize,
-                                           @RequestParam(value = "orderBy", required = false) String orderBy,
-                                           @RequestParam(value = "sortOrder", required = false) String sortOrder,
-                                           SearchCriteria sc) throws ServiceException {
+            @RequestParam(value = "page", required = false) String page,
+            @RequestParam(value = "pageSize", required = false) String pageSize,
+            @RequestParam(value = "orderBy", required = false) String orderBy,
+            @RequestParam(value = "sortOrder", required = false) String sortOrder,
+            SearchCriteria sc) throws ServiceException {
         return invitationService.search(sc);
     }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Delete invitation", nickname = "deleteInvitationById", httpMethod = "DELETE")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_INVITATIONS')")
     @DeleteMapping("/{idOrEmail}")
     public void deleteInvitation(@PathVariable("idOrEmail") String idOrEmail) throws ServiceException {

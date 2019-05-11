@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,52 +20,43 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qaprosoft.zafira.models.db.AbstractEntity;
 
 @JsonInclude(Include.NON_NULL)
-public class TestMetric extends AbstractEntity
-{
-	private static final long serialVersionUID = -5494737921559000889L;
-	
-	private String operation;
-	private Long elapsed;
-	private Long testId;
-	
-	public TestMetric()
-	{
-	}
+public class TestMetric extends AbstractEntity {
+    private static final long serialVersionUID = -5494737921559000889L;
 
-	public TestMetric(String operation, Long elapsed, Long testId)
-	{
-		this.operation = operation;
-		this.elapsed = elapsed;
-		this.testId = testId;
-	}
+    private String operation;
+    private Long elapsed;
+    private Long testId;
 
-	public String getOperation()
-	{
-		return operation;
-	}
+    public TestMetric() {
+    }
 
-	public void setOperation(String operation)
-	{
-		this.operation = operation;
-	}
+    public TestMetric(String operation, Long elapsed, Long testId) {
+        this.operation = operation;
+        this.elapsed = elapsed;
+        this.testId = testId;
+    }
 
-	public Long getElapsed()
-	{
-		return elapsed;
-	}
+    public String getOperation() {
+        return operation;
+    }
 
-	public void setElapsed(Long elapsed)
-	{
-		this.elapsed = elapsed;
-	}
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
 
-	public Long getTestId()
-	{
-		return testId;
-	}
+    public Long getElapsed() {
+        return elapsed;
+    }
 
-	public void setTestId(Long testId)
-	{
-		this.testId = testId;
-	}
+    public void setElapsed(Long elapsed) {
+        this.elapsed = elapsed;
+    }
+
+    public Long getTestId() {
+        return testId;
+    }
+
+    public void setTestId(Long testId) {
+        this.testId = testId;
+    }
 }

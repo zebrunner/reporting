@@ -23,16 +23,14 @@ import org.springframework.stereotype.Component;
 import java.util.function.Function;
 
 @Component(value = "testRunMapperCacheableService")
-public class TestRunMapperCacheableService implements ICacheableService<Long, TestRunStatistics>
-{
-	private static final long serialVersionUID = 4700339467519700561L;
-	
-	@Autowired
-	private TestRunMapper testRunMapper;
+public class TestRunMapperCacheableService implements ICacheableService<Long, TestRunStatistics> {
+    private static final long serialVersionUID = 4700339467519700561L;
 
-	@Override
-	public Function<Long, TestRunStatistics> getValue()
-	{
-		return testRunId -> testRunMapper.getTestRunStatistics(testRunId);
-	}
+    @Autowired
+    private TestRunMapper testRunMapper;
+
+    @Override
+    public Function<Long, TestRunStatistics> getValue() {
+        return testRunId -> testRunMapper.getTestRunStatistics(testRunId);
+    }
 }

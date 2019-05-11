@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,36 +20,36 @@ import java.util.Map;
 
 public class MetaInfoMessage {
 
-	private String message;
-	private Map<String, String> headers;
+    private String message;
+    private Map<String, String> headers;
 
-	public MetaInfoMessage() {
-		this.headers = new HashMap<>();
-	}
+    public MetaInfoMessage() {
+        this.headers = new HashMap<>();
+    }
 
-	public MetaInfoMessage addHeader(String key, String value) {
-		this.headers.put(key, value);
-		return this;
-	}
+    public MetaInfoMessage addHeader(String key, String value) {
+        this.headers.put(key, value);
+        return this;
+    }
 
-	public MetaInfoMessage addMessage(String message) {
-		this.message = message;
-		return this;
-	}
+    public MetaInfoMessage addMessage(String message) {
+        this.message = message;
+        return this;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	public Map<String, String> getHeaders() {
-		return headers;
-	}
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
 
-	public void setHeaders(Map<String, String> headers) {
-		this.headers = headers;
-	}
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
+    }
 }

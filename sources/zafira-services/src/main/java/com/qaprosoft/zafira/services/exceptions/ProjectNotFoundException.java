@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,27 +15,22 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public class ProjectNotFoundException extends ServiceException
-{
+public class ProjectNotFoundException extends ServiceException {
     private static final long serialVersionUID = 3096397473250298650L;
 
-    public ProjectNotFoundException()
-	{
-		super();
-	}
+    public ProjectNotFoundException() {
+        super();
+    }
 
-	public ProjectNotFoundException(String message)
-	{
-		super(message);
-	}
+    public ProjectNotFoundException(String message) {
+        super(message);
+    }
 
-	public ProjectNotFoundException(Throwable cause)
-	{
-		super(cause);
-	}
+    public ProjectNotFoundException(Throwable cause) {
+        super(cause);
+    }
 
-	public ProjectNotFoundException(String message, Throwable cause)
-	{
-		super(message, cause);
-	}
+    public ProjectNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

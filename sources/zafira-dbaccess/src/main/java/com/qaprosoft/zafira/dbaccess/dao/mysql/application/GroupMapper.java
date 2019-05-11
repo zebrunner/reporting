@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,25 +23,24 @@ import com.qaprosoft.zafira.models.db.Group.Role;
 import com.qaprosoft.zafira.models.db.Permission;
 import org.apache.ibatis.annotations.Param;
 
-public interface GroupMapper
-{
-	void createGroup(Group group);
+public interface GroupMapper {
+    void createGroup(Group group);
 
-	void addPermissionsToGroup(@Param("groupId") Long groupId, @Param("permissions") Set<Permission> permissions);
+    void addPermissionsToGroup(@Param("groupId") Long groupId, @Param("permissions") Set<Permission> permissions);
 
-	Group getGroupById(long id);
-	
-	Group getGroupByName(String name);
+    Group getGroupById(long id);
 
-	List<Group> getAllGroups(@Param("publicDetails") boolean publicDetails);
+    Group getGroupByName(String name);
 
-	Group getPrimaryGroupByRole(Role role);
+    List<Group> getAllGroups(@Param("publicDetails") boolean publicDetails);
 
-	void updateGroup(Group group);
+    Group getPrimaryGroupByRole(Role role);
 
-	void deleteGroup(long id);
+    void updateGroup(Group group);
 
-	void deletePermissionFromGroup(@Param("groupId") Long groupId, @Param("permissionId") Long permissionId);
+    void deleteGroup(long id);
 
-	Integer getGroupsCount();
+    void deletePermissionFromGroup(@Param("groupId") Long groupId, @Param("permissionId") Long permissionId);
+
+    Integer getGroupsCount();
 }

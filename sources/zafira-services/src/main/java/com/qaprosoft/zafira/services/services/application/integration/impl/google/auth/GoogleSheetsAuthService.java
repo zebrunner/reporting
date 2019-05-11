@@ -25,18 +25,18 @@ import java.io.IOException;
 @Component
 public class GoogleSheetsAuthService extends AbstractGoogleService {
 
-	public static Sheets getService(byte[] credsFile) throws IOException {
-		return getService(credsFile, null);
-	}
+    public static Sheets getService(byte[] credsFile) throws IOException {
+        return getService(credsFile, null);
+    }
 
-	public static Sheets getService(byte[] credsFile, Long expirationTime) throws IOException {
-		return new Sheets.Builder(getHttpTransport(), getJsonFactory(), getCredentialInstance(credsFile, expirationTime))
-				.setApplicationName(getApplicationName())
-				.build();
-	}
+    public static Sheets getService(byte[] credsFile, Long expirationTime) throws IOException {
+        return new Sheets.Builder(getHttpTransport(), getJsonFactory(), getCredentialInstance(credsFile, expirationTime))
+                .setApplicationName(getApplicationName())
+                .build();
+    }
 
-	public static Credential getCredentialInstance(byte[] credsFile, Long expirationTime) throws IOException {
-		return expirationTime == null ? authorize(credsFile) : authorize(credsFile, expirationTime);
-	}
+    public static Credential getCredentialInstance(byte[] credsFile, Long expirationTime) throws IOException {
+        return expirationTime == null ? authorize(credsFile) : authorize(credsFile, expirationTime);
+    }
 
 }

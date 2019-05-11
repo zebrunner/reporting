@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,17 +29,17 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("org.jsonschema2pojo")
 @JsonPropertyOrder({
-    "density",
-    "fps",
-    "height",
-    "id",
-    "rotation",
-    "secure",
-    "size",
-    "url",
-    "width",
-    "xdpi",
-    "ydpi"
+        "density",
+        "fps",
+        "height",
+        "id",
+        "rotation",
+        "secure",
+        "size",
+        "url",
+        "width",
+        "xdpi",
+        "ydpi"
 })
 public class Display {
 
@@ -104,7 +104,7 @@ public class Display {
     /**
      * 
      * @return
-     *     The density
+     *         The density
      */
     @JsonProperty("density")
     public Double getDensity() {
@@ -114,7 +114,7 @@ public class Display {
     /**
      * 
      * @param density
-     *     The density
+     *            The density
      */
     @JsonProperty("density")
     public void setDensity(Double density) {
@@ -124,7 +124,7 @@ public class Display {
     /**
      * 
      * @return
-     *     The fps
+     *         The fps
      */
     @JsonProperty("fps")
     public Double getFps() {
@@ -134,7 +134,7 @@ public class Display {
     /**
      * 
      * @param fps
-     *     The fps
+     *            The fps
      */
     @JsonProperty("fps")
     public void setFps(Double fps) {
@@ -144,7 +144,7 @@ public class Display {
     /**
      * 
      * @return
-     *     The height
+     *         The height
      */
     @JsonProperty("height")
     public Double getHeight() {
@@ -154,7 +154,7 @@ public class Display {
     /**
      * 
      * @param height
-     *     The height
+     *            The height
      */
     @JsonProperty("height")
     public void setHeight(Double height) {
@@ -164,7 +164,7 @@ public class Display {
     /**
      * 
      * @return
-     *     The id
+     *         The id
      */
     @JsonProperty("id")
     public Double getId() {
@@ -174,7 +174,7 @@ public class Display {
     /**
      * 
      * @param id
-     *     The id
+     *            The id
      */
     @JsonProperty("id")
     public void setId(Double id) {
@@ -184,7 +184,7 @@ public class Display {
     /**
      * 
      * @return
-     *     The rotation
+     *         The rotation
      */
     @JsonProperty("rotation")
     public Double getRotation() {
@@ -194,7 +194,7 @@ public class Display {
     /**
      * 
      * @param rotation
-     *     The rotation
+     *            The rotation
      */
     @JsonProperty("rotation")
     public void setRotation(Double rotation) {
@@ -204,7 +204,7 @@ public class Display {
     /**
      * 
      * @return
-     *     The secure
+     *         The secure
      */
     @JsonProperty("secure")
     public Boolean getSecure() {
@@ -214,7 +214,7 @@ public class Display {
     /**
      * 
      * @param secure
-     *     The secure
+     *            The secure
      */
     @JsonProperty("secure")
     public void setSecure(Boolean secure) {
@@ -224,7 +224,7 @@ public class Display {
     /**
      * 
      * @return
-     *     The size
+     *         The size
      */
     @JsonProperty("size")
     public Double getSize() {
@@ -234,7 +234,7 @@ public class Display {
     /**
      * 
      * @param size
-     *     The size
+     *            The size
      */
     @JsonProperty("size")
     public void setSize(Double size) {
@@ -244,7 +244,7 @@ public class Display {
     /**
      * 
      * @return
-     *     The url
+     *         The url
      */
     @JsonProperty("url")
     public String getUrl() {
@@ -254,7 +254,7 @@ public class Display {
     /**
      * 
      * @param url
-     *     The url
+     *            The url
      */
     @JsonProperty("url")
     public void setUrl(String url) {
@@ -264,7 +264,7 @@ public class Display {
     /**
      * 
      * @return
-     *     The width
+     *         The width
      */
     @JsonProperty("width")
     public Double getWidth() {
@@ -274,7 +274,7 @@ public class Display {
     /**
      * 
      * @param width
-     *     The width
+     *            The width
      */
     @JsonProperty("width")
     public void setWidth(Double width) {
@@ -284,7 +284,7 @@ public class Display {
     /**
      * 
      * @return
-     *     The xdpi
+     *         The xdpi
      */
     @JsonProperty("xdpi")
     public Double getXdpi() {
@@ -294,7 +294,7 @@ public class Display {
     /**
      * 
      * @param xdpi
-     *     The xdpi
+     *            The xdpi
      */
     @JsonProperty("xdpi")
     public void setXdpi(Double xdpi) {
@@ -304,7 +304,7 @@ public class Display {
     /**
      * 
      * @return
-     *     The ydpi
+     *         The ydpi
      */
     @JsonProperty("ydpi")
     public Double getYdpi() {
@@ -314,7 +314,7 @@ public class Display {
     /**
      * 
      * @param ydpi
-     *     The ydpi
+     *            The ydpi
      */
     @JsonProperty("ydpi")
     public void setYdpi(Double ydpi) {

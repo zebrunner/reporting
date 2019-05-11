@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,21 +19,20 @@ import java.util.List;
 
 import com.qaprosoft.zafira.models.db.Job;
 
-public interface JobMapper
-{
-	void createJob(Job job);
-	
-	List<Job> getAllJobs();
+public interface JobMapper {
+    void createJob(Job job);
 
-	Job getJobById(long id);
+    List<Job> getAllJobs();
 
-	Job getJobByName(String name);
-	
-	Job getJobByJobURL(String jobURL);
+    Job getJobById(long id);
 
-	void updateJob(Job job);
+    Job getJobByName(String name);
 
-	void deleteJobById(long id);
+    Job getJobByJobURL(String jobURL);
 
-	void deleteJob(Job job);
+    void updateJob(Job job);
+
+    void deleteJobById(long id);
+
+    void deleteJob(Job job);
 }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,20 +37,19 @@ import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
  * The RestAccessDeniedHandler is called by the ExceptionTranslationFilter to handle all AccessDeniedExceptions. These
  * exceptions are thrown when the authentication is valid but access is not authorized.
  */
-public class RestAccessDeniedHandler implements AccessDeniedHandler
-{
+public class RestAccessDeniedHandler implements AccessDeniedHandler {
 
-	@Override
-	public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException
-	{
-		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.FORBIDDENT));
-		ObjectMapper objMapper = new ObjectMapper();
+    @Override
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException)
+            throws IOException, ServletException {
+        ErrorResponse result = new ErrorResponse();
+        result.setError(new Error(ErrorCode.FORBIDDENT));
+        ObjectMapper objMapper = new ObjectMapper();
 
-		final HttpServletResponseWrapper wrapper = new HttpServletResponseWrapper(response);
-		wrapper.setStatus(SC_FORBIDDEN);
-		wrapper.setContentType(APPLICATION_JSON_VALUE);
-		wrapper.getWriter().println(objMapper.writeValueAsString(result));
-		wrapper.getWriter().flush();
-	}
+        final HttpServletResponseWrapper wrapper = new HttpServletResponseWrapper(response);
+        wrapper.setStatus(SC_FORBIDDEN);
+        wrapper.setContentType(APPLICATION_JSON_VALUE);
+        wrapper.getWriter().println(objMapper.writeValueAsString(result));
+        wrapper.getWriter().flush();
+    }
 }

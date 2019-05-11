@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,14 +27,14 @@ public class ElasticsearchResultHelper {
     private static final String AMAZON_PATH_FIELD_NAME = "AMAZON_PATH";
     private static final String MESSAGE_FIELD_NAME = "message";
 
-	public static HashMap getHeaders(SearchHit hit) {
+    public static HashMap getHeaders(SearchHit hit) {
         return (HashMap) getSourceMap(hit).get(HEADERS_FIELD_NAME);
     }
 
     public static String getAmazonPath(SearchHit hit) {
         String result = null;
         HashMap headers = getHeaders(hit);
-        if(headers != null) {
+        if (headers != null) {
             Object amazonPath = headers.get(AMAZON_PATH_FIELD_NAME);
             result = amazonPath != null ? amazonPath.toString() : null;
         }

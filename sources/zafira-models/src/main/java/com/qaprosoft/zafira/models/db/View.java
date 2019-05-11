@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,30 +15,25 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
-public class View extends AbstractEntity
-{
-	private static final long serialVersionUID = 3795611752266419360L;
+public class View extends AbstractEntity {
+    private static final long serialVersionUID = 3795611752266419360L;
 
-	private String name;
-	private Project project = new Project();
+    private String name;
+    private Project project = new Project();
 
-	public String getName()
-	{
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name)
-	{
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Project getProject()
-	{
-		return project;
-	}
+    public Project getProject() {
+        return project;
+    }
 
-	public void setProject(Project project)
-	{
-		this.project = project;
-	}
+    public void setProject(Project project) {
+        this.project = project;
+    }
 }

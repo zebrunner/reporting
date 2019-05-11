@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,35 +21,34 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface UserMapper
-{
-	void createUser(User user);
+public interface UserMapper {
+    void createUser(User user);
 
-	User getUserById(long id);
+    User getUserById(long id);
 
-	User getUserByUserName(String username);
+    User getUserByUserName(String username);
 
-	User getUserByEmail(String email);
+    User getUserByEmail(String email);
 
-	User getUserByResetToken(String token);
+    User getUserByResetToken(String token);
 
-	void updateUser(User user);
+    void updateUser(User user);
 
-	void updateStatus(@Param("status") User.Status status, @Param("id") Long id);
-	
-	void updateLastLoginDate(long userId);
+    void updateStatus(@Param("status") User.Status status, @Param("id") Long id);
 
-	void updateResetToken(@Param("resetToken") String resetToken, @Param("id") Long id);
+    void updateLastLoginDate(long userId);
 
-	void deleteUserById(long id);
+    void updateResetToken(@Param("resetToken") String resetToken, @Param("id") Long id);
 
-	void deleteUser(User user);
+    void deleteUserById(long id);
 
-	void addUserToGroup(@Param("userId") Long userId, @Param("groupId") Long groupId);
+    void deleteUser(User user);
 
-	void deleteUserFromGroup(@Param("userId") Long userId, @Param("groupId") Long groupId);
+    void addUserToGroup(@Param("userId") Long userId, @Param("groupId") Long groupId);
 
-	List<User> searchUsers(@Param("sc") UserSearchCriteria sc, @Param("publicDetails") Boolean publicDetails);
+    void deleteUserFromGroup(@Param("userId") Long userId, @Param("groupId") Long groupId);
 
-	Integer getUserSearchCount(@Param("sc") UserSearchCriteria sc, @Param("publicDetails") Boolean publicDetails);
+    List<User> searchUsers(@Param("sc") UserSearchCriteria sc, @Param("publicDetails") Boolean publicDetails);
+
+    Integer getUserSearchCount(@Param("sc") UserSearchCriteria sc, @Param("publicDetails") Boolean publicDetails);
 }

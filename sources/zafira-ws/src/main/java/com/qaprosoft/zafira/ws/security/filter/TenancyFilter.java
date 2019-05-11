@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,33 +40,33 @@ import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 @Component
 public class TenancyFilter extends GenericFilterBean {
 
-	private static final Logger LOGGER = Logger.getLogger(TenancyFilter.class);
+    private static final Logger LOGGER = Logger.getLogger(TenancyFilter.class);
 
-	@Value("${zafira.multitenant}")
-	private boolean isMultitenant;
+    @Value("${zafira.multitenant}")
+    private boolean isMultitenant;
 
-	@Override
-	public void doFilter(ServletRequest rq, ServletResponse rs, FilterChain chain)
-			throws IOException, ServletException {
-		if (isMultitenant) {
-			try {
-				// API clients without Origin
-				String host = rq.getServerName();
-				// Web clients has Origin header
-				String origin = ((HttpServletRequest) rq).getHeader("Origin");
-				if (StringUtils.nonEmptyString(origin)) {
-					host = origin.split("//")[1].split(":")[0];
-				}
-				InternetDomainName domain = InternetDomainName.from(host.replaceFirst("www.", ""));
-				if (!domain.isTopPrivateDomain()) {
-					String topDomain = domain.topPrivateDomain().toString();
-					String subDomain = domain.toString().replaceAll("." + topDomain, "");
-					TenancyContext.setTenantName(subDomain);
-				}
-			} catch (Exception e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-		}
-		chain.doFilter(rq, rs);
-	}
+    @Override
+    public void doFilter(ServletRequest rq, ServletResponse rs, FilterChain chain)
+            throws IOException, ServletException {
+        if (isMultitenant) {
+            try {
+                // API clients without Origin
+                String host = rq.getServerName();
+                // Web clients has Origin header
+                String origin = ((HttpServletRequest) rq).getHeader("Origin");
+                if (StringUtils.nonEmptyString(origin)) {
+                    host = origin.split("//")[1].split(":")[0];
+                }
+                InternetDomainName domain = InternetDomainName.from(host.replaceFirst("www.", ""));
+                if (!domain.isTopPrivateDomain()) {
+                    String topDomain = domain.topPrivateDomain().toString();
+                    String subDomain = domain.toString().replaceAll("." + topDomain, "");
+                    TenancyContext.setTenantName(subDomain);
+                }
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+        chain.doFilter(rq, rs);
+    }
 }

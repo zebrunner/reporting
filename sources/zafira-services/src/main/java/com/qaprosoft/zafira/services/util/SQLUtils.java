@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,16 +35,17 @@ public class SQLUtils {
 
     /**
      * Returns result map if query is valid or single result with key == null on sql is invalid
+     * 
      * @param sql - sql query
      * @return result map
      */
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getResult(String sql) {
         List<Map<String, Object>> result = null;
-        if(sql != null) {
+        if (sql != null) {
             try {
                 result = widgetService.executeSQL(sql);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 result = new ArrayList<>();
                 LOGGER.debug("String starts with 'select' but is not" + " sql or is not valid: '" + sql + "'");
             }
@@ -54,15 +55,16 @@ public class SQLUtils {
 
     /**
      * Returns result list for single row result if query is valid or one item list on sql is invalid
+     * 
      * @param sql - sql query
      * @return - result list
      */
     public List<Object> getSingleRowResult(String sql) {
         List<Map<String, Object>> multiRowResult = getResult(sql);
         List<Object> result = new ArrayList<>();
-        if(multiRowResult != null && !multiRowResult.isEmpty() && multiRowResult.get(0).keySet().size() == 1) {
+        if (multiRowResult != null && !multiRowResult.isEmpty() && multiRowResult.get(0).keySet().size() == 1) {
             multiRowResult.forEach(resultItem -> {
-                if(resultItem != null) {
+                if (resultItem != null) {
                     for (String key : resultItem.keySet()) {
                         result.add(resultItem.get(key));
                     }

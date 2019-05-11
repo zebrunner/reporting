@@ -59,11 +59,11 @@ public class SlackService extends AbstractIntegration<SlackContext> {
     private final CryptoService cryptoService;
 
     public SlackService(URLResolver urlResolver,
-                        JenkinsService jenkinsService,
-                        SettingsService settingsService,
-                        CryptoService cryptoService,
-                        @Value("${zafira.slack.image}") String image,
-                        @Value("${zafira.slack.author}") String author) {
+            JenkinsService jenkinsService,
+            SettingsService settingsService,
+            CryptoService cryptoService,
+            @Value("${zafira.slack.image}") String image,
+            @Value("${zafira.slack.author}") String author) {
         super(settingsService, cryptoService, SLACK, SlackContext.class);
         this.urlResolver = urlResolver;
         this.jenkinsService = jenkinsService;
@@ -98,7 +98,8 @@ public class SlackService extends AbstractIntegration<SlackContext> {
     }
 
     public void sendStatusOnFinish(TestRun testRun) {
-        String onFinishMessage = String.format(ON_FINISH_PATTERN, testRun.getId(), countElapsedInSMH(testRun.getElapsed()), TestRunResultsEmail.buildStatusText(testRun));
+        String onFinishMessage = String.format(ON_FINISH_PATTERN, testRun.getId(), countElapsedInSMH(testRun.getElapsed()),
+                TestRunResultsEmail.buildStatusText(testRun));
         sendNotification(testRun, onFinishMessage);
     }
 
@@ -139,7 +140,6 @@ public class SlackService extends AbstractIntegration<SlackContext> {
         }
         return slackAttachment;
     }
-
 
     public String getWebhook() {
         String wH = null;

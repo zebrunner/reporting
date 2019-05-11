@@ -22,8 +22,7 @@ import com.qaprosoft.zafira.services.services.application.integration.impl.googl
 import java.util.HashMap;
 import java.util.Map;
 
-public class GoogleContext extends AbstractContext
-{
+public class GoogleContext extends AbstractContext {
 
     private final byte[] credsFile;
     private final String credsFileOriginName;

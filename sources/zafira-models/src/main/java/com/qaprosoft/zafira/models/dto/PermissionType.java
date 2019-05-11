@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,23 +31,19 @@ public class PermissionType extends AbstractType {
     @NotNull(message = "Block required")
     private Permission.Block block;
 
-    public Permission.Name getName()
-    {
+    public Permission.Name getName() {
         return name;
     }
 
-    public void setName(Permission.Name name)
-    {
+    public void setName(Permission.Name name) {
         this.name = name;
     }
 
-    public Permission.Block getBlock()
-    {
+    public Permission.Block getBlock() {
         return block;
     }
 
-    public void setBlock(Permission.Block block)
-    {
+    public void setBlock(Permission.Block block) {
         this.block = block;
     }
 }

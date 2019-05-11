@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,10 +29,10 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("org.jsonschema2pojo")
 @JsonPropertyOrder({
-    "iccid",
-    "imei",
-    "network",
-    "phoneNumber"
+        "iccid",
+        "imei",
+        "network",
+        "phoneNumber"
 })
 public class Phone {
 
@@ -62,7 +62,7 @@ public class Phone {
     /**
      * 
      * @return
-     *     The iccid
+     *         The iccid
      */
     @JsonProperty("iccid")
     public Object getIccid() {
@@ -72,7 +72,7 @@ public class Phone {
     /**
      * 
      * @param iccid
-     *     The iccid
+     *            The iccid
      */
     @JsonProperty("iccid")
     public void setIccid(Object iccid) {
@@ -82,7 +82,7 @@ public class Phone {
     /**
      * 
      * @return
-     *     The imei
+     *         The imei
      */
     @JsonProperty("imei")
     public String getImei() {
@@ -92,7 +92,7 @@ public class Phone {
     /**
      * 
      * @param imei
-     *     The imei
+     *            The imei
      */
     @JsonProperty("imei")
     public void setImei(String imei) {
@@ -102,7 +102,7 @@ public class Phone {
     /**
      * 
      * @return
-     *     The network
+     *         The network
      */
     @JsonProperty("network")
     public String getNetwork() {
@@ -112,7 +112,7 @@ public class Phone {
     /**
      * 
      * @param network
-     *     The network
+     *            The network
      */
     @JsonProperty("network")
     public void setNetwork(String network) {
@@ -122,7 +122,7 @@ public class Phone {
     /**
      * 
      * @return
-     *     The phoneNumber
+     *         The phoneNumber
      */
     @JsonProperty("phoneNumber")
     public Object getPhoneNumber() {
@@ -132,7 +132,7 @@ public class Phone {
     /**
      * 
      * @param phoneNumber
-     *     The phoneNumber
+     *            The phoneNumber
      */
     @JsonProperty("phoneNumber")
     public void setPhoneNumber(Object phoneNumber) {

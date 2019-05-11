@@ -38,7 +38,7 @@ import static com.qaprosoft.zafira.services.util.EventPushService.Type.ZFR_CALLB
 public class TenancyInitializer {
 
     private static final Logger LOGGER = Logger.getLogger(TenancyInitializer.class);
-    
+
     private static final String DEFAULT_USER_GROUP = "Admins";
 
     @Autowired
@@ -63,6 +63,7 @@ public class TenancyInitializer {
 
     /**
      * RabbitMQ listener
+     * 
      * @param message - amqp message
      */
     @RabbitListener(queues = "#{tenanciesQueue.name}")
@@ -115,6 +116,7 @@ public class TenancyInitializer {
 
     /**
      * Trigger to execute some task on tenancy creation
+     * 
      * @param tenancy - to initialize
      * @param tenancyInitial - task to execute
      */
@@ -127,7 +129,7 @@ public class TenancyInitializer {
     }
 
     private void processMessage(String tenancy, Runnable runnable) {
-        if (! StringUtils.isBlank(tenancy) && tenancyService.getTenancyByName(tenancy) != null) {
+        if (!StringUtils.isBlank(tenancy) && tenancyService.getTenancyByName(tenancy) != null) {
             TenancyContext.setTenantName(tenancy);
             runnable.run();
             TenancyContext.setTenantName(null);

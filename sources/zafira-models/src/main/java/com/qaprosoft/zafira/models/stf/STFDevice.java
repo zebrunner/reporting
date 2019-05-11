@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,35 +31,35 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("org.jsonschema2pojo")
 @JsonPropertyOrder({
-    "abi",
-    "airplaneMode",
-    "battery",
-    "browser",
-    "channel",
-    "createdAt",
-    "display",
-    "manufacturer",
-    "model",
-    "network",
-    "operator",
-    "owner",
-    "phone",
-    "platform",
-    "presenceChangedAt",
-    "present",
-    "product",
-    "provider",
-    "ready",
-    "remoteConnectUrl",
-    "remoteConnect",
-    "reverseForwards",
-    "sdk",
-    "serial",
-    "statusChangedAt",
-    "status",
-    "using",
-    "version",
-    "deviceType"
+        "abi",
+        "airplaneMode",
+        "battery",
+        "browser",
+        "channel",
+        "createdAt",
+        "display",
+        "manufacturer",
+        "model",
+        "network",
+        "operator",
+        "owner",
+        "phone",
+        "platform",
+        "presenceChangedAt",
+        "present",
+        "product",
+        "provider",
+        "ready",
+        "remoteConnectUrl",
+        "remoteConnect",
+        "reverseForwards",
+        "sdk",
+        "serial",
+        "statusChangedAt",
+        "status",
+        "using",
+        "version",
+        "deviceType"
 })
 public class STFDevice {
 
@@ -208,14 +208,14 @@ public class STFDevice {
      */
     @JsonProperty("deviceType")
     private String deviceType = "Phone";
-    
+
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
      * 
      * @return
-     *     The abi
+     *         The abi
      */
     @JsonProperty("abi")
     public String getAbi() {
@@ -225,7 +225,7 @@ public class STFDevice {
     /**
      * 
      * @param abi
-     *     The abi
+     *            The abi
      */
     @JsonProperty("abi")
     public void setAbi(String abi) {
@@ -235,7 +235,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The airplaneMode
+     *         The airplaneMode
      */
     @JsonProperty("airplaneMode")
     public Boolean getAirplaneMode() {
@@ -245,7 +245,7 @@ public class STFDevice {
     /**
      * 
      * @param airplaneMode
-     *     The airplaneMode
+     *            The airplaneMode
      */
     @JsonProperty("airplaneMode")
     public void setAirplaneMode(Boolean airplaneMode) {
@@ -255,7 +255,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The battery
+     *         The battery
      */
     @JsonProperty("battery")
     public Battery getBattery() {
@@ -265,7 +265,7 @@ public class STFDevice {
     /**
      * 
      * @param battery
-     *     The battery
+     *            The battery
      */
     @JsonProperty("battery")
     public void setBattery(Battery battery) {
@@ -275,7 +275,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The browser
+     *         The browser
      */
     @JsonProperty("browser")
     public Browser getBrowser() {
@@ -285,7 +285,7 @@ public class STFDevice {
     /**
      * 
      * @param browser
-     *     The browser
+     *            The browser
      */
     @JsonProperty("browser")
     public void setBrowser(Browser browser) {
@@ -295,7 +295,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The channel
+     *         The channel
      */
     @JsonProperty("channel")
     public String getChannel() {
@@ -305,7 +305,7 @@ public class STFDevice {
     /**
      * 
      * @param channel
-     *     The channel
+     *            The channel
      */
     @JsonProperty("channel")
     public void setChannel(String channel) {
@@ -315,7 +315,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The createdAt
+     *         The createdAt
      */
     @JsonProperty("createdAt")
     public String getCreatedAt() {
@@ -325,7 +325,7 @@ public class STFDevice {
     /**
      * 
      * @param createdAt
-     *     The createdAt
+     *            The createdAt
      */
     @JsonProperty("createdAt")
     public void setCreatedAt(String createdAt) {
@@ -335,7 +335,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The display
+     *         The display
      */
     @JsonProperty("display")
     public Display getDisplay() {
@@ -345,7 +345,7 @@ public class STFDevice {
     /**
      * 
      * @param display
-     *     The display
+     *            The display
      */
     @JsonProperty("display")
     public void setDisplay(Display display) {
@@ -355,7 +355,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The manufacturer
+     *         The manufacturer
      */
     @JsonProperty("manufacturer")
     public String getManufacturer() {
@@ -365,7 +365,7 @@ public class STFDevice {
     /**
      * 
      * @param manufacturer
-     *     The manufacturer
+     *            The manufacturer
      */
     @JsonProperty("manufacturer")
     public void setManufacturer(String manufacturer) {
@@ -375,7 +375,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The model
+     *         The model
      */
     @JsonProperty("model")
     public String getModel() {
@@ -385,7 +385,7 @@ public class STFDevice {
     /**
      * 
      * @param model
-     *     The model
+     *            The model
      */
     @JsonProperty("model")
     public void setModel(String model) {
@@ -395,7 +395,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The network
+     *         The network
      */
     @JsonProperty("network")
     public Network getNetwork() {
@@ -405,7 +405,7 @@ public class STFDevice {
     /**
      * 
      * @param network
-     *     The network
+     *            The network
      */
     @JsonProperty("network")
     public void setNetwork(Network network) {
@@ -415,7 +415,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The operator
+     *         The operator
      */
     @JsonProperty("operator")
     public Object getOperator() {
@@ -425,7 +425,7 @@ public class STFDevice {
     /**
      * 
      * @param operator
-     *     The operator
+     *            The operator
      */
     @JsonProperty("operator")
     public void setOperator(Object operator) {
@@ -435,7 +435,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The owner
+     *         The owner
      */
     @JsonProperty("owner")
     public Object getOwner() {
@@ -445,7 +445,7 @@ public class STFDevice {
     /**
      * 
      * @param owner
-     *     The owner
+     *            The owner
      */
     @JsonProperty("owner")
     public void setOwner(Object owner) {
@@ -455,7 +455,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The phone
+     *         The phone
      */
     @JsonProperty("phone")
     public Phone getPhone() {
@@ -465,7 +465,7 @@ public class STFDevice {
     /**
      * 
      * @param phone
-     *     The phone
+     *            The phone
      */
     @JsonProperty("phone")
     public void setPhone(Phone phone) {
@@ -475,7 +475,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The platform
+     *         The platform
      */
     @JsonProperty("platform")
     public String getPlatform() {
@@ -485,7 +485,7 @@ public class STFDevice {
     /**
      * 
      * @param platform
-     *     The platform
+     *            The platform
      */
     @JsonProperty("platform")
     public void setPlatform(String platform) {
@@ -495,7 +495,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The presenceChangedAt
+     *         The presenceChangedAt
      */
     @JsonProperty("presenceChangedAt")
     public String getPresenceChangedAt() {
@@ -505,7 +505,7 @@ public class STFDevice {
     /**
      * 
      * @param presenceChangedAt
-     *     The presenceChangedAt
+     *            The presenceChangedAt
      */
     @JsonProperty("presenceChangedAt")
     public void setPresenceChangedAt(String presenceChangedAt) {
@@ -515,7 +515,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The present
+     *         The present
      */
     @JsonProperty("present")
     public Boolean getPresent() {
@@ -525,7 +525,7 @@ public class STFDevice {
     /**
      * 
      * @param present
-     *     The present
+     *            The present
      */
     @JsonProperty("present")
     public void setPresent(Boolean present) {
@@ -535,7 +535,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The product
+     *         The product
      */
     @JsonProperty("product")
     public String getProduct() {
@@ -545,7 +545,7 @@ public class STFDevice {
     /**
      * 
      * @param product
-     *     The product
+     *            The product
      */
     @JsonProperty("product")
     public void setProduct(String product) {
@@ -555,7 +555,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The provider
+     *         The provider
      */
     @JsonProperty("provider")
     public Provider getProvider() {
@@ -565,7 +565,7 @@ public class STFDevice {
     /**
      * 
      * @param provider
-     *     The provider
+     *            The provider
      */
     @JsonProperty("provider")
     public void setProvider(Provider provider) {
@@ -575,7 +575,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The ready
+     *         The ready
      */
     @JsonProperty("ready")
     public Boolean getReady() {
@@ -585,7 +585,7 @@ public class STFDevice {
     /**
      * 
      * @param ready
-     *     The ready
+     *            The ready
      */
     @JsonProperty("ready")
     public void setReady(Boolean ready) {
@@ -595,7 +595,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The remoteConnectUrl
+     *         The remoteConnectUrl
      */
     @JsonProperty("remoteConnectUrl")
     public Object getRemoteConnectUrl() {
@@ -605,7 +605,7 @@ public class STFDevice {
     /**
      * 
      * @param remoteConnectUrl
-     *     The remoteConnectUrl
+     *            The remoteConnectUrl
      */
     @JsonProperty("remoteConnectUrl")
     public void setRemoteConnectUrl(Object remoteConnectUrl) {
@@ -615,7 +615,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The remoteConnect
+     *         The remoteConnect
      */
     @JsonProperty("remoteConnect")
     public Boolean getRemoteConnect() {
@@ -625,7 +625,7 @@ public class STFDevice {
     /**
      * 
      * @param remoteConnect
-     *     The remoteConnect
+     *            The remoteConnect
      */
     @JsonProperty("remoteConnect")
     public void setRemoteConnect(Boolean remoteConnect) {
@@ -635,7 +635,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The reverseForwards
+     *         The reverseForwards
      */
     @JsonProperty("reverseForwards")
     public List<Object> getReverseForwards() {
@@ -645,7 +645,7 @@ public class STFDevice {
     /**
      * 
      * @param reverseForwards
-     *     The reverseForwards
+     *            The reverseForwards
      */
     @JsonProperty("reverseForwards")
     public void setReverseForwards(List<Object> reverseForwards) {
@@ -655,7 +655,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The sdk
+     *         The sdk
      */
     @JsonProperty("sdk")
     public String getSdk() {
@@ -665,7 +665,7 @@ public class STFDevice {
     /**
      * 
      * @param sdk
-     *     The sdk
+     *            The sdk
      */
     @JsonProperty("sdk")
     public void setSdk(String sdk) {
@@ -675,7 +675,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The serial
+     *         The serial
      */
     @JsonProperty("serial")
     public String getSerial() {
@@ -685,7 +685,7 @@ public class STFDevice {
     /**
      * 
      * @param serial
-     *     The serial
+     *            The serial
      */
     @JsonProperty("serial")
     public void setSerial(String serial) {
@@ -695,7 +695,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The statusChangedAt
+     *         The statusChangedAt
      */
     @JsonProperty("statusChangedAt")
     public String getStatusChangedAt() {
@@ -705,7 +705,7 @@ public class STFDevice {
     /**
      * 
      * @param statusChangedAt
-     *     The statusChangedAt
+     *            The statusChangedAt
      */
     @JsonProperty("statusChangedAt")
     public void setStatusChangedAt(String statusChangedAt) {
@@ -715,7 +715,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The status
+     *         The status
      */
     @JsonProperty("status")
     public Double getStatus() {
@@ -725,7 +725,7 @@ public class STFDevice {
     /**
      * 
      * @param status
-     *     The status
+     *            The status
      */
     @JsonProperty("status")
     public void setStatus(Double status) {
@@ -735,7 +735,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The using
+     *         The using
      */
     @JsonProperty("using")
     public Boolean getUsing() {
@@ -745,7 +745,7 @@ public class STFDevice {
     /**
      * 
      * @param using
-     *     The using
+     *            The using
      */
     @JsonProperty("using")
     public void setUsing(Boolean using) {
@@ -755,7 +755,7 @@ public class STFDevice {
     /**
      * 
      * @return
-     *     The version
+     *         The version
      */
     @JsonProperty("version")
     public String getVersion() {
@@ -765,17 +765,17 @@ public class STFDevice {
     /**
      * 
      * @param version
-     *     The version
+     *            The version
      */
     @JsonProperty("version")
     public void setVersion(String version) {
         this.version = version;
     }
-    
+
     /**
      * 
      * @return
-     *     The deviceType
+     *         The deviceType
      */
     @JsonProperty("deviceType")
     public String getDeviceType() {
@@ -785,7 +785,7 @@ public class STFDevice {
     /**
      * 
      * @param deviceType
-     *     The device type
+     *            The device type
      */
     @JsonProperty("deviceType")
     public void setDeviceType(String deviceType) {

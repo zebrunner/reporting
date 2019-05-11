@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,84 +47,74 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 
 @Component
-public class JwtTokenAuthenticationFilter extends GenericFilterBean
-{
-	@Autowired
-	private JWTService jwtService;
-	
-	private final RequestMatcher requestMatcher = new AntPathRequestMatcher("/**");
-	
-	@Override
-	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException
-	{
+public class JwtTokenAuthenticationFilter extends GenericFilterBean {
+    @Autowired
+    private JWTService jwtService;
 
-		HttpServletRequest request = (HttpServletRequest) req;
-		HttpServletResponse response = (HttpServletResponse) res;
+    private final RequestMatcher requestMatcher = new AntPathRequestMatcher("/**");
 
-		if (!requiresAuthentication(request))
-		{
-			/*
-			 * if the URL requested doesn't match the URL handled by the filter, then we chain to the next filters.
-			 */
-			chain.doFilter(request, response);
-			return;
-		}
+    @Override
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 
-		String header = request.getHeader("Authorization");
-		if (header == null || !header.startsWith("Bearer "))
-		{
-			/*
-			 * If there's not authentication information, then we chain to the next filters. The SecurityContext will be
-			 * analyzed by the chained filter that will throw AuthenticationExceptions if necessary
-			 */
-			chain.doFilter(request, response);
-			return;
-		}
+        HttpServletRequest request = (HttpServletRequest) req;
+        HttpServletResponse response = (HttpServletResponse) res;
 
-		try
-		{
-			/*
-			 * The token is extracted from the header. It's then checked (signature and expiration) An Authentication is
-			 * then created and registered in the SecurityContext. The SecurityContext will be analyzed by chained
-			 * filters that will throw Exceptions if necessary (like if authorizations are incorrect).
-			 */
-			User user = extractAndDecodeJwt(request);
+        if (!requiresAuthentication(request)) {
+            /*
+             * if the URL requested doesn't match the URL handled by the filter, then we chain to the next filters.
+             */
+            chain.doFilter(request, response);
+            return;
+        }
 
-			if(user.getStatus().equals(User.Status.INACTIVE)) {
-				return;
-			}
+        String header = request.getHeader("Authorization");
+        if (header == null || !header.startsWith("Bearer ")) {
+            /*
+             * If there's not authentication information, then we chain to the next filters. The SecurityContext will be
+             * analyzed by the chained filter that will throw AuthenticationExceptions if necessary
+             */
+            chain.doFilter(request, response);
+            return;
+        }
 
-			Authentication auth = buildAuthenticationFromJwt(user, request);
-			SecurityContextHolder.getContext().setAuthentication(auth);
+        try {
+            /*
+             * The token is extracted from the header. It's then checked (signature and expiration) An Authentication is
+             * then created and registered in the SecurityContext. The SecurityContext will be analyzed by chained
+             * filters that will throw Exceptions if necessary (like if authorizations are incorrect).
+             */
+            User user = extractAndDecodeJwt(request);
 
-			chain.doFilter(request, response);
-		} 
-		catch (ExpiredJwtException | MalformedJwtException | SignatureException | ParseException ex)
-		{
-			throw new BadCredentialsException("JWT not valid");
-		}
+            if (user.getStatus().equals(User.Status.INACTIVE)) {
+                return;
+            }
 
-		/* SecurityContext is then cleared since we are stateless. */
-		SecurityContextHolder.clearContext();
-	}
+            Authentication auth = buildAuthenticationFromJwt(user, request);
+            SecurityContextHolder.getContext().setAuthentication(auth);
 
-	private boolean requiresAuthentication(HttpServletRequest request)
-	{
-		return requestMatcher.matches(request);
-	}
+            chain.doFilter(request, response);
+        } catch (ExpiredJwtException | MalformedJwtException | SignatureException | ParseException ex) {
+            throw new BadCredentialsException("JWT not valid");
+        }
 
-	private User extractAndDecodeJwt(HttpServletRequest request) throws ParseException
-	{
-		String authHeader = request.getHeader(AUTHORIZATION);
-		String token = authHeader.substring("Bearer ".length());
-		return jwtService.parseAuthToken(token);
-	}
+        /* SecurityContext is then cleared since we are stateless. */
+        SecurityContextHolder.clearContext();
+    }
 
-	private Authentication buildAuthenticationFromJwt(User user, HttpServletRequest request) throws ParseException
-	{
-		JwtUserType userDetails = new JwtUserType(user.getId(), user.getUsername(), user.getGroups());
-		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-		authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-		return authentication;
-	}
+    private boolean requiresAuthentication(HttpServletRequest request) {
+        return requestMatcher.matches(request);
+    }
+
+    private User extractAndDecodeJwt(HttpServletRequest request) throws ParseException {
+        String authHeader = request.getHeader(AUTHORIZATION);
+        String token = authHeader.substring("Bearer ".length());
+        return jwtService.parseAuthToken(token);
+    }
+
+    private Authentication buildAuthenticationFromJwt(User user, HttpServletRequest request) throws ParseException {
+        JwtUserType userDetails = new JwtUserType(user.getId(), user.getUsername(), user.getGroups());
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        return authentication;
+    }
 }

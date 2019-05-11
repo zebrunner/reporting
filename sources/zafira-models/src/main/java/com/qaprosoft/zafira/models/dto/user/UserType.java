@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,155 +33,134 @@ import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Pattern;
 
 @JsonInclude(Include.NON_NULL)
-public class UserType extends AbstractType
-{
-	private static final long serialVersionUID = -6663692781158665080L;
-	
-	@NotEmpty(message = "Username required")
-	@Pattern(regexp = "[\\w-]+", message = "Invalid format")
-	private String username;
-	private String email;
-	private String firstName;
-	private String lastName;
-	private String password;
-	private String photoURL;
-	private List<Role> roles = new ArrayList<>();
-	private Set<Permission> permissions = new HashSet<>();
-	private List<UserPreference> preferences = new ArrayList<>();
-	private Date lastLogin;
-	private User.Source source;
-	private User.Status status;
+public class UserType extends AbstractType {
+    private static final long serialVersionUID = -6663692781158665080L;
 
-	public UserType() 
-	{
-	}
-	
-	public UserType(String username, String email, String firstName, String lastName)
-	{
-		this.username = username;
-		this.email = email;
-		this.firstName = firstName;
-		this.lastName = lastName;
-	}
-	
-	public String getUsername()
-	{
-		return username;
-	}
+    @NotEmpty(message = "Username required")
+    @Pattern(regexp = "[\\w-]+", message = "Invalid format")
+    private String username;
+    private String email;
+    private String firstName;
+    private String lastName;
+    private String password;
+    private String photoURL;
+    private List<Role> roles = new ArrayList<>();
+    private Set<Permission> permissions = new HashSet<>();
+    private List<UserPreference> preferences = new ArrayList<>();
+    private Date lastLogin;
+    private User.Source source;
+    private User.Status status;
 
-	public void setUsername(String username)
-	{
-		this.username = username;
-	}
+    public UserType() {
+    }
 
-	public String getEmail()
-	{
-		return email;
-	}
+    public UserType(String username, String email, String firstName, String lastName) {
+        this.username = username;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 
-	public void setEmail(String email)
-	{
-		this.email = email;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public String getFirstName()
-	{
-		return firstName;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public void setFirstName(String firstName)
-	{
-		this.firstName = firstName;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public String getLastName()
-	{
-		return lastName;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public void setLastName(String lastName)
-	{
-		this.lastName = lastName;
-	}
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public String getPhotoURL()
-	{
-		return photoURL;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	public void setPhotoURL(String photoURL)
-	{
-		this.photoURL = photoURL;
-	}
+    public String getLastName() {
+        return lastName;
+    }
 
-	public List<Role> getRoles()
-	{
-		return roles;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	public void setRoles(List<Role> roles)
-	{
-		this.roles = roles;
-	}
+    public String getPhotoURL() {
+        return photoURL;
+    }
 
-	public List<UserPreference> getPreferences() {
-		return preferences;
-	}
+    public void setPhotoURL(String photoURL) {
+        this.photoURL = photoURL;
+    }
 
-	public void setPreferences(List<UserPreference> preferences) {
-		this.preferences = preferences;
-	}
+    public List<Role> getRoles() {
+        return roles;
+    }
 
-	public Set<Permission> getPermissions()
-	{
-		return permissions;
-	}
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
 
-	public void setPermissions(Set<Permission> permissions)
-	{
-		this.permissions = permissions;
-	}
+    public List<UserPreference> getPreferences() {
+        return preferences;
+    }
 
-	public String getPassword()
-	{
-		return password;
-	}
+    public void setPreferences(List<UserPreference> preferences) {
+        this.preferences = preferences;
+    }
 
-	public void setPassword(String password)
-	{
-		this.password = password;
-	}
-	
-	public Date getLastLogin()
-	{
-		return lastLogin;
-	}
+    public Set<Permission> getPermissions() {
+        return permissions;
+    }
 
-	public void setLastLogin(Date lastLogin)
-	{
-		this.lastLogin = lastLogin;
-	}
+    public void setPermissions(Set<Permission> permissions) {
+        this.permissions = permissions;
+    }
 
-	public User.Source getSource() {
-		return source;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setSource(User.Source source) {
-		this.source = source;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public User.Status getStatus() {
-		return status;
-	}
+    public Date getLastLogin() {
+        return lastLogin;
+    }
 
-	public void setStatus(User.Status status) {
-		this.status = status;
-	}
+    public void setLastLogin(Date lastLogin) {
+        this.lastLogin = lastLogin;
+    }
 
-	@AssertTrue(message = "Email confirmation not matching")
-	@JsonIgnore
-	public boolean isEmailConfirmationValid() {
-		return this.email == null || new EmailValidator().isValid(this.email, null);
-	}
+    public User.Source getSource() {
+        return source;
+    }
+
+    public void setSource(User.Source source) {
+        this.source = source;
+    }
+
+    public User.Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(User.Status status) {
+        this.status = status;
+    }
+
+    @AssertTrue(message = "Email confirmation not matching")
+    @JsonIgnore
+    public boolean isEmailConfirmationValid() {
+        return this.email == null || new EmailValidator().isValid(this.email, null);
+    }
 
 }

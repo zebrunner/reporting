@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,121 +30,112 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
-public class JWTService
-{
-	private final String secret;
-	
-	private final Integer authTokenExp;
-	
-	private final Integer refreshTokenExp;
+public class JWTService {
+    private final String secret;
 
-	@Autowired
-	private UserService userService;
+    private final Integer authTokenExp;
 
-	@Autowired
-	private GroupService groupService;
+    private final Integer refreshTokenExp;
 
-	public JWTService(String secret, Integer authTokenExp, Integer refreshTokenExp)
-	{
-		this.secret = secret;
-		this.authTokenExp = authTokenExp;
-		this.refreshTokenExp = refreshTokenExp;
-	}
+    @Autowired
+    private UserService userService;
 
-	/**
-	 * Generates JWT auth token storing id, username, email, roles of the user and specifies expiration date.
-	 * 
-	 * @param user
-	 *            - for token generation
-	 * @return generated JWT token
-	 */
-	public String generateAuthToken(final User user, final String tenant)
-	{
-		Claims claims = Jwts.claims().setSubject(user.getId().toString());
-		claims.put("username", user.getUsername());
-		claims.put("groupIds", user.getGroups().stream().map(Group::getId).collect(Collectors.toList()));
-		claims.put("tenant", tenant);
-		return buildToken(claims, authTokenExp);
-	}
+    @Autowired
+    private GroupService groupService;
 
-	/**
-	 * Parses user details from JWT token.
-	 * 
-	 * @param token
-	 *            - to parse
-	 * @return retrieved user details
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public User parseAuthToken(String token)
-	{
-		final Claims body = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-		User user = new User();
-		user.setId(Long.valueOf(body.getSubject()));
-		user.setUsername((String) body.get("username"));
-		((List) body.get("groupIds"))
-				.forEach(groupId -> user.getGroups().add(groupService.getGroupById(((Number) groupId).longValue())));
-		user.setStatus(userService.getUserByIdTrusted(user.getId()).getStatus());
-		user.setTenant((String) body.get("tenant"));
-		return user;
-	}
+    public JWTService(String secret, Integer authTokenExp, Integer refreshTokenExp) {
+        this.secret = secret;
+        this.authTokenExp = authTokenExp;
+        this.refreshTokenExp = refreshTokenExp;
+    }
 
-	/**
-	 * Verifies JWT refresh token.
-	 * 
-	 * @param token
-	 *            - tp refresh
-	 * @return parsed user
-	 */
-	public User parseRefreshToken(final String token)
-	{
-		final Claims body = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-		User user = new User();
-		user.setId(Long.valueOf(body.getSubject()));
-		user.setPassword((String) body.get("password"));
-		user.setTenant((String) body.get("tenant"));
-		return user;
-	}
+    /**
+     * Generates JWT auth token storing id, username, email, roles of the user and specifies expiration date.
+     * 
+     * @param user
+     *            - for token generation
+     * @return generated JWT token
+     */
+    public String generateAuthToken(final User user, final String tenant) {
+        Claims claims = Jwts.claims().setSubject(user.getId().toString());
+        claims.put("username", user.getUsername());
+        claims.put("groupIds", user.getGroups().stream().map(Group::getId).collect(Collectors.toList()));
+        claims.put("tenant", tenant);
+        return buildToken(claims, authTokenExp);
+    }
 
-	/**
-	 * Generates JWT refresh token storing id, username, password of the user and specifies expiration date.
-	 * 
-	 * @param user
-	 *            - for token refresh
-	 * @return generated JWT token
-	 */
-	public String generateRefreshToken(final User user, final String tenant)
-	{
-		Claims claims = Jwts.claims().setSubject(user.getId().toString());
-		claims.put("password", user.getPassword());
-		claims.put("tenant", tenant);
-		return buildToken(claims, refreshTokenExp);
-	}
+    /**
+     * Parses user details from JWT token.
+     * 
+     * @param token
+     *            - to parse
+     * @return retrieved user details
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public User parseAuthToken(String token) {
+        final Claims body = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        User user = new User();
+        user.setId(Long.valueOf(body.getSubject()));
+        user.setUsername((String) body.get("username"));
+        ((List) body.get("groupIds"))
+                .forEach(groupId -> user.getGroups().add(groupService.getGroupById(((Number) groupId).longValue())));
+        user.setStatus(userService.getUserByIdTrusted(user.getId()).getStatus());
+        user.setTenant((String) body.get("tenant"));
+        return user;
+    }
 
-	/**
-	 * Generates JWT access token storing id, password of the user and specifies expiration (that never expires).
-	 * 
-	 * @param user
-	 *            - for token generation
-	 * @return generated JWT token
-	 */
-	public String generateAccessToken(User user, String tenant)
-	{
-		Claims claims = Jwts.claims().setSubject(user.getId().toString());
-		claims.put("password", user.getPassword());
-		claims.put("tenant", tenant);
-		return buildToken(claims, Integer.MAX_VALUE);
-	}
+    /**
+     * Verifies JWT refresh token.
+     * 
+     * @param token
+     *            - tp refresh
+     * @return parsed user
+     */
+    public User parseRefreshToken(final String token) {
+        final Claims body = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        User user = new User();
+        user.setId(Long.valueOf(body.getSubject()));
+        user.setPassword((String) body.get("password"));
+        user.setTenant((String) body.get("tenant"));
+        return user;
+    }
 
-	private String buildToken(Claims claims, Integer exp)
-	{
-		Calendar c = Calendar.getInstance();
-		c.add(Calendar.MINUTE, exp);
-		return Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS512, secret).setExpiration(c.getTime())
-				.compact();
-	}
+    /**
+     * Generates JWT refresh token storing id, username, password of the user and specifies expiration date.
+     * 
+     * @param user
+     *            - for token refresh
+     * @return generated JWT token
+     */
+    public String generateRefreshToken(final User user, final String tenant) {
+        Claims claims = Jwts.claims().setSubject(user.getId().toString());
+        claims.put("password", user.getPassword());
+        claims.put("tenant", tenant);
+        return buildToken(claims, refreshTokenExp);
+    }
 
-	public Integer getExpiration()
-	{
-		return authTokenExp;
-	}
+    /**
+     * Generates JWT access token storing id, password of the user and specifies expiration (that never expires).
+     * 
+     * @param user
+     *            - for token generation
+     * @return generated JWT token
+     */
+    public String generateAccessToken(User user, String tenant) {
+        Claims claims = Jwts.claims().setSubject(user.getId().toString());
+        claims.put("password", user.getPassword());
+        claims.put("tenant", tenant);
+        return buildToken(claims, Integer.MAX_VALUE);
+    }
+
+    private String buildToken(Claims claims, Integer exp) {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.MINUTE, exp);
+        return Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS512, secret).setExpiration(c.getTime())
+                .compact();
+    }
+
+    public Integer getExpiration() {
+        return authTokenExp;
+    }
 }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,27 +15,22 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public class AWSException extends ServiceException
-{
-	private static final long serialVersionUID = 201855553642859489L;
+public class AWSException extends ServiceException {
+    private static final long serialVersionUID = 201855553642859489L;
 
-	public AWSException()
-	{
-		super();
-	}
+    public AWSException() {
+        super();
+    }
 
-	public AWSException(String message)
-	{
-		super(message);
-	}
+    public AWSException(String message) {
+        super(message);
+    }
 
-	public AWSException(Throwable cause)
-	{
-		super(cause);
-	}
+    public AWSException(Throwable cause) {
+        super(cause);
+    }
 
-	public AWSException(String message, Throwable cause)
-	{
-		super(message, cause);
-	}
+    public AWSException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

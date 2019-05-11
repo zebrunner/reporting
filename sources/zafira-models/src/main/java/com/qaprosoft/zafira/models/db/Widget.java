@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,131 +15,116 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
-public class Widget extends AbstractEntity
-{
-	private static final long serialVersionUID = -750759195176951157L;
-	
-	private String title;
-	private String description;
-	private String paramsConfig;
-	private String legendConfig;
-	private WidgetTemplate widgetTemplate;
-	private boolean refreshable;
+public class Widget extends AbstractEntity {
+    private static final long serialVersionUID = -750759195176951157L;
 
-	private String type;
-	private Integer size;
-	private Integer position;
-	private String location;
-	private String sql;
-	private String model;
+    private String title;
+    private String description;
+    private String paramsConfig;
+    private String legendConfig;
+    private WidgetTemplate widgetTemplate;
+    private boolean refreshable;
 
-	public String getTitle()
-	{
-		return title;
-	}
+    private String type;
+    private Integer size;
+    private Integer position;
+    private String location;
+    private String sql;
+    private String model;
 
-	public void setTitle(String title)
-	{
-		this.title = title;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public String getParamsConfig() {
-		return paramsConfig;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setParamsConfig(String paramsConfig) {
-		this.paramsConfig = paramsConfig;
-	}
+    public String getParamsConfig() {
+        return paramsConfig;
+    }
 
-	public String getLegendConfig() {
-		return legendConfig;
-	}
+    public void setParamsConfig(String paramsConfig) {
+        this.paramsConfig = paramsConfig;
+    }
 
-	public void setLegendConfig(String legendConfig) {
-		this.legendConfig = legendConfig;
-	}
+    public String getLegendConfig() {
+        return legendConfig;
+    }
 
-	public WidgetTemplate getWidgetTemplate() {
-		return widgetTemplate;
-	}
+    public void setLegendConfig(String legendConfig) {
+        this.legendConfig = legendConfig;
+    }
 
-	public void setWidgetTemplate(WidgetTemplate widgetTemplate) {
-		this.widgetTemplate = widgetTemplate;
-	}
+    public WidgetTemplate getWidgetTemplate() {
+        return widgetTemplate;
+    }
 
-	public boolean isRefreshable() {
-		return refreshable;
-	}
+    public void setWidgetTemplate(WidgetTemplate widgetTemplate) {
+        this.widgetTemplate = widgetTemplate;
+    }
 
-	public void setRefreshable(boolean refreshable) {
-		this.refreshable = refreshable;
-	}
+    public boolean isRefreshable() {
+        return refreshable;
+    }
 
-	public String getModel()
-	{
-		return model;
-	}
+    public void setRefreshable(boolean refreshable) {
+        this.refreshable = refreshable;
+    }
 
-	public void setModel(String model)
-	{
-		this.model = model;
-	}
+    public String getModel() {
+        return model;
+    }
 
-	public String getType()
-	{
-		return type;
-	}
+    public void setModel(String model) {
+        this.model = model;
+    }
 
-	public void setType(String type)
-	{
-		this.type = type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public Integer getSize()
-	{
-		return size;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public void setSize(Integer size)
-	{
-		this.size = size;
-	}
+    public Integer getSize() {
+        return size;
+    }
 
-	public Integer getPosition()
-	{
-		return position;
-	}
+    public void setSize(Integer size) {
+        this.size = size;
+    }
 
-	public void setPosition(Integer position)
-	{
-		this.position = position;
-	}
+    public Integer getPosition() {
+        return position;
+    }
 
-	public String getLocation()
-	{
-		return location;
-	}
+    public void setPosition(Integer position) {
+        this.position = position;
+    }
 
-	public void setLocation(String location)
-	{
-		this.location = location;
-	}
+    public String getLocation() {
+        return location;
+    }
 
-	public String getSql()
-	{
-		return sql;
-	}
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
-	public void setSql(String sql)
-	{
-		this.sql = sql;
-	}
+    public String getSql() {
+        return sql;
+    }
+
+    public void setSql(String sql) {
+        this.sql = sql;
+    }
 }

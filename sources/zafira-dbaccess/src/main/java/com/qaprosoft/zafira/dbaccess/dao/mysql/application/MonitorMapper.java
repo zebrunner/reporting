@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,31 +22,30 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface MonitorMapper
-{
+public interface MonitorMapper {
 
-	void createMonitor(Monitor monitor);
+    void createMonitor(Monitor monitor);
 
-	void createMonitorStatus(@Param(value = "monitorStatus") MonitorStatus monitorStatus, @Param(value = "monitorId") Long monitorId);
+    void createMonitorStatus(@Param(value = "monitorStatus") MonitorStatus monitorStatus, @Param(value = "monitorId") Long monitorId);
 
-	Monitor getMonitorById(long id);
+    Monitor getMonitorById(long id);
 
-	Monitor getMonitorByMonitorName(String monitorName);
+    Monitor getMonitorByMonitorName(String monitorName);
 
-	List<Monitor> searchMonitors(MonitorSearchCriteria sc);
+    List<Monitor> searchMonitors(MonitorSearchCriteria sc);
 
-	Integer getMonitorsSearchCount(MonitorSearchCriteria sc);
+    Integer getMonitorsSearchCount(MonitorSearchCriteria sc);
 
-	MonitorStatus getLastMonitorStatus(@Param(value = "monitorId") Long monitorId);
+    MonitorStatus getLastMonitorStatus(@Param(value = "monitorId") Long monitorId);
 
-	void updateMonitor(Monitor monitor);
+    void updateMonitor(Monitor monitor);
 
-	void deleteMonitorById(long id);
+    void deleteMonitorById(long id);
 
-	void deleteMonitor(Monitor monitor);
+    void deleteMonitor(Monitor monitor);
 
-	List<Monitor> getAllMonitors();
+    List<Monitor> getAllMonitors();
 
-	Integer getMonitorsCount();
+    Integer getMonitorsCount();
 
 }

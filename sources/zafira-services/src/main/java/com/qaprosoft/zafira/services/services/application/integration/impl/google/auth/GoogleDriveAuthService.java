@@ -22,13 +22,11 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class GoogleDriveAuthService extends AbstractGoogleService
-{
+public class GoogleDriveAuthService extends AbstractGoogleService {
 
-	public static Drive getService(byte[] credsFile) throws IOException
-	{
-		return new Drive.Builder(getHttpTransport(), getJsonFactory(), authorize(credsFile))
-				.setApplicationName(getApplicationName())
-				.build();
-	}
+    public static Drive getService(byte[] credsFile) throws IOException {
+        return new Drive.Builder(getHttpTransport(), getJsonFactory(), authorize(credsFile))
+                .setApplicationName(getApplicationName())
+                .build();
+    }
 }

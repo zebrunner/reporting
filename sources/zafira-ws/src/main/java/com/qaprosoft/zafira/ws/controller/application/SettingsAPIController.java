@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -65,11 +65,11 @@ public class SettingsAPIController extends AbstractController {
     private final Long googleTokenExpiration;
 
     public SettingsAPIController(AmazonService amazonService,
-                                 GoogleService googleService,
-                                 SettingsService settingsService,
-                                 CryptoService cryptoService,
-                                 @Value("${zafira.amazon.token.expiration}") Integer amazonTokenExpiration,
-                                 @Value("${zafira.google.token.expiration}") Long googleTokenExpiration) {
+            GoogleService googleService,
+            SettingsService settingsService,
+            CryptoService cryptoService,
+            @Value("${zafira.amazon.token.expiration}") Integer amazonTokenExpiration,
+            @Value("${zafira.google.token.expiration}") Long googleTokenExpiration) {
         this.amazonService = amazonService;
         this.googleService = googleService;
         this.settingsService = settingsService;
@@ -80,9 +80,10 @@ public class SettingsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("tool/{tool}")
-    public List<Setting> getSettingsByTool(@PathVariable("tool") Tool tool, @RequestParam(value = "decrypt", required = false) boolean decrypt) throws Exception {
+    public List<Setting> getSettingsByTool(@PathVariable("tool") Tool tool, @RequestParam(value = "decrypt", required = false) boolean decrypt)
+            throws Exception {
         List<Setting> settings = settingsService.getSettingsByTool(tool);
 
         if (decrypt) {
@@ -102,7 +103,7 @@ public class SettingsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get tools", nickname = "getTools", httpMethod = "GET", response = Map.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("tools")
     public Map<Tool, Boolean> getTools() {
         return settingsService.getToolsStatuses();
@@ -110,7 +111,7 @@ public class SettingsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Update settings", nickname = "settings", httpMethod = "PUT", response = ConnectedToolType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_INTEGRATIONS')")
     @PutMapping("/tools")
     public ConnectedToolType updateSettings(@RequestBody List<Setting> settings) throws Exception {
@@ -118,16 +119,16 @@ public class SettingsAPIController extends AbstractController {
     }
 
     @ApiOperation(value = "Upload setting file", nickname = "uploadSettingFile", httpMethod = "POST", response = ConnectedToolType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/tools")
     public ConnectedToolType uploadSettingFile(@RequestParam("tool") Tool tool,
-                                               @RequestParam("name") String name,
-                                               @RequestParam("file") MultipartFile file) throws Exception {
+            @RequestParam("name") String name,
+            @RequestParam("file") MultipartFile file) throws Exception {
         return settingsService.createSettingFile(file.getBytes(), file.getOriginalFilename(), name, tool);
     }
 
     @ResponseStatusDetails
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Is tool connected", nickname = "isToolConnected", httpMethod = "GET", response = Boolean.class)
     @GetMapping("tools/{name}")
     public Boolean isToolConnected(@PathVariable("name") Tool tool) throws ServiceException {
@@ -142,14 +143,14 @@ public class SettingsAPIController extends AbstractController {
     }
 
     @ApiOperation(value = "Get amazon session credentials", nickname = "getSessionCredentials", httpMethod = "GET", response = SessionCredentials.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("amazon/creds")
     public SessionCredentials getSessionCredentials() throws ServiceException {
         return amazonService.getTemporarySessionCredentials(amazonTokenExpiration).orElse(null);
     }
 
     @ApiOperation(value = "Get google session credentials", nickname = "getGoogleSessionCredentials", httpMethod = "GET", response = String.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping(path = "google/creds", produces = MediaType.TEXT_PLAIN_VALUE)
     public String getGoogleSessionCredentials() throws ServiceException, IOException {
         return googleService.getTemporaryAccessToken(googleTokenExpiration);
@@ -158,7 +159,7 @@ public class SettingsAPIController extends AbstractController {
     @ResponseStatusDetails
     @ApiOperation(value = "Generate key", nickname = "generateKey", code = 201, httpMethod = "POST")
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_INTEGRATIONS')")
     @PostMapping("key/regenerate")
     public void reEncrypt() throws Exception {

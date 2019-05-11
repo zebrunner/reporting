@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,107 +21,90 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
-public class TestCaseType extends AbstractType
-{
-	private static final long serialVersionUID = 4361075320159665047L;
-	@NotNull
-	private String testClass;
-	@NotNull
-	private String testMethod;
-	private String info;
-	@NotNull
-	private Long testSuiteId;
-	@NotNull
-	private Long primaryOwnerId;
-	private Long secondaryOwnerId;
-	private ProjectType project;
+public class TestCaseType extends AbstractType {
+    private static final long serialVersionUID = 4361075320159665047L;
+    @NotNull
+    private String testClass;
+    @NotNull
+    private String testMethod;
+    private String info;
+    @NotNull
+    private Long testSuiteId;
+    @NotNull
+    private Long primaryOwnerId;
+    private Long secondaryOwnerId;
+    private ProjectType project;
 
-	public TestCaseType() {
-		
-	}
-	
-	public TestCaseType(String testClass, String testMethod, String info, Long testSuiteId, Long primaryOwnerId)
-	{
-		this.testClass = testClass;
-		this.testMethod = testMethod;
-		this.info = info;
-		this.testSuiteId = testSuiteId;
-		this.primaryOwnerId = primaryOwnerId;
-	}
-	
-	public TestCaseType(String testClass, String testMethod, String info, Long testSuiteId, Long primaryOwnerId, Long secondaryUserId)
-	{
-		this(testClass, testMethod, info, testSuiteId, primaryOwnerId);
-		this.secondaryOwnerId = secondaryUserId;
-	}
-	
-	public String getTestClass()
-	{
-		return testClass;
-	}
+    public TestCaseType() {
 
-	public void setTestClass(String testClass)
-	{
-		this.testClass = testClass;
-	}
+    }
 
-	public String getTestMethod()
-	{
-		return testMethod;
-	}
+    public TestCaseType(String testClass, String testMethod, String info, Long testSuiteId, Long primaryOwnerId) {
+        this.testClass = testClass;
+        this.testMethod = testMethod;
+        this.info = info;
+        this.testSuiteId = testSuiteId;
+        this.primaryOwnerId = primaryOwnerId;
+    }
 
-	public void setTestMethod(String testMethod)
-	{
-		this.testMethod = testMethod;
-	}
+    public TestCaseType(String testClass, String testMethod, String info, Long testSuiteId, Long primaryOwnerId, Long secondaryUserId) {
+        this(testClass, testMethod, info, testSuiteId, primaryOwnerId);
+        this.secondaryOwnerId = secondaryUserId;
+    }
 
-	public String getInfo()
-	{
-		return info;
-	}
+    public String getTestClass() {
+        return testClass;
+    }
 
-	public void setInfo(String info)
-	{
-		this.info = info;
-	}
+    public void setTestClass(String testClass) {
+        this.testClass = testClass;
+    }
 
-	public Long getTestSuiteId()
-	{
-		return testSuiteId;
-	}
+    public String getTestMethod() {
+        return testMethod;
+    }
 
-	public void setTestSuiteId(Long testSuiteId)
-	{
-		this.testSuiteId = testSuiteId;
-	}
+    public void setTestMethod(String testMethod) {
+        this.testMethod = testMethod;
+    }
 
-	public Long getPrimaryOwnerId()
-	{
-		return primaryOwnerId;
-	}
+    public String getInfo() {
+        return info;
+    }
 
-	public void setPrimaryOwnerId(Long primaryOwnerId)
-	{
-		this.primaryOwnerId = primaryOwnerId;
-	}
+    public void setInfo(String info) {
+        this.info = info;
+    }
 
-	public Long getSecondaryOwnerId()
-	{
-		return secondaryOwnerId;
-	}
+    public Long getTestSuiteId() {
+        return testSuiteId;
+    }
 
-	public void setSecondaryOwnerId(Long secondaryOwnerId)
-	{
-		this.secondaryOwnerId = secondaryOwnerId;
-	}
+    public void setTestSuiteId(Long testSuiteId) {
+        this.testSuiteId = testSuiteId;
+    }
 
-	public ProjectType getProject()
-	{
-		return project;
-	}
+    public Long getPrimaryOwnerId() {
+        return primaryOwnerId;
+    }
 
-	public void setProject(ProjectType project)
-	{
-		this.project = project;
-	}
+    public void setPrimaryOwnerId(Long primaryOwnerId) {
+        this.primaryOwnerId = primaryOwnerId;
+    }
+
+    public Long getSecondaryOwnerId() {
+        return secondaryOwnerId;
+    }
+
+    public void setSecondaryOwnerId(Long secondaryOwnerId) {
+        this.secondaryOwnerId = secondaryOwnerId;
+    }
+
+    public ProjectType getProject() {
+        return project;
+    }
+
+    public void setProject(ProjectType project) {
+        this.project = project;
+    }
 }

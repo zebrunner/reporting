@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2013-2019 Qaprosoft (http://www.qaprosoft.com).
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  ******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
@@ -64,7 +64,7 @@ public class LaunchersAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create launcher", nickname = "createLauncher", httpMethod = "POST", response = LauncherType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PostMapping()
     public LauncherType createLauncher(@RequestBody @Valid LauncherType launcherType) throws ServiceException {
@@ -74,7 +74,7 @@ public class LaunchersAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create launcher from Jenkins", nickname = "createLauncherFromJenkins", httpMethod = "POST", response = LauncherType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/create")
     public LauncherType createLauncherFromJenkins(@RequestBody @Valid CreateLauncherParamsType createLauncherParamsType) throws ServiceException {
         User owner = new User(getPrincipalId());
@@ -83,7 +83,7 @@ public class LaunchersAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get launcher by id", nickname = "getLauncherById", httpMethod = "GET", response = LauncherType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping("/{id}")
     public LauncherType getLauncherById(@PathVariable("id") Long id) throws ServiceException {
@@ -92,18 +92,18 @@ public class LaunchersAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get all launchers", nickname = "getAllLaunchers", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping()
     public List<LauncherType> getAllLaunchers() throws ServiceException {
         return launcherService.getAllLaunchers().stream()
-                                                .map(launcher -> mapper.map(launcher, LauncherType.class))
-                                                .collect(Collectors.toList());
+                .map(launcher -> mapper.map(launcher, LauncherType.class))
+                .collect(Collectors.toList());
     }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Update launcher", nickname = "updateLauncher", httpMethod = "PUT", response = LauncherType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PutMapping()
     public LauncherType updateLauncher(@RequestBody @Valid LauncherType launcherType) throws ServiceException {
@@ -112,7 +112,7 @@ public class LaunchersAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Delete launcher by id", nickname = "deleteLauncherById", httpMethod = "DELETE")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @DeleteMapping("/{id}")
     public void deleteLauncherById(@PathVariable("id") Long id) throws ServiceException {
@@ -121,7 +121,7 @@ public class LaunchersAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Build job with launcher", nickname = "build", httpMethod = "POST")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/build")
     public void build(@RequestBody @Valid LauncherType launcherType) throws ServiceException, IOException {
         launcherService.buildLauncherJob(mapper.map(launcherType, Launcher.class), userService.getNotNullUserById(getPrincipalId()));

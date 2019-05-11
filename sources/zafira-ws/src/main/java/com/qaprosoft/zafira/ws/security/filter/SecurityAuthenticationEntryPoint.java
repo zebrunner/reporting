@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,20 +40,19 @@ import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
  *
  * For problems related to access (roles), see RestAccessDeniedHandler.
  */
-public class SecurityAuthenticationEntryPoint implements AuthenticationEntryPoint
-{
+public class SecurityAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-	@Override
-	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException
-	{
-		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.UNAUTHORIZED));
-		ObjectMapper objMapper = new ObjectMapper();
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
+            throws IOException, ServletException {
+        ErrorResponse result = new ErrorResponse();
+        result.setError(new Error(ErrorCode.UNAUTHORIZED));
+        ObjectMapper objMapper = new ObjectMapper();
 
-		HttpServletResponseWrapper wrapper = new HttpServletResponseWrapper(response);
-		wrapper.setStatus(SC_UNAUTHORIZED);
-		wrapper.setContentType(APPLICATION_JSON_VALUE);
-		wrapper.getWriter().println(objMapper.writeValueAsString(result));
-		wrapper.getWriter().flush();
-	}
+        HttpServletResponseWrapper wrapper = new HttpServletResponseWrapper(response);
+        wrapper.setStatus(SC_UNAUTHORIZED);
+        wrapper.setContentType(APPLICATION_JSON_VALUE);
+        wrapper.getWriter().println(objMapper.writeValueAsString(result));
+        wrapper.getWriter().flush();
+    }
 }

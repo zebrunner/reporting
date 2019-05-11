@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,19 +17,16 @@ package com.qaprosoft.zafira.models.dto;
 
 import java.io.Serializable;
 
-public class AbstractType implements Serializable
-{
-	private static final long serialVersionUID = -1915862891525919654L;
+public class AbstractType implements Serializable {
+    private static final long serialVersionUID = -1915862891525919654L;
 
-	private long id;
-	
-	public long getId()
-	{
-		return id;
-	}
+    private long id;
 
-	public void setId(long id)
-	{
-		this.id = id;
-	}
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 }

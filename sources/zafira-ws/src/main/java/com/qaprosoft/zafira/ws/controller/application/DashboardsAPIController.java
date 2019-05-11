@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -65,7 +65,7 @@ public class DashboardsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create dashboard", nickname = "createDashboard", httpMethod = "POST", response = Dashboard.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
     @PostMapping
     public DashboardType createDashboard(@RequestBody @Valid DashboardType dashboard) throws ServiceException {
@@ -74,7 +74,7 @@ public class DashboardsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get dashboards", nickname = "getAllDashboards", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping
     public List<DashboardType> getAllDashboards(@RequestParam(value = "hidden", required = false) boolean hidden) throws ServiceException {
         List<Dashboard> dashboards;
@@ -85,13 +85,13 @@ public class DashboardsAPIController extends AbstractController {
         }
 
         return dashboards.stream()
-                         .map(dashboard -> mapper.map(dashboard, DashboardType.class))
-                         .collect(Collectors.toList());
+                .map(dashboard -> mapper.map(dashboard, DashboardType.class))
+                .collect(Collectors.toList());
     }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get dashboard by ID", nickname = "getDashboardById", httpMethod = "GET", response = Dashboard.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/{id}")
     public DashboardType getDashboardById(@PathVariable("id") long id) throws ServiceException {
         Dashboard dashboard = dashboardService.getDashboardById(id);
@@ -101,7 +101,7 @@ public class DashboardsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get dashboard by title", nickname = "getDashboardByTitle", httpMethod = "GET", response = Dashboard.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/title")
     public DashboardType getDashboardByTitle(@RequestParam(name = "title", required = false) String title) throws ServiceException {
         return mapper.map(dashboardService.getDashboardByTitle(title), DashboardType.class);
@@ -109,7 +109,7 @@ public class DashboardsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Delete dashboard", nickname = "deleteDashboard", httpMethod = "DELETE")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
     @DeleteMapping("/{id}")
     public void deleteDashboard(@PathVariable("id") long id) throws ServiceException {
@@ -118,7 +118,7 @@ public class DashboardsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Update dashboard", nickname = "updateDashboard", httpMethod = "PUT", response = Dashboard.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
     @PutMapping()
     public DashboardType updateDashboard(@Valid @RequestBody DashboardType dashboard) throws ServiceException {
@@ -127,7 +127,7 @@ public class DashboardsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Add dashboard widget", nickname = "addDashboardWidget", httpMethod = "POST", response = Widget.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_WIDGETS')")
     @PostMapping("/{dashboardId}/widgets")
     public Widget addDashboardWidget(@PathVariable("dashboardId") long dashboardId, @RequestBody Widget widget) throws ServiceException {
@@ -136,16 +136,17 @@ public class DashboardsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Delete dashboard widget", nickname = "deleteDashboardWidget", httpMethod = "DELETE")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_WIDGETS')")
     @DeleteMapping("/{dashboardId}/widgets/{widgetId}")
-    public void deleteDashboardWidget(@PathVariable("dashboardId") long dashboardId, @PathVariable("widgetId") long widgetId) throws ServiceException {
+    public void deleteDashboardWidget(@PathVariable("dashboardId") long dashboardId, @PathVariable("widgetId") long widgetId)
+            throws ServiceException {
         dashboardService.deleteDashboardWidget(dashboardId, widgetId);
     }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Update dashboard widget", nickname = "updateDashboardWidget", httpMethod = "PUT", response = Widget.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_WIDGETS')")
     @PutMapping("/{dashboardId}/widgets")
     public Widget updateDashboardWidget(@PathVariable("dashboardId") long dashboardId, @RequestBody Widget widget) throws ServiceException {
@@ -154,10 +155,11 @@ public class DashboardsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Update dashboard widget", nickname = "updateDashboardWidget", httpMethod = "PUT", response = Widget.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_WIDGETS')")
     @PutMapping("/{dashboardId}/widgets/all")
-    public List<Widget> updateDashboardWidgets(@PathVariable("dashboardId") long dashboardId, @RequestBody List<Widget> widgets) throws ServiceException {
+    public List<Widget> updateDashboardWidgets(@PathVariable("dashboardId") long dashboardId, @RequestBody List<Widget> widgets)
+            throws ServiceException {
         for (Widget widget : widgets) {
             dashboardService.updateDashboardWidget(dashboardId, widget);
         }
@@ -166,7 +168,7 @@ public class DashboardsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create dashboard attribute", nickname = "createDashboardAttribute", httpMethod = "POST", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
     @PostMapping("/{dashboardId}/attributes")
     public List<Attribute> createDashboardAttribute(@PathVariable("dashboardId") long dashboardId, @RequestBody Attribute attribute) {
@@ -176,7 +178,7 @@ public class DashboardsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Update dashboard attribute", nickname = "createDashboardAttribute", httpMethod = "PUT", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
     @PutMapping("/{dashboardId}/attributes")
     public List<Attribute> updateDashboardAttribute(@PathVariable("dashboardId") long dashboardId, @RequestBody Attribute attribute) {
@@ -186,7 +188,7 @@ public class DashboardsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Delete dashboard attribute", nickname = "createDashboardAttribute", httpMethod = "DELETE")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
     @DeleteMapping("/{dashboardId}/attributes/{id}")
     public List<Attribute> deleteDashboardAttribute(@PathVariable("dashboardId") long dashboardId, @PathVariable("id") long id) {

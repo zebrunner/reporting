@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -53,10 +53,12 @@ public class EntityAlreadyExistsException extends ServiceException {
     }
 
     private static String buildMessage(String fieldName, Class entityClass) {
-        return String.format(LocaleContext.getMessage("error.message.entityExistsTemplate"), LocaleContext.getMessage(entityClass), LocaleContext.getMessage("field", fieldName));
+        return String.format(LocaleContext.getMessage("error.message.entityExistsTemplate"), LocaleContext.getMessage(entityClass),
+                LocaleContext.getMessage("field", fieldName));
     }
 
     private static String buildMessage(String fieldName, String fieldValue, Class entityClass) {
-        return String.format(LocaleContext.getMessage("error.message.entityExistsWithValueTemplate"), LocaleContext.getMessage(entityClass), LocaleContext.getMessage("field", fieldName), fieldValue);
+        return String.format(LocaleContext.getMessage("error.message.entityExistsWithValueTemplate"), LocaleContext.getMessage(entityClass),
+                LocaleContext.getMessage("field", fieldName), fieldValue);
     }
 }

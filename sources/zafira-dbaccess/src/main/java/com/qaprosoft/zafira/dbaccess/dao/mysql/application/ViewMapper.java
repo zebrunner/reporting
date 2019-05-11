@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,15 +22,14 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
-public interface ViewMapper
-{
-	void createView(View view);
+public interface ViewMapper {
+    void createView(View view);
 
-	View getViewById(long id);
+    View getViewById(long id);
 
-	List<View> getAllViews(@Param("projectId") Long projectId);
+    List<View> getAllViews(@Param("projectId") Long projectId);
 
-	void updateView(View view);
+    void updateView(View view);
 
-	void deleteViewById(long id);
+    void deleteViewById(long id);
 }

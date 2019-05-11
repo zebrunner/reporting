@@ -98,8 +98,8 @@ public class AmazonService extends AbstractIntegration<AmazonContext> {
             CannedAccessControlList controlList = multitenant ? CannedAccessControlList.Private : CannedAccessControlList.PublicRead;
             context().getAmazonS3().setObjectAcl(context().getS3Bucket(), key, controlList);
 
-            result = multitenant ? urlResolver.getServiceURL() + relativePath :
-                    context().getAmazonS3().getUrl(context().getS3Bucket(), key).toString();
+            result = multitenant ? urlResolver.getServiceURL() + relativePath
+                    : context().getAmazonS3().getUrl(context().getS3Bucket(), key).toString();
 
         } catch (IOException e) {
             throw new AWSException("Can't save file to Amazone", e);
@@ -129,7 +129,7 @@ public class AmazonService extends AbstractIntegration<AmazonContext> {
      * @return {@link SessionCredentials} object
      */
     public Optional<SessionCredentials> getTemporarySessionCredentials(int expiresIn) {
-        if(! isEnabledAndConnected()) {
+        if (!isEnabledAndConnected()) {
             return Optional.empty();
         }
         SessionCredentials result = null;

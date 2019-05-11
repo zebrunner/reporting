@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,24 +22,22 @@ import org.apache.ibatis.annotations.Param;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestCaseSearchCriteria;
 import com.qaprosoft.zafira.models.db.TestCase;
 
+public interface TestCaseMapper {
+    void createTestCase(TestCase testCase);
 
-public interface TestCaseMapper
-{
-	void createTestCase(TestCase testCase);
+    TestCase getTestCaseById(long id);
 
-	TestCase getTestCaseById(long id);
-	
-	List<TestCase> getTestCasesByUsername(String username);
+    List<TestCase> getTestCasesByUsername(String username);
 
-	TestCase getTestCaseByClassAndMethod(@Param("testClass") String testClass, @Param("testMethod") String testMethod);
+    TestCase getTestCaseByClassAndMethod(@Param("testClass") String testClass, @Param("testMethod") String testMethod);
 
-	void updateTestCase(TestCase testCase);
+    void updateTestCase(TestCase testCase);
 
-	void deleteTestCaseById(long id);
+    void deleteTestCaseById(long id);
 
-	void deleteTestCase(TestCase testCase);
-	
-	List<TestCase> searchTestCases(TestCaseSearchCriteria sc);
-	
-	Integer getTestCasesSearchCount(TestCaseSearchCriteria sc);
+    void deleteTestCase(TestCase testCase);
+
+    List<TestCase> searchTestCases(TestCaseSearchCriteria sc);
+
+    Integer getTestCasesSearchCount(TestCaseSearchCriteria sc);
 }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,27 +15,22 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public class TestRunNotFoundException extends ServiceException
-{
-	private static final long serialVersionUID = 4538834387227891889L;
+public class TestRunNotFoundException extends ServiceException {
+    private static final long serialVersionUID = 4538834387227891889L;
 
-	public TestRunNotFoundException()
-	{
-		super();
-	}
+    public TestRunNotFoundException() {
+        super();
+    }
 
-	public TestRunNotFoundException(String message)
-	{
-		super(message);
-	}
+    public TestRunNotFoundException(String message) {
+        super(message);
+    }
 
-	public TestRunNotFoundException(Throwable cause)
-	{
-		super(cause);
-	}
+    public TestRunNotFoundException(Throwable cause) {
+        super(cause);
+    }
 
-	public TestRunNotFoundException(String message, Throwable cause)
-	{
-		super(message, cause);
-	}
+    public TestRunNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

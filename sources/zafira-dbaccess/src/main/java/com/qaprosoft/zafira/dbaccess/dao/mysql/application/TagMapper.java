@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,33 +25,36 @@ import java.util.Set;
 
 public interface TagMapper {
 
-	/**
-	 * Creates tag if it is not exist
-	 * @param tag - to create
-	 */
-	void createTag(Tag tag);
+    /**
+     * Creates tag if it is not exist
+     * 
+     * @param tag - to create
+     */
+    void createTag(Tag tag);
 
-	/**
-	 * Creates tags if it is not exist
-	 * @param tags - to create
-	 */
-	void createTags(@Param(value = "tags") Set<Tag> tags);
+    /**
+     * Creates tags if it is not exist
+     * 
+     * @param tags - to create
+     */
+    void createTags(@Param(value = "tags") Set<Tag> tags);
 
-	Tag getTagById(Long id);
+    Tag getTagById(Long id);
 
-	Tag getTagByNameAndTestId(@Param(value = "name") String name, @Param(value = "testId") Long testId);
+    Tag getTagByNameAndTestId(@Param(value = "name") String name, @Param(value = "testId") Long testId);
 
-	List<TestInfo> getTestInfoByTagNameAndTestRunCiRunId(@Param(value = "tagName") IntegrationTag name, @Param(value = "testRunCiRunId") String testRunCiRunId);
+    List<TestInfo> getTestInfoByTagNameAndTestRunCiRunId(@Param(value = "tagName") IntegrationTag name,
+            @Param(value = "testRunCiRunId") String testRunCiRunId);
 
-	Tag getTagByNameAndValue(@Param(value = "name") String name, @Param(value = "value") String value);
+    Tag getTagByNameAndValue(@Param(value = "name") String name, @Param(value = "value") String value);
 
-	Set<Tag> getAllTags();
+    Set<Tag> getAllTags();
 
-	Set<Tag> getTagsByTestId(Long testId);
+    Set<Tag> getTagsByTestId(Long testId);
 
-	Boolean isExists(String name);
+    Boolean isExists(String name);
 
-	void updateTag(Tag tag);
+    void updateTag(Tag tag);
 
-	void deleteTagById(Long id);
+    void deleteTagById(Long id);
 }

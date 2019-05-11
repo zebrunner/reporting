@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -66,14 +66,14 @@ public class WidgetTemplateService {
 
     public List<WidgetTemplate> getWidgetTemplates() {
         List<WidgetTemplate> widgetTemplates = getAllWidgetTemplates().stream()
-                                                                      .filter(widgetTemplate -> !widgetTemplate.getHidden())
-                                                                      .peek(this::clearRedundantParamsValues)
-                                                                      .collect(Collectors.toList());
+                .filter(widgetTemplate -> !widgetTemplate.getHidden())
+                .peek(this::clearRedundantParamsValues)
+                .collect(Collectors.toList());
         return widgetTemplates;
     }
 
     public WidgetTemplate prepareWidgetTemplate(WidgetTemplate widgetTemplate) throws ServiceException {
-        if(widgetTemplate == null) {
+        if (widgetTemplate == null) {
             throw new ForbiddenOperationException("Unable to prepare widget template data");
         }
         executeWidgetTemplateParamsSQLQueries(widgetTemplate);
@@ -81,9 +81,9 @@ public class WidgetTemplateService {
     }
 
     public void clearRedundantParamsValues(WidgetTemplate widgetTemplate) throws ServiceException {
-        if(widgetTemplate != null) {
+        if (widgetTemplate != null) {
             widgetTemplate.setParamsConfig(processParameters(widgetTemplate.getParamsConfig(), parameter -> {
-                if(parameter.getValuesQuery() != null && parameter.getValues() == null) {
+                if (parameter.getValuesQuery() != null && parameter.getValues() == null) {
                     parameter.setValues(new ArrayList<>());
                 }
                 parameter.setValuesQuery(null);
@@ -97,7 +97,7 @@ public class WidgetTemplateService {
     }
 
     private void executeWidgetTemplateParamsSQLQueries(WidgetTemplate widgetTemplate) {
-        if(widgetTemplate != null && ! StringUtils.isBlank(widgetTemplate.getParamsConfig())) {
+        if (widgetTemplate != null && !StringUtils.isBlank(widgetTemplate.getParamsConfig())) {
             widgetTemplate.setParamsConfig(processParameters(widgetTemplate.getParamsConfig(), this::processParameter));
         }
     }
@@ -105,7 +105,8 @@ public class WidgetTemplateService {
     private String processParameters(String paramsConfig, Consumer<WidgetTemplateParameter> parameterConsumer) {
         String result = null;
         try {
-            Map<String, WidgetTemplateParameter> params = mapper.readValue(paramsConfig, new TypeReference<Map<String, WidgetTemplateParameter>>() {});
+            Map<String, WidgetTemplateParameter> params = mapper.readValue(paramsConfig, new TypeReference<Map<String, WidgetTemplateParameter>>() {
+            });
             params.forEach((name, parameter) -> parameterConsumer.accept(parameter));
             result = mapper.writeValueAsString(params);
         } catch (IOException e) {

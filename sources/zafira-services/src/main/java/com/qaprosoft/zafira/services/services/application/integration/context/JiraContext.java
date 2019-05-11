@@ -27,14 +27,12 @@ import net.rcarz.jiraclient.JiraClient;
 import java.util.Map;
 
 @SuppressWarnings("deprecation")
-public class JiraContext extends AbstractContext
-{
+public class JiraContext extends AbstractContext {
 
     private BasicCredentials credentials;
     private JiraClient jiraClient;
 
-    public JiraContext(Map<Setting.SettingType, String> settings)
-    {
+    public JiraContext(Map<Setting.SettingType, String> settings) {
         super(settings, settings.get(Setting.SettingType.JIRA_ENABLED));
 
         String url = settings.get(Setting.SettingType.JIRA_URL);
@@ -45,26 +43,22 @@ public class JiraContext extends AbstractContext
         this.jiraClient = new JiraClient(url, credentials);
         final HttpParams httpParams = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
-        ((DefaultHttpClient)getJiraClient().getRestClient().getHttpClient()).setParams(httpParams);
+        ((DefaultHttpClient) getJiraClient().getRestClient().getHttpClient()).setParams(httpParams);
     }
 
-    public BasicCredentials getCredentials()
-    {
+    public BasicCredentials getCredentials() {
         return credentials;
     }
 
-    public void setCredentials(BasicCredentials credentials)
-    {
+    public void setCredentials(BasicCredentials credentials) {
         this.credentials = credentials;
     }
 
-    public JiraClient getJiraClient()
-    {
+    public JiraClient getJiraClient() {
         return jiraClient;
     }
 
-    public void setJiraClient(JiraClient jiraClient)
-    {
+    public void setJiraClient(JiraClient jiraClient) {
         this.jiraClient = jiraClient;
     }
 }

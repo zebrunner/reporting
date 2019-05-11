@@ -30,106 +30,91 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 
 @Service
-public class FilterService
-{
-	@Autowired
-	private FilterMapper filterMapper;
+public class FilterService {
+    @Autowired
+    private FilterMapper filterMapper;
 
-	private StoredSubject storedSubject;
+    private StoredSubject storedSubject;
 
-	@Autowired
-	private FreemarkerUtil freemarkerUtil;
-	
-	public FilterService() {
-		this.storedSubject = new StoredSubject();
-	}
+    @Autowired
+    private FreemarkerUtil freemarkerUtil;
 
-	public enum Template
-	{
-		TEST_RUN_TEMPLATE("/filter.ftl");
+    public FilterService() {
+        this.storedSubject = new StoredSubject();
+    }
 
-		private final String path;
+    public enum Template {
+        TEST_RUN_TEMPLATE("/filter.ftl");
 
-		Template(String path)
-		{
-			this.path = path;
-		}
+        private final String path;
 
-		public String getPath() {
-			return path;
-		}
-	}
+        Template(String path) {
+            this.path = path;
+        }
 
-	@Transactional(rollbackFor = Exception.class)
-	public Filter createFilter(Filter filter) throws ServiceException
-	{
-		filterMapper.createFilter(filter);
-		return filter;
-	}
+        public String getPath() {
+            return path;
+        }
+    }
 
-	@Transactional(readOnly = true)
-	public Filter getFilterById(long id) throws ServiceException
-	{
-		return filterMapper.getFilterById(id);
-	}
+    @Transactional(rollbackFor = Exception.class)
+    public Filter createFilter(Filter filter) throws ServiceException {
+        filterMapper.createFilter(filter);
+        return filter;
+    }
 
-	@Transactional(readOnly = true)
-	public Filter getFilterByName(String name) throws ServiceException
-	{
-		return filterMapper.getFilterByName(name);
-	}
+    @Transactional(readOnly = true)
+    public Filter getFilterById(long id) throws ServiceException {
+        return filterMapper.getFilterById(id);
+    }
 
-	@Transactional(readOnly = true)
-	public List<Filter> getAllFilters() throws ServiceException
-	{
-		return filterMapper.getAllFilters();
-	}
+    @Transactional(readOnly = true)
+    public Filter getFilterByName(String name) throws ServiceException {
+        return filterMapper.getFilterByName(name);
+    }
 
-	@Transactional(readOnly = true)
-	public List<Filter> getAllPublicFilters(Long userId)
-	{
-		return filterMapper.getAllPublicFilters(userId);
-	}
+    @Transactional(readOnly = true)
+    public List<Filter> getAllFilters() throws ServiceException {
+        return filterMapper.getAllFilters();
+    }
 
-	@Transactional(readOnly = true)
-	public Integer getFiltersCount() throws ServiceException
-	{
-		return filterMapper.getFiltersCount();
-	}
+    @Transactional(readOnly = true)
+    public List<Filter> getAllPublicFilters(Long userId) {
+        return filterMapper.getAllPublicFilters(userId);
+    }
 
-	@Transactional(rollbackFor = Exception.class)
-	public Filter updateFilter(Filter filter, boolean isAdmin) throws ServiceException
-	{
-		Filter dbFilter = getFilterById(filter.getId());
-		if(dbFilter == null)
-		{
-			throw new ServiceException("No filters found by id: " + filter.getId());
-		}
-		if(! filter.getName().equals(dbFilter.getName()) && getFilterByName(filter.getName()) != null)
-		{
-			throw new ServiceException("Filter with name '" + filter.getName() + "' already exists");
-		}
-		dbFilter.setName(filter.getName());
-		dbFilter.setDescription(filter.getDescription());
-		dbFilter.setSubject(filter.getSubject());
-		dbFilter.setPublicAccess(isAdmin && filter.isPublicAccess());
-		filterMapper.updateFilter(dbFilter);
-		return dbFilter;
-	}
+    @Transactional(readOnly = true)
+    public Integer getFiltersCount() throws ServiceException {
+        return filterMapper.getFiltersCount();
+    }
 
-	@Transactional(rollbackFor = Exception.class)
-	public void deleteFilterById(long id)
-	{
-		filterMapper.deleteFilterById(id);
-	}
+    @Transactional(rollbackFor = Exception.class)
+    public Filter updateFilter(Filter filter, boolean isAdmin) throws ServiceException {
+        Filter dbFilter = getFilterById(filter.getId());
+        if (dbFilter == null) {
+            throw new ServiceException("No filters found by id: " + filter.getId());
+        }
+        if (!filter.getName().equals(dbFilter.getName()) && getFilterByName(filter.getName()) != null) {
+            throw new ServiceException("Filter with name '" + filter.getName() + "' already exists");
+        }
+        dbFilter.setName(filter.getName());
+        dbFilter.setDescription(filter.getDescription());
+        dbFilter.setSubject(filter.getSubject());
+        dbFilter.setPublicAccess(isAdmin && filter.isPublicAccess());
+        filterMapper.updateFilter(dbFilter);
+        return dbFilter;
+    }
 
-	public Subject getStoredSubject(Subject.Name name)
-	{
-		return storedSubject.getSubjectByName(name);
-	}
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteFilterById(long id) {
+        filterMapper.deleteFilterById(id);
+    }
 
-	public String getTemplate(FilterType filter, Template template) throws ServiceException
-	{
-		return freemarkerUtil.getFreeMarkerTemplateContent(template.getPath(), filter);
-	}
+    public Subject getStoredSubject(Subject.Name name) {
+        return storedSubject.getSubjectByName(name);
+    }
+
+    public String getTemplate(FilterType filter, Template template) throws ServiceException {
+        return freemarkerUtil.getFreeMarkerTemplateContent(template.getPath(), filter);
+    }
 }

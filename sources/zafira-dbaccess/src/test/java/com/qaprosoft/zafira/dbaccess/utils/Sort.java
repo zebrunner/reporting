@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,11 +19,9 @@ import java.util.List;
 
 import com.qaprosoft.zafira.models.db.AbstractEntity;
 
-public class Sort<T extends AbstractEntity>
-{
-	public List<T> sortById(List<T> abstractEntityList)
-	{
-		abstractEntityList.sort((o1, o2) -> (int) (o1.getId() - o2.getId()));
-		return abstractEntityList;
-	}
+public class Sort<T extends AbstractEntity> {
+    public List<T> sortById(List<T> abstractEntityList) {
+        abstractEntityList.sort((o1, o2) -> (int) (o1.getId() - o2.getId()));
+        return abstractEntityList;
+    }
 }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,37 +17,34 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql.application.search;
 
 import java.util.Date;
 
-public class UserSearchCriteria extends SearchCriteria implements DateSearchCriteria
-{
+public class UserSearchCriteria extends SearchCriteria implements DateSearchCriteria {
 
-	private Date date;
-	private Date fromDate;
-	private Date toDate;
+    private Date date;
+    private Date fromDate;
+    private Date toDate;
 
-	public Date getDate()
-	{
-		return date;
-	}
+    public Date getDate() {
+        return date;
+    }
 
-	public void setDate(Date date)
-	{
-		this.date = date;
-	}
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
-	public Date getFromDate() {
-		return fromDate;
-	}
+    public Date getFromDate() {
+        return fromDate;
+    }
 
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
 
-	public Date getToDate() {
-		return toDate;
-	}
+    public Date getToDate() {
+        return toDate;
+    }
 
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
 
 }

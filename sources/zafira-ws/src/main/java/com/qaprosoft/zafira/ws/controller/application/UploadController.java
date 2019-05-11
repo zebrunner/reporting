@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -59,28 +59,27 @@ public class UploadController extends AbstractController {
     private EmailService emailService;
 
     @ApiOperation(value = "Upload file", nickname = "uploadFile", httpMethod = "POST", response = String.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping()
     public String uploadFile(@RequestHeader("FileType") Type type, @RequestParam("file") MultipartFile file) throws ServiceException {
         return String.format("{\"url\": \"%s\"}", amazonService.saveFile(new FileUploadType(file, type)));
     }
 
     @ApiOperation(value = "Send image by email", nickname = "sendImageByEmail", httpMethod = "POST")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/email")
     public void sendImageByEmail(@RequestParam("file") MultipartFile file, @ModelAttribute EmailType email) throws ServiceException, IOException {
         List<Attachment> attachments = new ArrayList<>();
         File attachment = File.createTempFile(
                 FilenameUtils.getName(file.getOriginalFilename()),
-                "." + FilenameUtils.getExtension(file.getOriginalFilename())
-        );
+                "." + FilenameUtils.getExtension(file.getOriginalFilename()));
         file.transferTo(attachment);
         attachments.add(new Attachment(email.getSubject(), attachment));
         emailService.sendEmail(new CommonEmail(email.getSubject(), email.getText(), attachments), email.getRecipients()
-                                                                                                       .trim()
-                                                                                                       .replaceAll(",", " ")
-                                                                                                       .replaceAll(";", " ")
-                                                                                                       .split(" "));
+                .trim()
+                .replaceAll(",", " ")
+                .replaceAll(";", " ")
+                .split(" "));
     }
 
 }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,15 +20,14 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface TestMetricMapper
-{
-	void createTestMetric(TestMetric user);
+public interface TestMetricMapper {
+    void createTestMetric(TestMetric user);
 
-	TestMetric getTestMetricById(long id);
+    TestMetric getTestMetricById(long id);
 
-	List<TestMetric> getTestMetricsByTestCaseIdAndEnv(@Param(value = "testCaseId") Long testCaseId, @Param(value = "env") String env);
+    List<TestMetric> getTestMetricsByTestCaseIdAndEnv(@Param(value = "testCaseId") Long testCaseId, @Param(value = "env") String env);
 
-	List<String> getEnvsByTestCaseId(Long testCaseId);
+    List<String> getEnvsByTestCaseId(Long testCaseId);
 
-	void deleteTestMetricById(long id);
+    void deleteTestMetricById(long id);
 }

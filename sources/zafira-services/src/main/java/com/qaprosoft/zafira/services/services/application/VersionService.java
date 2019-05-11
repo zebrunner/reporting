@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,29 +21,25 @@ import org.springframework.stereotype.Service;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
-public class VersionService
-{
-	@Value("${zafira.service.version}")
-	private String serviceVersion;
-	
-	@Value("${zafira.client.version}")
-	private String clientVersion;
-	
-	@Value("${zafira.webservice.url}")
-	private String webserviceURL;
-	
-	public String getServiceVersion() throws ServiceException
-	{
-		return serviceVersion;
-	}
-	
-	public String getClientVersion() throws ServiceException
-	{
-		return clientVersion;
-	}
+public class VersionService {
+    @Value("${zafira.service.version}")
+    private String serviceVersion;
 
-	public String getWebserviceURL()
-	{
-		return webserviceURL;
-	}
+    @Value("${zafira.client.version}")
+    private String clientVersion;
+
+    @Value("${zafira.webservice.url}")
+    private String webserviceURL;
+
+    public String getServiceVersion() throws ServiceException {
+        return serviceVersion;
+    }
+
+    public String getClientVersion() throws ServiceException {
+        return clientVersion;
+    }
+
+    public String getWebserviceURL() {
+        return webserviceURL;
+    }
 }

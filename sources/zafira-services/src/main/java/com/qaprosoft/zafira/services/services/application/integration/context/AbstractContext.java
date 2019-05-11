@@ -33,7 +33,7 @@ public abstract class AbstractContext {
     }
 
     public AbstractContext(Map<Setting.SettingType, String> settings, Boolean enabled) {
-        if(settings != null) {
+        if (settings != null) {
             this.settings = new HashMap<>(settings);
         }
         this.enabled = enabled;

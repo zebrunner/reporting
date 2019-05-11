@@ -26,15 +26,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class RabbitMQContext extends AbstractContext
-{
+public class RabbitMQContext extends AbstractContext {
 
     private CachingConnectionFactory cachingConnectionFactory;
     private Connection connection;
     private CompletableFuture<Connection> connectionCompletableFuture;
 
-    public RabbitMQContext(Map<Setting.SettingType, String> settings)
-    {
+    public RabbitMQContext(Map<Setting.SettingType, String> settings) {
         super(settings, settings.get(Setting.SettingType.RABBITMQ_ENABLED));
 
         String host = settings.get(Setting.SettingType.RABBITMQ_HOST);
@@ -54,34 +52,33 @@ public class RabbitMQContext extends AbstractContext
                     LOGGER.error(e.getMessage(), e);
                 }
             }
+
             @Override
             public void onClose(Connection conn) {
-                //connection = cachingConnectionFactory.createConnection();
+                // connection = cachingConnectionFactory.createConnection();
             }
         });
     }
 
-    public CachingConnectionFactory getCachingConnectionFactory()
-    {
+    public CachingConnectionFactory getCachingConnectionFactory() {
         return cachingConnectionFactory;
     }
 
-    public void setCachingConnectionFactory(CachingConnectionFactory cachingConnectionFactory)
-    {
+    public void setCachingConnectionFactory(CachingConnectionFactory cachingConnectionFactory) {
         this.cachingConnectionFactory = cachingConnectionFactory;
     }
 
     /**
      * Gets new connection from RabbitMQ connections factory.
      * If connection is not established, tries to retrieve it from factory using
-     *   previously instantiated connection completable future or creates a completable future if it doesn't exist.
+     * previously instantiated connection completable future or creates a completable future if it doesn't exist.
      * Compleatble future interrupts after 15 seconds if completable future does not completed yet
+     * 
      * @return retrieved connection
      */
-    public Connection getConnection()
-    {
-        if(connection == null || ! connection.isOpen()) {
-            if(connectionCompletableFuture == null || connectionCompletableFuture.isDone()) {
+    public Connection getConnection() {
+        if (connection == null || !connection.isOpen()) {
+            if (connectionCompletableFuture == null || connectionCompletableFuture.isDone()) {
                 this.connectionCompletableFuture = CompletableFuture.supplyAsync(() -> {
                     this.connection = this.cachingConnectionFactory.createConnection();
                     return this.connection;

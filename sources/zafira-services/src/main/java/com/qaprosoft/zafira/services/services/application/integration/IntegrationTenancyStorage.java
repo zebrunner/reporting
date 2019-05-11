@@ -42,13 +42,14 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
     private static final Logger LOGGER = Logger.getLogger(IntegrationTenancyStorage.class);
 
     private static final Map<Setting.Tool, Map<String, ? extends AbstractContext>> tenancyEntity = new ConcurrentHashMap<>();
-    
+
     private final TenancyService tenancyService;
     private final SettingsService settingsService;
     private final IntegrationService integrationService;
     private final CryptoService cryptoService;
 
-    public IntegrationTenancyStorage(TenancyService tenancyService, SettingsService settingsService, IntegrationService integrationService, CryptoService cryptoService) {
+    public IntegrationTenancyStorage(TenancyService tenancyService, SettingsService settingsService, IntegrationService integrationService,
+            CryptoService cryptoService) {
         this.tenancyService = tenancyService;
         this.settingsService = settingsService;
         this.integrationService = integrationService;
@@ -72,8 +73,8 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
     public void initDb() {
         try {
             cryptoService.init();
-            for(Setting setting : settingsService.getAllSettings()) {
-                if(setting.isValueForEncrypting() && !setting.isEncrypted()) {
+            for (Setting setting : settingsService.getAllSettings()) {
+                if (setting.isValueForEncrypting() && !setting.isEncrypted()) {
                     setting.setValue(cryptoService.encrypt(setting.getValue()));
                     setting.setEncrypted(true);
                     settingsService.updateSetting(setting);
@@ -98,7 +99,7 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
     public synchronized static void removeContext(Setting.Tool tool) {
         Map<String, ? extends AbstractContext> context = tenancyEntity.get(tool);
         String tenantName = TenancyContext.getTenantName();
-        if(context != null && context.get(tenantName) != null) {
+        if (context != null && context.get(tenantName) != null) {
             context.remove(tenantName);
         }
     }

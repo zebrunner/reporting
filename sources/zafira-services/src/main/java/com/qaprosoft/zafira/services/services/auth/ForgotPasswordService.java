@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,9 +38,9 @@ public class ForgotPasswordService {
     private final UserService userService;
 
     public ForgotPasswordService(@Value("${zafira.slack.image}") String zafiraLogoURL,
-                                 URLResolver urlResolver,
-                                 EmailService emailService,
-                                 UserService userService) {
+            URLResolver urlResolver,
+            EmailService emailService,
+            UserService userService) {
         this.zafiraLogoURL = zafiraLogoURL;
         this.urlResolver = urlResolver;
         this.emailService = emailService;
@@ -50,7 +50,7 @@ public class ForgotPasswordService {
     @Transactional(rollbackFor = Exception.class)
     public void sendForgotPasswordEmail(EmailType emailType, User user) throws ServiceException {
         AbstractEmail emailMessage;
-        if(User.Source.INTERNAL.equals(user.getSource())) {
+        if (User.Source.INTERNAL.equals(user.getSource())) {
             String token = RandomStringUtils.randomAlphanumeric(50);
             userService.updateResetToken(token, user.getId());
             emailMessage = new ForgotPasswordEmail(token, zafiraLogoURL, urlResolver.buildWebURL());

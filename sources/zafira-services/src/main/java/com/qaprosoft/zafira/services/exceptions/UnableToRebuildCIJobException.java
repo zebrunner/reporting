@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,27 +15,22 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public class UnableToRebuildCIJobException extends ServiceException
-{
-	private static final long serialVersionUID = 739932392670306969L;
+public class UnableToRebuildCIJobException extends ServiceException {
+    private static final long serialVersionUID = 739932392670306969L;
 
-	public UnableToRebuildCIJobException()
-	{
-		super();
-	}
+    public UnableToRebuildCIJobException() {
+        super();
+    }
 
-	public UnableToRebuildCIJobException(String message)
-	{
-		super(message);
-	}
+    public UnableToRebuildCIJobException(String message) {
+        super(message);
+    }
 
-	public UnableToRebuildCIJobException(Throwable cause)
-	{
-		super(cause);
-	}
+    public UnableToRebuildCIJobException(Throwable cause) {
+        super(cause);
+    }
 
-	public UnableToRebuildCIJobException(String message, Throwable cause)
-	{
-		super(message, cause);
-	}
+    public UnableToRebuildCIJobException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

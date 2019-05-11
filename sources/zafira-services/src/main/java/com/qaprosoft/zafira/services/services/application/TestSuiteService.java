@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,71 +24,58 @@ import com.qaprosoft.zafira.models.db.TestSuite;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
-public class TestSuiteService
-{
-	@Autowired
-	private TestSuiteMapper testSuiteMapper;
-	
-	@Transactional(rollbackFor = Exception.class)
-	public void createTestSuite(TestSuite testSuite) throws ServiceException
-	{
-		testSuiteMapper.createTestSuite(testSuite);
-	}
-	
-	@Transactional(readOnly = true)
-	public TestSuite getTestSuiteById(long id) throws ServiceException
-	{
-		return testSuiteMapper.getTestSuiteById(id);
-	}
+public class TestSuiteService {
+    @Autowired
+    private TestSuiteMapper testSuiteMapper;
 
-	@Transactional(readOnly = true)
-	public TestSuite getTestSuiteByIdFull(long id) throws ServiceException
-	{
-		return testSuiteMapper.getTestSuiteByIdFull(id);
-	}
+    @Transactional(rollbackFor = Exception.class)
+    public void createTestSuite(TestSuite testSuite) throws ServiceException {
+        testSuiteMapper.createTestSuite(testSuite);
+    }
 
-	@Transactional(readOnly = true)
-	public TestSuite getTestSuiteByName(String name) throws ServiceException
-	{
-		return testSuiteMapper.getTestSuiteByName(name);
-	}
-	
-	@Transactional(readOnly = true)
-	public TestSuite getTestSuiteByNameAndFileNameAndUserId(String name, String fileName, long userId) throws ServiceException
-	{
-		return testSuiteMapper.getTestSuiteByNameAndFileNameAndUserId(name, fileName, userId);
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public TestSuite updateTestSuite(TestSuite testSuite) throws ServiceException
-	{
-		testSuiteMapper.updateTestSuite(testSuite);
-		return testSuite;
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public void deleteTestSuite(TestSuite testSuite) throws ServiceException
-	{
-		testSuiteMapper.deleteTestSuite(testSuite);
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public TestSuite createOrUpdateTestSuite(TestSuite newTestSuite) throws ServiceException
-	{
-		TestSuite testSuite = getTestSuiteByNameAndFileNameAndUserId(newTestSuite.getName(), newTestSuite.getFileName(), newTestSuite.getUser().getId());
-		if(testSuite == null)
-		{
-			createTestSuite(newTestSuite);
-		}
-		else if(!testSuite.equals(newTestSuite))
-		{
-			newTestSuite.setId(testSuite.getId());
-			updateTestSuite(newTestSuite);
-		}
-		else
-		{
-			newTestSuite = testSuite;
-		}
-		return newTestSuite;
-	}
+    @Transactional(readOnly = true)
+    public TestSuite getTestSuiteById(long id) throws ServiceException {
+        return testSuiteMapper.getTestSuiteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public TestSuite getTestSuiteByIdFull(long id) throws ServiceException {
+        return testSuiteMapper.getTestSuiteByIdFull(id);
+    }
+
+    @Transactional(readOnly = true)
+    public TestSuite getTestSuiteByName(String name) throws ServiceException {
+        return testSuiteMapper.getTestSuiteByName(name);
+    }
+
+    @Transactional(readOnly = true)
+    public TestSuite getTestSuiteByNameAndFileNameAndUserId(String name, String fileName, long userId) throws ServiceException {
+        return testSuiteMapper.getTestSuiteByNameAndFileNameAndUserId(name, fileName, userId);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public TestSuite updateTestSuite(TestSuite testSuite) throws ServiceException {
+        testSuiteMapper.updateTestSuite(testSuite);
+        return testSuite;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteTestSuite(TestSuite testSuite) throws ServiceException {
+        testSuiteMapper.deleteTestSuite(testSuite);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public TestSuite createOrUpdateTestSuite(TestSuite newTestSuite) throws ServiceException {
+        TestSuite testSuite = getTestSuiteByNameAndFileNameAndUserId(newTestSuite.getName(), newTestSuite.getFileName(),
+                newTestSuite.getUser().getId());
+        if (testSuite == null) {
+            createTestSuite(newTestSuite);
+        } else if (!testSuite.equals(newTestSuite)) {
+            newTestSuite.setId(testSuite.getId());
+            updateTestSuite(newTestSuite);
+        } else {
+            newTestSuite = testSuite;
+        }
+        return newTestSuite;
+    }
 }

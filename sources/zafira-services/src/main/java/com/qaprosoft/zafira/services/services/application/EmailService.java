@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,66 +40,67 @@ import javax.mail.MessagingException;
 @Component
 public class EmailService {
 
-	private static final Logger LOGGER = Logger.getLogger(EmailService.class);
+    private static final Logger LOGGER = Logger.getLogger(EmailService.class);
 
-	private final MailSender mailSender;
-	private final FreemarkerUtil freemarkerUtil;
-	private final EmailValidator validator;
+    private final MailSender mailSender;
+    private final FreemarkerUtil freemarkerUtil;
+    private final EmailValidator validator;
 
-	public EmailService(MailSender mailSender, FreemarkerUtil freemarkerUtil) {
-		this.mailSender = mailSender;
-		this.freemarkerUtil = freemarkerUtil;
-		this.validator = EmailValidator.getInstance();
-	}
+    public EmailService(MailSender mailSender, FreemarkerUtil freemarkerUtil) {
+        this.mailSender = mailSender;
+        this.freemarkerUtil = freemarkerUtil;
+        this.validator = EmailValidator.getInstance();
+    }
 
-	public String sendEmail(final IEmailMessage message, final String... emails) throws ServiceException {
+    public String sendEmail(final IEmailMessage message, final String... emails) throws ServiceException {
 
-		if(! mailSender.isEnabledAndConnected()) {
-			return null;
-		}
+        if (!mailSender.isEnabledAndConnected()) {
+            return null;
+        }
 
-		final String text = freemarkerUtil.getFreeMarkerTemplateContent(message.getType().getTemplateName(), message);
-		final String[] recipients = processRecipients(emails);
+        final String text = freemarkerUtil.getFreeMarkerTemplateContent(message.getType().getTemplateName(), message);
+        final String[] recipients = processRecipients(emails);
 
-		if (!ArrayUtils.isEmpty(recipients)) {
-			final MimeMessagePreparator preparator = mimeMessage -> {
-				boolean hasAttachments = message.getAttachments() != null;
-				MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachments);
-				msg.setSubject(message.getSubject());
-				msg.setTo(recipients);
-				msgSetFrom(msg);
-				msg.setText(text, true);
-				if (hasAttachments) {
-					for (Attachment attachment : message.getAttachments()) {
-						msg.addAttachment(attachment.getName() + "." + FilenameUtils.getExtension(attachment.getFile().getName()), attachment.getFile());
-						msg.addInline(attachment.getName().replaceAll(" ", "_"), attachment.getFile());
-					}
-				}
-			};
-			this.mailSender.send(preparator);
-		}
-		return text;
-	}
+        if (!ArrayUtils.isEmpty(recipients)) {
+            final MimeMessagePreparator preparator = mimeMessage -> {
+                boolean hasAttachments = message.getAttachments() != null;
+                MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachments);
+                msg.setSubject(message.getSubject());
+                msg.setTo(recipients);
+                msgSetFrom(msg);
+                msg.setText(text, true);
+                if (hasAttachments) {
+                    for (Attachment attachment : message.getAttachments()) {
+                        msg.addAttachment(attachment.getName() + "." + FilenameUtils.getExtension(attachment.getFile().getName()),
+                                attachment.getFile());
+                        msg.addInline(attachment.getName().replaceAll(" ", "_"), attachment.getFile());
+                    }
+                }
+            };
+            this.mailSender.send(preparator);
+        }
+        return text;
+    }
 
-	private void msgSetFrom(MimeMessageHelper msg) throws UnsupportedEncodingException, MessagingException {
-		JavaMailSenderImpl javaMailSender = mailSender.getJavaMailSenderImpl()
-													  .orElseThrow(() -> new ForbiddenOperationException("Unable to retrieve sender address"));
-		String fromAddress = mailSender.getFromAddress()
-									   .orElseThrow(() -> new ForbiddenOperationException("Unable to retrieve sender address"));
-		if(! StringUtils.isBlank(fromAddress)) {
-			msg.setFrom(fromAddress, javaMailSender.getUsername());
-		} else {
-			msg.setFrom(javaMailSender.getUsername());
-		}
-	}
-	
-	private String [] processRecipients(String ... emails) {
-		return Arrays.stream(emails).filter(email -> {
-			boolean isValid = validator.isValid(email);
-			if(! isValid) {
-				LOGGER.info("Not valid recipient specified: " + email);
-			}
-			return validator.isValid(email);
-		}).toArray(String[]::new);
-	}
+    private void msgSetFrom(MimeMessageHelper msg) throws UnsupportedEncodingException, MessagingException {
+        JavaMailSenderImpl javaMailSender = mailSender.getJavaMailSenderImpl()
+                .orElseThrow(() -> new ForbiddenOperationException("Unable to retrieve sender address"));
+        String fromAddress = mailSender.getFromAddress()
+                .orElseThrow(() -> new ForbiddenOperationException("Unable to retrieve sender address"));
+        if (!StringUtils.isBlank(fromAddress)) {
+            msg.setFrom(fromAddress, javaMailSender.getUsername());
+        } else {
+            msg.setFrom(javaMailSender.getUsername());
+        }
+    }
+
+    private String[] processRecipients(String... emails) {
+        return Arrays.stream(emails).filter(email -> {
+            boolean isValid = validator.isValid(email);
+            if (!isValid) {
+                LOGGER.info("Not valid recipient specified: " + email);
+            }
+            return validator.isValid(email);
+        }).toArray(String[]::new);
+    }
 }

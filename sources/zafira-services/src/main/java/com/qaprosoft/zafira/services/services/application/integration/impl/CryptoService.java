@@ -47,7 +47,7 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
     private final String salt;
 
     public CryptoService(SettingsService settingsService,
-                         @Value("${zafira.crypto_salt}") String salt) {
+            @Value("${zafira.crypto_salt}") String salt) {
         super(settingsService, CRYPTO, CryptoContext.class);
         this.settingsService = settingsService;
         this.salt = salt;
@@ -56,9 +56,8 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
     @Override
     public void init() {
         super.init();
-        String key = getKey().orElseThrow(() ->
-                new IntegrationException("Create an integration context before key generating"));
-        if(context().getBasicTextEncryptor() == null) {
+        String key = getKey().orElseThrow(() -> new IntegrationException("Create an integration context before key generating"));
+        if (context().getBasicTextEncryptor() == null) {
             initCryptoTool(key);
         }
     }
@@ -72,7 +71,7 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
 
     private void initCryptoTool(String key) {
         try {
-            if (! StringUtils.isEmpty(key)) {
+            if (!StringUtils.isEmpty(key)) {
                 context().setKey(key);
             } else {
                 throw new EncryptorInitializationException();
@@ -103,7 +102,7 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
     public String generateKey() throws ServiceException {
         String key = null;
         try {
-            if(! mapContext(CryptoContext::getType).isPresent()) {
+            if (!mapContext(CryptoContext::getType).isPresent()) {
                 init();
                 return null;
             }

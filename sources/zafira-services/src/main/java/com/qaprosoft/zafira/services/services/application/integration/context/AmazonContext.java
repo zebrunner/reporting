@@ -65,43 +65,35 @@ public class AmazonContext extends AbstractContext {
                 .withClientConfiguration(clientConfiguration).build();
     }
 
-    public AmazonS3 getAmazonS3()
-    {
+    public AmazonS3 getAmazonS3() {
         return amazonS3;
     }
 
-    public void setAmazonS3(AmazonS3 amazonS3)
-    {
+    public void setAmazonS3(AmazonS3 amazonS3) {
         this.amazonS3 = amazonS3;
     }
 
-    public AWSSecurityTokenService getAwsSecurityTokenService()
-    {
+    public AWSSecurityTokenService getAwsSecurityTokenService() {
         return awsSecurityTokenService;
     }
 
-    public void setAwsSecurityTokenService(AWSSecurityTokenService awsSecurityTokenService)
-    {
+    public void setAwsSecurityTokenService(AWSSecurityTokenService awsSecurityTokenService) {
         this.awsSecurityTokenService = awsSecurityTokenService;
     }
 
-    public BasicAWSCredentials getBasicAWSCredentials()
-    {
+    public BasicAWSCredentials getBasicAWSCredentials() {
         return basicAWSCredentials;
     }
 
-    public void setBasicAWSCredentials(BasicAWSCredentials basicAWSCredentials)
-    {
+    public void setBasicAWSCredentials(BasicAWSCredentials basicAWSCredentials) {
         this.basicAWSCredentials = basicAWSCredentials;
     }
 
-    public String getS3Bucket()
-    {
+    public String getS3Bucket() {
         return s3Bucket;
     }
 
-    public void setS3Bucket(String s3Bucket)
-    {
+    public void setS3Bucket(String s3Bucket) {
         this.s3Bucket = s3Bucket;
     }
 }

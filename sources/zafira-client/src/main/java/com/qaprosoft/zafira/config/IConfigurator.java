@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,30 +31,29 @@ import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
  * 
  * @author akhursevich
  */
-public interface IConfigurator
-{
-	ConfigurationType getConfiguration();
-	
-	String getOwner(ISuite suite);
-	
-	String getPrimaryOwner(ITestResult test);
-	
-	String getSecondaryOwner(ITestResult test);
-	
-	String getTestName(ITestResult test);
-	
-	String getTestMethodName(ITestResult test);
-	
-	Set<TestArtifactType> getArtifacts(ITestResult test);
+public interface IConfigurator {
+    ConfigurationType getConfiguration();
 
-	void clearArtifacts();
+    String getOwner(ISuite suite);
 
-	Set<TagType> getTestTags(ITestResult test);
-	
-	List<String> getTestWorkItems(ITestResult test);
-	
-	int getRunCount(ITestResult test);
-	
-	Map<String, Long> getTestMetrics(ITestResult test);
-	
+    String getPrimaryOwner(ITestResult test);
+
+    String getSecondaryOwner(ITestResult test);
+
+    String getTestName(ITestResult test);
+
+    String getTestMethodName(ITestResult test);
+
+    Set<TestArtifactType> getArtifacts(ITestResult test);
+
+    void clearArtifacts();
+
+    Set<TagType> getTestTags(ITestResult test);
+
+    List<String> getTestWorkItems(ITestResult test);
+
+    int getRunCount(ITestResult test);
+
+    Map<String, Long> getTestMetrics(ITestResult test);
+
 }

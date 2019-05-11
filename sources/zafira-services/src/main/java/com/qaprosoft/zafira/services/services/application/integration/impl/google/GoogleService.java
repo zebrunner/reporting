@@ -28,57 +28,53 @@ import java.io.IOException;
 import static com.qaprosoft.zafira.models.db.Setting.Tool.GOOGLE;
 
 @Component
-public class GoogleService extends AbstractIntegration<GoogleContext>
-{
+public class GoogleService extends AbstractIntegration<GoogleContext> {
 
-	private final GoogleDriveAuthService driveAuthService;
-	private final GoogleSheetsAuthService sheetsAuthService;
+    private final GoogleDriveAuthService driveAuthService;
+    private final GoogleSheetsAuthService sheetsAuthService;
 
-	public GoogleService(SettingsService settingsService, GoogleDriveAuthService driveAuthService, GoogleSheetsAuthService sheetsAuthService, CryptoService cryptoService) {
-		super(settingsService, cryptoService, GOOGLE, GoogleContext.class);
-		this.driveAuthService = driveAuthService;
-		this.sheetsAuthService = sheetsAuthService;
-	}
+    public GoogleService(SettingsService settingsService, GoogleDriveAuthService driveAuthService, GoogleSheetsAuthService sheetsAuthService,
+            CryptoService cryptoService) {
+        super(settingsService, cryptoService, GOOGLE, GoogleContext.class);
+        this.driveAuthService = driveAuthService;
+        this.sheetsAuthService = sheetsAuthService;
+    }
 
-	public String getTemporaryAccessToken(Long expiresIn) throws IOException {
-		byte[] credsFile = mapContext(GoogleContext::getCredsFile).orElse(null);
-		return credsFile != null ? AbstractGoogleService.authorize(credsFile, expiresIn).getAccessToken() : null;
-	}
+    public String getTemporaryAccessToken(Long expiresIn) throws IOException {
+        byte[] credsFile = mapContext(GoogleContext::getCredsFile).orElse(null);
+        return credsFile != null ? AbstractGoogleService.authorize(credsFile, expiresIn).getAccessToken() : null;
+    }
 
-	@Override
-	@SuppressWarnings("all")
-	public boolean isConnected()
-	{
-		boolean result = false;
-		try
-		{
-			if(getContext() != null)
-			{
-				driveAuthService.getService(context().getCredsFile()).about();
-				sheetsAuthService.getService(context().getCredsFile()).spreadsheets();
-				result = true;
-			}
-		} catch(Exception e)
-		{
-		}
-		return result;
-	}
+    @Override
+    @SuppressWarnings("all")
+    public boolean isConnected() {
+        boolean result = false;
+        try {
+            if (getContext() != null) {
+                driveAuthService.getService(context().getCredsFile()).about();
+                sheetsAuthService.getService(context().getCredsFile()).spreadsheets();
+                result = true;
+            }
+        } catch (Exception e) {
+        }
+        return result;
+    }
 
-	/**
-	 * Throws an integration exception if integration is not configured
-	 * @return google drive service client
-	 */
-	public GoogleDriveService getDriveService()
-	{
-		return context().getDriveService();
-	}
+    /**
+     * Throws an integration exception if integration is not configured
+     * 
+     * @return google drive service client
+     */
+    public GoogleDriveService getDriveService() {
+        return context().getDriveService();
+    }
 
-	/**
-	 * Throws an integration exception if integration is not configured
-	 * @return google drive service client
-	 */
-	public GoogleSpreadsheetsService getSpreadsheetsService()
-	{
-		return context().getSpreadsheetsService();
-	}
+    /**
+     * Throws an integration exception if integration is not configured
+     * 
+     * @return google drive service client
+     */
+    public GoogleSpreadsheetsService getSpreadsheetsService() {
+        return context().getSpreadsheetsService();
+    }
 }

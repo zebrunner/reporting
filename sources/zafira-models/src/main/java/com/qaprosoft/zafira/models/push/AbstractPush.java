@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,39 +17,34 @@ package com.qaprosoft.zafira.models.push;
 
 import java.util.UUID;
 
-public class AbstractPush 
-{
-	public enum Type
-	{
-		TEST_RUN, TEST, TEST_RUN_STATISTICS
-	}
+public class AbstractPush {
+    public enum Type {
+        TEST_RUN,
+        TEST,
+        TEST_RUN_STATISTICS
+    }
 
-	private Type type;
-	private String uid;
+    private Type type;
+    private String uid;
 
-	public AbstractPush(Type type) 
-	{
-		this.type = type;
-		this.uid = UUID.randomUUID().toString();
-	}
+    public AbstractPush(Type type) {
+        this.type = type;
+        this.uid = UUID.randomUUID().toString();
+    }
 
-	public Type getType() 
-	{
-		return type;
-	}
+    public Type getType() {
+        return type;
+    }
 
-	public void setType(Type type) 
-	{
-		this.type = type;
-	}
+    public void setType(Type type) {
+        this.type = type;
+    }
 
-	public String getUid() 
-	{
-		return uid;
-	}
+    public String getUid() {
+        return uid;
+    }
 
-	public void setUid(String uid) 
-	{
-		this.uid = uid;
-	}
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 }

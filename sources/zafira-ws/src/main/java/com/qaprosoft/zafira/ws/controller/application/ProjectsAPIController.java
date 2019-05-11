@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -58,7 +58,7 @@ public class ProjectsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create project", nickname = "createProject", httpMethod = "POST", response = ProjectType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_PROJECTS')")
     @PostMapping()
     public ProjectType createProject(@RequestBody @Valid ProjectType project) throws ServiceException {
@@ -68,7 +68,7 @@ public class ProjectsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Delete project", nickname = "deleteProject", httpMethod = "DELETE")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_PROJECTS')")
     @DeleteMapping("/{id}")
     public void deleteProject(@PathVariable("id") long id) throws ServiceException {
@@ -77,7 +77,7 @@ public class ProjectsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Update project", nickname = "updateProject", httpMethod = "PUT", response = ProjectType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_PROJECTS')")
     @PutMapping()
     public ProjectType updateProject(@RequestBody @Valid ProjectType project) throws ServiceException {
@@ -87,7 +87,7 @@ public class ProjectsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get all projects", nickname = "getAllProjects", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping()
     public List<ProjectType> getAllProjects() throws ServiceException {
         List<ProjectType> projects = new ArrayList<>();
@@ -99,7 +99,7 @@ public class ProjectsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get project by name", nickname = "getProjectByName", httpMethod = "GET", response = ProjectType.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/{name}")
     public ProjectType getProjectByName(@PathVariable("name") String name) throws ServiceException {
         Project project = projectService.getProjectByName(name);

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,29 +20,28 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface UserPreferenceMapper
-{
-	void createUserPreference(UserPreference userPreference);
+public interface UserPreferenceMapper {
+    void createUserPreference(UserPreference userPreference);
 
-	void createUserPreferences(@Param(value = "userId") long userId, @Param(value = "userPreferences") List<UserPreference> userPreferences);
+    void createUserPreferences(@Param(value = "userId") long userId, @Param(value = "userPreferences") List<UserPreference> userPreferences);
 
-	String getDefaultPreferenceValue (String name);
-	
-	UserPreference getUserPreferenceById(long id);
+    String getDefaultPreferenceValue(String name);
 
-	List<UserPreference> getUserPreferencesByNameAndDashboardTitle(@Param("name") UserPreference.Name name, @Param("title") String title);
+    UserPreference getUserPreferenceById(long id);
 
-	List<UserPreference> getUserPreferencesByUserId(long userId);
+    List<UserPreference> getUserPreferencesByNameAndDashboardTitle(@Param("name") UserPreference.Name name, @Param("title") String title);
 
-	List<UserPreference> getDefaultUserPreferences();
+    List<UserPreference> getUserPreferencesByUserId(long userId);
 
-	UserPreference getUserPreferenceByNameAndUserId(@Param("name") String name, @Param("userId") long userId);
+    List<UserPreference> getDefaultUserPreferences();
 
-	void updateUserPreference(UserPreference userPreference);
+    UserPreference getUserPreferenceByNameAndUserId(@Param("name") String name, @Param("userId") long userId);
 
-	void updateUserPreferences(@Param(value = "userId") long userId, @Param(value = "userPreferences") List<UserPreference> userPreference);
+    void updateUserPreference(UserPreference userPreference);
 
-	void deleteUserPreferenceById(long id);
-	
-	void deleteUserPreferencesByUserId(long userId);
+    void updateUserPreferences(@Param(value = "userId") long userId, @Param(value = "userPreferences") List<UserPreference> userPreference);
+
+    void deleteUserPreferenceById(long id);
+
+    void deleteUserPreferencesByUserId(long userId);
 }

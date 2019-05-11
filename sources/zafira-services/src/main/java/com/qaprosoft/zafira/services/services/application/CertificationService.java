@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -49,18 +49,15 @@ public class CertificationService {
     private TestService testService;
 
     public CertificationType getCertificationDetails(Long upstreamJobId, Integer upstreamJobBuildNumber) throws ServiceException {
-        if(!elasticsearchService.isClientInitialized()) {
+        if (!elasticsearchService.isClientInitialized()) {
             return null;
         }
         CertificationType certification = new CertificationType();
 
-        for(TestRun testRun : testRunService.getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(upstreamJobId, upstreamJobBuildNumber))
-        {
+        for (TestRun testRun : testRunService.getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(upstreamJobId, upstreamJobBuildNumber)) {
             StringBuilder platform = new StringBuilder(testRun.getPlatform());
-            for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
-            {
-                if("browser_version".equals(arg.getKey()) && !"*".equals(arg.getValue()))
-                {
+            for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML())) {
+                if ("browser_version".equals(arg.getKey()) && !"*".equals(arg.getValue())) {
                     platform.append(" ").append(arg.getValue());
                 }
             }
@@ -73,7 +70,7 @@ public class CertificationService {
 
     private void insertIntoCertification(CertificationType certification, Long testRunId, String platform) throws ServiceException {
         TestRun testRun = testRunService.getTestRunById(testRunId);
-        if(testRun == null) {
+        if (testRun == null) {
             throw new ServiceException("Test run with id " + testRunId + " not found");
         }
         List<Test> tests = testService.getTestsByTestRunId(testRunId);
@@ -86,6 +83,6 @@ public class CertificationService {
 
     private String[] buildIndices(Date... dates) {
         return Arrays.stream(dates).map(date -> "logs-" + date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-                                                              .format(FORMATTER)).toArray(String[]::new);
+                .format(FORMATTER)).toArray(String[]::new);
     }
 }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,107 +36,93 @@ import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
-public class GroupService
-{
-	private static final Logger LOGGER = Logger.getLogger(GroupService.class);
+public class GroupService {
+    private static final Logger LOGGER = Logger.getLogger(GroupService.class);
 
-	@Autowired
-	private GroupMapper groupMapper;
+    @Autowired
+    private GroupMapper groupMapper;
 
-	@CachePut(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #group.id")
-	@Transactional(rollbackFor = Exception.class)
-	public Group createGroup(Group group) throws ServiceException
-	{
-		groupMapper.createGroup(group);
-		addPermissionsToGroup(group);
-		return group;
-	}
+    @CachePut(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #group.id")
+    @Transactional(rollbackFor = Exception.class)
+    public Group createGroup(Group group) throws ServiceException {
+        groupMapper.createGroup(group);
+        addPermissionsToGroup(group);
+        return group;
+    }
 
-	@CachePut(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #group.id")
-	@Transactional(rollbackFor = Exception.class)
-	public Group addPermissionsToGroup(Group group) throws ServiceException
-	{
-		Group dbGroup = groupMapper.getGroupById(group.getId());
+    @CachePut(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #group.id")
+    @Transactional(rollbackFor = Exception.class)
+    public Group addPermissionsToGroup(Group group) throws ServiceException {
+        Group dbGroup = groupMapper.getGroupById(group.getId());
 
-		Set<Permission> intersection = new HashSet<>(group.getPermissions());
-		intersection.retainAll(dbGroup.getPermissions());
+        Set<Permission> intersection = new HashSet<>(group.getPermissions());
+        intersection.retainAll(dbGroup.getPermissions());
 
-		dbGroup.getPermissions().removeAll(intersection);
-		group.getPermissions().removeAll(intersection);
-		dbGroup.getPermissions().forEach(permission -> {
-			try
-			{
-				deletePermissionFromGroup(group.getId(), permission.getId());
-			} catch (ServiceException e)
-			{
-				LOGGER.error(e.getMessage());
-			}
-		});
-		groupMapper.addPermissionsToGroup(group.getId(), group.getPermissions());
-		group.getPermissions().addAll(intersection);
-		return group;
-	}
+        dbGroup.getPermissions().removeAll(intersection);
+        group.getPermissions().removeAll(intersection);
+        dbGroup.getPermissions().forEach(permission -> {
+            try {
+                deletePermissionFromGroup(group.getId(), permission.getId());
+            } catch (ServiceException e) {
+                LOGGER.error(e.getMessage());
+            }
+        });
+        groupMapper.addPermissionsToGroup(group.getId(), group.getPermissions());
+        group.getPermissions().addAll(intersection);
+        return group;
+    }
 
-	@Transactional(readOnly = true)
-	@Cacheable(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #id")
-	public Group getGroupById(long id)
-	{
-		return groupMapper.getGroupById(id);
-	}
-	
-	@Transactional(readOnly = true)
-    public Group getGroupByName(String name) throws ServiceException
-    {
+    @Transactional(readOnly = true)
+    @Cacheable(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #id")
+    public Group getGroupById(long id) {
+        return groupMapper.getGroupById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Group getGroupByName(String name) throws ServiceException {
         return groupMapper.getGroupByName(name);
     }
 
-	@Transactional(readOnly = true)
-	public Group getPrimaryGroupByRole(Role role) throws ServiceException
-	{
-		return groupMapper.getPrimaryGroupByRole(role);
-	}
+    @Transactional(readOnly = true)
+    public Group getPrimaryGroupByRole(Role role) throws ServiceException {
+        return groupMapper.getPrimaryGroupByRole(role);
+    }
 
-	@Transactional(readOnly = true)
-	public List<Group> getAllGroups(Boolean isPublic) throws ServiceException
-	{
-		List<Group> groupList = groupMapper.getAllGroups(isPublic);
-		for (Group group : groupList)
-		{
-			Collections.sort(group.getUsers());
-		}
-		return groupList;
-	}
+    @Transactional(readOnly = true)
+    public List<Group> getAllGroups(Boolean isPublic) throws ServiceException {
+        List<Group> groupList = groupMapper.getAllGroups(isPublic);
+        for (Group group : groupList) {
+            Collections.sort(group.getUsers());
+        }
+        return groupList;
+    }
 
-	public static List<Role> getRoles() {
-		return Arrays.asList(Role.values());
-	}
+    public static List<Role> getRoles() {
+        return Arrays.asList(Role.values());
+    }
 
-	@Transactional(readOnly = true)
-	public Integer getGroupsCount() throws ServiceException
-	{
-		return groupMapper.getGroupsCount();
-	}
+    @Transactional(readOnly = true)
+    public Integer getGroupsCount() throws ServiceException {
+        return groupMapper.getGroupsCount();
+    }
 
-	@CachePut(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #group.id")
-	@Transactional(rollbackFor = Exception.class)
-	public Group updateGroup(Group group) throws ServiceException
-	{
-		groupMapper.updateGroup(group);
-		addPermissionsToGroup(group);
-		return group;
-	}
+    @CachePut(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #group.id")
+    @Transactional(rollbackFor = Exception.class)
+    public Group updateGroup(Group group) throws ServiceException {
+        groupMapper.updateGroup(group);
+        addPermissionsToGroup(group);
+        return group;
+    }
 
-	@CacheEvict(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #id")
-	@Transactional(rollbackFor = Exception.class)
-	public void deleteGroup(long id) throws ServiceException
-	{
-		groupMapper.deleteGroup(id);
-	}
+    @CacheEvict(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #id")
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteGroup(long id) throws ServiceException {
+        groupMapper.deleteGroup(id);
+    }
 
-	@CacheEvict(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #groupId")
-	@Transactional(rollbackFor = Exception.class)
-	public void deletePermissionFromGroup(long groupId, long permissionId) throws ServiceException
-	{
-		groupMapper.deletePermissionFromGroup(groupId, permissionId);
-	}
+    @CacheEvict(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #groupId")
+    @Transactional(rollbackFor = Exception.class)
+    public void deletePermissionFromGroup(long groupId, long permissionId) throws ServiceException {
+        groupMapper.deletePermissionFromGroup(groupId, permissionId);
+    }
 }

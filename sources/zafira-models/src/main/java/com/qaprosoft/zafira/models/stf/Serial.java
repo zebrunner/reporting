@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,43 +24,37 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("org.jsonschema2pojo")
 @JsonPropertyOrder({
-    "serial"
+        "serial"
 })
-public class Serial
-{
-	@JsonProperty("serial")
-	private String serial;
-	
-	@JsonProperty("timeout")
-	private long timeout;
-	
-	public Serial(String serial, long timeout)
-	{
-		this.serial = serial;
-		this.timeout = timeout;
-	}
+public class Serial {
+    @JsonProperty("serial")
+    private String serial;
 
-	@JsonProperty("serial")
-	public String getSerial()
-	{
-		return serial;
-	}
+    @JsonProperty("timeout")
+    private long timeout;
 
-	@JsonProperty("serial")
-	public void setSerial(String serial)
-	{
-		this.serial = serial;
-	}
+    public Serial(String serial, long timeout) {
+        this.serial = serial;
+        this.timeout = timeout;
+    }
 
-	@JsonProperty("serial")
-	public long getTimeout()
-	{
-		return timeout;
-	}
+    @JsonProperty("serial")
+    public String getSerial() {
+        return serial;
+    }
 
-	@JsonProperty("serial")
-	public void setTimeout(long timeout)
-	{
-		this.timeout = timeout;
-	}
+    @JsonProperty("serial")
+    public void setSerial(String serial) {
+        this.serial = serial;
+    }
+
+    @JsonProperty("serial")
+    public long getTimeout() {
+        return timeout;
+    }
+
+    @JsonProperty("serial")
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
+    }
 }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,261 +23,223 @@ import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestRun.Initiator;
 
 @JsonInclude(Include.NON_NULL)
-public class TestRunType extends AbstractType
-{
-	private static final long serialVersionUID = -1687311347861782118L;
-	private String ciRunId;
-	@NotNull
-	private Long testSuiteId;
-	private Status status;
-	private String scmURL;
-	private String scmBranch;
-	private String scmCommit;
-	private String configXML;
-	@NotNull
-	private Long jobId;
-	private Long upstreamJobId;
-	private Integer upstreamJobBuildNumber;
-	@NotNull
-	private Integer buildNumber;
-	@NotNull
-	private Initiator startedBy;
-	private Long userId;
-	private String workItem;
-	private ProjectType project;
-	private boolean knownIssue;
-	private boolean blocker;
-	private boolean reviewed;
+public class TestRunType extends AbstractType {
+    private static final long serialVersionUID = -1687311347861782118L;
+    private String ciRunId;
+    @NotNull
+    private Long testSuiteId;
+    private Status status;
+    private String scmURL;
+    private String scmBranch;
+    private String scmCommit;
+    private String configXML;
+    @NotNull
+    private Long jobId;
+    private Long upstreamJobId;
+    private Integer upstreamJobBuildNumber;
+    @NotNull
+    private Integer buildNumber;
+    @NotNull
+    private Initiator startedBy;
+    private Long userId;
+    private String workItem;
+    private ProjectType project;
+    private boolean knownIssue;
+    private boolean blocker;
+    private boolean reviewed;
 
-	public boolean isReviewed() {
-		return reviewed;
-	}
+    public boolean isReviewed() {
+        return reviewed;
+    }
 
-	public void setReviewed(boolean reviewed) {
-		this.reviewed = reviewed;
-	}
+    public void setReviewed(boolean reviewed) {
+        this.reviewed = reviewed;
+    }
 
-	public TestRunType() {
-		
-	}
-	
-	public TestRunType(String ciRunId, Long testSuiteId, Long userId, String scmURL, String scmBranch, String scmCommit,
-			String configXML, Long jobId, Integer buildNumber, Initiator startedBy, String workItem)
-	{
-		this.ciRunId = ciRunId;
-		this.testSuiteId = testSuiteId;
-		this.userId = userId;
-		this.scmURL = scmURL;
-		this.scmBranch = scmBranch;
-		this.scmCommit = scmCommit;
-		this.configXML = configXML;
-		this.jobId = jobId;
-		this.buildNumber = buildNumber;
-		this.startedBy = startedBy;
-		this.workItem = workItem;
-	}
-	
-	public TestRunType(String ciRunId, Long testSuiteId, String scmURL, String scmBranch, String scmCommit,
-			String configXML, Long jobId, Long upstreamJobId, Integer upstreamJobBuildNumber, Integer buildNumber,
-			Initiator startedBy, String workItem)
-	{
-		this.ciRunId = ciRunId;
-		this.testSuiteId = testSuiteId;
-		this.scmURL = scmURL;
-		this.scmBranch = scmBranch;
-		this.scmCommit = scmCommit;
-		this.configXML = configXML;
-		this.jobId = jobId;
-		this.upstreamJobId = upstreamJobId;
-		this.upstreamJobBuildNumber = upstreamJobBuildNumber;
-		this.buildNumber = buildNumber;
-		this.startedBy = startedBy;
-		this.workItem = workItem;
-	}
-	
-	public TestRunType(String ciRunId, Long testSuiteId, String scmURL, String scmBranch, String scmCommit,
-			String configXML, Long jobId, Integer buildNumber, Initiator startedBy, String workItem)
-	{
-		this.ciRunId = ciRunId;
-		this.testSuiteId = testSuiteId;
-		this.scmURL = scmURL;
-		this.scmBranch = scmBranch;
-		this.scmCommit = scmCommit;
-		this.configXML = configXML;
-		this.jobId = jobId;
-		this.buildNumber = buildNumber;
-		this.startedBy = startedBy;
-		this.workItem = workItem;
-	}
-	
-	public String getCiRunId()
-	{
-		return ciRunId;
-	}
+    public TestRunType() {
 
-	public void setCiRunId(String ciRunId)
-	{
-		this.ciRunId = ciRunId;
-	}
+    }
 
-	public Long getTestSuiteId()
-	{
-		return testSuiteId;
-	}
+    public TestRunType(String ciRunId, Long testSuiteId, Long userId, String scmURL, String scmBranch, String scmCommit,
+            String configXML, Long jobId, Integer buildNumber, Initiator startedBy, String workItem) {
+        this.ciRunId = ciRunId;
+        this.testSuiteId = testSuiteId;
+        this.userId = userId;
+        this.scmURL = scmURL;
+        this.scmBranch = scmBranch;
+        this.scmCommit = scmCommit;
+        this.configXML = configXML;
+        this.jobId = jobId;
+        this.buildNumber = buildNumber;
+        this.startedBy = startedBy;
+        this.workItem = workItem;
+    }
 
-	public void setTestSuiteId(Long testSuiteId)
-	{
-		this.testSuiteId = testSuiteId;
-	}
+    public TestRunType(String ciRunId, Long testSuiteId, String scmURL, String scmBranch, String scmCommit,
+            String configXML, Long jobId, Long upstreamJobId, Integer upstreamJobBuildNumber, Integer buildNumber,
+            Initiator startedBy, String workItem) {
+        this.ciRunId = ciRunId;
+        this.testSuiteId = testSuiteId;
+        this.scmURL = scmURL;
+        this.scmBranch = scmBranch;
+        this.scmCommit = scmCommit;
+        this.configXML = configXML;
+        this.jobId = jobId;
+        this.upstreamJobId = upstreamJobId;
+        this.upstreamJobBuildNumber = upstreamJobBuildNumber;
+        this.buildNumber = buildNumber;
+        this.startedBy = startedBy;
+        this.workItem = workItem;
+    }
 
-	public Status getStatus()
-	{
-		return status;
-	}
+    public TestRunType(String ciRunId, Long testSuiteId, String scmURL, String scmBranch, String scmCommit,
+            String configXML, Long jobId, Integer buildNumber, Initiator startedBy, String workItem) {
+        this.ciRunId = ciRunId;
+        this.testSuiteId = testSuiteId;
+        this.scmURL = scmURL;
+        this.scmBranch = scmBranch;
+        this.scmCommit = scmCommit;
+        this.configXML = configXML;
+        this.jobId = jobId;
+        this.buildNumber = buildNumber;
+        this.startedBy = startedBy;
+        this.workItem = workItem;
+    }
 
-	public void setStatus(Status status)
-	{
-		this.status = status;
-	}
+    public String getCiRunId() {
+        return ciRunId;
+    }
 
-	public String getScmURL()
-	{
-		return scmURL;
-	}
+    public void setCiRunId(String ciRunId) {
+        this.ciRunId = ciRunId;
+    }
 
-	public void setScmURL(String scmURL)
-	{
-		this.scmURL = scmURL;
-	}
+    public Long getTestSuiteId() {
+        return testSuiteId;
+    }
 
-	public String getScmBranch()
-	{
-		return scmBranch;
-	}
+    public void setTestSuiteId(Long testSuiteId) {
+        this.testSuiteId = testSuiteId;
+    }
 
-	public void setScmBranch(String scmBranch)
-	{
-		this.scmBranch = scmBranch;
-	}
+    public Status getStatus() {
+        return status;
+    }
 
-	public String getScmCommit()
-	{
-		return scmCommit;
-	}
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 
-	public void setScmCommit(String scmCommit)
-	{
-		this.scmCommit = scmCommit;
-	}
+    public String getScmURL() {
+        return scmURL;
+    }
 
-	public String getConfigXML()
-	{
-		return configXML;
-	}
+    public void setScmURL(String scmURL) {
+        this.scmURL = scmURL;
+    }
 
-	public void setConfigXML(String configXML)
-	{
-		this.configXML = configXML;
-	}
+    public String getScmBranch() {
+        return scmBranch;
+    }
 
-	public Long getJobId()
-	{
-		return jobId;
-	}
+    public void setScmBranch(String scmBranch) {
+        this.scmBranch = scmBranch;
+    }
 
-	public void setJobId(Long jobId)
-	{
-		this.jobId = jobId;
-	}
+    public String getScmCommit() {
+        return scmCommit;
+    }
 
-	public Integer getBuildNumber()
-	{
-		return buildNumber;
-	}
+    public void setScmCommit(String scmCommit) {
+        this.scmCommit = scmCommit;
+    }
 
-	public void setBuildNumber(Integer buildNumber)
-	{
-		this.buildNumber = buildNumber;
-	}
+    public String getConfigXML() {
+        return configXML;
+    }
 
-	public Initiator getStartedBy()
-	{
-		return startedBy;
-	}
+    public void setConfigXML(String configXML) {
+        this.configXML = configXML;
+    }
 
-	public void setStartedBy(Initiator startedBy)
-	{
-		this.startedBy = startedBy;
-	}
+    public Long getJobId() {
+        return jobId;
+    }
 
-	public Long getUpstreamJobId()
-	{
-		return upstreamJobId;
-	}
+    public void setJobId(Long jobId) {
+        this.jobId = jobId;
+    }
 
-	public void setUpstreamJobId(Long upstreamJobId)
-	{
-		this.upstreamJobId = upstreamJobId;
-	}
+    public Integer getBuildNumber() {
+        return buildNumber;
+    }
 
-	public Integer getUpstreamJobBuildNumber()
-	{
-		return upstreamJobBuildNumber;
-	}
+    public void setBuildNumber(Integer buildNumber) {
+        this.buildNumber = buildNumber;
+    }
 
-	public void setUpstreamJobBuildNumber(Integer upstreamJobBuildNumber)
-	{
-		this.upstreamJobBuildNumber = upstreamJobBuildNumber;
-	}
+    public Initiator getStartedBy() {
+        return startedBy;
+    }
 
-	public Long getUserId()
-	{
-		return userId;
-	}
+    public void setStartedBy(Initiator startedBy) {
+        this.startedBy = startedBy;
+    }
 
-	public void setUserId(Long userId)
-	{
-		this.userId = userId;
-	}
+    public Long getUpstreamJobId() {
+        return upstreamJobId;
+    }
 
-	public String getWorkItem()
-	{
-		return workItem;
-	}
+    public void setUpstreamJobId(Long upstreamJobId) {
+        this.upstreamJobId = upstreamJobId;
+    }
 
-	public void setWorkItem(String workItem)
-	{
-		this.workItem = workItem;
-	}
+    public Integer getUpstreamJobBuildNumber() {
+        return upstreamJobBuildNumber;
+    }
 
-	public ProjectType getProject()
-	{
-		return project;
-	}
+    public void setUpstreamJobBuildNumber(Integer upstreamJobBuildNumber) {
+        this.upstreamJobBuildNumber = upstreamJobBuildNumber;
+    }
 
-	public void setProject(ProjectType project)
-	{
-		this.project = project;
-	}
+    public Long getUserId() {
+        return userId;
+    }
 
-	public boolean isKnownIssue()
-	{
-		return knownIssue;
-	}
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
-	public void setKnownIssue(boolean knownIssue)
-	{
-		this.knownIssue = knownIssue;
-	}
+    public String getWorkItem() {
+        return workItem;
+    }
 
-	public boolean isBlocker()
-	{
-		return blocker;
-	}
+    public void setWorkItem(String workItem) {
+        this.workItem = workItem;
+    }
 
-	public void setBlocker(boolean blocker)
-	{
-		this.blocker = blocker;
-	}
+    public ProjectType getProject() {
+        return project;
+    }
+
+    public void setProject(ProjectType project) {
+        this.project = project;
+    }
+
+    public boolean isKnownIssue() {
+        return knownIssue;
+    }
+
+    public void setKnownIssue(boolean knownIssue) {
+        this.knownIssue = knownIssue;
+    }
+
+    public boolean isBlocker() {
+        return blocker;
+    }
+
+    public void setBlocker(boolean blocker) {
+        this.blocker = blocker;
+    }
 
 }

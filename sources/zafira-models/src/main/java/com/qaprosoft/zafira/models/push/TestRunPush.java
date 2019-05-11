@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,18 +19,18 @@ import com.qaprosoft.zafira.models.db.TestRun;
 
 public class TestRunPush extends AbstractPush {
 
-	private TestRun testRun;
+    private TestRun testRun;
 
-	public TestRunPush(TestRun testRun) {
-		super(Type.TEST_RUN);
-		this.testRun = testRun;
-	}
+    public TestRunPush(TestRun testRun) {
+        super(Type.TEST_RUN);
+        this.testRun = testRun;
+    }
 
-	public TestRun getTestRun() {
-		return testRun;
-	}
+    public TestRun getTestRun() {
+        return testRun;
+    }
 
-	public void setTestRun(TestRun testRun) {
-		this.testRun = testRun;
-	}
+    public void setTestRun(TestRun testRun) {
+        this.testRun = testRun;
+    }
 }

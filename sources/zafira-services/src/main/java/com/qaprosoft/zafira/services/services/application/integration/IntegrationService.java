@@ -25,7 +25,7 @@ import java.util.Map;
 @SuppressWarnings("rawtypes")
 public class IntegrationService {
 
-	private final Map<Setting.Tool, Integration> integrations;
+    private final Map<Setting.Tool, Integration> integrations;
 
     public IntegrationService(Map<String, Integration> integrations) {
         this.integrations = new HashMap<>();

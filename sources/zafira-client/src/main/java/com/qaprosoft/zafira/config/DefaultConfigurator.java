@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,77 +34,65 @@ import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
  * 
  * @author akhursevich
  */
-public class DefaultConfigurator implements IConfigurator
-{
-	private static final String ANONYMOUS = "anonymous";
-	
-	@Override
-	public ConfigurationType getConfiguration()
-	{
-		return new ConfigurationType();
-	}
+public class DefaultConfigurator implements IConfigurator {
+    private static final String ANONYMOUS = "anonymous";
 
-	@Override
-	public String getOwner(ISuite suite)
-	{
-		return ANONYMOUS;
-	}
+    @Override
+    public ConfigurationType getConfiguration() {
+        return new ConfigurationType();
+    }
 
-	@Override
-	public String getPrimaryOwner(ITestResult test)
-	{
-		return ANONYMOUS;
-	}
-	
-	@Override
-	public String getSecondaryOwner(ITestResult test)
-	{
-		return null;
-	}
+    @Override
+    public String getOwner(ISuite suite) {
+        return ANONYMOUS;
+    }
 
-	@Override
-	public String getTestName(ITestResult test)
-	{
-		return test.getName();
-	}
+    @Override
+    public String getPrimaryOwner(ITestResult test) {
+        return ANONYMOUS;
+    }
 
-	@Override
-	public String getTestMethodName(ITestResult test)
-	{
-		return test.getMethod().getMethodName();
-	}
+    @Override
+    public String getSecondaryOwner(ITestResult test) {
+        return null;
+    }
 
-	@Override
-	public int getRunCount(ITestResult test)
-	{
-		return 0;
-	}
+    @Override
+    public String getTestName(ITestResult test) {
+        return test.getName();
+    }
 
-	@Override
-	public List<String> getTestWorkItems(ITestResult test)
-	{
-		return new ArrayList<>();
-	}
+    @Override
+    public String getTestMethodName(ITestResult test) {
+        return test.getMethod().getMethodName();
+    }
 
-	@Override
-	public Map<String, Long> getTestMetrics(ITestResult test)
-	{
-		return null;
-	}
+    @Override
+    public int getRunCount(ITestResult test) {
+        return 0;
+    }
 
-	@Override
-	public Set<TestArtifactType> getArtifacts(ITestResult test) 
-	{
-		return new HashSet<>();
-	}
+    @Override
+    public List<String> getTestWorkItems(ITestResult test) {
+        return new ArrayList<>();
+    }
 
-	@Override
-	public void clearArtifacts()
-	{
-	}
+    @Override
+    public Map<String, Long> getTestMetrics(ITestResult test) {
+        return null;
+    }
 
-	@Override
-	public Set<TagType> getTestTags(ITestResult test) {
-		return new HashSet<>();
-	}
+    @Override
+    public Set<TestArtifactType> getArtifacts(ITestResult test) {
+        return new HashSet<>();
+    }
+
+    @Override
+    public void clearArtifacts() {
+    }
+
+    @Override
+    public Set<TagType> getTestTags(ITestResult test) {
+        return new HashSet<>();
+    }
 }

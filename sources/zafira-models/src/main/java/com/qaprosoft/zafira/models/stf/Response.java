@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,34 +15,28 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.stf;
 
-public class Response<T>
-{
-	private int status;
-	private T object;
-	
-	public Response(int status, T object)
-	{
-		this.status = status;
-		this.object = object;
-	}
+public class Response<T> {
+    private int status;
+    private T object;
 
-	public int getStatus()
-	{
-		return status;
-	}
+    public Response(int status, T object) {
+        this.status = status;
+        this.object = object;
+    }
 
-	public void setStatus(int status)
-	{
-		this.status = status;
-	}
+    public int getStatus() {
+        return status;
+    }
 
-	public T getObject()
-	{
-		return object;
-	}
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
-	public void setObject(T object)
-	{
-		this.object = object;
-	}
+    public T getObject() {
+        return object;
+    }
+
+    public void setObject(T object) {
+        this.object = object;
+    }
 }

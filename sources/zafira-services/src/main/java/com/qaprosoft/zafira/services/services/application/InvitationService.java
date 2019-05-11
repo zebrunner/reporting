@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -55,11 +55,11 @@ public class InvitationService {
     private final GroupService groupService;
 
     public InvitationService(@Value("${zafira.slack.image}") String zafiraLogoURL,
-                             URLResolver urlResolver,
-                             InvitationMapper invitationMapper,
-                             EmailService emailService,
-                             UserService userService,
-                             GroupService groupService) {
+            URLResolver urlResolver,
+            InvitationMapper invitationMapper,
+            EmailService emailService,
+            UserService userService,
+            GroupService groupService) {
         this.zafiraLogoURL = zafiraLogoURL;
         this.urlResolver = urlResolver;
         this.invitationMapper = invitationMapper;
@@ -105,7 +105,7 @@ public class InvitationService {
 
     public List<Invitation> createInvitations(Long principalId, Invitation... invitations) throws ServiceException {
         List<Invitation> result = new ArrayList<>();
-        for(Invitation invitation : invitations) {
+        for (Invitation invitation : invitations) {
             checkExisting(invitation.getEmail());
         }
         CompletableFuture.allOf(createInvitationsAsync(principalId, result, invitations)).join();
@@ -117,12 +117,12 @@ public class InvitationService {
         Invitation invitation = null;
         if (!StringUtils.isBlank(userService.getAdminUsername())) {
             User user = userService.getUserByUsername(userService.getAdminUsername());
-            if(user == null) {
+            if (user == null) {
                 throw new ForbiddenOperationException("Admin with username '" + userService.getAdminUsername() + "' does not exist");
             }
 
             Group group = groupService.getGroupByName(groupName);
-            if(group == null) {
+            if (group == null) {
                 throw new ForbiddenOperationException("Group by role '" + ROLE_ADMIN.name() + "' does not exist");
             }
 
@@ -138,10 +138,10 @@ public class InvitationService {
     @Transactional(rollbackFor = Exception.class)
     public Invitation retryInvitation(Long principalId, String email) throws ServiceException {
         Invitation invitationFromDb = getInvitationByEmail(email);
-        if(invitationFromDb == null) {
+        if (invitationFromDb == null) {
             throw new EntityNotExistsException(Invitation.class, false);
         }
-        if(invitationFromDb.getStatus().equals(Invitation.Status.ACCEPTED)) {
+        if (invitationFromDb.getStatus().equals(Invitation.Status.ACCEPTED)) {
             throw new ServiceException("Cannot retry invitation due invitation is accepted yet.");
         }
         String token = generateToken();
@@ -203,17 +203,17 @@ public class InvitationService {
     }
 
     private void checkExisting(String email) throws ServiceException {
-        if(userService.getUserByEmail(email) != null) {
+        if (userService.getUserByEmail(email) != null) {
             throw new EntityAlreadyExistsException("email", email, User.class, false);
-        } else if(getInvitationByEmail(email) != null) {
+        } else if (getInvitationByEmail(email) != null) {
             throw new EntityAlreadyExistsException("email", email, Invitation.class, false);
         }
     }
 
     private void sendEmail(Invitation invitation) throws ServiceException {
-        IEmailMessage userInviteEmail = LDAP.equals(invitation.getSource()) ?
-                new UserInviteEmail(invitation.getToken(), zafiraLogoURL, urlResolver.buildWebURL()) :
-                new UserInviteLdapEmail(invitation.getToken(), zafiraLogoURL, urlResolver.buildWebURL());
+        IEmailMessage userInviteEmail = LDAP.equals(invitation.getSource())
+                ? new UserInviteEmail(invitation.getToken(), zafiraLogoURL, urlResolver.buildWebURL())
+                : new UserInviteLdapEmail(invitation.getToken(), zafiraLogoURL, urlResolver.buildWebURL());
         emailService.sendEmail(userInviteEmail, invitation.getEmail());
     }
 

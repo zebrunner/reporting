@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,19 +19,18 @@ import com.qaprosoft.zafira.models.db.Permission;
 
 import java.util.List;
 
-public interface PermissionMapper
-{
-	void createPermission(Permission permission);
+public interface PermissionMapper {
+    void createPermission(Permission permission);
 
-	Permission getPermissionById(Long id);
+    Permission getPermissionById(Long id);
 
-	Permission getPermissionByName(Permission.Name name);
+    Permission getPermissionByName(Permission.Name name);
 
-	List<Permission> getAllPermissions();
+    List<Permission> getAllPermissions();
 
-	void updatePermission(Permission permission);
+    void updatePermission(Permission permission);
 
-	void deletePermissionById(Long id);
+    void deletePermissionById(Long id);
 
-	void deletePermissionByName(Permission.Name name);
+    void deletePermissionByName(Permission.Name name);
 }

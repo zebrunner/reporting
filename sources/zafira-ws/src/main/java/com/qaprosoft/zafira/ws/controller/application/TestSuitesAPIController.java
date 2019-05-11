@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -49,12 +49,11 @@ public class TestSuitesAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create test suite", nickname = "createTestSuite", httpMethod = "POST", notes = "Create a new test suite.", response = TestSuiteType.class, responseContainer = "TestSuiteType")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping()
     public TestSuiteType createTestSuite(
             @RequestBody @Valid TestSuiteType testSuite,
-            @RequestHeader(value = "Project", required = false) String project
-    ) throws ServiceException {
+            @RequestHeader(value = "Project", required = false) String project) throws ServiceException {
         return mapper.map(testSuiteService.createOrUpdateTestSuite(mapper.map(testSuite, TestSuite.class)), TestSuiteType.class);
     }
 

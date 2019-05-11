@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -48,7 +48,7 @@ public class SlackAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Send notification on testrun review", nickname = "sendReviewNotification", httpMethod = "GET")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/testrun/{id}/review")
     public void sendOnReviewNotification(@PathVariable("id") long id) throws ServiceException {
         TestRun testRun = testRunService.getTestRunByIdFull(id);
@@ -57,12 +57,11 @@ public class SlackAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Send notification on testrun finish", nickname = "sendOnFinishNotification", httpMethod = "GET")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/testrun/{ciRunId}/finish")
     public void sendOnFinishNotification(
             @PathVariable("ciRunId") String ciRunId,
-            @RequestParam(value = "channels", required = false) String channels
-    ) throws ServiceException {
+            @RequestParam(value = "channels", required = false) String channels) throws ServiceException {
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
         testRun.setSlackChannels(channels);
         testRunService.updateTestRun(testRun);

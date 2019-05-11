@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,192 +34,167 @@ import com.qaprosoft.zafira.models.stf.Response;
 import com.qaprosoft.zafira.models.stf.STFDevice;
 import com.sun.jersey.api.client.Client;
 
-public class STFClient
-{
-	private static final Logger LOGGER = LoggerFactory.getLogger(STFClient.class);
+public class STFClient {
+    private static final Logger LOGGER = LoggerFactory.getLogger(STFClient.class);
 
-	// Max device timeout 1 hour
-	private static final Integer TIMEOUT = 60 * 60 * 1000;
+    // Max device timeout 1 hour
+    private static final Integer TIMEOUT = 60 * 60 * 1000;
 
-	private static final String DEVICES_PATH = "/api/v1/devices";
-	private static final String USER_DEVICES_PATH = "/api/v1/user/devices";
-	private static final String USER_DEVICES_BY_ID_PATH = "/api/v1/user/devices/%s";
-	private static final String USER_DEVICES_REMOTE_CONNECT_PATH = "/api/v1/user/devices/%s/remoteConnect";
+    private static final String DEVICES_PATH = "/api/v1/devices";
+    private static final String USER_DEVICES_PATH = "/api/v1/user/devices";
+    private static final String USER_DEVICES_BY_ID_PATH = "/api/v1/user/devices/%s";
+    private static final String USER_DEVICES_REMOTE_CONNECT_PATH = "/api/v1/user/devices/%s/remoteConnect";
 
-	private Client client;
-	private String serviceURL;
-	private String authToken;
+    private Client client;
+    private String serviceURL;
+    private String authToken;
 
-	public STFClient(String serviceURL, String authToken)
-	{
-		this.serviceURL = serviceURL;
-		this.authToken = authToken;
+    public STFClient(String serviceURL, String authToken) {
+        this.serviceURL = serviceURL;
+        this.authToken = authToken;
 
-		this.client = Client.create();
-		this.client.setConnectTimeout(TIMEOUT);
-		this.client.setReadTimeout(TIMEOUT);
-	}
+        this.client = Client.create();
+        this.client.setConnectTimeout(TIMEOUT);
+        this.client.setReadTimeout(TIMEOUT);
+    }
 
-	public Response<Devices> getAllDevices()
-	{
-		Response<Devices> result = new Response<>(0, null);
-		try
-		{
-			HttpClient client = HttpClientBuilder.create().build();
-			HttpGet request = new HttpGet(serviceURL + DEVICES_PATH);
-			request.addHeader("Authorization", "Bearer " + authToken); // header
-			HttpResponse response = client.execute(request);
+    public Response<Devices> getAllDevices() {
+        Response<Devices> result = new Response<>(0, null);
+        try {
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpGet request = new HttpGet(serviceURL + DEVICES_PATH);
+            request.addHeader("Authorization", "Bearer " + authToken); // header
+            HttpResponse response = client.execute(request);
 
-			int status = response.getStatusLine().getStatusCode();
-			if (status == 200)
-			{
-				ObjectMapper mapper = new ObjectMapper();
-				Devices devices = mapper.readValue(response.getEntity().getContent(), Devices.class); // object
-				result.setStatus(status);
-				result.setObject(devices);
-			}
-		} catch (Exception e)
-		{
-			LOGGER.error(e.getMessage());
-		}
+            int status = response.getStatusLine().getStatusCode();
+            if (status == 200) {
+                ObjectMapper mapper = new ObjectMapper();
+                Devices devices = mapper.readValue(response.getEntity().getContent(), Devices.class); // object
+                result.setStatus(status);
+                result.setObject(devices);
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	public Response<STFDevice> getDevice(String udid)
-	{
-		Response<STFDevice> result = new Response<>(0, null);
-		try
-		{
-			HttpClient client = HttpClientBuilder.create().build();
-			HttpGet request = new HttpGet(serviceURL + DEVICES_PATH + "/" + udid);
-			request.addHeader("Authorization", "Bearer " + authToken); // header
-			HttpResponse response = client.execute(request);
+    public Response<STFDevice> getDevice(String udid) {
+        Response<STFDevice> result = new Response<>(0, null);
+        try {
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpGet request = new HttpGet(serviceURL + DEVICES_PATH + "/" + udid);
+            request.addHeader("Authorization", "Bearer " + authToken); // header
+            HttpResponse response = client.execute(request);
 
-			int status = response.getStatusLine().getStatusCode();
-			if (status == 200)
-			{
-				ObjectMapper mapper = new ObjectMapper();
-				JSONObject json = new JSONObject(IOUtils.toString(response.getEntity().getContent()));
-				STFDevice device = mapper.readValue(json.getString("device"), STFDevice.class);
-				result.setStatus(status);
-				result.setObject(device);
-			}
-		} catch (Exception e)
-		{
-			LOGGER.error(e.getMessage());
-		}
+            int status = response.getStatusLine().getStatusCode();
+            if (status == 200) {
+                ObjectMapper mapper = new ObjectMapper();
+                JSONObject json = new JSONObject(IOUtils.toString(response.getEntity().getContent()));
+                STFDevice device = mapper.readValue(json.getString("device"), STFDevice.class);
+                result.setStatus(status);
+                result.setObject(device);
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	public boolean reserveDevice(String serial, long timeout)
-	{
-		boolean isSuccess = false;
-		try
-		{
-			HttpClient client = HttpClientBuilder.create().build();
-			HttpPost request = new HttpPost(serviceURL + USER_DEVICES_PATH);
-			request.addHeader("Authorization", "Bearer " + authToken); // header
+    public boolean reserveDevice(String serial, long timeout) {
+        boolean isSuccess = false;
+        try {
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpPost request = new HttpPost(serviceURL + USER_DEVICES_PATH);
+            request.addHeader("Authorization", "Bearer " + authToken); // header
 
-			StringEntity entity = new StringEntity("{\"serial\":\"" + serial + "\"}");
-			entity.setContentType("application/json");
-			request.setEntity(entity);
+            StringEntity entity = new StringEntity("{\"serial\":\"" + serial + "\"}");
+            entity.setContentType("application/json");
+            request.setEntity(entity);
 
-			HttpResponse response = client.execute(request);
+            HttpResponse response = client.execute(request);
 
-			isSuccess = response.getStatusLine().getStatusCode() == 200;
+            isSuccess = response.getStatusLine().getStatusCode() == 200;
 
-		} catch (Exception e)
-		{
-			LOGGER.error(e.getMessage(), e);
-		}
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
 
-		return isSuccess;
-	}
+        return isSuccess;
+    }
 
-	public boolean returnDevice(String serial)
-	{
-		boolean isSuccess = false;
-		try
-		{
-			HttpClient client = HttpClientBuilder.create().build();
-			HttpDelete request = new HttpDelete(serviceURL + String.format(USER_DEVICES_BY_ID_PATH, serial));
-			request.addHeader("Authorization", "Bearer " + authToken); // header
-			HttpResponse response = client.execute(request);
+    public boolean returnDevice(String serial) {
+        boolean isSuccess = false;
+        try {
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpDelete request = new HttpDelete(serviceURL + String.format(USER_DEVICES_BY_ID_PATH, serial));
+            request.addHeader("Authorization", "Bearer " + authToken); // header
+            HttpResponse response = client.execute(request);
 
-			isSuccess = response.getStatusLine().getStatusCode() == 200;
+            isSuccess = response.getStatusLine().getStatusCode() == 200;
 
-		} catch (Exception e)
-		{
-			LOGGER.error(e.getMessage(), e);
-		}
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
 
-		return isSuccess;
-	}
+        return isSuccess;
+    }
 
-	public Response<RemoteConnectUserDevice> remoteConnectDevice(String serial)
-	{
-		Response<RemoteConnectUserDevice> result = new Response<>(0, null);
-		try
-		{
-			HttpClient client = HttpClientBuilder.create().build();
-			HttpPost request = new HttpPost(serviceURL + String.format(USER_DEVICES_REMOTE_CONNECT_PATH, serial));
-			request.addHeader("Authorization", "Bearer " + authToken); // header
-			HttpResponse response = client.execute(request);
+    public Response<RemoteConnectUserDevice> remoteConnectDevice(String serial) {
+        Response<RemoteConnectUserDevice> result = new Response<>(0, null);
+        try {
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpPost request = new HttpPost(serviceURL + String.format(USER_DEVICES_REMOTE_CONNECT_PATH, serial));
+            request.addHeader("Authorization", "Bearer " + authToken); // header
+            HttpResponse response = client.execute(request);
 
-			int status = response.getStatusLine().getStatusCode();
-			if (status == 200)
-			{
-				ObjectMapper mapper = new ObjectMapper();
-				RemoteConnectUserDevice devices = mapper.readValue(response.getEntity().getContent(),
-						RemoteConnectUserDevice.class); // object
-				result.setStatus(status);
-				result.setObject(devices);
-			}
-		} catch (Exception e)
-		{
-			LOGGER.error(e.getMessage(), e);
-		}
+            int status = response.getStatusLine().getStatusCode();
+            if (status == 200) {
+                ObjectMapper mapper = new ObjectMapper();
+                RemoteConnectUserDevice devices = mapper.readValue(response.getEntity().getContent(),
+                        RemoteConnectUserDevice.class); // object
+                result.setStatus(status);
+                result.setObject(devices);
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	public boolean remoteDisconnectDevice(String serial)
-	{
-		boolean isSuccess = false;
-		try
-		{
-			HttpClient client = HttpClientBuilder.create().build();
-			HttpPost request = new HttpPost(serviceURL + String.format(USER_DEVICES_REMOTE_CONNECT_PATH, serial));
-			request.addHeader("Authorization", "Bearer " + authToken); // header
-			HttpResponse response = client.execute(request);
+    public boolean remoteDisconnectDevice(String serial) {
+        boolean isSuccess = false;
+        try {
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpPost request = new HttpPost(serviceURL + String.format(USER_DEVICES_REMOTE_CONNECT_PATH, serial));
+            request.addHeader("Authorization", "Bearer " + authToken); // header
+            HttpResponse response = client.execute(request);
 
-			isSuccess = response.getStatusLine().getStatusCode() == 200;
+            isSuccess = response.getStatusLine().getStatusCode() == 200;
 
-		} catch (Exception e)
-		{
-			LOGGER.error(e.getMessage(), e);
-		}
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
 
-		return isSuccess;
-	}
+        return isSuccess;
+    }
 
-	public boolean isConnected() {
-		boolean isSuccess = false;
-		try
-		{
-			HttpClient client = HttpClientBuilder.create().build();
-			HttpGet request = new HttpGet(serviceURL + DEVICES_PATH);
-			request.addHeader("Authorization", "Bearer " + authToken); // header
-			HttpResponse response = client.execute(request);
+    public boolean isConnected() {
+        boolean isSuccess = false;
+        try {
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpGet request = new HttpGet(serviceURL + DEVICES_PATH);
+            request.addHeader("Authorization", "Bearer " + authToken); // header
+            HttpResponse response = client.execute(request);
 
-			isSuccess = response.getStatusLine().getStatusCode() == 200;
+            isSuccess = response.getStatusLine().getStatusCode() == 200;
 
-		} catch (Exception e)
-		{
-			LOGGER.error(e.getMessage(), e);
-		}
-		return isSuccess;
-	}
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return isSuccess;
+    }
 }

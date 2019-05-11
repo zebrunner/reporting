@@ -4,8 +4,7 @@ import com.qaprosoft.zafira.models.db.Filter;
 
 import java.util.List;
 
-public interface FilterMapper
-{
+public interface FilterMapper {
 
     void createFilter(Filter filter);
 

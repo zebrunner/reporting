@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,27 +30,27 @@ import com.qaprosoft.zafira.models.db.Tenancy;
  */
 public class TenancyDataSourceWrapper {
 
-	private DataSource dataSource;
-	
-	private static final String SET_SEARCH_PATH_SQL = "SET search_path TO '%s';";
+    private DataSource dataSource;
 
-	protected TenancyDataSourceWrapper(ComboPooledDataSource ds) {
-		this.dataSource = DataSourceInterceptor.wrapInterceptor(new DataSourceInterceptor(ds) {
-			@Override
-			protected Connection getConnection(ComboPooledDataSource delegate) throws SQLException {
-				Connection connection = delegate.getConnection();
-				String schema = getSchema(delegate);
-				connection.prepareStatement(String.format(SET_SEARCH_PATH_SQL, schema)).execute();
-				return connection;
-			}
-		});
-	}
+    private static final String SET_SEARCH_PATH_SQL = "SET search_path TO '%s';";
 
-	public DataSource getDataSource() {
-		return this.dataSource;
-	}
+    protected TenancyDataSourceWrapper(ComboPooledDataSource ds) {
+        this.dataSource = DataSourceInterceptor.wrapInterceptor(new DataSourceInterceptor(ds) {
+            @Override
+            protected Connection getConnection(ComboPooledDataSource delegate) throws SQLException {
+                Connection connection = delegate.getConnection();
+                String schema = getSchema(delegate);
+                connection.prepareStatement(String.format(SET_SEARCH_PATH_SQL, schema)).execute();
+                return connection;
+            }
+        });
+    }
 
-	private static String getSchema(ComboPooledDataSource delegate) {
-		return delegate.getIdentityToken().equals(Tenancy.getManagementSchema()) ? Tenancy.getManagementSchema() : TenancyContext.getTenantName();
-	}
+    public DataSource getDataSource() {
+        return this.dataSource;
+    }
+
+    private static String getSchema(ComboPooledDataSource delegate) {
+        return delegate.getIdentityToken().equals(Tenancy.getManagementSchema()) ? Tenancy.getManagementSchema() : TenancyContext.getTenantName();
+    }
 }

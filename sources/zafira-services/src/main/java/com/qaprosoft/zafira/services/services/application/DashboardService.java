@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,148 +32,131 @@ import com.qaprosoft.zafira.models.db.Widget;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
-public class DashboardService
-{
-	@Autowired
-	private DashboardMapper dashboardMapper;
+public class DashboardService {
+    @Autowired
+    private DashboardMapper dashboardMapper;
 
-	@Autowired
-	private UserPreferenceService userPreferenceService;
-	
-	@Transactional(rollbackFor = Exception.class)
-	public Dashboard createDashboard(Dashboard dashboard) throws ServiceException
-	{
-		if(getDashboardByTitle(dashboard.getTitle()) != null) {
-			throw new ServiceException("Dashboard title '" + dashboard.getTitle() + "' is currently in use");
-		}
-		dashboard.setEditable(true);
-		dashboardMapper.createDashboard(dashboard);
-		return dashboard;
-	}
-	
-	@Transactional(readOnly = true)
-	public Dashboard getDashboardById(long id) throws ServiceException
-	{
-		Dashboard dashboard = dashboardMapper.getDashboardById(id);
-		if(dashboard == null) {
-			throw new EntityNotExistsException(Dashboard.class ,false);
-		}
-		return dashboard;
-	}
-	
-	@Transactional(readOnly = true)
-	public List<Dashboard> getAllDashboards() throws ServiceException
-	{
-		return dashboardMapper.getAllDashboards();
-	}
-	
-	@Transactional(readOnly = true)
-	public List<Dashboard> getDashboardsByHidden(boolean hidden) throws ServiceException
-	{
-		return dashboardMapper.getDashboardsByHidden(hidden);
-	}
+    @Autowired
+    private UserPreferenceService userPreferenceService;
 
-	@Transactional(readOnly = true)
-	public Dashboard getDashboardByTitle(String title) throws ServiceException
-	{
-		return dashboardMapper.getDashboardByTitle(title);
-	}
+    @Transactional(rollbackFor = Exception.class)
+    public Dashboard createDashboard(Dashboard dashboard) throws ServiceException {
+        if (getDashboardByTitle(dashboard.getTitle()) != null) {
+            throw new ServiceException("Dashboard title '" + dashboard.getTitle() + "' is currently in use");
+        }
+        dashboard.setEditable(true);
+        dashboardMapper.createDashboard(dashboard);
+        return dashboard;
+    }
 
-	@Transactional(readOnly = true)
-	public Dashboard getDefaultDashboardByUserId(long userId) throws ServiceException
-	{
-		return dashboardMapper.getDefaultDashboardByUserId(userId);
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public Dashboard updateDashboard(Dashboard dashboard) throws ServiceException
-	{
-		Dashboard dbDashboard = getDashboardById(dashboard.getId());
-		if(dbDashboard == null) {
-			throw new ServiceException("Dashboard with id '" + dashboard.getId() + "' does not exist");
-		}
-		if (!dbDashboard.isEditable()) {
-			throw new ForbiddenOperationException("Cannot update not editable dashboard");
-		}
-		dashboard.setEditable(dbDashboard.isEditable());
-		dashboardMapper.updateDashboard(dashboard);
-		if (!dbDashboard.getTitle().equals(dashboard.getTitle())) {
-			userPreferenceService.updateDefaultDashboardPreference(dbDashboard.getTitle(), dashboard.getTitle());
-		}
-		return dashboard;
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public void deleteDashboardById(Long id) throws ServiceException
-	{
-		Dashboard dashboard = getDashboardById(id);
-		if (!dashboard.isEditable()) {
-			throw new ForbiddenOperationException("Cannot delete not editable dashboard");
-		}
-		userPreferenceService.updateDefaultDashboardPreference(dashboard.getTitle(), "General");
-		dashboardMapper.deleteDashboardById(id);
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public Widget addDashboardWidget(Long dashboardId, Widget widget) throws ServiceException
-	{
-		dashboardMapper.addDashboardWidget(dashboardId, widget);
-		return widget;
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public Widget updateDashboardWidget(Long dashboardId, Widget widget) throws ServiceException
-	{
-		dashboardMapper.updateDashboardWidget(dashboardId, widget);
-		return widget;
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public void deleteDashboardWidget(Long dashboardId, Long widgetId) throws ServiceException
-	{
-		dashboardMapper.deleteDashboardWidget(dashboardId, widgetId);
-	}
+    @Transactional(readOnly = true)
+    public Dashboard getDashboardById(long id) throws ServiceException {
+        Dashboard dashboard = dashboardMapper.getDashboardById(id);
+        if (dashboard == null) {
+            throw new EntityNotExistsException(Dashboard.class, false);
+        }
+        return dashboard;
+    }
 
-	@Transactional(rollbackFor = Exception.class)
-	public List<Attribute> getAttributesByDashboardId(long dashboardId) 
-	{
-		return dashboardMapper.getAttributesByDashboardId(dashboardId);
-	}
+    @Transactional(readOnly = true)
+    public List<Dashboard> getAllDashboards() throws ServiceException {
+        return dashboardMapper.getAllDashboards();
+    }
 
-	@Transactional(rollbackFor = Exception.class)
-	public Attribute createDashboardAttribute(long dashboardId, Attribute attribute)
-	{
-		dashboardMapper.createDashboardAttribute(dashboardId, attribute);
-		return attribute;
-	}
+    @Transactional(readOnly = true)
+    public List<Dashboard> getDashboardsByHidden(boolean hidden) throws ServiceException {
+        return dashboardMapper.getDashboardsByHidden(hidden);
+    }
 
-	@Transactional(rollbackFor = Exception.class)
-	public Attribute updateAttribute(Attribute attribute)
-	{
-		dashboardMapper.updateAttribute(attribute);
-		return attribute;
-	}
+    @Transactional(readOnly = true)
+    public Dashboard getDashboardByTitle(String title) throws ServiceException {
+        return dashboardMapper.getDashboardByTitle(title);
+    }
 
-	@Transactional(rollbackFor = Exception.class)
-	public void deleteDashboardAttributeById(long attributeId) 
-	{
-		dashboardMapper.deleteDashboardAttributeById(attributeId);
-	}
+    @Transactional(readOnly = true)
+    public Dashboard getDefaultDashboardByUserId(long userId) throws ServiceException {
+        return dashboardMapper.getDefaultDashboardByUserId(userId);
+    }
 
-	@Transactional(rollbackFor = Exception.class)
-	public void setDefaultDashboard(Map<String, Object> extendedUserProfile, String title, String key) throws ServiceException
-	{
-		Dashboard dashboard;
-		if("defaultDashboardId".equals(key)){
-			dashboard = getDefaultDashboardByUserId(((UserType)extendedUserProfile.get("user")).getId());
-		} else {
-			dashboard = getDashboardByTitle(title);
-		}
-		if (dashboard == null) {
-			extendedUserProfile.put(key, null);
-		} else {
-			extendedUserProfile.put(key, dashboard.getId());
-		}
-	}
+    @Transactional(rollbackFor = Exception.class)
+    public Dashboard updateDashboard(Dashboard dashboard) throws ServiceException {
+        Dashboard dbDashboard = getDashboardById(dashboard.getId());
+        if (dbDashboard == null) {
+            throw new ServiceException("Dashboard with id '" + dashboard.getId() + "' does not exist");
+        }
+        if (!dbDashboard.isEditable()) {
+            throw new ForbiddenOperationException("Cannot update not editable dashboard");
+        }
+        dashboard.setEditable(dbDashboard.isEditable());
+        dashboardMapper.updateDashboard(dashboard);
+        if (!dbDashboard.getTitle().equals(dashboard.getTitle())) {
+            userPreferenceService.updateDefaultDashboardPreference(dbDashboard.getTitle(), dashboard.getTitle());
+        }
+        return dashboard;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteDashboardById(Long id) throws ServiceException {
+        Dashboard dashboard = getDashboardById(id);
+        if (!dashboard.isEditable()) {
+            throw new ForbiddenOperationException("Cannot delete not editable dashboard");
+        }
+        userPreferenceService.updateDefaultDashboardPreference(dashboard.getTitle(), "General");
+        dashboardMapper.deleteDashboardById(id);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Widget addDashboardWidget(Long dashboardId, Widget widget) throws ServiceException {
+        dashboardMapper.addDashboardWidget(dashboardId, widget);
+        return widget;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Widget updateDashboardWidget(Long dashboardId, Widget widget) throws ServiceException {
+        dashboardMapper.updateDashboardWidget(dashboardId, widget);
+        return widget;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteDashboardWidget(Long dashboardId, Long widgetId) throws ServiceException {
+        dashboardMapper.deleteDashboardWidget(dashboardId, widgetId);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public List<Attribute> getAttributesByDashboardId(long dashboardId) {
+        return dashboardMapper.getAttributesByDashboardId(dashboardId);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Attribute createDashboardAttribute(long dashboardId, Attribute attribute) {
+        dashboardMapper.createDashboardAttribute(dashboardId, attribute);
+        return attribute;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Attribute updateAttribute(Attribute attribute) {
+        dashboardMapper.updateAttribute(attribute);
+        return attribute;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteDashboardAttributeById(long attributeId) {
+        dashboardMapper.deleteDashboardAttributeById(attributeId);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void setDefaultDashboard(Map<String, Object> extendedUserProfile, String title, String key) throws ServiceException {
+        Dashboard dashboard;
+        if ("defaultDashboardId".equals(key)) {
+            dashboard = getDefaultDashboardByUserId(((UserType) extendedUserProfile.get("user")).getId());
+        } else {
+            dashboard = getDashboardByTitle(title);
+        }
+        if (dashboard == null) {
+            extendedUserProfile.put(key, null);
+        } else {
+            extendedUserProfile.put(key, dashboard.getId());
+        }
+    }
 
 }
