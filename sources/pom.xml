@@ -127,7 +127,6 @@
         <module>zafira-services</module>
         <module>zafira-ws</module>
         <module>zafira-batch-services</module>
-        <module>zafira-tests</module>
     </modules>
     <dependencyManagement>
         <dependencies>
