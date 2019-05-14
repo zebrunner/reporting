@@ -110,6 +110,15 @@ public class SettingsAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
+    @ApiOperation(value = "Update setting", nickname = "setting", httpMethod = "PUT", response = Setting.class)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping
+    public Setting updateSetting(@RequestBody Setting setting) throws Exception {
+        return settingsService.updateSetting(setting);
+    }
+
+    @ResponseStatusDetails
     @ApiOperation(value = "Update settings", nickname = "settings", httpMethod = "PUT", response = ConnectedToolType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_INTEGRATIONS')")
