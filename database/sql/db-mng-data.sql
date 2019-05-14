@@ -903,8 +903,7 @@ SELECT
       sum( SKIPPED ) AS "SKIPPED",
       sum( KNOWN_ISSUE ) AS "KNOWN ISSUE",
       sum( ABORTED ) AS "ABORTED",
-      sum( QUEUED ) AS "QUEUED",
-      sum( TOTAL ) AS "TOTAL"
+      sum( QUEUED ) AS "QUEUED"
   FROM ${VIEW}
   ${WHERE_MULTIPLE_CLAUSE}
   GROUP BY "CREATED_AT"
@@ -1067,8 +1066,7 @@ SELECT
         "SKIPPED",
         "KNOWN ISSUE",
         "ABORTED",
-        "QUEUED",
-        "TOTAL"
+        "QUEUED"
     ],
     "color": [
         "#61c8b3",
@@ -1076,8 +1074,7 @@ SELECT
         "#fddb7a",
         "#9f5487",
         "#b5b5b5",
-        "#6dbbe7",
-        "#b5b5b5"
+        "#6dbbe7"
     ],
     "xAxis": {
         "type": "category",
@@ -1085,22 +1082,6 @@ SELECT
     },
     "yAxis": {},
     "series": [
-        {
-            "type": "line",
-            "smooth": false,
-            "stack": "Status",
-            "itemStyle": {
-                "normal": {
-                    "areaStyle": {
-                        "opacity": 0.8,
-                        "type": "default"
-                    }
-                }
-            },
-            "lineStyle": {
-                "width": 1
-            }
-        },
         {
             "type": "line",
             "smooth": false,
