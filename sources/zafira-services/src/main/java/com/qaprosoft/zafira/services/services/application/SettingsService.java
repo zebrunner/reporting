@@ -139,9 +139,10 @@ public class SettingsService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void updateSetting(Setting setting) throws ServiceException {
+    public Setting updateSetting(Setting setting) throws ServiceException {
         setting.setValue(StringUtils.isBlank(setting.getValue() != null ? setting.getValue().trim() : null) ? null : setting.getValue());
         settingsMapper.updateSetting(setting);
+        return setting;
     }
 
     @Transactional(rollbackFor = Exception.class)
