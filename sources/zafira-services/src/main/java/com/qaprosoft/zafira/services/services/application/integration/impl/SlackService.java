@@ -116,7 +116,7 @@ public class SlackService extends AbstractIntegration<SlackContext> {
             String attachmentColor = determineColor(tr);
             String mainMessage = customizedMessage + String.format(INFO_PATTERN, buildRunInfo(tr), zafiraUrl, jenkinsUrl);
             String resultsMessage = String.format(RESULTS_PATTERN, tr.getPassed(), tr.getFailed(), tr.getFailedAsKnown(), tr.getSkipped());
-            SlackAttachment attachment = generateSlackAttachment(mainMessage, resultsMessage, attachmentColor, tr.getComments());
+            SlackAttachment attachment = generateSlackAttachment(mainMessage, resultsMessage, attachmentColor);
             Arrays.stream(channels.split(",")).forEach(channel -> {
                 try {
                     context().setSlack(context().getSlack().sendToChannel(channel));
@@ -128,16 +128,13 @@ public class SlackService extends AbstractIntegration<SlackContext> {
         }
     }
 
-    private SlackAttachment generateSlackAttachment(String mainMessage, String messageResults, String attachmentColor, String comments) {
+    private SlackAttachment generateSlackAttachment(String mainMessage, String messageResults, String attachmentColor) {
         SlackAttachment slackAttachment = new SlackAttachment("");
         slackAttachment
                 .preText(mainMessage)
                 .color(attachmentColor)
                 .addField(new Field("Test Results", messageResults, false))
                 .fallback(mainMessage + "\n" + messageResults);
-        if (comments != null) {
-            slackAttachment.addField(new Field("Comments", comments, false));
-        }
         return slackAttachment;
     }
 
