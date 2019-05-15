@@ -124,10 +124,20 @@
 			    DASHBOARDS
 			SET
 				TITLE = #{title},
-                HIDDEN = #{hidden},
-				POSITION = #{position}
+                HIDDEN = #{hidden}
 			WHERE
 			    ID = #{id}
+		]]>
+	</update>
+
+	<update parameterType="map" id="updateDashboardOrder">
+		<![CDATA[
+			UPDATE
+				DASHBOARDS
+			SET
+				POSITION = #{position}
+			WHERE
+				ID = #{id}
 		]]>
 	</update>
 

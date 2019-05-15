@@ -96,6 +96,14 @@ public class DashboardService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public Map<Long, Integer> updateDashboardsOrder(Map<Long, Integer> order) {
+        order.forEach((id, position) -> {
+            dashboardMapper.updateDashboardOrder(id, position);
+        });
+        return order;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public void deleteDashboardById(Long id) throws ServiceException {
         Dashboard dashboard = getDashboardById(id);
         if (!dashboard.isEditable()) {
