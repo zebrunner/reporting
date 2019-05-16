@@ -46,6 +46,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Api("Dashboards API")
@@ -120,9 +121,18 @@ public class DashboardsAPIController extends AbstractController {
     @ApiOperation(value = "Update dashboard", nickname = "updateDashboard", httpMethod = "PUT", response = Dashboard.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
-    @PutMapping()
+    @PutMapping
     public DashboardType updateDashboard(@Valid @RequestBody DashboardType dashboard) throws ServiceException {
         return mapper.map(dashboardService.updateDashboard(mapper.map(dashboard, Dashboard.class)), DashboardType.class);
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Update dashboards order", nickname = "updateDashboardsOrder", httpMethod = "PUT", response = Map.class)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
+    @PutMapping("/order")
+    public Map<Long, Integer> updateDashboardsOrder(@RequestBody Map<Long, Integer> order) throws ServiceException {
+        return dashboardService.updateDashboardsOrder(order);
     }
 
     @ResponseStatusDetails

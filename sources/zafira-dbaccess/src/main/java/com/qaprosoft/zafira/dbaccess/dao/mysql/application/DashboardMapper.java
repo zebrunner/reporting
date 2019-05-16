@@ -21,6 +21,7 @@ import com.qaprosoft.zafira.models.db.Widget;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface DashboardMapper {
     void createDashboard(Dashboard dashboard);
@@ -34,6 +35,8 @@ public interface DashboardMapper {
     List<Dashboard> getAllDashboards();
 
     void updateDashboard(Dashboard dashboard);
+
+    void updateDashboardOrder(@Param("id") long id, @Param("position") int position);
 
     void deleteDashboardById(long id);
 

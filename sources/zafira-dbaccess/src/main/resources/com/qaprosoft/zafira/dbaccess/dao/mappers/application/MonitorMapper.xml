@@ -128,33 +128,15 @@
 
 	<select id="searchMonitors" resultMap="MonitorResultMap">
 		<include refid="getMonitors" />
-		<trim prefix="WHERE" prefixOverrides="AND |OR ">
-			<if test="null != name">
-                <![CDATA[
-	               AND LOWER(M.NAME) LIKE LOWER(CONCAT('%', #{name}, '%'))
-	            ]]>
-			</if>
-			<if test="null != url">
-                <![CDATA[
-	               AND LOWER(M.URL) LIKE LOWER(CONCAT('%', #{url}, '%'))
-	            ]]>
-			</if>
-			<if test="null != environment">
-                <![CDATA[
-	               AND LOWER(M.ENV) = LOWER(#{environment})
-	            ]]>
-			</if>
-			<if test="null != comment">
-                <![CDATA[
-	               AND LOWER(M.COMMENT) LIKE LOWER(CONCAT('%', #{comment}, '%'))
-	            ]]>
-			</if>
-			<if test="null != enabled">
-                <![CDATA[
-	               AND M.ENABLED = #{enabled}
-	            ]]>
-			</if>
-		</trim>
+		<if test="null != query">
+			<![CDATA[
+				WHERE
+					LOWER(M.NAME) LIKE LOWER(CONCAT('%', #{query}, '%'))
+					OR LOWER(M.URL) LIKE LOWER(CONCAT('%', #{query}, '%'))
+					OR LOWER(M.ENV) LIKE LOWER(CONCAT('%', #{query}, '%'))
+					OR LOWER(M.COMMENT) LIKE LOWER(CONCAT('%', #{query}, '%'))
+			]]>
+		</if>
 		<if test="sortOrder.toString() == 'ASC'">
             <![CDATA[
 				ORDER BY M.SUCCESS, M.NAME ASC
@@ -162,7 +144,7 @@
 		</if>
 		<if test="sortOrder.toString() == 'DESC'">
             <![CDATA[
-				ORDER BY M.SUCCSESS, M.NAME DESC
+				ORDER BY M.SUCCESS, M.NAME DESC
 			]]>
 		</if>
         <![CDATA[
@@ -178,33 +160,15 @@
 		FROM
 			MONITORS M
 		]]>
-		<trim prefix="WHERE" prefixOverrides="AND |OR ">
-			<if test="null != name">
-                <![CDATA[
-	               AND LOWER(M.NAME) LIKE LOWER(CONCAT('%', #{name}, '%'))
-	            ]]>
-			</if>
-			<if test="null != url">
-                <![CDATA[
-	               AND LOWER(M.URL) LIKE LOWER(CONCAT('%', #{url}, '%'))
-	            ]]>
-			</if>
-			<if test="null != environment">
-                <![CDATA[
-	               AND LOWER(M.ENV) = LOWER(#{environment})
-	            ]]>
-			</if>
-			<if test="null != comment">
-                <![CDATA[
-	               AND LOWER(M.COMMENT) LIKE LOWER(CONCAT('%', #{comment}, '%'))
-	            ]]>
-			</if>
-			<if test="null != enabled">
-                <![CDATA[
-	               AND M.ENABLED = #{enabled}
-	            ]]>
-			</if>
-		</trim>
+		<if test="null != query">
+			<![CDATA[
+				WHERE
+					LOWER(M.NAME) LIKE LOWER(CONCAT('%', #{query}, '%'))
+					OR LOWER(M.URL) LIKE LOWER(CONCAT('%', #{query}, '%'))
+					OR LOWER(M.ENV) LIKE LOWER(CONCAT('%', #{query}, '%'))
+					OR LOWER(M.COMMENT) LIKE LOWER(CONCAT('%', #{query}, '%'))
+			]]>
+		</if>
 	</select>
 
 	<select id="getLastMonitorStatus"
