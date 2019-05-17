@@ -370,6 +370,14 @@
                NV.TEST_RUN_ID
         FROM
              NIGHTLY_VIEW NV
+        GROUP BY
+            NV.UPSTREAM_JOB_ID,
+            NV.UPSTREAM_JOB_BUILD_NUMBER,
+            NV.JOB_NAME,
+            NV.JOB_URL,
+            NV.BUILD_NUMBER,
+            NV.TEST_SUITE_NAME,
+            NV.TEST_RUN_ID
         ]]>
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<![CDATA[ AND NV.UPSTREAM_JOB_ID = #{upstreamJobId}
