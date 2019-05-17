@@ -9,7 +9,7 @@
 		<![CDATA[
 			INSERT INTO WORK_ITEMS (JIRA_ID, HASH_CODE, 
 		]]>
-		<if test="type != user">
+		<if test="null != type">
 			TYPE,
 		</if>
 		<if test="null != user">
