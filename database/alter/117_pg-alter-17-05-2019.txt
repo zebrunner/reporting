@@ -2,10 +2,10 @@ SET SCHEMA 'zafira';
 
 select check_version(117);
 
-delete from test_work_items twi1 using test_work_items twi2
-where twi1.id > twi2.id
-  and twi1.test_id = twi2.test_id
-  and twi1.work_item_id = twi2.work_item_id;
+DELETE FROM TEST_WORK_ITEMS TWI1 USING TEST_WORK_ITEMS TWI2
+WHERE TWI1.ID > TWI2.ID
+  AND TWI1.TEST_ID = TWI2.TEST_ID
+  AND TWI1.WORK_ITEM_ID = TWI2.WORK_ITEM_ID;
 CREATE UNIQUE INDEX TEST_WORK_ITEM_TEST_ID_WORK_ITEM_ID_UNIQUE ON TEST_WORK_ITEMS (TEST_ID, WORK_ITEM_ID);
 
 select add_version(117);
