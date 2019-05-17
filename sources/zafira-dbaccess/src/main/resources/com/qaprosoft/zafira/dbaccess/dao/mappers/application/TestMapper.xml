@@ -36,6 +36,7 @@
 				#{test.id},
 			    #{workItem.id}
 			)
+			ON CONFLICT DO NOTHING
 		]]>
 	</insert>
 

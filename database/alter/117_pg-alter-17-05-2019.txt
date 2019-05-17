@@ -1,0 +1,11 @@
+SET SCHEMA 'zafira';
+
+select check_version(117);
+
+delete from test_work_items twi1 using test_work_items twi2
+where twi1.id > twi2.id
+  and twi1.test_id = twi2.test_id
+  and twi1.work_item_id = twi2.work_item_id;
+CREATE UNIQUE INDEX TEST_WORK_ITEM_TEST_ID_WORK_ITEM_ID_UNIQUE ON TEST_WORK_ITEMS (TEST_ID, WORK_ITEM_ID);
+
+select add_version(117);
