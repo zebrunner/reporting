@@ -698,7 +698,7 @@ public class TestRunService {
                 testRunStatistics -> !status.equals(IN_PROGRESS) && (isRerun || testRunStatistics.getInProgress() > 0)
                         ? updateStatistics(testRunStatistics, IN_PROGRESS, -increment)
                         : testRunStatistics);
-        if (trs != null && trs.getQueued() > 0 && status.equals(IN_PROGRESS)) {
+        if (trs != null && trs.getQueued() > 0 && (status.equals(IN_PROGRESS) || status.equals(ABORTED))) {
             updateStatisticsSafe(testRunId, testRunStatistics -> {
                 testRunStatistics.setQueued(testRunStatistics.getQueued() - 1);
                 return testRunStatistics;
