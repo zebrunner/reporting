@@ -271,7 +271,7 @@ public class TestRunService {
                 List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
                 TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
                 for (Test test : tests) {
-                    if (test.getStatus() != Status.QUEUED && test.getStatus() != ABORTED) {
+                    if (test.getStatus() != Status.QUEUED) {
                         test.setId(null);
                         test.setTestRunId(queuedTestRun.getId());
                         test.setStatus(Status.QUEUED);
