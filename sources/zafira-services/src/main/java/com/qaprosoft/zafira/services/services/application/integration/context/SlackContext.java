@@ -25,7 +25,7 @@ import static com.qaprosoft.zafira.services.services.application.integration.con
 
 public class SlackContext extends AbstractContext {
 
-    private Slack slack;
+    private final Slack slack;
 
     public SlackContext(Map<Setting.SettingType, String> settings, Map<SlackAdditionalProperty, String> additionalSettings) {
         super(settings, settings.get(Setting.SettingType.SLACK_ENABLED));
@@ -34,9 +34,9 @@ public class SlackContext extends AbstractContext {
         String author = additionalSettings.get(AUTHOR);
         String picPath = additionalSettings.get(IMAGE);
 
-        this.slack = new Slack(webHook);
-        this.slack = this.slack.displayName(author);
-        this.slack = this.slack.icon(picPath);
+        this.slack = new Slack(webHook)
+                .displayName(author)
+                .icon(picPath);
     }
 
     public enum SlackAdditionalProperty implements AdditionalProperty {
@@ -48,7 +48,4 @@ public class SlackContext extends AbstractContext {
         return slack;
     }
 
-    public void setSlack(Slack slack) {
-        this.slack = slack;
-    }
 }

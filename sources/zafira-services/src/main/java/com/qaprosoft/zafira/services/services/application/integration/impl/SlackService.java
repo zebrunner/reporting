@@ -117,14 +117,16 @@ public class SlackService extends AbstractIntegration<SlackContext> {
             String mainMessage = customizedMessage + String.format(INFO_PATTERN, buildRunInfo(tr), zafiraUrl, jenkinsUrl);
             String resultsMessage = String.format(RESULTS_PATTERN, tr.getPassed(), tr.getFailed(), tr.getFailedAsKnown(), tr.getSkipped());
             SlackAttachment attachment = generateSlackAttachment(mainMessage, resultsMessage, attachmentColor, tr.getComments());
-            Arrays.stream(channels.split(",")).forEach(channel -> {
-                try {
-                    context().setSlack(context().getSlack().sendToChannel(channel));
-                    context().getSlack().push(attachment);
-                } catch (IOException e) {
-                    LOGGER.error("Unable to push Slack notification");
-                }
-            });
+            synchronized (context().getSlack()) {
+                Arrays.stream(channels.split(",")).forEach(channel -> {
+                    try {
+                        context().getSlack().sendToChannel(channel);
+                        context().getSlack().push(attachment);
+                    } catch (IOException e) {
+                        LOGGER.error("Unable to push Slack notification");
+                    }
+                });
+            }
         }
     }
 
