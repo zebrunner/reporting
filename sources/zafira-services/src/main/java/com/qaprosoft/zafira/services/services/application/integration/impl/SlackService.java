@@ -17,12 +17,11 @@ package com.qaprosoft.zafira.services.services.application.integration.impl;
 
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_WEB_HOOK_URL;
 import static com.qaprosoft.zafira.models.db.Setting.Tool.SLACK;
-import static com.qaprosoft.zafira.services.services.application.integration.context.SlackContext.SlackAdditionalProperty.AUTHOR;
-import static com.qaprosoft.zafira.services.services.application.integration.context.SlackContext.SlackAdditionalProperty.IMAGE;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
@@ -74,19 +73,11 @@ public class SlackService extends AbstractIntegration<SlackContext> {
     }
 
     @Override
-    public Map<SlackContext.SlackAdditionalProperty, String> additionalContextProperties() {
-        Map<SlackContext.SlackAdditionalProperty, String> additionalProperties = new HashMap<>();
-        additionalProperties.put(AUTHOR, author);
-        additionalProperties.put(IMAGE, image);
-        return additionalProperties;
-    }
-
-    @Override
     public boolean isConnected() {
         return mapContext(context -> {
             boolean result = false;
             try {
-                context.getSlack().push(new SlackMessage(StringUtils.EMPTY));
+                push(null, new SlackMessage(StringUtils.EMPTY));
                 result = true;
             } catch (IOException e) {
                 if (((HttpResponseException) e).getStatusCode() != HttpStatusCodes.STATUS_CODE_NOT_FOUND) {
@@ -117,16 +108,13 @@ public class SlackService extends AbstractIntegration<SlackContext> {
             String mainMessage = customizedMessage + String.format(INFO_PATTERN, buildRunInfo(tr), zafiraUrl, jenkinsUrl);
             String resultsMessage = String.format(RESULTS_PATTERN, tr.getPassed(), tr.getFailed(), tr.getFailedAsKnown(), tr.getSkipped());
             SlackAttachment attachment = generateSlackAttachment(mainMessage, resultsMessage, attachmentColor, tr.getComments());
-            synchronized (context().getSlack()) {
-                Arrays.stream(channels.split(",")).forEach(channel -> {
-                    try {
-                        context().getSlack().sendToChannel(channel);
-                        context().getSlack().push(attachment);
-                    } catch (IOException e) {
-                        LOGGER.error("Unable to push Slack notification");
-                    }
-                });
-            }
+            Arrays.stream(channels.split(",")).forEach(channel -> {
+                try {
+                    push(channel, attachment);
+                } catch (IOException e) {
+                    LOGGER.error("Unable to push Slack notification");
+                }
+            });
         }
     }
 
@@ -208,6 +196,19 @@ public class SlackService extends AbstractIntegration<SlackContext> {
             return "danger";
         }
         return "warning";
+    }
+
+    private void push(String channel, SlackAttachment slackAttachment) throws IOException {
+        String webhookUrl = context().getWebhookUrl();
+        context().getSlackService()
+                 .push(webhookUrl, new SlackMessage(), author, image, channel, null, Collections.singletonList(slackAttachment));
+    }
+
+    private void push(String channel, SlackMessage message) throws IOException {
+        String webhookUrl = context().getWebhookUrl();
+        context().getSlackService()
+                 .push(webhookUrl, message, author, image, channel, null, new ArrayList<>());
+
     }
 
 }
