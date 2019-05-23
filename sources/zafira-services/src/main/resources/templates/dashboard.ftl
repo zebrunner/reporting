@@ -3,7 +3,9 @@
     <table>
         <tr>
             <td>
-                <p>${text}</p>
+                <p>
+                    <pre>${text}</pre>
+                </p>
             </td>
         </tr>
         <#if attachments??>
