@@ -18,20 +18,29 @@ package com.qaprosoft.zafira.services.services.application.integration.impl;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import com.qaprosoft.zafira.services.services.application.integration.context.SeleniumContext;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PreDestroy;
+import java.io.IOException;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.SELENIUM;
 
 @Component
 public class SeleniumService extends AbstractIntegration<SeleniumContext> {
 
-    private static final HttpClient HTTP_CLIENT;
+    private static final CloseableHttpClient HTTP_CLIENT;
+    private static final RequestConfig REQUEST_CONFIG;
 
     static {
+        REQUEST_CONFIG = RequestConfig.custom()
+                                      .setConnectTimeout(10)
+                                      .setConnectionRequestTimeout(10)
+                                      .build();
         HTTP_CLIENT = HttpClientBuilder.create().build();
     }
 
@@ -42,14 +51,41 @@ public class SeleniumService extends AbstractIntegration<SeleniumContext> {
     @Override
     public boolean isConnected() {
         boolean result;
+        HttpGet request = null;
+        CloseableHttpResponse response = null;
         try {
             String url = context().getUrl();
-            HttpResponse response = HTTP_CLIENT.execute(new HttpGet(url));
+            request = new HttpGet(url);
+            request.setConfig(REQUEST_CONFIG);
+            response = HTTP_CLIENT.execute(request);
+
             result = response.getStatusLine().getStatusCode() == 200;
         } catch (Exception e) {
             result = false;
+        } finally {
+            if (request != null) {
+                request.releaseConnection();
+            }
+            if(response != null) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+            }
         }
         return result;
+    }
+
+    @PreDestroy
+    public void close() {
+        try {
+            if (HTTP_CLIENT != null) {
+                HTTP_CLIENT.close();
+            }
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 
 }
