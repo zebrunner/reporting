@@ -33,13 +33,14 @@ import static com.qaprosoft.zafira.models.db.Setting.Tool.SELENIUM;
 @Component
 public class SeleniumService extends AbstractIntegration<SeleniumContext> {
 
+    private static final int TIMEOUT = 5000;
     private static final CloseableHttpClient HTTP_CLIENT;
     private static final RequestConfig REQUEST_CONFIG;
 
     static {
         REQUEST_CONFIG = RequestConfig.custom()
-                                      .setConnectTimeout(10000)
-                                      .setConnectionRequestTimeout(10000)
+                                      .setConnectTimeout(TIMEOUT)
+                                      .setConnectionRequestTimeout(TIMEOUT)
                                       .build();
         HTTP_CLIENT = HttpClientBuilder.create().build();
     }
@@ -55,8 +56,7 @@ public class SeleniumService extends AbstractIntegration<SeleniumContext> {
         CloseableHttpResponse response = null;
         try {
             String url = context().getUrl();
-            request = new HttpGet(url);
-            request.setConfig(REQUEST_CONFIG);
+            request = buildGetRequest(url);
             response = HTTP_CLIENT.execute(request);
 
             result = response.getStatusLine().getStatusCode() == 200;
@@ -75,6 +75,12 @@ public class SeleniumService extends AbstractIntegration<SeleniumContext> {
             }
         }
         return result;
+    }
+
+    private static HttpGet buildGetRequest(String url) {
+        HttpGet request = new HttpGet(url);
+        request.setConfig(REQUEST_CONFIG);
+        return request;
     }
 
     @PreDestroy
