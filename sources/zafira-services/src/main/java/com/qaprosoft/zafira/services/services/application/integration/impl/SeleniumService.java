@@ -38,8 +38,8 @@ public class SeleniumService extends AbstractIntegration<SeleniumContext> {
 
     static {
         REQUEST_CONFIG = RequestConfig.custom()
-                                      .setConnectTimeout(10)
-                                      .setConnectionRequestTimeout(10)
+                                      .setConnectTimeout(10000)
+                                      .setConnectionRequestTimeout(10000)
                                       .build();
         HTTP_CLIENT = HttpClientBuilder.create().build();
     }
