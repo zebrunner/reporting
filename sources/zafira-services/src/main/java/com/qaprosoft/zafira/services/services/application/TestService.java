@@ -102,7 +102,8 @@ public class TestService {
             } else {
                 updateTest(test);
             }
-            saveTags(test.getId(), test.getTags());
+            Set<Tag> tags = saveTags(test.getId(), test.getTags());
+            test.setTags(tags);
             testRunService.updateStatistics(test.getTestRunId(), test.getStatus());
         }
         // Existing test
@@ -114,7 +115,8 @@ public class TestService {
             test.setKnownIssue(false);
             test.setBlocker(false);
             updateTest(test);
-            saveTags(test.getId(), test.getTags());
+            Set<Tag> tags = saveTags(test.getId(), test.getTags());
+            test.setTags(tags);
             workItemService.deleteKnownIssuesByTestId(test.getId());
             testArtifactService.deleteTestArtifactsByTestId(test.getId());
         }
@@ -134,7 +136,9 @@ public class TestService {
         existingTest.setStatus(test.getStatus());
         existingTest.setRetry(test.getRetry());
         existingTest.setTestConfig(testConfigService.createTestConfigForTest(test, configXML));
-        saveTags(test.getId(), test.getTags());
+
+        Set<Tag> tags = saveTags(test.getId(), test.getTags());
+        existingTest.setTags(tags);
 
         // Wrap all additional test finalization logic to make sure status saved
         try {
@@ -484,7 +488,7 @@ public class TestService {
      * @throws ServiceException
      */
     @Transactional(rollbackFor = Exception.class)
-    public void saveTags(Long testId, Set<Tag> tags) throws ServiceException {
+    public Set<Tag> saveTags(Long testId, Set<Tag> tags) throws ServiceException {
         if (CollectionUtils.isNotEmpty(tags)) {
             tags = tagService.createTags(tags);
             Set<Tag> tagsToAdd = tags.stream().filter(tag -> tag.getId() != null && tag.getId() != 0).collect(Collectors.toSet());
@@ -493,6 +497,7 @@ public class TestService {
                 testMapper.addTags(testId, tagsToAdd);
             }
         }
+        return getNotNullTestById(testId).getTags();
     }
 
     @Transactional(rollbackFor = Exception.class)

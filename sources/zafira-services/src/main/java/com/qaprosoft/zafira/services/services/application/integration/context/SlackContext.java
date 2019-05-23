@@ -16,39 +16,28 @@
 package com.qaprosoft.zafira.services.services.application.integration.context;
 
 import com.qaprosoft.zafira.models.db.Setting;
-import in.ashwanthkumar.slack.webhook.Slack;
+import in.ashwanthkumar.slack.webhook.service.SlackService;
 
 import java.util.Map;
 
-import static com.qaprosoft.zafira.services.services.application.integration.context.SlackContext.SlackAdditionalProperty.AUTHOR;
-import static com.qaprosoft.zafira.services.services.application.integration.context.SlackContext.SlackAdditionalProperty.IMAGE;
-
 public class SlackContext extends AbstractContext {
 
-    private Slack slack;
+    private final String webhookUrl;
+    private final SlackService slackService;
 
-    public SlackContext(Map<Setting.SettingType, String> settings, Map<SlackAdditionalProperty, String> additionalSettings) {
+    public SlackContext(Map<Setting.SettingType, String> settings) {
         super(settings, settings.get(Setting.SettingType.SLACK_ENABLED));
 
-        String webHook = settings.get(Setting.SettingType.SLACK_WEB_HOOK_URL);
-        String author = additionalSettings.get(AUTHOR);
-        String picPath = additionalSettings.get(IMAGE);
-
-        this.slack = new Slack(webHook);
-        this.slack = this.slack.displayName(author);
-        this.slack = this.slack.icon(picPath);
+        this.webhookUrl = settings.get(Setting.SettingType.SLACK_WEB_HOOK_URL);
+        this.slackService = new SlackService();
     }
 
-    public enum SlackAdditionalProperty implements AdditionalProperty {
-        AUTHOR,
-        IMAGE
+    public String getWebhookUrl() {
+        return webhookUrl;
     }
 
-    public Slack getSlack() {
-        return slack;
+    public SlackService getSlackService() {
+        return slackService;
     }
 
-    public void setSlack(Slack slack) {
-        this.slack = slack;
-    }
 }
