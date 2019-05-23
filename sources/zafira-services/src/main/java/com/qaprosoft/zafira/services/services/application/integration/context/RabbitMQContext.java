@@ -28,7 +28,7 @@ import java.util.concurrent.TimeoutException;
 
 public class RabbitMQContext extends AbstractContext {
 
-    private CachingConnectionFactory cachingConnectionFactory;
+    private final CachingConnectionFactory cachingConnectionFactory;
     private Connection connection;
     private CompletableFuture<Connection> connectionCompletableFuture;
 
@@ -58,14 +58,6 @@ public class RabbitMQContext extends AbstractContext {
                 // connection = cachingConnectionFactory.createConnection();
             }
         });
-    }
-
-    public CachingConnectionFactory getCachingConnectionFactory() {
-        return cachingConnectionFactory;
-    }
-
-    public void setCachingConnectionFactory(CachingConnectionFactory cachingConnectionFactory) {
-        this.cachingConnectionFactory = cachingConnectionFactory;
     }
 
     /**

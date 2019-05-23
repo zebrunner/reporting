@@ -1,0 +1,11 @@
+SET SCHEMA 'zafira';
+
+select check_version(117);
+
+INSERT INTO SETTINGS (NAME, VALUE, TOOL) VALUES
+    ('SELENIUM_URL', '', 'SELENIUM'),
+    ('SELENIUM_USER', '', 'SELENIUM'),
+    ('SELENIUM_PASSWORD', '', 'SELENIUM'),
+    ('SELENIUM_ENABLED', false, 'SELENIUM');
+
+select add_version(117);
