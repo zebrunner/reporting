@@ -34,6 +34,7 @@ import com.qaprosoft.zafira.services.services.management.TenancyService;
 import com.qaprosoft.zafira.services.util.TenancyInitial;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 @DependsOn("integrationService")
@@ -74,7 +75,7 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
         try {
             cryptoService.init();
             for (Setting setting : settingsService.getAllSettings()) {
-                if (setting.isValueForEncrypting() && !setting.isEncrypted()) {
+                if (!StringUtils.isEmpty(setting.getValue()) && setting.isValueForEncrypting() && !setting.isEncrypted()) {
                     setting.setValue(cryptoService.encrypt(setting.getValue()));
                     setting.setEncrypted(true);
                     settingsService.updateSetting(setting);

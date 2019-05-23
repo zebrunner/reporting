@@ -71,6 +71,11 @@ public class Setting extends AbstractEntity {
                 SettingType.LDAP_MANAGER_USER,
                 SettingType.LDAP_MANAGER_PASSWORD,
                 SettingType.LDAP_ENABLED),
+        SELENIUM(
+                SettingType.SELENIUM_URL,
+                SettingType.SELENIUM_USER,
+                SettingType.SELENIUM_PASSWORD,
+                SettingType.SELENIUM_ENABLED),
         CRYPTO(1, SettingType.CRYPTO_KEY_TYPE, SettingType.CRYPTO_ALGORITHM, SettingType.CRYPTO_KEY_SIZE, SettingType.KEY);
 
         private final List<SettingType> toolSettings;
@@ -152,6 +157,10 @@ public class Setting extends AbstractEntity {
         RABBITMQ_USER,
         RABBITMQ_PASSWORD(true),
         RABBITMQ_ENABLED,
+        SELENIUM_URL,
+        SELENIUM_USER(false, false),
+        SELENIUM_PASSWORD(false, true),
+        SELENIUM_ENABLED,
         COMPANY_LOGO_URL;
 
         private final Boolean required;
