@@ -63,7 +63,7 @@ services:
       - "redis"
     restart: always
   zafira:
-    image: qaprosoft/zafira:latest
+    image: qaprosoft/zafira:4.0.56
     ports:
       - 8080:8080
     env_file:
@@ -79,7 +79,7 @@ services:
       - "redis"
     restart: always
   zafira-ui:
-    image: qaprosoft/zafira-ui:latest
+    image: qaprosoft/zafira-ui:1.8
     ports:
       - 80:80
     environment:
