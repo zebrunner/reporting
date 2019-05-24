@@ -382,8 +382,8 @@
 				<![CDATA[ AND LOWER(NV.OWNER_USERNAME) LIKE LOWER(CONCAT('%', #{owner}, '%'))]]>
 			</if>
 
-			<if test="null != hashcode and hashcode != ''">
-				<![CDATA[ AND LOWER(NV.MESSAGE_HASHCODE) LIKE LOWER(CONCAT('%', 'hashcode', '%')) ]]>
+			<if test="null != hashcode">
+				<![CDATA[ AND NV.MESSAGE_HASHCODE = #{hashcode}]]>
 			</if>
 			<if test="null != failurePercent">
 				<![CDATA[ AND (100.0 * (NV.FAILED + NV.SKIPPED + NV.ABORTED + NV.QUEUED)/NV.TOTAL)::integer > #{failurePercent} ]]>
