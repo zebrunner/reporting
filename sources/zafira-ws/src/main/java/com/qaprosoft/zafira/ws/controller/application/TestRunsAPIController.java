@@ -264,6 +264,9 @@ public class TestRunsAPIController extends AbstractController {
             @RequestParam(value = "rerunFailures", defaultValue = "true", required = false) Boolean rerunFailures,
             @RequestBody JobSearchCriteria sc) throws ServiceException {
 
+        if (rerunFailures && sc.getFailurePercent() == null) {
+            sc.setFailurePercent(0);
+        }
         List<TestRun> testRuns = testRunService.getTestRunsForSmartRerun(sc);
         List<TestRunType> testRunTypes = new ArrayList<>();
         if (testRuns != null) {

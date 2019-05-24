@@ -384,6 +384,12 @@
 			<if test="null != hashcode">
 				<![CDATA[ AND NV.TEST_RUN_ID IN (SELECT TEST_RUN_ID FROM TESTS T WHERE T.MESSAGE_HASH_CODE IN (#{hashcode})) ]]>
 			</if>
+			<if test="null != failurePercent">
+				<![CDATA[ AND (100.0 * (NV.FAILED + NV.SKIPPED + NV.ABORTED + NV.QUEUED)/NV.TOTAL)::integer > #{failurePercent} ]]>
+			</if>
+            <if test="null != cause">
+                <![CDATA[ AND LOWER(NV.MESSAGE) LIKE LOWER(CONCAT('%', #{cause}, '%')) ]]>
+            </if>
 		</trim>
         GROUP BY
             NV.UPSTREAM_JOB_ID,

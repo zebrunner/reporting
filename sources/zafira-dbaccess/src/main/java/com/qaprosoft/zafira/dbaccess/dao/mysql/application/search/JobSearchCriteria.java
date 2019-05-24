@@ -13,6 +13,8 @@ public class JobSearchCriteria {
     private String owner;
     private String scmURL;
     private Integer hashcode;
+    private Integer failurePercent;
+    private String cause;
 
     public String getOwner() {
         return owner;
@@ -54,4 +56,19 @@ public class JobSearchCriteria {
         this.hashcode = hashcode;
     }
 
+    public Integer getFailurePercent() {
+        return failurePercent;
+    }
+
+    public void setFailurePercent(Integer failurePercent) {
+        this.failurePercent = failurePercent;
+    }
+
+    public String getCause() {
+        return cause;
+    }
+
+    public void setCause(String cause) {
+        this.cause = cause;
+    }
 }
