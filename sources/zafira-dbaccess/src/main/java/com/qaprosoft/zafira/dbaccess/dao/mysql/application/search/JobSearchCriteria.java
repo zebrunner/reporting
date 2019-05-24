@@ -1,13 +1,18 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application.search;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class JobSearchCriteria {
+
+    @NotEmpty
     private Long upstreamJobId;
-    private String upstreamJobUrl;
+
+    @NotEmpty
     private Integer upstreamJobBuildNumber;
+
     private String owner;
     private String scmURL;
     private Integer hashcode;
-    private Integer failurePercent;
 
     public String getOwner() {
         return owner;
@@ -23,14 +28,6 @@ public class JobSearchCriteria {
 
     public void setUpstreamJobId(Long upstreamJobId) {
         this.upstreamJobId = upstreamJobId;
-    }
-
-    public String getUpstreamJobUrl() {
-        return upstreamJobUrl;
-    }
-
-    public void setUpstreamJobUrl(String upstreamJobUrl) {
-        this.upstreamJobUrl = upstreamJobUrl;
     }
 
     public Integer getUpstreamJobBuildNumber() {
@@ -57,11 +54,4 @@ public class JobSearchCriteria {
         this.hashcode = hashcode;
     }
 
-    public Integer getFailurePercent() {
-        return failurePercent;
-    }
-
-    public void setFailurePercent(Integer failurePercent) {
-        this.failurePercent = failurePercent;
-    }
 }
