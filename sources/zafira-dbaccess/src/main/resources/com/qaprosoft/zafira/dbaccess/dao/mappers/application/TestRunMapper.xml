@@ -375,18 +375,22 @@
 			<![CDATA[ AND NV.UPSTREAM_JOB_ID = #{upstreamJobId}
                       AND NV.UPSTREAM_JOB_BUILD_NUMBER = #{upstreamJobBuildNumber}
                       AND NV.TEST_RUN_STATUS <> 'IN_PROGRESS' ]]>
-			<if test="null != scmURL">
+			<if test="null != scmURL and scmURL != ''">
 				<![CDATA[ AND LOWER(NV.SCM_URL) LIKE LOWER(CONCAT('%', #{scmURL}, '%')) ]]>
 			</if>
-			<if test="null != owner">
+			<if test="null != owner and owner != ''">
 				<![CDATA[ AND LOWER(NV.OWNER_USERNAME) LIKE LOWER(CONCAT('%', #{owner}, '%'))]]>
 			</if>
+
 			<if test="null != hashcode">
-				<![CDATA[ AND NV.TEST_RUN_ID IN (SELECT TEST_RUN_ID FROM TESTS T WHERE T.MESSAGE_HASH_CODE IN (#{hashcode})) ]]>
+				<![CDATA[ AND NV.MESSAGE_HASHCODE = #{hashcode}]]>
 			</if>
 			<if test="null != failurePercent">
 				<![CDATA[ AND (100.0 * (NV.FAILED + NV.SKIPPED + NV.ABORTED + NV.QUEUED)/NV.TOTAL)::integer > #{failurePercent} ]]>
 			</if>
+            <if test="null != cause and cause != ''">
+                <![CDATA[ AND LOWER(NV.MESSAGE) LIKE LOWER(CONCAT('%', #{cause}, '%')) ]]>
+            </if>
 		</trim>
         GROUP BY
             NV.UPSTREAM_JOB_ID,

@@ -263,12 +263,7 @@ public class TestRunsAPIController extends AbstractController {
             @RequestParam(value = "doRebuild", defaultValue = "false", required = false) Boolean doRebuild,
             @RequestParam(value = "rerunFailures", defaultValue = "true", required = false) Boolean rerunFailures,
             @RequestBody JobSearchCriteria sc) throws ServiceException {
-        if (!StringUtils.isEmpty(sc.getUpstreamJobUrl())) {
-            sc.setUpstreamJobUrl(sc.getUpstreamJobUrl().replaceAll("/$", ""));
-            if (jobsService.getJobByJobURL(sc.getUpstreamJobUrl()) != null) {
-                sc.setUpstreamJobId(jobsService.getJobByJobURL(sc.getUpstreamJobUrl()).getId());
-            }
-        }
+
         if (rerunFailures && sc.getFailurePercent() == null) {
             sc.setFailurePercent(0);
         }
