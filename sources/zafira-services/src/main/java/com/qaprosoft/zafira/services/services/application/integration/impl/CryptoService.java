@@ -57,7 +57,7 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
     public void init() {
         super.init();
         String key = getKey().orElseThrow(() -> new IntegrationException("Create an integration context before key generating"));
-        if (context().getBasicTextEncryptor() == null) {
+        if (context().getBasicTextEncryptor() == null || !key.equals(context().getKey())) {
             initCryptoTool(key);
         }
     }
