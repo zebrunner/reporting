@@ -214,8 +214,7 @@ public class SettingsService {
     @RabbitListener(queues = "#{settingsQueue.name}")
     public void process(Message message) {
         ReinitEventMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
-        if (!getRabbitMQService().isSettingQueueConsumer(message.getMessageProperties().getConsumerQueue())
-                && integrationService.getServiceByTool(rm.getTool()) != null) {
+        if (integrationService.getServiceByTool(rm.getTool()) != null) {
             TenancyContext.setTenantName(rm.getTenancy());
             integrationService.getServiceByTool(rm.getTool()).init();
         }
