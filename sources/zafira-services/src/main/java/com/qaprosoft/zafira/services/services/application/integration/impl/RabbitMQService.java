@@ -42,8 +42,8 @@ public class RabbitMQService extends AbstractIntegration<RabbitMQContext> {
         return queues.get(id);
     }
 
-    public boolean isSettingQueueConsumer(String settingQueueName) {
-        return settingQueueName.equals(getQueueById(SETTINGS_QUEUE_NAME).getName());
+    public String getSettingQueueName() {
+        return getQueueById(SETTINGS_QUEUE_NAME).getName();
     }
 
     @Override

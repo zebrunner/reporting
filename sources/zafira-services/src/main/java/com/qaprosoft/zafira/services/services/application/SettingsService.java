@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.qaprosoft.zafira.services.services.application.integration.Integration;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.Message;
@@ -42,7 +43,6 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.ElasticsearchService;
-import com.qaprosoft.zafira.services.services.application.integration.impl.RabbitMQService;
 import com.qaprosoft.zafira.services.util.EventPushService;
 
 @Service
@@ -127,7 +127,7 @@ public class SettingsService {
             validateSettingsOwns(settings, tool);
             settings.forEach(setting -> {
                 decryptSetting(setting);
-                updateSetting(setting);
+                updateIntegrationSetting(setting);
             });
             notifyToolReinitiated(tool, TenancyContext.getTenantName());
             connectedTool = new ConnectedToolType();
@@ -178,17 +178,17 @@ public class SettingsService {
     public void reEncrypt() throws Exception {
         List<Setting> settings = getSettingsByEncrypted(true);
         CryptoService cryptoService = getCryptoMQService();
-        for (Setting setting : settings) {
+        settings.forEach(setting -> {
             String decValue = cryptoService.decrypt(setting.getValue());
             setting.setValue(decValue);
-        }
+        });
         cryptoService.regenerateKey();
-        notifyToolReinitiated(Tool.CRYPTO, TenancyContext.getTenantName());
-        for (Setting setting : settings) {
+        settings.forEach(setting -> {
             String encValue = cryptoService.encrypt(setting.getValue());
             setting.setValue(encValue);
             updateSetting(setting);
-        }
+        });
+        notifyToolReinitiated(Tool.CRYPTO, TenancyContext.getTenantName());
     }
 
     private CryptoService getCryptoMQService() {
@@ -208,15 +208,22 @@ public class SettingsService {
      */
     public void notifyToolReinitiated(Tool tool, String tenant) {
         eventPushService.convertAndSend(EventPushService.Type.SETTINGS, new ReinitEventMessage(tenant, tool));
-        integrationService.getServiceByTool(tool).init();
+        initIntegration(tool, tenant);
     }
 
     @RabbitListener(queues = "#{settingsQueue.name}")
     public void process(Message message) {
         ReinitEventMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
-        if (integrationService.getServiceByTool(rm.getTool()) != null) {
-            TenancyContext.setTenantName(rm.getTenancy());
-            integrationService.getServiceByTool(rm.getTool()).init();
+        if (!eventPushService.isSettingQueueConsumer(message)) {
+            initIntegration(rm.getTool(), rm.getTenancy());
+        }
+    }
+
+    private void initIntegration(Tool tool, String tenancyName) {
+        Integration integration = integrationService.getServiceByTool(tool);
+        if (integration != null) {
+            TenancyContext.setTenantName(tenancyName);
+            integration.init();
         }
     }
 
@@ -257,10 +264,6 @@ public class SettingsService {
 
     private ElasticsearchService getElasticsearchService() {
         return integrationService.getServiceByTool(Tool.ELASTICSEARCH);
-    }
-
-    private RabbitMQService getRabbitMQService() {
-        return integrationService.getServiceByTool(Tool.RABBITMQ);
     }
 
 }
