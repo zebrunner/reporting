@@ -16,20 +16,28 @@
 package com.qaprosoft.zafira.services.util;
 
 import com.qaprosoft.zafira.models.push.events.EventMessage;
+import com.qaprosoft.zafira.services.services.application.integration.impl.RabbitMQService;
 import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EventPushService<T extends EventMessage> {
 
     private static final String EXCHANGE_NAME = "events";
+    private static final String SUPPLIER_QUEUE_NAME_HEADER = "SUPPLIER_QUEUE";
 
-    @Autowired
-    @Qualifier("eventsTemplate")
-    private RabbitTemplate rabbitTemplate;
+    private final RabbitTemplate rabbitTemplate;
+    private final RabbitMQService rabbitMQService;
+
+    public EventPushService(RabbitTemplate rabbitTemplate,
+                            @Lazy RabbitMQService rabbitMQService) {
+        this.rabbitTemplate = rabbitTemplate;
+        this.rabbitMQService = rabbitMQService;
+    }
 
     public enum Type {
 
@@ -50,23 +58,41 @@ public class EventPushService<T extends EventMessage> {
     }
 
     public boolean convertAndSend(Type type, T eventMessage) {
+        return convertAndSend(type, eventMessage, setSupplierQueueNameHeader());
+    }
+
+    public boolean convertAndSend(Type type, T eventMessage, String headerName, String headerValue) {
+        return convertAndSend(type, eventMessage, message -> {
+            message.getMessageProperties().setHeader(headerName, headerValue);
+            return message;
+        });
+    }
+
+    private boolean convertAndSend(Type type, T eventMessage, MessagePostProcessor messagePostProcessor) {
         try {
-            rabbitTemplate.convertAndSend(EXCHANGE_NAME, type.getRoutingKey(), eventMessage);
+            rabbitTemplate.convertAndSend(EXCHANGE_NAME, type.getRoutingKey(), eventMessage, messagePostProcessor);
             return true;
         } catch (AmqpException e) {
             return false;
         }
     }
 
-    public boolean convertAndSend(Type type, T eventMessage, String headerName, String headerValue) {
-        try {
-            rabbitTemplate.convertAndSend(EXCHANGE_NAME, type.getRoutingKey(), eventMessage, message -> {
-                message.getMessageProperties().setHeader(headerName, headerValue);
-                return message;
-            });
-            return true;
-        } catch (AmqpException e) {
-            return false;
-        }
+
+    private MessagePostProcessor setSupplierQueueNameHeader() {
+        return message -> {
+            message.getMessageProperties().getHeaders().putIfAbsent(SUPPLIER_QUEUE_NAME_HEADER, rabbitMQService.getSettingQueueName());
+            return message;
+        };
     }
+
+
+    public boolean isSettingQueueConsumer(Message message) {
+        return rabbitMQService.getSettingQueueName().equals(getSupplierQueueNameHeader(message));
+    }
+
+    private String getSupplierQueueNameHeader(Message message) {
+        Object supplier =  message.getMessageProperties().getHeaders().get(SUPPLIER_QUEUE_NAME_HEADER);
+        return supplier != null ? message.getMessageProperties().getHeaders().get(SUPPLIER_QUEUE_NAME_HEADER).toString() : null;
+    }
+
 }

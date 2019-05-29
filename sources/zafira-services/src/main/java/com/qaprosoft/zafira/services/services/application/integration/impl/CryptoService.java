@@ -38,9 +38,10 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.EncryptorInitializationException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.context.CryptoContext;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Service
 public class CryptoService extends AbstractIntegration<CryptoContext> {
 
     private final SettingsService settingsService;
@@ -89,6 +90,7 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
         return context().getBasicTextEncryptor().decrypt(strToDecrypt);
     }
 
+    @Transactional(readOnly = true)
     public Optional<String> getKey() {
         return mapContext(context -> {
             String result = settingsService.getSettingByType(KEY).getValue();
@@ -99,6 +101,7 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
         });
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public String generateKey() throws ServiceException {
         String key = null;
         try {
