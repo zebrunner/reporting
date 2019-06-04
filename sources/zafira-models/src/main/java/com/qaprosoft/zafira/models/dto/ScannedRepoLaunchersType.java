@@ -19,13 +19,22 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ScannedRepoLaunchersType implements Serializable {
 
     private static final long serialVersionUID = -5754742673797369219L;
 
+    @NotEmpty
     private String repo;
+
+    @NotNull
+    @Min(1)
+    private Long userId;
     private List<JenkinsLauncherType> jenkinsLaunchers;
     private boolean success;
 
@@ -35,6 +44,14 @@ public class ScannedRepoLaunchersType implements Serializable {
 
     public void setRepo(String repo) {
         this.repo = repo;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public List<JenkinsLauncherType> getJenkinsLaunchers() {

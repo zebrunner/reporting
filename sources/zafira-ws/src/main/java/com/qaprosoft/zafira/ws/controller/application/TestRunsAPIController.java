@@ -26,6 +26,7 @@ import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.models.dto.CommentType;
 import com.qaprosoft.zafira.models.dto.EmailType;
+import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
 import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.TestType;
@@ -447,7 +448,8 @@ public class TestRunsAPIController extends AbstractController {
             throw new TestRunNotFoundException();
         }
 
-        if (!jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber())) {
+        JobResult jobResult = jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber());
+        if (!jobResult.isSuccess()) {
             throw new UnableToAbortCIJobException();
         }
     }
@@ -469,7 +471,8 @@ public class TestRunsAPIController extends AbstractController {
 
         boolean success;
         if (buildWithParameters) {
-            success = jenkinsService.buildJob(testRun.getJob(), jobParameters);
+            JobResult result = jenkinsService.buildJob(testRun.getJob(), jobParameters);
+            success = result.isSuccess();
         } else {
             success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), false);
         }
