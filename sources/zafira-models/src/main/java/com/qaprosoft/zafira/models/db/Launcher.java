@@ -28,6 +28,18 @@ public class Launcher extends AbstractEntity {
     private String model;
     private ScmAccount scmAccount;
     private Job job;
+    private boolean autoScan;
+
+    public Launcher() {
+    }
+
+    public Launcher(String name, String model, ScmAccount scmAccount, Job job, boolean autoScan) {
+        this.name = name;
+        this.model = model;
+        this.scmAccount = scmAccount;
+        this.job = job;
+        this.autoScan = autoScan;
+    }
 
     public String getName() {
         return name;
@@ -60,4 +72,13 @@ public class Launcher extends AbstractEntity {
     public void setJob(Job job) {
         this.job = job;
     }
+
+    public boolean isAutoScan() {
+        return autoScan;
+    }
+
+    public void setAutoScan(boolean autoScan) {
+        this.autoScan = autoScan;
+    }
+
 }

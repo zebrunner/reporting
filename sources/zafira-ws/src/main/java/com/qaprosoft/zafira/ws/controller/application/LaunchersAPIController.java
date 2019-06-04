@@ -15,10 +15,13 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Launcher;
 import com.qaprosoft.zafira.models.db.User;
-import com.qaprosoft.zafira.models.dto.CreateLauncherParamsType;
+import com.qaprosoft.zafira.models.dto.LauncherScannerType;
 import com.qaprosoft.zafira.models.dto.LauncherType;
+import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
+import com.qaprosoft.zafira.models.push.LauncherPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.LauncherService;
 import com.qaprosoft.zafira.services.services.application.UserService;
@@ -29,8 +32,8 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -53,14 +56,17 @@ import java.util.stream.Collectors;
 @RestController
 public class LaunchersAPIController extends AbstractController {
 
-    @Autowired
-    private LauncherService launcherService;
+    private final LauncherService launcherService;
+    private final UserService userService;
+    private final Mapper mapper;
+    private final SimpMessagingTemplate websocketTemplate;
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private Mapper mapper;
+    public LaunchersAPIController(LauncherService launcherService, UserService userService, Mapper mapper, SimpMessagingTemplate websocketTemplate) {
+        this.launcherService = launcherService;
+        this.userService = userService;
+        this.mapper = mapper;
+        this.websocketTemplate = websocketTemplate;
+    }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create launcher", nickname = "createLauncher", httpMethod = "POST", response = LauncherType.class)
@@ -70,15 +76,6 @@ public class LaunchersAPIController extends AbstractController {
     public LauncherType createLauncher(@RequestBody @Valid LauncherType launcherType) throws ServiceException {
         User owner = new User(getPrincipalId());
         return mapper.map(launcherService.createLauncher(mapper.map(launcherType, Launcher.class), owner), LauncherType.class);
-    }
-
-    @ResponseStatusDetails
-    @ApiOperation(value = "Create launcher from Jenkins", nickname = "createLauncherFromJenkins", httpMethod = "POST", response = LauncherType.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @PostMapping("/create")
-    public LauncherType createLauncherFromJenkins(@RequestBody @Valid CreateLauncherParamsType createLauncherParamsType) throws ServiceException {
-        User owner = new User(getPrincipalId());
-        return mapper.map(launcherService.createLauncherForJob(createLauncherParamsType, owner), LauncherType.class);
     }
 
     @ResponseStatusDetails
@@ -125,6 +122,37 @@ public class LaunchersAPIController extends AbstractController {
     @PostMapping("/build")
     public void build(@RequestBody @Valid LauncherType launcherType) throws ServiceException, IOException {
         launcherService.buildLauncherJob(mapper.map(launcherType, Launcher.class), userService.getNotNullUserById(getPrincipalId()));
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Scan launchers with jenkins", nickname = "runScanner", httpMethod = "POST")
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
+    @PostMapping("/scanner")
+    public void runScanner(@RequestBody @Valid LauncherScannerType launcherScannerType) {
+        launcherService.buildScannerJob(TenancyContext.getTenantName(), launcherScannerType.getBranch(), launcherScannerType.getScmAccountId(), launcherScannerType.isRescan());
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Cancel launcher scanner", nickname = "cancelScanner", httpMethod = "DELETE")
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
+    @DeleteMapping("/scanner")
+    public void cancelScanner(@RequestBody @Valid LauncherScannerType launcherScannerType) {
+        launcherService.buildScannerJob(TenancyContext.getTenantName(), launcherScannerType.getBranch(), launcherScannerType.getScmAccountId(), launcherScannerType.isRescan());
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Create launchers from Jenkins", nickname = "createLaunchersFromJenkins", httpMethod = "POST", response = List.class)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
+    @PostMapping("/create")
+    public List<LauncherType> createLaunchersFromJenkins(@RequestBody @Valid ScannedRepoLaunchersType scannedRepoLaunchersType) throws ServiceException {
+        List<Launcher> launchers = launcherService.createLaunchersForJob(scannedRepoLaunchersType, new User(getPrincipalId()));
+        websocketTemplate.convertAndSend(getLaunchersWebsocketPath(), new LauncherPush(launchers, scannedRepoLaunchersType.isSuccess()));
+        return launchers.stream()
+                        .map(launcher -> mapper.map(launcher, LauncherType.class))
+                        .collect(Collectors.toList());
     }
 
 }

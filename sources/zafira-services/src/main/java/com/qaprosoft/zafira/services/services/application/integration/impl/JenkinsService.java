@@ -55,7 +55,11 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
 
     private static final String[] REQUIRED_ARGS = new String[] { "scmURL", "branch", "overrideFields" };
 
-    private final String FOLDER_REGEX = ".+job\\/.+\\/job.+";
+    private static final String ERR_MSG_UNABLE_RUN_JOB = "Unable to run '%s' job";
+
+    private static final String SCANNER_JOB_URL_PATTERN = "%s/job/%s/job/RegisterRepository";
+    private static final String RESCANNER_JOB_URL_PATTERN = "%s/job/%s/job/%s/job/onPush-%s";
+    private static final String FOLDER_REGEX = ".+job/.+/job.+";
 
     public JenkinsService(SettingsService settingsService, CryptoService cryptoService) {
         super(settingsService, cryptoService, JENKINS, JenkinsContext.class);
@@ -104,6 +108,25 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
         return success;
     }
 
+    public boolean buildScannerJob(String tenantName, String repositoryName, Map<String, String> jobParameters, boolean rescan) {
+        String scannerJobUrl = rescan ? String.format(RESCANNER_JOB_URL_PATTERN, context().getJenkinsHost(), tenantName, repositoryName, repositoryName) :
+                String.format(SCANNER_JOB_URL_PATTERN, context().getJenkinsHost(), tenantName);
+        return buildJob(scannerJobUrl, jobParameters);
+    }
+
+    private boolean buildJob(String jobUrl, Map<String, String> jobParameters) {
+        boolean result = false;
+        try {
+            JobWithDetails job = getJobByURL(jobUrl)
+                    .orElseThrow(() -> new ForbiddenOperationException(String.format(ERR_MSG_UNABLE_RUN_JOB, jobUrl)));
+            QueueReference reference = job.build(jobParameters, true);
+            result = checkReference(reference);
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return result;
+    }
+
     public boolean abortJob(Job ciJob, Integer buildNumber) {
         boolean success = false;
         try {
@@ -121,13 +144,13 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
     }
 
     private QueueReference stop(JobWithDetails job, Integer buildNumber) throws IOException {
-        ExtractHeader location = (ExtractHeader) job.getClient().post(job.getUrl() + buildNumber + "/stop",
+        ExtractHeader location = job.getClient().post(job.getUrl() + buildNumber + "/stop",
                 null, ExtractHeader.class);
         return new QueueReference(location.getLocation());
     }
 
     private QueueReference terminate(JobWithDetails job, Integer buildNumber) throws IOException {
-        ExtractHeader location = (ExtractHeader) job.getClient().post(job.getUrl() + buildNumber + "/term",
+        ExtractHeader location = job.getClient().post(job.getUrl() + buildNumber + "/term",
                 null, ExtractHeader.class);
         return new QueueReference(location.getLocation());
     }

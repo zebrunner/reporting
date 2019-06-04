@@ -16,12 +16,16 @@
 package com.qaprosoft.zafira.services.services.application;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
+import com.qaprosoft.zafira.services.services.application.scm.GitHubService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +38,6 @@ import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Launcher;
 import com.qaprosoft.zafira.models.db.ScmAccount;
 import com.qaprosoft.zafira.models.db.User;
-import com.qaprosoft.zafira.models.dto.CreateLauncherParamsType;
 import com.qaprosoft.zafira.services.exceptions.ScmAccountNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.integration.context.JenkinsContext;
@@ -45,23 +48,29 @@ import com.qaprosoft.zafira.services.services.auth.JWTService;
 @Service
 public class LauncherService {
 
-    @Autowired
-    private LauncherMapper launcherMapper;
+    private final LauncherMapper launcherMapper;
+    private final JenkinsService jenkinsService;
+    private final ScmAccountService scmAccountService;
+    private final JobsService jobsService;
+    private final JWTService jwtService;
+    private final GitHubService gitHubService;
+    private final String apiUrl;
 
-    @Autowired
-    private JenkinsService jenkinsService;
-
-    @Autowired
-    private ScmAccountService scmAccountService;
-
-    @Autowired
-    private JobsService jobsService;
-
-    @Autowired
-    private JWTService jwtService;
-
-    @Value("${zafira.webservice.url}")
-    private String apiURL;
+    public LauncherService(LauncherMapper launcherMapper,
+                           JenkinsService jenkinsService,
+                           ScmAccountService scmAccountService,
+                           JobsService jobsService,
+                           JWTService jwtService,
+                           GitHubService gitHubService,
+                           @Value("${zafira.webservice.url}") String apiUrl) {
+        this.launcherMapper = launcherMapper;
+        this.jenkinsService = jenkinsService;
+        this.scmAccountService = scmAccountService;
+        this.jobsService = jobsService;
+        this.jwtService = jwtService;
+        this.gitHubService = gitHubService;
+        this.apiUrl = apiUrl;
+    }
 
     @Transactional(rollbackFor = Exception.class)
     public Launcher createLauncher(Launcher launcher, User owner) throws ServiceException {
@@ -88,29 +97,27 @@ public class LauncherService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Launcher createLauncherForJob(CreateLauncherParamsType createLauncherParamsType, User owner) throws ServiceException {
-        String jobUrl = createLauncherParamsType.getJobUrl();
-        Job job = jobsService.getJobByJobURL(jobUrl);
-        if (job == null) {
-            job = jobsService.createOrUpdateJobByURL(jobUrl, owner);
+    public List<Launcher> createLaunchersForJob(ScannedRepoLaunchersType scannedRepoLaunchersType, User owner) throws ServiceException {
+        if (!scannedRepoLaunchersType.isSuccess()) {
+            return new ArrayList<>();
         }
-        ScmAccount scmAccount = scmAccountService.getScmAccountByRepo(createLauncherParamsType.getRepo());
+        ScmAccount scmAccount = scmAccountService.getScmAccountByRepo(scannedRepoLaunchersType.getRepo());
         if (scmAccount == null)
             throw new ScmAccountNotFoundException("Unable to find scm account for repo");
-        Launcher launcher = getLauncherByJobId(job.getId());
-        if (launcher == null) {
-            launcher = new Launcher();
-        }
-        launcher.setModel(createLauncherParamsType.getJobParameters());
-        if (launcher.getId() == null) {
-            launcher.setJob(job);
-            launcher.setName(job.getName());
-            launcher.setScmAccount(scmAccount);
+
+        deleteAutoScannedLaunchersByScmAccountId(scmAccount.getId());
+
+        List<Launcher> result = scannedRepoLaunchersType.getJenkinsLaunchers().stream().map(jenkinsLauncherType -> {
+            String jobUrl = jenkinsLauncherType.getJobUrl();
+            Job job = jobsService.getJobByJobURL(jobUrl);
+            if (job == null) {
+                job = jobsService.createOrUpdateJobByURL(jobUrl, owner);
+            }
+            Launcher launcher = new Launcher(job.getName(), jenkinsLauncherType.getJobParameters(), scmAccount, job, true);
             launcherMapper.createLauncher(launcher);
-        } else {
-            launcherMapper.updateLauncher(launcher);
-        }
-        return launcher;
+            return launcher;
+        }).collect(Collectors.toList());
+        return result;
     }
 
     @Transactional(readOnly = true)
@@ -139,6 +146,12 @@ public class LauncherService {
         launcherMapper.deleteLauncherById(id);
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteAutoScannedLaunchersByScmAccountId(Long scmAccountId) throws ServiceException {
+        launcherMapper.deleteAutoScannedLaunchersByScmAccountId(scmAccountId);
+    }
+
+    @Transactional(readOnly = true)
     public void buildLauncherJob(Launcher launcher, User user) throws IOException, ServiceException {
 
         ScmAccount scmAccount = scmAccountService.getScmAccountById(launcher.getScmAccount().getId());
@@ -149,15 +162,14 @@ public class LauncherService {
         if (job == null)
             throw new ServiceException("Launcher job not specified");
 
-        Map<String, String> jobParameters = new ObjectMapper().readValue(launcher.getModel(), new TypeReference<Map<String, String>>() {
-        });
+        Map<String, String> jobParameters = new ObjectMapper().readValue(launcher.getModel(), new TypeReference<Map<String, String>>() {});
         jobParameters.put("scmURL", scmAccount.buildAuthorizedURL());
         if (!jobParameters.containsKey("branch")) {
             jobParameters.put("branch", "*/master");
         }
 
         jobParameters.put("zafira_enabled", "true");
-        jobParameters.put("zafira_service_url", apiURL.replace("api", TenancyContext.getTenantName()));
+        jobParameters.put("zafira_service_url", apiUrl.replace("api", TenancyContext.getTenantName()));
         jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, TenancyContext.getTenantName()));
 
         String args = jobParameters.entrySet().stream().filter(param -> !Arrays.asList(JenkinsService.getRequiredArgs()).contains(param.getKey()))
@@ -170,4 +182,26 @@ public class LauncherService {
 
         jenkinsService.buildJob(job, jobParameters);
     }
+
+    @Transactional(readOnly = true)
+    public void buildScannerJob(String tenantName, String branch, long scmAccountId, boolean rescan) {
+        ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
+        if(scmAccount == null) {
+            throw new ServiceException("Scm account not found");
+        }
+        String loginName = gitHubService.getLoginName(scmAccount.getAccessToken());
+
+        Map<String, String> jobParameters = new HashMap<>();
+        jobParameters.put("organization", scmAccount.getOrganizationName());
+        jobParameters.put("repo", scmAccount.getRepositoryName());
+        jobParameters.put("branch", branch);
+        jobParameters.put("user", loginName);
+        jobParameters.put("token", scmAccount.getAccessToken());
+
+        boolean jobStarted = jenkinsService.buildScannerJob(tenantName, scmAccount.getRepositoryName(), jobParameters, rescan);
+        if (!jobStarted) {
+            throw new ForbiddenOperationException("Repository scanner job is not started");
+        }
+    }
+
 }

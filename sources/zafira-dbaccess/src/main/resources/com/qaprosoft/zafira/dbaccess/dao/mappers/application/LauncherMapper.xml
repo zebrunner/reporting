@@ -11,6 +11,7 @@
 			    NAME
 			    , MODEL
 			    , SCM_ID
+			    , AUTO_SCAN
         ]]>
 		<if test="null != job">
                     <![CDATA[
@@ -22,7 +23,8 @@
 			VALUES (
 				#{name},
 				#{model},
-			    #{scmAccount.id}
+			    #{scmAccount.id},
+			    #{autoScan}
         ]]>
 		<if test="null != job">
                     <![CDATA[
@@ -40,6 +42,7 @@
 				L.ID AS LAUNCHER_ID,
 				L.NAME AS LAUNCHER_NAME,
 				L.MODEL AS LAUNCHER_MODEL,
+				L.AUTO_SCAN AS LAUNCHER_AUTO_SCAN,
 
 				S.ID AS SCM_ID,
 				S.NAME AS SCM_NAME,
@@ -122,12 +125,21 @@
 	<sql id="deleteLauncher">
         <![CDATA[
 			DELETE FROM LAUNCHERS
-			WHERE ID = #{id}
         ]]>
 	</sql>
 
 	<delete id="deleteLauncherById">
 		<include refid="deleteLauncher" />
+		<![CDATA[
+			WHERE ID = #{id}
+        ]]>
+	</delete>
+
+	<delete id="deleteAutoScannedLaunchersByScmAccountId">
+		<include refid="deleteLauncher" />
+		<![CDATA[
+			WHERE AUTO_SCAN = true AND SCM_ID = #{scmAccountId}
+        ]]>
 	</delete>
 
 	<resultMap type="com.qaprosoft.zafira.models.db.Launcher"
@@ -135,6 +147,7 @@
 		<id column="LAUNCHER_ID" property="id" />
 		<result column="LAUNCHER_NAME" property="name" />
 		<result column="LAUNCHER_MODEL" property="model" />
+		<result column="LAUNCHER_AUTO_SCAN" property="autoScan" />
 		<result column="LAUNCHER_MODIFIED_AT" property="modifiedAt" />
 		<result column="LAUNCHER_CREATED_AT" property="createdAt" />
 		<association property="scmAccount"

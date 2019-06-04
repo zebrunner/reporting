@@ -19,28 +19,36 @@ import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 import com.qaprosoft.zafira.models.dto.auth.UserGrantedAuthority;
+import com.qaprosoft.zafira.models.push.AbstractPush;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import static com.qaprosoft.zafira.models.push.AbstractPush.Type.LAUNCHER;
+import static com.qaprosoft.zafira.models.push.AbstractPush.Type.TEST;
+import static com.qaprosoft.zafira.models.push.AbstractPush.Type.TEST_RUN;
+import static com.qaprosoft.zafira.models.push.AbstractPush.Type.TEST_RUN_STATISTICS;
+
 public abstract class AbstractController {
 
-    private static final String TEST_RUNS_WEBSOCKET_PATH = "/topic/%s.testRuns";
-
-    private static final String TESTS_WEBSOCKET_PATH = "/topic/%s.testRuns.%s.tests";
-
-    private static final String STATISTICS_WEBSOCKET_PATH = "/topic/%s.statistics";
-
     protected String getStatisticsWebsocketPath() {
-        return String.format(STATISTICS_WEBSOCKET_PATH, TenancyContext.getTenantName());
+        return buildWebSocketPath(TEST_RUN_STATISTICS, TenancyContext.getTenantName());
     }
 
     protected String getTestRunsWebsocketPath() {
-        return String.format(TEST_RUNS_WEBSOCKET_PATH, TenancyContext.getTenantName());
+        return buildWebSocketPath(TEST_RUN, TenancyContext.getTenantName());
     }
 
     protected String getTestsWebsocketPath(Long testRunId) {
-        return String.format(TESTS_WEBSOCKET_PATH, TenancyContext.getTenantName(), testRunId);
+        return buildWebSocketPath(TEST, TenancyContext.getTenantName(), testRunId);
+    }
+
+    protected String getLaunchersWebsocketPath() {
+        return buildWebSocketPath(LAUNCHER, TenancyContext.getTenantName());
+    }
+
+    private String buildWebSocketPath(AbstractPush.Type type, Object... parameters) {
+        return type.buildWebsocketPath(parameters);
     }
 
     private JwtUserType getPrincipal() {

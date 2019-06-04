@@ -20,6 +20,7 @@ import com.qaprosoft.zafira.models.dto.scm.Repository;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.util.GitHubHttpUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.kohsuke.github.GHPerson;
 import org.kohsuke.github.GitHub;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class GitHubService implements IScmService {
+
+    private static final Logger LOGGER = Logger.getLogger(GitHubService.class);
 
     @Autowired
     private GitHubHttpUtils gitHubHttpUtils;
@@ -77,4 +80,18 @@ public class GitHubService implements IScmService {
     public String getClientId() {
         return this.gitHubClientId;
     }
+
+    @Override
+    public String getLoginName(String accessToken) {
+        String result = null;
+        GitHub gitHub;
+        try {
+            gitHub = GitHub.connectUsingOAuth(accessToken);
+            result = gitHub.getMyself().getLogin();
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return result;
+    }
+
 }

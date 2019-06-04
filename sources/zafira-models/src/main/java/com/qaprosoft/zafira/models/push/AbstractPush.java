@@ -18,14 +18,31 @@ package com.qaprosoft.zafira.models.push;
 import java.util.UUID;
 
 public class AbstractPush {
-    public enum Type {
-        TEST_RUN,
-        TEST,
-        TEST_RUN_STATISTICS
-    }
 
     private Type type;
     private String uid;
+
+    public enum Type {
+        TEST_RUN("/topic/%s.testRuns"),
+        TEST("/topic/%s.testRuns.%s.tests"),
+        TEST_RUN_STATISTICS("/topic/%s.statistics"),
+        LAUNCHER("/topic/%s.launchers");
+
+        private final String websocketPathTemplate;
+
+        Type(String websocketPathTemplate) {
+            this.websocketPathTemplate = websocketPathTemplate;
+        }
+
+        public String getWebsocketPathTemplate() {
+            return websocketPathTemplate;
+        }
+
+        public String buildWebsocketPath(Object... parameters) {
+            return String.format(getWebsocketPathTemplate(), parameters);
+        }
+
+    }
 
     public AbstractPush(Type type) {
         this.type = type;
@@ -47,4 +64,5 @@ public class AbstractPush {
     public void setUid(String uid) {
         this.uid = uid;
     }
+
 }

@@ -1,32 +1,21 @@
 package com.qaprosoft.zafira.models.dto;
 
-import java.io.Serializable;
-
-import javax.validation.constraints.NotNull;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CreateLauncherParamsType implements Serializable {
-    private static final long serialVersionUID = -5754742673797369219L;
+public class JenkinsLauncherType implements Serializable {
 
-    @NotNull(message = "{error.repo.required}")
-    private String repo;
+    private static final long serialVersionUID = -5754742673797369219L;
 
     @NotEmpty(message = "{error.job.url.required}")
     private String jobUrl;
 
+    @NotNull(message = "{error.job.parameters.required}")
     private String jobParameters;
-
-    public String getRepo() {
-        return repo;
-    }
-
-    public void setRepo(String repo) {
-        this.repo = repo;
-    }
 
     public String getJobUrl() {
         return jobUrl;
@@ -43,4 +32,5 @@ public class CreateLauncherParamsType implements Serializable {
     public void setJobParameters(String jobParameters) {
         this.jobParameters = jobParameters;
     }
+
 }
