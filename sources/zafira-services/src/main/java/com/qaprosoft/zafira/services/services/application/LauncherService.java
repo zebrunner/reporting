@@ -200,6 +200,7 @@ public class LauncherService {
         jobParameters.put("branch", branch);
         jobParameters.put("githubUser", loginName);
         jobParameters.put("githubToken", scmAccount.getAccessToken());
+        jobParameters.put("onlyUpdated", String.valueOf(false));
 
         result = jenkinsService.buildScannerJob(tenantName, scmAccount.getRepositoryName(), jobParameters, rescan);
         if (!result.isSuccess()) {
