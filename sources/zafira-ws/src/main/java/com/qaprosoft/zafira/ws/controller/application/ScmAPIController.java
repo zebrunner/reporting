@@ -95,6 +95,15 @@ public class ScmAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
+    @ApiOperation(value = "Get default branch of SCM account by id", nickname = "getScmAccountDefaultBranch", httpMethod = "GET", response = String.class)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/accounts/{id}/defaultBranch")
+    public String getScmAccountDefaultBranch(@PathVariable("id") long id) throws ServiceException {
+        return scmAccountService.getDefaultBranch(id);
+    }
+
+    @ResponseStatusDetails
     @ApiOperation(value = "Update SCM account", nickname = "updateScmAccount", httpMethod = "PUT", response = ScmAccountType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN')")

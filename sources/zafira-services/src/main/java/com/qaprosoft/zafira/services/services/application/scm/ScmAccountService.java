@@ -17,6 +17,8 @@ package com.qaprosoft.zafira.services.services.application.scm;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.ScmAccountMapper;
 import com.qaprosoft.zafira.models.db.ScmAccount;
+import com.qaprosoft.zafira.models.dto.scm.Repository;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +28,13 @@ import java.util.List;
 @Service
 public class ScmAccountService {
 
-    @Autowired
-    private ScmAccountMapper scmAccountMapper;
+    private final ScmAccountMapper scmAccountMapper;
+    private final GitHubService gitHubService;
+
+    public ScmAccountService(ScmAccountMapper scmAccountMapper, GitHubService gitHubService) {
+        this.scmAccountMapper = scmAccountMapper;
+        this.gitHubService = gitHubService;
+    }
 
     @Transactional(rollbackFor = Exception.class)
     public ScmAccount createScmAccount(ScmAccount scmAccount) {
@@ -60,4 +67,15 @@ public class ScmAccountService {
     public void deleteScmAccountById(Long id) {
         scmAccountMapper.deleteScmAccountById(id);
     }
+
+    @Transactional(readOnly = true)
+    public String getDefaultBranch(Long id) {
+        ScmAccount scmAccount = getScmAccountById(id);
+        if(scmAccount == null) {
+            throw new ForbiddenOperationException("Unable to retrieve scm account default branch name");
+        }
+        Repository repository = gitHubService.getRepository(scmAccount.getAccessToken(), scmAccount.getOrganizationName(), scmAccount.getRepositoryName());
+        return repository.getDefaultBranch();
+    }
+
 }
