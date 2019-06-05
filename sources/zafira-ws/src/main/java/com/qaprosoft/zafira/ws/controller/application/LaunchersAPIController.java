@@ -152,7 +152,8 @@ public class LaunchersAPIController extends AbstractController {
     @PostMapping("/create")
     public List<LauncherType> createLaunchersFromJenkins(@RequestBody @Valid ScannedRepoLaunchersType scannedRepoLaunchersType) throws ServiceException {
         List<Launcher> launchers = launcherService.createLaunchersForJob(scannedRepoLaunchersType, new User(getPrincipalId()));
-        websocketTemplate.convertAndSend(getLaunchersWebsocketPath(), new LauncherPush(launchers, scannedRepoLaunchersType.getUserId(), scannedRepoLaunchersType.isSuccess()));
+        List<LauncherType> launcherTypes = launchers.stream().map(launcher -> mapper.map(launcher, LauncherType.class)).collect(Collectors.toList());
+        websocketTemplate.convertAndSend(getLaunchersWebsocketPath(), new LauncherPush(launcherTypes, scannedRepoLaunchersType.getUserId(), scannedRepoLaunchersType.isSuccess()));
         return launchers.stream()
                         .map(launcher -> mapper.map(launcher, LauncherType.class))
                         .collect(Collectors.toList());
