@@ -17,24 +17,16 @@ package com.qaprosoft.zafira.models.dto;
 
 public class JobResult {
 
-    private Integer buildNumber;
+    private String queueItemUrl;
     private boolean success;
 
-    public JobResult(boolean success) {
+    public JobResult(String queueItemUrl, boolean success) {
+        this.queueItemUrl = queueItemUrl;
         this.success = success;
     }
 
-    public JobResult(Integer buildNumber, boolean success) {
-        this.buildNumber = buildNumber;
-        this.success = success;
-    }
-
-    public Integer getBuildNumber() {
-        return buildNumber;
-    }
-
-    public void setBuildNumber(Integer buildNumber) {
-        this.buildNumber = buildNumber;
+    public String getQueueItemUrl() {
+        return queueItemUrl;
     }
 
     public boolean isSuccess() {

@@ -127,13 +127,20 @@ public class LaunchersAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Scan launchers with jenkins", nickname = "runScanner", httpMethod = "POST", response = Integer.class)
+    @ApiOperation(value = "Get build number", nickname = "getBuildNumber", httpMethod = "GET", response = Integer.class)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @GetMapping("/build/number")
+    public Integer getBuildNumber(@RequestBody String queueItemUrl) throws ServiceException {
+        return launcherService.getBuildNumber(queueItemUrl);
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Scan launchers with jenkins", nickname = "runScanner", httpMethod = "POST", response = JobResult.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PostMapping("/scanner")
-    public Integer runScanner(@RequestBody @Valid LauncherScannerType launcherScannerType) {
-        JobResult jobResult = launcherService.buildScannerJob(TenancyContext.getTenantName(), getPrincipalId(), launcherScannerType.getBranch(), launcherScannerType.getScmAccountId(), launcherScannerType.isRescan());
-        return jobResult.getBuildNumber();
+    public JobResult runScanner(@RequestBody @Valid LauncherScannerType launcherScannerType) {
+        return launcherService.buildScannerJob(TenancyContext.getTenantName(), getPrincipalId(), launcherScannerType.getBranch(), launcherScannerType.getScmAccountId(), launcherScannerType.isRescan());
     }
 
     @ResponseStatusDetails

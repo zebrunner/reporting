@@ -103,7 +103,7 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
     public JobResult buildJob(Job job, Map<String, String> jobParameters) {
         JobWithDetails ciJob = getJobWithDetails(job)
                 .orElseThrow(() -> new ForbiddenOperationException("Unable to build CI job"));
-        return buildJob(ciJob, jobParameters, false);
+        return buildJob(ciJob, jobParameters);
     }
 
     public JobResult buildScannerJob(String tenantName, String repositoryName, Map<String, String> jobParameters, boolean rescan) {
@@ -125,19 +125,11 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
     }
 
     private JobResult buildJob(JobWithDetails job, Map<String, String> jobParameters) {
-        return buildJob(job, jobParameters, true);
-    }
-
-    public JobResult buildJob(JobWithDetails job, Map<String, String> jobParameters, boolean retrieveBuildNumber) {
         JobResult result = null;
         try {
             QueueReference reference = job.build(jobParameters, true);
             boolean success = checkReference(reference);
-            result = new JobResult(success);
-            if(success && retrieveBuildNumber) {
-                Integer buildNumber = getBuildNumber(reference);
-                result.setBuildNumber(buildNumber);
-            }
+            result = new JobResult(reference.getQueueItemUrlPart(), success);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -164,7 +156,7 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
                 reference = terminate(job, buildNumber);
                 success = checkReference(reference);
             }
-            result = new JobResult(buildNumber, success);
+            result = new JobResult(reference.getQueueItemUrlPart(), success);
         } catch (Exception e) {
             LOGGER.error("Unable to abort Jenkins job:  " + e.getMessage());
         }
@@ -250,11 +242,21 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
         });
     }
 
-    private Integer getBuildNumber(QueueReference queueReference) {
+    public Integer getBuildNumber(QueueReference queueReference) {
         Integer buildNumber = null;
+        int attempts = 5;
+        long millisToSleep = 2000;
         JenkinsServer server = context().getJenkinsServer();
         try {
-            QueueItem queueItem = server.getQueueItem(queueReference);
+            QueueItem queueItem = null;
+            while(attempts > 0) {
+                queueItem = server.getQueueItem(queueReference);
+                if(queueItem.getExecutable() != null) {
+                    break;
+                }
+                sleep(millisToSleep);
+                attempts --;
+            }
             Build build = server.getBuild(queueItem);
             buildNumber = build.getNumber();
         } catch (IOException e) {
@@ -348,4 +350,13 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
             return false;
         }
     }
+
+    private void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
 }

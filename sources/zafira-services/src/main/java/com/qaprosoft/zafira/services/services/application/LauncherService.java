@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.offbytwo.jenkins.model.QueueReference;
 import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
@@ -186,7 +187,6 @@ public class LauncherService {
 
     @Transactional(readOnly = true)
     public JobResult buildScannerJob(String tenantName, Long userId, String branch, long scmAccountId, boolean rescan) {
-        JobResult result;
         ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
         if(scmAccount == null) {
             throw new ServiceException("Scm account not found");
@@ -202,13 +202,14 @@ public class LauncherService {
         jobParameters.put("githubToken", scmAccount.getAccessToken());
         jobParameters.put("onlyUpdated", String.valueOf(false));
 
-        result = jenkinsService.buildScannerJob(tenantName, scmAccount.getRepositoryName(), jobParameters, rescan);
-        if (!result.isSuccess()) {
+        JobResult result = jenkinsService.buildScannerJob(tenantName, scmAccount.getRepositoryName(), jobParameters, rescan);
+        if (! result.isSuccess()) {
             throw new ForbiddenOperationException("Repository scanner job is not started");
         }
         return result;
     }
 
+    @Transactional(readOnly = true)
     public JobResult abortScannerJob(String tenantName, long scmAccountId, boolean rescan, Integer buildNumber) {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
         if(scmAccount == null) {
@@ -220,6 +221,10 @@ public class LauncherService {
             throw new ForbiddenOperationException("Repository scanner job is not aborted");
         }
         return result;
+    }
+
+    public Integer getBuildNumber(String queueItemUrl) {
+        return jenkinsService.getBuildNumber(new QueueReference(queueItemUrl));
     }
 
 }
