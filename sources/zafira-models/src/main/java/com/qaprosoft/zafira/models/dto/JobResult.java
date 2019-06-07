@@ -20,6 +20,10 @@ public class JobResult {
     private Integer buildNumber;
     private boolean success;
 
+    public JobResult(boolean success) {
+        this.success = success;
+    }
+
     public JobResult(Integer buildNumber, boolean success) {
         this.buildNumber = buildNumber;
         this.success = success;
@@ -27,6 +31,10 @@ public class JobResult {
 
     public Integer getBuildNumber() {
         return buildNumber;
+    }
+
+    public void setBuildNumber(Integer buildNumber) {
+        this.buildNumber = buildNumber;
     }
 
     public boolean isSuccess() {

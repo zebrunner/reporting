@@ -103,7 +103,7 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
     public JobResult buildJob(Job job, Map<String, String> jobParameters) {
         JobWithDetails ciJob = getJobWithDetails(job)
                 .orElseThrow(() -> new ForbiddenOperationException("Unable to build CI job"));
-        return buildJob(ciJob, jobParameters);
+        return buildJob(ciJob, jobParameters, false);
     }
 
     public JobResult buildScannerJob(String tenantName, String repositoryName, Map<String, String> jobParameters, boolean rescan) {
@@ -125,12 +125,19 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
     }
 
     private JobResult buildJob(JobWithDetails job, Map<String, String> jobParameters) {
+        return buildJob(job, jobParameters, true);
+    }
+
+    public JobResult buildJob(JobWithDetails job, Map<String, String> jobParameters, boolean retrieveBuildNumber) {
         JobResult result = null;
         try {
             QueueReference reference = job.build(jobParameters, true);
             boolean success = checkReference(reference);
-            Integer buildNumber = getBuildNumber(reference);
-            result = new JobResult(buildNumber, success);
+            result = new JobResult(success);
+            if(success && retrieveBuildNumber) {
+                Integer buildNumber = getBuildNumber(reference);
+                result.setBuildNumber(buildNumber);
+            }
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
