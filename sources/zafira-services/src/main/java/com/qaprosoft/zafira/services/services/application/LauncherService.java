@@ -203,7 +203,7 @@ public class LauncherService {
         jobParameters.put("onlyUpdated", String.valueOf(false));
 
         JobResult result = jenkinsService.buildScannerJob(tenantName, scmAccount.getRepositoryName(), jobParameters, rescan);
-        if (! result.isSuccess()) {
+        if (result == null || ! result.isSuccess()) {
             throw new ForbiddenOperationException("Repository scanner job is not started");
         }
         return result;
