@@ -77,6 +77,7 @@ public class LaunchersAPIController extends AbstractController {
     @PostMapping()
     public LauncherType createLauncher(@RequestBody @Valid LauncherType launcherType) throws ServiceException {
         User owner = new User(getPrincipalId());
+        launcherType.setAutoScan(false);
         return mapper.map(launcherService.createLauncher(mapper.map(launcherType, Launcher.class), owner), LauncherType.class);
     }
 
@@ -130,7 +131,7 @@ public class LaunchersAPIController extends AbstractController {
     @ApiOperation(value = "Get build number", nickname = "getBuildNumber", httpMethod = "GET", response = Integer.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/build/number")
-    public Integer getBuildNumber(@RequestBody String queueItemUrl) throws ServiceException {
+    public Integer getBuildNumber(@RequestParam("queueItemUrl") String queueItemUrl) throws ServiceException {
         return launcherService.getBuildNumber(queueItemUrl);
     }
 
