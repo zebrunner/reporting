@@ -122,7 +122,7 @@ td .es-button-border-1555487122413:hover {
                       <td align="left" style="padding:0;Margin:0;padding-top:20px;padding-bottom:20px;"> <h2 style="Margin:0;line-height:24px;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:20px;font-style:normal;font-weight:normal;color:#333333;text-align:center;">Password reset</h2> </td> 
                      </tr> 
                      <tr style="border-collapse:collapse;"> 
-                      <td align="center" class="es-m-txt-c" style="padding:0;Margin:0;"> <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:16px;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:32px;color:#333333;">In case you didn’t want to reset the old password or this message was sent to you by mistake, ignore this e-mail, your password will stay the same.</p> </td> 
+                      <td align="center" class="es-m-txt-c" style="padding:0;Margin:0;"> <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:16px;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:32px;color:#333333;">In case you didn’t want to reset the old password or this message was sent to you by mistake, ignore this e-mail, your password will remain the same.</p> </td>
                      </tr> 
                    </table> </td> 
                  </tr> 
