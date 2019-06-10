@@ -13,33 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.emails;
+package com.qaprosoft.zafira.models.dto;
 
-public class UserInviteLdapEmail extends AbstractEmail {
+public class JobResult {
 
-    private static final String SUBJECT = "Join the workspace";
+    private String queueItemUrl;
+    private boolean success;
 
-    private final String token;
-    private final String zafiraLogoURL;
-    private final String workspaceURL;
-
-    public UserInviteLdapEmail(String token, String zafiraLogoURL, String workspaceURL) {
-        super(SUBJECT, EmailType.USER_INVITE_LDAP, zafiraLogoURL, workspaceURL);
-        this.token = token;
-        this.zafiraLogoURL = zafiraLogoURL;
-        this.workspaceURL = workspaceURL;
+    public JobResult(String queueItemUrl, boolean success) {
+        this.queueItemUrl = queueItemUrl;
+        this.success = success;
     }
 
-    public String getToken() {
-        return token;
+    public String getQueueItemUrl() {
+        return queueItemUrl;
     }
 
-    public String getZafiraLogoURL() {
-        return zafiraLogoURL;
-    }
-
-    public String getWorkspaceURL() {
-        return workspaceURL;
+    public boolean isSuccess() {
+        return success;
     }
 
 }

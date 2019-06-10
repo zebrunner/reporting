@@ -23,6 +23,7 @@ public class Repository implements Serializable {
 
     private String name;
     private String url;
+    private String defaultBranch;
     private Boolean isPrivate;
 
     public Repository() {
@@ -48,6 +49,14 @@ public class Repository implements Serializable {
         this.url = url;
     }
 
+    public String getDefaultBranch() {
+        return defaultBranch;
+    }
+
+    public void setDefaultBranch(String defaultBranch) {
+        this.defaultBranch = defaultBranch;
+    }
+
     public Boolean getPrivate() {
         return isPrivate;
     }
@@ -55,4 +64,5 @@ public class Repository implements Serializable {
     public void setPrivate(Boolean aPrivate) {
         isPrivate = aPrivate;
     }
+
 }

@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.services.services.application.emails;
 
 public class UserInviteEmail extends AbstractEmail {
 
-    private static final String SUBJECT = "Join workspace";
+    private static final String SUBJECT = "Join the workspace";
 
     private final String token;
     private final String zafiraLogoURL;

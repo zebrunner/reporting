@@ -30,6 +30,8 @@ public interface IScmService {
 
     List<Repository> getRepositories(String accessToken, String organizationName) throws IOException, ServiceException;
 
+    Repository getRepository(String accessToken, String organizationName, String repositoryName);
+
     String getLoginName(String accessToken);
 
 }

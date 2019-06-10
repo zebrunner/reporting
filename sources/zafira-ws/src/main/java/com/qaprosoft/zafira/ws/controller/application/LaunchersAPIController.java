@@ -18,6 +18,7 @@ package com.qaprosoft.zafira.ws.controller.application;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Launcher;
 import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.LauncherScannerType;
 import com.qaprosoft.zafira.models.dto.LauncherType;
 import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
@@ -43,6 +44,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -75,6 +77,7 @@ public class LaunchersAPIController extends AbstractController {
     @PostMapping()
     public LauncherType createLauncher(@RequestBody @Valid LauncherType launcherType) throws ServiceException {
         User owner = new User(getPrincipalId());
+        launcherType.setAutoScan(false);
         return mapper.map(launcherService.createLauncher(mapper.map(launcherType, Launcher.class), owner), LauncherType.class);
     }
 
@@ -125,21 +128,29 @@ public class LaunchersAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Scan launchers with jenkins", nickname = "runScanner", httpMethod = "POST")
+    @ApiOperation(value = "Get build number", nickname = "getBuildNumber", httpMethod = "GET", response = Integer.class)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @GetMapping("/build/number")
+    public Integer getBuildNumber(@RequestParam("queueItemUrl") String queueItemUrl) throws ServiceException {
+        return launcherService.getBuildNumber(queueItemUrl);
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Scan launchers with jenkins", nickname = "runScanner", httpMethod = "POST", response = JobResult.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PostMapping("/scanner")
-    public void runScanner(@RequestBody @Valid LauncherScannerType launcherScannerType) {
-        launcherService.buildScannerJob(TenancyContext.getTenantName(), launcherScannerType.getBranch(), launcherScannerType.getScmAccountId(), launcherScannerType.isRescan());
+    public JobResult runScanner(@RequestBody @Valid LauncherScannerType launcherScannerType) {
+        return launcherService.buildScannerJob(TenancyContext.getTenantName(), getPrincipalId(), launcherScannerType.getBranch(), launcherScannerType.getScmAccountId(), launcherScannerType.isRescan());
     }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Cancel launcher scanner", nickname = "cancelScanner", httpMethod = "DELETE")
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
-    @DeleteMapping("/scanner")
-    public void cancelScanner(@RequestBody @Valid LauncherScannerType launcherScannerType) {
-        launcherService.buildScannerJob(TenancyContext.getTenantName(), launcherScannerType.getBranch(), launcherScannerType.getScmAccountId(), launcherScannerType.isRescan());
+    @DeleteMapping("/scanner/{buildNumber}")
+    public void cancelScanner(@PathVariable("buildNumber") int buildNumber, @RequestParam("scmAccountId") Long scmAccountId, @RequestParam("rescan") boolean rescan) {
+        launcherService.abortScannerJob(TenancyContext.getTenantName(), scmAccountId, rescan, buildNumber);
     }
 
     @ResponseStatusDetails
@@ -149,7 +160,8 @@ public class LaunchersAPIController extends AbstractController {
     @PostMapping("/create")
     public List<LauncherType> createLaunchersFromJenkins(@RequestBody @Valid ScannedRepoLaunchersType scannedRepoLaunchersType) throws ServiceException {
         List<Launcher> launchers = launcherService.createLaunchersForJob(scannedRepoLaunchersType, new User(getPrincipalId()));
-        websocketTemplate.convertAndSend(getLaunchersWebsocketPath(), new LauncherPush(launchers, scannedRepoLaunchersType.isSuccess()));
+        List<LauncherType> launcherTypes = launchers.stream().map(launcher -> mapper.map(launcher, LauncherType.class)).collect(Collectors.toList());
+        websocketTemplate.convertAndSend(getLaunchersWebsocketPath(), new LauncherPush(launcherTypes, scannedRepoLaunchersType.getUserId(), scannedRepoLaunchersType.isSuccess()));
         return launchers.stream()
                         .map(launcher -> mapper.map(launcher, LauncherType.class))
                         .collect(Collectors.toList());

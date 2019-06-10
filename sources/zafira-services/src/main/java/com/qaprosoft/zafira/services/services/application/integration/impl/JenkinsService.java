@@ -33,6 +33,10 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.offbytwo.jenkins.JenkinsServer;
+import com.offbytwo.jenkins.model.Build;
+import com.offbytwo.jenkins.model.QueueItem;
+import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import org.apache.commons.lang.StringUtils;
@@ -55,7 +59,7 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
 
     private static final String[] REQUIRED_ARGS = new String[] { "scmURL", "branch", "overrideFields" };
 
-    private static final String ERR_MSG_UNABLE_RUN_JOB = "Unable to run '%s' job";
+    private static final String ERR_MSG_UNABLE_RUN_JOB = "Unable to build '%s' job";
 
     private static final String SCANNER_JOB_URL_PATTERN = "%s/job/%s/job/RegisterRepository";
     private static final String RESCANNER_JOB_URL_PATTERN = "%s/job/%s/job/%s/job/onPush-%s";
@@ -96,51 +100,67 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
         return success;
     }
 
-    public boolean buildJob(Job job, Map<String, String> jobParameters) {
-        boolean success = false;
-        try {
-            JobWithDetails ciJob = getJobWithDetails(job).orElseThrow(() -> new ForbiddenOperationException("Unable to build CI job"));
-            QueueReference reference = ciJob.build(jobParameters, true);
-            success = checkReference(reference);
-        } catch (Exception e) {
-            LOGGER.error("Unable to run Jenkins job:  " + e.getMessage());
-        }
-        return success;
+    public JobResult buildJob(Job job, Map<String, String> jobParameters) {
+        JobWithDetails ciJob = getJobWithDetails(job)
+                .orElseThrow(() -> new ForbiddenOperationException("Unable to build CI job"));
+        return buildJob(ciJob, jobParameters);
     }
 
-    public boolean buildScannerJob(String tenantName, String repositoryName, Map<String, String> jobParameters, boolean rescan) {
+    public JobResult buildScannerJob(String tenantName, String repositoryName, Map<String, String> jobParameters, boolean rescan) {
         String scannerJobUrl = rescan ? String.format(RESCANNER_JOB_URL_PATTERN, context().getJenkinsHost(), tenantName, repositoryName, repositoryName) :
                 String.format(SCANNER_JOB_URL_PATTERN, context().getJenkinsHost(), tenantName);
         return buildJob(scannerJobUrl, jobParameters);
     }
 
-    private boolean buildJob(String jobUrl, Map<String, String> jobParameters) {
-        boolean result = false;
+    public JobResult abortScannerJob(String tenantName, String repositoryName, boolean rescan, Integer buildNumber) {
+        String scannerJobUrl = rescan ? String.format(RESCANNER_JOB_URL_PATTERN, context().getJenkinsHost(), tenantName, repositoryName, repositoryName) :
+                String.format(SCANNER_JOB_URL_PATTERN, context().getJenkinsHost(), tenantName);
+        return abortJob(scannerJobUrl, buildNumber);
+    }
+
+    private JobResult buildJob(String jobUrl, Map<String, String> jobParameters) {
+        JobWithDetails job = getJobByURL(jobUrl)
+                .orElseThrow(() -> new ForbiddenOperationException(String.format(ERR_MSG_UNABLE_RUN_JOB, jobUrl)));
+        return buildJob(job, jobParameters);
+    }
+
+    private JobResult buildJob(JobWithDetails job, Map<String, String> jobParameters) {
+        JobResult result = null;
         try {
-            JobWithDetails job = getJobByURL(jobUrl)
-                    .orElseThrow(() -> new ForbiddenOperationException(String.format(ERR_MSG_UNABLE_RUN_JOB, jobUrl)));
             QueueReference reference = job.build(jobParameters, true);
-            result = checkReference(reference);
+            boolean success = checkReference(reference);
+            result = new JobResult(reference.getQueueItemUrlPart(), success);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
         return result;
     }
 
-    public boolean abortJob(Job ciJob, Integer buildNumber) {
-        boolean success = false;
+    public JobResult abortJob(String jobUrl, Integer buildNumber) {
+        JobWithDetails job = getJobByURL(jobUrl).orElseThrow(() ->
+                new ForbiddenOperationException(String.format("Unable to abort job '%s' with build number %s", jobUrl, buildNumber)));
+        return abortJob(job, buildNumber);
+    }
+
+    public JobResult abortJob(Job ciJob, Integer buildNumber) {
+        JobWithDetails job = getJobWithDetails(ciJob).orElseThrow(() -> new ForbiddenOperationException("Unable to abort CI job"));
+        return abortJob(job, buildNumber);
+    }
+
+    private JobResult abortJob(JobWithDetails job, Integer buildNumber) {
+        JobResult result = null;
         try {
-            JobWithDetails job = getJobWithDetails(ciJob).orElseThrow(() -> new ForbiddenOperationException("Unable to abord CI job"));
             QueueReference reference = stop(job, buildNumber);
-            success = checkReference(reference);
-            if (!checkReference(reference)) {
+            boolean success = checkReference(reference);
+            if (!success) {
                 reference = terminate(job, buildNumber);
                 success = checkReference(reference);
             }
+            result = new JobResult(reference.getQueueItemUrlPart(), success);
         } catch (Exception e) {
             LOGGER.error("Unable to abort Jenkins job:  " + e.getMessage());
         }
-        return success;
+        return result;
     }
 
     private QueueReference stop(JobWithDetails job, Integer buildNumber) throws IOException {
@@ -220,6 +240,29 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
             }
             return job;
         });
+    }
+
+    public Integer getBuildNumber(QueueReference queueReference) {
+        Integer buildNumber = null;
+        int attempts = 5;
+        long millisToSleep = 2000;
+        JenkinsServer server = context().getJenkinsServer();
+        try {
+            QueueItem queueItem = null;
+            while(attempts > 0) {
+                queueItem = server.getQueueItem(queueReference);
+                if(queueItem.getExecutable() != null) {
+                    break;
+                }
+                sleep(millisToSleep);
+                attempts --;
+            }
+            Build build = server.getBuild(queueItem);
+            buildNumber = build.getNumber();
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return buildNumber;
     }
 
     private Optional<JobWithDetails> getJobByURL(String jobUrl) {
@@ -307,4 +350,13 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
             return false;
         }
     }
+
+    private void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
 }

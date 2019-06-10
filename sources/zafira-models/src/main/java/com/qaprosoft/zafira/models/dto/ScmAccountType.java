@@ -29,6 +29,7 @@ public class ScmAccountType extends AbstractType {
     private String repositoryURL;
     private Long userId;
     private ScmAccount.Name name;
+    private String defaultBranch;
 
     public String getOrganizationName() {
         return organizationName;
@@ -77,4 +78,13 @@ public class ScmAccountType extends AbstractType {
     public void setName(ScmAccount.Name name) {
         this.name = name;
     }
+
+    public String getDefaultBranch() {
+        return defaultBranch;
+    }
+
+    public void setDefaultBranch(String defaultBranch) {
+        this.defaultBranch = defaultBranch;
+    }
+
 }
