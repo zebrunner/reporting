@@ -13,25 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.scm;
+package com.qaprosoft.zafira.models.dto;
 
-import com.qaprosoft.zafira.models.dto.scm.Organization;
-import com.qaprosoft.zafira.models.dto.scm.Repository;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+public class JobResult {
 
-import java.io.IOException;
-import java.util.List;
+    private String queueItemUrl;
+    private boolean success;
 
-public interface IScmService {
+    public JobResult(String queueItemUrl, boolean success) {
+        this.queueItemUrl = queueItemUrl;
+        this.success = success;
+    }
 
-    String getClientId();
+    public String getQueueItemUrl() {
+        return queueItemUrl;
+    }
 
-    List<Organization> getOrganizations(String accessToken) throws IOException, ServiceException;
-
-    List<Repository> getRepositories(String accessToken, String organizationName) throws IOException, ServiceException;
-
-    Repository getRepository(String accessToken, String organizationName, String repositoryName);
-
-    String getLoginName(String accessToken);
+    public boolean isSuccess() {
+        return success;
+    }
 
 }

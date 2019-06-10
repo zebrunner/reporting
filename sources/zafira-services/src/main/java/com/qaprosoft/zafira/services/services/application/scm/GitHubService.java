@@ -20,7 +20,9 @@ import com.qaprosoft.zafira.models.dto.scm.Repository;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.util.GitHubHttpUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.kohsuke.github.GHPerson;
+import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +35,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class GitHubService implements IScmService {
+
+    private static final Logger LOGGER = Logger.getLogger(GitHubService.class);
 
     @Autowired
     private GitHubHttpUtils gitHubHttpUtils;
@@ -51,12 +55,22 @@ public class GitHubService implements IScmService {
     public List<Repository> getRepositories(String accessToken, String organizationName) throws IOException, ServiceException {
         GitHub gitHub = GitHub.connectUsingOAuth(accessToken);
         GHPerson person = StringUtils.isBlank(organizationName) ? gitHub.getMyself() : gitHub.getOrganization(organizationName);
-        return person.listRepositories().asList().stream().map(repository -> {
-            Repository repo = new Repository(repository.getName());
-            repo.setPrivate(repository.isPrivate());
-            repo.setUrl(repository.getHtmlUrl().toString());
-            return repo;
-        }).collect(Collectors.toList());
+        return person.listRepositories().asList().stream().map(this::mapRepository).collect(Collectors.toList());
+    }
+
+    @Override
+    public Repository getRepository(String accessToken, String organizationName, String repositoryName) {
+        GHRepository repository = null;
+        if (!StringUtils.isBlank(organizationName) && !StringUtils.isBlank(repositoryName)) {
+            try {
+                GitHub gitHub = GitHub.connectUsingOAuth(accessToken);
+                String repositoryAbsoluteName = organizationName + "/" + repositoryName;
+                repository = gitHub.getRepository(repositoryAbsoluteName);
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+        return repository == null ? null : mapRepository(repository);
     }
 
     @Override
@@ -77,4 +91,26 @@ public class GitHubService implements IScmService {
     public String getClientId() {
         return this.gitHubClientId;
     }
+
+    @Override
+    public String getLoginName(String accessToken) {
+        String result = null;
+        GitHub gitHub;
+        try {
+            gitHub = GitHub.connectUsingOAuth(accessToken);
+            result = gitHub.getMyself().getLogin();
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return result;
+    }
+
+    private Repository mapRepository(GHRepository repository) {
+        Repository repo = new Repository(repository.getName());
+        repo.setDefaultBranch(repository.getDefaultBranch());
+        repo.setPrivate(repository.isPrivate());
+        repo.setUrl(repository.getHtmlUrl().toString());
+        return repo;
+    }
+
 }

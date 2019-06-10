@@ -32,4 +32,7 @@ public interface LauncherMapper {
     void updateLauncher(Launcher launcher);
 
     void deleteLauncherById(Long id);
+
+    void deleteAutoScannedLaunchersByScmAccountId(Long scmAccountId);
+
 }

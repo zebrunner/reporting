@@ -35,6 +35,7 @@ public class LauncherType extends AbstractType {
     private ScmAccountType scmAccountType;
 
     private JobType job;
+    private boolean autoScan;
 
     public String getName() {
         return name;
@@ -67,4 +68,13 @@ public class LauncherType extends AbstractType {
     public void setJob(JobType job) {
         this.job = job;
     }
+
+    public boolean isAutoScan() {
+        return autoScan;
+    }
+
+    public void setAutoScan(boolean autoScan) {
+        this.autoScan = autoScan;
+    }
+
 }
