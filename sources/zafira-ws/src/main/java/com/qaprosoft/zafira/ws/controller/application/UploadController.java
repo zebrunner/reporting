@@ -31,11 +31,11 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -68,7 +68,7 @@ public class UploadController extends AbstractController {
     @ApiOperation(value = "Send image by email", nickname = "sendImageByEmail", httpMethod = "POST")
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/email")
-    public void sendImageByEmail(@RequestParam("file") MultipartFile file, @ModelAttribute EmailType email) throws ServiceException, IOException {
+    public void sendImageByEmail(@RequestPart("file") MultipartFile file, @RequestPart("email") EmailType email) throws ServiceException, IOException {
         List<Attachment> attachments = new ArrayList<>();
         File attachment = File.createTempFile(
                 FilenameUtils.getName(file.getOriginalFilename()),
