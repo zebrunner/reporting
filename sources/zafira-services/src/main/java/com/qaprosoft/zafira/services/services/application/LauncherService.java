@@ -45,6 +45,7 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.ScmAccountNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.integration.context.JenkinsContext;
+import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.SeleniumService;
 import com.qaprosoft.zafira.services.services.application.scm.ScmAccountService;
@@ -60,6 +61,7 @@ public class LauncherService {
     private final JWTService jwtService;
     private final GitHubService gitHubService;
     private final SeleniumService seleniumService;
+    private final CryptoService cryptoService;
     private final String apiUrl;
 
     public LauncherService(LauncherMapper launcherMapper,
@@ -69,6 +71,7 @@ public class LauncherService {
                            JWTService jwtService,
                            GitHubService gitHubService,
                            SeleniumService seleniumService,
+                           CryptoService cryptoService,
                            @Value("${zafira.webservice.url}") String apiUrl) {
         this.launcherMapper = launcherMapper;
         this.jenkinsService = jenkinsService;
@@ -77,6 +80,7 @@ public class LauncherService {
         this.jwtService = jwtService;
         this.gitHubService = gitHubService;
         this.seleniumService = seleniumService;
+        this.cryptoService = cryptoService;
         this.apiUrl = apiUrl;
     }
 
@@ -182,7 +186,7 @@ public class LauncherService {
             final String username = seleniumService.context().getUser();
             final String password = seleniumService.context().getPassword();
             if(StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
-                seleniumURL = String.format("%s//%s:%s@%s", seleniumURL.split("//")[0], username, password, seleniumURL.split("//")[1]);
+                seleniumURL = String.format("%s//%s:%s@%s", seleniumURL.split("//")[0], username, cryptoService.decrypt(password), seleniumURL.split("//")[1]);
             }
             jobParameters.put("selenium_host", seleniumURL);
         }
