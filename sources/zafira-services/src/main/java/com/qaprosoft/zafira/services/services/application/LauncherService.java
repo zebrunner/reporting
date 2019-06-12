@@ -28,6 +28,8 @@ import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.scm.GitHubService;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +46,7 @@ import com.qaprosoft.zafira.services.exceptions.ScmAccountNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.integration.context.JenkinsContext;
 import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.SeleniumService;
 import com.qaprosoft.zafira.services.services.application.scm.ScmAccountService;
 import com.qaprosoft.zafira.services.services.auth.JWTService;
 
@@ -56,6 +59,7 @@ public class LauncherService {
     private final JobsService jobsService;
     private final JWTService jwtService;
     private final GitHubService gitHubService;
+    private final SeleniumService seleniumService;
     private final String apiUrl;
 
     public LauncherService(LauncherMapper launcherMapper,
@@ -64,6 +68,7 @@ public class LauncherService {
                            JobsService jobsService,
                            JWTService jwtService,
                            GitHubService gitHubService,
+                           SeleniumService seleniumService,
                            @Value("${zafira.webservice.url}") String apiUrl) {
         this.launcherMapper = launcherMapper;
         this.jenkinsService = jenkinsService;
@@ -71,6 +76,7 @@ public class LauncherService {
         this.jobsService = jobsService;
         this.jwtService = jwtService;
         this.gitHubService = gitHubService;
+        this.seleniumService = seleniumService;
         this.apiUrl = apiUrl;
     }
 
@@ -163,11 +169,22 @@ public class LauncherService {
         Job job = launcher.getJob();
         if (job == null)
             throw new ServiceException("Launcher job not specified");
-
+        
         Map<String, String> jobParameters = new ObjectMapper().readValue(launcher.getModel(), new TypeReference<Map<String, String>>() {});
         jobParameters.put("scmURL", scmAccount.buildAuthorizedURL());
         if (!jobParameters.containsKey("branch")) {
             jobParameters.put("branch", "*/master");
+        }
+        
+        // If Selenium integration is enabled pass selenium_host with basic auth as job argument
+        if(seleniumService.isConnected()) {
+            String seleniumURL = seleniumService.context().getUrl();
+            final String username = seleniumService.context().getUser();
+            final String password = seleniumService.context().getPassword();
+            if(StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
+                seleniumURL = String.format("%s//%s:%s@%s", seleniumURL.split("//")[0], username, password, seleniumURL.split("//")[1]);
+            }
+            jobParameters.put("selenium_host", seleniumURL);
         }
 
         jobParameters.put("zafira_enabled", "true");
@@ -226,5 +243,4 @@ public class LauncherService {
     public Integer getBuildNumber(String queueItemUrl) {
         return jenkinsService.getBuildNumber(new QueueReference(queueItemUrl));
     }
-
 }

@@ -56,7 +56,8 @@ public class SeleniumService extends AbstractIntegration<SeleniumContext> {
         CloseableHttpResponse response = null;
         try {
             String url = context().getUrl();
-            request = buildGetRequest(url);
+            request = new HttpGet(url);
+            request.setConfig(REQUEST_CONFIG);
             response = HTTP_CLIENT.execute(request);
 
             result = response.getStatusLine().getStatusCode() == 200;
@@ -77,12 +78,6 @@ public class SeleniumService extends AbstractIntegration<SeleniumContext> {
         return result;
     }
 
-    private static HttpGet buildGetRequest(String url) {
-        HttpGet request = new HttpGet(url);
-        request.setConfig(REQUEST_CONFIG);
-        return request;
-    }
-
     @PreDestroy
     public void close() {
         try {
@@ -93,5 +88,4 @@ public class SeleniumService extends AbstractIntegration<SeleniumContext> {
             LOGGER.error(e.getMessage(), e);
         }
     }
-
 }
