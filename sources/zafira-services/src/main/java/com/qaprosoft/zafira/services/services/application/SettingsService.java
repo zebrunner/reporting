@@ -220,7 +220,7 @@ public class SettingsService {
     }
 
     private void initIntegration(Tool tool, String tenancyName) {
-        Integration integration = integrationService.getServiceByTool(tool);
+        Integration<?> integration = integrationService.getServiceByTool(tool);
         if (integration != null) {
             TenancyContext.setTenantName(tenancyName);
             integration.init();

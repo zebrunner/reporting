@@ -122,6 +122,7 @@ public class LaunchersAPIController extends AbstractController {
     @ResponseStatusDetails
     @ApiOperation(value = "Build job with launcher", nickname = "build", httpMethod = "POST")
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @PostMapping("/build")
     public void build(@RequestBody @Valid LauncherType launcherType) throws ServiceException, IOException {
         launcherService.buildLauncherJob(mapper.map(launcherType, Launcher.class), userService.getNotNullUserById(getPrincipalId()));
@@ -130,6 +131,7 @@ public class LaunchersAPIController extends AbstractController {
     @ResponseStatusDetails
     @ApiOperation(value = "Get build number", nickname = "getBuildNumber", httpMethod = "GET", response = Integer.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping("/build/number")
     public Integer getBuildNumber(@RequestParam("queueItemUrl") String queueItemUrl) throws ServiceException {
         return launcherService.getBuildNumber(queueItemUrl);
