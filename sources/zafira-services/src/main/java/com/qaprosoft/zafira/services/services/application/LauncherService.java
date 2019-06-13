@@ -210,7 +210,7 @@ public class LauncherService {
     }
 
     @Transactional(readOnly = true)
-    public JobResult buildScannerJob(String tenantName, Long userId, String branch, long scmAccountId, boolean rescan) {
+    public JobResult buildScannerJob(Long userId, String branch, long scmAccountId, boolean rescan) {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
         if(scmAccount == null) {
             throw new ServiceException("Scm account not found");
@@ -230,9 +230,9 @@ public class LauncherService {
 
         JobResult result;
         if (rescan) {
-            result = jenkinsService.buildReScannerJob(tenantName, scmAccount.getRepositoryName(), jobParameters);
+            result = jenkinsService.buildReScannerJob(scmAccount.getRepositoryName(), jobParameters);
         } else {
-            result = jenkinsService.buildScannerJob(tenantName, jobParameters);
+            result = jenkinsService.buildScannerJob(jobParameters);
         }
         if (result == null || !result.isSuccess()) {
             throw new ForbiddenOperationException("Repository scanner job is not started");
