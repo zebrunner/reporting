@@ -62,7 +62,9 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
     private static final String ERR_MSG_UNABLE_RUN_JOB = "Unable to build '%s' job";
 
     private static final String SCANNER_JOB_URL_PATTERN = "%s/job/%s/job/RegisterRepository";
+    private static final String SCANNER_JOB_ROOT_URL_PATTERN = "%s/job/RegisterRepository";
     private static final String RESCANNER_JOB_URL_PATTERN = "%s/job/%s/job/%s/job/onPush-%s";
+    private static final String RESCANNER_JOB_ROOT_URL_PATTERN = "%s/job/%s/job/onPush-%s";
     private static final String FOLDER_REGEX = ".+job/.+/job.+";
 
     public JenkinsService(SettingsService settingsService, CryptoService cryptoService) {
@@ -106,9 +108,23 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
         return buildJob(ciJob, jobParameters);
     }
 
-    public JobResult buildScannerJob(String tenantName, String repositoryName, Map<String, String> jobParameters, boolean rescan) {
-        String scannerJobUrl = rescan ? String.format(RESCANNER_JOB_URL_PATTERN, context().getJenkinsHost(), tenantName, repositoryName, repositoryName) :
-                String.format(SCANNER_JOB_URL_PATTERN, context().getJenkinsHost(), tenantName);
+    public JobResult buildScannerJob(String tenantName, Map<String, String> jobParameters) {
+        String scannerJobUrl;
+        if (StringUtils.isEmpty(context().getFolder())) {
+            scannerJobUrl = String.format(SCANNER_JOB_ROOT_URL_PATTERN, context().getJenkinsHost());
+        } else {
+            scannerJobUrl = String.format(SCANNER_JOB_URL_PATTERN, context().getJenkinsHost(), tenantName);
+        }
+        return buildJob(scannerJobUrl, jobParameters);
+    }
+
+    public JobResult buildReScannerJob(String tenantName, String repositoryName, Map<String, String> jobParameters) {
+        String scannerJobUrl;
+        if (StringUtils.isEmpty(context().getFolder())) {
+            scannerJobUrl = String.format(RESCANNER_JOB_ROOT_URL_PATTERN, context().getJenkinsHost(), tenantName, repositoryName);
+        } else {
+            scannerJobUrl = String.format(RESCANNER_JOB_URL_PATTERN, context().getJenkinsHost(), tenantName, repositoryName, repositoryName);
+        }
         return buildJob(scannerJobUrl, jobParameters);
     }
 
