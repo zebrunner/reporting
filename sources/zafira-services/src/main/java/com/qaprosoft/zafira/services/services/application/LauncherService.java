@@ -27,6 +27,7 @@ import com.offbytwo.jenkins.model.QueueReference;
 import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
+import com.qaprosoft.zafira.services.exceptions.JenkinsJobNotFoundException;
 import com.qaprosoft.zafira.services.services.application.scm.GitHubService;
 
 import org.apache.commons.lang3.StringUtils;
@@ -53,6 +54,9 @@ import com.qaprosoft.zafira.services.services.auth.JWTService;
 
 @Service
 public class LauncherService {
+
+    private static final String LAUNCHER_JOB_URL_PATTERN = "%s/job/%s/job/launcher";
+    private static final String LAUNCHER_JOB_ROOT_URL_PATTERN = "%s/job/launcher";
 
     private final LauncherMapper launcherMapper;
     private final JenkinsService jenkinsService;
@@ -88,21 +92,20 @@ public class LauncherService {
     public Launcher createLauncher(Launcher launcher, User owner) throws ServiceException {
         if (jenkinsService.isConnected()) {
             JenkinsContext context = jenkinsService.context();
-            String launcherJobName = context.getLauncherJobName();
-            if (launcherJobName != null) {
-                String jenkinsHost = context.getJenkinsHost();
-                String launcherJobUrl = Arrays.stream(launcherJobName.split("/")).collect(Collectors.joining("/job/", jenkinsHost + "/job/", ""));
-                Job job = jobsService.getJobByJobURL(launcherJobUrl);
-                if (job == null) {
-                    job = jenkinsService.getJobByUrl(launcherJobUrl).orElse(null);
-                    if (job != null) {
-                        job.setJenkinsHost(jenkinsHost);
-                        job.setUser(owner);
-                        jobsService.createJob(job);
-                    }
-                }
-                launcher.setJob(job);
+            String jenkinsHost = context.getJenkinsHost();
+            String folder = context.getFolder();
+            String launcherJobUrl = StringUtils.isEmpty(folder) ?
+                    String.format(LAUNCHER_JOB_ROOT_URL_PATTERN, jenkinsHost) :
+                    String.format(LAUNCHER_JOB_URL_PATTERN, jenkinsHost, folder);
+            Job job = jobsService.getJobByJobURL(launcherJobUrl);
+            if (job == null) {
+                job = jenkinsService.getJobByUrl(launcherJobUrl).orElseThrow(
+                        () -> new JenkinsJobNotFoundException("Job\n" + launcherJobUrl + "\nis not found on Jenkins"));
+                job.setJenkinsHost(jenkinsHost);
+                job.setUser(owner);
+                jobsService.createJob(job);
             }
+            launcher.setJob(job);
         }
         launcherMapper.createLauncher(launcher);
         return launcher;
@@ -207,7 +210,7 @@ public class LauncherService {
     }
 
     @Transactional(readOnly = true)
-    public JobResult buildScannerJob(String tenantName, Long userId, String branch, long scmAccountId, boolean rescan) {
+    public JobResult buildScannerJob(Long userId, String branch, long scmAccountId, boolean rescan) {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
         if(scmAccount == null) {
             throw new ServiceException("Scm account not found");
@@ -216,15 +219,22 @@ public class LauncherService {
 
         Map<String, String> jobParameters = new HashMap<>();
         jobParameters.put("userId", String.valueOf(userId));
-        jobParameters.put("organization", scmAccount.getOrganizationName());
+        if (StringUtils.isNotEmpty(jenkinsService.context().getFolder())) {
+            jobParameters.put("organization", scmAccount.getOrganizationName());
+        }
         jobParameters.put("repo", scmAccount.getRepositoryName());
         jobParameters.put("branch", branch);
         jobParameters.put("githubUser", loginName);
         jobParameters.put("githubToken", scmAccount.getAccessToken());
         jobParameters.put("onlyUpdated", String.valueOf(false));
 
-        JobResult result = jenkinsService.buildScannerJob(tenantName, scmAccount.getRepositoryName(), jobParameters, rescan);
-        if (result == null || ! result.isSuccess()) {
+        JobResult result;
+        if (rescan) {
+            result = jenkinsService.buildReScannerJob(scmAccount.getRepositoryName(), jobParameters);
+        } else {
+            result = jenkinsService.buildScannerJob(jobParameters);
+        }
+        if (result == null || !result.isSuccess()) {
             throw new ForbiddenOperationException("Repository scanner job is not started");
         }
         return result;
