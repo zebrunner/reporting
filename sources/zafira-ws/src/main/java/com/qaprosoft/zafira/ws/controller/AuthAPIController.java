@@ -23,6 +23,7 @@ import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.qaprosoft.zafira.models.dto.auth.CredentialsType;
 import com.qaprosoft.zafira.models.dto.auth.EmailType;
 import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
+import com.qaprosoft.zafira.models.dto.auth.TenantToken;
 import com.qaprosoft.zafira.models.dto.auth.TenantType;
 import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
 import com.qaprosoft.zafira.models.dto.user.PasswordType;
@@ -113,6 +114,13 @@ public class AuthAPIController extends AbstractController {
     @GetMapping("/tenant")
     public TenantType getTenant() {
         return new TenantType(TenancyContext.getTenantName(), urlResolver.getServiceURL(), useArtifactsProxy);
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Verify tenant in secured token", nickname = "verifyTenant", httpMethod = "POST", response = Boolean.class)
+    @PostMapping("/tenant/verification")
+    public boolean verifyTenant(@Valid @RequestBody TenantToken tenantToken) {
+        return jwtService.checkTenant(tenantToken.getTenantName(), tenantToken.getToken());
     }
 
     @ResponseStatusDetails

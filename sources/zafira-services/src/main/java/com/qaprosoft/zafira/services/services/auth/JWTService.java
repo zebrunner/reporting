@@ -31,6 +31,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 public class JWTService {
+
     private final String secret;
 
     private final Integer authTokenExp;
@@ -135,7 +136,19 @@ public class JWTService {
                 .compact();
     }
 
+    public boolean checkTenant(String tenantName, String token) {
+        Object tenantObj;
+        try {
+            final Claims body = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+            tenantObj = body.get("tenant");
+        } catch (Exception e) {
+            return false;
+        }
+        return tenantObj != null && ((String) tenantObj).equals(tenantName);
+    }
+
     public Integer getExpiration() {
         return authTokenExp;
     }
+
 }
