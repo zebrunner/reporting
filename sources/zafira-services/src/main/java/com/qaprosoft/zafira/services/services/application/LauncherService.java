@@ -23,13 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.offbytwo.jenkins.model.QueueReference;
-import com.qaprosoft.zafira.models.dto.JobResult;
-import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.JenkinsJobNotFoundException;
-import com.qaprosoft.zafira.services.services.application.scm.GitHubService;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -37,18 +30,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.offbytwo.jenkins.model.QueueReference;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherMapper;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Launcher;
 import com.qaprosoft.zafira.models.db.ScmAccount;
 import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.dto.JobResult;
+import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
+import com.qaprosoft.zafira.services.exceptions.JenkinsJobNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ScmAccountNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.integration.context.JenkinsContext;
 import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.SeleniumService;
+import com.qaprosoft.zafira.services.services.application.scm.GitHubService;
 import com.qaprosoft.zafira.services.services.application.scm.ScmAccountService;
 import com.qaprosoft.zafira.services.services.auth.JWTService;
 
@@ -65,7 +64,6 @@ public class LauncherService {
     private final JWTService jwtService;
     private final GitHubService gitHubService;
     private final SeleniumService seleniumService;
-    private final CryptoService cryptoService;
     private final String apiUrl;
 
     public LauncherService(LauncherMapper launcherMapper,
@@ -75,7 +73,6 @@ public class LauncherService {
                            JWTService jwtService,
                            GitHubService gitHubService,
                            SeleniumService seleniumService,
-                           CryptoService cryptoService,
                            @Value("${zafira.webservice.url}") String apiUrl) {
         this.launcherMapper = launcherMapper;
         this.jenkinsService = jenkinsService;
@@ -84,7 +81,6 @@ public class LauncherService {
         this.jwtService = jwtService;
         this.gitHubService = gitHubService;
         this.seleniumService = seleniumService;
-        this.cryptoService = cryptoService;
         this.apiUrl = apiUrl;
     }
 
