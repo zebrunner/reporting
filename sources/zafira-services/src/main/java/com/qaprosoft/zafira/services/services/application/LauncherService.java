@@ -189,7 +189,7 @@ public class LauncherService {
             final String username = seleniumService.context().getUser();
             final String password = seleniumService.context().getPassword();
             if(StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
-                seleniumURL = String.format("%s//%s:%s@%s", seleniumURL.split("//")[0], username, cryptoService.decrypt(password), seleniumURL.split("//")[1]);
+                seleniumURL = String.format("%s//%s:%s@%s", seleniumURL.split("//")[0], username, password, seleniumURL.split("//")[1]);
             }
             jobParameters.put("selenium_host", seleniumURL);
         }
