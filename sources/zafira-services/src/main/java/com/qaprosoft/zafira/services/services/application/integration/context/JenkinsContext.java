@@ -29,7 +29,7 @@ public class JenkinsContext extends AbstractContext {
     private static final Integer HTTP_TIMEOUT = 15;
 
     private JenkinsServer jenkinsServer;
-    private String launcherJobName;
+    private String folder;
     private String jenkinsHost;
 
     public JenkinsContext(Map<Setting.SettingType, String> settings) {
@@ -38,11 +38,11 @@ public class JenkinsContext extends AbstractContext {
             String username = settings.get(Setting.SettingType.JENKINS_USER);
             String passwordOrApiToken = settings.get(Setting.SettingType.JENKINS_API_TOKEN_OR_PASSWORD);
             String url = settings.get(Setting.SettingType.JENKINS_URL);
-            String launcherJobName = settings.get(Setting.SettingType.JENKINS_LAUNCHER_JOB_NAME);
+            String folder = settings.get(Setting.SettingType.JENKINS_FOLDER);
 
             JenkinsConfig config = new JenkinsConfig(username, passwordOrApiToken, HTTP_TIMEOUT);
             this.jenkinsServer = new JenkinsServer(new JenkinsClient(new URI(url), config));
-            this.launcherJobName = launcherJobName;
+            this.folder = folder;
             this.jenkinsHost = url;
         } catch (URISyntaxException e) {
             LOGGER.error(e.getMessage(), e);
@@ -57,12 +57,12 @@ public class JenkinsContext extends AbstractContext {
         this.jenkinsServer = jenkinsServer;
     }
 
-    public String getLauncherJobName() {
-        return launcherJobName;
+    public String getFolder() {
+        return folder;
     }
 
-    public void setLauncherJobName(String launcherJobName) {
-        this.launcherJobName = launcherJobName;
+    public void setFolder(String folder) {
+        this.folder = folder;
     }
 
     public String getJenkinsHost() {

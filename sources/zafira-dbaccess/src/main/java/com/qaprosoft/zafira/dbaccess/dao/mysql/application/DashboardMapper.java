@@ -15,13 +15,13 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.qaprosoft.zafira.models.db.Attribute;
 import com.qaprosoft.zafira.models.db.Dashboard;
 import com.qaprosoft.zafira.models.db.Widget;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
-import java.util.Map;
 
 public interface DashboardMapper {
     void createDashboard(Dashboard dashboard);

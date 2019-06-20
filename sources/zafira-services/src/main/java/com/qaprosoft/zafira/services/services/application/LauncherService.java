@@ -27,7 +27,10 @@ import com.offbytwo.jenkins.model.QueueReference;
 import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
+import com.qaprosoft.zafira.services.exceptions.JenkinsJobNotFoundException;
 import com.qaprosoft.zafira.services.services.application.scm.GitHubService;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,12 +46,17 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.ScmAccountNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.integration.context.JenkinsContext;
+import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.SeleniumService;
 import com.qaprosoft.zafira.services.services.application.scm.ScmAccountService;
 import com.qaprosoft.zafira.services.services.auth.JWTService;
 
 @Service
 public class LauncherService {
+
+    private static final String LAUNCHER_JOB_URL_PATTERN = "%s/job/%s/job/launcher";
+    private static final String LAUNCHER_JOB_ROOT_URL_PATTERN = "%s/job/launcher";
 
     private final LauncherMapper launcherMapper;
     private final JenkinsService jenkinsService;
@@ -56,6 +64,8 @@ public class LauncherService {
     private final JobsService jobsService;
     private final JWTService jwtService;
     private final GitHubService gitHubService;
+    private final SeleniumService seleniumService;
+    private final CryptoService cryptoService;
     private final String apiUrl;
 
     public LauncherService(LauncherMapper launcherMapper,
@@ -64,6 +74,8 @@ public class LauncherService {
                            JobsService jobsService,
                            JWTService jwtService,
                            GitHubService gitHubService,
+                           SeleniumService seleniumService,
+                           CryptoService cryptoService,
                            @Value("${zafira.webservice.url}") String apiUrl) {
         this.launcherMapper = launcherMapper;
         this.jenkinsService = jenkinsService;
@@ -71,6 +83,8 @@ public class LauncherService {
         this.jobsService = jobsService;
         this.jwtService = jwtService;
         this.gitHubService = gitHubService;
+        this.seleniumService = seleniumService;
+        this.cryptoService = cryptoService;
         this.apiUrl = apiUrl;
     }
 
@@ -78,21 +92,20 @@ public class LauncherService {
     public Launcher createLauncher(Launcher launcher, User owner) throws ServiceException {
         if (jenkinsService.isConnected()) {
             JenkinsContext context = jenkinsService.context();
-            String launcherJobName = context.getLauncherJobName();
-            if (launcherJobName != null) {
-                String jenkinsHost = context.getJenkinsHost();
-                String launcherJobUrl = Arrays.stream(launcherJobName.split("/")).collect(Collectors.joining("/job/", jenkinsHost + "/job/", ""));
-                Job job = jobsService.getJobByJobURL(launcherJobUrl);
-                if (job == null) {
-                    job = jenkinsService.getJobByUrl(launcherJobUrl).orElse(null);
-                    if (job != null) {
-                        job.setJenkinsHost(jenkinsHost);
-                        job.setUser(owner);
-                        jobsService.createJob(job);
-                    }
-                }
-                launcher.setJob(job);
+            String jenkinsHost = context.getJenkinsHost();
+            String folder = context.getFolder();
+            String launcherJobUrl = StringUtils.isEmpty(folder) ?
+                    String.format(LAUNCHER_JOB_ROOT_URL_PATTERN, jenkinsHost) :
+                    String.format(LAUNCHER_JOB_URL_PATTERN, jenkinsHost, folder);
+            Job job = jobsService.getJobByJobURL(launcherJobUrl);
+            if (job == null) {
+                job = jenkinsService.getJobByUrl(launcherJobUrl).orElseThrow(
+                        () -> new JenkinsJobNotFoundException("Job\n" + launcherJobUrl + "\nis not found on Jenkins"));
+                job.setJenkinsHost(jenkinsHost);
+                job.setUser(owner);
+                jobsService.createJob(job);
             }
+            launcher.setJob(job);
         }
         launcherMapper.createLauncher(launcher);
         return launcher;
@@ -163,11 +176,22 @@ public class LauncherService {
         Job job = launcher.getJob();
         if (job == null)
             throw new ServiceException("Launcher job not specified");
-
+        
         Map<String, String> jobParameters = new ObjectMapper().readValue(launcher.getModel(), new TypeReference<Map<String, String>>() {});
         jobParameters.put("scmURL", scmAccount.buildAuthorizedURL());
         if (!jobParameters.containsKey("branch")) {
             jobParameters.put("branch", "*/master");
+        }
+        
+        // If Selenium integration is enabled pass selenium_host with basic auth as job argument
+        if(seleniumService.isConnected()) {
+            String seleniumURL = seleniumService.context().getUrl();
+            final String username = seleniumService.context().getUser();
+            final String password = seleniumService.context().getPassword();
+            if(StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
+                seleniumURL = String.format("%s//%s:%s@%s", seleniumURL.split("//")[0], username, cryptoService.decrypt(password), seleniumURL.split("//")[1]);
+            }
+            jobParameters.put("selenium_host", seleniumURL);
         }
 
         jobParameters.put("zafira_enabled", "true");
@@ -186,7 +210,7 @@ public class LauncherService {
     }
 
     @Transactional(readOnly = true)
-    public JobResult buildScannerJob(String tenantName, Long userId, String branch, long scmAccountId, boolean rescan) {
+    public JobResult buildScannerJob(Long userId, String branch, long scmAccountId, boolean rescan) {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
         if(scmAccount == null) {
             throw new ServiceException("Scm account not found");
@@ -195,15 +219,22 @@ public class LauncherService {
 
         Map<String, String> jobParameters = new HashMap<>();
         jobParameters.put("userId", String.valueOf(userId));
-        jobParameters.put("organization", scmAccount.getOrganizationName());
+        if (StringUtils.isNotEmpty(jenkinsService.context().getFolder())) {
+            jobParameters.put("organization", scmAccount.getOrganizationName());
+        }
         jobParameters.put("repo", scmAccount.getRepositoryName());
         jobParameters.put("branch", branch);
         jobParameters.put("githubUser", loginName);
         jobParameters.put("githubToken", scmAccount.getAccessToken());
         jobParameters.put("onlyUpdated", String.valueOf(false));
 
-        JobResult result = jenkinsService.buildScannerJob(tenantName, scmAccount.getRepositoryName(), jobParameters, rescan);
-        if (result == null || ! result.isSuccess()) {
+        JobResult result;
+        if (rescan) {
+            result = jenkinsService.buildReScannerJob(scmAccount.getRepositoryName(), jobParameters);
+        } else {
+            result = jenkinsService.buildScannerJob(jobParameters);
+        }
+        if (result == null || !result.isSuccess()) {
             throw new ForbiddenOperationException("Repository scanner job is not started");
         }
         return result;
@@ -226,5 +257,4 @@ public class LauncherService {
     public Integer getBuildNumber(String queueItemUrl) {
         return jenkinsService.getBuildNumber(new QueueReference(queueItemUrl));
     }
-
 }

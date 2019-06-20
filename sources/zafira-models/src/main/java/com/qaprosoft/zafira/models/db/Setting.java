@@ -48,7 +48,7 @@ public class Setting extends AbstractEntity {
                 SettingType.JENKINS_URL,
                 SettingType.JENKINS_USER,
                 SettingType.JENKINS_API_TOKEN_OR_PASSWORD,
-                SettingType.JENKINS_LAUNCHER_JOB_NAME,
+                SettingType.JENKINS_FOLDER,
                 SettingType.JENKINS_ENABLED),
         SLACK(SettingType.SLACK_WEB_HOOK_URL, SettingType.SLACK_NOTIF_CHANNEL_EXAMPLE, SettingType.SLACK_ENABLED),
         EMAIL(
@@ -126,7 +126,7 @@ public class Setting extends AbstractEntity {
         JENKINS_URL,
         JENKINS_USER,
         JENKINS_API_TOKEN_OR_PASSWORD(true),
-        JENKINS_LAUNCHER_JOB_NAME(false, false),
+        JENKINS_FOLDER(false, false),
         JENKINS_ENABLED,
         SLACK_WEB_HOOK_URL,
         SLACK_NOTIF_CHANNEL_EXAMPLE,
