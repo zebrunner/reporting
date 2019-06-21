@@ -16,10 +16,16 @@
 package com.qaprosoft.zafira.services.services.auth;
 
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.services.services.application.UserService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.qaprosoft.zafira.models.db.Group;
@@ -29,8 +35,11 @@ import com.qaprosoft.zafira.services.services.application.GroupService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.util.CollectionUtils;
 
 public class JWTService {
+
+    private static final Logger LOGGER = Logger.getLogger(JWTService.class);
 
     private final String secret;
 
@@ -136,15 +145,37 @@ public class JWTService {
                 .compact();
     }
 
-    public boolean checkTenant(String tenantName, String token) {
-        Object tenantObj;
+    @SuppressWarnings("unchecked")
+    public boolean checkPermissions(String tenantName, String token, Set<Permission.Name> permissionsToCheck) {
+        Set<Permission.Name> permissions = null;
+        Object tenantObj = null;
         try {
             final Claims body = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
             tenantObj = body.get("tenant");
+            List groupIds = (List) body.get("groupIds");
+            permissions = (Set) groupIds.stream()
+                                  .map(groupId -> retrievePermissionNames(((Number) groupId).longValue()))
+                                  .reduce(new HashSet<>(), collectPermissions());
         } catch (Exception e) {
-            return false;
+            LOGGER.error(e.getMessage(), e);
+        } finally {
+            return tenantObj != null && tenantObj.equals(tenantName)
+                    && ! CollectionUtils.isEmpty(permissions) && permissions.containsAll(permissionsToCheck);
         }
-        return tenantObj != null && ((String) tenantObj).equals(tenantName);
+    }
+
+    private Set<Permission.Name> retrievePermissionNames(long groupId) {
+        Group group = groupService.getGroupById(groupId);
+        return group.getPermissions().stream()
+                    .map(Permission::getName)
+                    .collect(Collectors.toSet());
+    }
+
+    private BinaryOperator<Set<Permission.Name>> collectPermissions() {
+        return (name1, name2) -> {
+            name1.addAll(name2);
+            return name1;
+        };
     }
 
     public Integer getExpiration() {

@@ -38,7 +38,8 @@ public class Permission extends AbstractEntity implements Comparable<Permission>
         MONITORS,
         PROJECTS,
         INTEGRATIONS,
-        LAUNCHERS
+        LAUNCHERS,
+        BILLING
     }
 
     public enum Name {
@@ -61,7 +62,9 @@ public class Permission extends AbstractEntity implements Comparable<Permission>
         MODIFY_INTEGRATIONS,
         VIEW_INTEGRATIONS,
         MODIFY_LAUNCHERS,
-        VIEW_LAUNCHERS
+        VIEW_LAUNCHERS,
+        PAYMENT_METHODS,
+        INVOICES
     }
 
     public Name getName() {

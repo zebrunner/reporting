@@ -15,11 +15,13 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto.auth;
 
+import com.qaprosoft.zafira.models.db.Permission;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import java.io.Serializable;
+import java.util.Set;
 
-public class TenantToken implements Serializable {
+public class TenantAuth implements Serializable {
 
     private static final long serialVersionUID = -1075126053459147979L;
 
@@ -28,6 +30,9 @@ public class TenantToken implements Serializable {
 
     @NotEmpty
     private String token;
+
+    @NotEmpty
+    private Set<Permission.Name> permissions;
 
     public String getTenantName() {
         return tenantName;
@@ -43,6 +48,14 @@ public class TenantToken implements Serializable {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public Set<Permission.Name> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(Set<Permission.Name> permissions) {
+        this.permissions = permissions;
     }
 
 }

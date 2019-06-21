@@ -23,7 +23,7 @@ import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.qaprosoft.zafira.models.dto.auth.CredentialsType;
 import com.qaprosoft.zafira.models.dto.auth.EmailType;
 import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
-import com.qaprosoft.zafira.models.dto.auth.TenantToken;
+import com.qaprosoft.zafira.models.dto.auth.TenantAuth;
 import com.qaprosoft.zafira.models.dto.auth.TenantType;
 import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
 import com.qaprosoft.zafira.models.dto.user.PasswordType;
@@ -49,7 +49,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -117,10 +119,12 @@ public class AuthAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Verify tenant in secured token", nickname = "verifyTenant", httpMethod = "POST", response = Boolean.class)
+    @ApiOperation(value = "Check tenant permissions", nickname = "checkPermissions", httpMethod = "POST")
     @PostMapping("/tenant/verification")
-    public boolean verifyTenant(@Valid @RequestBody TenantToken tenantToken) {
-        return jwtService.checkTenant(tenantToken.getTenantName(), tenantToken.getToken());
+    public ResponseEntity<Void> checkPermissions(@Valid @RequestBody TenantAuth tenantAuth) {
+        boolean result = jwtService.checkPermissions(tenantAuth.getTenantName(), tenantAuth.getToken(), tenantAuth.getPermissions());
+        HttpStatus httpStatus = result ? HttpStatus.OK : HttpStatus.FORBIDDEN;
+        return new ResponseEntity<>(httpStatus);
     }
 
     @ResponseStatusDetails
