@@ -66,6 +66,9 @@ public class LauncherService {
     private final SeleniumService seleniumService;
     private final String apiUrl;
 
+    @Value("${zafira.multitenant}")
+    private boolean isMultitenant;
+
     public LauncherService(LauncherMapper launcherMapper,
                            JenkinsService jenkinsService,
                            ScmAccountService scmAccountService,
@@ -206,7 +209,7 @@ public class LauncherService {
     }
 
     @Transactional(readOnly = true)
-    public JobResult buildScannerJob(Long userId, String branch, long scmAccountId, boolean rescan) {
+    public JobResult buildScannerJob(User user, String branch, long scmAccountId, boolean rescan) {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
         if(scmAccount == null) {
             throw new ServiceException("Scm account not found");
@@ -214,7 +217,7 @@ public class LauncherService {
         String loginName = gitHubService.getLoginName(scmAccount.getAccessToken());
 
         Map<String, String> jobParameters = new HashMap<>();
-        jobParameters.put("userId", String.valueOf(userId));
+        jobParameters.put("userId", String.valueOf(user.getId()));
         if (StringUtils.isNotEmpty(jenkinsService.context().getFolder())) {
             jobParameters.put("organization", scmAccount.getOrganizationName());
         }
@@ -223,6 +226,13 @@ public class LauncherService {
         jobParameters.put("githubUser", loginName);
         jobParameters.put("githubToken", scmAccount.getAccessToken());
         jobParameters.put("onlyUpdated", String.valueOf(false));
+
+        if(isMultitenant){
+            jobParameters.put("zafira_enabled", "true");
+            jobParameters.put("zafira_service_url", apiUrl.replace("api", TenancyContext.getTenantName()));
+            jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, TenancyContext.getTenantName()));
+
+        }
 
         JobResult result;
         if (rescan) {
