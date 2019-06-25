@@ -19,7 +19,8 @@
                     "type" : "text"
                 },
                 "message" : {
-                    "type" : "text"
+                    "type" : "text",
+                    "ignore_above": 8191
                 },
                 "threadName" : {
                     "type" : "text"
