@@ -223,11 +223,13 @@ public class LauncherService {
         jobParameters.put("githubUser", loginName);
         jobParameters.put("githubToken", scmAccount.getAccessToken());
         jobParameters.put("onlyUpdated", String.valueOf(false));
+        jobParameters.put("zafira_service_url", apiUrl.replace("api", TenancyContext.getTenantName()));
+        jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, TenancyContext.getTenantName()));
 
-        jobParameters.put("ZAFIRA_SERVICE_URL", apiUrl.replace("api", TenancyContext.getTenantName()));
-        jobParameters.put("ZAFIRA_ACCESS_TOKEN", jwtService.generateAccessToken(user, TenancyContext.getTenantName()));
+        String args = jobParameters.entrySet().stream()
+                                   .map(param -> param.getKey() + "=" + param.getValue()).collect(Collectors.joining(","));
 
-
+        jobParameters.put("overrideFields", args);
         JobResult result;
         if (rescan) {
             result = jenkinsService.buildReScannerJob(scmAccount.getRepositoryName(), jobParameters);
