@@ -143,11 +143,11 @@
 		]]>
 	</select>
 
-	<select id="getTestCaseByClassAndMethod"
+	<select id="getOwnedTestCase"
 		resultMap="TestCaseResultMap">
 		<include refid="getTestCase" />
 		<![CDATA[
-			WHERE TC.TEST_CLASS = #{testClass} AND TC.TEST_METHOD = #{testMethod};
+			WHERE TC.PRIMARY_OWNER_ID = #{userId} AND TC.TEST_CLASS = #{testClass} AND TC.TEST_METHOD = #{testMethod};
 		]]>
 	</select>
 

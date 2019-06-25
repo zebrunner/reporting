@@ -29,7 +29,7 @@ public interface TestCaseMapper {
 
     List<TestCase> getTestCasesByUsername(String username);
 
-    TestCase getTestCaseByClassAndMethod(@Param("testClass") String testClass, @Param("testMethod") String testMethod);
+    TestCase getOwnedTestCase(@Param("userId") Long userId, @Param("testClass") String testClass, @Param("testMethod") String testMethod);
 
     void updateTestCase(TestCase testCase);
 

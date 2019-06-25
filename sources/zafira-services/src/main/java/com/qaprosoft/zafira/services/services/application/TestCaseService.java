@@ -66,9 +66,9 @@ public class TestCaseService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "testCases", key = "{ T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #testClass,  T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #testMethod }")
-    public TestCase getTestCaseByClassAndMethod(String testClass, String testMethod) throws ServiceException {
-        return testCaseMapper.getTestCaseByClassAndMethod(testClass, testMethod);
+    @Cacheable(value = "testCases", key = "{ T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #userId, T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #testClass,  T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #testMethod }")
+    public TestCase getOwnedTestCase(Long userId, String testClass, String testMethod) throws ServiceException {
+        return testCaseMapper.getOwnedTestCase(userId, testClass, testMethod);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -89,7 +89,7 @@ public class TestCaseService {
             // Locking by class name and method name to avoid concurrent save of the same test case https://github.com/qaprosoft/zafira/issues/46
             updateLocks.get(CLASS_METHOD).lock();
 
-            TestCase testCase = getTestCaseByClassAndMethod(newTestCase.getTestClass(), newTestCase.getTestMethod());
+            TestCase testCase = getOwnedTestCase(newTestCase.getPrimaryOwner().getId(), newTestCase.getTestClass(), newTestCase.getTestMethod());
             if (testCase == null) {
                 createTestCase(newTestCase);
             } else if (!testCase.equals(newTestCase)) {
