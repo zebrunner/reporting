@@ -206,7 +206,7 @@ public class LauncherService {
     }
 
     @Transactional(readOnly = true)
-    public JobResult buildScannerJob(Long userId, String branch, long scmAccountId, boolean rescan) {
+    public JobResult buildScannerJob(User user, String branch, long scmAccountId, boolean rescan) {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
         if(scmAccount == null) {
             throw new ServiceException("Scm account not found");
@@ -214,7 +214,7 @@ public class LauncherService {
         String loginName = gitHubService.getLoginName(scmAccount.getAccessToken());
 
         Map<String, String> jobParameters = new HashMap<>();
-        jobParameters.put("userId", String.valueOf(userId));
+        jobParameters.put("userId", String.valueOf(user.getId()));
         if (StringUtils.isNotEmpty(jenkinsService.context().getFolder())) {
             jobParameters.put("organization", scmAccount.getOrganizationName());
         }
@@ -223,7 +223,13 @@ public class LauncherService {
         jobParameters.put("githubUser", loginName);
         jobParameters.put("githubToken", scmAccount.getAccessToken());
         jobParameters.put("onlyUpdated", String.valueOf(false));
+        jobParameters.put("zafira_service_url", apiUrl.replace("api", TenancyContext.getTenantName()));
+        jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, TenancyContext.getTenantName()));
 
+        String args = jobParameters.entrySet().stream()
+                                   .map(param -> param.getKey() + "=" + param.getValue()).collect(Collectors.joining(","));
+
+        jobParameters.put("overrideFields", args);
         JobResult result;
         if (rescan) {
             result = jenkinsService.buildReScannerJob(scmAccount.getRepositoryName(), jobParameters);

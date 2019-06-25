@@ -143,7 +143,7 @@ public class LaunchersAPIController extends AbstractController {
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PostMapping("/scanner")
     public JobResult runScanner(@RequestBody @Valid LauncherScannerType launcherScannerType) {
-        return launcherService.buildScannerJob(getPrincipalId(), launcherScannerType.getBranch(), launcherScannerType.getScmAccountId(), launcherScannerType.isRescan());
+        return launcherService.buildScannerJob(userService.getNotNullUserById(getPrincipalId()), launcherScannerType.getBranch(), launcherScannerType.getScmAccountId(), launcherScannerType.isRescan());
     }
 
     @ResponseStatusDetails
