@@ -223,9 +223,9 @@ public class LauncherService {
         jobParameters.put("githubUser", loginName);
         jobParameters.put("githubToken", scmAccount.getAccessToken());
         jobParameters.put("onlyUpdated", String.valueOf(false));
-        jobParameters.put("zafira_enabled", "true");
-        jobParameters.put("zafira_service_url", apiUrl.replace("api", TenancyContext.getTenantName()));
-        jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, TenancyContext.getTenantName()));
+
+        jobParameters.put("ZAFIRA_SERVICE_URL", apiUrl.replace("api", TenancyContext.getTenantName()));
+        jobParameters.put("ZAFIRA_ACCESS_TOKEN", jwtService.generateAccessToken(user, TenancyContext.getTenantName()));
 
 
         JobResult result;
