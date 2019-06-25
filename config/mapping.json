@@ -20,7 +20,7 @@
                 },
                 "message" : {
                     "type" : "text",
-                    "ignore_above": 8191
+                    "index": false
                 },
                 "threadName" : {
                     "type" : "text"
