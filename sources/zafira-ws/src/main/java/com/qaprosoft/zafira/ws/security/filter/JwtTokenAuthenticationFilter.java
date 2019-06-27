@@ -86,6 +86,7 @@ public class JwtTokenAuthenticationFilter extends GenericFilterBean {
             User user = extractAndDecodeJwt(request);
 
             if (user.getStatus().equals(User.Status.INACTIVE)) {
+                chain.doFilter(request, response);
                 return;
             }
 

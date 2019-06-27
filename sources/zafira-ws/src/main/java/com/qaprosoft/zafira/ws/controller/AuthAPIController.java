@@ -183,6 +183,10 @@ public class AuthAPIController extends AbstractController {
                 throw new UserNotFoundException();
             }
 
+            if (User.Status.INACTIVE.equals(user.getStatus())) {
+                throw new BadCredentialsException("Unable to refresh auth token");
+            }
+
             if (!TenancyContext.getTenantName().equals(jwtUser.getTenant())) {
                 throw new InvalidCredentialsException("Invalid tenant");
             }
