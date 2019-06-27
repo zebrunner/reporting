@@ -53,15 +53,6 @@ services:
     restart: always
     depends_on:
       - elasticsearch
-  zafira-batch:
-    image: qaprosoft/zafira-batch:latest
-    env_file:
-     - integrations.env
-    depends_on:
-      - "db"
-      - "rabbitmq"
-      - "redis"
-    restart: always
   zafira:
     image: qaprosoft/zafira:4.0.56
     ports:

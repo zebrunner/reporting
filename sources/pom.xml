@@ -91,8 +91,6 @@
         <gson.version>2.2.2</gson.version>
         <pubnub.version>3.7.10</pubnub.version>
         <log4j.version>1.2.12</log4j.version>
-        <wrapper.version>3.2.3</wrapper.version>
-        <quartz.version>2.2.1</quartz.version>
         <smack.version>3.2.1</smack.version>
         <jersey.version>1.19.4</jersey.version>
         <genson.version>0.99</genson.version>
@@ -126,7 +124,6 @@
         <module>zafira-dbaccess</module>
         <module>zafira-services</module>
         <module>zafira-ws</module>
-        <module>zafira-batch-services</module>
     </modules>
     <dependencyManagement>
         <dependencies>
@@ -158,11 +155,6 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>zafira-ws</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>zafira-batch-services</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -519,16 +511,6 @@
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
                 <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>tanukisoft</groupId>
-                <artifactId>wrapper</artifactId>
-                <version>${wrapper.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.quartz-scheduler</groupId>
-                <artifactId>quartz</artifactId>
-                <version>${quartz.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.igniterealtime.smack</groupId>
