@@ -2,6 +2,7 @@ version: '3'
 
 services:
   db:
+    container_name: zfr_postgres
     image: qaprosoft/postgres:9.6
     volumes:
       - ./pgdata:/var/lib/postgresql/data
@@ -15,6 +16,7 @@ services:
       - POSTGRES_PASSWORD=postgres
     restart: always
   rabbitmq:
+    container_name: zfr_rabbitmq
     image: qaprosoft/rabbitmq:latest
     ports:
       - 15672:15672
@@ -27,11 +29,13 @@ services:
       - RABBITMQ_DEFAULT_PASS=qpsdemo
     restart: always
   redis:
+    container_name: zfr_redis
     image: redis:4.0.11
     ports:
       - 6379:6379
     restart: always
   elasticsearch:
+    container_name: zfr_elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:6.3.1
     volumes:
       - ./esdata:/usr/share/elasticsearch/data
@@ -46,6 +50,7 @@ services:
       - 9200:9200
     restart: always
   logstash:
+    container_name: zfr_logstash
     image: docker.elastic.co/logstash/logstash:6.3.1
     volumes:
       - ./config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
@@ -54,6 +59,7 @@ services:
     depends_on:
       - elasticsearch
   zafira-batch:
+    container_name: zfr_batch_service
     image: qaprosoft/zafira-batch:latest
     env_file:
      - integrations.env
@@ -63,7 +69,8 @@ services:
       - "redis"
     restart: always
   zafira:
-    image: qaprosoft/zafira:4.0.56
+    container_name: zfr_zafira_back_end
+     image: qaprosoft/zafira:4.0.59
     ports:
       - 8080:8080
     env_file:
@@ -79,6 +86,7 @@ services:
       - "redis"
     restart: always
   zafira-ui:
+    container_name: zfr_zafira_ui
     image: qaprosoft/zafira-ui:1.8
     ports:
       - 80:80
