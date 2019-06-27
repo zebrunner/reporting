@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 public class TestCaseSearchCriteria extends SearchCriteria implements DateSearchCriteria {
+
     private Long id;
     private List<Long> ids;
     private String testClass;
