@@ -102,18 +102,8 @@ public class TestConfigService {
     }
 
     @Transactional(readOnly = true)
-    public TestConfig getTestConfigById(long id) throws ServiceException {
-        return testConfigMapper.getTestConfigById(id);
-    }
-
-    @Transactional(readOnly = true)
     public TestConfig searchTestConfig(TestConfig testConfig) throws ServiceException {
         return testConfigMapper.searchTestConfig(testConfig);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteTestConfigById(long id) throws ServiceException {
-        testConfigMapper.deleteTestConfigById(id);
     }
 
     public List<Argument> readConfigArgs(String configXML) {

@@ -55,11 +55,6 @@ public class WidgetTemplateService {
     }
 
     @Transactional(readOnly = true)
-    public WidgetTemplate getWidgetTemplateByName(String name) {
-        return widgetTemplateMapper.getWidgetTemplateByName(name);
-    }
-
-    @Transactional(readOnly = true)
     public List<WidgetTemplate> getAllWidgetTemplates() {
         return widgetTemplateMapper.getAllWidgetTemplates();
     }

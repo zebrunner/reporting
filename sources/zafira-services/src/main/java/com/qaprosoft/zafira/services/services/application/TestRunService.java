@@ -24,7 +24,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -204,11 +203,6 @@ public class TestRunService {
     }
 
     @Transactional(readOnly = true)
-    public List<TestRun> getTestRunsByStatusAndStartedBefore(Status status, Date startedBefore) throws ServiceException {
-        return testRunMapper.getTestRunsByStatusAndStartedBefore(status, startedBefore);
-    }
-
-    @Transactional(readOnly = true)
     public List<TestRun> getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(Long jobId, Integer buildNumber) throws ServiceException {
         return testRunMapper.getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(jobId, buildNumber);
     }
@@ -301,12 +295,6 @@ public class TestRunService {
     public TestRun updateTestRun(TestRun testRun) throws ServiceException {
         testRunMapper.updateTestRun(testRun);
         return testRun;
-    }
-
-    @CacheEvict(value = "environments", allEntries = true)
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteTestRun(TestRun testRun) throws ServiceException {
-        testRunMapper.deleteTestRun(testRun);
     }
 
     @CacheEvict(value = "environments", allEntries = true)

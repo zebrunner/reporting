@@ -22,7 +22,14 @@ import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.REMOVE_BL
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.qaprosoft.zafira.models.db.*;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.Tag;
+import com.qaprosoft.zafira.models.db.Test;
+import com.qaprosoft.zafira.models.db.TestArtifact;
+import com.qaprosoft.zafira.models.db.TestCase;
+import com.qaprosoft.zafira.models.db.TestConfig;
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.WorkItem;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
@@ -279,30 +286,10 @@ public class TestService {
         return testRunId.matches("\\d+") ? testMapper.getTestsByTestRunId(Long.valueOf(testRunId)) : testMapper.getTestsByTestRunCiRunId(testRunId);
     }
 
-    @Transactional(readOnly = true)
-    public List<Test> getTestsByTestRunCiRunId(String testRunCiRunId) throws ServiceException {
-        return testMapper.getTestsByTestRunCiRunId(testRunCiRunId);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Test> getTestsByTestRunIdAndStatus(long testRunId, Status status) throws ServiceException {
-        return testMapper.getTestsByTestRunIdAndStatus(testRunId, status);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Test> getTestsByWorkItemId(long workItemId) throws ServiceException {
-        return testMapper.getTestsByWorkItemId(workItemId);
-    }
-
     @Transactional(rollbackFor = Exception.class)
     public Test updateTest(Test test) throws ServiceException {
         testMapper.updateTest(test);
         return test;
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteTest(Test test) throws ServiceException {
-        testMapper.deleteTest(test);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -498,11 +485,6 @@ public class TestService {
             }
         }
         return getNotNullTestById(testId).getTags();
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteTag(Long testId, Long tagId) {
-        testMapper.deleteTag(testId, tagId);
     }
 
     @Transactional(rollbackFor = Exception.class)

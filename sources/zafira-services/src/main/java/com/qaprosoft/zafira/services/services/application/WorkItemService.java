@@ -28,6 +28,7 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
 public class WorkItemService {
+
     @Autowired
     private WorkItemMapper workItemMapper;
 
@@ -60,16 +61,6 @@ public class WorkItemService {
     public WorkItem updateWorkItem(WorkItem workItem) throws ServiceException {
         workItemMapper.updateWorkItem(workItem);
         return workItem;
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteWorkItemById(long id) throws ServiceException {
-        workItemMapper.deleteWorkItemById(id);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteWorkItem(WorkItem workItem) throws ServiceException {
-        workItemMapper.deleteWorkItem(workItem);
     }
 
     @Transactional(rollbackFor = Exception.class)

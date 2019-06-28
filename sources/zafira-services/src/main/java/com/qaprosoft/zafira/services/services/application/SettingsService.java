@@ -97,11 +97,6 @@ public class SettingsService {
         return result;
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteSettingById(long id) throws ServiceException {
-        settingsMapper.deleteSettingById(id);
-    }
-
     @Transactional(readOnly = true)
     public List<Setting> getAllSettings() throws ServiceException {
         return settingsMapper.getAllSettings();
@@ -146,12 +141,6 @@ public class SettingsService {
     public void updateIntegrationSetting(Setting setting) throws ServiceException {
         setting.setValue(StringUtils.isBlank(setting.getValue() != null ? setting.getValue().trim() : null) ? null : setting.getValue());
         settingsMapper.updateIntegrationSetting(setting);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public Setting createSetting(Setting setting) {
-        settingsMapper.createSetting(setting);
-        return setting;
     }
 
     @Transactional(rollbackFor = Exception.class)

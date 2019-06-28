@@ -15,20 +15,17 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
-import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_CLOSED_STATUS;
-import static com.qaprosoft.zafira.models.db.Setting.Tool.JIRA;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.application.SettingsService;
+import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
+import com.qaprosoft.zafira.services.services.application.integration.context.JiraContext;
+import net.rcarz.jiraclient.Issue;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
-
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.application.SettingsService;
-import com.qaprosoft.zafira.services.services.application.integration.context.JiraContext;
-
-import net.rcarz.jiraclient.Issue;
-import org.springframework.stereotype.Component;
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_CLOSED_STATUS;
+import static com.qaprosoft.zafira.models.db.Setting.Tool.JIRA;
 
 @Component
 public class JiraService extends AbstractIntegration<JiraContext> {
@@ -59,11 +56,6 @@ public class JiraService extends AbstractIntegration<JiraContext> {
             }
             return issue;
         });
-    }
-
-    public boolean isIssueClosed(String ticket) throws ServiceException {
-        Issue issue = getIssue(ticket).orElseThrow(() -> new ForbiddenOperationException("Unable to retrieve an issue"));
-        return isIssueClosed(issue);
     }
 
     public boolean isIssueClosed(Issue issue) throws ServiceException {

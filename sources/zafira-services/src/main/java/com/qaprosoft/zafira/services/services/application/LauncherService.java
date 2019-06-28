@@ -140,11 +140,6 @@ public class LauncherService {
     }
 
     @Transactional(readOnly = true)
-    public Launcher getLauncherByJobId(Long id) throws ServiceException {
-        return launcherMapper.getLauncherByJobId(id);
-    }
-
-    @Transactional(readOnly = true)
     public List<Launcher> getAllLaunchers() throws ServiceException {
         return launcherMapper.getAllLaunchers();
     }
@@ -197,8 +192,10 @@ public class LauncherService {
         jobParameters.put("zafira_service_url", apiUrl.replace("api", TenancyContext.getTenantName()));
         jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, TenancyContext.getTenantName()));
 
-        String args = jobParameters.entrySet().stream().filter(param -> !Arrays.asList(JenkinsService.getRequiredArgs()).contains(param.getKey()))
-                .map(param -> param.getKey() + "=" + param.getValue()).collect(Collectors.joining(","));
+        String args = jobParameters.entrySet().stream()
+                                   .filter(param -> !Arrays.asList(JenkinsService.getRequiredArgs()).contains(param.getKey()))
+                                   .map(param -> param.getKey() + "=" + param.getValue())
+                                   .collect(Collectors.joining(","));
 
         jobParameters.put("overrideFields", args);
 

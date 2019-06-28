@@ -28,6 +28,7 @@ import static com.qaprosoft.zafira.models.db.UserPreference.Name.DEFAULT_DASHBOA
 
 @Service
 public class UserPreferenceService {
+
     @Autowired
     private UserPreferenceMapper userPreferenceMapper;
 
@@ -52,11 +53,6 @@ public class UserPreferenceService {
     }
 
     @Transactional(readOnly = true)
-    public UserPreference getUserPreferenceById(long id) throws ServiceException {
-        return userPreferenceMapper.getUserPreferenceById(id);
-    }
-
-    @Transactional(readOnly = true)
     public List<UserPreference> getUserPreferencesByNameAndDashboardTitle(UserPreference.Name name, String title) throws ServiceException {
         return userPreferenceMapper.getUserPreferencesByNameAndDashboardTitle(name, title);
     }
@@ -71,21 +67,6 @@ public class UserPreferenceService {
     public List<UserPreference> updateUserPreferences(long userId, List<UserPreference> userPreferences) throws ServiceException {
         userPreferenceMapper.updateUserPreferences(userId, userPreferences);
         return userPreferences;
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public List<UserPreference> resetUserPreferencesToDefault1(long userId) throws ServiceException {
-        return updateUserPreferences(userId, getDefaultUserPreferences());
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteUserPreferenceById(Long id) throws ServiceException {
-        userPreferenceMapper.deleteUserPreferenceById(id);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public String getDefaultPreferenceValue(String name) throws ServiceException {
-        return userPreferenceMapper.getDefaultPreferenceValue(name);
     }
 
     @Transactional(rollbackFor = Exception.class)

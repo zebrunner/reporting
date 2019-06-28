@@ -31,6 +31,7 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
 public class JobsService {
+
     @Autowired
     private JobMapper jobMapper;
 
@@ -64,16 +65,6 @@ public class JobsService {
     }
 
     @Transactional(readOnly = true)
-    public Job getJobById(long id) throws ServiceException {
-        return jobMapper.getJobById(id);
-    }
-
-    @Transactional(readOnly = true)
-    public Job getJobByName(String name) throws ServiceException {
-        return jobMapper.getJobByName(name);
-    }
-
-    @Transactional(readOnly = true)
     public Job getJobByJobURL(String url) throws ServiceException {
         return jobMapper.getJobByJobURL(url);
     }
@@ -82,11 +73,6 @@ public class JobsService {
     public Job updateJob(Job job) throws ServiceException {
         jobMapper.updateJob(job);
         return job;
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteJob(Job job) throws ServiceException {
-        jobMapper.deleteJob(job);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -112,11 +98,6 @@ public class JobsService {
     @Transactional(readOnly = true)
     public List<JobView> getJobViewsByViewId(long viewId) throws ServiceException {
         return jobViewMapper.getJobViewsByViewId(viewId);
-    }
-
-    @Transactional(readOnly = true)
-    public List<JobView> getJobViewsByViewIdAndEnv(long viewId, String env) throws ServiceException {
-        return jobViewMapper.getJobViewsByViewIdAndEnv(viewId, env);
     }
 
     @Transactional(rollbackFor = Exception.class)

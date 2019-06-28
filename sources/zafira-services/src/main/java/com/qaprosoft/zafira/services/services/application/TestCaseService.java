@@ -78,11 +78,6 @@ public class TestCaseService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteTestCase(TestCase testCase) throws ServiceException {
-        testCaseMapper.deleteTestCase(testCase);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
     public TestCase createOrUpdateCase(TestCase newTestCase) throws ServiceException, ExecutionException {
         final String CLASS_METHOD = newTestCase.getTestClass() + "." + newTestCase.getTestMethod();
         try {

@@ -31,6 +31,7 @@ import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 
 @Service
 public class FilterService {
+
     @Autowired
     private FilterMapper filterMapper;
 
@@ -74,18 +75,8 @@ public class FilterService {
     }
 
     @Transactional(readOnly = true)
-    public List<Filter> getAllFilters() throws ServiceException {
-        return filterMapper.getAllFilters();
-    }
-
-    @Transactional(readOnly = true)
     public List<Filter> getAllPublicFilters(Long userId) {
         return filterMapper.getAllPublicFilters(userId);
-    }
-
-    @Transactional(readOnly = true)
-    public Integer getFiltersCount() throws ServiceException {
-        return filterMapper.getFiltersCount();
     }
 
     @Transactional(rollbackFor = Exception.class)

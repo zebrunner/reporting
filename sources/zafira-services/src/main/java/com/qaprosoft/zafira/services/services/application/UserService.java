@@ -221,18 +221,6 @@ public class UserService implements TenancyDbInitial {
         return createOrUpdateUser(newUser, null);
     }
 
-    @CacheEvict(value = "users", condition = "#user.id != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #user.id")
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteUser(User user) throws ServiceException {
-        userMapper.deleteUser(user);
-    }
-
-    @CacheEvict(value = "users", condition = "#id != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #id")
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteUser(long id) throws ServiceException {
-        userMapper.deleteUserById(id);
-    }
-
     @Caching(evict = {
             @CacheEvict(value = "users", condition = "#user.id != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #user.id"),
             @CacheEvict(value = "groups", condition = "#groupId != 0", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #groupId")
@@ -263,10 +251,6 @@ public class UserService implements TenancyDbInitial {
         results.setResults(userMapper.searchUsers(sc, publicDetails));
         results.setTotalResults(userMapper.getUserSearchCount(sc, publicDetails));
         return results;
-    }
-
-    public boolean checkPassword(String plain, String encrypted) {
-        return passwordEncryptor.checkPassword(plain, encrypted);
     }
 
     public String getAdminUsername() {

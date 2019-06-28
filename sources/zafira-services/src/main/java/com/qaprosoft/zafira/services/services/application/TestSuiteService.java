@@ -34,18 +34,8 @@ public class TestSuiteService {
     }
 
     @Transactional(readOnly = true)
-    public TestSuite getTestSuiteById(long id) throws ServiceException {
-        return testSuiteMapper.getTestSuiteById(id);
-    }
-
-    @Transactional(readOnly = true)
     public TestSuite getTestSuiteByIdFull(long id) throws ServiceException {
         return testSuiteMapper.getTestSuiteByIdFull(id);
-    }
-
-    @Transactional(readOnly = true)
-    public TestSuite getTestSuiteByName(String name) throws ServiceException {
-        return testSuiteMapper.getTestSuiteByName(name);
     }
 
     @Transactional(readOnly = true)
@@ -57,11 +47,6 @@ public class TestSuiteService {
     public TestSuite updateTestSuite(TestSuite testSuite) throws ServiceException {
         testSuiteMapper.updateTestSuite(testSuite);
         return testSuite;
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteTestSuite(TestSuite testSuite) throws ServiceException {
-        testSuiteMapper.deleteTestSuite(testSuite);
     }
 
     @Transactional(rollbackFor = Exception.class)
