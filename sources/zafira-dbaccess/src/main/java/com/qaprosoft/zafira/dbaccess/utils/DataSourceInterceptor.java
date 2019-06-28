@@ -15,15 +15,13 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.utils;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+
+import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
-
-import javax.sql.DataSource;
-
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 /**
  * DataSourceInterceptor - proxies data sources calls for custom interceptors.
@@ -35,11 +33,7 @@ public abstract class DataSourceInterceptor {
     private final InvocationHandler handler;
 
     protected DataSourceInterceptor(final ComboPooledDataSource delegate) {
-        this.handler = new InvocationHandler() {
-            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                return (method.getName().equals("getConnection")) ? getConnection(delegate) : method.invoke(delegate, args);
-            }
-        };
+        this.handler = (proxy, method, args) -> (method.getName().equals("getConnection")) ? getConnection(delegate) : method.invoke(delegate, args);
     }
 
     protected Connection getConnection(final ComboPooledDataSource delegate) throws SQLException {

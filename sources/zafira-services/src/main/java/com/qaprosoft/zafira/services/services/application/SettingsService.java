@@ -89,13 +89,10 @@ public class SettingsService {
     @Transactional(readOnly = true)
     public List<Setting> getSettingsByTool(Tool tool) throws ServiceException {
         List<Setting> result;
-        switch (tool) {
-        case ELASTICSEARCH:
+        if (tool == Tool.ELASTICSEARCH) {
             result = getElasticsearchService().getSettings();
-            break;
-        default:
+        } else {
             result = settingsMapper.getSettingsByTool(tool);
-            break;
         }
         return result;
     }
@@ -152,13 +149,13 @@ public class SettingsService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Setting createSetting(Setting setting) throws Exception {
+    public Setting createSetting(Setting setting) {
         settingsMapper.createSetting(setting);
         return setting;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ConnectedToolType createSettingFile(byte[] fileBytes, String originalFileName, String name, Tool tool) throws Exception {
+    public ConnectedToolType createSettingFile(byte[] fileBytes, String originalFileName, String name, Tool tool) {
         Setting dbSetting = getSettingByNameSafely(name, tool);
         if (dbSetting != null) {
             dbSetting.setFile(fileBytes);
@@ -175,7 +172,7 @@ public class SettingsService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void reEncrypt() throws Exception {
+    public void reEncrypt() {
         List<Setting> settings = getSettingsByEncrypted(true);
         CryptoService cryptoService = getCryptoMQService();
         settings.forEach(setting -> {

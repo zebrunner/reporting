@@ -65,11 +65,10 @@ public class WidgetTemplateService {
     }
 
     public List<WidgetTemplate> getWidgetTemplates() {
-        List<WidgetTemplate> widgetTemplates = getAllWidgetTemplates().stream()
-                .filter(widgetTemplate -> !widgetTemplate.getHidden())
-                .peek(this::clearRedundantParamsValues)
-                .collect(Collectors.toList());
-        return widgetTemplates;
+        return getAllWidgetTemplates().stream()
+                                      .filter(widgetTemplate -> !widgetTemplate.getHidden())
+                                      .peek(this::clearRedundantParamsValues)
+                                      .collect(Collectors.toList());
     }
 
     public WidgetTemplate prepareWidgetTemplate(WidgetTemplate widgetTemplate) throws ServiceException {

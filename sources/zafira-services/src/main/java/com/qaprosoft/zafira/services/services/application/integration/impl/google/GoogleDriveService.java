@@ -82,7 +82,7 @@ public class GoogleDriveService extends AbstractGoogleService {
         try {
             driveService.permissions().create(fileId, userPermission)
                     .setFields("id")
-                    .queue(batch, new GoogleDriveJsonBatchCallback<Permission>());
+                    .queue(batch, new GoogleDriveJsonBatchCallback<>());
             batch.execute();
         } catch (IOException e) {
             LOGGER.error(e);
@@ -91,12 +91,12 @@ public class GoogleDriveService extends AbstractGoogleService {
 
     private class GoogleDriveJsonBatchCallback<T> extends JsonBatchCallback<T> {
         @Override
-        public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) throws IOException {
+        public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) {
             LOGGER.error(e.getMessage());
         }
 
         @Override
-        public void onSuccess(T t, HttpHeaders responseHeaders) throws IOException {
+        public void onSuccess(T t, HttpHeaders responseHeaders) {
         }
     }
 }

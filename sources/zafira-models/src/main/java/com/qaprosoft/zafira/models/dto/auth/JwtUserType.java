@@ -15,16 +15,14 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto.auth;
 
-import java.util.ArrayList;
+import com.qaprosoft.zafira.models.db.Group;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import com.qaprosoft.zafira.models.db.Group;
 
 /**
  * All user information handled by the JWT token
@@ -38,7 +36,7 @@ public class JwtUserType implements UserDetails {
 
     private String password;
 
-    private List<GrantedAuthority> authorities = new ArrayList<>();
+    private List<GrantedAuthority> authorities;
 
     public JwtUserType(long id, String username, List<Group> groups) {
         this.id = id;
@@ -47,7 +45,7 @@ public class JwtUserType implements UserDetails {
                 .collect(Collectors.toList());
         // TODO: removed when default role populated for all
         if (this.authorities.isEmpty()) {
-            this.authorities.add(new UserGrantedAuthority("ROLE_USER", new HashSet<String>()));
+            this.authorities.add(new UserGrantedAuthority("ROLE_USER", new HashSet<>()));
         }
     }
 

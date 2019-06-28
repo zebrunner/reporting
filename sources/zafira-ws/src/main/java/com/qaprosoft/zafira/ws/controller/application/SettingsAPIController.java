@@ -82,8 +82,7 @@ public class SettingsAPIController extends AbstractController {
     @ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("tool/{tool}")
-    public List<Setting> getSettingsByTool(@PathVariable("tool") Tool tool, @RequestParam(value = "decrypt", required = false) boolean decrypt)
-            throws Exception {
+    public List<Setting> getSettingsByTool(@PathVariable("tool") Tool tool, @RequestParam(value = "decrypt", required = false) boolean decrypt) {
         List<Setting> settings = settingsService.getSettingsByTool(tool);
 
         if (decrypt) {
@@ -114,7 +113,7 @@ public class SettingsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping
-    public Setting updateSetting(@RequestBody Setting setting) throws Exception {
+    public Setting updateSetting(@RequestBody Setting setting) {
         return settingsService.updateSetting(setting);
     }
 
@@ -123,7 +122,7 @@ public class SettingsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_INTEGRATIONS')")
     @PutMapping("/tools")
-    public ConnectedToolType updateSettings(@RequestBody List<Setting> settings) throws Exception {
+    public ConnectedToolType updateSettings(@RequestBody List<Setting> settings) {
         return settingsService.updateSettings(settings);
     }
 

@@ -115,7 +115,7 @@ public class TestCase extends AbstractEntity {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof TestCase && this.hashCode() == ((TestCase) obj).hashCode());
+        return (obj instanceof TestCase && this.hashCode() == obj.hashCode());
     }
 
     @Override

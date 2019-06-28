@@ -107,7 +107,7 @@ public class ScmAccount extends AbstractEntity {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof ScmAccount && this.hashCode() == ((ScmAccount) obj).hashCode();
+        return obj instanceof ScmAccount && this.hashCode() == obj.hashCode();
     }
 
     public String buildAuthorizedURL() {
