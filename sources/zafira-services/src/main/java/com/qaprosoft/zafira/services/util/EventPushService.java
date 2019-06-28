@@ -42,7 +42,6 @@ public class EventPushService<T extends EventMessage> {
     public enum Type {
 
         SETTINGS("settings"),
-        MONITORS("monitors"),
         ZFR_CALLBACKS("zfr_callbacks"),
         TENANCIES("tenancies");
 

@@ -166,9 +166,6 @@
 		name="zfrCallbacksQueue" durable="false" auto-declare="true"
 		auto-delete="true" />
 
-	<rabbit:queue id="monitorsQueue" durable="false"
-		auto-declare="true" auto-delete="true" />
-
 	<rabbit:direct-exchange id="eventsTopicExchange"
 		name="events" durable="false" auto-declare="true" auto-delete="true">
 		<rabbit:bindings>
@@ -178,7 +175,6 @@
 				key="zfr_events" />
 			<rabbit:binding queue="zfrCallbacksQueue"
 				key="zfr_callbacks" />
-			<rabbit:binding queue="monitorsQueue" key="monitors" />
 		</rabbit:bindings>
 	</rabbit:direct-exchange>
 

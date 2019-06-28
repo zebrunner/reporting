@@ -19,7 +19,8 @@
                     "type" : "text"
                 },
                 "message" : {
-                    "type" : "text"
+                    "type" : "text",
+                    "index": false
                 },
                 "threadName" : {
                     "type" : "text"

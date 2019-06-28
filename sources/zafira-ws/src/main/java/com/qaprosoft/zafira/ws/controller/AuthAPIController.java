@@ -23,6 +23,7 @@ import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.qaprosoft.zafira.models.dto.auth.CredentialsType;
 import com.qaprosoft.zafira.models.dto.auth.EmailType;
 import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
+import com.qaprosoft.zafira.models.dto.auth.TenantAuth;
 import com.qaprosoft.zafira.models.dto.auth.TenantType;
 import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
 import com.qaprosoft.zafira.models.dto.user.PasswordType;
@@ -48,7 +49,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -105,6 +108,9 @@ public class AuthAPIController extends AbstractController {
     @Value("${zafira.admin.username}")
     private String adminUsername;
 
+    @Value("${zafira.multitenant}")
+    private boolean isMultitenant;
+
     @Value("${zafira.artifacts.useProxy:false}")
     private boolean useArtifactsProxy;
 
@@ -112,7 +118,18 @@ public class AuthAPIController extends AbstractController {
     @ApiOperation(value = "Get current tenant", nickname = "getTenant", httpMethod = "GET", response = String.class)
     @GetMapping("/tenant")
     public TenantType getTenant() {
-        return new TenantType(TenancyContext.getTenantName(), urlResolver.getServiceURL(), useArtifactsProxy);
+        TenantType tenantType = new TenantType(TenancyContext.getTenantName(), urlResolver.getServiceURL(), useArtifactsProxy);
+        tenantType.setMultitenant(isMultitenant);
+        return tenantType;
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Check tenant permissions", nickname = "checkPermissions", httpMethod = "POST")
+    @PostMapping("/tenant/verification")
+    public ResponseEntity<Void> checkPermissions(@Valid @RequestBody TenantAuth tenantAuth) {
+        boolean result = jwtService.checkPermissions(tenantAuth.getTenantName(), tenantAuth.getToken(), tenantAuth.getPermissions());
+        HttpStatus httpStatus = result ? HttpStatus.OK : HttpStatus.FORBIDDEN;
+        return new ResponseEntity<>(httpStatus);
     }
 
     @ResponseStatusDetails
@@ -181,6 +198,10 @@ public class AuthAPIController extends AbstractController {
             User user = userService.getUserById(jwtUser.getId());
             if (user == null) {
                 throw new UserNotFoundException();
+            }
+
+            if (User.Status.INACTIVE.equals(user.getStatus())) {
+                throw new BadCredentialsException("Unable to refresh auth token");
             }
 
             if (!TenancyContext.getTenantName().equals(jwtUser.getTenant())) {
