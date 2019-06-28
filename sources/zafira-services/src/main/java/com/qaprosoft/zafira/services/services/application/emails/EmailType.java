@@ -7,7 +7,6 @@ public enum EmailType {
     DASHBOARD("dashboard.ftl"),
     FORGOT_PASSWORD("forgot_password.ftl"),
     FORGOT_PASSWORD_LDAP("forgot_password_ldap.ftl"),
-    MONITOR("monitor_status.ftl"),
     TEST_RUN("test_run_results.ftl");
 
     private final String templateName;

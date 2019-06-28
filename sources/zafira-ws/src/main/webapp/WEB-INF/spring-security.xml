@@ -72,7 +72,7 @@
 		security="none" />
 	<security:http pattern="/api/websockets/**"
 		security="none" />
-	<security:http pattern="/api/auth/tenant" security="none" />
+	<security:http pattern="/api/auth/tenant/**" security="none" />
 	<security:http pattern="/api/invitations/info"
 		security="none" />
 	<security:http pattern="/api/auth/signup" security="none" />
