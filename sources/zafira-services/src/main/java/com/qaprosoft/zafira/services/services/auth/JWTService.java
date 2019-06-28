@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.services.services.application.UserService;

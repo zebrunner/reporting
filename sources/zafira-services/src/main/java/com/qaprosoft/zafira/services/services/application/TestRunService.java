@@ -327,7 +327,7 @@ public class TestRunService {
                 // TODO: investigate if startedBy should be also copied
             }
             LOGGER.info("Looking for test run with CI ID: " + testRun.getCiRunId());
-            LOGGER.info("Test run found: " + String.valueOf(existingTestRun != null));
+            LOGGER.info("Test run found: " + (existingTestRun != null));
         } else {
             testRun.setCiRunId(UUID.randomUUID().toString());
             LOGGER.info("Generating new test run CI ID: " + testRun.getCiRunId());
@@ -389,7 +389,7 @@ public class TestRunService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TestRun abortTestRun(TestRun testRun, String abortCause) throws ServiceException, InterruptedException {
+    public TestRun abortTestRun(TestRun testRun, String abortCause) throws ServiceException {
         if (testRun != null) {
             List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
             if (IN_PROGRESS.equals(testRun.getStatus()) || QUEUED.equals(testRun.getStatus()) && isBuildFailure(abortCause)) {
@@ -425,7 +425,7 @@ public class TestRunService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TestRun calculateTestRunResult(long id, boolean finishTestRun) throws ServiceException, InterruptedException {
+    public TestRun calculateTestRunResult(long id, boolean finishTestRun) throws ServiceException {
         TestRun testRun = getNotNullTestRunById(id);
 
         List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
@@ -481,7 +481,7 @@ public class TestRunService {
         Set<String> testNames = new HashSet<>();
         for (Long id : testRunIds) {
             List<Test> tests = testService.getTestsByTestRunId(id);
-            testNamesWithTests.put(id, new HashMap<String, Test>());
+            testNamesWithTests.put(id, new HashMap<>());
             for (Test test : tests) {
                 testNames.add(test.getName());
                 testNamesWithTests.get(id).put(test.getName(), test);

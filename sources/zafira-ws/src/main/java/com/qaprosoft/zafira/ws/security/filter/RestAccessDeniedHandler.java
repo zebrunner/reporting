@@ -20,7 +20,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -41,7 +40,7 @@ public class RestAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException)
-            throws IOException, ServletException {
+            throws IOException {
         ErrorResponse result = new ErrorResponse();
         result.setError(new Error(ErrorCode.FORBIDDENT));
         ObjectMapper objMapper = new ObjectMapper();

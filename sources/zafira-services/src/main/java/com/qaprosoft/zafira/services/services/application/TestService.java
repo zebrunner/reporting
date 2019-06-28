@@ -222,7 +222,7 @@ public class TestService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Test changeTestStatus(long id, Status newStatus) throws ServiceException, InterruptedException {
+    public Test changeTestStatus(long id, Status newStatus) throws ServiceException {
         Test test = getTestById(id);
         if (test == null) {
             throw new TestNotFoundException();
@@ -331,7 +331,7 @@ public class TestService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public WorkItem createOrUpdateTestWorkItem(long testId, WorkItem workItem) throws ServiceException, InterruptedException {
+    public WorkItem createOrUpdateTestWorkItem(long testId, WorkItem workItem) throws ServiceException {
         Test test = getNotNullTestById(testId);
         Type workItemType = workItem.getType();
         WorkItem attachedWorkItem = test.getWorkItemByType(workItemType);
@@ -373,7 +373,7 @@ public class TestService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public WorkItem createWorkItem(long testId, WorkItem workItem) throws ServiceException, InterruptedException {
+    public WorkItem createWorkItem(long testId, WorkItem workItem) throws ServiceException {
         Test test = getNotNullTestById(testId);
         workItemService.createWorkItem(workItem);
         testMapper.createTestWorkItem(test, workItem);
@@ -381,7 +381,7 @@ public class TestService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TestRun deleteTestWorkItemByWorkItemIdAndTest(long workItemId, Test test) throws ServiceException, InterruptedException {
+    public TestRun deleteTestWorkItemByWorkItemIdAndTest(long workItemId, Test test) throws ServiceException {
         test.setKnownIssue(false);
         test.setBlocker(false);
         updateTest(test);
@@ -400,12 +400,12 @@ public class TestService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteTestWorkItemByWorkItemIdAndTestId(long workItemId, long testId) throws ServiceException, InterruptedException {
+    public void deleteTestWorkItemByWorkItemIdAndTestId(long workItemId, long testId) throws ServiceException {
         testMapper.deleteTestWorkItemByWorkItemIdAndTestId(workItemId, testId);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteTestWorkItemByTestIdAndWorkItemType(long testId, Type type) throws ServiceException, InterruptedException {
+    public void deleteTestWorkItemByTestIdAndWorkItemType(long testId, Type type) throws ServiceException {
         testMapper.deleteTestWorkItemByTestIdAndWorkItemType(testId, type);
     }
 

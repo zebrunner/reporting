@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.qaprosoft.zafira.models.dto.JenkinsLauncherType;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,6 @@ import com.qaprosoft.zafira.services.exceptions.JenkinsJobNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ScmAccountNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.integration.context.JenkinsContext;
-import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.SeleniumService;
 import com.qaprosoft.zafira.services.services.application.scm.GitHubService;
@@ -118,17 +118,20 @@ public class LauncherService {
 
         deleteAutoScannedLaunchersByScmAccountId(scmAccount.getId());
 
-        List<Launcher> result = scannedRepoLaunchersType.getJenkinsLaunchers().stream().map(jenkinsLauncherType -> {
-            String jobUrl = jenkinsLauncherType.getJobUrl();
-            Job job = jobsService.getJobByJobURL(jobUrl);
-            if (job == null) {
-                job = jobsService.createOrUpdateJobByURL(jobUrl, owner);
-            }
-            Launcher launcher = new Launcher(job.getName(), jenkinsLauncherType.getJobParameters(), scmAccount, job, true);
-            launcherMapper.createLauncher(launcher);
-            return launcher;
-        }).collect(Collectors.toList());
-        return result;
+        return scannedRepoLaunchersType.getJenkinsLaunchers().stream()
+                                       .map(jenkinsLauncherType -> launcherTypeToLauncher(owner, scmAccount, jenkinsLauncherType))
+                                       .collect(Collectors.toList());
+    }
+
+    private Launcher launcherTypeToLauncher(User owner, ScmAccount scmAccount, JenkinsLauncherType jenkinsLauncherType) {
+        String jobUrl = jenkinsLauncherType.getJobUrl();
+        Job job = jobsService.getJobByJobURL(jobUrl);
+        if (job == null) {
+            job = jobsService.createOrUpdateJobByURL(jobUrl, owner);
+        }
+        Launcher launcher = new Launcher(job.getName(), jenkinsLauncherType.getJobParameters(), scmAccount, job, true);
+        launcherMapper.createLauncher(launcher);
+        return launcher;
     }
 
     @Transactional(readOnly = true)

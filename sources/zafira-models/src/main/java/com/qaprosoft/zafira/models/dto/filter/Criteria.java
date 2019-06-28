@@ -78,8 +78,6 @@ public class Criteria {
     @JsonIgnore
     @AssertTrue(message = "Incorrect value")
     public boolean isValueNull() {
-        return Arrays.asList(LAST_24_HOURS, LAST_7_DAYS, LAST_14_DAYS, LAST_30_DAYS).contains(this.operator)
-                ? value == null
-                : value != null;
+        return Arrays.asList(LAST_24_HOURS, LAST_7_DAYS, LAST_14_DAYS, LAST_30_DAYS).contains(this.operator) == (value == null);
     }
 }

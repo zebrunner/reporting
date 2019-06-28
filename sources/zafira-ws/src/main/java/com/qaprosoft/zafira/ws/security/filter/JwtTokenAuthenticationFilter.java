@@ -18,7 +18,6 @@ package com.qaprosoft.zafira.ws.security.filter;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -94,7 +93,7 @@ public class JwtTokenAuthenticationFilter extends GenericFilterBean {
             SecurityContextHolder.getContext().setAuthentication(auth);
 
             chain.doFilter(request, response);
-        } catch (ExpiredJwtException | MalformedJwtException | SignatureException | ParseException ex) {
+        } catch (ExpiredJwtException | MalformedJwtException | SignatureException ex) {
             throw new BadCredentialsException("JWT not valid");
         }
 
@@ -106,13 +105,13 @@ public class JwtTokenAuthenticationFilter extends GenericFilterBean {
         return requestMatcher.matches(request);
     }
 
-    private User extractAndDecodeJwt(HttpServletRequest request) throws ParseException {
+    private User extractAndDecodeJwt(HttpServletRequest request) {
         String authHeader = request.getHeader(AUTHORIZATION);
         String token = authHeader.substring("Bearer ".length());
         return jwtService.parseAuthToken(token);
     }
 
-    private Authentication buildAuthenticationFromJwt(User user, HttpServletRequest request) throws ParseException {
+    private Authentication buildAuthenticationFromJwt(User user, HttpServletRequest request) {
         JwtUserType userDetails = new JwtUserType(user.getId(), user.getUsername(), user.getGroups());
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

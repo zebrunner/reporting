@@ -80,7 +80,7 @@ public class GoogleSpreadsheetsService extends AbstractGoogleService {
         return sheetsService.spreadsheets().batchUpdate(spreadsheetId, body).execute();
     }
 
-    public Request setAutoResizeDimensionToGrid(Spreadsheet spreadsheet, Integer sheetId) throws IOException {
+    public Request setAutoResizeDimensionToGrid(Spreadsheet spreadsheet, Integer sheetId) {
         return new Request().setAutoResizeDimensions(new AutoResizeDimensionsRequest().setDimensions(new DimensionRange()
                 .setDimension(AutoDimensionType.COLUMNS.name()).setSheetId(getSheetById(spreadsheet, sheetId).getProperties().getSheetId())));
     }

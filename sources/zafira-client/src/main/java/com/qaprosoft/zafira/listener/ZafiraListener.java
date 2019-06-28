@@ -315,23 +315,18 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 
     @Override
     public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
-        if (!ZAFIRA_ENABLED)
-            return;
-
-        try {
-            Response<TestType> rs = zc.finishTest(populateTestResult(result, Status.FAILED, getFullStackTrace(result)));
-            if (rs.getStatus() != 200 && rs.getObject() == null) {
-                throw new RuntimeException("Unable to register test " + rs.getObject().getName() + " for zafira service: " + ZAFIRA_URL);
-            }
-        } catch (Throwable e) {
-            LOGGER.error("Undefined error during test case/method finish!", e);
-        }
+        processResultOnTestFailure(result);
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
-        if (!ZAFIRA_ENABLED)
+        processResultOnTestFailure(result);
+    }
+
+    private void processResultOnTestFailure(ITestResult result) {
+        if (!ZAFIRA_ENABLED) {
             return;
+        }
 
         try {
             Response<TestType> rs = zc.finishTest(populateTestResult(result, Status.FAILED, getFullStackTrace(result)));

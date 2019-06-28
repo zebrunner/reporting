@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.models.db;
 
 import java.util.Date;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -74,13 +75,13 @@ public class TestArtifact extends AbstractEntity implements Comparable<TestArtif
 
         TestArtifact that = (TestArtifact) o;
 
-        if (name != null ? !name.equals(that.name) : that.name != null)
+        if (!Objects.equals(name, that.name))
             return false;
-        if (link != null ? !link.equals(that.link) : that.link != null)
+        if (!Objects.equals(link, that.link))
             return false;
-        if (expiresAt != null ? !expiresAt.equals(that.expiresAt) : that.expiresAt != null)
+        if (!Objects.equals(expiresAt, that.expiresAt))
             return false;
-        return testId != null ? testId.equals(that.testId) : that.testId == null;
+        return Objects.equals(testId, that.testId);
     }
 
     @Override

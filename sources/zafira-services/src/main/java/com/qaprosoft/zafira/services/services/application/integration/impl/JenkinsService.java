@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.model.Build;
@@ -353,7 +352,7 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
     }
 
     public static boolean checkArguments(Map<String, String> args) {
-        return Arrays.stream(REQUIRED_ARGS).filter(arg -> args.get(arg) == null).collect(Collectors.toList()).size() == 0;
+        return Arrays.stream(REQUIRED_ARGS).noneMatch(arg -> args.get(arg) == null);
     }
 
     public static String[] getRequiredArgs() {
