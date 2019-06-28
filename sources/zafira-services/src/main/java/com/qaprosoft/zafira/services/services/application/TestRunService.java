@@ -322,6 +322,7 @@ public class TestRunService {
             if (existingTestRun != null) {
                 existingTestRun.setBuildNumber(testRun.getBuildNumber());
                 existingTestRun.setConfigXML(testRun.getConfigXML());
+                existingTestRun.setTestSuite(testRun.getTestSuite());
                 testRun = existingTestRun;
                 // TODO: investigate if startedBy should be also copied
             }

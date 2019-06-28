@@ -162,6 +162,8 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
                 this.run.setBuildNumber(ci.getCiBuild());
                 // Reset testRun config for rerun in case of queued tests
                 this.run.setConfigXML(convertToXML(configurator.getConfiguration()));
+                // Reset test suite https://github.com/qaprosoft/zafira/issues/1584
+                this.run.setTestSuiteId(suite.getId());
                 // Re-register test run to reset status onto in progress
                 Response<TestRunType> response = zc.startTestRun(this.run);
                 this.run = response.getObject();
