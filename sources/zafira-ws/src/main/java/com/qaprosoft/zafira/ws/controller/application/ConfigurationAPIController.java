@@ -17,7 +17,6 @@ package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.ProjectService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
 import com.qaprosoft.zafira.services.services.application.VersionService;
@@ -71,7 +70,7 @@ public class ConfigurationAPIController extends AbstractController {
     @ApiOperation(value = "Get version", nickname = "getVersion", httpMethod = "GET", response = Map.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/version")
-    public Map<String, Object> getVersion() throws ServiceException {
+    public Map<String, Object> getVersion() {
         Map<String, Object> config = new HashMap<>();
         config.put("service", versionService.getServiceVersion());
         config.put("client", versionService.getClientVersion());
@@ -82,7 +81,7 @@ public class ConfigurationAPIController extends AbstractController {
     @ApiOperation(value = "Get all projects", nickname = "getAllProjects", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/projects")
-    public List<Project> getAllProjects() throws ServiceException {
+    public List<Project> getAllProjects() {
         return projectService.getAllProjects();
     }
 
@@ -90,7 +89,7 @@ public class ConfigurationAPIController extends AbstractController {
     @ApiOperation(value = "Get jenkins config", nickname = "getJenkinsConfig", httpMethod = "GET", response = Map.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/jenkins")
-    public Map<String, Object> getJenkinsConfig() throws ServiceException {
+    public Map<String, Object> getJenkinsConfig() {
         Map<String, Object> config = new HashMap<>();
         config.put("connected", jenkinsService.isEnabledAndConnected());
         return config;
@@ -100,7 +99,7 @@ public class ConfigurationAPIController extends AbstractController {
     @ApiOperation(value = "Get jira config", nickname = "getJiraConfig", httpMethod = "GET", response = Map.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/jira")
-    public Map<String, Object> getJiraConfig() throws ServiceException {
+    public Map<String, Object> getJiraConfig() {
         Map<String, Object> config = new HashMap<>();
         config.put("connected", jiraService.isEnabledAndConnected());
         return config;
@@ -110,7 +109,7 @@ public class ConfigurationAPIController extends AbstractController {
     @ApiOperation(value = "Is slack available for test run", nickname = "isSlackAvailableForRun", httpMethod = "GET", response = Map.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/slack/{id}")
-    public Map<String, Object> isSlackAvailable(@PathVariable("id") long id) throws ServiceException {
+    public Map<String, Object> isSlackAvailable(@PathVariable("id") long id) {
         Map<String, Object> config = new HashMap<>();
         TestRun tr = testRunService.getTestRunByIdFull(id);
         boolean available = slackService.getWebhook() != null && StringUtils.isNotEmpty(tr.getSlackChannels())
@@ -123,7 +122,7 @@ public class ConfigurationAPIController extends AbstractController {
     @ApiOperation(value = "Is slack available", nickname = "isSlackAvailable", httpMethod = "GET", response = Map.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/slack")
-    public Map<String, Object> isSlackAvailable() throws ServiceException {
+    public Map<String, Object> isSlackAvailable() {
         Map<String, Object> config = new HashMap<>();
         boolean available = slackService.getWebhook() != null && slackService.isEnabledAndConnected();
         config.put("available", available);

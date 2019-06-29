@@ -21,7 +21,6 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.management.WidgetTemplateMapper;
 import com.qaprosoft.zafira.models.db.WidgetTemplate;
 import com.qaprosoft.zafira.models.dto.widget.WidgetTemplateParameter;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.util.SQLUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -66,7 +65,7 @@ public class WidgetTemplateService {
                                       .collect(Collectors.toList());
     }
 
-    public WidgetTemplate prepareWidgetTemplate(WidgetTemplate widgetTemplate) throws ServiceException {
+    public WidgetTemplate prepareWidgetTemplate(WidgetTemplate widgetTemplate) {
         if (widgetTemplate == null) {
             throw new ForbiddenOperationException("Unable to prepare widget template data");
         }
@@ -74,7 +73,7 @@ public class WidgetTemplateService {
         return widgetTemplate;
     }
 
-    public void clearRedundantParamsValues(WidgetTemplate widgetTemplate) throws ServiceException {
+    public void clearRedundantParamsValues(WidgetTemplate widgetTemplate) {
         if (widgetTemplate != null) {
             widgetTemplate.setParamsConfig(processParameters(widgetTemplate.getParamsConfig(), parameter -> {
                 if (parameter.getValuesQuery() != null && parameter.getValues() == null) {
@@ -85,7 +84,7 @@ public class WidgetTemplateService {
         }
     }
 
-    public WidgetTemplate prepareWidgetTemplateById(Long id) throws ServiceException {
+    public WidgetTemplate prepareWidgetTemplateById(Long id) {
         WidgetTemplate widgetTemplate = widgetTemplateMapper.getWidgetTemplateById(id);
         return prepareWidgetTemplate(widgetTemplate);
     }

@@ -59,18 +59,18 @@ public class FilterService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Filter createFilter(Filter filter) throws ServiceException {
+    public Filter createFilter(Filter filter) {
         filterMapper.createFilter(filter);
         return filter;
     }
 
     @Transactional(readOnly = true)
-    public Filter getFilterById(long id) throws ServiceException {
+    public Filter getFilterById(long id) {
         return filterMapper.getFilterById(id);
     }
 
     @Transactional(readOnly = true)
-    public Filter getFilterByName(String name) throws ServiceException {
+    public Filter getFilterByName(String name) {
         return filterMapper.getFilterByName(name);
     }
 
@@ -80,7 +80,7 @@ public class FilterService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Filter updateFilter(Filter filter, boolean isAdmin) throws ServiceException {
+    public Filter updateFilter(Filter filter, boolean isAdmin) {
         Filter dbFilter = getFilterById(filter.getId());
         if (dbFilter == null) {
             throw new ServiceException("No filters found by id: " + filter.getId());
@@ -105,7 +105,7 @@ public class FilterService {
         return storedSubject.getSubjectByName(name);
     }
 
-    public String getTemplate(FilterType filter, Template template) throws ServiceException {
+    public String getTemplate(FilterType filter, Template template) {
         return freemarkerUtil.getFreeMarkerTemplateContent(template.getPath(), filter);
     }
 }

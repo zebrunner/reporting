@@ -17,7 +17,6 @@ package com.qaprosoft.zafira.services.services.auth;
 
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.EmailType;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.EmailService;
 import com.qaprosoft.zafira.services.services.application.UserService;
 import com.qaprosoft.zafira.services.services.application.emails.ForgotPasswordEmail;
@@ -48,7 +47,7 @@ public class ForgotPasswordService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void sendForgotPasswordEmail(EmailType emailType, User user) throws ServiceException {
+    public void sendForgotPasswordEmail(EmailType emailType, User user) {
         AbstractEmail emailMessage;
         if (User.Source.INTERNAL.equals(user.getSource())) {
             String token = RandomStringUtils.randomAlphanumeric(50);

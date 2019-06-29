@@ -20,7 +20,6 @@ import com.qaprosoft.zafira.models.db.Dashboard;
 import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.models.db.Widget;
 import com.qaprosoft.zafira.models.dto.DashboardType;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.DashboardService;
 import com.qaprosoft.zafira.services.services.application.WidgetTemplateService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
@@ -69,7 +68,7 @@ public class DashboardsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
     @PostMapping
-    public DashboardType createDashboard(@RequestBody @Valid DashboardType dashboard) throws ServiceException {
+    public DashboardType createDashboard(@RequestBody @Valid DashboardType dashboard) {
         return mapper.map(dashboardService.createDashboard(mapper.map(dashboard, Dashboard.class)), DashboardType.class);
     }
 
@@ -77,7 +76,7 @@ public class DashboardsAPIController extends AbstractController {
     @ApiOperation(value = "Get dashboards", nickname = "getAllDashboards", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping
-    public List<DashboardType> getAllDashboards(@RequestParam(value = "hidden", required = false) boolean hidden) throws ServiceException {
+    public List<DashboardType> getAllDashboards(@RequestParam(value = "hidden", required = false) boolean hidden) {
         List<Dashboard> dashboards;
         if (!hidden && hasPermission(Permission.Name.VIEW_HIDDEN_DASHBOARDS)) {
             dashboards = (dashboardService.getAllDashboards());
@@ -94,7 +93,7 @@ public class DashboardsAPIController extends AbstractController {
     @ApiOperation(value = "Get dashboard by ID", nickname = "getDashboardById", httpMethod = "GET", response = Dashboard.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/{id}")
-    public DashboardType getDashboardById(@PathVariable("id") long id) throws ServiceException {
+    public DashboardType getDashboardById(@PathVariable("id") long id) {
         Dashboard dashboard = dashboardService.getDashboardById(id);
         dashboard.getWidgets().forEach(widget -> widgetTemplateService.clearRedundantParamsValues(widget.getWidgetTemplate()));
         return mapper.map(dashboard, DashboardType.class);
@@ -104,7 +103,7 @@ public class DashboardsAPIController extends AbstractController {
     @ApiOperation(value = "Get dashboard by title", nickname = "getDashboardByTitle", httpMethod = "GET", response = Dashboard.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/title")
-    public DashboardType getDashboardByTitle(@RequestParam(name = "title", required = false) String title) throws ServiceException {
+    public DashboardType getDashboardByTitle(@RequestParam(name = "title", required = false) String title) {
         return mapper.map(dashboardService.getDashboardByTitle(title), DashboardType.class);
     }
 
@@ -113,7 +112,7 @@ public class DashboardsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
     @DeleteMapping("/{id}")
-    public void deleteDashboard(@PathVariable("id") long id) throws ServiceException {
+    public void deleteDashboard(@PathVariable("id") long id) {
         dashboardService.deleteDashboardById(id);
     }
 
@@ -122,7 +121,7 @@ public class DashboardsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
     @PutMapping
-    public DashboardType updateDashboard(@Valid @RequestBody DashboardType dashboard) throws ServiceException {
+    public DashboardType updateDashboard(@Valid @RequestBody DashboardType dashboard) {
         return mapper.map(dashboardService.updateDashboard(mapper.map(dashboard, Dashboard.class)), DashboardType.class);
     }
 
@@ -131,7 +130,7 @@ public class DashboardsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
     @PutMapping("/order")
-    public Map<Long, Integer> updateDashboardsOrder(@RequestBody Map<Long, Integer> order) throws ServiceException {
+    public Map<Long, Integer> updateDashboardsOrder(@RequestBody Map<Long, Integer> order) {
         return dashboardService.updateDashboardsOrder(order);
     }
 
@@ -140,7 +139,7 @@ public class DashboardsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_WIDGETS')")
     @PostMapping("/{dashboardId}/widgets")
-    public Widget addDashboardWidget(@PathVariable("dashboardId") long dashboardId, @RequestBody Widget widget) throws ServiceException {
+    public Widget addDashboardWidget(@PathVariable("dashboardId") long dashboardId, @RequestBody Widget widget) {
         return dashboardService.addDashboardWidget(dashboardId, widget);
     }
 
@@ -150,7 +149,7 @@ public class DashboardsAPIController extends AbstractController {
     @PreAuthorize("hasPermission('MODIFY_WIDGETS')")
     @DeleteMapping("/{dashboardId}/widgets/{widgetId}")
     public void deleteDashboardWidget(@PathVariable("dashboardId") long dashboardId, @PathVariable("widgetId") long widgetId)
-            throws ServiceException {
+            {
         dashboardService.deleteDashboardWidget(dashboardId, widgetId);
     }
 
@@ -159,7 +158,7 @@ public class DashboardsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_WIDGETS')")
     @PutMapping("/{dashboardId}/widgets")
-    public Widget updateDashboardWidget(@PathVariable("dashboardId") long dashboardId, @RequestBody Widget widget) throws ServiceException {
+    public Widget updateDashboardWidget(@PathVariable("dashboardId") long dashboardId, @RequestBody Widget widget) {
         return dashboardService.updateDashboardWidget(dashboardId, widget);
     }
 
@@ -169,7 +168,7 @@ public class DashboardsAPIController extends AbstractController {
     @PreAuthorize("hasPermission('MODIFY_WIDGETS')")
     @PutMapping("/{dashboardId}/widgets/all")
     public List<Widget> updateDashboardWidgets(@PathVariable("dashboardId") long dashboardId, @RequestBody List<Widget> widgets)
-            throws ServiceException {
+            {
         for (Widget widget : widgets) {
             dashboardService.updateDashboardWidget(dashboardId, widget);
         }

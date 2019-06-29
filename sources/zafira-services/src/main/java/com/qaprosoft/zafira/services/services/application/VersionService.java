@@ -18,8 +18,6 @@ package com.qaprosoft.zafira.services.services.application;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-
 @Service
 public class VersionService {
     @Value("${zafira.service.version}")
@@ -31,11 +29,11 @@ public class VersionService {
     @Value("${zafira.webservice.url}")
     private String webserviceURL;
 
-    public String getServiceVersion() throws ServiceException {
+    public String getServiceVersion() {
         return serviceVersion;
     }
 
-    public String getClientVersion() throws ServiceException {
+    public String getClientVersion() {
         return clientVersion;
     }
 

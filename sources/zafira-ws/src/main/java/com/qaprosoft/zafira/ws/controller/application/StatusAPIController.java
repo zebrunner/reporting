@@ -40,7 +40,7 @@ public class StatusAPIController extends AbstractController {
     @ResponseStatusDetails
     @ApiOperation(value = "Get service status", nickname = "status", httpMethod = "GET", response = String.class)
     @GetMapping()
-    public String getStatus() throws ServiceException {
+    public String getStatus() {
         try {
             final String version = settingsService.getPostgresVersion();
             if (StringUtils.isEmpty(version)) {

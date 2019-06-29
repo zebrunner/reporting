@@ -29,8 +29,7 @@ public class ServiceExceptionAspect
 	private static final Logger logger = LoggerFactory.getLogger(ServiceExceptionAspect.class);
 
 	@AfterThrowing(pointcut = "execution(public * com.qaprosoft.zafira.services.services..*.*(..) throws com.qaprosoft.zafira.services.exceptions.ServiceException)", throwing = "e")
-	public void rethrowException(JoinPoint joinPoint, Exception e) throws ServiceException
-	{
+	public void rethrowException(JoinPoint joinPoint, Exception e) {
 		logger.error("Got exception when calling [{}]", joinPoint.getSignature().toString(), e);
 
 		if (e instanceof ServiceException)

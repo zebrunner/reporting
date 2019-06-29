@@ -45,7 +45,7 @@ public class FiltersAPIController extends AbstractController {
     @ApiOperation(value = "Create filter", nickname = "createFilter", httpMethod = "POST", response = FilterType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping()
-    public FilterType createFilter(@RequestBody @Valid FilterType filterType) throws ServiceException {
+    public FilterType createFilter(@RequestBody @Valid FilterType filterType) {
         if (filterService.getFilterByName(filterType.getName()) != null) {
             throw new ServiceException("Filter with name '" + filterType.getName() + "' already exists");
         }
@@ -62,7 +62,7 @@ public class FiltersAPIController extends AbstractController {
     @ApiOperation(value = "Get all public filters", nickname = "getAllPublicFilters", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/all/public")
-    public List<FilterType> getAllPublicFilters() throws ServiceException {
+    public List<FilterType> getAllPublicFilters() {
         return filterService.getAllPublicFilters(getPrincipalId()).stream()
                 .map(filter -> mapper.map(filter, FilterType.class))
                 .collect(Collectors.toList());
@@ -73,7 +73,7 @@ public class FiltersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("isOwner(@filterService.getFilterById(#filterType.id), 'userId')")
     @PutMapping()
-    public FilterType updateFilter(@RequestBody @Valid FilterType filterType) throws ServiceException {
+    public FilterType updateFilter(@RequestBody @Valid FilterType filterType) {
         filterType.getSubject().sortCriterias();
         return mapper.map(filterService.updateFilter(mapper.map(filterType, Filter.class), isAdmin()), FilterType.class);
     }
@@ -83,7 +83,7 @@ public class FiltersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("isOwner(@filterService.getFilterById(#id), 'userId')")
     @DeleteMapping("/{id}")
-    public void deleteFilter(@PathVariable("id") Long id) throws ServiceException {
+    public void deleteFilter(@PathVariable("id") Long id) {
         filterService.deleteFilterById(id);
     }
 

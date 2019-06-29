@@ -20,7 +20,6 @@ import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationDataType;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationTag;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TagService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
 import com.qaprosoft.zafira.services.util.URLResolver;
@@ -64,7 +63,7 @@ public class TagsAPIController extends AbstractController {
     @GetMapping("/{ciRunId}/integration")
     public IntegrationDataType getIntegrationInfo(
             @PathVariable("ciRunId") String ciRunId,
-            @RequestParam("integrationTag") IntegrationTag integrationTag) throws ServiceException, JAXBException {
+            @RequestParam("integrationTag") IntegrationTag integrationTag) throws JAXBException {
         IntegrationDataType integrationData = new IntegrationDataType();
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
 

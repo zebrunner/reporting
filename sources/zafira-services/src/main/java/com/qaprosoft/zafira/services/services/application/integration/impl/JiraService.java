@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import com.qaprosoft.zafira.services.services.application.integration.context.JiraContext;
@@ -58,7 +57,7 @@ public class JiraService extends AbstractIntegration<JiraContext> {
         });
     }
 
-    public boolean isIssueClosed(Issue issue) throws ServiceException {
+    public boolean isIssueClosed(Issue issue) {
         boolean isIssueClosed = false;
         String[] closeStatuses = settingsService.getSettingValue(JIRA_CLOSED_STATUS).split(";");
         for (String closeStatus : closeStatuses) {

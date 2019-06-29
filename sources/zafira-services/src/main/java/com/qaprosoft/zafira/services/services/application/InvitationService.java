@@ -69,7 +69,7 @@ public class InvitationService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Invitation createInvitation(Long principalId, Invitation invitation, boolean checkExisting, boolean force) throws ServiceException {
+    public Invitation createInvitation(Long principalId, Invitation invitation, boolean checkExisting, boolean force) {
         if (checkExisting) {
             checkExisting(invitation.getEmail());
         }
@@ -103,7 +103,7 @@ public class InvitationService {
         })).toArray(CompletableFuture[]::new);
     }
 
-    public List<Invitation> createInvitations(Long principalId, Invitation... invitations) throws ServiceException {
+    public List<Invitation> createInvitations(Long principalId, Invitation... invitations) {
         List<Invitation> result = new ArrayList<>();
         for (Invitation invitation : invitations) {
             checkExisting(invitation.getEmail());
@@ -113,7 +113,7 @@ public class InvitationService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Invitation createInitialInvitation(String email, String groupName) throws ServiceException {
+    public Invitation createInitialInvitation(String email, String groupName) {
         Invitation invitation = null;
         if (!StringUtils.isBlank(userService.getAdminUsername())) {
             User user = userService.getUserByUsername(userService.getAdminUsername());
@@ -136,7 +136,7 @@ public class InvitationService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Invitation retryInvitation(Long principalId, String email) throws ServiceException {
+    public Invitation retryInvitation(Long principalId, String email) {
         Invitation invitationFromDb = getInvitationByEmail(email);
         if (invitationFromDb == null) {
             throw new EntityNotExistsException(Invitation.class, false);
@@ -202,7 +202,7 @@ public class InvitationService {
         return RandomStringUtils.randomAlphanumeric(50);
     }
 
-    private void checkExisting(String email) throws ServiceException {
+    private void checkExisting(String email) {
         if (userService.getUserByEmail(email) != null) {
             throw new EntityAlreadyExistsException("email", email, User.class, false);
         } else if (getInvitationByEmail(email) != null) {
@@ -210,7 +210,7 @@ public class InvitationService {
         }
     }
 
-    private void sendEmail(Invitation invitation) throws ServiceException {
+    private void sendEmail(Invitation invitation) {
         IEmailMessage userInviteEmail = LDAP.equals(invitation.getSource())
                 ? new UserInviteEmail(invitation.getToken(), zafiraLogoURL, urlResolver.buildWebURL())
                 : new UserInviteLdapEmail(invitation.getToken(), zafiraLogoURL, urlResolver.buildWebURL());

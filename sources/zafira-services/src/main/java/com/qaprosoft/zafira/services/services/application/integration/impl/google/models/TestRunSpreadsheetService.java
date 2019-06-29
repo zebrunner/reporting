@@ -20,7 +20,6 @@ import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
 import com.qaprosoft.zafira.services.services.application.TestService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleDriveService;
@@ -59,7 +58,7 @@ public class TestRunSpreadsheetService {
     @Autowired
     private TestRunService testRunService;
 
-    public String createTestRunResultSpreadsheet(TestRun testRun, String... accessRecipients) throws ServiceException {
+    public String createTestRunResultSpreadsheet(TestRun testRun, String... accessRecipients) {
         String result = null;
         GoogleSpreadsheetsService spreadsheetsService = googleService.getSpreadsheetsService();
         GoogleDriveService driveService = googleService.getDriveService();
@@ -108,7 +107,7 @@ public class TestRunSpreadsheetService {
         return result;
     }
 
-    public List<List<Object>> collectTestRunResults(final TestRun testRun) throws ServiceException {
+    public List<List<Object>> collectTestRunResults(final TestRun testRun) {
         List<List<Object>> result = new ArrayList<>();
         result.add(Arrays.asList("Status", "Message", "Title", "Owner", "Secondary owner", "Device", "Elapsed", "Started at", ""));
         List<Test> tests = testService.getTestsByTestRunId(testRun.getId());

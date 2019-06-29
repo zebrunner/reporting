@@ -71,7 +71,7 @@ public class AmazonService extends AbstractIntegration<AmazonContext> {
         }
     }
 
-    public String saveFile(final FileUploadType file) throws ServiceException {
+    public String saveFile(final FileUploadType file) {
         String result;
         SdkBufferedInputStream stream = null;
         try {
@@ -101,7 +101,7 @@ public class AmazonService extends AbstractIntegration<AmazonContext> {
         return result;
     }
 
-    public void removeFile(final String linkToFile) throws ServiceException {
+    public void removeFile(final String linkToFile) {
         try {
             context().getAmazonS3().deleteObject(
                     new DeleteObjectRequest(context().getS3Bucket(), new URL(linkToFile).getPath().substring(1)));

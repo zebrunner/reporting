@@ -60,12 +60,12 @@ public class TestConfigService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void createTestConfig(TestConfig testConfig) throws ServiceException {
+    public void createTestConfig(TestConfig testConfig) {
         testConfigMapper.createTestConfig(testConfig);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TestConfig createTestConfigForTest(Test test, String testConfigXML) throws ServiceException {
+    public TestConfig createTestConfigForTest(Test test, String testConfigXML) {
         TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
         if (testRun == null) {
             throw new ServiceException("Test run not found!");
@@ -87,7 +87,7 @@ public class TestConfigService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TestConfig createTestConfigForTestRun(String configXML) throws ServiceException {
+    public TestConfig createTestConfigForTestRun(String configXML) {
         List<Argument> testRunConfig = readConfigArgs(configXML);
 
         TestConfig config = new TestConfig().init(testRunConfig);
@@ -102,7 +102,7 @@ public class TestConfigService {
     }
 
     @Transactional(readOnly = true)
-    public TestConfig searchTestConfig(TestConfig testConfig) throws ServiceException {
+    public TestConfig searchTestConfig(TestConfig testConfig) {
         return testConfigMapper.searchTestConfig(testConfig);
     }
 

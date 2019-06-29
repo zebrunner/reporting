@@ -41,7 +41,6 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.User.Status;
 import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 import com.qaprosoft.zafira.services.services.management.TenancyService;
 import com.qaprosoft.zafira.services.util.TenancyDbInitial;
@@ -107,7 +106,7 @@ public class UserService implements TenancyDbInitial {
     }
 
     @Transactional(readOnly = true)
-    public User getUserById(long id) throws ServiceException {
+    public User getUserById(long id) {
         return userMapper.getUserById(id);
     }
 
@@ -118,7 +117,7 @@ public class UserService implements TenancyDbInitial {
     }
 
     @Transactional(readOnly = true)
-    public User getNotNullUserById(long id) throws ServiceException {
+    public User getNotNullUserById(long id) {
         User user = getUserById(id);
         if (user == null) {
             throw new UserNotFoundException();
@@ -127,18 +126,18 @@ public class UserService implements TenancyDbInitial {
     }
 
     @Transactional(readOnly = true)
-    public User getUserByUsername(String username) throws ServiceException {
+    public User getUserByUsername(String username) {
         return userMapper.getUserByUserName(username);
     }
 
     @Transactional(readOnly = true)
-    public User getUserByUsernameOrEmail(String usernameOrEmail) throws ServiceException {
+    public User getUserByUsernameOrEmail(String usernameOrEmail) {
         boolean isEmail = new EmailValidator().isValid(usernameOrEmail, null);
         return isEmail ? getUserByEmail(usernameOrEmail) : getUserByUsername(usernameOrEmail);
     }
 
     @Transactional(readOnly = true)
-    public User getUserByEmail(String email) throws ServiceException {
+    public User getUserByEmail(String email) {
         return userMapper.getUserByEmail(email);
     }
 
@@ -148,19 +147,19 @@ public class UserService implements TenancyDbInitial {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void createUser(User user) throws ServiceException {
+    public void createUser(User user) {
         userMapper.createUser(user);
     }
 
     @CacheEvict(value = "users", condition = "#user.id != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #user.id")
     @Transactional(rollbackFor = Exception.class)
-    public User updateUser(User user) throws ServiceException {
+    public User updateUser(User user) {
         userMapper.updateUser(user);
         return user;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void updateUserPassword(PasswordChangingType password, boolean forceUpdate) throws ServiceException {
+    public void updateUserPassword(PasswordChangingType password, boolean forceUpdate) {
         User user = getNotNullUserById(password.getUserId());
         if (!forceUpdate && (password.getOldPassword() == null || !passwordEncryptor.checkPassword(password.getOldPassword(), user.getPassword()))) {
             throw new ForbiddenOperationException();
@@ -170,7 +169,7 @@ public class UserService implements TenancyDbInitial {
 
     @CacheEvict(value = "users", condition = "#password.userId != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #password.userId")
     @Transactional(rollbackFor = Exception.class)
-    public void updateUserPassword(User user, PasswordChangingType password) throws ServiceException {
+    public void updateUserPassword(User user, PasswordChangingType password) {
         user = user != null ? user : getNotNullUserById(password.getUserId());
         user.setPassword(passwordEncryptor.encryptPassword(password.getPassword()));
         updateUser(user);
@@ -187,7 +186,7 @@ public class UserService implements TenancyDbInitial {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public User createOrUpdateUser(User newUser, Group group) throws ServiceException {
+    public User createOrUpdateUser(User newUser, Group group) {
         User user = getUserByUsername(newUser.getUsername());
         if (user == null) {
             if (!StringUtils.isEmpty(newUser.getPassword())) {
@@ -217,7 +216,7 @@ public class UserService implements TenancyDbInitial {
         return user;
     }
 
-    public User createOrUpdateUser(User newUser) throws ServiceException {
+    public User createOrUpdateUser(User newUser) {
         return createOrUpdateUser(newUser, null);
     }
 
@@ -226,7 +225,7 @@ public class UserService implements TenancyDbInitial {
             @CacheEvict(value = "groups", condition = "#groupId != 0", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #groupId")
     })
     @Transactional(rollbackFor = Exception.class)
-    public User addUserToGroup(User user, long groupId) throws ServiceException {
+    public User addUserToGroup(User user, long groupId) {
         userMapper.addUserToGroup(user.getId(), groupId);
         return userMapper.getUserById(user.getId());
     }
@@ -236,13 +235,13 @@ public class UserService implements TenancyDbInitial {
             @CacheEvict(value = "groups", condition = "#groupId != 0", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #groupId")
     })
     @Transactional(rollbackFor = Exception.class)
-    public User deleteUserFromGroup(long groupId, long userId) throws ServiceException {
+    public User deleteUserFromGroup(long groupId, long userId) {
         userMapper.deleteUserFromGroup(userId, groupId);
         return userMapper.getUserById(userId);
     }
 
     @Transactional(readOnly = true)
-    public SearchResult<User> searchUsers(UserSearchCriteria sc, Boolean publicDetails) throws ServiceException {
+    public SearchResult<User> searchUsers(UserSearchCriteria sc, Boolean publicDetails) {
         actualizeSearchCriteriaDate(sc);
         SearchResult<User> results = new SearchResult<>();
         results.setPage(sc.getPage());

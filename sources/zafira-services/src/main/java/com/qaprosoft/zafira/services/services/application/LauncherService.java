@@ -85,7 +85,7 @@ public class LauncherService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Launcher createLauncher(Launcher launcher, User owner) throws ServiceException {
+    public Launcher createLauncher(Launcher launcher, User owner) {
         if (jenkinsService.isConnected()) {
             JenkinsContext context = jenkinsService.context();
             String jenkinsHost = context.getJenkinsHost();
@@ -108,7 +108,7 @@ public class LauncherService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public List<Launcher> createLaunchersForJob(ScannedRepoLaunchersType scannedRepoLaunchersType, User owner) throws ServiceException {
+    public List<Launcher> createLaunchersForJob(ScannedRepoLaunchersType scannedRepoLaunchersType, User owner) {
         if (!scannedRepoLaunchersType.isSuccess()) {
             return new ArrayList<>();
         }
@@ -135,28 +135,28 @@ public class LauncherService {
     }
 
     @Transactional(readOnly = true)
-    public Launcher getLauncherById(Long id) throws ServiceException {
+    public Launcher getLauncherById(Long id) {
         return launcherMapper.getLauncherById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<Launcher> getAllLaunchers() throws ServiceException {
+    public List<Launcher> getAllLaunchers() {
         return launcherMapper.getAllLaunchers();
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Launcher updateLauncher(Launcher launcher) throws ServiceException {
+    public Launcher updateLauncher(Launcher launcher) {
         launcherMapper.updateLauncher(launcher);
         return launcher;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteLauncherById(Long id) throws ServiceException {
+    public void deleteLauncherById(Long id) {
         launcherMapper.deleteLauncherById(id);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteAutoScannedLaunchersByScmAccountId(Long scmAccountId) throws ServiceException {
+    public void deleteAutoScannedLaunchersByScmAccountId(Long scmAccountId) {
         launcherMapper.deleteAutoScannedLaunchersByScmAccountId(scmAccountId);
     }
 

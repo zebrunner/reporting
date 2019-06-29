@@ -21,7 +21,6 @@ import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.db.TestCase;
 import com.qaprosoft.zafira.models.db.TestMetric;
 import com.qaprosoft.zafira.models.dto.TestCaseType;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.ProjectService;
 import com.qaprosoft.zafira.services.services.application.TestCaseService;
 import com.qaprosoft.zafira.services.services.application.TestMetricService;
@@ -70,7 +69,7 @@ public class TestCasesAPIController extends AbstractController {
     @ApiOperation(value = "Search test cases", nickname = "searchTestCases", httpMethod = "POST", response = SearchResult.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/search")
-    public SearchResult<TestCase> searchTestCases(@Valid @RequestBody TestCaseSearchCriteria sc) throws ServiceException {
+    public SearchResult<TestCase> searchTestCases(@Valid @RequestBody TestCaseSearchCriteria sc) {
         return testCaseService.searchTestCases(sc);
     }
 
@@ -78,7 +77,7 @@ public class TestCasesAPIController extends AbstractController {
     @ApiOperation(value = "Get test metrics by test case id", nickname = "getTestMetricsByTestCaseId", httpMethod = "GET", response = Map.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/{id}/metrics")
-    public Map<String, List<TestMetric>> getTestMetricsByTestCaseId(@PathVariable("id") Long id) throws ServiceException {
+    public Map<String, List<TestMetric>> getTestMetricsByTestCaseId(@PathVariable("id") Long id) {
         return testMetricService.getTestMetricsByTestCaseId(id);
     }
 
@@ -88,7 +87,7 @@ public class TestCasesAPIController extends AbstractController {
     @PostMapping()
     public TestCaseType createTestCase(
             @RequestBody @Valid TestCaseType testCase,
-            @RequestHeader(value = "Project", required = false) String projectName) throws ServiceException, MappingException, ExecutionException {
+            @RequestHeader(value = "Project", required = false) String projectName) throws MappingException, ExecutionException {
         TestCase tc = mapper.map(testCase, TestCase.class);
         tc.setProject(projectService.getProjectByName(projectName));
         return mapper.map(testCaseService.createOrUpdateCase(tc), TestCaseType.class);
@@ -99,7 +98,7 @@ public class TestCasesAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/batch")
     public TestCaseType[] createTestCases(@RequestBody @Valid TestCaseType[] tcs,
-            @RequestHeader(value = "Project", required = false) String projectName) throws ServiceException, ExecutionException {
+            @RequestHeader(value = "Project", required = false) String projectName) throws ExecutionException {
         if (!ArrayUtils.isEmpty(tcs)) {
             Project project = projectService.getProjectByName(projectName);
             TestCase[] testCases = new TestCase[tcs.length];

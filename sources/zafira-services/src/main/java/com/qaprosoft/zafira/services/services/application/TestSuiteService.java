@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestSuiteMapper;
 import com.qaprosoft.zafira.models.db.TestSuite;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
 public class TestSuiteService {
@@ -29,28 +28,28 @@ public class TestSuiteService {
     private TestSuiteMapper testSuiteMapper;
 
     @Transactional(rollbackFor = Exception.class)
-    public void createTestSuite(TestSuite testSuite) throws ServiceException {
+    public void createTestSuite(TestSuite testSuite) {
         testSuiteMapper.createTestSuite(testSuite);
     }
 
     @Transactional(readOnly = true)
-    public TestSuite getTestSuiteByIdFull(long id) throws ServiceException {
+    public TestSuite getTestSuiteByIdFull(long id) {
         return testSuiteMapper.getTestSuiteByIdFull(id);
     }
 
     @Transactional(readOnly = true)
-    public TestSuite getTestSuiteByNameAndFileNameAndUserId(String name, String fileName, long userId) throws ServiceException {
+    public TestSuite getTestSuiteByNameAndFileNameAndUserId(String name, String fileName, long userId) {
         return testSuiteMapper.getTestSuiteByNameAndFileNameAndUserId(name, fileName, userId);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TestSuite updateTestSuite(TestSuite testSuite) throws ServiceException {
+    public TestSuite updateTestSuite(TestSuite testSuite) {
         testSuiteMapper.updateTestSuite(testSuite);
         return testSuite;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TestSuite createOrUpdateTestSuite(TestSuite newTestSuite) throws ServiceException {
+    public TestSuite createOrUpdateTestSuite(TestSuite newTestSuite) {
         TestSuite testSuite = getTestSuiteByNameAndFileNameAndUserId(newTestSuite.getName(), newTestSuite.getFileName(),
                 newTestSuite.getUser().getId());
         if (testSuite == null) {

@@ -87,7 +87,7 @@ public class TestService {
     private TagService tagService;
 
     @Transactional(rollbackFor = Exception.class)
-    public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException {
+    public Test startTest(Test test, List<String> jiraIds, String configXML) {
         // New or Queued test
         if ((test.getId() == null || test.getId() == 0) || test.getStatus() == Status.QUEUED) {
             // This code block is executed only for the first job run
@@ -131,12 +131,12 @@ public class TestService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void createTest(Test test) throws ServiceException {
+    public void createTest(Test test) {
         testMapper.createTest(test);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Test finishTest(Test test, String configXML) throws ServiceException {
+    public Test finishTest(Test test, String configXML) {
         Test existingTest = getNotNullTestById(test.getId());
 
         existingTest.setFinishTime(test.getFinishTime());
@@ -212,7 +212,7 @@ public class TestService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Test skipTest(Test test) throws ServiceException {
+    public Test skipTest(Test test) {
         test.setStatus(Status.SKIPPED);
         testRunService.updateStatistics(test.getTestRunId(), Status.SKIPPED);
         updateTest(test);
@@ -220,7 +220,7 @@ public class TestService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Test abortTest(Test test, String abortCause) throws ServiceException {
+    public Test abortTest(Test test, String abortCause) {
         test.setStatus(Status.ABORTED);
         test.setMessage(abortCause);
         testRunService.updateStatistics(test.getTestRunId(), Status.ABORTED);
@@ -229,7 +229,7 @@ public class TestService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Test changeTestStatus(long id, Status newStatus) throws ServiceException {
+    public Test changeTestStatus(long id, Status newStatus) {
         Test test = getTestById(id);
         if (test == null) {
             throw new TestNotFoundException();
@@ -247,7 +247,7 @@ public class TestService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Test createTestWorkItems(long id, List<String> jiraIds) throws ServiceException {
+    public Test createTestWorkItems(long id, List<String> jiraIds) {
         Test test = getTestById(id);
         if (test == null) {
             throw new ServiceException("Test not found by id: " + id);
@@ -263,12 +263,12 @@ public class TestService {
     }
 
     @Transactional(readOnly = true)
-    public Test getTestById(long id) throws ServiceException {
+    public Test getTestById(long id) {
         return testMapper.getTestById(id);
     }
 
     @Transactional(readOnly = true)
-    public Test getNotNullTestById(long id) throws ServiceException {
+    public Test getNotNullTestById(long id) {
         Test test = getTestById(id);
         if (test == null) {
             throw new TestNotFoundException("Test ID: " + id);
@@ -277,33 +277,33 @@ public class TestService {
     }
 
     @Transactional(readOnly = true)
-    public List<Test> getTestsByTestRunId(long testRunId) throws ServiceException {
+    public List<Test> getTestsByTestRunId(long testRunId) {
         return testMapper.getTestsByTestRunId(testRunId);
     }
 
     @Transactional(readOnly = true)
-    public List<Test> getTestsByTestRunId(String testRunId) throws ServiceException {
+    public List<Test> getTestsByTestRunId(String testRunId) {
         return testRunId.matches("\\d+") ? testMapper.getTestsByTestRunId(Long.valueOf(testRunId)) : testMapper.getTestsByTestRunCiRunId(testRunId);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Test updateTest(Test test) throws ServiceException {
+    public Test updateTest(Test test) {
         testMapper.updateTest(test);
         return test;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteTestById(long id) throws ServiceException {
+    public void deleteTestById(long id) {
         testMapper.deleteTestById(id);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteQueuedTest(Test test) throws ServiceException {
+    public void deleteQueuedTest(Test test) {
         testMapper.deleteTestByTestRunIdAndNameAndStatus(test.getTestRunId(), test.getName(), Status.QUEUED);
     }
 
     @Transactional(readOnly = true)
-    public SearchResult<Test> searchTests(TestSearchCriteria sc) throws ServiceException {
+    public SearchResult<Test> searchTests(TestSearchCriteria sc) {
         SearchResult<Test> results = new SearchResult<>();
         results.setPage(sc.getPage());
         results.setPageSize(sc.getPageSize());
@@ -318,7 +318,7 @@ public class TestService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public WorkItem createOrUpdateTestWorkItem(long testId, WorkItem workItem) throws ServiceException {
+    public WorkItem createOrUpdateTestWorkItem(long testId, WorkItem workItem) {
         Test test = getNotNullTestById(testId);
         Type workItemType = workItem.getType();
         WorkItem attachedWorkItem = test.getWorkItemByType(workItemType);
@@ -360,7 +360,7 @@ public class TestService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public WorkItem createWorkItem(long testId, WorkItem workItem) throws ServiceException {
+    public WorkItem createWorkItem(long testId, WorkItem workItem) {
         Test test = getNotNullTestById(testId);
         workItemService.createWorkItem(workItem);
         testMapper.createTestWorkItem(test, workItem);
@@ -368,7 +368,7 @@ public class TestService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TestRun deleteTestWorkItemByWorkItemIdAndTest(long workItemId, Test test) throws ServiceException {
+    public TestRun deleteTestWorkItemByWorkItemIdAndTest(long workItemId, Test test) {
         test.setKnownIssue(false);
         test.setBlocker(false);
         updateTest(test);
@@ -387,12 +387,12 @@ public class TestService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteTestWorkItemByWorkItemIdAndTestId(long workItemId, long testId) throws ServiceException {
+    public void deleteTestWorkItemByWorkItemIdAndTestId(long workItemId, long testId) {
         testMapper.deleteTestWorkItemByWorkItemIdAndTestId(workItemId, testId);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteTestWorkItemByTestIdAndWorkItemType(long testId, Type type) throws ServiceException {
+    public void deleteTestWorkItemByTestIdAndWorkItemType(long testId, Type type) {
         testMapper.deleteTestWorkItemByTestIdAndWorkItemType(testId, type);
     }
 
@@ -475,7 +475,7 @@ public class TestService {
      * @throws ServiceException
      */
     @Transactional(rollbackFor = Exception.class)
-    public Set<Tag> saveTags(Long testId, Set<Tag> tags) throws ServiceException {
+    public Set<Tag> saveTags(Long testId, Set<Tag> tags) {
         if (CollectionUtils.isNotEmpty(tags)) {
             tags = tagService.createTags(tags);
             Set<Tag> tagsToAdd = tags.stream().filter(tag -> tag.getId() != null && tag.getId() != 0).collect(Collectors.toSet());

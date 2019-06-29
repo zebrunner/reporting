@@ -21,7 +21,6 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.UserPreference;
 import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 import com.qaprosoft.zafira.services.services.application.DashboardService;
 import com.qaprosoft.zafira.services.services.application.UserPreferenceService;
@@ -80,7 +79,7 @@ public class UsersAPIController extends AbstractController {
     @ApiOperation(value = "Get user profile", nickname = "getUserProfile", httpMethod = "GET", response = UserType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/profile")
-    public UserType getUserProfile(@RequestParam(value = "username", required = false) String username) throws ServiceException {
+    public UserType getUserProfile(@RequestParam(value = "username", required = false) String username) {
         User user = StringUtils.isEmpty(username) ? userService.getUserById(getPrincipalId())
                 : userService.getUserByUsername(username);
         if (user == null) {
@@ -97,7 +96,7 @@ public class UsersAPIController extends AbstractController {
     @ApiOperation(value = "Get extended user profile", nickname = "getExtendedUserProfile", httpMethod = "GET", response = Map.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/profile/extended")
-    public Map<String, Object> getExtendedUserProfile() throws ServiceException {
+    public Map<String, Object> getExtendedUserProfile() {
         Map<String, Object> extendedUserProfile = new HashMap<>();
         User user = userService.getUserById(getPrincipalId());
         UserType userType = mapper.map(user, UserType.class);
@@ -116,7 +115,7 @@ public class UsersAPIController extends AbstractController {
     @ApiOperation(value = "Update user profile", nickname = "updateUserProfile", httpMethod = "PUT", response = UserType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PutMapping("/profile")
-    public UserType updateUserProfile(@Valid @RequestBody UserType user) throws ServiceException {
+    public UserType updateUserProfile(@Valid @RequestBody UserType user) {
         checkCurrentUserAccess(user.getId());
         UserType userType = mapper.map(userService.updateUser(mapper.map(user, User.class)), UserType.class);
         userType.setRoles(user.getRoles());
@@ -129,7 +128,7 @@ public class UsersAPIController extends AbstractController {
     @ApiOperation(value = "Delete user profile photo", nickname = "deleteUserProfilePhoto", httpMethod = "DELETE")
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @DeleteMapping("/profile/photo")
-    public void deleteUserProfilePhoto() throws ServiceException {
+    public void deleteUserProfilePhoto() {
         User user = userService.getUserById(getPrincipalId());
         amazonService.removeFile(user.getPhotoURL());
         user.setPhotoURL(StringUtils.EMPTY);
@@ -140,7 +139,7 @@ public class UsersAPIController extends AbstractController {
     @ApiOperation(value = "Update user password", nickname = "updateUserPassword", httpMethod = "PUT")
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PutMapping("/password")
-    public void updateUserPassword(@Valid @RequestBody PasswordChangingType password) throws ServiceException {
+    public void updateUserPassword(@Valid @RequestBody PasswordChangingType password) {
         checkCurrentUserAccess(password.getUserId());
         userService.updateUserPassword(password, isAdmin() && password.getOldPassword() == null);
     }
@@ -152,7 +151,7 @@ public class UsersAPIController extends AbstractController {
     @PostMapping("/search")
     public SearchResult<User> searchUsers(
             @Valid @RequestBody UserSearchCriteria searchCriteria,
-            @RequestParam(value = "public", required = false) boolean isPublic) throws ServiceException {
+            @RequestParam(value = "public", required = false) boolean isPublic) {
         return userService.searchUsers(searchCriteria, isPublic);
     }
 
@@ -161,7 +160,7 @@ public class UsersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USERS')")
     @PutMapping()
-    public UserType createOrUpdateUser(@RequestBody @Valid UserType user) throws ServiceException {
+    public UserType createOrUpdateUser(@RequestBody @Valid UserType user) {
         return mapper.map(userService.createOrUpdateUser(mapper.map(user, User.class)), UserType.class);
     }
 
@@ -170,7 +169,7 @@ public class UsersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USERS')")
     @PutMapping("/status")
-    public UserType updateStatus(@RequestBody @Valid UserType user) throws ServiceException {
+    public UserType updateStatus(@RequestBody @Valid UserType user) {
         return mapper.map(userService.updateStatus(mapper.map(user, User.class)), UserType.class);
     }
 
@@ -179,7 +178,7 @@ public class UsersAPIController extends AbstractController {
     @ApiOperation(value = "Add user to group", nickname = "addUserToGroup", httpMethod = "PUT", response = User.class)
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
     @PutMapping("/group/{id}")
-    public User addUserToGroup(@RequestBody User user, @PathVariable("id") long id) throws ServiceException {
+    public User addUserToGroup(@RequestBody User user, @PathVariable("id") long id) {
         return userService.addUserToGroup(user, id);
     }
 
@@ -189,7 +188,7 @@ public class UsersAPIController extends AbstractController {
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
     @DeleteMapping("/{userId}/group/{groupId}")
     public void deleteUserFromGroup(@PathVariable("groupId") long groupId, @PathVariable("userId") long userId)
-            throws ServiceException {
+            {
         userService.deleteUserFromGroup(groupId, userId);
     }
 
@@ -197,7 +196,7 @@ public class UsersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Get default user preferences", nickname = "getDefaultUserPreferences", httpMethod = "GET", response = List.class)
     @GetMapping("/preferences")
-    public List<UserPreference> getDefaultUserPreferences() throws ServiceException {
+    public List<UserPreference> getDefaultUserPreferences() {
         return userPreferenceService.getAllUserPreferences(userService.getUserByUsername("anonymous").getId());
     }
 
@@ -207,7 +206,7 @@ public class UsersAPIController extends AbstractController {
     @RequestMapping(value = "{userId}/preferences", method = RequestMethod.PUT)
     public List<UserPreference> createUserPreference(
             @PathVariable("userId") long userId,
-            @RequestBody List<UserPreference> preferences) throws ServiceException {
+            @RequestBody List<UserPreference> preferences) {
         for (UserPreference preference : preferences) {
             userPreferenceService.createOrUpdateUserPreference(preference);
         }
@@ -218,7 +217,7 @@ public class UsersAPIController extends AbstractController {
     @ApiOperation(value = "Reset user preferences to default", nickname = "resetUserPreferencesToDefault", httpMethod = "PUT", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PutMapping("/preferences/default")
-    public List<UserPreference> resetUserPreferencesToDefault() throws ServiceException {
+    public List<UserPreference> resetUserPreferencesToDefault() {
         return userPreferenceService.resetUserPreferencesToDefault(getPrincipalId());
     }
 
@@ -226,7 +225,7 @@ public class UsersAPIController extends AbstractController {
     @ApiOperation(value = "Delete user preferences", nickname = "deleteUserPreferences", httpMethod = "DELETE")
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @DeleteMapping("/{userId}/preferences")
-    public void deleteUserPreferences(@PathVariable("userId") long userId) throws ServiceException {
+    public void deleteUserPreferences(@PathVariable("userId") long userId) {
         userPreferenceService.deleteUserPreferencesByUserId(userId);
     }
 

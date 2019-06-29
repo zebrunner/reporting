@@ -27,7 +27,6 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.JobMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.JobViewMapper;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.JobView;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
 public class JobsService {
@@ -39,13 +38,13 @@ public class JobsService {
     private JobViewMapper jobViewMapper;
 
     @Transactional(rollbackFor = Exception.class)
-    public void createJob(Job job) throws ServiceException {
+    public void createJob(Job job) {
         jobMapper.createJob(job);
     }
 
     // Check the same logics in ZafiraClient method registerJob
     @Transactional(rollbackFor = Exception.class)
-    public Job createOrUpdateJobByURL(String jobUrl, User user) throws ServiceException {
+    public Job createOrUpdateJobByURL(String jobUrl, User user) {
         jobUrl = jobUrl.replaceAll("/$", "");
         String jobName = StringUtils.substringAfterLast(jobUrl, "/");
         String jenkinsHost = StringUtils.EMPTY;
@@ -60,23 +59,23 @@ public class JobsService {
     }
 
     @Transactional(readOnly = true)
-    public List<Job> getAllJobs() throws ServiceException {
+    public List<Job> getAllJobs() {
         return jobMapper.getAllJobs();
     }
 
     @Transactional(readOnly = true)
-    public Job getJobByJobURL(String url) throws ServiceException {
+    public Job getJobByJobURL(String url) {
         return jobMapper.getJobByJobURL(url);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Job updateJob(Job job) throws ServiceException {
+    public Job updateJob(Job job) {
         jobMapper.updateJob(job);
         return job;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Job createOrUpdateJob(Job newJob) throws ServiceException {
+    public Job createOrUpdateJob(Job newJob) {
         Job job = getJobByJobURL(newJob.getJobURL());
         if (job == null) {
             createJob(newJob);
@@ -90,18 +89,18 @@ public class JobsService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public JobView createJobView(JobView jobView) throws ServiceException {
+    public JobView createJobView(JobView jobView) {
         jobViewMapper.createJobView(jobView);
         return jobView;
     }
 
     @Transactional(readOnly = true)
-    public List<JobView> getJobViewsByViewId(long viewId) throws ServiceException {
+    public List<JobView> getJobViewsByViewId(long viewId) {
         return jobViewMapper.getJobViewsByViewId(viewId);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteJobViews(long viewId, String env) throws ServiceException {
+    public void deleteJobViews(long viewId, String env) {
         jobViewMapper.deleteJobViewsByViewIdAndEnv(viewId, env);
     }
 }
