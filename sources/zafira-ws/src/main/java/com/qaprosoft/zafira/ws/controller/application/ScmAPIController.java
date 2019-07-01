@@ -71,7 +71,7 @@ public class ScmAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS')")
     @PostMapping("/accounts")
-    public ScmAccountType createScmAccount(@Valid @RequestBody ScmAccountType scmAccountType) throws ServiceException {
+    public ScmAccountType createScmAccount(@Valid @RequestBody ScmAccountType scmAccountType) {
         return mapper.map(scmAccountService.createScmAccount(mapper.map(scmAccountType, ScmAccount.class)), ScmAccountType.class);
     }
 
@@ -80,7 +80,7 @@ public class ScmAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping("/accounts/{id}")
-    public ScmAccountType getScmAccountById(@PathVariable("id") Long id) throws ServiceException {
+    public ScmAccountType getScmAccountById(@PathVariable("id") Long id) {
         return mapper.map(scmAccountService.getScmAccountById(id), ScmAccountType.class);
     }
 
@@ -89,7 +89,7 @@ public class ScmAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping("/accounts")
-    public List<ScmAccountType> getAllScmAccounts() throws ServiceException {
+    public List<ScmAccountType> getAllScmAccounts() {
         return scmAccountService.getAllScmAccounts().stream()
                 .map(scmAccount -> mapper.map(scmAccount, ScmAccountType.class))
                 .collect(Collectors.toList());
@@ -100,7 +100,7 @@ public class ScmAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping(value = "/accounts/{id}/defaultBranch", produces = MediaType.TEXT_PLAIN_VALUE)
-    public String getScmAccountDefaultBranch(@PathVariable("id") long id) throws ServiceException {
+    public String getScmAccountDefaultBranch(@PathVariable("id") long id) {
         return scmAccountService.getDefaultBranch(id);
     }
 
@@ -109,7 +109,7 @@ public class ScmAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS')")
     @PutMapping("/accounts")
-    public ScmAccountType updateScmAccount(@RequestBody @Valid ScmAccountType scmAccountType) throws ServiceException {
+    public ScmAccountType updateScmAccount(@RequestBody @Valid ScmAccountType scmAccountType) {
         ScmAccount account = scmAccountService.getScmAccountById(scmAccountType.getId());
         if (account == null) {
             throw new ServiceException("Scm account with id " + scmAccountType.getId() + " does not exist.");
@@ -126,7 +126,7 @@ public class ScmAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS')")
     @DeleteMapping("/accounts/{id}")
-    public void deleteScmAccountById(@PathVariable("id") Long id) throws ServiceException {
+    public void deleteScmAccountById(@PathVariable("id") Long id) {
         scmAccountService.deleteScmAccountById(id);
     }
 

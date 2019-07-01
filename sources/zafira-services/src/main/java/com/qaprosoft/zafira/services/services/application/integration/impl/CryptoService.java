@@ -28,7 +28,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -102,7 +101,7 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public String generateKey() throws ServiceException {
+    public String generateKey() {
         String key = null;
         try {
             if (!mapContext(CryptoContext::getType).isPresent()) {

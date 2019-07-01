@@ -23,7 +23,6 @@ import com.qaprosoft.zafira.models.dto.LauncherScannerType;
 import com.qaprosoft.zafira.models.dto.LauncherType;
 import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
 import com.qaprosoft.zafira.models.push.LauncherPush;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.LauncherService;
 import com.qaprosoft.zafira.services.services.application.UserService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
@@ -75,7 +74,7 @@ public class LaunchersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PostMapping()
-    public LauncherType createLauncher(@RequestBody @Valid LauncherType launcherType) throws ServiceException {
+    public LauncherType createLauncher(@RequestBody @Valid LauncherType launcherType) {
         User owner = new User(getPrincipalId());
         launcherType.setAutoScan(false);
         return mapper.map(launcherService.createLauncher(mapper.map(launcherType, Launcher.class), owner), LauncherType.class);
@@ -86,7 +85,7 @@ public class LaunchersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping("/{id}")
-    public LauncherType getLauncherById(@PathVariable("id") Long id) throws ServiceException {
+    public LauncherType getLauncherById(@PathVariable("id") Long id) {
         return mapper.map(launcherService.getLauncherById(id), LauncherType.class);
     }
 
@@ -95,7 +94,7 @@ public class LaunchersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping()
-    public List<LauncherType> getAllLaunchers() throws ServiceException {
+    public List<LauncherType> getAllLaunchers() {
         return launcherService.getAllLaunchers().stream()
                 .map(launcher -> mapper.map(launcher, LauncherType.class))
                 .collect(Collectors.toList());
@@ -106,7 +105,7 @@ public class LaunchersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PutMapping()
-    public LauncherType updateLauncher(@RequestBody @Valid LauncherType launcherType) throws ServiceException {
+    public LauncherType updateLauncher(@RequestBody @Valid LauncherType launcherType) {
         return mapper.map(launcherService.updateLauncher(mapper.map(launcherType, Launcher.class)), LauncherType.class);
     }
 
@@ -115,7 +114,7 @@ public class LaunchersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @DeleteMapping("/{id}")
-    public void deleteLauncherById(@PathVariable("id") Long id) throws ServiceException {
+    public void deleteLauncherById(@PathVariable("id") Long id) {
         launcherService.deleteLauncherById(id);
     }
 
@@ -124,7 +123,7 @@ public class LaunchersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @PostMapping("/build")
-    public void build(@RequestBody @Valid LauncherType launcherType) throws ServiceException, IOException {
+    public void build(@RequestBody @Valid LauncherType launcherType) throws IOException {
         launcherService.buildLauncherJob(mapper.map(launcherType, Launcher.class), userService.getNotNullUserById(getPrincipalId()));
     }
 
@@ -133,7 +132,7 @@ public class LaunchersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping("/build/number")
-    public Integer getBuildNumber(@RequestParam("queueItemUrl") String queueItemUrl) throws ServiceException {
+    public Integer getBuildNumber(@RequestParam("queueItemUrl") String queueItemUrl) {
         return launcherService.getBuildNumber(queueItemUrl);
     }
 
@@ -160,7 +159,7 @@ public class LaunchersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PostMapping("/create")
-    public List<LauncherType> createLaunchersFromJenkins(@RequestBody @Valid ScannedRepoLaunchersType scannedRepoLaunchersType) throws ServiceException {
+    public List<LauncherType> createLaunchersFromJenkins(@RequestBody @Valid ScannedRepoLaunchersType scannedRepoLaunchersType) {
         List<Launcher> launchers = launcherService.createLaunchersForJob(scannedRepoLaunchersType, new User(getPrincipalId()));
         List<LauncherType> launcherTypes = launchers.stream().map(launcher -> mapper.map(launcher, LauncherType.class)).collect(Collectors.toList());
         websocketTemplate.convertAndSend(getLaunchersWebsocketPath(), new LauncherPush(launcherTypes, scannedRepoLaunchersType.getUserId(), scannedRepoLaunchersType.isSuccess()));

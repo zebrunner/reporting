@@ -15,23 +15,20 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.security.filter;
 
-import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qaprosoft.zafira.models.dto.errors.Error;
 import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
 import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+import java.io.IOException;
+
+import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
  * SecurityAuthenticationEntryPoint is called by ExceptionTranslationFilter to handle all AuthenticationException. These
@@ -44,7 +41,7 @@ public class SecurityAuthenticationEntryPoint implements AuthenticationEntryPoin
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
-            throws IOException, ServletException {
+            throws IOException {
         ErrorResponse result = new ErrorResponse();
         result.setError(new Error(ErrorCode.UNAUTHORIZED));
         ObjectMapper objMapper = new ObjectMapper();

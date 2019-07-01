@@ -17,7 +17,6 @@ package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.View;
 import com.qaprosoft.zafira.models.dto.ViewType;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.ViewService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -60,7 +59,7 @@ public class ViewsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('VIEW_TEST_RUN_VIEWS', 'MODIFY_TEST_RUN_VIEWS')")
     @GetMapping("/{id}")
-    public View getViewById(@PathVariable("id") long id) throws ServiceException {
+    public View getViewById(@PathVariable("id") long id) {
         return viewService.getViewById(id);
     }
 
@@ -69,7 +68,7 @@ public class ViewsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('VIEW_TEST_RUN_VIEWS', 'MODIFY_TEST_RUN_VIEWS')")
     @GetMapping()
-    public List<View> getAllViews(@RequestParam(value = "projectId", required = false) Long projectId) throws ServiceException {
+    public List<View> getAllViews(@RequestParam(value = "projectId", required = false) Long projectId) {
         return viewService.getAllViews(projectId);
     }
 
@@ -78,7 +77,7 @@ public class ViewsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_TEST_RUN_VIEWS')")
     @PostMapping()
-    public ViewType createView(@RequestBody @Valid ViewType view) throws ServiceException {
+    public ViewType createView(@RequestBody @Valid ViewType view) {
         return mapper.map(viewService.createView(mapper.map(view, View.class)), ViewType.class);
     }
 
@@ -87,7 +86,7 @@ public class ViewsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_TEST_RUN_VIEWS')")
     @PutMapping()
-    public ViewType updateView(@RequestBody @Valid ViewType view) throws ServiceException {
+    public ViewType updateView(@RequestBody @Valid ViewType view) {
         return mapper.map(viewService.updateView(mapper.map(view, View.class)), ViewType.class);
     }
 
@@ -96,7 +95,7 @@ public class ViewsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_TEST_RUN_VIEWS')")
     @DeleteMapping("/{id}")
-    public void deleteView(@PathVariable("id") long id) throws ServiceException {
+    public void deleteView(@PathVariable("id") long id) {
         viewService.deleteViewById(id);
     }
 

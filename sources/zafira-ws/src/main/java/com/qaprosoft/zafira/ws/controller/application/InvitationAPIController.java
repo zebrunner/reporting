@@ -21,7 +21,6 @@ import com.qaprosoft.zafira.models.db.Invitation;
 import com.qaprosoft.zafira.models.dto.auth.InvitationListType;
 import com.qaprosoft.zafira.models.dto.auth.InvitationType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.InvitationService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -63,7 +62,7 @@ public class InvitationAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('INVITE_USERS')")
     @PostMapping()
-    public List<Invitation> inviteUsers(@Valid @RequestBody InvitationListType invitationList) throws ServiceException {
+    public List<Invitation> inviteUsers(@Valid @RequestBody InvitationListType invitationList) {
         Invitation[] invitations = invitationList.getInvitationTypes().stream()
                 .map(invitationType -> mapper.map(invitationType, Invitation.class))
                 .toArray(Invitation[]::new);
@@ -75,14 +74,14 @@ public class InvitationAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('INVITE_USERS')")
     @PostMapping("/retry")
-    public Invitation retryInviteUser(@Valid @RequestBody InvitationType invitation) throws ServiceException {
+    public Invitation retryInviteUser(@Valid @RequestBody InvitationType invitation) {
         return invitationService.retryInvitation(getPrincipalId(), invitation.getEmail());
     }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get invitation", nickname = "getInvitation", httpMethod = "GET", response = InvitationType.class)
     @GetMapping("/info")
-    public InvitationType getInvitation(@RequestParam("token") String token) throws ServiceException {
+    public InvitationType getInvitation(@RequestParam("token") String token) {
         Invitation invitation = invitationService.getInvitationByToken(token);
         if (invitation == null || !invitation.isValid()) {
             throw new ForbiddenOperationException();
@@ -95,7 +94,7 @@ public class InvitationAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasAnyPermission('INVITE_USERS', 'MODIFY_INVITATIONS')")
     @GetMapping("/all")
-    public List<Invitation> getAllInvitations() throws ServiceException {
+    public List<Invitation> getAllInvitations() {
         return invitationService.getAllInvitations();
     }
 
@@ -109,7 +108,7 @@ public class InvitationAPIController extends AbstractController {
             @RequestParam(value = "pageSize", required = false) String pageSize,
             @RequestParam(value = "orderBy", required = false) String orderBy,
             @RequestParam(value = "sortOrder", required = false) String sortOrder,
-            SearchCriteria sc) throws ServiceException {
+            SearchCriteria sc) {
         return invitationService.search(sc);
     }
 
@@ -118,7 +117,7 @@ public class InvitationAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_INVITATIONS')")
     @DeleteMapping("/{idOrEmail}")
-    public void deleteInvitation(@PathVariable("idOrEmail") String idOrEmail) throws ServiceException {
+    public void deleteInvitation(@PathVariable("idOrEmail") String idOrEmail) {
         if (idOrEmail.matches("\\d+")) { // check if number
             invitationService.deleteInvitation(Long.valueOf(idOrEmail));
         } else { // otherwise treat as email

@@ -44,7 +44,7 @@ public class GroupService {
 
     @CachePut(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #group.id")
     @Transactional(rollbackFor = Exception.class)
-    public Group createGroup(Group group) throws ServiceException {
+    public Group createGroup(Group group) {
         groupMapper.createGroup(group);
         addPermissionsToGroup(group);
         return group;
@@ -52,7 +52,7 @@ public class GroupService {
 
     @CachePut(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #group.id")
     @Transactional(rollbackFor = Exception.class)
-    public Group addPermissionsToGroup(Group group) throws ServiceException {
+    public Group addPermissionsToGroup(Group group) {
         Group dbGroup = groupMapper.getGroupById(group.getId());
 
         Set<Permission> intersection = new HashSet<>(group.getPermissions());
@@ -79,17 +79,17 @@ public class GroupService {
     }
 
     @Transactional(readOnly = true)
-    public Group getGroupByName(String name) throws ServiceException {
+    public Group getGroupByName(String name) {
         return groupMapper.getGroupByName(name);
     }
 
     @Transactional(readOnly = true)
-    public Group getPrimaryGroupByRole(Role role) throws ServiceException {
+    public Group getPrimaryGroupByRole(Role role) {
         return groupMapper.getPrimaryGroupByRole(role);
     }
 
     @Transactional(readOnly = true)
-    public List<Group> getAllGroups(Boolean isPublic) throws ServiceException {
+    public List<Group> getAllGroups(Boolean isPublic) {
         List<Group> groupList = groupMapper.getAllGroups(isPublic);
         for (Group group : groupList) {
             Collections.sort(group.getUsers());
@@ -102,13 +102,13 @@ public class GroupService {
     }
 
     @Transactional(readOnly = true)
-    public Integer getGroupsCount() throws ServiceException {
+    public Integer getGroupsCount() {
         return groupMapper.getGroupsCount();
     }
 
     @CachePut(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #group.id")
     @Transactional(rollbackFor = Exception.class)
-    public Group updateGroup(Group group) throws ServiceException {
+    public Group updateGroup(Group group) {
         groupMapper.updateGroup(group);
         addPermissionsToGroup(group);
         return group;
@@ -116,13 +116,13 @@ public class GroupService {
 
     @CacheEvict(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #id")
     @Transactional(rollbackFor = Exception.class)
-    public void deleteGroup(long id) throws ServiceException {
+    public void deleteGroup(long id) {
         groupMapper.deleteGroup(id);
     }
 
     @CacheEvict(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #groupId")
     @Transactional(rollbackFor = Exception.class)
-    public void deletePermissionFromGroup(long groupId, long permissionId) throws ServiceException {
+    public void deletePermissionFromGroup(long groupId, long permissionId) {
         groupMapper.deletePermissionFromGroup(groupId, permissionId);
     }
 }

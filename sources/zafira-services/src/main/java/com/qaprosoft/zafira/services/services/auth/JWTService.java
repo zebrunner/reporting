@@ -153,14 +153,13 @@ public class JWTService {
             tenantObj = body.get("tenant");
             List groupIds = (List) body.get("groupIds");
             permissions = (Set) groupIds.stream()
-                                  .map(groupId -> retrievePermissionNames(((Number) groupId).longValue()))
-                                  .reduce(new HashSet<>(), collectPermissions());
+                                        .map(groupId -> retrievePermissionNames(((Number) groupId).longValue()))
+                                        .reduce(new HashSet<>(), collectPermissions());
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-        } finally {
-            return tenantObj != null && tenantObj.equals(tenantName)
-                    && ! CollectionUtils.isEmpty(permissions) && permissions.containsAll(permissionsToCheck);
         }
+
+        return tenantObj != null && tenantObj.equals(tenantName) && ! CollectionUtils.isEmpty(permissions) && permissions.containsAll(permissionsToCheck);
     }
 
     private Set<Permission.Name> retrievePermissionNames(long groupId) {

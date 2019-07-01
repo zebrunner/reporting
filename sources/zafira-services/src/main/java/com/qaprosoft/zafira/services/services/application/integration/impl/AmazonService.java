@@ -34,10 +34,8 @@ import com.amazonaws.internal.SdkBufferedInputStream;
 import com.amazonaws.services.s3.internal.Mimetypes;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.securitytoken.model.Credentials;
 import com.amazonaws.services.securitytoken.model.GetSessionTokenRequest;
 import com.amazonaws.services.securitytoken.model.GetSessionTokenResult;
@@ -73,13 +71,7 @@ public class AmazonService extends AbstractIntegration<AmazonContext> {
         }
     }
 
-    public List<S3ObjectSummary> listFiles(String filePrefix) {
-        ListObjectsRequest listObjectRequest = new ListObjectsRequest().withBucketName(context().getS3Bucket())
-                .withPrefix(filePrefix);
-        return context().getAmazonS3().listObjects(listObjectRequest).getObjectSummaries();
-    }
-
-    public String saveFile(final FileUploadType file) throws ServiceException {
+    public String saveFile(final FileUploadType file) {
         String result;
         SdkBufferedInputStream stream = null;
         try {
@@ -109,7 +101,7 @@ public class AmazonService extends AbstractIntegration<AmazonContext> {
         return result;
     }
 
-    public void removeFile(final String linkToFile) throws ServiceException {
+    public void removeFile(final String linkToFile) {
         try {
             context().getAmazonS3().deleteObject(
                     new DeleteObjectRequest(context().getS3Bucket(), new URL(linkToFile).getPath().substring(1)));

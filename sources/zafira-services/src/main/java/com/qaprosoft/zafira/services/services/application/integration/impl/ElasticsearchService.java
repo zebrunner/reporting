@@ -41,13 +41,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.ELASTICSEARCH;
 
@@ -60,9 +58,11 @@ public class ElasticsearchService extends AbstractIntegration {
     private final String password;
     private RestHighLevelClient client;
 
-    public ElasticsearchService(@Value("${zafira.elasticsearch.url}") String url,
+    public ElasticsearchService(
+            @Value("${zafira.elasticsearch.url}") String url,
             @Value("${zafira.elasticsearch.user}") String user,
-            @Value("${zafira.elasticsearch.pass}") String password) {
+            @Value("${zafira.elasticsearch.pass}") String password
+    ) {
         super(ELASTICSEARCH);
         this.url = url;
         this.user = user;
@@ -104,32 +104,6 @@ public class ElasticsearchService extends AbstractIntegration {
         return result;
     }
 
-    public List<String> getScreenshots(String correlationId, String... indices) {
-        List<String> result = null;
-        if (isClientInitialized()) {
-            try {
-                SearchResponse response = search(SearchBuilder.SCREENSHOTS, prepareCorrelationIdMap(correlationId), indices);
-                result = Arrays.stream(response.getHits().getHits()).map(ElasticsearchResultHelper::getAmazonPath).collect(Collectors.toList());
-            } catch (IOException e) {
-                throw new RuntimeException("Cannot get screenshots from elasticsearch", e);
-            }
-        }
-        return result;
-    }
-
-    public List<String> getMessages(String correlationId, String... indices) {
-        List<String> result = null;
-        if (isClientInitialized()) {
-            try {
-                SearchResponse response = search(SearchBuilder.MESSAGES, prepareCorrelationIdMap(correlationId), indices);
-                result = Arrays.stream(response.getHits().getHits()).map(ElasticsearchResultHelper::getMessage).collect(Collectors.toList());
-            } catch (IOException e) {
-                throw new RuntimeException("Cannot get screenshots from elasticsearch", e);
-            }
-        }
-        return result;
-    }
-
     public SearchResponse search(SearchBuilder searchBuilder, Map<String, String> map, String... indices) throws IOException {
         return search(searchBuilder.apply(map), indices);
     }
@@ -151,16 +125,6 @@ public class ElasticsearchService extends AbstractIntegration {
         ALL(map -> {
             return QueryBuilders.boolQuery()
                     .must(QueryBuilders.termQuery("correlation-id", map.get("correlationId")));
-        }),
-        SCREENSHOTS(map -> {
-            return QueryBuilders.boolQuery()
-                    .must(QueryBuilders.termQuery("correlation-id", map.get("correlationId")))
-                    .must(QueryBuilders.existsQuery("headers.AMAZON_PATH"));
-        }),
-        MESSAGES(map -> {
-            return QueryBuilders.boolQuery()
-                    .must(QueryBuilders.termQuery("correlation-id", map.get("correlationId")))
-                    .mustNot(QueryBuilders.existsQuery("headers"));
         });
 
         private Function<Map<String, String>, QueryBuilder> builder;

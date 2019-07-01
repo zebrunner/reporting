@@ -48,7 +48,7 @@ public class CertificationService {
     @Autowired
     private TestService testService;
 
-    public CertificationType getCertificationDetails(Long upstreamJobId, Integer upstreamJobBuildNumber) throws ServiceException {
+    public CertificationType getCertificationDetails(Long upstreamJobId, Integer upstreamJobBuildNumber) {
         if (!elasticsearchService.isClientInitialized()) {
             return null;
         }
@@ -68,7 +68,7 @@ public class CertificationService {
         return certification;
     }
 
-    private void insertIntoCertification(CertificationType certification, Long testRunId, String platform) throws ServiceException {
+    private void insertIntoCertification(CertificationType certification, Long testRunId, String platform) {
         TestRun testRun = testRunService.getTestRunById(testRunId);
         if (testRun == null) {
             throw new ServiceException("Test run with id " + testRunId + " not found");

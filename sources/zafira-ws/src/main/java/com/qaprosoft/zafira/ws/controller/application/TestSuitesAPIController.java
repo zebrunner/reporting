@@ -17,7 +17,6 @@ package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.TestSuite;
 import com.qaprosoft.zafira.models.dto.TestSuiteType;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TestSuiteService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -53,7 +52,7 @@ public class TestSuitesAPIController extends AbstractController {
     @PostMapping()
     public TestSuiteType createTestSuite(
             @RequestBody @Valid TestSuiteType testSuite,
-            @RequestHeader(value = "Project", required = false) String project) throws ServiceException {
+            @RequestHeader(value = "Project", required = false) String project) {
         return mapper.map(testSuiteService.createOrUpdateTestSuite(mapper.map(testSuite, TestSuite.class)), TestSuiteType.class);
     }
 

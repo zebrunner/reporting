@@ -34,7 +34,7 @@ public class FreemarkerUtil {
     @Autowired
     private Configuration freemarkerConfiguration;
 
-    public String getFreeMarkerTemplateContent(String template, Object obj) throws ServiceException {
+    public String getFreeMarkerTemplateContent(String template, Object obj) {
         return getFreeMarkerTemplateContent(template, obj, true);
     }
 
@@ -47,7 +47,7 @@ public class FreemarkerUtil {
      * @return processed template through freemarker engine
      * @throws ServiceException - on freemarker template compilation
      */
-    public String getFreeMarkerTemplateContent(String template, Object obj, boolean isPath) throws ServiceException {
+    public String getFreeMarkerTemplateContent(String template, Object obj, boolean isPath) {
         StringBuilder content = new StringBuilder();
         try {
             Template fTemplate = isPath ? freemarkerConfiguration.getTemplate(template)

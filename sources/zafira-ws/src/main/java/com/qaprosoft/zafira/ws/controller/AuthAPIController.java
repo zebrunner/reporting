@@ -229,7 +229,7 @@ public class AuthAPIController extends AbstractController {
     @ResponseStatusDetails
     @ApiOperation(value = "Forgot password", nickname = "forgotPassword", httpMethod = "POST")
     @PostMapping("/password/forgot")
-    public void forgotPassword(@Valid @RequestBody EmailType emailType) throws ServiceException {
+    public void forgotPassword(@Valid @RequestBody EmailType emailType) {
         User user = userService.getUserByEmail(emailType.getEmail());
         if (user != null) {
             forgotPasswordService.sendForgotPasswordEmail(emailType, user);
@@ -249,7 +249,7 @@ public class AuthAPIController extends AbstractController {
     @ResponseStatusDetails
     @ApiOperation(value = "Reset password", nickname = "resetPassword", httpMethod = "PUT")
     @PutMapping("/password")
-    public void resetPassword(@RequestHeader("Access-Token") String token, @Valid @RequestBody PasswordType passwordType) throws ServiceException {
+    public void resetPassword(@RequestHeader("Access-Token") String token, @Valid @RequestBody PasswordType passwordType) {
         User user = userService.getUserByResetToken(token);
         if (user != null && user.getSource().equals(User.Source.INTERNAL)) {
             PasswordChangingType passwordChangingType = new PasswordChangingType();
@@ -264,7 +264,7 @@ public class AuthAPIController extends AbstractController {
     @ApiOperation(value = "Generates access token", nickname = "accessToken", httpMethod = "GET", response = AuthTokenType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/access")
-    public AccessTokenType accessToken() throws ServiceException {
+    public AccessTokenType accessToken() {
         String token = jwtService.generateAccessToken(userService.getNotNullUserById(getPrincipalId()), TenancyContext.getTenantName());
         return new AccessTokenType(token);
     }

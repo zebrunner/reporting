@@ -66,40 +66,40 @@ public class WidgetService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Widget createWidget(Widget widget) throws ServiceException {
+    public Widget createWidget(Widget widget) {
         widgetMapper.createWidget(widget);
         return widget;
     }
 
     @Transactional(readOnly = true)
-    public Widget getWidgetById(long id) throws ServiceException {
+    public Widget getWidgetById(long id) {
         return widgetMapper.getWidgetById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<Widget> getAllWidgets() throws ServiceException {
+    public List<Widget> getAllWidgets() {
         return widgetMapper.getAllWidgets();
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Widget updateWidget(Widget widget) throws ServiceException {
+    public Widget updateWidget(Widget widget) {
         widgetMapper.updateWidget(widget);
         return widget;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteWidgetById(Long id) throws ServiceException {
+    public void deleteWidgetById(Long id) {
         widgetMapper.deleteWidgetById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<Map<String, Object>> executeSQL(String sql) throws ServiceException {
+    public List<Map<String, Object>> executeSQL(String sql) {
         return widgetMapper.executeSQL(new SQLAdapter(sql));
     }
 
     @Transactional(readOnly = true)
     public List<Map<String, Object>> executeSQL(String sql, Map<String, Object> params, Map<DefaultParam, Object> additionalParams,
-            boolean isSqlFreemarkerTemplate) throws ServiceException {
+            boolean isSqlFreemarkerTemplate) {
         if (isSqlFreemarkerTemplate) {
             sql = freemarkerUtil.getFreeMarkerTemplateContent(sql, processDefaultParameters(params, additionalParams), false);
         }

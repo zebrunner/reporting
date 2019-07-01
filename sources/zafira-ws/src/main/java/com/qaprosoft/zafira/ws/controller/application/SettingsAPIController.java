@@ -35,7 +35,6 @@ import com.qaprosoft.zafira.models.db.Setting.Tool;
 import com.qaprosoft.zafira.models.dto.ConnectedToolType;
 import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.AmazonService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
@@ -139,28 +138,28 @@ public class SettingsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Is tool connected", nickname = "isToolConnected", httpMethod = "GET", response = Boolean.class)
     @GetMapping("tools/{name}")
-    public Boolean isToolConnected(@PathVariable("name") Tool tool) throws ServiceException {
+    public Boolean isToolConnected(@PathVariable("name") Tool tool) {
         return settingsService.isConnected(tool);
     }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get company logo URL", nickname = "getSettingValue", httpMethod = "GET", response = Setting.class)
     @GetMapping("companyLogo")
-    public Setting getCompanyLogoURL() throws ServiceException {
+    public Setting getCompanyLogoURL() {
         return settingsService.getSettingByName(Setting.SettingType.COMPANY_LOGO_URL.name());
     }
 
     @ApiOperation(value = "Get amazon session credentials", nickname = "getSessionCredentials", httpMethod = "GET", response = SessionCredentials.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("amazon/creds")
-    public SessionCredentials getSessionCredentials() throws ServiceException {
+    public SessionCredentials getSessionCredentials() {
         return amazonService.getTemporarySessionCredentials(amazonTokenExpiration).orElse(null);
     }
 
     @ApiOperation(value = "Get google session credentials", nickname = "getGoogleSessionCredentials", httpMethod = "GET", response = String.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping(path = "google/creds", produces = MediaType.TEXT_PLAIN_VALUE)
-    public String getGoogleSessionCredentials() throws ServiceException, IOException {
+    public String getGoogleSessionCredentials() throws IOException {
         return googleService.getTemporaryAccessToken(googleTokenExpiration);
     }
 
@@ -170,7 +169,7 @@ public class SettingsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_INTEGRATIONS')")
     @PostMapping("key/regenerate")
-    public void reEncrypt() throws Exception {
+    public void reEncrypt() {
         settingsService.reEncrypt();
     }
 

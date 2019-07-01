@@ -26,7 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,16 +59,6 @@ public class TagService {
     }
 
     @Transactional(readOnly = true)
-    public Tag getTagById(Long id) {
-        return tagMapper.getTagById(id);
-    }
-
-    @Transactional(readOnly = true)
-    public Tag getTagByNameAndTestId(String name, Long testId) {
-        return tagMapper.getTagByNameAndTestId(name, testId);
-    }
-
-    @Transactional(readOnly = true)
     public List<TestInfo> getTestInfoByTagNameAndTestRunCiRunId(IntegrationTag name, String ciRunId) {
         return tagMapper.getTestInfoByTagNameAndTestRunCiRunId(name, ciRunId);
     }
@@ -77,34 +69,9 @@ public class TagService {
     }
 
     @Transactional(readOnly = true)
-    public Set<Tag> getAllTags() {
-        return tagMapper.getAllTags();
-    }
-
-    @Transactional(readOnly = true)
-    public Set<Tag> getTagsByTestId(Long testId) {
-        return tagMapper.getTagsByTestId(testId);
-    }
-
-    @Transactional(readOnly = true)
     public void setTestInfoByIntegrationTag(String ciRunId, IntegrationTag integrationTag, IntegrationDataType integrationDataType) {
         List<TestInfo> testInfo = getTestInfoByTagNameAndTestRunCiRunId(integrationTag, ciRunId);
         integrationDataType.setTestInfo(testInfo);
     }
 
-    @Transactional(readOnly = true)
-    public Boolean isTagExistsByName(String name) {
-        return tagMapper.isExists(name);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public Tag updateTag(Tag tag) {
-        tagMapper.updateTag(tag);
-        return tag;
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteTagById(Long id) {
-        tagMapper.deleteTagById(id);
-    }
 }

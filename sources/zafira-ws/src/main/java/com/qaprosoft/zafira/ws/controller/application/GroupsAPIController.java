@@ -18,7 +18,6 @@ package com.qaprosoft.zafira.ws.controller.application;
 import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.GroupService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -56,7 +55,7 @@ public class GroupsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
     @PostMapping()
-    public Group createGroup(@RequestBody Group group) throws ServiceException {
+    public Group createGroup(@RequestBody Group group) {
         return groupService.createGroup(group);
     }
 
@@ -65,7 +64,7 @@ public class GroupsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
     @PostMapping("/permissions")
-    public Group addPermissionsToGroup(@RequestBody Group group) throws ServiceException {
+    public Group addPermissionsToGroup(@RequestBody Group group) {
         return groupService.addPermissionsToGroup(group);
     }
 
@@ -74,7 +73,7 @@ public class GroupsAPIController extends AbstractController {
     @ApiOperation(value = "Get group", nickname = "getGroup", httpMethod = "GET", response = Group.class)
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
     @GetMapping("/{id}")
-    public Group getGroup(@PathVariable("id") long id) throws ServiceException {
+    public Group getGroup(@PathVariable("id") long id) {
         return groupService.getGroupById(id);
     }
 
@@ -83,7 +82,7 @@ public class GroupsAPIController extends AbstractController {
     @ApiOperation(value = "Get all groups", nickname = "getAllGroups", httpMethod = "GET", response = List.class)
     @GetMapping("/all")
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS') or #isPublic")
-    public List<Group> getAllGroups(@RequestParam(name = "public", required = false) boolean isPublic) throws ServiceException {
+    public List<Group> getAllGroups(@RequestParam(name = "public", required = false) boolean isPublic) {
         return groupService.getAllGroups(isPublic);
     }
 
@@ -92,7 +91,7 @@ public class GroupsAPIController extends AbstractController {
     @ApiOperation(value = "Get groups count", nickname = "getGroupsCount", httpMethod = "GET", response = Integer.class)
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
     @GetMapping("/count")
-    public Integer getGroupsCount() throws ServiceException {
+    public Integer getGroupsCount() {
         return groupService.getGroupsCount();
     }
 
@@ -101,7 +100,7 @@ public class GroupsAPIController extends AbstractController {
     @ApiOperation(value = "Get roles", nickname = "getRoles", httpMethod = "GET", response = List.class)
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
     @GetMapping("/roles")
-    public List<Group.Role> getRoles() throws ServiceException {
+    public List<Group.Role> getRoles() {
         return GroupService.getRoles();
     }
 
@@ -110,7 +109,7 @@ public class GroupsAPIController extends AbstractController {
     @ApiOperation(value = "Update group", nickname = "updateGroup", httpMethod = "PUT", response = Group.class)
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
     @PutMapping()
-    public Group updateGroup(@RequestBody Group group) throws ServiceException {
+    public Group updateGroup(@RequestBody Group group) {
         return groupService.updateGroup(group);
     }
 
@@ -119,7 +118,7 @@ public class GroupsAPIController extends AbstractController {
     @ApiOperation(value = "Delete group", nickname = "deleteGroup", httpMethod = "DELETE")
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
     @DeleteMapping("/{id}")
-    public void deleteGroup(@PathVariable("id") long id) throws ServiceException {
+    public void deleteGroup(@PathVariable("id") long id) {
         Group group = groupService.getGroupById(id);
         if (group == null) {
             throw new EntityNotExistsException(Group.class, false);

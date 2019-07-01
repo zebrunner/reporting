@@ -30,7 +30,6 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
 
 import com.qaprosoft.zafira.models.db.Attachment;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.integration.impl.MailSender;
 import com.qaprosoft.zafira.services.services.application.emails.IEmailMessage;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
@@ -52,7 +51,7 @@ public class EmailService {
         this.validator = EmailValidator.getInstance();
     }
 
-    public String sendEmail(final IEmailMessage message, final String... emails) throws ServiceException {
+    public String sendEmail(final IEmailMessage message, final String... emails) {
 
         if (!mailSender.isEnabledAndConnected()) {
             return null;
