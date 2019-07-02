@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 public class XmlConfigurationUtil {
 
     /**
-     * Parses configuration
+     * Parses configuration xml
+     * into Configuration object
      * @param configXML
-     * and
      * @return Configuration object
      */
     public static Configuration readArguments(String configXML) {
@@ -35,14 +35,27 @@ public class XmlConfigurationUtil {
         return configuration;
     }
 
+    /**
+     * Parses Configuration object
+     * into Map<String, String> map
+     * @param configuration
+     * @return map
+     */
     public static Map<String, String> parseConfigToMap(Configuration configuration){
         return configuration.getArg()
                             .stream()
                             .collect(Collectors.toMap(Argument::getKey, Argument::getValue));
     }
 
-    public static String getConfigValueByName(String name, String configurationXML) {
-        Configuration configuration = readArguments(configurationXML);
+    /**
+     * Gets value of argument in Configuration
+     * by name
+     * @param name
+     * @param configXML
+     * @return value
+     */
+    public static String getConfigValueByName(String name, String configXML) {
+        Configuration configuration = readArguments(configXML);
         return configuration.getArg()
                             .stream()
                             .filter(arg -> arg.getKey().equalsIgnoreCase(name))

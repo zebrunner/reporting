@@ -35,7 +35,7 @@ public class CertificationAPIController extends AbstractController {
     private CertificationService certificationService;
 
     @GetMapping("/details")
-    public CertificationType getCertifcationDetails(
+    public CertificationType getCertificationDetails(
             @RequestParam("upstreamJobId") Long upstreamJobId,
             @RequestParam("upstreamJobBuildNumber") Integer upstreamJobBuildNumber) {
         return certificationService.getCertificationDetails(upstreamJobId, upstreamJobBuildNumber);
