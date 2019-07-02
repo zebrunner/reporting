@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.config;
+package com.qaprosoft.zafira.util.http;
 
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
@@ -37,4 +37,5 @@ public class GensonProvider implements ContextResolver<Genson> {
     public Genson getContext(Class<?> type) {
         return genson;
     }
+
 }

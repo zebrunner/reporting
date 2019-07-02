@@ -15,6 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.client;
 
+import com.qaprosoft.zafira.client.impl.ZafiraClientImpl;
+import com.qaprosoft.zafira.util.http.HttpClient;
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -25,7 +27,6 @@ import org.apache.commons.configuration2.tree.MergeCombiner;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.qaprosoft.zafira.client.ZafiraClient.Response;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 
 import java.util.concurrent.CompletableFuture;
@@ -34,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * ZafiraSingleton - singleton wrapper around {@link ZafiraClient}.
+ * ZafiraSingleton - singleton wrapper around {@link ZafiraClientImpl}.
  * 
  * @author Alexey Khursevich (hursevich@gmail.com)
  */
@@ -48,11 +49,11 @@ public enum ZafiraSingleton {
 
     private ZafiraClient zafiraClient;
 
-    private final CompletableFuture<Response<AuthTokenType>> INIT_FUTURE;
+    private final CompletableFuture<HttpClient.Response<AuthTokenType>> INIT_FUTURE;
 
     ZafiraSingleton() {
         INIT_FUTURE = CompletableFuture.supplyAsync(() -> {
-            Response<AuthTokenType> result = null;
+            HttpClient.Response<AuthTokenType> result = null;
             try {
                 CombinedConfiguration config = new CombinedConfiguration(new MergeCombiner());
                 // TODO: 2019-04-12 it`s make sense to throw an exception until zafira client instance is static in log appender class
@@ -65,7 +66,7 @@ public enum ZafiraSingleton {
                 String url = config.getString("zafira_service_url", StringUtils.EMPTY);
                 String token = config.getString("zafira_access_token", StringUtils.EMPTY);
 
-                zafiraClient = new ZafiraClient(url);
+                zafiraClient = new ZafiraClientImpl(url);
                 if (enabled && zafiraClient.isAvailable()) {
                     result = zafiraClient.refreshToken(token);
                 }
@@ -78,7 +79,7 @@ public enum ZafiraSingleton {
         INIT_FUTURE.thenAccept(auth -> {
             if (auth != null && auth.getStatus() == 200) {
                 zafiraClient.setAuthToken(auth.getObject().getType() + " " + auth.getObject().getAccessToken());
-                zafiraClient.onInit();
+                //zafiraClient.onInit();
             }
         });
     }
@@ -90,7 +91,7 @@ public enum ZafiraSingleton {
     }
 
     /**
-     * @return {@link ZafiraClient} instance
+     * @return {@link ZafiraClientImpl} instance
      */
     public ZafiraClient getClient() {
         return isRunning() ? zafiraClient : null;
@@ -101,7 +102,7 @@ public enum ZafiraSingleton {
      * @return Zafira integration status
      */
     public boolean isRunning() {
-        Response<AuthTokenType> response;
+        HttpClient.Response<AuthTokenType> response;
         try {
             response = INIT_FUTURE.get(60, TimeUnit.SECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {

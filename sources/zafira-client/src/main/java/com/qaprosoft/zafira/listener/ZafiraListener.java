@@ -30,6 +30,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import com.qaprosoft.zafira.util.http.HttpClient;
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
@@ -56,8 +57,7 @@ import org.testng.ITestResult;
 import org.testng.SkipException;
 import org.testng.xml.XmlClass;
 
-import com.qaprosoft.zafira.client.ZafiraClient;
-import com.qaprosoft.zafira.client.ZafiraClient.Response;
+import com.qaprosoft.zafira.client.impl.ZafiraClientImpl;
 import com.qaprosoft.zafira.config.CIConfig;
 import com.qaprosoft.zafira.config.CIConfig.BuildCasue;
 import com.qaprosoft.zafira.config.IConfigurator;
@@ -71,6 +71,8 @@ import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
+
+import static com.qaprosoft.zafira.client.ClientDefaults.USER;
 
 /**
  * TestNG listener that provides integration with Zafira reporting web-service.
@@ -97,7 +99,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 
     private IConfigurator configurator;
     private CIConfig ci;
-    private ZafiraClient zc;
+    private ZafiraClientImpl zc;
 
     private UserType user = null;
     private JobType parentJob = null;
@@ -146,13 +148,13 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
             // Register upstream job if required
             UserType anonymous;
             if (BuildCasue.UPSTREAMTRIGGER.equals(ci.getCiBuildCause())) {
-                anonymous = zc.getUserOrAnonymousIfNotFound(ZafiraClient.DEFAULT_USER);
+                anonymous = zc.getUserOrAnonymousIfNotFound(USER);
                 parentJob = zc.registerJob(ci.getCiParentUrl(), anonymous.getId());
             }
 
             // Searching for existing test run with same CI run id in case of rerun
             if (!StringUtils.isEmpty(ci.getCiRunId())) {
-                Response<TestRunType> response = zc.getTestRunByCiRunId(ci.getCiRunId());
+                HttpClient.Response<TestRunType> response = zc.getTestRunByCiRunId(ci.getCiRunId());
                 this.run = response.getObject();
             }
 
@@ -165,7 +167,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
                 // Reset test suite https://github.com/qaprosoft/zafira/issues/1584
                 this.run.setTestSuiteId(suite.getId());
                 // Re-register test run to reset status onto in progress
-                Response<TestRunType> response = zc.startTestRun(this.run);
+                HttpClient.Response<TestRunType> response = zc.startTestRun(this.run);
                 this.run = response.getObject();
 
                 List<TestType> testRunResults = Arrays.asList(zc.getTestRunResults(run.getId()).getObject());
@@ -304,7 +306,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
             return;
 
         try {
-            Response<TestType> rs = zc.finishTest(populateTestResult(result, Status.PASSED, getFullStackTrace(result)));
+            HttpClient.Response<TestType> rs = zc.finishTest(populateTestResult(result, Status.PASSED, getFullStackTrace(result)));
             if (rs.getStatus() != 200 && rs.getObject() == null) {
                 throw new RuntimeException("Unable to register test " + rs.getObject().getName() + " for zafira service: " + ZAFIRA_URL);
             }
@@ -329,7 +331,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
         }
 
         try {
-            Response<TestType> rs = zc.finishTest(populateTestResult(result, Status.FAILED, getFullStackTrace(result)));
+            HttpClient.Response<TestType> rs = zc.finishTest(populateTestResult(result, Status.FAILED, getFullStackTrace(result)));
             if (rs.getStatus() != 200 && rs.getObject() == null) {
                 throw new RuntimeException("Unable to register test " + rs.getObject().getName() + " for zafira service: " + ZAFIRA_URL);
             }
@@ -394,7 +396,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
                 threadTest.set(test);
             }
 
-            Response<TestType> rs = zc.finishTest(populateTestResult(result, Status.SKIPPED, getFullStackTrace(result)));
+            HttpClient.Response<TestType> rs = zc.finishTest(populateTestResult(result, Status.SKIPPED, getFullStackTrace(result)));
             if (rs.getStatus() != 200 && rs.getObject() == null) {
                 throw new RuntimeException("Unable to register test " + rs.getObject().getName() + " for zafira service: " + ZAFIRA_URL);
             }
@@ -554,12 +556,12 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
             ZAFIRA_CONFIGURATOR = (String) ZafiraConfiguration.CONFIGURATOR.get(config, suiteContext);
 
             if (ZAFIRA_ENABLED) {
-                zc = new ZafiraClient(ZAFIRA_URL);
+                zc = new ZafiraClientImpl(ZAFIRA_URL);
 
                 ZAFIRA_ENABLED = zc.isAvailable();
 
                 if (ZAFIRA_ENABLED) {
-                    Response<AuthTokenType> auth = zc.refreshToken(ZAFIRA_ACCESS_TOKEN);
+                    HttpClient.Response<AuthTokenType> auth = zc.refreshToken(ZAFIRA_ACCESS_TOKEN);
                     if (auth.getStatus() == 200) {
                         zc.setAuthToken(auth.getObject().getType() + " " + auth.getObject().getAccessToken());
                     } else {
@@ -654,10 +656,10 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
      * TestRunShutdownHook - aborts test run when CI job is aborted.
      */
     public static class TestRunShutdownHook extends Thread {
-        private ZafiraClient zc;
+        private ZafiraClientImpl zc;
         private TestRunType testRun;
 
-        public TestRunShutdownHook(ZafiraClient zc, TestRunType testRun) {
+        public TestRunShutdownHook(ZafiraClientImpl zc, TestRunType testRun) {
             this.zc = zc;
             this.testRun = testRun;
         }

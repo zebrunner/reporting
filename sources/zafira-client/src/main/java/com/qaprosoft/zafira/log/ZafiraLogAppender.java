@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
+import com.qaprosoft.zafira.util.http.HttpClient;
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -37,7 +38,6 @@ import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.ErrorCode;
 import org.apache.log4j.spi.LoggingEvent;
 
-import com.qaprosoft.zafira.client.ZafiraClient.Response;
 import com.qaprosoft.zafira.client.ZafiraSingleton;
 import com.qaprosoft.zafira.listener.ZafiraListener;
 import com.rabbitmq.client.AMQP;
@@ -384,7 +384,7 @@ public class ZafiraLogAppender extends AppenderSkeleton {
                     System.setProperty("ci_run_id", routingKey);
                 }
 
-                Response<List<HashMap<String, String>>> rs = ZAFIRA_INSTANCE.getClient().getToolSettings("RABBITMQ", true);
+                HttpClient.Response<List<HashMap<String, String>>> rs = ZAFIRA_INSTANCE.getClient().getToolSettings("RABBITMQ", true);
                 if (rs.getStatus() == 200) {
                     List<HashMap<String, String>> settings = rs.getObject();
                     if (settings != null) {
