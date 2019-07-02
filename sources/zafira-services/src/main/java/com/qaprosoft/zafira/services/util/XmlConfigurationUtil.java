@@ -9,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import java.io.ByteArrayInputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 

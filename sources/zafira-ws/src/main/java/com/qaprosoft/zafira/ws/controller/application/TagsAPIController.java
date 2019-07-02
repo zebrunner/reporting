@@ -16,14 +16,13 @@
 package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationDataType;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationTag;
 import com.qaprosoft.zafira.services.services.application.TagService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
-import com.qaprosoft.zafira.services.util.XmlConfigurationUtil;
 import com.qaprosoft.zafira.services.util.URLResolver;
+import com.qaprosoft.zafira.services.util.XmlConfigurationUtil;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.Api;
@@ -40,7 +39,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Map;
 
 @Api("Tags operations")
