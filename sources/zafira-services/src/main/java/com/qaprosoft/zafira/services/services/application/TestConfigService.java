@@ -15,30 +15,23 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestConfigMapper;
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestConfig;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
-import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.util.ConfigurationUtil;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class TestConfigService {
+
     private static final Logger logger = Logger.getLogger(TestConfigService.class);
 
     @Autowired
@@ -46,18 +39,6 @@ public class TestConfigService {
 
     @Autowired
     private TestRunService testRunService;
-
-    private Unmarshaller unmarshaller;
-
-    public TestConfigService() {
-        JAXBContext context;
-        try {
-            context = JAXBContext.newInstance(Configuration.class);
-            unmarshaller = context.createUnmarshaller();
-        } catch (JAXBException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
 
     @Transactional(rollbackFor = Exception.class)
     public void createTestConfig(TestConfig testConfig) {
@@ -71,8 +52,8 @@ public class TestConfigService {
             throw new ServiceException("Test run not found!");
         }
 
-        List<Argument> testRunConfig = readConfigArgs(testRun.getConfigXML());
-        List<Argument> testConfig = readConfigArgs(testConfigXML);
+        List<Argument> testRunConfig = ConfigurationUtil.readConfigArgs(testRun.getConfigXML()).getArg();
+        List<Argument> testConfig = ConfigurationUtil.readConfigArgs(testConfigXML).getArg();
 
         TestConfig config = new TestConfig().init(testRunConfig).init(testConfig);
 
@@ -88,7 +69,7 @@ public class TestConfigService {
 
     @Transactional(rollbackFor = Exception.class)
     public TestConfig createTestConfigForTestRun(String configXML) {
-        List<Argument> testRunConfig = readConfigArgs(configXML);
+        List<Argument> testRunConfig = ConfigurationUtil.readConfigArgs(configXML).getArg();
 
         TestConfig config = new TestConfig().init(testRunConfig);
 
@@ -104,18 +85,5 @@ public class TestConfigService {
     @Transactional(readOnly = true)
     public TestConfig searchTestConfig(TestConfig testConfig) {
         return testConfigMapper.searchTestConfig(testConfig);
-    }
-
-    public List<Argument> readConfigArgs(String configXML) {
-        List<Argument> args = new ArrayList<>();
-        try {
-            if (!StringUtils.isEmpty(configXML)) {
-                Configuration config = (Configuration) unmarshaller.unmarshal(new ByteArrayInputStream(configXML.getBytes()));
-                args.addAll(config.getArg());
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
-        return args;
     }
 }

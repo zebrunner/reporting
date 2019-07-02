@@ -19,7 +19,6 @@ import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_URL;
 import static com.qaprosoft.zafira.models.db.Status.*;
 import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
 
-import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
@@ -36,12 +35,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-
 import com.qaprosoft.zafira.models.db.*;
+import com.qaprosoft.zafira.services.util.ConfigurationUtil;
 import com.qaprosoft.zafira.services.util.URLResolver;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Seconds;
@@ -165,21 +161,31 @@ public class TestRunService {
         results.setPageSize(sc.getPageSize());
         results.setSortOrder(sc.getSortOrder());
         List<TestRun> testRuns = testRunMapper.searchTestRuns(sc);
-        for (TestRun testRun : testRuns) {
-            if (!StringUtils.isEmpty(testRun.getConfigXML())) {
-                for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML())) {
-                    if (!StringUtils.isEmpty(arg.getValue())) {
-                        if ("browser_version".equals(arg.getKey()) && !arg.getValue().equals("*") && !arg.getValue().equals("")
-                                && arg.getValue() != null) {
-                            testRun.setPlatform(testRun.getPlatform() + " " + arg.getValue());
-                        }
-                    }
-                }
-            }
-        }
-        results.setResults(testRuns);
+        results.setResults(parsePlatformVersion(testRuns));
         results.setTotalResults(testRunMapper.getTestRunsSearchCount(sc));
         return results;
+    }
+
+    private List<TestRun> parsePlatformVersion(List<TestRun> testRuns){
+        testRuns.forEach( testRun -> {
+            Configuration testRunConfig = ConfigurationUtil.readConfigArgs(testRun.getConfigXML());
+            testRunConfig.getArg()
+                         .stream()
+                         .filter(this::filterBrowserVersionArg)
+                         .findAny()
+                         .ifPresent(argument -> setPlatformWithVersion(testRun, argument));
+        });
+        return testRuns;
+    }
+
+    private boolean filterBrowserVersionArg(Argument argument) {
+        String argumentKey = argument.getKey();
+        String argumentValue = argument.getValue();
+        return "browser_version".equals(argumentKey) && !StringUtils.isEmpty(argumentValue) && !argumentValue.equals("*");
+    }
+
+    private void setPlatformWithVersion(TestRun testRun, Argument argument) {
+        testRun.setPlatform(testRun.getPlatform() + " " + argument.getValue());
     }
 
     @Transactional(readOnly = true)
@@ -484,8 +490,10 @@ public class TestRunService {
     }
 
     @Transactional(readOnly = true)
-    public String sendTestRunResultsEmail(final String testRunId, boolean showOnlyFailures, boolean showStacktrace, final String... recipients)
-            throws JAXBException {
+    public String sendTestRunResultsEmail(final String testRunId,
+                                          boolean showOnlyFailures,
+                                          boolean showStacktrace,
+                                          final String... recipients) {
         TestRun testRun = getTestRunByIdFull(testRunId);
         if (testRun == null) {
             throw new TestRunNotFoundException("No test runs found by ID: " + testRunId);
@@ -494,9 +502,12 @@ public class TestRunService {
         return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
     }
 
-    public String sendTestRunResultsNotification(final TestRun testRun, final List<Test> tests, boolean showOnlyFailures, boolean showStacktrace,
-            final String... recipients) throws JAXBException {
-        Configuration configuration = readConfiguration(testRun.getConfigXML());
+    public String sendTestRunResultsNotification(final TestRun testRun,
+                                                 final List<Test> tests,
+                                                 boolean showOnlyFailures,
+                                                 boolean showStacktrace,
+                                                 final String... recipients) {
+        Configuration configuration = ConfigurationUtil.readConfigArgs(testRun.getConfigXML());
         // Forward from API to Web
         configuration.getArg().add(new Argument("zafira_service_url", urlResolver.buildWebURL()));
         for (Test test : tests) {
@@ -517,12 +528,12 @@ public class TestRunService {
     }
 
     @Transactional(readOnly = true)
-    public String exportTestRunHTML(final String id) throws JAXBException {
+    public String exportTestRunHTML(final String id) {
         TestRun testRun = getTestRunByIdFull(id);
         if (testRun == null) {
             throw new TestRunNotFoundException("No test runs found by ID: " + id);
         }
-        Configuration configuration = readConfiguration(testRun.getConfigXML());
+        Configuration configuration = ConfigurationUtil.readConfigArgs(testRun.getConfigXML());
         configuration.getArg().add(new Argument("zafira_service_url", urlResolver.buildWebURL()));
 
         List<Test> tests = testService.getTestsByTestRunId(id);
@@ -533,23 +544,13 @@ public class TestRunService {
         return freemarkerUtil.getFreeMarkerTemplateContent(email.getType().getTemplateName(), email);
     }
 
-    public Configuration readConfiguration(String xml) throws JAXBException {
-        Configuration configuration = new Configuration();
-        if (!StringUtils.isEmpty(xml)) {
-            ByteArrayInputStream xmlBA = new ByteArrayInputStream(xml.getBytes());
-            configuration = (Configuration) JAXBContext.newInstance(Configuration.class).createUnmarshaller().unmarshal(xmlBA);
-            IOUtils.closeQuietly(xmlBA);
-        }
-        return configuration;
-    }
-
     public static int calculateSuccessRate(TestRun testRun) {
         int total = testRun.getPassed() + testRun.getFailed() + testRun.getSkipped();
         double rate = (double) testRun.getPassed() / (double) total;
         return total > 0 ? (new BigDecimal(rate).setScale(2, RoundingMode.HALF_UP).multiply(new BigDecimal(100))).intValue() : 0;
     }
 
-    public boolean isBuildFailure(String comments) {
+    private boolean isBuildFailure(String comments) {
         boolean failure = false;
         if (StringUtils.isNotEmpty(comments)) {
             if (comments.contains(FailureCause.BUILD_FAILURE.getCause()) ||
