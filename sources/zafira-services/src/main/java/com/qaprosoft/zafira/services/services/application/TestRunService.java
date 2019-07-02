@@ -15,9 +15,42 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_URL;
-import static com.qaprosoft.zafira.models.db.Status.*;
-import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestRunMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
+import com.qaprosoft.zafira.models.db.Job;
+import com.qaprosoft.zafira.models.db.Project;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.Test;
+import com.qaprosoft.zafira.models.db.TestConfig;
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.db.config.Argument;
+import com.qaprosoft.zafira.models.db.config.Configuration;
+import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
+import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.services.exceptions.IntegrationException;
+import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
+import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
+import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
+import com.qaprosoft.zafira.services.util.FreemarkerUtil;
+import com.qaprosoft.zafira.services.util.URLResolver;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.LocalDateTime;
+import org.joda.time.Seconds;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -35,38 +68,15 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
-import com.qaprosoft.zafira.models.db.*;
-import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.*;
-import com.qaprosoft.zafira.services.util.URLResolver;
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.LocalDateTime;
-import org.joda.time.Seconds;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestRunMapper;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
-import com.qaprosoft.zafira.models.db.config.Argument;
-import com.qaprosoft.zafira.models.db.config.Configuration;
-import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
-import com.qaprosoft.zafira.models.dto.TestRunStatistics;
-import com.qaprosoft.zafira.services.exceptions.IntegrationException;
-import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
-import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
-import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
-import com.qaprosoft.zafira.services.util.FreemarkerUtil;
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_URL;
+import static com.qaprosoft.zafira.models.db.Status.ABORTED;
+import static com.qaprosoft.zafira.models.db.Status.FAILED;
+import static com.qaprosoft.zafira.models.db.Status.IN_PROGRESS;
+import static com.qaprosoft.zafira.models.db.Status.PASSED;
+import static com.qaprosoft.zafira.models.db.Status.QUEUED;
+import static com.qaprosoft.zafira.models.db.Status.SKIPPED;
+import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
+import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.readArguments;
 
 @Service
 public class TestRunService {
@@ -161,19 +171,9 @@ public class TestRunService {
         results.setPageSize(sc.getPageSize());
         results.setSortOrder(sc.getSortOrder());
         List<TestRun> testRuns = testRunMapper.searchTestRuns(sc);
-        results.setResults(parsePlatformVersion(testRuns));
+        results.setResults(testRuns);
         results.setTotalResults(testRunMapper.getTestRunsSearchCount(sc));
         return results;
-    }
-
-    private List<TestRun> parsePlatformVersion(List<TestRun> testRuns) {
-        testRuns.forEach(testRun -> {
-            String browserVersion = getConfigValueByName("browser_version", testRun.getConfigXML());
-            if (!StringUtils.isEmpty(browserVersion) && !browserVersion.equals("*")) {
-                testRun.setPlatform(testRun.getPlatform() + " " + browserVersion);
-            }
-        });
-        return testRuns;
     }
 
     @Transactional(readOnly = true)

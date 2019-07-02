@@ -51,10 +51,14 @@ import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.context.JenkinsContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JenkinsService extends AbstractIntegration<JenkinsContext> {
+
+    private static final Logger logger = LoggerFactory.getLogger(JenkinsService.class);
 
     private static final String[] REQUIRED_ARGS = new String[] { "scmURL", "branch", "overrideFields" };
 

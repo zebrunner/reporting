@@ -231,7 +231,7 @@
 
 	<select id="getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber"
 		resultMap="TestRunResultMap">
-		<include refid="getTestRun" />
+		<include refid="getTestRunFull" />
 		<![CDATA[
 			WHERE TR.UPSTREAM_JOB_ID = #{jobId} AND TR.UPSTREAM_JOB_BUILD_NUMBER = #{buildNumber};
 		]]>

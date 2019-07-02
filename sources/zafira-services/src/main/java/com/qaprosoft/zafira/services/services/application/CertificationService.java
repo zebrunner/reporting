@@ -17,7 +17,6 @@ package com.qaprosoft.zafira.services.services.application;
 
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.dto.CertificationType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.integration.impl.ElasticsearchService;
@@ -43,9 +42,6 @@ public class CertificationService {
     private TestRunService testRunService;
 
     @Autowired
-    private TestConfigService testConfigService;
-
-    @Autowired
     private TestService testService;
 
     public CertificationType getCertificationDetails(Long upstreamJobId, Integer upstreamJobBuildNumber) {
@@ -56,15 +52,12 @@ public class CertificationService {
 
         for (TestRun testRun : testRunService.getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(upstreamJobId, upstreamJobBuildNumber)) {
             StringBuilder platform = new StringBuilder(testRun.getPlatform());
-            for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML())) {
-                if ("browser_version".equals(arg.getKey()) && !"*".equals(arg.getValue())) {
-                    platform.append(" ").append(arg.getValue());
-                }
+            String browserVersion = testRun.getConfig().getBrowserVersion();
+            if(!"*".equals(browserVersion)) {
+                platform.append(" ").append(browserVersion);
             }
-
             insertIntoCertification(certification, testRun.getId(), platform.toString());
         }
-
         return certification;
     }
 
@@ -82,7 +75,11 @@ public class CertificationService {
     }
 
     private String[] buildIndices(Date... dates) {
-        return Arrays.stream(dates).map(date -> "logs-" + date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-                .format(FORMATTER)).toArray(String[]::new);
+        return Arrays.stream(dates)
+                     .map(date -> "logs-" + date.toInstant()
+                                                .atZone(ZoneId.systemDefault())
+                                                .toLocalDate()
+                                                .format(FORMATTER))
+                     .toArray(String[]::new);
     }
 }
