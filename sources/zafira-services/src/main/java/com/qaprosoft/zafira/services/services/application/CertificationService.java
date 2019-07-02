@@ -49,16 +49,21 @@ public class CertificationService {
             return null;
         }
         CertificationType certification = new CertificationType();
-
-        for (TestRun testRun : testRunService.getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(upstreamJobId, upstreamJobBuildNumber)) {
-            StringBuilder platform = new StringBuilder(testRun.getPlatform());
-            String browserVersion = testRun.getConfig().getBrowserVersion();
-            if(!"*".equals(browserVersion)) {
-                platform.append(" ").append(browserVersion);
-            }
-            insertIntoCertification(certification, testRun.getId(), platform.toString());
-        }
+        List<TestRun> testRuns = testRunService.getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(upstreamJobId, upstreamJobBuildNumber);
+        testRuns.forEach(testRun -> {
+            String platformName = buildPlatformName(testRun);
+            insertIntoCertification(certification, testRun.getId(), platformName);
+        });
         return certification;
+    }
+
+    private String buildPlatformName(TestRun testRun){
+        StringBuilder platform = new StringBuilder(testRun.getPlatform());
+        String browserVersion = testRun.getConfig().getBrowserVersion();
+        if(!"*".equals(browserVersion)) {
+            platform.append(" ").append(browserVersion);
+        }
+        return platform.toString();
     }
 
     private void insertIntoCertification(CertificationType certification, Long testRunId, String platform) {
@@ -68,9 +73,11 @@ public class CertificationService {
         }
         List<Test> tests = testService.getTestsByTestRunId(testRunId);
         tests.forEach(test -> {
-            Map<String, String> screenshotsInfo = elasticsearchService.getScreenshotsInfo(testRun.getCiRunId() + "_" +
-                    test.getCiTestId(), buildIndices(test.getStartTime(), test.getFinishTime()));
-            screenshotsInfo.keySet().forEach(key -> certification.addScreenshot(screenshotsInfo.get(key), platform, key));
+            String correlationId = testRun.getCiRunId() + "_" + test.getCiTestId();
+            String[] indices = buildIndices(test.getStartTime(), test.getFinishTime());
+            Map<String, String> screenshotsInfo = elasticsearchService.getScreenshotsInfo(correlationId, indices);
+            screenshotsInfo.keySet()
+                           .forEach(key -> certification.addScreenshot(screenshotsInfo.get(key), platform, key));
         });
     }
 

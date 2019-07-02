@@ -35,8 +35,7 @@ public class XmlConfigurationUtil {
         return configuration;
     }
 
-    public static Map<String, String> parseConfigToMap(String configXML){
-        Configuration configuration = XmlConfigurationUtil.readArguments(configXML);
+    public static Map<String, String> parseConfigToMap(Configuration configuration){
         return configuration.getArg()
                             .stream()
                             .collect(Collectors.toMap(Argument::getKey, Argument::getValue));

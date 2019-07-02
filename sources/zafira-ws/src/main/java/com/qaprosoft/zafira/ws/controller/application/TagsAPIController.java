@@ -86,11 +86,7 @@ public class TagsAPIController extends AbstractController {
 
             // ConfigXML parsing for TestRunName generation
             Configuration configuration = XmlConfigurationUtil.readArguments(testRun.getConfigXML());
-            Map<String, String> configMap = new HashMap<>();
-            for (Argument arg : configuration.getArg()) {
-                configMap.put(arg.getKey(), arg.getValue());
-            }
-
+            Map<String, String> configMap = XmlConfigurationUtil.parseConfigToMap(configuration);
             integrationData.setTestRunName(testRun.getName(configMap));
 
             // IntegrationType-specific properties adding
