@@ -22,6 +22,7 @@ import com.qaprosoft.zafira.models.dto.tag.IntegrationDataType;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationTag;
 import com.qaprosoft.zafira.services.services.application.TagService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
+import com.qaprosoft.zafira.services.util.XmlConfigurationUtil;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -38,7 +39,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.xml.bind.JAXBException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +63,7 @@ public class TagsAPIController extends AbstractController {
     @GetMapping("/{ciRunId}/integration")
     public IntegrationDataType getIntegrationInfo(
             @PathVariable("ciRunId") String ciRunId,
-            @RequestParam("integrationTag") IntegrationTag integrationTag) throws JAXBException {
+            @RequestParam("integrationTag") IntegrationTag integrationTag) {
         IntegrationDataType integrationData = new IntegrationDataType();
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
 
@@ -85,7 +85,7 @@ public class TagsAPIController extends AbstractController {
             integrationData.setZafiraServiceUrl(urlResolver.buildWebURL());
 
             // ConfigXML parsing for TestRunName generation
-            Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
+            Configuration configuration = XmlConfigurationUtil.readArguments(testRun.getConfigXML());
             Map<String, String> configMap = new HashMap<>();
             for (Argument arg : configuration.getArg()) {
                 configMap.put(arg.getKey(), arg.getValue());

@@ -15,11 +15,12 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.impl.google.models;
 
-import com.google.api.services.sheets.v4.model.*;
+import com.google.api.services.sheets.v4.model.Request;
+import com.google.api.services.sheets.v4.model.Sheet;
+import com.google.api.services.sheets.v4.model.SheetProperties;
+import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.config.Argument;
-import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
 import com.qaprosoft.zafira.services.services.application.TestService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleDriveService;
@@ -32,7 +33,6 @@ import org.joda.time.Period;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,8 +40,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.getConfigValueByName;
+import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.isConfigValueIsEmpty;
+
 @Service
-public class TestRunSpreadsheetService {
+public class
+TestRunSpreadsheetService {
 
     private static final Logger LOGGER = Logger.getLogger(TestRunSpreadsheetService.class);
 
@@ -207,20 +211,6 @@ public class TestRunSpreadsheetService {
 
     private Object getNotNullSpreadsheetValue(String value) {
         return value != null ? !value.equalsIgnoreCase("null") ? value : "" : "";
-    }
-
-    private String getConfigValueByName(String name, String configurationXML) {
-        Configuration configuration = null;
-        try {
-            configuration = testRunService.readConfiguration(configurationXML);
-        } catch (JAXBException e) {
-            LOGGER.error(e);
-        }
-        return configuration.getArg().stream().filter(arg -> arg.getKey().equalsIgnoreCase(name)).findFirst().orElse(new Argument()).getValue();
-    }
-
-    private boolean isConfigValueIsEmpty(String value) {
-        return StringUtils.isBlank(value) || value.equalsIgnoreCase("NULL") || value.equals("*");
     }
 
     private String getElapsed(TestRun testRun) {

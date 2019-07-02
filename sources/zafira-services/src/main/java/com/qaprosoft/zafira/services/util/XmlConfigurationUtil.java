@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.services.util;
 
+import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.services.exceptions.MalformedConfigXMLException;
 import org.apache.commons.io.IOUtils;
@@ -9,7 +10,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import java.io.ByteArrayInputStream;
 
-public class ConfigurationUtil {
+public class XmlConfigurationUtil {
 
     /**
      * Parses configuration
@@ -17,7 +18,7 @@ public class ConfigurationUtil {
      * and
      * @return Configuration object
      */
-    public static Configuration readConfigArgs(String configXML) {
+    public static Configuration readArguments(String configXML) {
         Configuration configuration = new Configuration();
         try {
             if (!StringUtils.isEmpty(configXML)) {
@@ -31,4 +32,16 @@ public class ConfigurationUtil {
         return configuration;
     }
 
+    public static String getConfigValueByName(String name, String configurationXML) {
+        Configuration configuration = readArguments(configurationXML);
+        return configuration.getArg()
+                            .stream()
+                            .filter(arg -> arg.getKey().equalsIgnoreCase(name))
+                            .findFirst()
+                            .orElse(new Argument()).getValue();
+    }
+
+    public static boolean isConfigValueIsEmpty(String value) {
+        return org.apache.commons.lang3.StringUtils.isBlank(value) || value.equalsIgnoreCase("NULL") || value.equals("*");
+    }
 }

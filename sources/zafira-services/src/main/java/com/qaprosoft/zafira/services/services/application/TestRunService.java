@@ -36,7 +36,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
 import com.qaprosoft.zafira.models.db.*;
-import com.qaprosoft.zafira.services.util.ConfigurationUtil;
+import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.*;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDateTime;
@@ -166,26 +166,14 @@ public class TestRunService {
         return results;
     }
 
-    private List<TestRun> parsePlatformVersion(List<TestRun> testRuns){
-        testRuns.forEach( testRun -> {
-            Configuration testRunConfig = ConfigurationUtil.readConfigArgs(testRun.getConfigXML());
-            testRunConfig.getArg()
-                         .stream()
-                         .filter(this::filterBrowserVersionArg)
-                         .findAny()
-                         .ifPresent(argument -> setPlatformWithVersion(testRun, argument));
+    private List<TestRun> parsePlatformVersion(List<TestRun> testRuns) {
+        testRuns.forEach(testRun -> {
+            String browserVersion = getConfigValueByName("browser_version", testRun.getConfigXML());
+            if (!StringUtils.isEmpty(browserVersion) && !browserVersion.equals("*")) {
+                testRun.setPlatform(testRun.getPlatform() + " " + browserVersion);
+            }
         });
         return testRuns;
-    }
-
-    private boolean filterBrowserVersionArg(Argument argument) {
-        String argumentKey = argument.getKey();
-        String argumentValue = argument.getValue();
-        return "browser_version".equals(argumentKey) && !StringUtils.isEmpty(argumentValue) && !argumentValue.equals("*");
-    }
-
-    private void setPlatformWithVersion(TestRun testRun, Argument argument) {
-        testRun.setPlatform(testRun.getPlatform() + " " + argument.getValue());
     }
 
     @Transactional(readOnly = true)
@@ -507,7 +495,7 @@ public class TestRunService {
                                                  boolean showOnlyFailures,
                                                  boolean showStacktrace,
                                                  final String... recipients) {
-        Configuration configuration = ConfigurationUtil.readConfigArgs(testRun.getConfigXML());
+        Configuration configuration = readArguments(testRun.getConfigXML());
         // Forward from API to Web
         configuration.getArg().add(new Argument("zafira_service_url", urlResolver.buildWebURL()));
         for (Test test : tests) {
@@ -533,7 +521,7 @@ public class TestRunService {
         if (testRun == null) {
             throw new TestRunNotFoundException("No test runs found by ID: " + id);
         }
-        Configuration configuration = ConfigurationUtil.readConfigArgs(testRun.getConfigXML());
+        Configuration configuration = readArguments(testRun.getConfigXML());
         configuration.getArg().add(new Argument("zafira_service_url", urlResolver.buildWebURL()));
 
         List<Test> tests = testService.getTestsByTestRunId(id);

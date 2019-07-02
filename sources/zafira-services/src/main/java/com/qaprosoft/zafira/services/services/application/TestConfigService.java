@@ -21,7 +21,7 @@ import com.qaprosoft.zafira.models.db.TestConfig;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.util.ConfigurationUtil;
+import com.qaprosoft.zafira.services.util.XmlConfigurationUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,8 +52,8 @@ public class TestConfigService {
             throw new ServiceException("Test run not found!");
         }
 
-        List<Argument> testRunConfig = ConfigurationUtil.readConfigArgs(testRun.getConfigXML()).getArg();
-        List<Argument> testConfig = ConfigurationUtil.readConfigArgs(testConfigXML).getArg();
+        List<Argument> testRunConfig = XmlConfigurationUtil.readArguments(testRun.getConfigXML()).getArg();
+        List<Argument> testConfig = XmlConfigurationUtil.readArguments(testConfigXML).getArg();
 
         TestConfig config = new TestConfig().init(testRunConfig).init(testConfig);
 
@@ -69,7 +69,7 @@ public class TestConfigService {
 
     @Transactional(rollbackFor = Exception.class)
     public TestConfig createTestConfigForTestRun(String configXML) {
-        List<Argument> testRunConfig = ConfigurationUtil.readConfigArgs(configXML).getArg();
+        List<Argument> testRunConfig = XmlConfigurationUtil.readArguments(configXML).getArg();
 
         TestConfig config = new TestConfig().init(testRunConfig);
 
