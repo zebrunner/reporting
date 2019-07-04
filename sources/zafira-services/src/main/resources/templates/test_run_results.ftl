@@ -95,24 +95,42 @@
                 </td>
             </tr>
             </#if>
-            <tr class="pass" style="color: #66C266;">
-                <td>Passed: </td>
-                <td>${testRun.passed}</td>
-            </tr>
-            <tr class="fail" style="color: #FF5C33;">
-                <td>Failed|Known|Blockers:</td>
-                <td>${testRun.failed} | ${testRun.failedAsKnown} | ${testRun.failedAsBlocker}</td>
-            </tr>
-            <tr class="skip" style="color: #FFD700;">
-                <td>Skipped:</td>
-                <td>${testRun.skipped}</td>
-            </tr>
+<#--            <tr class="pass" style="color: #66C266;">-->
+<#--                <td>Passed: </td>-->
+<#--                <td>${testRun.passed}</td>-->
+<#--            </tr>-->
+<#--            <tr class="fail" style="color: #FF5C33;">-->
+<#--                <td>Failed|Known|Blockers:</td>-->
+<#--                <td>${testRun.failed} | ${testRun.failedAsKnown} | ${testRun.failedAsBlocker}</td>-->
+<#--            </tr>-->
+<#--            <tr class="skip" style="color: #FFD700;">-->
+<#--                <td>Skipped:</td>-->
+<#--                <td>${testRun.skipped}</td>-->
+<#--            </tr>-->
             <tr>
                 <td>Success rate:</td>
                 <td>
                     ${successRate}%
                     <#if successRate?number != 100>
                          <a href="${testRun.job.jobURL}/${testRun.buildNumber?c}/rebuild/parameterized">(Rebuild)</a>
+                    </#if>
+                    <#if (testRun.passed > 0)>
+                        Passed: ${testRun.passed}
+                    </#if>
+                    <#if (testRun.failed > 0)>
+                        Failed: ${testRun.failed}
+                    </#if>
+                    <#if (testRun.failedAsKnown > 0)>
+                        Known issue: ${testRun.failedAsKnown}
+                    </#if>
+                    <#if (testRun.failedAsBlocker > 0)>
+                        Blockers: ${testRun.failedAsBlocker}
+                    </#if>
+                    <#if (testRun.skipped > 0)>
+                        Skipped: ${testRun.skipped}
+                    </#if>
+                    <#if (testRun.queued > 0)>
+                        Queued: ${testRun.queued}
                     </#if>
                 </td>
 
