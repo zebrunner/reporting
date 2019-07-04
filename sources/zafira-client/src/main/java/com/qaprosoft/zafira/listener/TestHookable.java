@@ -15,26 +15,10 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.listener;
 
-import com.qaprosoft.zafira.listener.adapter.MethodAdapter;
-import com.qaprosoft.zafira.listener.adapter.SuiteAdapter;
 import com.qaprosoft.zafira.listener.adapter.TestResultAdapter;
 
-public interface ZafiraListener {
+public interface TestHookable {
 
-    void onSuiteStart(SuiteAdapter adapter);
-
-    void onSuiteFinish();
-
-    void onTestStart(TestResultAdapter resultAdapter);
-
-    void onTestSuccess(TestResultAdapter resultAdapter);
-
-    void onTestFailure(TestResultAdapter adapter);
-
-    void onTestSkipped(TestResultAdapter adapter);
-
-    void onTestHook(TestHookable hookCallBack, TestResultAdapter adapter);
-
-    void beforeMethodInvocation(MethodAdapter invokedMethodAdapter, TestResultAdapter adapter);
+    void runTestMethod(TestResultAdapter adapter);
 
 }

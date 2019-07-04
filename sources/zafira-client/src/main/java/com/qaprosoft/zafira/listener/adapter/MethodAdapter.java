@@ -13,28 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.listener;
+package com.qaprosoft.zafira.listener.adapter;
 
-import com.qaprosoft.zafira.listener.adapter.MethodAdapter;
-import com.qaprosoft.zafira.listener.adapter.SuiteAdapter;
-import com.qaprosoft.zafira.listener.adapter.TestResultAdapter;
+import java.lang.annotation.Annotation;
 
-public interface ZafiraListener {
+public interface MethodAdapter {
 
-    void onSuiteStart(SuiteAdapter adapter);
+    Object getMethod();
 
-    void onSuiteFinish();
+    Annotation[] getMethodAnnotations();
 
-    void onTestStart(TestResultAdapter resultAdapter);
+    String getMethodName();
 
-    void onTestSuccess(TestResultAdapter resultAdapter);
+    String getDeclaredClassName();
 
-    void onTestFailure(TestResultAdapter adapter);
+    String getTestClassName();
 
-    void onTestSkipped(TestResultAdapter adapter);
+    String getRealClassName();
 
-    void onTestHook(TestHookable hookCallBack, TestResultAdapter adapter);
+    String[] getMethodDependsOnMethods();
 
-    void beforeMethodInvocation(MethodAdapter invokedMethodAdapter, TestResultAdapter adapter);
+    boolean isBeforeClassConfiguration();
+
+    boolean isAfterClassConfiguration();
+
+    boolean isBeforeTestConfiguration();
+
+    boolean isAfterTestConfiguration();
+
+    TestAnnotationAdapter getTestAnnotationAdapter();
 
 }

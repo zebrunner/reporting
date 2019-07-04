@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
+import com.qaprosoft.zafira.listener.impl.ZafiraListenerImpl;
 import com.qaprosoft.zafira.util.http.HttpClient;
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
@@ -39,7 +40,7 @@ import org.apache.log4j.spi.ErrorCode;
 import org.apache.log4j.spi.LoggingEvent;
 
 import com.qaprosoft.zafira.client.ZafiraSingleton;
-import com.qaprosoft.zafira.listener.ZafiraListener;
+import com.qaprosoft.zafira.listener.testng.TestNGListener;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -459,7 +460,7 @@ public class ZafiraLogAppender extends AppenderSkeleton {
                     && ((MetaInfoMessage) loggingEvent.getMessage()).getHeaders().get("CI_TEST_ID") != null) {
                 testId = ((MetaInfoMessage) loggingEvent.getMessage()).getHeaders().get("CI_TEST_ID");
             } else {
-                testId = ZafiraListener.getThreadCiTestId();
+                testId = ZafiraListenerImpl.getThreadCiTestId();
             }
             this.correlationId = testId != null ? routingKey + "_" + testId : routingKey;
         }

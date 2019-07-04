@@ -13,28 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.listener;
+package com.qaprosoft.zafira.listener.adapter;
 
-import com.qaprosoft.zafira.listener.adapter.MethodAdapter;
-import com.qaprosoft.zafira.listener.adapter.SuiteAdapter;
-import com.qaprosoft.zafira.listener.adapter.TestResultAdapter;
+public enum TestResultStatus {
 
-public interface ZafiraListener {
+    UNKNOWN(-2),
+    SKIP(3);
 
-    void onSuiteStart(SuiteAdapter adapter);
+    private final int code;
 
-    void onSuiteFinish();
+    TestResultStatus(int code) {
+        this.code = code;
+    }
 
-    void onTestStart(TestResultAdapter resultAdapter);
-
-    void onTestSuccess(TestResultAdapter resultAdapter);
-
-    void onTestFailure(TestResultAdapter adapter);
-
-    void onTestSkipped(TestResultAdapter adapter);
-
-    void onTestHook(TestHookable hookCallBack, TestResultAdapter adapter);
-
-    void beforeMethodInvocation(MethodAdapter invokedMethodAdapter, TestResultAdapter adapter);
+    public int getCode() {
+        return code;
+    }
 
 }

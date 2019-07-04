@@ -19,27 +19,28 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * Simple configuration bean that represent CI configuration properties used to initialize Zafira test runs.
- * 
+ *
  * @author akhursevich
  */
 public class CIConfig {
-    public enum BuildCasue {
-        UPSTREAMTRIGGER,
-        TIMERTRIGGER,
-        MANUALTRIGGER,
-        SCMTRIGGER
-    }
 
     private String ciRunId;
     private String ciUrl;
     private Integer ciBuild;
-    private BuildCasue ciBuildCause;
+    private BuildCase ciBuildCause;
     private String ciParentUrl;
     private Integer ciParentBuild;
 
     private String gitBranch;
     private String gitCommit;
     private String gitUrl;
+
+    public enum BuildCase {
+        UPSTREAMTRIGGER,
+        TIMERTRIGGER,
+        MANUALTRIGGER,
+        SCMTRIGGER
+    }
 
     public String getCiRunId() {
         return ciRunId;
@@ -65,14 +66,18 @@ public class CIConfig {
         this.ciBuild = StringUtils.isEmpty(ciBuild) ? 0 : Integer.valueOf(ciBuild);
     }
 
-    public BuildCasue getCiBuildCause() {
+    public BuildCase getCiBuildCause() {
         return ciBuildCause;
+    }
+
+    public void setCiBuildCause(BuildCase ciBuildCause) {
+        this.ciBuildCause = ciBuildCause;
     }
 
     public void setCiBuildCause(String ciBuildCause) {
         if (ciBuildCause != null) {
-            // HotFix for 'BuildCasue.UPSTREAMTRIGGER,UPSTREAMTRIGGER,UPSTREAMTRIGGER'
-            this.ciBuildCause = BuildCasue.valueOf(ciBuildCause.toUpperCase().split(",")[0]);
+            // HotFix for 'BuildCase.UPSTREAMTRIGGER,UPSTREAMTRIGGER,UPSTREAMTRIGGER'
+            this.ciBuildCause = BuildCase.valueOf(ciBuildCause.toUpperCase().split(",")[0]);
         }
     }
 

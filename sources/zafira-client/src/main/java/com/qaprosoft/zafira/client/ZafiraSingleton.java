@@ -34,6 +34,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static com.qaprosoft.zafira.client.ClientDefaults.ZAFIRA_PROPERTIES_FILE;
+
 /**
  * ZafiraSingleton - singleton wrapper around {@link ZafiraClientImpl}.
  * 
@@ -44,8 +46,6 @@ public enum ZafiraSingleton {
     INSTANCE;
 
     private final Logger LOGGER = Logger.getLogger(ZafiraSingleton.class);
-
-    private final String ZAFIRA_PROPERTIES = "zafira.properties";
 
     private ZafiraClient zafiraClient;
 
@@ -86,7 +86,7 @@ public enum ZafiraSingleton {
 
     private FileBasedConfiguration getConfiguration() throws org.apache.commons.configuration2.ex.ConfigurationException {
         return new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
-                .configure(new Parameters().properties().setFileName(ZAFIRA_PROPERTIES))
+                .configure(new Parameters().properties().setFileName(ZAFIRA_PROPERTIES_FILE))
                 .getConfiguration();
     }
 

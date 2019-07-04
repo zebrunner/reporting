@@ -13,28 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.listener;
+package com.qaprosoft.zafira.listener.adapter;
 
-import com.qaprosoft.zafira.listener.adapter.MethodAdapter;
-import com.qaprosoft.zafira.listener.adapter.SuiteAdapter;
-import com.qaprosoft.zafira.listener.adapter.TestResultAdapter;
+import java.util.Set;
 
-public interface ZafiraListener {
+public interface TestResultAdapter {
 
-    void onSuiteStart(SuiteAdapter adapter);
+    Object getTestResult();
 
-    void onSuiteFinish();
+    String getName();
 
-    void onTestStart(TestResultAdapter resultAdapter);
+    Object[] getParameters();
 
-    void onTestSuccess(TestResultAdapter resultAdapter);
+    void setAttribute(String name, Object value);
 
-    void onTestFailure(TestResultAdapter adapter);
+    Throwable getThrowable();
 
-    void onTestSkipped(TestResultAdapter adapter);
+    TestResultStatus getStatus();
 
-    void onTestHook(TestHookable hookCallBack, TestResultAdapter adapter);
+    Set<TestResultAdapter> getFailedTestResults();
 
-    void beforeMethodInvocation(MethodAdapter invokedMethodAdapter, TestResultAdapter adapter);
+    Set<TestResultAdapter> getSkippedTestResults();
+
+    Set<String> getKnownClassNames();
+
+    RuntimeException getSkipExceptionInstance(String message);
+
+    MethodAdapter getMethodAdapter();
+
+    SuiteAdapter getSuiteAdapter();
 
 }

@@ -13,28 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.listener;
+package com.qaprosoft.zafira.listener.adapter;
 
-import com.qaprosoft.zafira.listener.adapter.MethodAdapter;
-import com.qaprosoft.zafira.listener.adapter.SuiteAdapter;
-import com.qaprosoft.zafira.listener.adapter.TestResultAdapter;
+import java.util.List;
 
-public interface ZafiraListener {
+public interface SuiteAdapter {
 
-    void onSuiteStart(SuiteAdapter adapter);
+    String getSuiteParameter(String name);
 
-    void onSuiteFinish();
+    String getSuiteFileName();
 
-    void onTestStart(TestResultAdapter resultAdapter);
+    String getSuiteName();
 
-    void onTestSuccess(TestResultAdapter resultAdapter);
+    String[] getSuiteDependsOnMethods();
 
-    void onTestFailure(TestResultAdapter adapter);
-
-    void onTestSkipped(TestResultAdapter adapter);
-
-    void onTestHook(TestHookable hookCallBack, TestResultAdapter adapter);
-
-    void beforeMethodInvocation(MethodAdapter invokedMethodAdapter, TestResultAdapter adapter);
+    List<MethodAdapter> getMethodAdapters();
 
 }
