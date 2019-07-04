@@ -95,18 +95,6 @@
                 </td>
             </tr>
             </#if>
-<#--            <tr class="pass" style="color: #66C266;">-->
-<#--                <td>Passed: </td>-->
-<#--                <td>${testRun.passed}</td>-->
-<#--            </tr>-->
-<#--            <tr class="fail" style="color: #FF5C33;">-->
-<#--                <td>Failed|Known|Blockers:</td>-->
-<#--                <td>${testRun.failed} | ${testRun.failedAsKnown} | ${testRun.failedAsBlocker}</td>-->
-<#--            </tr>-->
-<#--            <tr class="skip" style="color: #FFD700;">-->
-<#--                <td>Skipped:</td>-->
-<#--                <td>${testRun.skipped}</td>-->
-<#--            </tr>-->
             <tr>
                 <td>Success rate:</td>
                 <td>
