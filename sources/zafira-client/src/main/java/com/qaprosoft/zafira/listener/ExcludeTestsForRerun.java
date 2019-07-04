@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import com.qaprosoft.zafira.config.IConfigurator;
 import com.qaprosoft.zafira.models.dto.TestType;
 
+// todo investigate real business and refactor it
 public class ExcludeTestsForRerun {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExcludeTestsForRerun.class);
@@ -69,27 +70,21 @@ public class ExcludeTestsForRerun {
                     Class<? extends Annotation> testAnnotationClass = testAnnotationAdapter.getTestAnnotationClass();
                     if (testAnnotationClass != null && testAnnotationClass.isAssignableFrom(a.getClass())) {
                         isTest = true;
-                        if (!StringUtils.isEmpty(methodAdapter.getTestAnnotationAdapter().getDataProviderName())) {
-                            if (!classesToRerun.contains(methodAdapter.getRealClassName()) && testAnnotationAdapter.isEnabled()) {
-                                modifyAnnotationValue(a, methodAdapter, ENABLED, false);
+                        boolean useDataProvider = StringUtils.isEmpty(methodAdapter.getTestAnnotationAdapter().getDataProviderName());
+                        if (!useDataProvider) {
+                            boolean classNeedRerun = classesToRerun.contains(methodAdapter.getRealClassName());
+                            if (!classNeedRerun && isTestEnabled(testAnnotationAdapter)) {
+                                allDependentMethods = skipDependentMethods(allDependentMethods, a, methodAdapter);
                                 isAnythingMarked = true;
-
-                                for (String m : methodAdapter.getMethodDependsOnMethods()) {
-                                    allDependentMethods = ArrayUtils.removeElement(allDependentMethods, m);
-                                }
                             } else {
                                 shouldUpdateDataProvider = true;
                             }
                         } else {
                             if (!ArrayUtils.contains(allDependentMethods, methodAdapter.getRealClassName() + "." + methodAdapter.getMethodName())) {
-                                TestResultAdapter testResultAdapter = new TestResultAdapterImpl(methodAdapter);
-                                if (testNamesNoRerun.contains(configurator.getTestName(testResultAdapter)) && testAnnotationAdapter.isEnabled()) {
-                                    modifyAnnotationValue(a, methodAdapter, ENABLED, false);
+                                boolean testNeedRerun = isTestNeedRerun(methodAdapter, testNamesNoRerun, configurator);
+                                if (!testNeedRerun && isTestEnabled(testAnnotationAdapter)) {
+                                    skipDependentMethods(allDependentMethods, a, methodAdapter);
                                     isAnythingMarked = true;
-
-                                    for (String m : methodAdapter.getMethodDependsOnMethods()) {
-                                        allDependentMethods = ArrayUtils.removeElement(allDependentMethods, m);
-                                    }
                                 }
                             }
                         }
@@ -106,6 +101,13 @@ public class ExcludeTestsForRerun {
 
     }
 
+    /**
+     * Inserts new value to annotation field by name
+     * @param a - annotation to modify
+     * @param methodAdapter - method adapter to log annotated method name
+     * @param fieldName - annotation field name to search and modify
+     * @param newValue - new field value to put
+     */
     @SuppressWarnings("unchecked")
     private static void modifyAnnotationValue(Annotation a, MethodAdapter methodAdapter, String fieldName,
             Object newValue) {
@@ -133,6 +135,27 @@ public class ExcludeTestsForRerun {
                 return;
             }
         }
+    }
+
+    private static String[] skipDependentMethods(String[] allDependentMethods, Annotation methodAnnotation, MethodAdapter adapter) {
+        modifyAnnotationValue(methodAnnotation, adapter, ENABLED, false);
+        return removeDependentMethodsFromArray(allDependentMethods, adapter);
+    }
+
+    private static boolean isTestEnabled(TestAnnotationAdapter testAnnotationAdapter) {
+        return testAnnotationAdapter.isEnabled();
+    }
+
+    private static String[] removeDependentMethodsFromArray(String[] allDependentMethods, MethodAdapter adapter) {
+        for (String m : adapter.getMethodDependsOnMethods()) {
+            allDependentMethods = ArrayUtils.removeElement(allDependentMethods, m);
+        }
+        return allDependentMethods;
+    }
+
+    private static boolean isTestNeedRerun(MethodAdapter adapter, List<String> testNamesNoRerun, IConfigurator configurator) {
+        TestResultAdapter testResultAdapter = new TestResultAdapterImpl(adapter);
+        return !testNamesNoRerun.contains(configurator.getTestName(testResultAdapter));
     }
 
 }
