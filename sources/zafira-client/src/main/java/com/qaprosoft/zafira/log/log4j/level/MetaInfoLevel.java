@@ -1,4 +1,19 @@
-package com.qaprosoft.zafira.log;
+/*******************************************************************************
+ * Copyright 2013-2019 Qaprosoft (http://www.qaprosoft.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
+package com.qaprosoft.zafira.log.log4j.level;
 
 import org.apache.log4j.Level;
 
@@ -19,14 +34,14 @@ public class MetaInfoLevel extends Level {
         if (sArg != null && sArg.toUpperCase().equals(META_NAME)) {
             return META_INFO;
         }
-        return (Level) toLevel(sArg, Level.DEBUG);
+        return toLevel(sArg, Level.DEBUG);
     }
 
     public static Level toLevel(int val) {
         if (val == META_INT) {
             return META_INFO;
         }
-        return (Level) toLevel(val, Level.DEBUG);
+        return toLevel(val, Level.DEBUG);
     }
 
     public static Level toLevel(int val, Level defaultLevel) {

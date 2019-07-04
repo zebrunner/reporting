@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.log;
+package com.qaprosoft.zafira.log.domain;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,4 +52,5 @@ public class MetaInfoMessage {
     public void setHeaders(Map<String, String> headers) {
         this.headers = headers;
     }
+
 }
