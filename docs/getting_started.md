@@ -21,7 +21,7 @@ Before running Zafira, verify that following ports are not binded:
 #### Startup in Docker
 * Clone Zafira repo:
 ```
-$ git clone git@github.com:qaprosoft/zafira.git
+$ git clone https://github.com/qaprosoft/zafira.git
 ```
 
 * If you are planning to access Zafira remotely you will need to modify **docker-compose.yml** specifying appropriate IP address of your host:
