@@ -56,6 +56,7 @@ echo zafira.admin.group=$ZAFIRA_GROUP >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.db.jdbc.url=$ZAFIRA_JDBC_URL >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.db.jdbc.user=$ZAFIRA_JDBC_USER >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.db.jdbc.password=$ZAFIRA_JDBC_PASS >> $CATALINA_HOME/conf/catalina.properties
+echo zafira.db.c3p0.maxPoolSize=$ZAFIRA_JDBC_POOL_SIZE >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.ldap.protocol=$ZAFIRA_LDAP_PROTOCOL >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.ldap.server=$ZAFIRA_LDAP_SERVER >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.ldap.port=$ZAFIRA_LDAP_PORT >> $CATALINA_HOME/conf/catalina.properties
