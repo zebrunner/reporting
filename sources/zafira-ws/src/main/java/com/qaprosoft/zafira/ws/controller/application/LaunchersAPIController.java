@@ -151,7 +151,7 @@ public class LaunchersAPIController extends AbstractController {
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @DeleteMapping("/scanner/{buildNumber}")
     public void cancelScanner(@PathVariable("buildNumber") int buildNumber, @RequestParam("scmAccountId") Long scmAccountId, @RequestParam("rescan") boolean rescan) {
-        launcherService.abortScannerJob(TenancyContext.getTenantName(), scmAccountId, rescan, buildNumber);
+        launcherService.abortScannerJob(scmAccountId, buildNumber, rescan);
     }
 
     @ResponseStatusDetails
