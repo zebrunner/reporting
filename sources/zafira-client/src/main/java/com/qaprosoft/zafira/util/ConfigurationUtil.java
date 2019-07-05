@@ -37,20 +37,29 @@ public class ConfigurationUtil {
     private static CombinedConfiguration configuration;
 
     public static CombinedConfiguration getConfiguration() {
+        return getConfiguration(true);
+    }
+
+    public static CombinedConfiguration getConfiguration(boolean throwExceptionOnMissing) {
         if(configuration != null) {
             return configuration;
         }
         CombinedConfiguration config = new CombinedConfiguration(new MergeCombiner());
         try {
-            config.setThrowExceptionOnMissing(true);
+            config.setThrowExceptionOnMissing(throwExceptionOnMissing);
             config.addConfiguration(new SystemConfiguration());
-            config.addConfiguration(new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
-                    .configure(new Parameters().properties().setFileName(ZAFIRA_PROPERTIES_FILE)).getConfiguration());
+            config.addConfiguration(getZafiraPropertiesConfiguration());
         } catch (ConfigurationException e) {
             LOGGER.error(ERR_MSG_INIT_CONFIG, e);
         }
         configuration = config;
         return config;
+    }
+
+    private static FileBasedConfiguration getZafiraPropertiesConfiguration() throws ConfigurationException {
+        return new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
+                .configure(new Parameters().properties().setFileName(ZAFIRA_PROPERTIES_FILE))
+                .getConfiguration();
     }
 
 }

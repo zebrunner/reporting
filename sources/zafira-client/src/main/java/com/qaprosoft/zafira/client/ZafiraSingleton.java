@@ -16,26 +16,15 @@
 package com.qaprosoft.zafira.client;
 
 import com.qaprosoft.zafira.client.impl.ZafiraClientImpl;
+import com.qaprosoft.zafira.util.AsyncUtil;
+import com.qaprosoft.zafira.util.ConfigurationUtil;
 import com.qaprosoft.zafira.util.http.HttpClient;
 import org.apache.commons.configuration2.CombinedConfiguration;
-import org.apache.commons.configuration2.FileBasedConfiguration;
-import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.SystemConfiguration;
-import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
-import org.apache.commons.configuration2.builder.fluent.Parameters;
-import org.apache.commons.configuration2.tree.MergeCombiner;
 import org.apache.commons.lang3.StringUtils;
 
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import static com.qaprosoft.zafira.client.ClientDefaults.ZAFIRA_PROPERTIES_FILE;
 
 /**
  * ZafiraSingleton - singleton wrapper around {@link ZafiraClientImpl}.
@@ -46,22 +35,18 @@ public enum ZafiraSingleton {
 
     INSTANCE;
 
-    private final Logger LOGGER = LoggerFactory.getLogger(ZafiraSingleton.class);
+    private final CompletableFuture<HttpClient.Response<AuthTokenType>> INIT_FUTURE;
 
     private ZafiraClient zafiraClient;
-
-    private final CompletableFuture<HttpClient.Response<AuthTokenType>> INIT_FUTURE;
 
     ZafiraSingleton() {
         INIT_FUTURE = CompletableFuture.supplyAsync(() -> {
             HttpClient.Response<AuthTokenType> result = null;
             try {
-                CombinedConfiguration config = new CombinedConfiguration(new MergeCombiner());
+                CombinedConfiguration config = ConfigurationUtil.getConfiguration(false);
                 // TODO: 2019-04-12 it`s make sense to throw an exception until zafira client instance is static in log appender class
                 // and CombinedConfiguration doesn`t save singleton initialization 'injection'
                 // config.setThrowExceptionOnMissing(false);
-                config.addConfiguration(new SystemConfiguration());
-                config.addConfiguration(getConfiguration());
 
                 boolean enabled = config.getBoolean("zafira_enabled", false);
                 String url = config.getString("zafira_service_url", StringUtils.EMPTY);
@@ -85,12 +70,6 @@ public enum ZafiraSingleton {
         });
     }
 
-    private FileBasedConfiguration getConfiguration() throws org.apache.commons.configuration2.ex.ConfigurationException {
-        return new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
-                .configure(new Parameters().properties().setFileName(ZAFIRA_PROPERTIES_FILE))
-                .getConfiguration();
-    }
-
     /**
      * @return {@link ZafiraClientImpl} instance
      */
@@ -99,17 +78,13 @@ public enum ZafiraSingleton {
     }
 
     /**
-     * 
      * @return Zafira integration status
      */
     public boolean isRunning() {
         HttpClient.Response<AuthTokenType> response;
         try {
-            response = INIT_FUTURE.get(60, TimeUnit.SECONDS);
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            return false;
+            response = AsyncUtil.getAsync(INIT_FUTURE, "Cannot connect to zafira");
         } catch (Exception e) {
-            LOGGER.debug("Cannot connect to zafira", e);
             return false;
         }
         return response != null && response.getStatus() == 200;
