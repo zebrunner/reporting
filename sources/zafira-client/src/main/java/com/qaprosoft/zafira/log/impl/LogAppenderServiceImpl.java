@@ -32,6 +32,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
+import static com.rabbitmq.client.impl.recovery.RecordedQueue.EMPTY_STRING;
+
 /**
  * @author akhursevich
  */
@@ -43,13 +45,14 @@ public class LogAppenderServiceImpl implements LogAppenderService {
     private final AmqpService amqpService;
 
     private EventPublisher eventPublisher;
-    private String identifier = null;
-    private boolean durable = false;
-    private String routingKey = "";
-    private boolean zafiraConnected = false;
+    private String identifier;
+    private boolean durable;
+    private String routingKey;
+    private boolean zafiraConnected;
 
     public LogAppenderServiceImpl() {
         this.amqpService = new RabbitMQService(ZAFIRA_INSTANCE.getClient());
+        this.routingKey = EMPTY_STRING;
     }
 
     @Override
