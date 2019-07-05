@@ -17,7 +17,6 @@ package com.qaprosoft.zafira.log;
 
 import com.qaprosoft.zafira.log.event.EventPublisher;
 
-import java.io.IOException;
 import java.util.concurrent.Callable;
 
 /**
