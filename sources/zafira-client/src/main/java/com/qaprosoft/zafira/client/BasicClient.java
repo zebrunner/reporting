@@ -116,7 +116,9 @@ public interface BasicClient {
      */
     UserType getUserOrAnonymousIfNotFound(String username);
 
-    String getServiceURL();
+    String getServiceUrl();
+
+    String getRealServiceUrl();
 
     TenantType getTenantType();
 

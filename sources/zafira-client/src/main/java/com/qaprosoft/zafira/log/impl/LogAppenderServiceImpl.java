@@ -54,8 +54,8 @@ public class LogAppenderServiceImpl implements LogAppenderService {
 
     @Override
     public void append(BaseAppenderTask task) {
-        task.setEventPublisher(eventPublisher);
         task.setRoutingKey(routingKey);
+        task.setEventPublisher(eventPublisher);
         task.setIdentifier(identifier);
         task.setZafiraConnected(zafiraConnected);
         threadPool.submit(task);

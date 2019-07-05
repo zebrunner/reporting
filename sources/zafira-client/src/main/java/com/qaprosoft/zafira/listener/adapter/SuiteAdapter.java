@@ -19,6 +19,8 @@ import java.util.List;
 
 public interface SuiteAdapter {
 
+    Object getSuite();
+
     String getSuiteParameter(String name);
 
     String getSuiteFileName();

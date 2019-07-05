@@ -29,6 +29,8 @@ public class LogAppender extends AppenderSkeleton {
 
     private final LogAppenderService logAppenderService;
 
+    private int history = 1000;
+
     public LogAppender() {
         this.logAppenderService = new LogAppenderServiceImpl();
     }
@@ -83,6 +85,14 @@ public class LogAppender extends AppenderSkeleton {
     @Override
     public boolean requiresLayout() {
         return true;
+    }
+
+    public int getHistory() {
+        return history;
+    }
+
+    public void setHistory(int history) {
+        this.history = history;
     }
 
 }

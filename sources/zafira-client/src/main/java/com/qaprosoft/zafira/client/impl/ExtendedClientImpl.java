@@ -63,7 +63,7 @@ public class ExtendedClientImpl implements ExtendedClient {
         user = response.getObject();
 
         if (user == null) {
-            throw new RuntimeException("Unable to register user '" + userName + "' for zafira service: " + client.getServiceURL());
+            throw new RuntimeException("Unable to register user '" + userName + "' for zafira service: " + client.getServiceUrl());
         } else {
             LOGGER.debug("Registered user details:"
                     + String.format(userDetails, user.getUsername(), user.getEmail(), user.getFirstName(), user.getLastName()));
@@ -81,7 +81,7 @@ public class ExtendedClientImpl implements ExtendedClient {
         testCase = response.getObject();
         if (testCase == null) {
             throw new RuntimeException("Unable to register test case '"
-                    + String.format(testCaseDetails, testClass, testMethod, "", suiteId, primaryOwnerId) + "' for zafira service: " + client.getServiceURL());
+                    + String.format(testCaseDetails, testClass, testMethod, "", suiteId, primaryOwnerId) + "' for zafira service: " + client.getServiceUrl());
         } else {
             LOGGER.debug("Registered test case details:"
                     + String.format(testCaseDetails, testClass, testMethod, "", suiteId, primaryOwnerId, secondaryOwnerId));
@@ -109,7 +109,7 @@ public class ExtendedClientImpl implements ExtendedClient {
         testSuite = response.getObject();
 
         if (testSuite == null) {
-            throw new RuntimeException("Unable to register test suite '" + suiteName + "' for zafira service: " + client.getServiceURL());
+            throw new RuntimeException("Unable to register test suite '" + suiteName + "' for zafira service: " + client.getServiceUrl());
         } else {
             LOGGER.debug("Registered test suite details:"
                     + String.format(testSuiteDetails, testSuite.getName(), testSuite.getFileName(), testSuite.getUserId()));
@@ -137,7 +137,7 @@ public class ExtendedClientImpl implements ExtendedClient {
         job = response.getObject();
 
         if (job == null) {
-            throw new RuntimeException("Unable to register job for zafira service: " + client.getServiceURL());
+            throw new RuntimeException("Unable to register job for zafira service: " + client.getServiceUrl());
         } else {
             LOGGER.debug("Registered job details:" + String.format(jobDetails, job.getName(), job.getJenkinsHost(), job.getUserId()));
         }
@@ -159,7 +159,7 @@ public class ExtendedClientImpl implements ExtendedClient {
         if (testRun == null) {
             throw new RuntimeException("Unable to register test run '" + String.format(testRunDetails, testSuiteId, userId,
                     ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), jobId, ciConfig.getCiBuild(), startedBy, workItem)
-                    + "' for zafira service: " + client.getServiceURL());
+                    + "' for zafira service: " + client.getServiceUrl());
         } else {
             LOGGER.debug("Registered test run details:"
                     + String.format(testRunDetails, testSuiteId, userId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(),
@@ -183,7 +183,7 @@ public class ExtendedClientImpl implements ExtendedClient {
             throw new RuntimeException("Unable to register test run '"
                     + String.format(testRunDetails, testSuiteId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), jobId,
                     ciConfig.getCiBuild(), startedBy, workItem)
-                    + "' for zafira service: " + client.getServiceURL());
+                    + "' for zafira service: " + client.getServiceUrl());
         } else {
             LOGGER.debug("Registered test run details:" + String.format(testRunDetails, testSuiteId, ciConfig.getGitUrl(), ciConfig.getGitBranch(),
                     ciConfig.getGitCommit(), jobId, ciConfig.getCiBuild(), startedBy, workItem));
@@ -208,7 +208,7 @@ public class ExtendedClientImpl implements ExtendedClient {
             throw new RuntimeException("Unable to register test run '"
                     + String.format(testRunDetails, testSuiteId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), jobId,
                     parentJobId, ciConfig.getCiParentBuild(), ciConfig.getCiBuild(), startedBy, workItem)
-                    + "' for zafira service: " + client.getServiceURL());
+                    + "' for zafira service: " + client.getServiceUrl());
         } else {
             LOGGER.debug("Registered test run details:" + String.format(testRunDetails, testSuiteId, ciConfig.getGitUrl(), ciConfig.getGitBranch(),
                     ciConfig.getGitCommit(), jobId, parentJobId, ciConfig.getCiParentBuild(), ciConfig.getCiBuild(), startedBy, workItem));
@@ -253,7 +253,7 @@ public class ExtendedClientImpl implements ExtendedClient {
         if (test == null) {
             throw new RuntimeException(
                     "Unable to register test '" + String.format(testDetails, name, status, testArgs, testRunId, testCaseId, startTime, retry)
-                            + "' startup for zafira service: " + client.getServiceURL());
+                            + "' startup for zafira service: " + client.getServiceUrl());
         } else {
             LOGGER.debug(
                     "Registered test startup details:" + String.format(testDetails, name, status, testArgs, testRunId, testCaseId, startTime, retry));
@@ -267,7 +267,7 @@ public class ExtendedClientImpl implements ExtendedClient {
         HttpClient.Response<TestType> response = client.startTest(test);
         test = response.getObject();
         if (test == null) {
-            throw new RuntimeException("Unable to register test '" + testName + "' restart for zafira service: " + client.getServiceURL());
+            throw new RuntimeException("Unable to register test '" + testName + "' restart for zafira service: " + client.getServiceUrl());
         } else {
             LOGGER.debug("Registered test restart details:'" + testName + "'; startTime: " + new Date(test.getStartTime()));
         }

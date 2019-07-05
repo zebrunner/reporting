@@ -35,6 +35,12 @@ public class SuiteAdapterImpl implements SuiteAdapter {
     }
 
     @Override
+    public Object getSuite() {
+        suiteNotNull();
+        return suite;
+    }
+
+    @Override
     public String getSuiteParameter(String name) {
         suiteNotNull();
         return suite.getParameter(name);

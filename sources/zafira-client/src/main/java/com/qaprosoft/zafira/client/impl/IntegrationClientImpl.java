@@ -89,7 +89,7 @@ public class IntegrationClientImpl implements IntegrationClient {
                         : CannedAccessControlList.PublicRead;
                 getAmazonClient().setObjectAcl(this.amazonS3SessionCredentials.getBucket(), key, controlList);
 
-                filePath = tenantType.isUseArtifactsProxy() ? client.getServiceURL() + relativeKey : getFilePath(key);
+                filePath = tenantType.isUseArtifactsProxy() ? client.getRealServiceUrl() + relativeKey : getFilePath(key);
 
             } catch (Exception e) {
                 LOGGER.error("Can't save file to Amazon S3", e);
@@ -108,7 +108,7 @@ public class IntegrationClientImpl implements IntegrationClient {
     /**
      * Registers Amazon S3 client
      */
-    private void initAmazonS3Client() {
+    private CompletableFuture<AmazonS3> initAmazonS3Client() {
         this.amazonClient = CompletableFuture.supplyAsync(() -> {
             this.amazonS3SessionCredentials = getAmazonSessionCredentials().getObject();
             AmazonS3 client = null;
@@ -129,6 +129,7 @@ public class IntegrationClientImpl implements IntegrationClient {
             }
             return client;
         });
+        return amazonClient;
     }
 
     @Override
@@ -144,13 +145,13 @@ public class IntegrationClientImpl implements IntegrationClient {
      * @return Amazon S3 temporary credentials
      */
     private HttpClient.Response<SessionCredentials> getAmazonSessionCredentials() {
-        return HttpClient.uri(Path.AMAZON_SESSION_CREDENTIALS_PATH, client.getServiceURL())
+        return HttpClient.uri(Path.AMAZON_SESSION_CREDENTIALS_PATH, client.getServiceUrl())
                          .withAuthorization(client.getAuthToken())
                          .onFailure(ERR_MSG_GET_AWS_CREDENTIALS)
                          .get(SessionCredentials.class);
     }
 
-    private void initGoogleClient() {
+    private CompletableFuture<Sheets> initGoogleClient() {
         this.sheets = CompletableFuture.supplyAsync(() -> {
             Sheets sheets = null;
             String accessToken = getGoogleSessionCredentials().getObject();
@@ -166,6 +167,7 @@ public class IntegrationClientImpl implements IntegrationClient {
             }
             return sheets;
         });
+        return sheets;
     }
 
     /**
@@ -174,7 +176,7 @@ public class IntegrationClientImpl implements IntegrationClient {
      * @return Google temporary credentials
      */
     private HttpClient.Response<String> getGoogleSessionCredentials() {
-        return HttpClient.uri(Path.GOOGLE_SESSION_CREDENTIALS_PATH, client.getServiceURL())
+        return HttpClient.uri(Path.GOOGLE_SESSION_CREDENTIALS_PATH, client.getServiceUrl())
                          .withAuthorization(client.getAuthToken())
                          .type(MediaType.TEXT_PLAIN)
                          .accept(MediaType.TEXT_PLAIN)

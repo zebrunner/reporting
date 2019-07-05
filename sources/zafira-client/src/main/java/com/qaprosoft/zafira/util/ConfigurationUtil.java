@@ -23,13 +23,14 @@ import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.tree.MergeCombiner;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.qaprosoft.zafira.client.ClientDefaults.ZAFIRA_PROPERTIES_FILE;
 
 public class ConfigurationUtil {
 
-    private static final Logger LOGGER = Logger.getLogger(ConfigurationUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationUtil.class);
 
     private static final String ERR_MSG_INIT_CONFIG = "Unable to initialize a configuration";
 

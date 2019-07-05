@@ -25,9 +25,10 @@ import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.tree.MergeCombiner;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -45,7 +46,7 @@ public enum ZafiraSingleton {
 
     INSTANCE;
 
-    private final Logger LOGGER = Logger.getLogger(ZafiraSingleton.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(ZafiraSingleton.class);
 
     private ZafiraClient zafiraClient;
 

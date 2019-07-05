@@ -201,8 +201,13 @@ public class ZafiraClientImpl implements ZafiraClient {
     }
 
     @Override
-    public String getServiceURL() {
-        return basicClient.getServiceURL();
+    public String getServiceUrl() {
+        return basicClient.getServiceUrl();
+    }
+
+    @Override
+    public String getRealServiceUrl() {
+        return basicClient.getRealServiceUrl();
     }
 
     @Override

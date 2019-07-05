@@ -31,11 +31,6 @@ public abstract class BaseAppenderTask<T> implements Callable<T> {
     private boolean zafiraConnected;
     private String correlationId;
 
-    public BaseAppenderTask() {
-        String testId = getTestId();
-        this.correlationId = testId != null ? routingKey + "_" + testId : routingKey;
-    }
-
     protected abstract String getTestId();
     protected abstract String getJsonPayload();
     protected abstract String getEventType();
@@ -52,11 +47,25 @@ public abstract class BaseAppenderTask<T> implements Callable<T> {
         return getEventObject();
     }
 
-    private void publishEvent() throws IOException {
+    private void publishEvent() {
         if (zafiraConnected) {
             String payload = getJsonPayload();
+            String correlationId = getCorrelationId();
             eventPublisher.publishEvent(routingKey, correlationId, identifier, getEventType(), payload);
         }
+    }
+
+    private String buildCorrelationId(String routingKey) {
+        String testId = getTestId();
+        return testId != null ? routingKey + "_" + testId : routingKey;
+    }
+
+    private void setCorrelationId(String correlationId) {
+        this.correlationId = correlationId;
+    }
+
+    private String getCorrelationId() {
+        return correlationId;
     }
 
     public void setEventPublisher(EventPublisher eventPublisher) {
@@ -65,6 +74,8 @@ public abstract class BaseAppenderTask<T> implements Callable<T> {
 
     public void setRoutingKey(String routingKey) {
         this.routingKey = routingKey;
+        String correlationId = buildCorrelationId(routingKey);
+        setCorrelationId(correlationId);
     }
 
     public void setIdentifier(String identifier) {

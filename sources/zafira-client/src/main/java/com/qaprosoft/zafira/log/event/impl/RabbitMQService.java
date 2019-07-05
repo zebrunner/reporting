@@ -24,6 +24,8 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -34,6 +36,8 @@ import java.util.concurrent.TimeoutException;
 import static com.qaprosoft.zafira.models.db.Setting.Tool.RABBITMQ;
 
 public class RabbitMQService implements AmqpService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQService.class);
 
     private static final String VIRTUAL_HOST = "/";
     private static final String TYPE = "x-recent-history";
@@ -97,13 +101,20 @@ public class RabbitMQService implements AmqpService {
             this.channel = channel;
         }
 
-        public void publishEvent(String routingKey, String correlationId, String appId, String eventType, String payload) throws IOException {
+        public boolean publishEvent(String routingKey, String correlationId, String appId, String eventType, String payload) {
+            boolean result = false;
             AMQP.BasicProperties.Builder b = new AMQP.BasicProperties().builder()
                                                                        .appId(appId)
                                                                        .type(eventType)
                                                                        .correlationId(String.valueOf(correlationId))
                                                                        .contentType("text/json");
-            this.channel.basicPublish(EXCHANGE_NAME, routingKey, b.build(), payload.getBytes());
+            try {
+                this.channel.basicPublish(EXCHANGE_NAME, routingKey, b.build(), payload.getBytes());
+                result = true;
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+            return result;
         }
 
     }
@@ -173,11 +184,13 @@ public class RabbitMQService implements AmqpService {
     }
 
     private boolean initAuthProperties() {
-        HttpClient.Response<List<HashMap<String, String>>> rs = client.getToolSettings(RABBITMQ.name(), true);
-        if (rs.getStatus() == 200) {
-            List<HashMap<String, String>> settings = rs.getObject();
-            if (settings != null) {
-                settings.forEach(this::initAuthProperty);
+        if(client != null) {
+            HttpClient.Response<List<HashMap<String, String>>> rs = client.getToolSettings(RABBITMQ.name(), true);
+            if (rs.getStatus() == 200) {
+                List<HashMap<String, String>> settings = rs.getObject();
+                if (settings != null) {
+                    settings.forEach(this::initAuthProperty);
+                }
             }
         }
         return connected;

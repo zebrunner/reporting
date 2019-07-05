@@ -15,10 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.log.event;
 
-import java.io.IOException;
-
 public interface EventPublisher {
 
-    void publishEvent(String routingKey, String correlationId, String appId, String eventType, String payload) throws IOException;
+    boolean publishEvent(String routingKey, String correlationId, String appId, String eventType, String payload);
 
 }

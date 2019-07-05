@@ -330,7 +330,12 @@ public class BasicClientImpl implements BasicClient {
     }
 
     @Override
-    public String getServiceURL() {
+    public String getServiceUrl() {
+        return this.serviceURL;
+    }
+
+    @Override
+    public String getRealServiceUrl() {
         return getTenantType().getServiceUrl();
     }
 
@@ -344,8 +349,9 @@ public class BasicClientImpl implements BasicClient {
         return authToken;
     }
 
-    private void initTenant() {
+    private CompletableFuture<TenantType> initTenant() {
         this.tenantType = CompletableFuture.supplyAsync(() -> getTenant().getObject());
+        return tenantType;
     }
 
     private HttpClient.Response<TenantType> getTenant() {
