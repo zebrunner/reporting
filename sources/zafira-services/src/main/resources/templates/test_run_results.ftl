@@ -96,16 +96,15 @@
             </tr>
             </#if>
             <tr>
-                <td>Success rate: ${successRate}%</td>
-                <td>
-            <tr>
+                <td>Success rate: </td>
+                <td>${successRate}%</td>
                 <#if (testRun.passed > 0)>
-                    <td class="pass" style="color: #5DBA65;">
+                    <td class="pass" style="color: #66C266;">
                         Passed: ${testRun.passed}
                     </td>
                 </#if>
                 <#if (testRun.failed > 0)>
-                    <td class="fail" style="color: #E83A3A;">
+                    <td class="fail" style="color: #ffcccc;">
                         Failed: ${testRun.failed}
                     </td>
                 </#if>
@@ -120,8 +119,13 @@
                     </td>
                 </#if>
                 <#if (testRun.skipped > 0)>
-                    <td class="skip" style="color: #f0c800;">
+                    <td class="skip" style="color: #ffe4b5;">
                         Skipped: ${testRun.skipped}
+                    </td>
+                </#if>
+                <#if (testRun.aborted > 0)>
+                    <td class="skip" style="color: #C5C5C5;">
+                        Aborted: ${testRun.aborted}
                     </td>
                 </#if>
                 <#if (testRun.queued > 0)>
@@ -129,13 +133,11 @@
                         Queued: ${testRun.queued}
                     </td>
                 </#if>
-            </tr>
-            </td>
-            <td>
                 <#if successRate?number != 100>
-                    <a href="${testRun.job.jobURL}/${testRun.buildNumber?c}/rebuild/parameterized">(Rebuild)</a>
+                    <td>
+                        <a href="${testRun.job.jobURL}/${testRun.buildNumber?c}/rebuild/parameterized">(Rebuild)</a>
+                    </td>
                 </#if>
-            </td>
             </tr>
             <#if configuration['language']?? && configuration['language'] != '' && configuration['language'] != 'en_US' && configuration['language'] != 'en' && configuration['language'] != 'US'>
             <tr>
