@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.ViewMapper;
 import com.qaprosoft.zafira.models.db.View;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
 public class ViewService {
@@ -31,29 +30,29 @@ public class ViewService {
     private ViewMapper viewMapper;
 
     @Transactional(readOnly = true)
-    public List<View> getAllViews(Long projectId) throws ServiceException {
+    public List<View> getAllViews(Long projectId) {
         return viewMapper.getAllViews(projectId);
     }
 
     @Transactional(readOnly = true)
-    public View getViewById(Long id) throws ServiceException {
+    public View getViewById(Long id) {
         return viewMapper.getViewById(id);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public View createView(View view) throws ServiceException {
+    public View createView(View view) {
         viewMapper.createView(view);
         return view;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public View updateView(View view) throws ServiceException {
+    public View updateView(View view) {
         viewMapper.updateView(view);
         return view;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteViewById(long id) throws ServiceException {
+    public void deleteViewById(long id) {
         viewMapper.deleteViewById(id);
     }
 }

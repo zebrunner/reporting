@@ -24,12 +24,6 @@
 	<bean id="passwordEncryptor"
 		class="org.jasypt.util.password.BasicPasswordEncryptor" />
 
-	<bean id="tokenizer"
-		class="com.qaprosoft.zafira.services.util.Tokenizer">
-		<constructor-arg index="0" value="SHA1PRNG" />
-		<constructor-arg index="1" value="SHA-1" />
-	</bean>
-
 	<bean id="messageJsonifier"
 		class="com.fasterxml.jackson.databind.ObjectMapper">
 		<property name="serializationInclusion" value="NON_NULL" />

@@ -85,7 +85,7 @@ public class LauncherService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Launcher createLauncher(Launcher launcher, User owner) throws ServiceException {
+    public Launcher createLauncher(Launcher launcher, User owner) {
         if (jenkinsService.isConnected()) {
             JenkinsContext context = jenkinsService.context();
             String jenkinsHost = context.getJenkinsHost();
@@ -108,7 +108,7 @@ public class LauncherService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public List<Launcher> createLaunchersForJob(ScannedRepoLaunchersType scannedRepoLaunchersType, User owner) throws ServiceException {
+    public List<Launcher> createLaunchersForJob(ScannedRepoLaunchersType scannedRepoLaunchersType, User owner) {
         if (!scannedRepoLaunchersType.isSuccess()) {
             return new ArrayList<>();
         }
@@ -135,33 +135,28 @@ public class LauncherService {
     }
 
     @Transactional(readOnly = true)
-    public Launcher getLauncherById(Long id) throws ServiceException {
+    public Launcher getLauncherById(Long id) {
         return launcherMapper.getLauncherById(id);
     }
 
     @Transactional(readOnly = true)
-    public Launcher getLauncherByJobId(Long id) throws ServiceException {
-        return launcherMapper.getLauncherByJobId(id);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Launcher> getAllLaunchers() throws ServiceException {
+    public List<Launcher> getAllLaunchers() {
         return launcherMapper.getAllLaunchers();
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Launcher updateLauncher(Launcher launcher) throws ServiceException {
+    public Launcher updateLauncher(Launcher launcher) {
         launcherMapper.updateLauncher(launcher);
         return launcher;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteLauncherById(Long id) throws ServiceException {
+    public void deleteLauncherById(Long id) {
         launcherMapper.deleteLauncherById(id);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteAutoScannedLaunchersByScmAccountId(Long scmAccountId) throws ServiceException {
+    public void deleteAutoScannedLaunchersByScmAccountId(Long scmAccountId) {
         launcherMapper.deleteAutoScannedLaunchersByScmAccountId(scmAccountId);
     }
 
@@ -197,8 +192,10 @@ public class LauncherService {
         jobParameters.put("zafira_service_url", apiUrl.replace("api", TenancyContext.getTenantName()));
         jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, TenancyContext.getTenantName()));
 
-        String args = jobParameters.entrySet().stream().filter(param -> !Arrays.asList(JenkinsService.getRequiredArgs()).contains(param.getKey()))
-                .map(param -> param.getKey() + "=" + param.getValue()).collect(Collectors.joining(","));
+        String args = jobParameters.entrySet().stream()
+                                   .filter(param -> !Arrays.asList(JenkinsService.getRequiredArgs()).contains(param.getKey()))
+                                   .map(param -> param.getKey() + "=" + param.getValue())
+                                   .collect(Collectors.joining(","));
 
         jobParameters.put("overrideFields", args);
 
@@ -214,31 +211,31 @@ public class LauncherService {
         if(scmAccount == null) {
             throw new ServiceException("Scm account not found");
         }
-        String loginName = gitHubService.getLoginName(scmAccount.getAccessToken());
+        String tenantName = TenancyContext.getTenantName();
+        String repositoryName = scmAccount.getRepositoryName();
+        String organizationName = scmAccount.getOrganizationName();
+        String accessToken = scmAccount.getAccessToken();
+        String loginName = gitHubService.getLoginName(accessToken);
 
         Map<String, String> jobParameters = new HashMap<>();
         jobParameters.put("userId", String.valueOf(user.getId()));
         if (StringUtils.isNotEmpty(jenkinsService.context().getFolder())) {
-            jobParameters.put("organization", scmAccount.getOrganizationName());
+            jobParameters.put("organization", organizationName);
         }
-        jobParameters.put("repo", scmAccount.getRepositoryName());
+        jobParameters.put("repo", repositoryName);
         jobParameters.put("branch", branch);
         jobParameters.put("githubUser", loginName);
-        jobParameters.put("githubToken", scmAccount.getAccessToken());
+        jobParameters.put("githubToken", accessToken);
         jobParameters.put("onlyUpdated", String.valueOf(false));
-        jobParameters.put("zafira_service_url", apiUrl.replace("api", TenancyContext.getTenantName()));
-        jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, TenancyContext.getTenantName()));
+        jobParameters.put("zafira_service_url", apiUrl.replace("api", tenantName));
+        jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, tenantName));
 
         String args = jobParameters.entrySet().stream()
                                    .map(param -> param.getKey() + "=" + param.getValue()).collect(Collectors.joining(","));
 
         jobParameters.put("overrideFields", args);
-        JobResult result;
-        if (rescan) {
-            result = jenkinsService.buildReScannerJob(scmAccount.getRepositoryName(), jobParameters);
-        } else {
-            result = jenkinsService.buildScannerJob(jobParameters);
-        }
+
+        JobResult result = jenkinsService.buildScannerJob(repositoryName, jobParameters, rescan);
         if (result == null || !result.isSuccess()) {
             throw new ForbiddenOperationException("Repository scanner job is not started");
         }
@@ -246,17 +243,16 @@ public class LauncherService {
     }
 
     @Transactional(readOnly = true)
-    public JobResult abortScannerJob(String tenantName, long scmAccountId, boolean rescan, Integer buildNumber) {
+    public void abortScannerJob(long scmAccountId, Integer buildNumber, boolean rescan) {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
         if(scmAccount == null) {
             throw new ServiceException("Scm account not found");
         }
-
-        JobResult result = jenkinsService.abortScannerJob(tenantName, scmAccount.getRepositoryName(), rescan, buildNumber);
+        String repositoryName = scmAccount.getRepositoryName();
+        JobResult result = jenkinsService.abortScannerJob(repositoryName, buildNumber, rescan);
         if (result == null || !result.isSuccess()) {
             throw new ForbiddenOperationException("Repository scanner job is not aborted");
         }
-        return result;
     }
 
     public Integer getBuildNumber(String queueItemUrl) {

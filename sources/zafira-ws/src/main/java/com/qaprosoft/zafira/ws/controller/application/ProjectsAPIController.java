@@ -18,7 +18,6 @@ package com.qaprosoft.zafira.ws.controller.application;
 import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.dto.ProjectType;
 import com.qaprosoft.zafira.services.exceptions.ProjectNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.ProjectService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -61,7 +60,7 @@ public class ProjectsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_PROJECTS')")
     @PostMapping()
-    public ProjectType createProject(@RequestBody @Valid ProjectType project) throws ServiceException {
+    public ProjectType createProject(@RequestBody @Valid ProjectType project) {
         Project newProject = projectService.createProject(mapper.map(project, Project.class));
         return mapper.map(newProject, ProjectType.class);
     }
@@ -71,7 +70,7 @@ public class ProjectsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_PROJECTS')")
     @DeleteMapping("/{id}")
-    public void deleteProject(@PathVariable("id") long id) throws ServiceException {
+    public void deleteProject(@PathVariable("id") long id) {
         projectService.deleteProjectById(id);
     }
 
@@ -80,7 +79,7 @@ public class ProjectsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_PROJECTS')")
     @PutMapping()
-    public ProjectType updateProject(@RequestBody @Valid ProjectType project) throws ServiceException {
+    public ProjectType updateProject(@RequestBody @Valid ProjectType project) {
         Project updatedProject = projectService.updateProject(mapper.map(project, Project.class));
         return mapper.map(updatedProject, ProjectType.class);
     }
@@ -89,7 +88,7 @@ public class ProjectsAPIController extends AbstractController {
     @ApiOperation(value = "Get all projects", nickname = "getAllProjects", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping()
-    public List<ProjectType> getAllProjects() throws ServiceException {
+    public List<ProjectType> getAllProjects() {
         List<ProjectType> projects = new ArrayList<>();
         for (Project project : projectService.getAllProjects()) {
             projects.add(mapper.map(project, ProjectType.class));
@@ -101,7 +100,7 @@ public class ProjectsAPIController extends AbstractController {
     @ApiOperation(value = "Get project by name", nickname = "getProjectByName", httpMethod = "GET", response = ProjectType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/{name}")
-    public ProjectType getProjectByName(@PathVariable("name") String name) throws ServiceException {
+    public ProjectType getProjectByName(@PathVariable("name") String name) {
         Project project = projectService.getProjectByName(name);
         if (project == null) {
             throw new ProjectNotFoundException();

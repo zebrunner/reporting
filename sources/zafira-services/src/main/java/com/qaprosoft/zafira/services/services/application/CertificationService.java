@@ -17,7 +17,6 @@ package com.qaprosoft.zafira.services.services.application;
 
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.dto.CertificationType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.integration.impl.ElasticsearchService;
@@ -43,46 +42,51 @@ public class CertificationService {
     private TestRunService testRunService;
 
     @Autowired
-    private TestConfigService testConfigService;
-
-    @Autowired
     private TestService testService;
 
-    public CertificationType getCertificationDetails(Long upstreamJobId, Integer upstreamJobBuildNumber) throws ServiceException {
+    public CertificationType getCertificationDetails(Long upstreamJobId, Integer upstreamJobBuildNumber) {
         if (!elasticsearchService.isClientInitialized()) {
             return null;
         }
         CertificationType certification = new CertificationType();
-
-        for (TestRun testRun : testRunService.getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(upstreamJobId, upstreamJobBuildNumber)) {
-            StringBuilder platform = new StringBuilder(testRun.getPlatform());
-            for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML())) {
-                if ("browser_version".equals(arg.getKey()) && !"*".equals(arg.getValue())) {
-                    platform.append(" ").append(arg.getValue());
-                }
-            }
-
-            insertIntoCertification(certification, testRun.getId(), platform.toString());
-        }
-
+        List<TestRun> testRuns = testRunService.getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(upstreamJobId, upstreamJobBuildNumber);
+        testRuns.forEach(testRun -> {
+            String platformName = buildPlatformName(testRun);
+            insertIntoCertification(certification, testRun.getId(), platformName);
+        });
         return certification;
     }
 
-    private void insertIntoCertification(CertificationType certification, Long testRunId, String platform) throws ServiceException {
+    private String buildPlatformName(TestRun testRun){
+        StringBuilder platform = new StringBuilder(testRun.getPlatform());
+        String browserVersion = testRun.getConfig().getBrowserVersion();
+        if(!"*".equals(browserVersion)) {
+            platform.append(" ").append(browserVersion);
+        }
+        return platform.toString();
+    }
+
+    private void insertIntoCertification(CertificationType certification, Long testRunId, String platform) {
         TestRun testRun = testRunService.getTestRunById(testRunId);
         if (testRun == null) {
             throw new ServiceException("Test run with id " + testRunId + " not found");
         }
         List<Test> tests = testService.getTestsByTestRunId(testRunId);
         tests.forEach(test -> {
-            Map<String, String> screenshotsInfo = elasticsearchService.getScreenshotsInfo(testRun.getCiRunId() + "_" +
-                    test.getCiTestId(), buildIndices(test.getStartTime(), test.getFinishTime()));
-            screenshotsInfo.keySet().forEach(key -> certification.addScreenshot(screenshotsInfo.get(key), platform, key));
+            String correlationId = testRun.getCiRunId() + "_" + test.getCiTestId();
+            String[] indices = buildIndices(test.getStartTime(), test.getFinishTime());
+            Map<String, String> screenshotsInfo = elasticsearchService.getScreenshotsInfo(correlationId, indices);
+            screenshotsInfo.keySet()
+                           .forEach(key -> certification.addScreenshot(screenshotsInfo.get(key), platform, key));
         });
     }
 
     private String[] buildIndices(Date... dates) {
-        return Arrays.stream(dates).map(date -> "logs-" + date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-                .format(FORMATTER)).toArray(String[]::new);
+        return Arrays.stream(dates)
+                     .map(date -> "logs-" + date.toInstant()
+                                                .atZone(ZoneId.systemDefault())
+                                                .toLocalDate()
+                                                .format(FORMATTER))
+                     .toArray(String[]::new);
     }
 }

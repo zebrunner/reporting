@@ -30,7 +30,6 @@ import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TestArtifactService;
 import com.qaprosoft.zafira.services.services.application.TestMetricService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
@@ -103,7 +102,7 @@ public class TestsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping()
     public TestType startTest(@Valid @RequestBody TestType t, @RequestHeader(value = "Project", required = false) String project)
-            throws ServiceException {
+            {
         Test test = testService.startTest(mapper.map(t, Test.class), t.getWorkItems(), t.getConfigXML());
         websocketTemplate.convertAndSend(
                 getStatisticsWebsocketPath(),
@@ -117,7 +116,7 @@ public class TestsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/{id}/finish")
     public TestType finishTest(@ApiParam(value = "Test ID", required = true) @PathVariable("id") long id, @RequestBody TestType t)
-            throws ServiceException {
+            {
         t.setId(id);
         Test test = testService.finishTest(mapper.map(t, Test.class), t.getConfigXML());
         testService.deleteQueuedTest(test);
@@ -134,7 +133,7 @@ public class TestsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_TESTS')")
     @PutMapping()
-    public Test updateTest(@RequestBody Test test) throws ServiceException, InterruptedException {
+    public Test updateTest(@RequestBody Test test) {
         Test updatedTest = testService.changeTestStatus(test.getId(), test.getStatus());
 
         websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService
@@ -151,7 +150,7 @@ public class TestsAPIController extends AbstractController {
     @PostMapping("/{id}/workitems")
     public TestType createTestWorkItems(
             @ApiParam(value = "Work item ID", required = true) @PathVariable("id") long id,
-            @RequestBody List<String> workItems) throws ServiceException {
+            @RequestBody List<String> workItems) {
         return mapper.map(testService.createTestWorkItems(id, workItems), TestType.class);
     }
 
@@ -159,7 +158,7 @@ public class TestsAPIController extends AbstractController {
     @ApiOperation(value = "Delete test by id", nickname = "deleteTest", httpMethod = "DELETE")
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @DeleteMapping("/{id}")
-    public void deleteTest(@ApiParam(value = "Test ID", required = true) @PathVariable("id") long id) throws ServiceException {
+    public void deleteTest(@ApiParam(value = "Test ID", required = true) @PathVariable("id") long id) {
         testService.deleteTestById(id);
     }
 
@@ -167,7 +166,7 @@ public class TestsAPIController extends AbstractController {
     @ApiOperation(value = "Search tests", nickname = "searchTests", httpMethod = "POST", response = SearchResult.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/search")
-    public SearchResult<Test> searchTests(@RequestBody TestSearchCriteria sc) throws ServiceException {
+    public SearchResult<Test> searchTests(@RequestBody TestSearchCriteria sc) {
         return testService.searchTests(sc);
     }
 
@@ -177,7 +176,7 @@ public class TestsAPIController extends AbstractController {
     @GetMapping("/{id}/workitem/{type}")
     public List<WorkItem> getTestCaseWorkItemsByType(
             @ApiParam(value = "Test ID", required = true) @PathVariable("id") long id,
-            @PathVariable("type") String type) throws ServiceException {
+            @PathVariable("type") String type) {
         List<WorkItem> workItems = new ArrayList<>();
         Test test = testService.getTestById(id);
         if (test != null) {
@@ -192,7 +191,7 @@ public class TestsAPIController extends AbstractController {
     @PostMapping("/{id}/workitem")
     public WorkItem createOrUpdateTestWorkItem(
             @ApiParam(value = "Test ID", required = true) @PathVariable("id") long id,
-            @RequestBody WorkItem workItem) throws ServiceException, InterruptedException {
+            @RequestBody WorkItem workItem) {
         if (getPrincipalId() > 0) {
             workItem.setUser(new User(getPrincipalId()));
         }
@@ -219,7 +218,7 @@ public class TestsAPIController extends AbstractController {
     @PutMapping("/{id}/issues")
     public WorkItem updateTestKnownIssue(
             @ApiParam(value = "Test ID", required = true) @PathVariable("id") long id,
-            @RequestBody WorkItem workItem) throws ServiceException {
+            @RequestBody WorkItem workItem) {
         Test test = testService.getTestById(id);
         workItem.setHashCode(testService.getTestMessageHashCode(test.getMessage()));
         return workItemService.updateWorkItem(workItem);
@@ -231,7 +230,7 @@ public class TestsAPIController extends AbstractController {
     @DeleteMapping("/{testId}/workitem/{workItemId}")
     public void deleteTestWorkItem(
             @PathVariable("workItemId") long workItemId,
-            @PathVariable("testId") long testId) throws ServiceException, InterruptedException {
+            @PathVariable("testId") long testId) {
         Test test = testService.getTestById(testId);
         WorkItem workItem = workItemService.getWorkItemById(workItemId);
         if (workItem.getType() == Type.BUG) {
@@ -269,7 +268,7 @@ public class TestsAPIController extends AbstractController {
     @PostMapping("/{id}/artifacts")
     public void addTestArtifact(
             @ApiParam(value = "Test ID", required = true) @PathVariable("id") long id,
-            @RequestBody TestArtifactType artifact) throws ServiceException {
+            @RequestBody TestArtifactType artifact) {
         artifact.setTestId(id);
         testArtifactService.createOrUpdateTestArtifact(mapper.map(artifact, TestArtifact.class));
         // Updating web client with latest artifacts

@@ -167,24 +167,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-client</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-json</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.owlike</groupId>
-			<artifactId>genson</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.pubnub</groupId>
-			<artifactId>pubnub</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 		</dependency>
@@ -192,16 +174,6 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.igniterealtime.smack</groupId>
-			<artifactId>smack</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.igniterealtime.smack</groupId>
-			<artifactId>smackx</artifactId>
 		</dependency>
 
 		<dependency>
@@ -279,11 +251,6 @@
 		<dependency>
 			<groupId>in.ashwanthkumar</groupId>
 			<artifactId>slack-java-webhook</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>ru.yandex.qatools.ashot</groupId>
-			<artifactId>ashot</artifactId>
 		</dependency>
 
 		<dependency>

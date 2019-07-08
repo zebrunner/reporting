@@ -18,7 +18,6 @@ package com.qaprosoft.zafira.ws.controller.application;
 import com.qaprosoft.zafira.models.db.Attachment;
 import com.qaprosoft.zafira.models.dto.EmailType;
 import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.EmailService;
 import com.qaprosoft.zafira.services.services.application.emails.CommonEmail;
 import com.qaprosoft.zafira.services.services.application.integration.impl.AmazonService;
@@ -61,14 +60,14 @@ public class UploadController extends AbstractController {
     @ApiOperation(value = "Upload file", nickname = "uploadFile", httpMethod = "POST", response = String.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping()
-    public String uploadFile(@RequestHeader("FileType") Type type, @RequestParam("file") MultipartFile file) throws ServiceException {
+    public String uploadFile(@RequestHeader("FileType") Type type, @RequestParam("file") MultipartFile file) {
         return String.format("{\"url\": \"%s\"}", amazonService.saveFile(new FileUploadType(file, type)));
     }
 
     @ApiOperation(value = "Send image by email", nickname = "sendImageByEmail", httpMethod = "POST")
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/email")
-    public void sendImageByEmail(@RequestPart("file") MultipartFile file, @RequestPart("email") EmailType email) throws ServiceException, IOException {
+    public void sendImageByEmail(@RequestPart("file") MultipartFile file, @RequestPart("email") EmailType email) throws IOException {
         List<Attachment> attachments = new ArrayList<>();
         File attachment = File.createTempFile(
                 FilenameUtils.getName(file.getOriginalFilename()),

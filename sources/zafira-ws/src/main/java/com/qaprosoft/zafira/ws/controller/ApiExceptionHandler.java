@@ -183,7 +183,7 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Object handleOtherException(Exception e) throws ServiceException {
+    public Object handleOtherException(Exception e) {
         if (debugMode) {
             throw new ServiceException(e);
         }

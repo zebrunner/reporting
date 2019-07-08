@@ -16,7 +16,6 @@
 package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.SlackService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
@@ -50,7 +49,7 @@ public class SlackAPIController extends AbstractController {
     @ApiOperation(value = "Send notification on testrun review", nickname = "sendReviewNotification", httpMethod = "GET")
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/testrun/{id}/review")
-    public void sendOnReviewNotification(@PathVariable("id") long id) throws ServiceException {
+    public void sendOnReviewNotification(@PathVariable("id") long id) {
         TestRun testRun = testRunService.getTestRunByIdFull(id);
         slackService.sendStatusReviewed(testRun);
     }
@@ -61,7 +60,7 @@ public class SlackAPIController extends AbstractController {
     @GetMapping("/testrun/{ciRunId}/finish")
     public void sendOnFinishNotification(
             @PathVariable("ciRunId") String ciRunId,
-            @RequestParam(value = "channels", required = false) String channels) throws ServiceException {
+            @RequestParam(value = "channels", required = false) String channels) {
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
         testRun.setSlackChannels(channels);
         testRunService.updateTestRun(testRun);

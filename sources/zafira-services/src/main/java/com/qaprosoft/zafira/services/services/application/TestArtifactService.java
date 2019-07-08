@@ -15,8 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,25 +32,10 @@ public class TestArtifactService {
         testArtifactMapper.createTestArtifact(testArtifact);
     }
 
-    @Transactional(readOnly = true)
-    public List<TestArtifact> getAllTestArtifacts(Long testId) {
-        return testArtifactMapper.getTestArtifactsByTestId(testId);
-    }
-
-    @Transactional(readOnly = true)
-    public TestArtifact getTestArtifactById(long id) {
-        return testArtifactMapper.getTestArtifactById(id);
-    }
-
     @Transactional(rollbackFor = Exception.class)
     public TestArtifact updateTestArtifact(TestArtifact testArtifact) {
         testArtifactMapper.updateTestArtifact(testArtifact);
         return testArtifact;
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteTestArtifactById(Long id) {
-        testArtifactMapper.deleteTestArtifactById(id);
     }
 
     @Transactional(rollbackFor = Exception.class)

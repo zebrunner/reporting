@@ -16,7 +16,6 @@
 package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.dto.CertificationType;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.CertificationService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +35,9 @@ public class CertificationAPIController extends AbstractController {
     private CertificationService certificationService;
 
     @GetMapping("/details")
-    public CertificationType getCertifcationDetails(
+    public CertificationType getCertificationDetails(
             @RequestParam("upstreamJobId") Long upstreamJobId,
-            @RequestParam("upstreamJobBuildNumber") Integer upstreamJobBuildNumber) throws ServiceException {
+            @RequestParam("upstreamJobBuildNumber") Integer upstreamJobBuildNumber) {
         return certificationService.getCertificationDetails(upstreamJobId, upstreamJobBuildNumber);
     }
 

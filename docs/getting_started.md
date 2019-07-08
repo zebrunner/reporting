@@ -21,7 +21,7 @@ Before running Zafira, verify that following ports are not binded:
 #### Startup in Docker
 * Clone Zafira repo:
 ```
-$ git clone git@github.com:qaprosoft/zafira.git
+$ git clone https://github.com/qaprosoft/zafira.git
 ```
 
 * If you are planning to access Zafira remotely you will need to modify **docker-compose.yml** specifying appropriate IP address of your host:
@@ -49,7 +49,7 @@ e8a2d32590ed        qaprosoft/postgres:9.6              "docker-entrypoint.s…"
 
 * Open Zafira in your browser:
 ```
-http://localhost:8080/zafira
+http://localhost:80/app
 ```
 
 * Use default credentials to login:

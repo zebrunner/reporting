@@ -85,7 +85,7 @@ public class WidgetsAPIController extends AbstractController {
     @PostMapping()
     public WidgetType createWidget(
             @RequestBody @Valid WidgetType widget,
-            @RequestHeader(value = "Project", required = false) String project) throws ServiceException {
+            @RequestHeader(value = "Project", required = false) String project) {
         if (widget.getWidgetTemplate() != null) {
             WidgetTemplate widgetTemplate = widgetTemplateService.getWidgetTemplateById(widget.getWidgetTemplate().getId());
             if (widgetTemplate == null) {
@@ -102,7 +102,7 @@ public class WidgetsAPIController extends AbstractController {
     @ApiOperation(value = "Get widget", nickname = "getWidget", httpMethod = "GET", response = Widget.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/{id}")
-    public Widget getWidget(@PathVariable("id") long id) throws ServiceException {
+    public Widget getWidget(@PathVariable("id") long id) {
         return widgetService.getWidgetById(id);
     }
 
@@ -111,7 +111,7 @@ public class WidgetsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_WIDGETS')")
     @DeleteMapping("/{id}")
-    public void deleteWidget(@PathVariable("id") long id) throws ServiceException {
+    public void deleteWidget(@PathVariable("id") long id) {
         widgetService.deleteWidgetById(id);
     }
 
@@ -120,7 +120,7 @@ public class WidgetsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_WIDGETS')")
     @PutMapping()
-    public Widget updateWidget(@RequestBody WidgetType widget) throws ServiceException {
+    public Widget updateWidget(@RequestBody WidgetType widget) {
         if (widget.getWidgetTemplate() != null) {
             WidgetTemplate widgetTemplate = widgetTemplateService
                     .getWidgetTemplateById(widget.getWidgetTemplate().getId());
@@ -143,7 +143,7 @@ public class WidgetsAPIController extends AbstractController {
             @RequestParam(value = "projects", defaultValue = "", required = false) List<String> projects,
             @RequestParam(value = "currentUserId", required = false) String currentUserId,
             @RequestParam(value = "dashboardName", required = false) String dashboardName,
-            @RequestParam(value = "stackTraceRequired", required = false) boolean stackTraceRequired) throws ServiceException {
+            @RequestParam(value = "stackTraceRequired", required = false) boolean stackTraceRequired) {
         String query = sql.getSql();
         List<Map<String, Object>> resultList = null;
         try {
@@ -198,7 +198,7 @@ public class WidgetsAPIController extends AbstractController {
     @ApiOperation(value = "Get all widgets", nickname = "getAllWidgets", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping()
-    public List<WidgetType> getAllWidgets() throws ServiceException {
+    public List<WidgetType> getAllWidgets() {
         return widgetService.getAllWidgets()
                 .stream()
                 .map(widget -> {
@@ -211,7 +211,7 @@ public class WidgetsAPIController extends AbstractController {
     @ApiOperation(value = "Get all widget templates", nickname = "getAllWidgetTemplates", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/templates")
-    public List<WidgetTemplateType> getAllWidgetTemplates() throws ServiceException {
+    public List<WidgetTemplateType> getAllWidgetTemplates() {
         return widgetTemplateService.getWidgetTemplates()
                 .stream()
                 .map(widgetTemplate -> mapper.map(widgetTemplate, WidgetTemplateType.class))
@@ -222,7 +222,7 @@ public class WidgetsAPIController extends AbstractController {
     @ApiOperation(value = "Prepare widget template data by id", nickname = "prepareWidgetTemplateById", httpMethod = "GET", response = WidgetTemplateType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/templates/{id}/prepare")
-    public WidgetTemplateType prepareWidgetTemplate(@PathVariable("id") Long id) throws ServiceException {
+    public WidgetTemplateType prepareWidgetTemplate(@PathVariable("id") Long id) {
         return mapper.map(widgetTemplateService.prepareWidgetTemplateById(id), WidgetTemplateType.class);
     }
 
@@ -232,7 +232,7 @@ public class WidgetsAPIController extends AbstractController {
     @PostMapping("/templates/sql")
     public List<Map<String, Object>> executeSQLTemplate(
             @RequestBody @Valid SQLExecuteType sqlExecuteType,
-            @RequestParam(value = "stackTraceRequired", required = false) boolean stackTraceRequired) throws ServiceException {
+            @RequestParam(value = "stackTraceRequired", required = false) boolean stackTraceRequired) {
         WidgetTemplate widgetTemplate = widgetTemplateService.getWidgetTemplateById(sqlExecuteType.getTemplateId());
         if (widgetTemplate == null) {
             throw new ServiceException("Unable to execute SQL query.");

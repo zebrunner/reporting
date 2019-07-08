@@ -16,7 +16,6 @@
 package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.Permission;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.PermissionService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.Api;
@@ -47,7 +46,7 @@ public class PermissionsAPIController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
     @GetMapping()
-    public List<Permission> getAllPermissions() throws ServiceException {
+    public List<Permission> getAllPermissions() {
         return permissionService.getAllPermissions();
     }
 

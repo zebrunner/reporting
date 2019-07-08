@@ -24,61 +24,51 @@ import org.springframework.transaction.annotation.Transactional;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.WorkItemMapper;
 import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.db.WorkItem.Type;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
 public class WorkItemService {
+
     @Autowired
     private WorkItemMapper workItemMapper;
 
     @Transactional(rollbackFor = Exception.class)
-    public void createWorkItem(WorkItem workItem) throws ServiceException {
+    public void createWorkItem(WorkItem workItem) {
         workItemMapper.createWorkItem(workItem);
     }
 
     @Transactional(readOnly = true)
-    public WorkItem getWorkItemById(long id) throws ServiceException {
+    public WorkItem getWorkItemById(long id) {
         return workItemMapper.getWorkItemById(id);
     }
 
     @Transactional(readOnly = true)
-    public WorkItem getWorkItemByJiraIdAndType(String jiraId, Type type) throws ServiceException {
+    public WorkItem getWorkItemByJiraIdAndType(String jiraId, Type type) {
         return workItemMapper.getWorkItemByJiraIdAndType(jiraId, type);
     }
 
     @Transactional(readOnly = true)
-    public WorkItem getWorkItemByTestCaseIdAndHashCode(long testCaseId, int hashCode) throws ServiceException {
+    public WorkItem getWorkItemByTestCaseIdAndHashCode(long testCaseId, int hashCode) {
         return workItemMapper.getWorkItemByTestCaseIdAndHashCode(testCaseId, hashCode);
     }
 
     @Transactional(readOnly = true)
-    public List<WorkItem> getWorkItemsByTestCaseIdAndType(long testCaseId, Type type) throws ServiceException {
+    public List<WorkItem> getWorkItemsByTestCaseIdAndType(long testCaseId, Type type) {
         return workItemMapper.getWorkItemsByTestCaseIdAndType(testCaseId, type);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public WorkItem updateWorkItem(WorkItem workItem) throws ServiceException {
+    public WorkItem updateWorkItem(WorkItem workItem) {
         workItemMapper.updateWorkItem(workItem);
         return workItem;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteWorkItemById(long id) throws ServiceException {
-        workItemMapper.deleteWorkItemById(id);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteWorkItem(WorkItem workItem) throws ServiceException {
-        workItemMapper.deleteWorkItem(workItem);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteKnownIssuesByTestId(long testId) throws ServiceException {
+    public void deleteKnownIssuesByTestId(long testId) {
         workItemMapper.deleteKnownIssuesByTestId(testId);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public WorkItem createOrGetWorkItem(WorkItem newWorkItem) throws ServiceException {
+    public WorkItem createOrGetWorkItem(WorkItem newWorkItem) {
         WorkItem workItem = getWorkItemByJiraIdAndType(newWorkItem.getJiraId(), newWorkItem.getType());
         if (workItem == null) {
             createWorkItem(newWorkItem);

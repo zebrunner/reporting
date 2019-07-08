@@ -15,16 +15,47 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_URL;
-import static com.qaprosoft.zafira.models.db.Status.*;
-import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestRunMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
+import com.qaprosoft.zafira.models.db.Job;
+import com.qaprosoft.zafira.models.db.Project;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.Test;
+import com.qaprosoft.zafira.models.db.TestConfig;
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.db.config.Argument;
+import com.qaprosoft.zafira.models.db.config.Configuration;
+import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
+import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.services.exceptions.IntegrationException;
+import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
+import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
+import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
+import com.qaprosoft.zafira.services.util.FreemarkerUtil;
+import com.qaprosoft.zafira.services.util.URLResolver;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.LocalDateTime;
+import org.joda.time.Seconds;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,41 +68,15 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-
-import com.qaprosoft.zafira.models.db.*;
-import com.qaprosoft.zafira.services.util.URLResolver;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.LocalDateTime;
-import org.joda.time.Seconds;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestRunMapper;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
-import com.qaprosoft.zafira.models.db.config.Argument;
-import com.qaprosoft.zafira.models.db.config.Configuration;
-import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
-import com.qaprosoft.zafira.models.dto.TestRunStatistics;
-import com.qaprosoft.zafira.services.exceptions.IntegrationException;
-import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
-import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
-import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
-import com.qaprosoft.zafira.services.util.FreemarkerUtil;
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_URL;
+import static com.qaprosoft.zafira.models.db.Status.ABORTED;
+import static com.qaprosoft.zafira.models.db.Status.FAILED;
+import static com.qaprosoft.zafira.models.db.Status.IN_PROGRESS;
+import static com.qaprosoft.zafira.models.db.Status.PASSED;
+import static com.qaprosoft.zafira.models.db.Status.QUEUED;
+import static com.qaprosoft.zafira.models.db.Status.SKIPPED;
+import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
+import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.readArguments;
 
 @Service
 public class TestRunService {
@@ -140,17 +145,17 @@ public class TestRunService {
                     });
 
     @Transactional(rollbackFor = Exception.class)
-    public void createTestRun(TestRun testRun) throws ServiceException {
+    public void createTestRun(TestRun testRun) {
         testRunMapper.createTestRun(testRun);
     }
 
     @Transactional(readOnly = true)
-    public TestRun getTestRunById(long id) throws ServiceException {
+    public TestRun getTestRunById(long id) {
         return testRunMapper.getTestRunById(id);
     }
 
     @Transactional(readOnly = true)
-    public TestRun getNotNullTestRunById(long id) throws ServiceException {
+    public TestRun getNotNullTestRunById(long id) {
         TestRun testRun = getTestRunById(id);
         if (testRun == null) {
             throw new TestRunNotFoundException();
@@ -159,62 +164,45 @@ public class TestRunService {
     }
 
     @Transactional(readOnly = true)
-    public SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc) throws ServiceException {
+    public SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc) {
         actualizeSearchCriteriaDate(sc);
         SearchResult<TestRun> results = new SearchResult<>();
         results.setPage(sc.getPage());
         results.setPageSize(sc.getPageSize());
         results.setSortOrder(sc.getSortOrder());
         List<TestRun> testRuns = testRunMapper.searchTestRuns(sc);
-        for (TestRun testRun : testRuns) {
-            if (!StringUtils.isEmpty(testRun.getConfigXML())) {
-                for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML())) {
-                    if (!StringUtils.isEmpty(arg.getValue())) {
-                        if ("browser_version".equals(arg.getKey()) && !arg.getValue().equals("*") && !arg.getValue().equals("")
-                                && arg.getValue() != null) {
-                            testRun.setPlatform(testRun.getPlatform() + " " + arg.getValue());
-                        }
-                    }
-                }
-            }
-        }
         results.setResults(testRuns);
         results.setTotalResults(testRunMapper.getTestRunsSearchCount(sc));
         return results;
     }
 
     @Transactional(readOnly = true)
-    public TestRun getTestRunByCiRunId(String ciRunId) throws ServiceException {
+    public TestRun getTestRunByCiRunId(String ciRunId) {
         return !StringUtils.isEmpty(ciRunId) ? testRunMapper.getTestRunByCiRunId(ciRunId) : null;
     }
 
     @Transactional(readOnly = true)
-    public TestRun getTestRunByIdFull(long id) throws ServiceException {
+    public TestRun getTestRunByIdFull(long id) {
         return testRunMapper.getTestRunByIdFull(id);
     }
 
     @Transactional(readOnly = true)
-    public TestRun getTestRunByIdFull(String id) throws ServiceException {
+    public TestRun getTestRunByIdFull(String id) {
         return id.matches("\\d+") ? testRunMapper.getTestRunByIdFull(Long.valueOf(id)) : getTestRunByCiRunIdFull(id);
     }
 
     @Transactional(readOnly = true)
-    public TestRun getTestRunByCiRunIdFull(String ciRunId) throws ServiceException {
+    public TestRun getTestRunByCiRunIdFull(String ciRunId) {
         return testRunMapper.getTestRunByCiRunIdFull(ciRunId);
     }
 
     @Transactional(readOnly = true)
-    public List<TestRun> getTestRunsByStatusAndStartedBefore(Status status, Date startedBefore) throws ServiceException {
-        return testRunMapper.getTestRunsByStatusAndStartedBefore(status, startedBefore);
-    }
-
-    @Transactional(readOnly = true)
-    public List<TestRun> getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(Long jobId, Integer buildNumber) throws ServiceException {
+    public List<TestRun> getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(Long jobId, Integer buildNumber) {
         return testRunMapper.getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(jobId, buildNumber);
     }
 
     @Transactional(readOnly = true)
-    public Map<Long, TestRun> getLatestJobTestRuns(String env, List<Long> jobIds) throws ServiceException {
+    public Map<Long, TestRun> getLatestJobTestRuns(String env, List<Long> jobIds) {
         Map<Long, TestRun> jobTestRuns = new HashMap<>();
         for (TestRun tr : testRunMapper.getLatestJobTestRuns(env, jobIds)) {
             jobTestRuns.put(tr.getJob().getId(), tr);
@@ -223,12 +211,12 @@ public class TestRunService {
     }
 
     @Transactional(readOnly = true)
-    public TestRun getLatestJobTestRunByBranchAndJobURL(String branch, String jobURL) throws ServiceException {
+    public TestRun getLatestJobTestRunByBranchAndJobURL(String branch, String jobURL) {
         return testRunMapper.getLatestJobTestRunByBranch(branch, jobsService.getJobByJobURL(jobURL).getId());
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TestRun queueTestRun(QueueTestRunParamsType queueTestRunParams, User user) throws ServiceException {
+    public TestRun queueTestRun(QueueTestRunParamsType queueTestRunParams, User user) {
         TestRun testRun;
         // Check if testRun with provided ci_run_id exists in DB (mostly for queued and aborted without execution)
         TestRun existingRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
@@ -298,25 +286,19 @@ public class TestRunService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TestRun updateTestRun(TestRun testRun) throws ServiceException {
+    public TestRun updateTestRun(TestRun testRun) {
         testRunMapper.updateTestRun(testRun);
         return testRun;
     }
 
     @CacheEvict(value = "environments", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
-    public void deleteTestRun(TestRun testRun) throws ServiceException {
-        testRunMapper.deleteTestRun(testRun);
-    }
-
-    @CacheEvict(value = "environments", allEntries = true)
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteTestRunById(Long id) throws ServiceException {
+    public void deleteTestRunById(Long id) {
         testRunMapper.deleteTestRunById(id);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TestRun startTestRun(TestRun testRun) throws ServiceException {
+    public TestRun startTestRun(TestRun testRun) {
         if (!StringUtils.isEmpty(testRun.getCiRunId())) {
             TestRun existingTestRun = testRunMapper.getTestRunByCiRunId(testRun.getCiRunId());
             if (existingTestRun != null) {
@@ -374,7 +356,7 @@ public class TestRunService {
         return testRun;
     }
 
-    public void initTestRunWithXml(TestRun testRun) throws ServiceException {
+    public void initTestRunWithXml(TestRun testRun) {
         if (!StringUtils.isEmpty(testRun.getConfigXML())) {
             TestConfig config = testConfigService.createTestConfigForTestRun(testRun.getConfigXML());
             testRun.setConfig(config);
@@ -389,7 +371,7 @@ public class TestRunService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TestRun abortTestRun(TestRun testRun, String abortCause) throws ServiceException {
+    public TestRun abortTestRun(TestRun testRun, String abortCause) {
         if (testRun != null) {
             List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
             if (IN_PROGRESS.equals(testRun.getStatus()) || QUEUED.equals(testRun.getStatus()) && isBuildFailure(abortCause)) {
@@ -408,7 +390,7 @@ public class TestRunService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TestRun markAsReviewed(Long id, String comment) throws ServiceException {
+    public TestRun markAsReviewed(Long id, String comment) {
         TestRun tr = addComment(id, comment);
         if (!"undefined failure".equalsIgnoreCase(comment)) {
             tr.setReviewed(true);
@@ -420,12 +402,12 @@ public class TestRunService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public List<TestRun> getTestRunsForSmartRerun(JobSearchCriteria sc) throws ServiceException {
+    public List<TestRun> getTestRunsForSmartRerun(JobSearchCriteria sc) {
         return testRunMapper.getTestRunsForSmartRerun(sc);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TestRun calculateTestRunResult(long id, boolean finishTestRun) throws ServiceException {
+    public TestRun calculateTestRunResult(long id, boolean finishTestRun) {
         TestRun testRun = getNotNullTestRunById(id);
 
         List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
@@ -476,7 +458,7 @@ public class TestRunService {
     }
 
     @Transactional(readOnly = true)
-    public Map<Long, Map<String, Test>> createCompareMatrix(List<Long> testRunIds) throws ServiceException {
+    public Map<Long, Map<String, Test>> createCompareMatrix(List<Long> testRunIds) {
         Map<Long, Map<String, Test>> testNamesWithTests = new HashMap<>();
         Set<String> testNames = new HashSet<>();
         for (Long id : testRunIds) {
@@ -496,8 +478,10 @@ public class TestRunService {
     }
 
     @Transactional(readOnly = true)
-    public String sendTestRunResultsEmail(final String testRunId, boolean showOnlyFailures, boolean showStacktrace, final String... recipients)
-            throws ServiceException, JAXBException {
+    public String sendTestRunResultsEmail(final String testRunId,
+                                          boolean showOnlyFailures,
+                                          boolean showStacktrace,
+                                          final String... recipients) {
         TestRun testRun = getTestRunByIdFull(testRunId);
         if (testRun == null) {
             throw new TestRunNotFoundException("No test runs found by ID: " + testRunId);
@@ -506,9 +490,12 @@ public class TestRunService {
         return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
     }
 
-    public String sendTestRunResultsNotification(final TestRun testRun, final List<Test> tests, boolean showOnlyFailures, boolean showStacktrace,
-            final String... recipients) throws ServiceException, JAXBException {
-        Configuration configuration = readConfiguration(testRun.getConfigXML());
+    public String sendTestRunResultsNotification(final TestRun testRun,
+                                                 final List<Test> tests,
+                                                 boolean showOnlyFailures,
+                                                 boolean showStacktrace,
+                                                 final String... recipients) {
+        Configuration configuration = readArguments(testRun.getConfigXML());
         // Forward from API to Web
         configuration.getArg().add(new Argument("zafira_service_url", urlResolver.buildWebURL()));
         for (Test test : tests) {
@@ -529,12 +516,12 @@ public class TestRunService {
     }
 
     @Transactional(readOnly = true)
-    public String exportTestRunHTML(final String id) throws ServiceException, JAXBException {
+    public String exportTestRunHTML(final String id) {
         TestRun testRun = getTestRunByIdFull(id);
         if (testRun == null) {
             throw new TestRunNotFoundException("No test runs found by ID: " + id);
         }
-        Configuration configuration = readConfiguration(testRun.getConfigXML());
+        Configuration configuration = readArguments(testRun.getConfigXML());
         configuration.getArg().add(new Argument("zafira_service_url", urlResolver.buildWebURL()));
 
         List<Test> tests = testService.getTestsByTestRunId(id);
@@ -545,23 +532,13 @@ public class TestRunService {
         return freemarkerUtil.getFreeMarkerTemplateContent(email.getType().getTemplateName(), email);
     }
 
-    public Configuration readConfiguration(String xml) throws JAXBException {
-        Configuration configuration = new Configuration();
-        if (!StringUtils.isEmpty(xml)) {
-            ByteArrayInputStream xmlBA = new ByteArrayInputStream(xml.getBytes());
-            configuration = (Configuration) JAXBContext.newInstance(Configuration.class).createUnmarshaller().unmarshal(xmlBA);
-            IOUtils.closeQuietly(xmlBA);
-        }
-        return configuration;
-    }
-
     public static int calculateSuccessRate(TestRun testRun) {
         int total = testRun.getPassed() + testRun.getFailed() + testRun.getSkipped();
         double rate = (double) testRun.getPassed() / (double) total;
         return total > 0 ? (new BigDecimal(rate).setScale(2, RoundingMode.HALF_UP).multiply(new BigDecimal(100))).intValue() : 0;
     }
 
-    public boolean isBuildFailure(String comments) {
+    private boolean isBuildFailure(String comments) {
         boolean failure = false;
         if (StringUtils.isNotEmpty(comments)) {
             if (comments.contains(FailureCause.BUILD_FAILURE.getCause()) ||
@@ -574,7 +551,7 @@ public class TestRunService {
     }
 
     @Transactional
-    public TestRun addComment(long id, String comment) throws ServiceException {
+    public TestRun addComment(long id, String comment) {
         TestRun testRun = getTestRunById(id);
         if (testRun == null) {
             throw new ServiceException("No test run found by ID: " + id);
@@ -586,12 +563,12 @@ public class TestRunService {
 
     @Transactional(readOnly = true)
     @Cacheable(value = "environments", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #result", condition = "#result != null && #result.size() != 0")
-    public List<String> getEnvironments() throws ServiceException {
+    public List<String> getEnvironments() {
         return testRunMapper.getEnvironments();
     }
 
     @Transactional(readOnly = true)
-    public List<String> getPlatforms() throws ServiceException {
+    public List<String> getPlatforms() {
         return testRunMapper.getPlatforms();
     }
 

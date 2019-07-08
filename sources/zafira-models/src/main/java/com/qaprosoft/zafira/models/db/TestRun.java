@@ -15,17 +15,13 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.joda.time.LocalDateTime;
-import org.joda.time.Seconds;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @JsonInclude(Include.NON_NULL)
 public class TestRun extends AbstractEntity {
@@ -393,13 +389,4 @@ public class TestRun extends AbstractEntity {
         this.config = config;
     }
 
-    public Integer getCountdown() {
-        Integer countdown = null;
-        if (Status.IN_PROGRESS.equals(this.status) && this.startedAt != null && this.eta != null) {
-            LocalDateTime from = new LocalDateTime(this.startedAt.getTime());
-            LocalDateTime to = new LocalDateTime(Calendar.getInstance().getTime());
-            countdown = Math.max(0, this.eta - Seconds.secondsBetween(from, to).getSeconds());
-        }
-        return countdown;
-    }
 }

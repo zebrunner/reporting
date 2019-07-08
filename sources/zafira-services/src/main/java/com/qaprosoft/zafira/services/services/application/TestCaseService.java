@@ -33,7 +33,6 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestCaseSearchCriteria;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestCase;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 import static com.qaprosoft.zafira.services.util.DateFormatter.*;
 
@@ -53,7 +52,7 @@ public class TestCaseService {
                     });
 
     @Transactional(rollbackFor = Exception.class)
-    public void createTestCase(TestCase testCase) throws ServiceException {
+    public void createTestCase(TestCase testCase) {
         if (testCase.getStatus() == null) {
             testCase.setStatus(Status.UNKNOWN);
         }
@@ -61,29 +60,24 @@ public class TestCaseService {
     }
 
     @Transactional(readOnly = true)
-    public TestCase getTestCaseById(long id) throws ServiceException {
+    public TestCase getTestCaseById(long id) {
         return testCaseMapper.getTestCaseById(id);
     }
 
     @Transactional(readOnly = true)
     @Cacheable(value = "testCases", key = "{ T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #userId, T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #testClass,  T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #testMethod }")
-    public TestCase getOwnedTestCase(Long userId, String testClass, String testMethod) throws ServiceException {
+    public TestCase getOwnedTestCase(Long userId, String testClass, String testMethod) {
         return testCaseMapper.getOwnedTestCase(userId, testClass, testMethod);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TestCase updateTestCase(TestCase testCase) throws ServiceException {
+    public TestCase updateTestCase(TestCase testCase) {
         testCaseMapper.updateTestCase(testCase);
         return testCase;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteTestCase(TestCase testCase) throws ServiceException {
-        testCaseMapper.deleteTestCase(testCase);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public TestCase createOrUpdateCase(TestCase newTestCase) throws ServiceException, ExecutionException {
+    public TestCase createOrUpdateCase(TestCase newTestCase) throws ExecutionException {
         final String CLASS_METHOD = newTestCase.getTestClass() + "." + newTestCase.getTestMethod();
         try {
             // Locking by class name and method name to avoid concurrent save of the same test case https://github.com/qaprosoft/zafira/issues/46
@@ -105,7 +99,7 @@ public class TestCaseService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TestCase[] createOrUpdateCases(TestCase[] newTestCases) throws ServiceException, ExecutionException {
+    public TestCase[] createOrUpdateCases(TestCase[] newTestCases) throws ExecutionException {
         int index = 0;
         for (TestCase newTestCase : newTestCases) {
             newTestCases[index++] = createOrUpdateCase(newTestCase);
@@ -114,7 +108,7 @@ public class TestCaseService {
     }
 
     @Transactional(readOnly = true)
-    public SearchResult<TestCase> searchTestCases(TestCaseSearchCriteria sc) throws ServiceException {
+    public SearchResult<TestCase> searchTestCases(TestCaseSearchCriteria sc) {
         actualizeSearchCriteriaDate(sc);
         SearchResult<TestCase> results = new SearchResult<>();
         results.setPage(sc.getPage());

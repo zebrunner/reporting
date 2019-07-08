@@ -17,7 +17,6 @@ package com.qaprosoft.zafira.services.services.application;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserPreferenceMapper;
 import com.qaprosoft.zafira.models.db.UserPreference;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,83 +27,64 @@ import static com.qaprosoft.zafira.models.db.UserPreference.Name.DEFAULT_DASHBOA
 
 @Service
 public class UserPreferenceService {
+
     @Autowired
     private UserPreferenceMapper userPreferenceMapper;
 
     @Transactional(rollbackFor = Exception.class)
-    public void createDefaultUserPreferences(long userId) throws ServiceException {
+    public void createDefaultUserPreferences(long userId) {
         userPreferenceMapper.createUserPreferences(userId, getDefaultUserPreferences());
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void createUserPreference(UserPreference userPreference) throws ServiceException {
+    public void createUserPreference(UserPreference userPreference) {
         userPreferenceMapper.createUserPreference(userPreference);
     }
 
     @Transactional(readOnly = true)
-    public List<UserPreference> getAllUserPreferences(Long userId) throws ServiceException {
+    public List<UserPreference> getAllUserPreferences(Long userId) {
         return userPreferenceMapper.getUserPreferencesByUserId(userId);
     }
 
     @Transactional(readOnly = true)
-    public List<UserPreference> getDefaultUserPreferences() throws ServiceException {
+    public List<UserPreference> getDefaultUserPreferences() {
         return userPreferenceMapper.getDefaultUserPreferences();
     }
 
     @Transactional(readOnly = true)
-    public UserPreference getUserPreferenceById(long id) throws ServiceException {
-        return userPreferenceMapper.getUserPreferenceById(id);
-    }
-
-    @Transactional(readOnly = true)
-    public List<UserPreference> getUserPreferencesByNameAndDashboardTitle(UserPreference.Name name, String title) throws ServiceException {
+    public List<UserPreference> getUserPreferencesByNameAndDashboardTitle(UserPreference.Name name, String title) {
         return userPreferenceMapper.getUserPreferencesByNameAndDashboardTitle(name, title);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public UserPreference updateUserPreference(UserPreference userPreference) throws ServiceException {
+    public UserPreference updateUserPreference(UserPreference userPreference) {
         userPreferenceMapper.updateUserPreference(userPreference);
         return userPreference;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public List<UserPreference> updateUserPreferences(long userId, List<UserPreference> userPreferences) throws ServiceException {
+    public List<UserPreference> updateUserPreferences(long userId, List<UserPreference> userPreferences) {
         userPreferenceMapper.updateUserPreferences(userId, userPreferences);
         return userPreferences;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public List<UserPreference> resetUserPreferencesToDefault1(long userId) throws ServiceException {
-        return updateUserPreferences(userId, getDefaultUserPreferences());
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteUserPreferenceById(Long id) throws ServiceException {
-        userPreferenceMapper.deleteUserPreferenceById(id);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public String getDefaultPreferenceValue(String name) throws ServiceException {
-        return userPreferenceMapper.getDefaultPreferenceValue(name);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteUserPreferencesByUserId(Long userId) throws ServiceException {
+    public void deleteUserPreferencesByUserId(Long userId) {
         userPreferenceMapper.deleteUserPreferencesByUserId(userId);
     }
 
     @Transactional(readOnly = true)
-    public UserPreference getUserPreferenceByNameAndUserId(String name, long userId) throws ServiceException {
+    public UserPreference getUserPreferenceByNameAndUserId(String name, long userId) {
         return userPreferenceMapper.getUserPreferenceByNameAndUserId(name, userId);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public List<UserPreference> resetUserPreferencesToDefault(long userId) throws ServiceException {
+    public List<UserPreference> resetUserPreferencesToDefault(long userId) {
         return updateUserPreferences(userId, getDefaultUserPreferences());
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public UserPreference createOrUpdateUserPreference(UserPreference newUserPreference) throws ServiceException {
+    public UserPreference createOrUpdateUserPreference(UserPreference newUserPreference) {
         UserPreference userPreference = getUserPreferenceByNameAndUserId(newUserPreference.getName().name(), newUserPreference.getUserId());
         if (userPreference == null) {
             createUserPreference(newUserPreference);
@@ -118,7 +98,7 @@ public class UserPreferenceService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void updateDefaultDashboardPreference(String fromTitle, String toTitle) throws ServiceException {
+    public void updateDefaultDashboardPreference(String fromTitle, String toTitle) {
         List<UserPreference> userPreferences = getUserPreferencesByNameAndDashboardTitle(DEFAULT_DASHBOARD, fromTitle);
         for (UserPreference userPreference : userPreferences) {
             userPreference.setValue(toTitle);

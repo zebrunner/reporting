@@ -39,7 +39,6 @@ import com.qaprosoft.zafira.models.db.Setting.Tool;
 import com.qaprosoft.zafira.models.dto.ConnectedToolType;
 import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.ElasticsearchService;
@@ -65,7 +64,7 @@ public class SettingsService {
     }
 
     @Transactional(readOnly = true)
-    public Setting getSettingByName(String name) throws ServiceException {
+    public Setting getSettingByName(String name) {
         return settingsMapper.getSettingByName(name);
     }
 
@@ -75,7 +74,7 @@ public class SettingsService {
     }
 
     @Transactional(readOnly = true)
-    public List<Setting> getSettingsByEncrypted(boolean isEncrypted) throws ServiceException {
+    public List<Setting> getSettingsByEncrypted(boolean isEncrypted) {
         return settingsMapper.getSettingsByEncrypted(isEncrypted);
     }
 
@@ -87,7 +86,7 @@ public class SettingsService {
     }
 
     @Transactional(readOnly = true)
-    public List<Setting> getSettingsByTool(Tool tool) throws ServiceException {
+    public List<Setting> getSettingsByTool(Tool tool) {
         List<Setting> result;
         if (tool == Tool.ELASTICSEARCH) {
             result = getElasticsearchService().getSettings();
@@ -97,13 +96,8 @@ public class SettingsService {
         return result;
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteSettingById(long id) throws ServiceException {
-        settingsMapper.deleteSettingById(id);
-    }
-
     @Transactional(readOnly = true)
-    public List<Setting> getAllSettings() throws ServiceException {
+    public List<Setting> getAllSettings() {
         return settingsMapper.getAllSettings();
     }
 
@@ -112,12 +106,12 @@ public class SettingsService {
     }
 
     @Transactional(readOnly = true)
-    public String getSettingValue(Setting.SettingType type) throws ServiceException {
+    public String getSettingValue(Setting.SettingType type) {
         return getSettingByName(type.name()).getValue();
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ConnectedToolType updateSettings(List<Setting> settings) throws ServiceException {
+    public ConnectedToolType updateSettings(List<Setting> settings) {
         ConnectedToolType connectedTool = null;
         if (!CollectionUtils.isEmpty(settings)) {
             Tool tool = settings.get(0).getTool();
@@ -136,22 +130,16 @@ public class SettingsService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Setting updateSetting(Setting setting) throws ServiceException {
+    public Setting updateSetting(Setting setting) {
         setting.setValue(StringUtils.isBlank(setting.getValue() != null ? setting.getValue().trim() : null) ? null : setting.getValue());
         settingsMapper.updateSetting(setting);
         return setting;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void updateIntegrationSetting(Setting setting) throws ServiceException {
+    public void updateIntegrationSetting(Setting setting) {
         setting.setValue(StringUtils.isBlank(setting.getValue() != null ? setting.getValue().trim() : null) ? null : setting.getValue());
         settingsMapper.updateIntegrationSetting(setting);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public Setting createSetting(Setting setting) {
-        settingsMapper.createSetting(setting);
-        return setting;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -193,7 +181,7 @@ public class SettingsService {
     }
 
     @Transactional(readOnly = true)
-    public String getPostgresVersion() throws ServiceException {
+    public String getPostgresVersion() {
         return settingsMapper.getPostgresVersion();
     }
 

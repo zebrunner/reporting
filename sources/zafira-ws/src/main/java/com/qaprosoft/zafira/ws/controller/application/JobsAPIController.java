@@ -23,7 +23,6 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.JobType;
 import com.qaprosoft.zafira.models.dto.JobUrlType;
 import com.qaprosoft.zafira.models.dto.JobViewType;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.JobsService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
 import com.qaprosoft.zafira.services.services.application.UserService;
@@ -78,7 +77,7 @@ public class JobsAPIController extends AbstractController {
     @ApiOperation(value = "Create job", nickname = "createJob", httpMethod = "POST", response = JobType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping()
-    public JobType createJob(@RequestBody @Valid JobType job) throws ServiceException {
+    public JobType createJob(@RequestBody @Valid JobType job) {
         return mapper.map(jobsService.createOrUpdateJob(mapper.map(job, Job.class)), JobType.class);
     }
 
@@ -86,7 +85,7 @@ public class JobsAPIController extends AbstractController {
     @ApiOperation(value = "Create job by url", nickname = "createJobByUrl", httpMethod = "POST", response = JobType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/url")
-    public JobType createJobByUrl(@RequestBody @Valid JobUrlType jobUrl) throws ServiceException {
+    public JobType createJobByUrl(@RequestBody @Valid JobUrlType jobUrl) {
         User user = userService.getUserById(getPrincipalId());
         return mapper.map(jobsService.createOrUpdateJobByURL(jobUrl.getJobUrlValue(), user), JobType.class);
     }
@@ -95,7 +94,7 @@ public class JobsAPIController extends AbstractController {
     @ApiOperation(value = "Get all jobs", nickname = "getAllJobs", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping()
-    public List<Job> getAllJobs() throws ServiceException {
+    public List<Job> getAllJobs() {
         return jobsService.getAllJobs();
     }
 
@@ -104,7 +103,7 @@ public class JobsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/views/{id}/tests/runs")
     public Map<Long, TestRun> getLatestJobTestRuns(@QueryParam("env") String env, @RequestBody @Valid List<JobViewType> jobViews)
-            throws ServiceException {
+            {
         List<Long> jobIds = jobViews.stream()
                 .map(JobViewType::getJob)
                 .map(AbstractEntity::getId)
@@ -117,7 +116,7 @@ public class JobsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/views")
     @Secured({ "ROLE_ADMIN" })
-    public List<JobViewType> createJobViews(@RequestBody @Valid List<JobViewType> jobViews) throws ServiceException {
+    public List<JobViewType> createJobViews(@RequestBody @Valid List<JobViewType> jobViews) {
         for (JobViewType jobView : jobViews) {
             jobView = mapper.map(jobsService.createJobView(mapper.map(jobView, JobView.class)), JobViewType.class);
         }
@@ -132,7 +131,7 @@ public class JobsAPIController extends AbstractController {
     public List<JobViewType> updateJobViews(
             @RequestBody @Valid List<JobViewType> jobViews,
             @PathVariable("id") long viewId,
-            @QueryParam("env") String env) throws ServiceException {
+            @QueryParam("env") String env) {
         if (!CollectionUtils.isEmpty(jobViews)) {
             jobsService.deleteJobViews(viewId, env);
             for (JobViewType jobView : jobViews) {
@@ -147,7 +146,7 @@ public class JobsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/views/{id}")
     public Map<String, List<JobViewType>> getJobViews(@PathVariable("id") long id)
-            throws ServiceException {
+            {
         Map<String, List<JobViewType>> jobViews = new LinkedHashMap<>();
         for (JobView jobView : jobsService.getJobViewsByViewId(id)) {
             if (!jobViews.containsKey(jobView.getEnv())) {
@@ -162,7 +161,7 @@ public class JobsAPIController extends AbstractController {
     @ApiOperation(value = "Delete job views", nickname = "deleteJobViews", httpMethod = "DELETE")
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @DeleteMapping("views/{id}")
-    public void deleteJobViews(@PathVariable("id") long viewId, @QueryParam("env") String env) throws ServiceException {
+    public void deleteJobViews(@PathVariable("id") long viewId, @QueryParam("env") String env) {
         jobsService.deleteJobViews(viewId, env);
     }
 

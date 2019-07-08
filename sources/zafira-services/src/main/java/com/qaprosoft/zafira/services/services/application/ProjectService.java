@@ -27,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.ProjectMapper;
 import com.qaprosoft.zafira.models.db.Project;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
 public class ProjectService {
@@ -36,32 +35,32 @@ public class ProjectService {
 
     @CachePut(value = "projects", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #project.name", condition = "#project != null && #project.name != null")
     @Transactional(rollbackFor = Exception.class)
-    public Project createProject(Project project) throws ServiceException {
+    public Project createProject(Project project) {
         projectMapper.createProject(project);
         return project;
     }
 
     @Transactional(readOnly = true)
-    public List<Project> getAllProjects() throws ServiceException {
+    public List<Project> getAllProjects() {
         return projectMapper.getAllProjects();
     }
 
     @Cacheable(value = "projects", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #name", condition = "#name != null")
     @Transactional(readOnly = true)
-    public Project getProjectByName(String name) throws ServiceException {
+    public Project getProjectByName(String name) {
         return !StringUtils.isEmpty(name) ? projectMapper.getProjectByName(name) : null;
     }
 
     @CacheEvict(value = "projects", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
-    public Project updateProject(Project project) throws ServiceException {
+    public Project updateProject(Project project) {
         projectMapper.updateProject(project);
         return project;
     }
 
     @CacheEvict(value = "projects", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
-    public void deleteProjectById(Long id) throws ServiceException {
+    public void deleteProjectById(Long id) {
         projectMapper.deleteProjectById(id);
     }
 }

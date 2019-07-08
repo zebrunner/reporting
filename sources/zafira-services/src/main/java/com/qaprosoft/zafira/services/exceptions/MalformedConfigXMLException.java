@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.services.util;
+package com.qaprosoft.zafira.services.exceptions;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+public class MalformedConfigXMLException extends ServiceException {
 
-import org.apache.commons.codec.binary.Hex;
+    private static final long serialVersionUID = -3103208478340435949L;
 
-public class Tokenizer {
-    private SecureRandom prng;
-    private MessageDigest sha;
-
-    public Tokenizer(String srAlg, String mdAlg) throws NoSuchAlgorithmException {
-        this.prng = SecureRandom.getInstance("SHA1PRNG");
-        this.sha = MessageDigest.getInstance("SHA-1");
+    public MalformedConfigXMLException() {
+        super();
     }
 
-    public String randomToken() {
-        return new String(Hex.encodeHex(sha.digest(Integer.toString(prng.nextInt()).getBytes())));
+    public MalformedConfigXMLException(String message) {
+        super(message);
+    }
+
+    public MalformedConfigXMLException(Throwable cause) {
+        super(cause);
+    }
+
+    public MalformedConfigXMLException(String message, Throwable cause) {
+        super(message, cause);
     }
 }
