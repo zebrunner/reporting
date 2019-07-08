@@ -111,32 +111,46 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
         return buildJob(ciJob, jobParameters);
     }
 
-    public JobResult buildScannerJob(Map<String, String> jobParameters) {
-        String scannerJobUrl;
-        String jenkinsFolder = context().getFolder();
-        if (StringUtils.isEmpty(jenkinsFolder)) {
-            scannerJobUrl = String.format(SCANNER_JOB_ROOT_URL_PATTERN, context().getJenkinsHost());
-        } else {
-            scannerJobUrl = String.format(SCANNER_JOB_URL_PATTERN, context().getJenkinsHost(), jenkinsFolder);
-        }
-        return buildJob(scannerJobUrl, jobParameters);
+    public JobResult buildScannerJob(String repositoryName, Map<String, String> jobParameters, boolean rescan) {
+        String jobUrl = buildJobUrl(repositoryName, rescan);
+        return buildJob(jobUrl, jobParameters);
     }
 
-    public JobResult buildReScannerJob(String repositoryName, Map<String, String> jobParameters) {
-        String scannerJobUrl;
-        String jenkinsFolder = context().getFolder();
-        if (StringUtils.isEmpty(jenkinsFolder)) {
-            scannerJobUrl = String.format(RESCANNER_JOB_ROOT_URL_PATTERN, context().getJenkinsHost(), repositoryName, repositoryName);
-        } else {
-            scannerJobUrl = String.format(RESCANNER_JOB_URL_PATTERN, context().getJenkinsHost(), jenkinsFolder, repositoryName, repositoryName);
-        }
-        return buildJob(scannerJobUrl, jobParameters);
+    public JobResult abortScannerJob(String repositoryName, Integer buildNumber, boolean rescan) {
+        String jobUrl = buildJobUrl(repositoryName, rescan);
+        return abortJob(jobUrl, buildNumber);
     }
 
-    public JobResult abortScannerJob(String tenantName, String repositoryName, boolean rescan, Integer buildNumber) {
-        String scannerJobUrl = rescan ? String.format(RESCANNER_JOB_URL_PATTERN, context().getJenkinsHost(), tenantName, repositoryName, repositoryName) :
-                String.format(SCANNER_JOB_URL_PATTERN, context().getJenkinsHost(), tenantName);
-        return abortJob(scannerJobUrl, buildNumber);
+    private String buildJobUrl(String repositoryName, boolean rescan){
+        String jenkinsFolder = context().getFolder();
+        String jenkinsHost = context().getJenkinsHost();
+        String jobUrl;
+        if(rescan) {
+            jobUrl = formatReScannerJobUrl(jenkinsFolder, jenkinsHost, repositoryName);
+        } else {
+            jobUrl = formatScannerJobUrl(jenkinsFolder, jenkinsHost);
+        }
+        return jobUrl;
+    }
+
+    private String formatReScannerJobUrl(String jenkinsFolder, String jenkinsHost, String repositoryName){
+        String reScannerJobUrl;
+        if (StringUtils.isEmpty(jenkinsFolder)) {
+            reScannerJobUrl = String.format(RESCANNER_JOB_ROOT_URL_PATTERN, jenkinsHost, repositoryName, repositoryName);
+        } else {
+            reScannerJobUrl = String.format(RESCANNER_JOB_URL_PATTERN, jenkinsHost, jenkinsFolder, repositoryName, repositoryName);
+        }
+        return reScannerJobUrl;
+    }
+
+    private String formatScannerJobUrl(String jenkinsFolder, String jenkinsHost){
+        String scannerJobUrl;
+        if (StringUtils.isEmpty(jenkinsFolder)) {
+            scannerJobUrl = String.format(SCANNER_JOB_ROOT_URL_PATTERN, jenkinsHost);
+        } else {
+            scannerJobUrl = String.format(SCANNER_JOB_URL_PATTERN, jenkinsHost, jenkinsFolder);
+        }
+        return scannerJobUrl;
     }
 
     private JobResult buildJob(String jobUrl, Map<String, String> jobParameters) {

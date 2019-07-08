@@ -34,7 +34,7 @@ public class PasswordType implements Serializable {
 
     @NotEmpty(message = "Password required")
     @Size(min = 8, max = 50, message = "Too short password")
-    @Pattern(regexp = "^[A-Za-z0-9_@!#]+$")
+    @Pattern(regexp = "^[A-Za-z0-9_@!#\"$%&'()*+,-./:;<>=?\\[\\]\\\\^`{}|~]+$")
     protected String password;
 
     public Long getUserId() {

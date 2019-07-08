@@ -95,24 +95,30 @@
                 </td>
             </tr>
             </#if>
-            <tr class="pass" style="color: #66C266;">
-                <td>Passed: </td>
-                <td>${testRun.passed}</td>
-            </tr>
-            <tr class="fail" style="color: #FF5C33;">
-                <td>Failed|Known|Blockers:</td>
-                <td>${testRun.failed} | ${testRun.failedAsKnown} | ${testRun.failedAsBlocker}</td>
-            </tr>
-            <tr class="skip" style="color: #FFD700;">
-                <td>Skipped:</td>
-                <td>${testRun.skipped}</td>
-            </tr>
             <tr>
                 <td>Success rate:</td>
                 <td>
                     ${successRate}%
+                    <#if (testRun.passed > 0)>
+                        Passed: ${testRun.passed}
+                    </#if>
+                    <#if (testRun.failed > 0)>
+                        Failed: ${testRun.failed}
+                    </#if>
+                    <#if (testRun.failedAsKnown > 0)>
+                        Known issue: ${testRun.failedAsKnown}
+                    </#if>
+                    <#if (testRun.failedAsBlocker > 0)>
+                        Blockers: ${testRun.failedAsBlocker}
+                    </#if>
+                    <#if (testRun.skipped > 0)>
+                        Skipped: ${testRun.skipped}
+                    </#if>
+                    <#if (testRun.queued > 0)>
+                        Queued: ${testRun.queued}
+                    </#if>
                     <#if successRate?number != 100>
-                         <a href="${testRun.job.jobURL}/${testRun.buildNumber?c}/rebuild/parameterized">(Rebuild)</a>
+                        <a href="${testRun.job.jobURL}/${testRun.buildNumber?c}/rebuild/parameterized">(Rebuild)</a>
                     </#if>
                 </td>
 
@@ -203,19 +209,32 @@
 	            			</#if>
 	            		</td>
                         <td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
-	                        <#list test.workItems as workItem>
-	                            <#if workItem.type == 'BUG'>
-	                                <a href='${jiraURL}/browse/${workItem.jiraId}' target="_blank" style="background: #d9534f; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">
+                            <#list test.workItems as workItem>
+                                <#if workItem.type == 'BUG' && (jiraURL?contains('atlassian') || jiraURL?contains('jira'))>
+                                    <a href='${jiraURL}/browse/${workItem.jiraId}' target="_blank"
+                                       style="background: #d9534f; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">
                                         <#if workItem.blocker?? && workItem.blocker>
                                             <span>BLOCKER<br/></span>
                                         </#if>
                                         ${workItem.jiraId}
                                     </a>
-	                            </#if>
-	                            <#if workItem.type == 'TASK'>
-	                                <a href='${jiraURL}/browse/${workItem.jiraId}' target="_blank" style="background: #337ab7; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">${workItem.jiraId}</a>
-	                            </#if>
-	                        </#list>
+                                <#elseif workItem.type == 'BUG'>
+                                    <a href='${jiraURL}/${workItem.jiraId}' target="_blank"
+                                       style="background: #d9534f; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">
+                                        <#if workItem.blocker?? && workItem.blocker>
+                                            <span>BLOCKER<br/></span>
+                                        </#if>
+                                        ${workItem.jiraId}
+                                    </a>
+                                </#if>
+                                <#if workItem.type == 'TASK' && (jiraURL?contains('atlassian') || jiraURL?contains('jira'))>
+                                    <a href='${jiraURL}/browse/${workItem.jiraId}' target="_blank"
+                                       style="background: #337ab7; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">${workItem.jiraId}</a>
+                                <#elseif workItem.type == 'TASK'>
+                                    <a href='${jiraURL}/${workItem.jiraId}' target="_blank"
+                                       style="background: #337ab7; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">${workItem.jiraId}</a>
+                                </#if>
+                            </#list>
 	                    </td>
                         <td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
                             <#if configuration['zafira_service_url']?? && (configuration['zafira_service_url'] != 'NULL') && (configuration['zafira_service_url'] != '')>
