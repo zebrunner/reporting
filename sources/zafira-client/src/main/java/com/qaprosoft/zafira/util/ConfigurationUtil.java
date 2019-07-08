@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.util;
 
+import com.qaprosoft.zafira.config.CiConfig;
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -26,15 +27,32 @@ import org.apache.commons.configuration2.tree.MergeCombiner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.UUID;
+
 import static com.qaprosoft.zafira.client.ClientDefaults.ZAFIRA_PROPERTIES_FILE;
 
 public class ConfigurationUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationUtil.class);
 
-    private static final String ERR_MSG_INIT_CONFIG = "Unable to initialize a configuration";
+    private static final String ERR_MSG_INIT_CONFIG = "Unable to initialize a configuration '%s'";
 
     private static CombinedConfiguration configuration;
+
+    public static CiConfig retrieveCiConfig(CombinedConfiguration config) {
+        return new CiConfig.Builder()
+                .setCiRunId(config.getString("ci_run_id", UUID.randomUUID().toString()))
+                .setCiUrl(config.getString("ci_url", "http://localhost:8080/job/unavailable"))
+                .setCiBuild(config.getString("ci_build", null))
+                .setCiBuildCause(config.getString("ci_build_cause", "MANUALTRIGGER"))
+                .setCiParentUrl(config.getString("ci_parent_url", null))
+                .setCiParentBuild(config.getString("ci_parent_build", null))
+
+                .setGitBranch(config.getString("git_branch", null))
+                .setGitCommit(config.getString("git_commit", null))
+                .setGitUrl(config.getString("git_url", null))
+                .build();
+    }
 
     public static CombinedConfiguration getConfiguration() {
         return getConfiguration(true);
@@ -50,10 +68,18 @@ public class ConfigurationUtil {
             config.addConfiguration(new SystemConfiguration());
             config.addConfiguration(getZafiraPropertiesConfiguration());
         } catch (ConfigurationException e) {
-            LOGGER.error(ERR_MSG_INIT_CONFIG, e);
+            String message = String.format(ERR_MSG_INIT_CONFIG, ZAFIRA_PROPERTIES_FILE);
+            LOGGER.error(message, e);
         }
         configuration = config;
         return config;
+    }
+
+    public static void addSystemConfiguration(String key, String value) {
+        System.setProperty(key, value);
+        if(configuration != null) {
+            configuration.addConfiguration(new SystemConfiguration());
+        }
     }
 
     private static FileBasedConfiguration getZafiraPropertiesConfiguration() throws ConfigurationException {

@@ -16,11 +16,11 @@
 package com.qaprosoft.zafira.client;
 
 import com.qaprosoft.zafira.client.impl.ZafiraClientImpl;
+import com.qaprosoft.zafira.listener.domain.ZafiraConfiguration;
 import com.qaprosoft.zafira.util.AsyncUtil;
 import com.qaprosoft.zafira.util.ConfigurationUtil;
 import com.qaprosoft.zafira.util.http.HttpClient;
 import org.apache.commons.configuration2.CombinedConfiguration;
-import org.apache.commons.lang3.StringUtils;
 
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 
@@ -48,9 +48,9 @@ public enum ZafiraSingleton {
                 // and CombinedConfiguration doesn`t save singleton initialization 'injection'
                 // config.setThrowExceptionOnMissing(false);
 
-                boolean enabled = config.getBoolean("zafira_enabled", false);
-                String url = config.getString("zafira_service_url", StringUtils.EMPTY);
-                String token = config.getString("zafira_access_token", StringUtils.EMPTY);
+                boolean enabled = (Boolean) ZafiraConfiguration.ENABLED.get(config);
+                String url = (String) ZafiraConfiguration.SERVICE_URL.get(config);
+                String token = (String) ZafiraConfiguration.ACCESS_TOKEN.get(config);
 
                 zafiraClient = new ZafiraClientImpl(url);
                 if (enabled && zafiraClient.isAvailable()) {

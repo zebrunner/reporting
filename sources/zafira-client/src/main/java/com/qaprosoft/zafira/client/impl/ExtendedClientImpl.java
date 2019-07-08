@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.client.impl;
 
 import com.qaprosoft.zafira.client.ExtendedClient;
 import com.qaprosoft.zafira.client.BasicClient;
-import com.qaprosoft.zafira.config.CIConfig;
+import com.qaprosoft.zafira.config.CiConfig;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.dto.JobType;
@@ -146,7 +146,7 @@ public class ExtendedClientImpl implements ExtendedClient {
     }
 
     @Override
-    public TestRunType registerTestRunByHUMAN(Long testSuiteId, Long userId, String configXML, Long jobId, CIConfig ciConfig, TestRun.Initiator startedBy,
+    public TestRunType registerTestRunByHUMAN(Long testSuiteId, Long userId, String configXML, Long jobId, CiConfig ciConfig, TestRun.Initiator startedBy,
                                               String workItem) {
         TestRunType testRun = new TestRunType(ciConfig.getCiRunId(), testSuiteId, userId, ciConfig.getGitUrl(), ciConfig.getGitBranch(),
                 ciConfig.getGitCommit(), configXML, jobId, ciConfig.getCiBuild(), startedBy, workItem);
@@ -169,7 +169,7 @@ public class ExtendedClientImpl implements ExtendedClient {
     }
 
     @Override
-    public TestRunType registerTestRunBySCHEDULER(Long testSuiteId, String configXML, Long jobId, CIConfig ciConfig, TestRun.Initiator startedBy,
+    public TestRunType registerTestRunBySCHEDULER(Long testSuiteId, String configXML, Long jobId, CiConfig ciConfig, TestRun.Initiator startedBy,
                                                   String workItem) {
         TestRunType testRun = new TestRunType(ciConfig.getCiRunId(), testSuiteId, ciConfig.getGitUrl(), ciConfig.getGitBranch(),
                 ciConfig.getGitCommit(), configXML, jobId, ciConfig.getCiBuild(), startedBy, workItem);
@@ -192,7 +192,7 @@ public class ExtendedClientImpl implements ExtendedClient {
     }
 
     @Override
-    public TestRunType registerTestRunUPSTREAM_JOB(Long testSuiteId, String configXML, Long jobId, Long parentJobId, CIConfig ciConfig,
+    public TestRunType registerTestRunUPSTREAM_JOB(Long testSuiteId, String configXML, Long jobId, Long parentJobId, CiConfig ciConfig,
                                                    TestRun.Initiator startedBy, String workItem) {
         TestRunType testRun = new TestRunType(ciConfig.getCiRunId(), testSuiteId, ciConfig.getGitUrl(), ciConfig.getGitBranch(),
                 ciConfig.getGitCommit(), configXML, jobId, parentJobId, ciConfig.getCiParentBuild(),

@@ -20,7 +20,7 @@ import com.qaprosoft.zafira.client.ZafiraClient;
 import com.qaprosoft.zafira.client.ExtendedClient;
 import com.qaprosoft.zafira.client.BasicClient;
 import com.qaprosoft.zafira.client.IntegrationClient;
-import com.qaprosoft.zafira.config.CIConfig;
+import com.qaprosoft.zafira.config.CiConfig;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.dto.JobType;
@@ -246,17 +246,17 @@ public class ZafiraClientImpl implements ZafiraClient {
     }
 
     @Override
-    public TestRunType registerTestRunByHUMAN(Long testSuiteId, Long userId, String configXML, Long jobId, CIConfig ciConfig, TestRun.Initiator startedBy, String workItem) {
+    public TestRunType registerTestRunByHUMAN(Long testSuiteId, Long userId, String configXML, Long jobId, CiConfig ciConfig, TestRun.Initiator startedBy, String workItem) {
         return extendedClient.registerTestRunByHUMAN(testSuiteId, userId, configXML, jobId, ciConfig, startedBy, workItem);
     }
 
     @Override
-    public TestRunType registerTestRunBySCHEDULER(Long testSuiteId, String configXML, Long jobId, CIConfig ciConfig, TestRun.Initiator startedBy, String workItem) {
+    public TestRunType registerTestRunBySCHEDULER(Long testSuiteId, String configXML, Long jobId, CiConfig ciConfig, TestRun.Initiator startedBy, String workItem) {
         return extendedClient.registerTestRunBySCHEDULER(testSuiteId, configXML, jobId, ciConfig, startedBy, workItem);
     }
 
     @Override
-    public TestRunType registerTestRunUPSTREAM_JOB(Long testSuiteId, String configXML, Long jobId, Long parentJobId, CIConfig ciConfig, TestRun.Initiator startedBy, String workItem) {
+    public TestRunType registerTestRunUPSTREAM_JOB(Long testSuiteId, String configXML, Long jobId, Long parentJobId, CiConfig ciConfig, TestRun.Initiator startedBy, String workItem) {
         return extendedClient.registerTestRunUPSTREAM_JOB(testSuiteId, configXML, jobId, parentJobId, ciConfig, startedBy, workItem);
     }
 

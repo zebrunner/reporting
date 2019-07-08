@@ -32,6 +32,7 @@ import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
  * @author akhursevich
  */
 public interface IConfigurator {
+
     ConfigurationType getConfiguration();
 
     String getOwner(SuiteAdapter adapter);

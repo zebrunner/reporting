@@ -16,8 +16,8 @@
 package com.qaprosoft.zafira.listener.impl;
 
 import com.qaprosoft.zafira.client.ZafiraClient;
-import com.qaprosoft.zafira.client.impl.ZafiraClientImpl;
-import com.qaprosoft.zafira.config.CIConfig;
+import com.qaprosoft.zafira.client.ZafiraSingleton;
+import com.qaprosoft.zafira.config.CiConfig;
 import com.qaprosoft.zafira.config.IConfigurator;
 import com.qaprosoft.zafira.listener.TestHookable;
 import com.qaprosoft.zafira.listener.ExcludeTestsForRerun;
@@ -26,27 +26,32 @@ import com.qaprosoft.zafira.listener.adapter.MethodAdapter;
 import com.qaprosoft.zafira.listener.adapter.SuiteAdapter;
 import com.qaprosoft.zafira.listener.adapter.TestResultAdapter;
 import com.qaprosoft.zafira.listener.adapter.TestResultStatus;
+import com.qaprosoft.zafira.listener.domain.CiConfiguration;
+import com.qaprosoft.zafira.listener.domain.ZafiraConfiguration;
+import com.qaprosoft.zafira.listener.service.JobTypeService;
+import com.qaprosoft.zafira.listener.service.ProjectTypeService;
+import com.qaprosoft.zafira.listener.service.TestCaseTypeService;
+import com.qaprosoft.zafira.listener.service.TestTypeService;
+import com.qaprosoft.zafira.listener.service.TestRunTypeService;
+import com.qaprosoft.zafira.listener.service.TestSuiteTypeService;
+import com.qaprosoft.zafira.listener.service.UserTypeService;
+import com.qaprosoft.zafira.listener.service.impl.JobTypeServiceImpl;
+import com.qaprosoft.zafira.listener.service.impl.ProjectTypeServiceImpl;
+import com.qaprosoft.zafira.listener.service.impl.TestCaseTypeServiceImpl;
+import com.qaprosoft.zafira.listener.service.impl.TestTypeServiceImpl;
+import com.qaprosoft.zafira.listener.service.impl.TestRunTypeServiceImpl;
+import com.qaprosoft.zafira.listener.service.impl.TestSuiteTypeServiceImpl;
+import com.qaprosoft.zafira.listener.service.impl.UserTypeServiceImpl;
 import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.dto.JobType;
 import com.qaprosoft.zafira.models.dto.TestCaseType;
 import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.TestSuiteType;
 import com.qaprosoft.zafira.models.dto.TestType;
-import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
-import com.qaprosoft.zafira.util.http.HttpClient;
+import com.qaprosoft.zafira.util.ConfigurationUtil;
 import org.apache.commons.configuration2.CombinedConfiguration;
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.FileBasedConfiguration;
-import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.SystemConfiguration;
-import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
-import org.apache.commons.configuration2.builder.fluent.Parameters;
-import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.apache.commons.configuration2.tree.MergeCombiner;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,8 +71,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.qaprosoft.zafira.client.ClientDefaults.USER;
-import static com.qaprosoft.zafira.client.ClientDefaults.ZAFIRA_PROPERTIES_FILE;
-import static com.qaprosoft.zafira.config.CIConfig.BuildCase.UPSTREAMTRIGGER;
+import static com.qaprosoft.zafira.config.CiConfig.BuildCase.UPSTREAMTRIGGER;
 
 public class ZafiraListenerImpl implements ZafiraListener {
 
@@ -75,34 +79,41 @@ public class ZafiraListenerImpl implements ZafiraListener {
 
     private final static String SKIP_CFG_EXC_MSG = "Skipping configuration method since test class doesn't contain test methods to rerun";
 
-    private static final String ZAFIRA_PROJECT_PARAM = "zafira_project";
     private static final String ZAFIRA_RUN_ID_PARAM = "zafira_run_id";
 
-    private boolean ZAFIRA_ENABLED = false;
-    private String ZAFIRA_URL = null;
-    private String ZAFIRA_ACCESS_TOKEN = null;
-    private String ZAFIRA_PROJECT = null;
-    private boolean ZAFIRA_RERUN_FAILURES = false;
-    private String ZAFIRA_CONFIGURATOR = null;
+    private boolean ZAFIRA_ENABLED;
+    private String ZAFIRA_URL;
+    private String ZAFIRA_PROJECT;
+    private boolean ZAFIRA_RERUN_FAILURES;
+    private String ZAFIRA_CONFIGURATOR;
 
-    private String JIRA_SUITE_ID = null;
+    private String JIRA_SUITE_ID;
 
     private IConfigurator configurator;
-    private CIConfig ci;
+    private CiConfig ci;
     private ZafiraClient zc;
 
-    private UserType user = null;
-    private JobType parentJob = null;
-    private JobType job = null;
-    private TestSuiteType suite = null;
-    private TestRunType run = null;
+    private UserType user;
+    private JobType parentJob;
+    private JobType job;
+    private TestSuiteType suite;
+    private TestRunType run;
     private Map<String, TestType> registeredTests = new HashMap<>();
     private Set<String> classesToRerun = new HashSet<>();
 
     private static ThreadLocal<String> threadCiTestId = new ThreadLocal<>();
     private static ThreadLocal<TestType> threadTest = new ThreadLocal<>();
 
-    private Marshaller marshaller;
+    private TestRunTypeService testRunTypeService;
+    private TestSuiteTypeService testSuiteTypeService;
+    private ProjectTypeService projectTypeService;
+    private UserTypeService userTypeService;
+    private JobTypeService jobTypeService;
+    private TestTypeService testTypeService;
+    private TestCaseTypeService testCaseTypeService;
+
+    public ZafiraListenerImpl() {
+    }
 
     @Override
     public void onSuiteStart(SuiteAdapter adapter) {
@@ -116,51 +127,40 @@ public class ZafiraListenerImpl implements ZafiraListener {
             // context based on need rerun flag. And delete appropriate code
             // from before method and before class
 
-            marshaller = JAXBContext.newInstance(ConfigurationType.class).createMarshaller();
-
             configurator = (IConfigurator) Class.forName(ZAFIRA_CONFIGURATOR).newInstance();
 
             // Override project if specified in XML
-            String project = adapter.getSuiteParameter(ZAFIRA_PROJECT_PARAM);
-            zc.initProject(!StringUtils.isEmpty(project) ? project : ZAFIRA_PROJECT);
+            String project = (String) ZafiraConfiguration.PROJECT.get(adapter);
+            project = !StringUtils.isEmpty(project) ? project : ZAFIRA_PROJECT;
+            projectTypeService.initProject(project);
 
             // Register user who initiated test run
-            this.user = zc.getUserProfile().getObject();
+            this.user = userTypeService.getUserProfile();
 
             // Register test suite along with suite owner
-            UserType suiteOwner = zc.getUserOrAnonymousIfNotFound(configurator.getOwner(adapter));
-            this.suite = zc.registerTestSuite(adapter.getSuiteName(), FilenameUtils.getName(adapter.getSuiteFileName()),
-                    suiteOwner.getId());
+            String owner = configurator.getOwner(adapter);
+            UserType suiteOwner = userTypeService.getUserOrAnonymousIfNotFound(owner);
+            this.suite = testSuiteTypeService.register(adapter.getSuiteName(), adapter.getSuiteFileName(), suiteOwner.getId());
 
             // Register job that triggers test run
-            this.job = zc.registerJob(ci.getCiUrl(), suiteOwner.getId());
+            this.job = jobTypeService.register(ci.getCiUrl(), suiteOwner.getId());
 
             // Register upstream job if required
-            UserType anonymous;
             if (UPSTREAMTRIGGER.equals(ci.getCiBuildCause())) {
-                anonymous = zc.getUserOrAnonymousIfNotFound(USER);
-                parentJob = zc.registerJob(ci.getCiParentUrl(), anonymous.getId());
+                UserType anonymous = userTypeService.getUserOrAnonymousIfNotFound(USER);
+                parentJob = jobTypeService.register(ci.getCiParentUrl(), anonymous.getId());
             }
 
             // Searching for existing test run with same CI run id in case of rerun
             if (!StringUtils.isEmpty(ci.getCiRunId())) {
-                HttpClient.Response<TestRunType> response = zc.getTestRunByCiRunId(ci.getCiRunId());
-                this.run = response.getObject();
+                this.run = testRunTypeService.findTestRunByCiRunId(ci.getCiRunId());
             }
 
             if (this.run != null) {
                 // Already discovered run with the same CI_RUN_ID, it is re-run functionality!
-                // Reset build number for re-run to map to the latest rerun build
-                this.run.setBuildNumber(ci.getCiBuild());
-                // Reset testRun config for rerun in case of queued tests
-                this.run.setConfigXML(convertToXML(configurator.getConfiguration()));
-                // Reset test suite https://github.com/qaprosoft/zafira/issues/1584
-                this.run.setTestSuiteId(suite.getId());
-                // Re-register test run to reset status onto in progress
-                HttpClient.Response<TestRunType> response = zc.startTestRun(this.run);
-                this.run = response.getObject();
+                run = testRunTypeService.rerun(run, ci.getCiBuild(), suite.getId(), configurator.getConfiguration());
 
-                List<TestType> testRunResults = Arrays.asList(zc.getTestRunResults(run.getId()).getObject());
+                List<TestType> testRunResults = testRunTypeService.findTestRunResults(run.getId());
                 for (TestType test : testRunResults) {
                     registeredTests.put(test.getName(), test);
                     if (test.isNeedRerun()) {
@@ -179,33 +179,17 @@ public class ZafiraListenerImpl implements ZafiraListener {
                 }
                 // Register new test run
 
-                switch (ci.getCiBuildCause()) {
-                    case UPSTREAMTRIGGER:
-                        this.run = zc.registerTestRunUPSTREAM_JOB(suite.getId(), convertToXML(configurator.getConfiguration()), job.getId(),
-                                parentJob.getId(), ci, TestRun.Initiator.UPSTREAM_JOB, JIRA_SUITE_ID);
-                        break;
-                    case TIMERTRIGGER:
-                    case SCMTRIGGER:
-                        this.run = zc.registerTestRunBySCHEDULER(suite.getId(), convertToXML(configurator.getConfiguration()), job.getId(), ci,
-                                TestRun.Initiator.SCHEDULER, JIRA_SUITE_ID);
-                        break;
-                    case MANUALTRIGGER:
-                        this.run = zc.registerTestRunByHUMAN(suite.getId(), user.getId(), convertToXML(configurator.getConfiguration()), job.getId(), ci,
-                                TestRun.Initiator.HUMAN, JIRA_SUITE_ID);
-                        break;
-                    default:
-                        throw new RuntimeException("Unable to register test run for zafira service: " + ZAFIRA_URL + " due to the misses build cause: '"
-                                + ci.getCiBuildCause() + "'");
-                }
+                this.run = testRunTypeService.register(run, ci.getCiBuildCause(), suite.getId(), job.getId(), user.getId(), parentJob,
+                        ci, JIRA_SUITE_ID, configurator.getConfiguration());
             }
 
             if (this.run == null) {
                 throw new RuntimeException("Unable to register test run for zafira service: " + ZAFIRA_URL);
             } else {
-                System.setProperty(ZAFIRA_RUN_ID_PARAM, String.valueOf(this.run.getId()));
+                ConfigurationUtil.addSystemConfiguration(ZAFIRA_RUN_ID_PARAM, String.valueOf(this.run.getId()));
             }
 
-            Runtime.getRuntime().addShutdownHook(new TestRunShutdownHook(this.zc, this.run));
+            Runtime.getRuntime().addShutdownHook(new TestRunShutdownHook(testRunTypeService, this.run));
         } catch (Throwable e) {
             ZAFIRA_ENABLED = false;
             LOGGER.error("Undefined error during test run registration!", e);
@@ -214,13 +198,12 @@ public class ZafiraListenerImpl implements ZafiraListener {
 
     @Override
     public void onSuiteFinish() {
-        if (!ZAFIRA_ENABLED)
+        if (!ZAFIRA_ENABLED) {
             return;
+        }
 
         try {
-            // Reset configuration to store for example updated at run-time app_version etc
-            this.run.setConfigXML(convertToXML(configurator.getConfiguration()));
-            zc.registerTestRunResults(this.run);
+            testRunTypeService.registerTestRunResults(run, configurator.getConfiguration());
         } catch (Throwable e) {
             LOGGER.error("Unable to finish test run correctly", e);
         }
@@ -228,32 +211,16 @@ public class ZafiraListenerImpl implements ZafiraListener {
 
     @Override
     public void onTestStart(TestResultAdapter adapter) {
-        if (!ZAFIRA_ENABLED)
+        if (!ZAFIRA_ENABLED) {
             return;
+        }
 
         try {
             TestType startedTest = null;
 
             String testName = configurator.getTestName(adapter);
 
-            // If method owner is not specified then try to use suite owner. If both are not declared then ANONYMOUS will be used.
-            String po = configurator.getPrimaryOwner(adapter);
-            String primaryOwnerName = !StringUtils.isEmpty(po) ? po : configurator.getOwner(adapter.getSuiteAdapter());
-            UserType primaryOwner = zc.getUserOrAnonymousIfNotFound(primaryOwnerName);
-            LOGGER.debug("primaryOwner: " + primaryOwnerName);
-
-            String secondaryOwnerName = configurator.getSecondaryOwner(adapter);
-            UserType secondaryOwner = null;
-            if (!StringUtils.isEmpty(secondaryOwnerName)) {
-                secondaryOwner = zc.getUserOrAnonymousIfNotFound(secondaryOwnerName);
-                LOGGER.debug("secondaryOwner: " + secondaryOwnerName);
-            }
-
-            String testClass = adapter.getMethodAdapter().getTestClassName();
-            String testMethod = configurator.getTestMethodName(adapter);
-
-            TestCaseType testCase = zc.registerTestCase(this.suite.getId(), primaryOwner.getId(),
-                    (secondaryOwner != null ? secondaryOwner.getId() : null), testClass, testMethod);
+            TestCaseType testCase = registerTestCase(adapter);
 
             // Search already registered test!
             if (registeredTests.containsKey(testName)) {
@@ -273,7 +240,7 @@ public class ZafiraListenerImpl implements ZafiraListener {
                  * https://github.com/qaprosoft/carina/issues/707
                  */
                 startedTest.setTags(configurator.getTestTags(adapter));
-                startedTest = zc.registerTestRestart(startedTest);
+                startedTest = testTypeService.registerTestRestart(startedTest);
             }
 
             if (startedTest == null) {
@@ -285,12 +252,11 @@ public class ZafiraListenerImpl implements ZafiraListener {
 
                 String[] dependsOnMethods = adapter.getMethodAdapter().getMethodDependsOnMethods();
 
-                startedTest = zc.registerTestStart(testName, group, Status.IN_PROGRESS, testArgs, run.getId(), testCase.getId(),
-                        configurator.getRunCount(adapter), convertToXML(configurator.getConfiguration()), dependsOnMethods, getThreadCiTestId(),
-                        configurator.getTestTags(adapter));
+                startedTest = testTypeService.registerTestStart(testName, group, Status.IN_PROGRESS, testArgs, run.getId(), testCase.getId(),
+                        configurator.getRunCount(adapter), convertToXML(configurator.getConfiguration()), dependsOnMethods, getThreadCiTestId(), configurator.getTestTags(adapter));
             }
 
-            zc.registerWorkItems(startedTest.getId(), configurator.getTestWorkItems(adapter));
+            testTypeService.registerWorkItems(startedTest.getId(), configurator.getTestWorkItems(adapter));
             // TODO: investigate why we need it
             threadTest.set(startedTest);
             registeredTests.put(testName, startedTest);
@@ -307,14 +273,12 @@ public class ZafiraListenerImpl implements ZafiraListener {
 
     @Override
     public void onTestSuccess(TestResultAdapter adapter) {
-        if (!ZAFIRA_ENABLED)
+        if (!ZAFIRA_ENABLED) {
             return;
+        }
 
         try {
-            HttpClient.Response<TestType> rs = zc.finishTest(populateTestResult(adapter, Status.PASSED, getFullStackTrace(adapter)));
-            if (rs.getStatus() != 200 && rs.getObject() == null) {
-                throw new RuntimeException("Unable to register test " + adapter.getMethodAdapter().getMethodName() + " for zafira service: " + ZAFIRA_URL);
-            }
+            finishTest(adapter, Status.PASSED);
         } catch (Throwable e) {
             LOGGER.error("Undefined error during test case/method finish!", e);
         }
@@ -348,25 +312,8 @@ public class ZafiraListenerImpl implements ZafiraListener {
             // When test is skipped as dependent, reinit test from scratch.
             if (test == null) {
 
-                // If method owner is not specified then try to use suite owner. If both are not declared then ANONYMOUS will be used.
-                String po = configurator.getPrimaryOwner(adapter);
-                String primaryOwnerName = !StringUtils.isEmpty(po) ? po : configurator.getOwner(adapter.getSuiteAdapter());
-                UserType primaryOwner = zc.getUserOrAnonymousIfNotFound(primaryOwnerName);
-                LOGGER.debug("primaryOwner: " + primaryOwnerName);
-
-                String secondaryOwnerName = configurator.getSecondaryOwner(adapter);
-                UserType secondaryOwner = null;
-                if (!StringUtils.isEmpty(secondaryOwnerName)) {
-                    secondaryOwner = zc.getUserOrAnonymousIfNotFound(secondaryOwnerName);
-                    LOGGER.debug("secondaryOwner: " + secondaryOwnerName);
-                }
-
-                String testClass = adapter.getMethodAdapter().getTestClassName();
-                String testMethod = configurator.getTestMethodName(adapter);
-
                 // if not start new test as it is skipped dependent test method
-                TestCaseType testCase = zc.registerTestCase(this.suite.getId(), primaryOwner.getId(),
-                        (secondaryOwner != null ? secondaryOwner.getId() : null), testClass, testMethod);
+                TestCaseType testCase = registerTestCase(adapter);
                 String testArgs = adapter.getParameters().toString();
 
                 String group = adapter.getMethodAdapter().getTestClassName();
@@ -374,17 +321,12 @@ public class ZafiraListenerImpl implements ZafiraListener {
 
                 String[] dependsOnMethods = adapter.getMethodAdapter().getMethodDependsOnMethods();
 
-                test = zc.registerTestStart(testName, group, Status.SKIPPED, testArgs, run.getId(), testCase.getId(),
-                        configurator.getRunCount(adapter), convertToXML(configurator.getConfiguration()), dependsOnMethods, getThreadCiTestId(),
-                        configurator.getTestTags(adapter));
+                test = testTypeService.registerTestStart(testName, group, Status.SKIPPED, testArgs, run.getId(), testCase.getId(),
+                        configurator.getRunCount(adapter), convertToXML(configurator.getConfiguration()), dependsOnMethods, getThreadCiTestId(), configurator.getTestTags(adapter));
                 threadTest.set(test);
             }
 
-            String fullStackTrace = getFullStackTrace(adapter);
-            HttpClient.Response<TestType> rs = zc.finishTest(populateTestResult(adapter, Status.SKIPPED, fullStackTrace));
-            if (rs.getStatus() != 200 && rs.getObject() == null) {
-                throw new RuntimeException("Unable to register test " + adapter.getMethodAdapter().getMethodName() + " for zafira service: " + ZAFIRA_URL);
-            }
+            finishTest(adapter, Status.SKIPPED);
         } catch (Throwable e) {
             LOGGER.error("Undefined error during test case/method finish!", e);
         }
@@ -443,59 +385,38 @@ public class ZafiraListenerImpl implements ZafiraListener {
      * @return if initialization success
      */
     private boolean initializeZafira(SuiteAdapter adapter) {
-        boolean success = false;
         try {
-            CombinedConfiguration config = new CombinedConfiguration(new MergeCombiner());
-            config.setThrowExceptionOnMissing(true);
-            config.addConfiguration(new SystemConfiguration());
-            config.addConfiguration(new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
-                    .configure(new Parameters().properties().setFileName(ZAFIRA_PROPERTIES_FILE)).getConfiguration());
+            CombinedConfiguration config = ConfigurationUtil.getConfiguration();
+            ci = ConfigurationUtil.retrieveCiConfig(config);
 
-            ci = new CIConfig();
-            ci.setCiRunId(config.getString("ci_run_id", UUID.randomUUID().toString()));
-            ci.setCiUrl(config.getString("ci_url", "http://localhost:8080/job/unavailable"));
-            ci.setCiBuild(config.getString("ci_build", null));
-            ci.setCiBuildCause(config.getString("ci_build_cause", "MANUALTRIGGER"));
-            ci.setCiParentUrl(config.getString("ci_parent_url", null));
-            ci.setCiParentBuild(config.getString("ci_parent_build", null));
-
-            ci.setGitBranch(config.getString("git_branch", null));
-            ci.setGitCommit(config.getString("git_commit", null));
-            ci.setGitUrl(config.getString("git_url", null));
-
-            JIRA_SUITE_ID = config.getString("jira_suite_id", null);
-
+            JIRA_SUITE_ID = (String) CiConfiguration.JIRA_SUITE_ID.get(config, adapter);
             ZAFIRA_ENABLED = (Boolean) ZafiraConfiguration.ENABLED.get(config, adapter);
             ZAFIRA_URL = (String) ZafiraConfiguration.SERVICE_URL.get(config, adapter);
-            ZAFIRA_ACCESS_TOKEN = (String) ZafiraConfiguration.ACCESS_TOKEN.get(config, adapter);
             ZAFIRA_PROJECT = (String) ZafiraConfiguration.PROJECT.get(config, adapter);
             ZAFIRA_RERUN_FAILURES = (Boolean) ZafiraConfiguration.RERUN_FAILURES.get(config, adapter);
             ZAFIRA_CONFIGURATOR = (String) ZafiraConfiguration.CONFIGURATOR.get(config, adapter);
 
             if (ZAFIRA_ENABLED) {
-                zc = new ZafiraClientImpl(ZAFIRA_URL);
+                zc = ZafiraSingleton.INSTANCE.getClient();
+                if(zc != null) {
+                    ZAFIRA_ENABLED = zc.isAvailable();
 
-                ZAFIRA_ENABLED = zc.isAvailable();
-
-                if (ZAFIRA_ENABLED) {
-                    HttpClient.Response<AuthTokenType> auth = zc.refreshToken(ZAFIRA_ACCESS_TOKEN);
-                    if (auth.getStatus() == 200) {
-                        zc.setAuthToken(auth.getObject().getType() + " " + auth.getObject().getAccessToken());
-                    } else {
-                        ZAFIRA_ENABLED = false;
-                    }
+                    this.testRunTypeService = new TestRunTypeServiceImpl(zc);
+                    this.testSuiteTypeService = new TestSuiteTypeServiceImpl(zc);
+                    this.projectTypeService = new ProjectTypeServiceImpl(zc);
+                    this.userTypeService = new UserTypeServiceImpl(zc);
+                    this.jobTypeService = new JobTypeServiceImpl(zc);
+                    this.testTypeService = new TestTypeServiceImpl(zc);
+                    this.testCaseTypeService = new TestCaseTypeServiceImpl(zc);
                 }
                 LOGGER.info("Zafira is " + (ZAFIRA_ENABLED ? "available" : "unavailable"));
             }
 
-            success = ZAFIRA_ENABLED;
-        } catch (ConfigurationException e) {
-            LOGGER.error("Unable to locate " + ZAFIRA_PROPERTIES_FILE + ": ", e);
         } catch (NoSuchElementException e) {
             LOGGER.error("Unable to find config property: ", e);
         }
 
-        return success;
+        return ZAFIRA_ENABLED;
     }
 
     /**
@@ -507,6 +428,7 @@ public class ZafiraListenerImpl implements ZafiraListener {
     private String convertToXML(ConfigurationType config) {
         final StringWriter w = new StringWriter();
         try {
+            Marshaller marshaller = JAXBContext.newInstance(ConfigurationType.class).createMarshaller();
             marshaller.marshal(config != null ? config : new ConfigurationType(), w);
         } catch (Throwable thr) {
             LOGGER.error("Unable to convert config to XML!", thr);
@@ -522,38 +444,24 @@ public class ZafiraListenerImpl implements ZafiraListener {
      */
     private String getFullStackTrace(TestResultAdapter adapter) {
         StringBuilder sb = new StringBuilder();
-
         if (adapter.getThrowable() == null) {
             if (adapter.getStatus().getCode() == TestResultStatus.SKIP.getCode()) {
                 // Identify is it due to the dependent failure or exception in before suite/class/method
                 String[] methods = adapter.getMethodAdapter().getMethodDependsOnMethods();
-
                 // Find if any parent method failed/skipped
-                boolean dependentMethod = false;
-                String dependentMethodName = "";
+                String dependentMethodName = null;
                 for (TestResultAdapter failedTestResultAdapter : adapter.getFailedTestResults()) {
-                    for (int i = 0; i < methods.length; i++) {
-                        String failedTestResultAdapterName = failedTestResultAdapter.getName();
-                        if (methods[i].contains(failedTestResultAdapterName)) {
-                            dependentMethodName = failedTestResultAdapterName;
-                            dependentMethod = true;
-                            break;
-                        }
-                    }
+                    String failedTestResultAdapterName = failedTestResultAdapter.getName();
+                    dependentMethodName = getDependentMethodName(methods, failedTestResultAdapterName);
                 }
 
                 for (TestResultAdapter skippedTestResultAdapter : adapter.getSkippedTestResults()) {
-                    for (int i = 0; i < methods.length; i++) {
-                        String skippedTestResultAdapterName = skippedTestResultAdapter.getName();
-                        if (methods[i].contains(skippedTestResultAdapterName)) {
-                            dependentMethodName = skippedTestResultAdapterName;
-                            dependentMethod = true;
-                            break;
-                        }
-                    }
+                    String skippedTestResultAdapterName = skippedTestResultAdapter.getName();
+                    String skippedDependentMethodName = getDependentMethodName(methods, skippedTestResultAdapterName);
+                    dependentMethodName = skippedDependentMethodName != null ? skippedDependentMethodName : dependentMethodName;
                 }
 
-                if (dependentMethod) {
+                if (dependentMethodName != null) {
                     sb.append("Test skipped due to the dependency from: ").append(dependentMethodName);
                 } else {
                     // TODO: find a way to transfer configuration failure message in case of error in before suite/class/method
@@ -561,32 +469,39 @@ public class ZafiraListenerImpl implements ZafiraListener {
             }
         } else {
             sb.append(adapter.getThrowable().getMessage()).append("\n");
-
-            StackTraceElement[] elems = adapter.getThrowable().getStackTrace();
-            for (StackTraceElement elem : elems) {
+            for (StackTraceElement elem : adapter.getThrowable().getStackTrace()) {
                 sb.append("\n").append(elem.toString());
             }
         }
-
         return !StringUtils.isEmpty(sb.toString()) ? sb.toString() : null;
+    }
+
+    private String getDependentMethodName(String[] methods, String testName) {
+        String result = null;
+        boolean contains = Arrays.stream(methods).anyMatch(method -> method.contains(testName));
+        if(contains) {
+            result = testName;
+        }
+        return result;
     }
 
     /**
      * TestRunShutdownHook - aborts test run when CI job is aborted.
      */
     public static class TestRunShutdownHook extends Thread {
-        private ZafiraClient zc;
-        private TestRunType testRun;
 
-        public TestRunShutdownHook(ZafiraClient zc, TestRunType testRun) {
-            this.zc = zc;
+        private final TestRunTypeService testRunTypeService;
+        private final TestRunType testRun;
+
+        TestRunShutdownHook(TestRunTypeService testRunTypeService, TestRunType testRun) {
+            this.testRunTypeService = testRunTypeService;
             this.testRun = testRun;
         }
 
         @Override
         public void run() {
             if (testRun != null) {
-                boolean aborted = zc.abortTestRun(testRun.getId());
+                boolean aborted = testRunTypeService.abort(testRun.getId());
                 LOGGER.info("TestRunShutdownHook was executed with result: " + aborted);
             }
         }
@@ -600,16 +515,11 @@ public class ZafiraListenerImpl implements ZafiraListener {
     }
 
     private void processResultOnTestFailure(TestResultAdapter adapter) {
-        if (!ZAFIRA_ENABLED) {
+        if (!ZAFIRA_ENABLED)
             return;
-        }
 
         try {
-            String fullStackTrace = getFullStackTrace(adapter);
-            HttpClient.Response<TestType> rs = zc.finishTest(populateTestResult(adapter, Status.FAILED, fullStackTrace));
-            if (rs.getStatus() != 200 && rs.getObject() == null) {
-                throw new RuntimeException("Unable to register test " + adapter.getMethodAdapter().getMethodName() + " for zafira service: " + ZAFIRA_URL);
-            }
+            finishTest(adapter, Status.FAILED);
         } catch (Throwable e) {
             LOGGER.error("Undefined error during test case/method finish!", e);
         }
@@ -650,60 +560,30 @@ public class ZafiraListenerImpl implements ZafiraListener {
         return test;
     }
 
-    public enum ZafiraConfiguration {
+    private void finishTest(TestResultAdapter adapter, Status status) throws JAXBException {
+        String fullStackTrace = getFullStackTrace(adapter);
+        TestType finishedTest = populateTestResult(adapter, status, fullStackTrace);
+        testTypeService.finishTest(finishedTest);
+    }
 
-        ENABLED("zafira_enabled", false),
-        SERVICE_URL("zafira_service_url", StringUtils.EMPTY),
-        ACCESS_TOKEN("zafira_access_token", StringUtils.EMPTY),
-        PROJECT("zafira_project", StringUtils.EMPTY, true),
-        RERUN_FAILURES("zafira_rerun_failures", false),
-        CONFIGURATOR("zafira_configurator", "com.qaprosoft.zafira.listener.DefaultConfigurator", true);
+    private TestCaseType registerTestCase(TestResultAdapter adapter) {
+        // If method owner is not specified then try to use suite owner. If both are not declared then ANONYMOUS will be used.
+        String po = configurator.getPrimaryOwner(adapter);
+        String primaryOwnerName = !StringUtils.isEmpty(po) ? po : configurator.getOwner(adapter.getSuiteAdapter());
+        UserType primaryOwner = userTypeService.getUserOrAnonymousIfNotFound(primaryOwnerName);
+        LOGGER.debug("primaryOwner: " + primaryOwnerName);
 
-        private String configName;
-        private Object defaultValue;
-        private boolean canOverride;
-
-        ZafiraConfiguration(String configName, Object defaultValue) {
-            this.configName = configName;
-            this.defaultValue = defaultValue;
+        String secondaryOwnerName = configurator.getSecondaryOwner(adapter);
+        UserType secondaryOwner = null;
+        if (!StringUtils.isEmpty(secondaryOwnerName)) {
+            secondaryOwner = userTypeService.getUserOrAnonymousIfNotFound(secondaryOwnerName);
+            LOGGER.debug("secondaryOwner: " + secondaryOwnerName);
         }
 
-        ZafiraConfiguration(String configName, Object defaultValue, boolean canOverride) {
-            this.configName = configName;
-            this.defaultValue = defaultValue;
-            this.canOverride = canOverride;
-        }
-
-        public String getConfigName() {
-            return configName;
-        }
-
-        public Object getDefaultValue() {
-            return defaultValue;
-        }
-
-        public boolean isCanOverride() {
-            return canOverride;
-        }
-
-        @SuppressWarnings("unchecked")
-        public Object get(Configuration config, SuiteAdapter adapter) {
-            return this.canOverride && adapter.getSuiteParameter(this.configName) != null ? adapter.getSuiteParameter(this.configName)
-                    : config.get(getDefaultClassValue(), this.configName, this.defaultValue);
-        }
-
-        @SuppressWarnings("rawtypes")
-        private Class getDefaultClassValue() {
-            Class aClass = null;
-            if (this.defaultValue instanceof String) {
-                aClass = String.class;
-            } else if (this.defaultValue instanceof Boolean) {
-                aClass = Boolean.class;
-            } else if (this.defaultValue instanceof Integer) {
-                aClass = Integer.class;
-            }
-            return aClass;
-        }
+        String testClass = adapter.getMethodAdapter().getTestClassName();
+        String testMethod = configurator.getTestMethodName(adapter);
+        Long testCaseSecondaryOwner = secondaryOwner != null ? secondaryOwner.getId() : null;
+        return testCaseTypeService.registerTestCase(suite.getId(), primaryOwner.getId(), testCaseSecondaryOwner, testClass, testMethod);
     }
 
 }

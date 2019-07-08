@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.client;
 
-import com.qaprosoft.zafira.config.CIConfig;
+import com.qaprosoft.zafira.config.CiConfig;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.dto.JobType;
@@ -89,7 +89,7 @@ public interface ExtendedClient {
      * @param workItem - test work item
      * @return created test run
      */
-    TestRunType registerTestRunByHUMAN(Long testSuiteId, Long userId, String configXML, Long jobId, CIConfig ciConfig, TestRun.Initiator startedBy, String workItem);
+    TestRunType registerTestRunByHUMAN(Long testSuiteId, Long userId, String configXML, Long jobId, CiConfig ciConfig, TestRun.Initiator startedBy, String workItem);
 
     /**
      * Registers new test run triggered by scheduler.
@@ -101,7 +101,7 @@ public interface ExtendedClient {
      * @param workItem - test work item
      * @return created test run
      */
-    TestRunType registerTestRunBySCHEDULER(Long testSuiteId, String configXML, Long jobId, CIConfig ciConfig, TestRun.Initiator startedBy, String workItem);
+    TestRunType registerTestRunBySCHEDULER(Long testSuiteId, String configXML, Long jobId, CiConfig ciConfig, TestRun.Initiator startedBy, String workItem);
 
     /**
      * Registers new test run triggered by upstream job.
@@ -114,7 +114,7 @@ public interface ExtendedClient {
      * @param workItem - test work item
      * @return created test run
      */
-    TestRunType registerTestRunUPSTREAM_JOB(Long testSuiteId, String configXML, Long jobId, Long parentJobId, CIConfig ciConfig, TestRun.Initiator startedBy, String workItem);
+    TestRunType registerTestRunUPSTREAM_JOB(Long testSuiteId, String configXML, Long jobId, Long parentJobId, CiConfig ciConfig, TestRun.Initiator startedBy, String workItem);
 
     /**
      * Finalizes test run calculating test results.

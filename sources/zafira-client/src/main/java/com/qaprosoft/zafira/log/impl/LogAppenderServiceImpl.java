@@ -129,7 +129,7 @@ public class LogAppenderServiceImpl implements LogAppenderService {
         String routingKey = configuration.getString("ci_run_id", null);
         if (StringUtils.isEmpty(routingKey)) {
             routingKey = UUID.randomUUID().toString();
-            System.setProperty("ci_run_id", routingKey);
+            ConfigurationUtil.addSystemConfiguration("ci_run_id", routingKey);
         }
         return routingKey;
     }
