@@ -77,7 +77,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import javax.xml.bind.JAXBException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -340,8 +339,7 @@ public class TestRunsAPIController extends AbstractController {
             @PathVariable("id") String id,
             @RequestBody @Valid EmailType email,
             @RequestParam(value = "filter", defaultValue = "all", required = false) String filter,
-            @RequestParam(value = "showStacktrace", defaultValue = "true", required = false) boolean showStacktrace)
-            throws JAXBException {
+            @RequestParam(value = "showStacktrace", defaultValue = "true", required = false) boolean showStacktrace) {
         String[] recipients = getRecipients(email.getRecipients());
         return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), showStacktrace, recipients);
     }
@@ -354,8 +352,7 @@ public class TestRunsAPIController extends AbstractController {
             @PathVariable("id") String id,
             @RequestBody @Valid EmailType email,
             @RequestParam(value = "suiteOwner", defaultValue = "false", required = false) boolean suiteOwner,
-            @RequestParam(value = "suiteRunner", defaultValue = "false", required = false) boolean suiteRunner)
-            throws JAXBException {
+            @RequestParam(value = "suiteRunner", defaultValue = "false", required = false) boolean suiteRunner) {
 
         String[] recipients = getRecipients(email.getRecipients());
         if (suiteOwner) {
@@ -384,7 +381,7 @@ public class TestRunsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Get test run result html text", nickname = "exportTestRunHTML", httpMethod = "GET", response = String.class)
     @GetMapping(path = "/{id}/export", produces = MediaType.TEXT_HTML_VALUE)
-    public String exportTestRunHTML(@PathVariable("id") String id) throws JAXBException {
+    public String exportTestRunHTML(@PathVariable("id") String id) {
         return testRunService.exportTestRunHTML(id);
     }
 

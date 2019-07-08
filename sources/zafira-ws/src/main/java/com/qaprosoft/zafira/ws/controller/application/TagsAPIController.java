@@ -16,7 +16,6 @@
 package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationDataType;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationTag;
@@ -38,10 +37,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.xml.bind.JAXBException;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Map;
+
+import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.parseConfigToMap;
+import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.readArguments;
 
 @Api("Tags operations")
 @RequestMapping(path = "api/tags", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -59,11 +59,11 @@ public class TagsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get integration info", nickname = "getTestIntegrationInfo", httpMethod = "GET", response = IntegrationDataType.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping("/{ciRunId}/integration")
     public IntegrationDataType getIntegrationInfo(
             @PathVariable("ciRunId") String ciRunId,
-            @RequestParam("integrationTag") IntegrationTag integrationTag) throws JAXBException {
+            @RequestParam("integrationTag") IntegrationTag integrationTag) {
         IntegrationDataType integrationData = new IntegrationDataType();
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
 
@@ -85,35 +85,31 @@ public class TagsAPIController extends AbstractController {
             integrationData.setZafiraServiceUrl(urlResolver.buildWebURL());
 
             // ConfigXML parsing for TestRunName generation
-            Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
-            Map<String, String> configMap = new HashMap<>();
-            for (Argument arg : configuration.getArg()) {
-                configMap.put(arg.getKey(), arg.getValue());
-            }
-
+            Configuration configuration = readArguments(testRun.getConfigXML());
+            Map<String, String> configMap = parseConfigToMap(configuration);
             integrationData.setTestRunName(testRun.getName(configMap));
 
             // IntegrationType-specific properties adding
             switch (integrationTag) {
-            case TESTRAIL_TESTCASE_UUID:
-                configuration.getArg().forEach(arg -> {
-                    if (arg.getKey().contains("testrail_assignee")) {
-                        integrationData.getCustomParams().put("assignee", arg.getValue());
-                    } else if (arg.getKey().contains("testrail_milestone")) {
-                        integrationData.getCustomParams().put("milestone", arg.getValue());
-                    } else if (arg.getKey().contains("testrail_run_name")) {
-                        integrationData.getCustomParams().put("testrail_run_name", arg.getValue());
-                    }
-                });
-                break;
-            case QTEST_TESTCASE_UUID:
-                configuration.getArg().forEach(arg -> {
-                    if (arg.getKey().contains("qtest_cycle_name")) {
-                        integrationData.getCustomParams().put("cycle_name", arg.getValue());
-                    } else if (arg.getKey().contains("qtest_suite_name") && !StringUtils.isEmpty(arg.getValue())) {
-                        integrationData.setTestRunName(arg.getValue());
-                    }
-                });
+                case TESTRAIL_TESTCASE_UUID:
+                    configuration.getArg().forEach(arg -> {
+                        if (arg.getKey().contains("testrail_assignee")) {
+                            integrationData.getCustomParams().put("assignee", arg.getValue());
+                        } else if (arg.getKey().contains("testrail_milestone")) {
+                            integrationData.getCustomParams().put("milestone", arg.getValue());
+                        } else if (arg.getKey().contains("testrail_run_name")) {
+                            integrationData.getCustomParams().put("testrail_run_name", arg.getValue());
+                        }
+                    });
+                    break;
+                case QTEST_TESTCASE_UUID:
+                    configuration.getArg().forEach(arg -> {
+                        if (arg.getKey().contains("qtest_cycle_name")) {
+                            integrationData.getCustomParams().put("cycle_name", arg.getValue());
+                        } else if (arg.getKey().contains("qtest_suite_name") && !StringUtils.isEmpty(arg.getValue())) {
+                            integrationData.setTestRunName(arg.getValue());
+                        }
+                    });
             }
         }
         return integrationData;
