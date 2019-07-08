@@ -97,9 +97,10 @@
             </#if>
             <tr>
                 <td>Success rate: ${successRate}%</td>
+                <td>
+            <tr>
                 <#if (testRun.passed > 0)>
                     <td class="pass" style="color: #5DBA65;">
-
                         Passed: ${testRun.passed}
                     </td>
                 </#if>
@@ -128,11 +129,13 @@
                         Queued: ${testRun.queued}
                     </td>
                 </#if>
-                <td>
-                    <#if successRate?number != 100>
-                        <a href="${testRun.job.jobURL}/${testRun.buildNumber?c}/rebuild/parameterized">(Rebuild)</a>
-                    </#if>
-                </td>
+            </tr>
+            </td>
+            <td>
+                <#if successRate?number != 100>
+                    <a href="${testRun.job.jobURL}/${testRun.buildNumber?c}/rebuild/parameterized">(Rebuild)</a>
+                </#if>
+            </td>
             </tr>
             <#if configuration['language']?? && configuration['language'] != '' && configuration['language'] != 'en_US' && configuration['language'] != 'en' && configuration['language'] != 'US'>
             <tr>
