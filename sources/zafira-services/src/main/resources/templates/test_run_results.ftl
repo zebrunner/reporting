@@ -97,36 +97,37 @@
             </#if>
             <tr>
                 <td>Success rate: ${successRate}%</td>
-                <td class="pass" style="color: #5dba65;">
-                    <#if (testRun.passed > 0)>
+                <#if (testRun.passed > 0)>
+                    <td class="pass" style="color: #5DBA65;">
+
                         Passed: ${testRun.passed}
-                    </#if>
-                </td>
-                <td class="fail" style="color: #e74231;">
-                    <#if (testRun.failed > 0)>
+                    </td>
+                </#if>
+                <#if (testRun.failed > 0)>
+                    <td class="fail" style="color: #E83A3A;">
                         Failed: ${testRun.failed}
-                    </#if>
-                </td>
-                <td class="fail" style="color: #bc1f1f;">
-                    <#if (testRun.failedAsKnown > 0)>
+                    </td>
+                </#if>
+                <#if (testRun.failedAsKnown > 0)>
+                    <td class="fail" style="color: #B51E1E;">
                         Known issue: ${testRun.failedAsKnown}
-                    </#if>
-                </td>
-                <td class="fail" style="color: #bc1f1f;">
-                    <#if (testRun.failedAsBlocker > 0)>
+                    </td>
+                </#if>
+                <#if (testRun.failedAsBlocker > 0)>
+                    <td class="fail" style="color: #B51E1E;">
                         Blockers: ${testRun.failedAsBlocker}
-                    </#if>
-                </td>
-                <td class="skip" style="color: #f0c800;">
-                    <#if (testRun.skipped > 0)>
+                    </td>
+                </#if>
+                <#if (testRun.skipped > 0)>
+                    <td class="skip" style="color: #f0c800;">
                         Skipped: ${testRun.skipped}
-                    </#if>
-                </td>
-                <td class="skip" style="color: #b7c2c5;">
-                    <#if (testRun.queued > 0)>
+                    </td>
+                </#if>
+                <#if (testRun.queued > 0)>
+                    <td class="skip" style="color: #b7c2c5;">
                         Queued: ${testRun.queued}
-                    </#if>
-                </td>
+                    </td>
+                </#if>
                 <td>
                     <#if successRate?number != 100>
                         <a href="${testRun.job.jobURL}/${testRun.buildNumber?c}/rebuild/parameterized">(Rebuild)</a>
