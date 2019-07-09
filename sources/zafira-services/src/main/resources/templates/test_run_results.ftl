@@ -96,48 +96,49 @@
             </tr>
             </#if>
             <tr>
-                <td>Success rate: </td>
-                <td>${successRate}%</td>
-                <#if (testRun.passed > 0)>
-                    <td class="pass" style="color: #66C266;">
-                        Passed: ${testRun.passed}
-                    </td>
-                </#if>
-                <#if (testRun.failed > 0)>
-                    <td class="fail" style="color: #ffcccc;">
-                        Failed: ${testRun.failed}
-                    </td>
-                </#if>
-                <#if (testRun.failedAsKnown > 0)>
-                    <td class="fail" style="color: #B51E1E;">
-                        Known issue: ${testRun.failedAsKnown}
-                    </td>
-                </#if>
-                <#if (testRun.failedAsBlocker > 0)>
-                    <td class="fail" style="color: #B51E1E;">
-                        Blockers: ${testRun.failedAsBlocker}
-                    </td>
-                </#if>
-                <#if (testRun.skipped > 0)>
-                    <td class="skip" style="color: #ffe4b5;">
-                        Skipped: ${testRun.skipped}
-                    </td>
-                </#if>
-                <#if (testRun.aborted > 0)>
-                    <td class="skip" style="color: #C5C5C5;">
-                        Aborted: ${testRun.aborted}
-                    </td>
-                </#if>
-                <#if (testRun.queued > 0)>
-                    <td class="skip" style="color: #b7c2c5;">
-                        Queued: ${testRun.queued}
-                    </td>
-                </#if>
-                <#if successRate?number != 100>
-                    <td>
-                        <a href="${testRun.job.jobURL}/${testRun.buildNumber?c}/rebuild/parameterized">(Rebuild)</a>
-                    </td>
-                </#if>
+                <td>Success rate:</td>
+                <td>${successRate}%
+                    <#if (testRun.passed > 0)>
+                        <div class="pass" style="color: #5DBA65;">
+                            Passed: ${testRun.passed}
+                        </div>
+                    </#if>
+                    <#if (testRun.failed > 0)>
+                        <div class="fail" style="color: #E83A3A;">
+                            Failed: ${testRun.failed}
+                        </div>
+                    </#if>
+                    <#if (testRun.failedAsKnown > 0)>
+                        <div class="fail" style="color: #B51E1E;">
+                            Known issue: ${testRun.failedAsKnown}
+                        </div>
+                    </#if>
+                    <#if (testRun.failedAsBlocker > 0)>
+                        <div class="fail" style="color: #B51E1E;">
+                            Blockers: ${testRun.failedAsBlocker}
+                        </div>
+                    </#if>
+                    <#if (testRun.skipped > 0)>
+                        <div class="skip" style="color: #f0c800;">
+                            Skipped: ${testRun.skipped}
+                        </div>
+                    </#if>
+                    <#if (testRun.aborted > 0)>
+                        <div class="skip" style="color: #C5C5C5;">
+                            Aborted: ${testRun.aborted}
+                        </div>
+                    </#if>
+                    <#if (testRun.queued > 0)>
+                        <div class="skip" style="color: #b7c2c5;">
+                            Queued: ${testRun.queued}
+                        </div>
+                    </#if>
+                    <#if successRate?number != 100>
+                        <div>
+                            <a href="${testRun.job.jobURL}/${testRun.buildNumber?c}/rebuild/parameterized">(Rebuild)</a>
+                        </div>
+                    </#if>
+                </td>
             </tr>
             <#if configuration['language']?? && configuration['language'] != '' && configuration['language'] != 'en_US' && configuration['language'] != 'en' && configuration['language'] != 'US'>
             <tr>
