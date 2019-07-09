@@ -97,31 +97,48 @@
             </#if>
             <tr>
                 <td>Success rate:</td>
-                <td>
-                    ${successRate}%
+                <td>${successRate}%
                     <#if (testRun.passed > 0)>
-                        Passed: ${testRun.passed}
+                        <span class="pass" style="color: #5DBA65;">
+                            Passed: ${testRun.passed}
+                        </span>
                     </#if>
                     <#if (testRun.failed > 0)>
-                        Failed: ${testRun.failed}
+                        <span class="fail" style="color: #E83A3A;">
+                            Failed: ${testRun.failed}
+                        </span>
                     </#if>
                     <#if (testRun.failedAsKnown > 0)>
-                        Known issue: ${testRun.failedAsKnown}
+                        <span class="fail" style="color: #B51E1E;">
+                            Known issue: ${testRun.failedAsKnown}
+                        </span>
                     </#if>
                     <#if (testRun.failedAsBlocker > 0)>
-                        Blockers: ${testRun.failedAsBlocker}
+                        <span class="fail" style="color: #B51E1E;">
+                            Blockers: ${testRun.failedAsBlocker}
+                        </span>
                     </#if>
                     <#if (testRun.skipped > 0)>
-                        Skipped: ${testRun.skipped}
+                        <span class="skip" style="color: #f0c800;">
+                            Skipped: ${testRun.skipped}
+                        </span>
+                    </#if>
+                    <#if (testRun.aborted > 0)>
+                        <span class="skip" style="color: #C5C5C5;">
+                            Aborted: ${testRun.aborted}
+                        </span>
                     </#if>
                     <#if (testRun.queued > 0)>
-                        Queued: ${testRun.queued}
+                        <span class="skip" style="color: #b7c2c5;">
+                            Queued: ${testRun.queued}
+                        </span>
                     </#if>
                     <#if successRate?number != 100>
-                        <a href="${testRun.job.jobURL}/${testRun.buildNumber?c}/rebuild/parameterized">(Rebuild)</a>
+                        <span>
+                            <a href="${testRun.job.jobURL}/${testRun.buildNumber?c}/rebuild/parameterized">(Rebuild)</a>
+                        </span>
                     </#if>
                 </td>
-
             </tr>
             <#if configuration['language']?? && configuration['language'] != '' && configuration['language'] != 'en_US' && configuration['language'] != 'en' && configuration['language'] != 'US'>
             <tr>
