@@ -99,44 +99,44 @@
                 <td>Success rate:</td>
                 <td>${successRate}%
                     <#if (testRun.passed > 0)>
-                        <div class="pass" style="color: #5DBA65;">
+                        <span class="pass" style="color: #5DBA65;">
                             Passed: ${testRun.passed}
-                        </div>
+                        </span>
                     </#if>
                     <#if (testRun.failed > 0)>
-                        <div class="fail" style="color: #E83A3A;">
+                        <span class="fail" style="color: #E83A3A;">
                             Failed: ${testRun.failed}
-                        </div>
+                        </span>
                     </#if>
                     <#if (testRun.failedAsKnown > 0)>
-                        <div class="fail" style="color: #B51E1E;">
+                        <span class="fail" style="color: #B51E1E;">
                             Known issue: ${testRun.failedAsKnown}
-                        </div>
+                        </span>
                     </#if>
                     <#if (testRun.failedAsBlocker > 0)>
-                        <div class="fail" style="color: #B51E1E;">
+                        <span class="fail" style="color: #B51E1E;">
                             Blockers: ${testRun.failedAsBlocker}
-                        </div>
+                        </span>
                     </#if>
                     <#if (testRun.skipped > 0)>
-                        <div class="skip" style="color: #f0c800;">
+                        <span class="skip" style="color: #f0c800;">
                             Skipped: ${testRun.skipped}
-                        </div>
+                        </span>
                     </#if>
                     <#if (testRun.aborted > 0)>
-                        <div class="skip" style="color: #C5C5C5;">
+                        <span class="skip" style="color: #C5C5C5;">
                             Aborted: ${testRun.aborted}
-                        </div>
+                        </span>
                     </#if>
                     <#if (testRun.queued > 0)>
-                        <div class="skip" style="color: #b7c2c5;">
+                        <span class="skip" style="color: #b7c2c5;">
                             Queued: ${testRun.queued}
-                        </div>
+                        </span>
                     </#if>
                     <#if successRate?number != 100>
-                        <div>
+                        <span>
                             <a href="${testRun.job.jobURL}/${testRun.buildNumber?c}/rebuild/parameterized">(Rebuild)</a>
-                        </div>
+                        </span>
                     </#if>
                 </td>
             </tr>
