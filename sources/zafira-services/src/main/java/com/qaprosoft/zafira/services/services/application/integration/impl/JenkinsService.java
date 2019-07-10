@@ -130,6 +130,7 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
         } else {
             jobUrl = formatScannerJobUrl(jenkinsFolder, jenkinsHost);
         }
+        LOGGER.error("Jenkins job url: " + jobUrl);
         return jobUrl;
     }
 

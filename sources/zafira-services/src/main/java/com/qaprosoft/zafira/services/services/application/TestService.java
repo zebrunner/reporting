@@ -155,7 +155,7 @@ public class TestService {
             errorMessage += "dependsOnMethods";
         }
         if(StringUtils.isNotEmpty(errorMessage)){
-            errorMessage = "Test ID: "+ test.getId() + "Test name: "+ test.getName() + "\nFields exceeding 255 symbols restriction: " + errorMessage;
+            errorMessage = "Test ID: "+ test.getId() + ", Test name: "+ test.getName() + "\nFields exceeding 255 symbols restriction: " + errorMessage;
             LOGGER.error(errorMessage);
         }
     }

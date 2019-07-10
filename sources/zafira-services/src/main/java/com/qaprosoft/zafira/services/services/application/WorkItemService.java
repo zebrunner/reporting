@@ -90,7 +90,7 @@ public class WorkItemService {
             errorMessage += "jiraId";
         }
         if(StringUtils.isNotEmpty(errorMessage)){
-            errorMessage = "WorkItem ID: "+ workItem.getId() + "WorkItem JiraId: "+ workItem.getJiraId() + "\nFields exceeding 45 symbols restriction: " + errorMessage;
+            errorMessage = "WorkItem ID: "+ workItem.getId() + ", WorkItem JiraId: "+ workItem.getJiraId() + "\nFields exceeding 45 symbols restriction: " + errorMessage;
             LOGGER.error(errorMessage);
         }
     }
