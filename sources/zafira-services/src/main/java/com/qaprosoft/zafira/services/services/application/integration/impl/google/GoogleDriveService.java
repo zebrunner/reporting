@@ -34,7 +34,7 @@ public class GoogleDriveService extends AbstractGoogleService {
         try {
             this.driveService = GoogleDriveAuthService.getService(credsFile);
         } catch (IOException e) {
-            LOGGER.error(e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -85,7 +85,7 @@ public class GoogleDriveService extends AbstractGoogleService {
                     .queue(batch, new GoogleDriveJsonBatchCallback<>());
             batch.execute();
         } catch (IOException e) {
-            LOGGER.error(e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

@@ -67,8 +67,7 @@ public abstract class AbstractIntegration<T extends AbstractContext> implements 
                     Setting.SettingType toolSetting = Setting.SettingType.valueOf(setting.getName());
                     if (toolSetting.isRequired() && StringUtils.isBlank(setting.getValue())) {
                         removeContext();
-                        throw new IntegrationException("Integration tool '" + tool + "' data is malformed." +
-                                "Setting '" + setting.getName() + "' is required");
+                        throw new IntegrationException("Integration tool '" + tool + "' data is malformed. Setting '" + setting.getName() + "' is required");
                     }
                     if (setting.isEncrypted()) {
                         setting.setValue(mapEncrypted(setting));

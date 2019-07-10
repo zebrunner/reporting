@@ -32,7 +32,7 @@ public class GoogleSpreadsheetsService extends AbstractGoogleService {
         try {
             this.sheetsService = GoogleSheetsAuthService.getService(credsFile);
         } catch (IOException e) {
-            LOGGER.error(e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
