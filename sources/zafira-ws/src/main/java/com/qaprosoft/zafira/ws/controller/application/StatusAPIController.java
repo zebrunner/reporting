@@ -22,8 +22,6 @@ import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,8 +33,6 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping(path = "api/status", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class StatusAPIController extends AbstractController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(StatusAPIController.class);
 
     @Autowired
     private SettingsService settingsService;
