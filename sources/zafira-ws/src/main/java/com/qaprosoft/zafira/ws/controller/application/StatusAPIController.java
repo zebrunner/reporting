@@ -45,9 +45,6 @@ public class StatusAPIController extends AbstractController {
     @ApiOperation(value = "Get service status", nickname = "status", httpMethod = "GET", response = String.class)
     @GetMapping()
     public String getStatus() {
-
-        LOGGER.info("Whats up! Im in!");
-
         try {
             final String version = settingsService.getPostgresVersion();
             if (StringUtils.isEmpty(version)) {
