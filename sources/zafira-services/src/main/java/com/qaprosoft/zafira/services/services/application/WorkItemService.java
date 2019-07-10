@@ -87,10 +87,10 @@ public class WorkItemService {
     private void validateWorkItemFieldsLength(WorkItem workItem) {
         String errorMessage = "";
         if (is45SymbolsLengthExceeded(workItem.getJiraId())) {
-            errorMessage += "jiraId\n";
+            errorMessage += "jiraId";
         }
         if(StringUtils.isNotEmpty(errorMessage)){
-            errorMessage = "WorkItem ID: "+ workItem.getId() + "\nFields exceeding 45 symbols restriction:\n" + errorMessage;
+            errorMessage = "WorkItem ID: "+ workItem.getId() + "WorkItem JiraId: "+ workItem.getJiraId() + "\nFields exceeding 45 symbols restriction: " + errorMessage;
             LOGGER.error(errorMessage);
         }
     }

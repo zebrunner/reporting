@@ -146,16 +146,16 @@ public class TestService {
     private void validateTestFieldsLength(Test test) {
         String errorMessage = "";
         if (is255SymbolsLengthExceeded(test.getName())) {
-            errorMessage += "name\n";
+            errorMessage += "name, ";
         }
         if (is255SymbolsLengthExceeded(test.getTestGroup())){
-            errorMessage += "testGroup\n";
+            errorMessage += "testGroup, ";
         }
         if (is255SymbolsLengthExceeded(test.getDependsOnMethods())){
-            errorMessage += "dependsOnMethods\n";
+            errorMessage += "dependsOnMethods";
         }
         if(StringUtils.isNotEmpty(errorMessage)){
-            errorMessage = "Test ID: "+ test.getId() + "\nFields exceeding 255 symbols restriction:\n" + errorMessage;
+            errorMessage = "Test ID: "+ test.getId() + "Test name: "+ test.getName() + "\nFields exceeding 255 symbols restriction: " + errorMessage;
             LOGGER.error(errorMessage);
         }
     }
