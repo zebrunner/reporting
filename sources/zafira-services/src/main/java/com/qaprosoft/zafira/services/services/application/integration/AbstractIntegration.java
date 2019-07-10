@@ -23,7 +23,8 @@ import com.qaprosoft.zafira.services.services.application.integration.context.Ad
 import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -33,7 +34,7 @@ import java.util.Map;
 
 public abstract class AbstractIntegration<T extends AbstractContext> implements Integration<T> {
 
-    protected static final Logger LOGGER = Logger.getLogger(AbstractIntegration.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractIntegration.class);
 
     private final SettingsService settingsService;
     private final CryptoService cryptoService;
@@ -66,8 +67,7 @@ public abstract class AbstractIntegration<T extends AbstractContext> implements 
                     Setting.SettingType toolSetting = Setting.SettingType.valueOf(setting.getName());
                     if (toolSetting.isRequired() && StringUtils.isBlank(setting.getValue())) {
                         removeContext();
-                        throw new IntegrationException("Integration tool '" + tool + "' data is malformed." +
-                                "Setting '" + setting.getName() + "' is required");
+                        throw new IntegrationException("Integration tool '" + tool + "' data is malformed. Setting '" + setting.getName() + "' is required");
                     }
                     if (setting.isEncrypted()) {
                         setting.setValue(mapEncrypted(setting));

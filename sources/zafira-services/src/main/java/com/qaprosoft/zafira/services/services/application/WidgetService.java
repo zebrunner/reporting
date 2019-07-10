@@ -22,7 +22,8 @@ import java.util.Map;
 import com.qaprosoft.zafira.dbaccess.utils.SQLTemplateAdapter;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 import com.qaprosoft.zafira.services.util.URLResolver;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +36,7 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 @Service
 public class WidgetService {
 
-    private static final Logger LOGGER = Logger.getLogger(WidgetService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WidgetService.class);
 
     @Autowired
     private WidgetMapper widgetMapper;

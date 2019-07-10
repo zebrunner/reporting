@@ -21,7 +21,8 @@ import com.qaprosoft.zafira.models.db.TestConfig;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +34,7 @@ import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.readArgume
 @Service
 public class TestConfigService {
 
-    private static final Logger logger = Logger.getLogger(TestConfigService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestConfigService.class);
 
     @Autowired
     private TestConfigMapper testConfigMapper;

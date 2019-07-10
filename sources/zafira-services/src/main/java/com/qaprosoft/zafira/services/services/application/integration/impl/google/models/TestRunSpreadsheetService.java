@@ -27,9 +27,10 @@ import com.qaprosoft.zafira.services.services.application.integration.impl.googl
 import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleSpreadsheetsService;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.joda.time.Interval;
 import org.joda.time.Period;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +48,7 @@ import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.isConfigVa
 public class
 TestRunSpreadsheetService {
 
-    private static final Logger LOGGER = Logger.getLogger(TestRunSpreadsheetService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestRunSpreadsheetService.class);
 
     private static final String TEST_RUN_INFO_SHEET_NAME = "INFO";
 
@@ -106,7 +107,7 @@ TestRunSpreadsheetService {
                     .shareFile(spreadsheetId, GoogleDriveService.GranteeType.USER,
                             GoogleDriveService.GranteeRoleType.READER, recipient));
         } catch (IOException e) {
-            LOGGER.error(e);
+            LOGGER.error(e.getMessage(), e);
         }
         return result;
     }

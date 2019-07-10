@@ -31,7 +31,8 @@ import com.qaprosoft.zafira.services.services.application.emails.UserInviteLdapE
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +46,7 @@ import static com.qaprosoft.zafira.models.db.User.Source.LDAP;
 @Service
 public class InvitationService {
 
-    private static final Logger LOGGER = Logger.getLogger(InvitationService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InvitationService.class);
 
     private final String zafiraLogoURL;
     private final URLResolver urlResolver;

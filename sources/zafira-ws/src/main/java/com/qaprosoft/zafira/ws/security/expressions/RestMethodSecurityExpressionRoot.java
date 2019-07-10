@@ -16,7 +16,8 @@
 package com.qaprosoft.zafira.ws.security.expressions;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.core.Authentication;
@@ -29,7 +30,7 @@ import org.springframework.security.core.Authentication;
 public class RestMethodSecurityExpressionRoot extends SecurityExpressionRoot
         implements MethodSecurityExpressionOperations {
 
-    private static final Logger LOGGER = Logger.getLogger(RestMethodSecurityExpressionRoot.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestMethodSecurityExpressionRoot.class);
 
     private UserPermissionEvaluator permissionEvaluator;
 

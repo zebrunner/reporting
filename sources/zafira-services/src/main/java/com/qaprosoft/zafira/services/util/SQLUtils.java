@@ -16,7 +16,8 @@
 package com.qaprosoft.zafira.services.util;
 
 import com.qaprosoft.zafira.services.services.application.WidgetService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +29,7 @@ import java.util.Map;
 @Service
 public class SQLUtils {
 
-    private static final Logger LOGGER = Logger.getLogger(SQLUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SQLUtils.class);
 
     @Autowired
     private WidgetService widgetService;

@@ -24,7 +24,8 @@ import java.util.stream.Collectors;
 
 import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.services.services.application.UserService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.qaprosoft.zafira.models.db.Group;
@@ -38,7 +39,7 @@ import org.springframework.util.CollectionUtils;
 
 public class JWTService {
 
-    private static final Logger LOGGER = Logger.getLogger(JWTService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JWTService.class);
 
     private final String secret;
 

@@ -139,7 +139,7 @@ public class SlackService extends AbstractIntegration<SlackContext> {
                 try {
                     slackWebHookURL.setValue(cryptoService.decrypt(slackWebHookURL.getValue()));
                 } catch (Exception e) {
-                    LOGGER.error(e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
             wH = slackWebHookURL.getValue();

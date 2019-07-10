@@ -20,7 +20,8 @@ import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.UserService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
@@ -32,7 +33,7 @@ import java.util.Collection;
 
 public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper {
 
-    private static final Logger LOGGER = Logger.getLogger(LDAPUserDetailsContextMapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LDAPUserDetailsContextMapper.class);
 
     @Autowired
     private UserService userService;

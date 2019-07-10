@@ -25,7 +25,8 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.InvitationService;
 import com.qaprosoft.zafira.services.services.management.TenancyService;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ import static com.qaprosoft.zafira.services.util.EventPushService.Type.ZFR_CALLB
 
 public class TenancyInitializer {
 
-    private static final Logger LOGGER = Logger.getLogger(TenancyInitializer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TenancyInitializer.class);
 
     private static final String DEFAULT_USER_GROUP = "Admins";
 

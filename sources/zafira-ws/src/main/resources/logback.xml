@@ -1,44 +1,32 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE configuration>
-
 <configuration>
+    <jmxConfigurator/>
 
-	<contextName>condor</contextName>
-	<jmxConfigurator />
+    <appender name="CONSOLE_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%level] [%t] [%logger{36}] [%msg]%n</pattern>
+        </encoder>
+    </appender>
 
-	<appender name="console"
-		class="ch.qos.logback.core.ConsoleAppender">
-		<target>System.out</target>
+    <appender name="ROLLING_LOG_FILE_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%level] [%t] [%logger{36}] [%msg]%n</pattern>
+        </encoder>
 
-		<encoder>
-			<pattern>[%d{yyyy-MM-dd HH:mm:ss,SSS}{UTC}] [%-5p] [%t] [%c{1}]
-				[%m]%n</pattern>
-		</encoder>
-	</appender>
+        <file>${catalina.home}/logs/zafira-app.log</file>
 
-	<appender name="file"
-		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${catalina.home}/logs/zafira/app-logs.txt</file>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${catalina.home}/logs/zafira-app-%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
 
-		<rollingPolicy
-			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${catalina.home}/logs/zafira/app-logs.%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
-			<maxHistory>5</maxHistory>
-			<timeBasedFileNamingAndTriggeringPolicy
-				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-				<maxFileSize>10MB</maxFileSize>
-			</timeBasedFileNamingAndTriggeringPolicy>
-		</rollingPolicy>
-
-		<encoder>
-			<pattern>[%d{yyyy-MM-dd HH:mm:ss,SSS}{UTC}] [%-5p] [%t] [%c{1}]
-				[%m]%n</pattern>
-		</encoder>
-	</appender>
-
-	<root level="error">
-		<appender-ref ref="console" />
-		<appender-ref ref="file" />
-	</root>
+    <root level="info">
+        <appender-ref ref="CONSOLE_APPENDER" />
+        <appender-ref ref="ROLLING_LOG_FILE_APPENDER" />
+    </root>
 
 </configuration>
