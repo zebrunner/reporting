@@ -13,8 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.client;
+package com.qaprosoft.zafira.listener.adapter;
 
-public interface ZafiraClient extends BasicClient, ExtendedClient, IntegrationClient {
+public enum TestResultStatus {
+
+    UNKNOWN(-2),
+    SKIP(3);
+
+    private final int code;
+
+    TestResultStatus(int code) {
+        this.code = code;
+    }
+
+    public int getCode() {
+        return code;
+    }
 
 }

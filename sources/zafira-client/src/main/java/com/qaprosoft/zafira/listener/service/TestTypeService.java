@@ -13,28 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.config;
+package com.qaprosoft.zafira.listener.service;
 
-import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Provider;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.dto.TagType;
+import com.qaprosoft.zafira.models.dto.TestType;
 
-import org.springframework.stereotype.Component;
+import java.util.List;
+import java.util.Set;
 
-import com.owlike.genson.Genson;
+public interface TestTypeService {
 
-/**
- * GensonProvider - allows to deserialize timestamp to Date.
- * 
- * @author akhursevich
- */
-@Component
-@Provider
-public class GensonProvider implements ContextResolver<Genson> {
+    TestType registerTestRestart(TestType test);
 
-    private final Genson genson = new Genson.Builder().useTimeInMillis(true).create();
+    TestType registerTestStart(String testName, String group, Status status, String testArgs, long testRunId, long testCaseId, int runCount,
+                               String xmlConfiguration, String[] dependsOnMethods, String testCiId, Set<TagType> tags);
 
-    @Override
-    public Genson getContext(Class<?> type) {
-        return genson;
-    }
+    TestType registerWorkItems(long testId, List<String> workItems);
+
+    TestType finishTest(TestType test);
+
 }

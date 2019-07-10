@@ -25,28 +25,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.qaprosoft.zafira.listener.adapter.MethodAdapter;
+import com.qaprosoft.zafira.listener.adapter.SuiteAdapter;
+import com.qaprosoft.zafira.listener.adapter.TestAnnotationAdapter;
+import com.qaprosoft.zafira.listener.adapter.TestResultAdapter;
+import com.qaprosoft.zafira.listener.adapter.impl.TestResultAdapterImpl;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.ISuite;
-import org.testng.ITestNGMethod;
-import org.testng.SuiteRunner;
-import org.testng.TestRunner;
-import org.testng.annotations.Test;
-import org.testng.internal.Configuration;
-import org.testng.internal.TestResult;
-import org.testng.xml.XmlSuite;
 
 import com.qaprosoft.zafira.config.IConfigurator;
 import com.qaprosoft.zafira.models.dto.TestType;
 
+// todo investigate real business and refactor it
 public class ExcludeTestsForRerun {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExcludeTestsForRerun.class);
+
     private final static String DO_NOT_RUN_TEST_NAMES = "doNotRunTestNames";
     private final static String ENABLED = "enabled";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZafiraListener.class);
-
-    public static void excludeTestsForRerun(ISuite suite, List<TestType> testRunResults, IConfigurator configurator) {
+    public static void excludeTestsForRerun(SuiteAdapter adapter, List<TestType> testRunResults, IConfigurator configurator) {
         List<String> testNamesNoRerun = new ArrayList<>();
         Set<String> classesToRerun = new HashSet<>();
         for (TestType test : testRunResults) {
@@ -57,47 +57,34 @@ public class ExcludeTestsForRerun {
             }
         }
         String[] testNamesNoRerunArr = testNamesNoRerun.toArray(new String[testNamesNoRerun.size()]);
-        String[] allDependentMethods = ArrayUtils.EMPTY_STRING_ARRAY;
-        for (ITestNGMethod testNGMethod : suite.getAllMethods()) {
-            allDependentMethods = ArrayUtils.addAll(allDependentMethods, testNGMethod.getMethodsDependedUpon());
-        }
+        String[] allDependentMethods = adapter.getSuiteDependsOnMethods();
         boolean isAnythingMarked = true;
         while (isAnythingMarked) {
             isAnythingMarked = false;
-            for (ITestNGMethod testNGMethod : suite.getAllMethods()) {
-                Annotation[] annotations = testNGMethod.getConstructorOrMethod().getMethod().getAnnotations();
+            for (MethodAdapter methodAdapter : adapter.getMethodAdapters()) {
+                Annotation[] annotations = methodAdapter.getMethodAnnotations();
                 boolean isTest = false;
                 boolean shouldUpdateDataProvider = false;
                 for (Annotation a : annotations) {
-                    if (a instanceof Test) {
+                    TestAnnotationAdapter testAnnotationAdapter = methodAdapter.getTestAnnotationAdapter();
+                    Class<? extends Annotation> testAnnotationClass = testAnnotationAdapter.getTestAnnotationClass();
+                    if (testAnnotationClass != null && testAnnotationClass.isAssignableFrom(a.getClass())) {
                         isTest = true;
-                        if (!((Test) a).dataProvider().isEmpty()) {
-                            if (!classesToRerun.contains(testNGMethod.getRealClass().getName()) && ((Test) a).enabled()) {
-                                modifyAnnotationValue(a, testNGMethod, ENABLED, false);
+                        boolean useDataProvider = StringUtils.isEmpty(methodAdapter.getTestAnnotationAdapter().getDataProviderName());
+                        if (!useDataProvider) {
+                            boolean classNeedRerun = classesToRerun.contains(methodAdapter.getRealClassName());
+                            if (!classNeedRerun && isTestEnabled(testAnnotationAdapter)) {
+                                allDependentMethods = skipDependentMethods(allDependentMethods, a, methodAdapter);
                                 isAnythingMarked = true;
-
-                                for (String m : testNGMethod.getMethodsDependedUpon()) {
-                                    allDependentMethods = ArrayUtils.removeElement(allDependentMethods, m);
-                                }
                             } else {
                                 shouldUpdateDataProvider = true;
                             }
                         } else {
-                            if (!ArrayUtils.contains(allDependentMethods, testNGMethod.getRealClass().getName() + "."
-                                    + testNGMethod.getConstructorOrMethod().getMethod().getName())) {
-                                @SuppressWarnings("deprecation")
-                                SuiteRunner suiteRunner = new SuiteRunner(new Configuration(), new XmlSuite(), "");
-                                TestRunner testRunner = new TestRunner(new Configuration(), suiteRunner,
-                                        testNGMethod.getXmlTest(), false, null, new ArrayList<>());
-                                TestResult testResult = new TestResult(testNGMethod.getTestClass(),
-                                        testNGMethod.getInstance(), testNGMethod, null, 0, 0, testRunner);
-                                if (testNamesNoRerun.contains(configurator.getTestName(testResult)) && ((Test) a).enabled()) {
-                                    modifyAnnotationValue(a, testNGMethod, ENABLED, false);
+                            if (!ArrayUtils.contains(allDependentMethods, methodAdapter.getRealClassName() + "." + methodAdapter.getMethodName())) {
+                                boolean testNeedRerun = isTestNeedRerun(methodAdapter, testNamesNoRerun, configurator);
+                                if (!testNeedRerun && isTestEnabled(testAnnotationAdapter)) {
+                                    skipDependentMethods(allDependentMethods, a, methodAdapter);
                                     isAnythingMarked = true;
-
-                                    for (String m : testNGMethod.getMethodsDependedUpon()) {
-                                        allDependentMethods = ArrayUtils.removeElement(allDependentMethods, m);
-                                    }
                                 }
                             }
                         }
@@ -106,7 +93,7 @@ public class ExcludeTestsForRerun {
                 }
                 if (isTest && shouldUpdateDataProvider) {
                     for (Annotation a : annotations) {
-                        modifyAnnotationValue(a, testNGMethod, DO_NOT_RUN_TEST_NAMES, testNamesNoRerunArr);
+                        modifyAnnotationValue(a, methodAdapter, DO_NOT_RUN_TEST_NAMES, testNamesNoRerunArr);
                     }
                 }
             }
@@ -114,15 +101,21 @@ public class ExcludeTestsForRerun {
 
     }
 
+    /**
+     * Inserts new value to annotation field by name
+     * @param a - annotation to modify
+     * @param methodAdapter - method adapter to log annotated method name
+     * @param fieldName - annotation field name to search and modify
+     * @param newValue - new field value to put
+     */
     @SuppressWarnings("unchecked")
-    private static void modifyAnnotationValue(Annotation a, ITestNGMethod testNGMethod, String fieldName,
+    private static void modifyAnnotationValue(Annotation a, MethodAdapter methodAdapter, String fieldName,
             Object newValue) {
         Class<? extends Annotation> c = a.getClass();
         Method[] aMethods = c.getDeclaredMethods();
         for (Method m : aMethods) {
             if (fieldName.equals(m.getName())) {
-                LOGGER.info(String.format("'%s' annotation was found for method '%s'", m.getName(),
-                        testNGMethod.getConstructorOrMethod().getMethod().getName()));
+                LOGGER.info(String.format("'%s' annotation was found for method '%s'", m.getName(), methodAdapter.getMethodName()));
 
                 Object handler = Proxy.getInvocationHandler(a);
                 Field f;
@@ -142,6 +135,27 @@ public class ExcludeTestsForRerun {
                 return;
             }
         }
+    }
+
+    private static String[] skipDependentMethods(String[] allDependentMethods, Annotation methodAnnotation, MethodAdapter adapter) {
+        modifyAnnotationValue(methodAnnotation, adapter, ENABLED, false);
+        return removeDependentMethodsFromArray(allDependentMethods, adapter);
+    }
+
+    private static boolean isTestEnabled(TestAnnotationAdapter testAnnotationAdapter) {
+        return testAnnotationAdapter.isEnabled();
+    }
+
+    private static String[] removeDependentMethodsFromArray(String[] allDependentMethods, MethodAdapter adapter) {
+        for (String m : adapter.getMethodDependsOnMethods()) {
+            allDependentMethods = ArrayUtils.removeElement(allDependentMethods, m);
+        }
+        return allDependentMethods;
+    }
+
+    private static boolean isTestNeedRerun(MethodAdapter adapter, List<String> testNamesNoRerun, IConfigurator configurator) {
+        TestResultAdapter testResultAdapter = new TestResultAdapterImpl(adapter);
+        return !testNamesNoRerun.contains(configurator.getTestName(testResultAdapter));
     }
 
 }

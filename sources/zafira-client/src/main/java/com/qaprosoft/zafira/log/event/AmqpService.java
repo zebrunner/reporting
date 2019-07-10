@@ -13,8 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.client;
+package com.qaprosoft.zafira.log.event;
 
-public interface ZafiraClient extends BasicClient, ExtendedClient, IntegrationClient {
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+public interface AmqpService {
+
+    EventPublisher connect() throws IOException, TimeoutException;
+
+    void releaseConnection() throws IOException, TimeoutException;
+
+    boolean isConnected();
 
 }

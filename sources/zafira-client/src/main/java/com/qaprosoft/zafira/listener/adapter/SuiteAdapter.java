@@ -13,8 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.client;
+package com.qaprosoft.zafira.listener.adapter;
 
-public interface ZafiraClient extends BasicClient, ExtendedClient, IntegrationClient {
+import java.util.List;
+
+public interface SuiteAdapter {
+
+    Object getSuite();
+
+    String getSuiteParameter(String name);
+
+    String getSuiteFileName();
+
+    String getSuiteName();
+
+    String[] getSuiteDependsOnMethods();
+
+    List<MethodAdapter> getMethodAdapters();
 
 }

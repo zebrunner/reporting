@@ -13,27 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.client;
+package com.qaprosoft.zafira.listener;
 
-import com.qaprosoft.zafira.models.stf.Devices;
-import com.qaprosoft.zafira.models.stf.RemoteConnectUserDevice;
-import com.qaprosoft.zafira.models.stf.STFDevice;
-import com.qaprosoft.zafira.util.http.HttpClient;
+import com.qaprosoft.zafira.listener.adapter.MethodAdapter;
+import com.qaprosoft.zafira.listener.adapter.SuiteAdapter;
+import com.qaprosoft.zafira.listener.adapter.TestResultAdapter;
 
-public interface STFClient {
+/**
+ * Defines access to test registration events and callbacks
+ */
+public interface TestLifecycleAware {
 
-    HttpClient.Response<Devices> getAllDevices();
+    void onSuiteStart(SuiteAdapter adapter);
 
-    HttpClient.Response<STFDevice> getDevice(String udid);
+    void onSuiteFinish();
 
-    boolean reserveDevice(String serial, long timeout);
+    void onTestStart(TestResultAdapter resultAdapter);
 
-    boolean returnDevice(String serial);
+    void onTestSuccess(TestResultAdapter resultAdapter);
 
-    HttpClient.Response<RemoteConnectUserDevice> remoteConnectDevice(String serial);
+    void onTestFailure(TestResultAdapter adapter);
 
-    boolean remoteDisconnectDevice(String serial);
+    void onTestSkipped(TestResultAdapter adapter);
 
-    boolean isConnected();
+    void onTestHook(TestHookable hookCallBack, TestResultAdapter adapter);
+
+    void beforeMethodInvocation(MethodAdapter invokedMethodAdapter, TestResultAdapter adapter);
 
 }

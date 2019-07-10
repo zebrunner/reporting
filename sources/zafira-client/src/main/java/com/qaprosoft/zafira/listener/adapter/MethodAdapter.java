@@ -13,8 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.client;
+package com.qaprosoft.zafira.listener.adapter;
 
-public interface ZafiraClient extends BasicClient, ExtendedClient, IntegrationClient {
+import java.lang.annotation.Annotation;
+
+public interface MethodAdapter {
+
+    Object getMethod();
+
+    Annotation[] getMethodAnnotations();
+
+    String getMethodName();
+
+    String getDeclaredClassName();
+
+    String getTestClassName();
+
+    String getRealClassName();
+
+    String[] getMethodDependsOnMethods();
+
+    boolean isBeforeClassConfiguration();
+
+    boolean isAfterClassConfiguration();
+
+    boolean isBeforeTestConfiguration();
+
+    boolean isAfterTestConfiguration();
+
+    TestAnnotationAdapter getTestAnnotationAdapter();
 
 }

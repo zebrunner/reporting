@@ -15,6 +15,23 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.client;
 
-public interface ZafiraClient extends BasicClient, ExtendedClient, IntegrationClient {
+import com.google.api.services.sheets.v4.Sheets;
+
+import java.io.File;
+import java.util.Optional;
+
+public interface IntegrationClient {
+
+    /**
+     * Uploads file to Amazon S3 used integration data from server
+     * @param file - any file to upload
+     * @param expiresIn - in seconds to generate presigned URL
+     * @param keyPrefix - bucket folder name where file will be stored
+     * @return url of the file in string format
+     * @throws Exception throws when there are any issues with a Amazon S3 connection
+     */
+    String uploadFile(File file, Integer expiresIn, String keyPrefix) throws Exception;
+
+    Optional<Sheets> getSpreadsheetService();
 
 }

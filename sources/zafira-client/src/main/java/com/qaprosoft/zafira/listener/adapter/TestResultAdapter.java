@@ -13,8 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.client;
+package com.qaprosoft.zafira.listener.adapter;
 
-public interface ZafiraClient extends BasicClient, ExtendedClient, IntegrationClient {
+import java.util.Set;
+
+public interface TestResultAdapter {
+
+    Object getTestResult();
+
+    String getName();
+
+    Object[] getParameters();
+
+    void setAttribute(String name, Object value);
+
+    Throwable getThrowable();
+
+    TestResultStatus getStatus();
+
+    Set<TestResultAdapter> getFailedTestResults();
+
+    Set<TestResultAdapter> getSkippedTestResults();
+
+    Set<String> getKnownClassNames();
+
+    RuntimeException getSkipExceptionInstance(String message);
+
+    MethodAdapter getMethodAdapter();
+
+    SuiteAdapter getSuiteAdapter();
 
 }

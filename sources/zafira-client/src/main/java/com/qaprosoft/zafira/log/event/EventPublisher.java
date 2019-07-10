@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.client;
+package com.qaprosoft.zafira.log.event;
 
-public interface ZafiraClient extends BasicClient, ExtendedClient, IntegrationClient {
+public interface EventPublisher {
+
+    boolean publishEvent(String routingKey, String correlationId, String appId, String eventType, String payload);
 
 }

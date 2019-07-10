@@ -13,8 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.client;
+package com.qaprosoft.zafira.listener.service.impl;
 
-public interface ZafiraClient extends BasicClient, ExtendedClient, IntegrationClient {
+import com.qaprosoft.zafira.client.ZafiraClient;
+import com.qaprosoft.zafira.listener.service.UserTypeService;
+import com.qaprosoft.zafira.models.dto.user.UserType;
 
+public class UserTypeServiceImpl implements UserTypeService {
+
+    private final ZafiraClient zafiraClient;
+
+    public UserTypeServiceImpl(ZafiraClient zafiraClient) {
+        this.zafiraClient = zafiraClient;
+    }
+
+    @Override
+    public UserType getUserProfile() {
+        return zafiraClient.getUserProfile().getObject();
+    }
+
+    @Override
+    public UserType getUserOrAnonymousIfNotFound(String owner) {
+        return zafiraClient.getUserOrAnonymousIfNotFound(owner);
+    }
 }

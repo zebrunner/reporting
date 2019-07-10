@@ -13,8 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.client;
+package com.qaprosoft.zafira.listener.service.impl;
 
-public interface ZafiraClient extends BasicClient, ExtendedClient, IntegrationClient {
+import com.qaprosoft.zafira.client.ZafiraClient;
+import com.qaprosoft.zafira.listener.service.ProjectTypeService;
+
+public class ProjectTypeServiceImpl implements ProjectTypeService {
+
+    private final ZafiraClient zafiraClient;
+
+    public ProjectTypeServiceImpl(ZafiraClient zafiraClient) {
+        this.zafiraClient = zafiraClient;
+    }
+
+    @Override
+    public void initProject(String projectName) {
+        zafiraClient.initProject(projectName);
+    }
 
 }

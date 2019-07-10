@@ -13,8 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.client;
+package com.qaprosoft.zafira.listener.service.impl;
 
-public interface ZafiraClient extends BasicClient, ExtendedClient, IntegrationClient {
+import com.qaprosoft.zafira.client.ZafiraClient;
+import com.qaprosoft.zafira.listener.service.JobTypeService;
+import com.qaprosoft.zafira.models.dto.JobType;
+
+public class JobTypeServiceImpl implements JobTypeService {
+
+    private final ZafiraClient zafiraClient;
+
+    public JobTypeServiceImpl(ZafiraClient zafiraClient) {
+        this.zafiraClient = zafiraClient;
+    }
+
+    @Override
+    public JobType register(String ciUrl, long suiteOwnerId) {
+        return zafiraClient.registerJob(ciUrl, suiteOwnerId);
+    }
 
 }

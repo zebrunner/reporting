@@ -21,12 +21,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.qaprosoft.zafira.listener.adapter.SuiteAdapter;
+import com.qaprosoft.zafira.listener.adapter.TestResultAdapter;
 import com.qaprosoft.zafira.models.dto.TagType;
-import org.testng.ISuite;
 import org.testng.ITestResult;
 
 import com.qaprosoft.zafira.models.dto.TestArtifactType;
 import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
+
+import static com.qaprosoft.zafira.client.ClientDefaults.USER;
 
 /**
  * Default implementation of Zafira {@link IConfigurator} used for more deep integration with test frameworks.
@@ -35,7 +38,6 @@ import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
  * @author akhursevich
  */
 public class DefaultConfigurator implements IConfigurator {
-    private static final String ANONYMOUS = "anonymous";
 
     @Override
     public ConfigurationType getConfiguration() {
@@ -43,47 +45,48 @@ public class DefaultConfigurator implements IConfigurator {
     }
 
     @Override
-    public String getOwner(ISuite suite) {
-        return ANONYMOUS;
+    public String getOwner(SuiteAdapter adapter) {
+        return USER;
     }
 
     @Override
-    public String getPrimaryOwner(ITestResult test) {
-        return ANONYMOUS;
+    public String getPrimaryOwner(TestResultAdapter adapter) {
+        return USER;
     }
 
     @Override
-    public String getSecondaryOwner(ITestResult test) {
+    public String getSecondaryOwner(TestResultAdapter adapter) {
         return null;
     }
 
     @Override
-    public String getTestName(ITestResult test) {
-        return test.getName();
+    public String getTestName(TestResultAdapter adapter) {
+        ITestResult testResult = (ITestResult) adapter.getTestResult();
+        return testResult.getTestName();
     }
 
     @Override
-    public String getTestMethodName(ITestResult test) {
-        return test.getMethod().getMethodName();
+    public String getTestMethodName(TestResultAdapter adapter) {
+        return adapter.getMethodAdapter().getMethodName();
     }
 
     @Override
-    public int getRunCount(ITestResult test) {
+    public int getRunCount(TestResultAdapter adapter) {
         return 0;
     }
 
     @Override
-    public List<String> getTestWorkItems(ITestResult test) {
+    public List<String> getTestWorkItems(TestResultAdapter adapter) {
         return new ArrayList<>();
     }
 
     @Override
-    public Map<String, Long> getTestMetrics(ITestResult test) {
+    public Map<String, Long> getTestMetrics(TestResultAdapter adapter) {
         return null;
     }
 
     @Override
-    public Set<TestArtifactType> getArtifacts(ITestResult test) {
+    public Set<TestArtifactType> getArtifacts(TestResultAdapter adapter) {
         return new HashSet<>();
     }
 
@@ -92,7 +95,8 @@ public class DefaultConfigurator implements IConfigurator {
     }
 
     @Override
-    public Set<TagType> getTestTags(ITestResult test) {
+    public Set<TagType> getTestTags(TestResultAdapter adapter) {
         return new HashSet<>();
     }
+
 }

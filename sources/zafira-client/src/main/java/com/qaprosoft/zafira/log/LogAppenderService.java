@@ -13,8 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.client;
+package com.qaprosoft.zafira.log;
 
-public interface ZafiraClient extends BasicClient, ExtendedClient, IntegrationClient {
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+public interface LogAppenderService {
+
+    void append(BaseAppenderTask task);
+
+    void connectZafira() throws IOException, TimeoutException;
+
+    void onClose() throws IOException, TimeoutException;
 
 }

@@ -13,8 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.client;
+package com.qaprosoft.zafira.listener.domain;
 
-public interface ZafiraClient extends BasicClient, ExtendedClient, IntegrationClient {
+import com.qaprosoft.zafira.listener.adapter.SuiteAdapter;
+
+interface Configuration<T> {
+
+    boolean canOverride();
+    String getConfigName();
+    T getDefaultValue();
+    Class<T> getConfigClass();
+
+    default T get(SuiteAdapter adapter) {
+        String configValue = adapter.getSuiteParameter(getConfigName());
+        return getConfigClass().cast(configValue);
+    }
+
+    default T get(org.apache.commons.configuration2.Configuration config) {
+        return config.get(getConfigClass(), getConfigName(), getDefaultValue());
+    }
+
+    default T get(org.apache.commons.configuration2.Configuration config, SuiteAdapter adapter) {
+        return canOverride() && get(adapter) != null ? get(adapter) : get(config);
+    }
 
 }

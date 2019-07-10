@@ -15,6 +15,11 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.client;
 
-public interface ZafiraClient extends BasicClient, ExtendedClient, IntegrationClient {
+public interface ClientDefaults {
+
+    String PROJECT = "UNKNOWN";
+    String USER = "anonymous";
+
+    String ZAFIRA_PROPERTIES_FILE = "zafira.properties";
 
 }

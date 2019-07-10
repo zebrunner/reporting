@@ -13,8 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.client;
+package com.qaprosoft.zafira.util.http;
 
-public interface ZafiraClient extends BasicClient, ExtendedClient, IntegrationClient {
+import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.Provider;
+
+import org.springframework.stereotype.Component;
+
+import com.owlike.genson.Genson;
+
+/**
+ * GensonProvider - allows to deserialize timestamp to Date.
+ * 
+ * @author akhursevich
+ */
+@Component
+@Provider
+public class GensonProvider implements ContextResolver<Genson> {
+
+    private final Genson genson = new Genson.Builder().useTimeInMillis(true).create();
+
+    @Override
+    public Genson getContext(Class<?> type) {
+        return genson;
+    }
 
 }

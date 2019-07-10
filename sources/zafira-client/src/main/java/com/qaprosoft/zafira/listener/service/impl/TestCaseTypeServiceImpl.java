@@ -13,8 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.client;
+package com.qaprosoft.zafira.listener.service.impl;
 
-public interface ZafiraClient extends BasicClient, ExtendedClient, IntegrationClient {
+import com.qaprosoft.zafira.client.ZafiraClient;
+import com.qaprosoft.zafira.listener.service.TestCaseTypeService;
+import com.qaprosoft.zafira.models.dto.TestCaseType;
+
+public class TestCaseTypeServiceImpl implements TestCaseTypeService {
+
+    private final ZafiraClient zafiraClient;
+
+    public TestCaseTypeServiceImpl(ZafiraClient zafiraClient) {
+        this.zafiraClient = zafiraClient;
+    }
+
+    @Override
+    public TestCaseType registerTestCase(Long testSuiteId, Long primaryOwnerId, Long secondaryOwnerId, String testClass, String testMethod) {
+        return zafiraClient.registerTestCase(testSuiteId, primaryOwnerId, secondaryOwnerId, testClass, testMethod);
+    }
 
 }
