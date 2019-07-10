@@ -15,24 +15,29 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.util.List;
-
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.WorkItemMapper;
+import com.qaprosoft.zafira.models.db.WorkItem;
+import com.qaprosoft.zafira.models.db.WorkItem.Type;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.WorkItemMapper;
-import com.qaprosoft.zafira.models.db.WorkItem;
-import com.qaprosoft.zafira.models.db.WorkItem.Type;
+import java.util.List;
 
 @Service
 public class WorkItemService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WorkItemService.class);
 
     @Autowired
     private WorkItemMapper workItemMapper;
 
     @Transactional(rollbackFor = Exception.class)
     public void createWorkItem(WorkItem workItem) {
+        validateWorkItemFieldsLength(workItem);
         workItemMapper.createWorkItem(workItem);
     }
 
@@ -58,6 +63,7 @@ public class WorkItemService {
 
     @Transactional(rollbackFor = Exception.class)
     public WorkItem updateWorkItem(WorkItem workItem) {
+        validateWorkItemFieldsLength(workItem);
         workItemMapper.updateWorkItem(workItem);
         return workItem;
     }
@@ -76,5 +82,20 @@ public class WorkItemService {
         } else {
             return workItem;
         }
+    }
+
+    private void validateWorkItemFieldsLength(WorkItem workItem) {
+        String errorMessage = "";
+        if (is45SymbolsLengthExceeded(workItem.getJiraId())) {
+            errorMessage += "jiraId("+ workItem.getJiraId() +")";
+        }
+        if(StringUtils.isNotEmpty(errorMessage)){
+            errorMessage = "WorkItem ID: "+ workItem.getId() + ", WorkItem JiraId: "+ workItem.getJiraId() + "\nFields exceeding 45 symbols restriction: " + errorMessage;
+            LOGGER.error(errorMessage);
+        }
+    }
+
+    private boolean is45SymbolsLengthExceeded(String value) {
+        return StringUtils.isNotEmpty(value) && value.length() > 45;
     }
 }

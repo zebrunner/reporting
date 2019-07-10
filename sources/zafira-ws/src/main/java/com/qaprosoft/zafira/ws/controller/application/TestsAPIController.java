@@ -101,7 +101,7 @@ public class TestsAPIController extends AbstractController {
     @ApiOperation(value = "Start test", nickname = "startTest", httpMethod = "POST", response = TestType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping()
-    public TestType startTest(@Valid @RequestBody TestType t, @RequestHeader(value = "Project", required = false) String project)
+    public TestType startTest(@Valid @RequestBody TestType t)
             {
         Test test = testService.startTest(mapper.map(t, Test.class), t.getWorkItems(), t.getConfigXML());
         websocketTemplate.convertAndSend(

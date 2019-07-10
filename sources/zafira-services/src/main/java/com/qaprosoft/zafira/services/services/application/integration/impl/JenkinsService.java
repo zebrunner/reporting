@@ -113,6 +113,8 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
 
     public JobResult buildScannerJob(String repositoryName, Map<String, String> jobParameters, boolean rescan) {
         String jobUrl = buildJobUrl(repositoryName, rescan);
+        LOGGER.error("Jenkins job url: " + jobUrl);
+        LOGGER.error("Job parameters: " + jobParameters);
         return buildJob(jobUrl, jobParameters);
     }
 

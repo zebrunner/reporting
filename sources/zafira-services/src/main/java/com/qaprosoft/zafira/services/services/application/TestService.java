@@ -15,13 +15,10 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_BLOCKER;
-import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_KNOWN_ISSUE;
-import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.REMOVE_BLOCKER;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestCaseSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSearchCriteria;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Tag;
 import com.qaprosoft.zafira.models.db.Test;
@@ -30,6 +27,12 @@ import com.qaprosoft.zafira.models.db.TestCase;
 import com.qaprosoft.zafira.models.db.TestConfig;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.WorkItem;
+import com.qaprosoft.zafira.models.db.WorkItem.Type;
+import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
+import com.qaprosoft.zafira.services.services.application.integration.impl.JiraService;
+import net.rcarz.jiraclient.Issue;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
@@ -39,17 +42,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestMapper;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestCaseSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSearchCriteria;
-import com.qaprosoft.zafira.models.db.WorkItem.Type;
-import com.qaprosoft.zafira.models.dto.TestRunStatistics;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
-import com.qaprosoft.zafira.services.services.application.integration.impl.JiraService;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
-import net.rcarz.jiraclient.Issue;
+import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_BLOCKER;
+import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_KNOWN_ISSUE;
+import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.REMOVE_BLOCKER;
 
 @Service
 public class TestService {
@@ -132,7 +139,29 @@ public class TestService {
 
     @Transactional(rollbackFor = Exception.class)
     public void createTest(Test test) {
+        validateTestFieldsLength(test);
         testMapper.createTest(test);
+    }
+
+    private void validateTestFieldsLength(Test test) {
+        String errorMessage = "";
+        if (is255SymbolsLengthExceeded(test.getName())) {
+            errorMessage += "name(" + test.getName().length() + ") , ";
+        }
+        if (is255SymbolsLengthExceeded(test.getTestGroup())){
+            errorMessage += "testGroup("+ test.getTestGroup().length() +"), ";
+        }
+        if (is255SymbolsLengthExceeded(test.getDependsOnMethods())){
+            errorMessage += "dependsOnMethods("+ test.getDependsOnMethods().length() +")";
+        }
+        if(StringUtils.isNotEmpty(errorMessage)){
+            errorMessage = "Test ID: "+ test.getId() + ", Test name: "+ test.getName() + "\nFields exceeding 255 symbols restriction: " + errorMessage;
+            LOGGER.error(errorMessage);
+        }
+    }
+
+    private boolean is255SymbolsLengthExceeded(String value) {
+        return StringUtils.isNotEmpty(value) && value.length() > 255;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -288,6 +317,7 @@ public class TestService {
 
     @Transactional(rollbackFor = Exception.class)
     public Test updateTest(Test test) {
+        validateTestFieldsLength(test);
         testMapper.updateTest(test);
         return test;
     }
