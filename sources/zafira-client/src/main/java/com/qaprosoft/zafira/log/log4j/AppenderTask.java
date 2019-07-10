@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.log.log4j;
 
-import com.qaprosoft.zafira.listener.impl.ZafiraListenerImpl;
+import com.qaprosoft.zafira.listener.ZafiraEventRegistrar;
 import com.qaprosoft.zafira.log.BaseAppenderTask;
 import com.qaprosoft.zafira.log.domain.MetaInfoMessage;
 import com.qaprosoft.zafira.log.log4j.level.MetaInfoLevel;
@@ -44,7 +44,7 @@ public class AppenderTask extends BaseAppenderTask<LoggingEvent> {
         if (isMetaInfoLevel && ((MetaInfoMessage) loggingEvent.getMessage()).getHeaders().get("CI_TEST_ID") != null) {
             result = ((MetaInfoMessage) loggingEvent.getMessage()).getHeaders().get("CI_TEST_ID");
         } else {
-            result = ZafiraListenerImpl.getThreadCiTestId();
+            result = ZafiraEventRegistrar.getThreadCiTestId();
         }
         return result;
     }

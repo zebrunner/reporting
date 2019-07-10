@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.listener.impl;
+package com.qaprosoft.zafira.listener;
 
 import com.qaprosoft.zafira.client.ZafiraClient;
 import com.qaprosoft.zafira.client.ZafiraSingleton;
 import com.qaprosoft.zafira.config.CiConfig;
 import com.qaprosoft.zafira.config.IConfigurator;
-import com.qaprosoft.zafira.listener.TestHookable;
-import com.qaprosoft.zafira.listener.ExcludeTestsForRerun;
-import com.qaprosoft.zafira.listener.ZafiraListener;
 import com.qaprosoft.zafira.listener.adapter.MethodAdapter;
 import com.qaprosoft.zafira.listener.adapter.SuiteAdapter;
 import com.qaprosoft.zafira.listener.adapter.TestResultAdapter;
@@ -73,9 +70,12 @@ import java.util.UUID;
 import static com.qaprosoft.zafira.client.ClientDefaults.USER;
 import static com.qaprosoft.zafira.config.CiConfig.BuildCase.UPSTREAMTRIGGER;
 
-public class ZafiraListenerImpl implements ZafiraListener {
+/**
+ * Registers events to Zafira via adapters
+ */
+public class ZafiraEventRegistrar implements TestLifecycleAware {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZafiraListenerImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZafiraEventRegistrar.class);
 
     private final static String SKIP_CFG_EXC_MSG = "Skipping configuration method since test class doesn't contain test methods to rerun";
 
@@ -112,7 +112,7 @@ public class ZafiraListenerImpl implements ZafiraListener {
     private TestTypeService testTypeService;
     private TestCaseTypeService testCaseTypeService;
 
-    public ZafiraListenerImpl() {
+    public ZafiraEventRegistrar() {
     }
 
     @Override
