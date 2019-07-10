@@ -24,7 +24,6 @@ import javax.annotation.PostConstruct;
 
 import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
 import com.qaprosoft.zafira.services.util.TenancyDbInitial;
-import org.apache.log4j.Logger;
 
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Setting;
@@ -32,6 +31,8 @@ import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.context.AbstractContext;
 import com.qaprosoft.zafira.services.services.management.TenancyService;
 import com.qaprosoft.zafira.services.util.TenancyInitial;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -40,7 +41,7 @@ import org.springframework.util.StringUtils;
 @DependsOn("integrationService")
 public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbInitial {
 
-    private static final Logger LOGGER = Logger.getLogger(IntegrationTenancyStorage.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IntegrationTenancyStorage.class);
 
     private static final Map<Setting.Tool, Map<String, ? extends AbstractContext>> tenancyEntity = new ConcurrentHashMap<>();
 

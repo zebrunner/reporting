@@ -16,14 +16,15 @@
 package com.qaprosoft.zafira.services.services.application.integration.context;
 
 import com.qaprosoft.zafira.models.db.Setting;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class AbstractContext {
 
-    protected static final Logger LOGGER = Logger.getLogger(AbstractContext.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractContext.class);
 
     private Map<Setting.SettingType, Object> settings;
     private final Boolean enabled;

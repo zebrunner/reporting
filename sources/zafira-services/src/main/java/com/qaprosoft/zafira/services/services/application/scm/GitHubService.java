@@ -20,10 +20,11 @@ import com.qaprosoft.zafira.models.dto.scm.Repository;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.util.GitHubHttpUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.kohsuke.github.GHPerson;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -36,7 +37,7 @@ import java.util.stream.Collectors;
 @Component
 public class GitHubService implements IScmService {
 
-    private static final Logger LOGGER = Logger.getLogger(GitHubService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GitHubService.class);
 
     @Autowired
     private GitHubHttpUtils gitHubHttpUtils;

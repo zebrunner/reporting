@@ -21,9 +21,10 @@ import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCr
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.jasypt.util.password.PasswordEncryptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
@@ -48,7 +49,7 @@ import com.qaprosoft.zafira.services.util.TenancyDbInitial;
 @Service
 public class UserService implements TenancyDbInitial {
 
-    private static final Logger LOGGER = Logger.getLogger(UserService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     @Value("${zafira.admin.username}")
     private String adminUsername;

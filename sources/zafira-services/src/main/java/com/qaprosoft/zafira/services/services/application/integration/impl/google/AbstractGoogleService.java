@@ -22,7 +22,8 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.sheets.v4.SheetsScopes;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -30,7 +31,7 @@ import java.util.Set;
 
 public abstract class AbstractGoogleService {
 
-    protected static final Logger LOGGER = Logger.getLogger(AbstractGoogleService.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractGoogleService.class);
 
     private static String APPLICATION_NAME = "zafira";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();

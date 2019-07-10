@@ -21,7 +21,8 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
@@ -31,7 +32,7 @@ import java.net.URISyntaxException;
 @Component
 public class GitHubHttpUtils {
 
-    private static final Logger LOGGER = Logger.getLogger(GitHubHttpUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GitHubHttpUtils.class);
 
     private static final String GITHUB_ACCESS_TOKEN_PATH = "https://github.com/login/oauth/access_token";
 

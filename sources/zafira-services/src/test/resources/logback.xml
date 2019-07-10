@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE configuration>
 
-<configuration
-	xmlns:log4j="http://jakarta.apache.org/log4j/">
+<configuration>
 
 	<appender name="console"
 		class="ch.qos.logback.core.ConsoleAppender">

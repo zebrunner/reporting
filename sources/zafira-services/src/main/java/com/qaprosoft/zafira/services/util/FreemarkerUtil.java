@@ -18,7 +18,8 @@ package com.qaprosoft.zafira.services.util;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
@@ -29,7 +30,7 @@ import java.util.UUID;
 @Component
 public class FreemarkerUtil {
 
-    private static final Logger LOGGER = Logger.getLogger(FreemarkerUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FreemarkerUtil.class);
 
     @Autowired
     private Configuration freemarkerConfiguration;
