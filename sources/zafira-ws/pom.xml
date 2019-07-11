@@ -14,10 +14,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.qaprosoft</groupId>
-			<artifactId>zafira-conf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.qaprosoft</groupId>
 			<artifactId>zafira-dbaccess</artifactId>
 		</dependency>
 		<dependency>
@@ -158,12 +154,8 @@
 		<finalName>${project.artifactId}</finalName>
 		<resources>
 			<resource>
-				<directory>src/main/filtered-resources</directory>
-				<filtering>true</filtering>
-			</resource>
-			<resource>
 				<directory>src/main/resources</directory>
-				<filtering>false</filtering>
+				<filtering>true</filtering>
 			</resource>
 		</resources>
 		<plugins>

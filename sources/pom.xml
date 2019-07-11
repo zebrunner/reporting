@@ -108,7 +108,6 @@
         <es.version>6.6.0</es.version>
     </properties>
     <modules>
-        <module>zafira-conf</module>
         <module>zafira-models</module>
         <module>zafira-client</module>
         <module>zafira-dbaccess</module>
@@ -117,11 +116,6 @@
     </modules>
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>zafira-conf</artifactId>
-                <version>${project.version}</version>
-            </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>zafira-models</artifactId>
