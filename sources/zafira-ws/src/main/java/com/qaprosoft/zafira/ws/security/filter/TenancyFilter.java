@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.ws.security.filter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -43,31 +44,37 @@ public class TenancyFilter extends GenericFilterBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TenancyFilter.class);
 
+    private static final String[] EXCLUSIONS = {"api/status"};
+
     @Value("${zafira.multitenant}")
     private boolean isMultitenant;
 
     @Override
-    public void doFilter(ServletRequest rq, ServletResponse rs, FilterChain chain)
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        if (isMultitenant) {
-            try {
-                // API clients without Origin
-                String host = rq.getServerName();
-                // Web clients has Origin header
-                String origin = ((HttpServletRequest) rq).getHeader("Origin");
+        HttpServletRequest servletRequest = (HttpServletRequest) request;
+
+        if (Arrays.stream(EXCLUSIONS).noneMatch(path -> servletRequest.getRequestURI().contains(path))) {
+
+            if (isMultitenant) {
+                String host = servletRequest.getServerName(); // API clients without Origin
+                String origin = servletRequest.getHeader("Origin"); // Web clients has Origin header
                 if (StringUtils.nonEmptyString(origin)) {
                     host = origin.split("//")[1].split(":")[0];
                 }
-                InternetDomainName domain = InternetDomainName.from(host.replaceFirst("www.", ""));
-                if (!domain.isTopPrivateDomain()) {
-                    String topDomain = domain.topPrivateDomain().toString();
-                    String subDomain = domain.toString().replaceAll("." + topDomain, "");
-                    TenancyContext.setTenantName(subDomain);
+                try {
+                    InternetDomainName domain = InternetDomainName.from(host.replaceFirst("www.", ""));
+                    if (!domain.isTopPrivateDomain()) {
+                        String topDomain = domain.topPrivateDomain().toString();
+                        String subDomain = domain.toString().replaceAll("." + topDomain, "");
+                        TenancyContext.setTenantName(subDomain);
+                    }
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
                 }
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
             }
         }
-        chain.doFilter(rq, rs);
+
+        chain.doFilter(request, response);
     }
 }
