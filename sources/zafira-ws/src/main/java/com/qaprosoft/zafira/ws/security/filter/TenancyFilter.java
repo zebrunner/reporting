@@ -47,27 +47,30 @@ public class TenancyFilter extends GenericFilterBean {
     private boolean isMultitenant;
 
     @Override
-    public void doFilter(ServletRequest rq, ServletResponse rs, FilterChain chain)
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        if (isMultitenant) {
-            try {
-                // API clients without Origin
-                String host = rq.getServerName();
-                // Web clients has Origin header
-                String origin = ((HttpServletRequest) rq).getHeader("Origin");
+        HttpServletRequest servletRequest = (HttpServletRequest) request;
+        if (!servletRequest.getRequestURI().contains("api/status")) { // check if that's a status api - call
+
+            if (isMultitenant) {
+                String host = servletRequest.getServerName(); // API clients without Origin
+                String origin = servletRequest.getHeader("Origin"); // Web clients has Origin header
                 if (StringUtils.nonEmptyString(origin)) {
                     host = origin.split("//")[1].split(":")[0];
                 }
-                InternetDomainName domain = InternetDomainName.from(host.replaceFirst("www.", ""));
-                if (!domain.isTopPrivateDomain()) {
-                    String topDomain = domain.topPrivateDomain().toString();
-                    String subDomain = domain.toString().replaceAll("." + topDomain, "");
-                    TenancyContext.setTenantName(subDomain);
+                try {
+                    InternetDomainName domain = InternetDomainName.from(host.replaceFirst("www.", ""));
+                    if (!domain.isTopPrivateDomain()) {
+                        String topDomain = domain.topPrivateDomain().toString();
+                        String subDomain = domain.toString().replaceAll("." + topDomain, "");
+                        TenancyContext.setTenantName(subDomain);
+                    }
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
                 }
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
             }
         }
-        chain.doFilter(rq, rs);
+
+        chain.doFilter(request, response);
     }
 }
