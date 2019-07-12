@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.ws.security.filter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -43,6 +44,8 @@ public class TenancyFilter extends GenericFilterBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TenancyFilter.class);
 
+    private static final String[] EXCLUSIONS = {"api/status"};
+
     @Value("${zafira.multitenant}")
     private boolean isMultitenant;
 
@@ -50,7 +53,8 @@ public class TenancyFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest servletRequest = (HttpServletRequest) request;
-        if (!servletRequest.getRequestURI().contains("api/status")) { // check if that's a status api - call
+
+        if (Arrays.stream(EXCLUSIONS).noneMatch(path -> servletRequest.getRequestURI().contains(path))) {
 
             if (isMultitenant) {
                 String host = servletRequest.getServerName(); // API clients without Origin
