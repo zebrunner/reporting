@@ -154,9 +154,9 @@
 			UPDATE
 			    SETTINGS
 			SET
-				VALUE = #{value},
+			    VALUE        = #{value},
                 IS_ENCRYPTED = #{isEncrypted},
-				FILE = #{file, jdbcType=BINARY}
+                FILE         = #{file, jdbcType=BINARY}
 			WHERE
 			    ID = #{id}
 		]]>
