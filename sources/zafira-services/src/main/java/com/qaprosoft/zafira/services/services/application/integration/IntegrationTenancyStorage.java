@@ -68,7 +68,8 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
 
     @Override
     public void init() {
-        Arrays.stream(Setting.Tool.getValues()).forEach(tool -> integrationService.getServiceByTool(tool).init());
+        Arrays.stream(Setting.Tool.getValues())
+              .forEach(tool -> integrationService.getServiceByTool(tool).init());
     }
 
     @Override

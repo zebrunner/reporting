@@ -155,12 +155,12 @@
 			    SETTINGS
 			SET
 				VALUE = #{value},
+                                IS_ENCRYPTED = #{isEncrypted},
 				FILE = #{file, jdbcType=BINARY}
 			WHERE
 			    ID = #{id}
 		]]>
 	</update>
-
 	<sql id="deleteSetting">
 		<![CDATA[
 			DELETE FROM SETTINGS
