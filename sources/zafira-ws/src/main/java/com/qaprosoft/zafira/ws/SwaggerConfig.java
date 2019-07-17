@@ -1,23 +1,8 @@
-/*******************************************************************************
- * Copyright 2013-2019 Qaprosoft (http://www.qaprosoft.com).
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
-package com.qaprosoft.zafira.ws.configurations;
+package com.qaprosoft.zafira.ws;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -26,15 +11,15 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-@Component
+/**
+ * Must be standalone cause must to have @Configuration annotation
+ */
+@Configuration
 @EnableSwagger2
-public class SwaggerConfiguration {
-
-    @Value("${zafira.debugMode:false}")
-    private boolean debugMode;
+public class SwaggerConfig {
 
     @Bean
-    public Docket api() {
+    public Docket api(@Value("${zafira.debugMode:false}") boolean debugMode) {
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName("zafira-api")
                 .select()
@@ -45,7 +30,7 @@ public class SwaggerConfiguration {
                 .apiInfo(apiInfo());
     }
 
-    public ApiInfo apiInfo() {
+    private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Spring MVC swagger document")
                 .description("End Points")
@@ -55,4 +40,5 @@ public class SwaggerConfiguration {
                 .version("2.0")
                 .build();
     }
+
 }

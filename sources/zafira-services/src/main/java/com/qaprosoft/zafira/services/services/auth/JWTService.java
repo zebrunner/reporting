@@ -35,16 +35,17 @@ import com.qaprosoft.zafira.services.services.application.GroupService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+@Component
 public class JWTService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JWTService.class);
 
     private final String secret;
-
     private final Integer authTokenExp;
-
     private final Integer refreshTokenExp;
 
     @Autowired
@@ -53,7 +54,9 @@ public class JWTService {
     @Autowired
     private GroupService groupService;
 
-    public JWTService(String secret, Integer authTokenExp, Integer refreshTokenExp) {
+    public JWTService(@Value("${zafira.jwt.secret}") String secret,
+                      @Value("${zafira.jwt.authTokenExp}") Integer authTokenExp,
+                      @Value("${zafira.jwt.refreshTokenExp}") Integer refreshTokenExp) {
         this.secret = secret;
         this.authTokenExp = authTokenExp;
         this.refreshTokenExp = refreshTokenExp;

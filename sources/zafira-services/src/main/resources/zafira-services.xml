@@ -18,8 +18,8 @@
 			ref="testRunMapperCacheableService" />
 	</bean>
 
-	<context:component-scan
-		base-package="com.qaprosoft.zafira.services" />
+<!--	<context:component-scan-->
+<!--		base-package="com.qaprosoft.zafira.services" />-->
 
 	<bean id="passwordEncryptor"
 		class="org.jasypt.util.password.BasicPasswordEncryptor" />
@@ -105,7 +105,7 @@
 		</property>
 	</bean>
 
-	<bean id="jwtService"
+	<!--<bean id="jwtService"
 		class="com.qaprosoft.zafira.services.services.auth.JWTService">
 		<constructor-arg index="0"
 			value="${zafira.jwt.secret}" />
@@ -113,7 +113,7 @@
 			value="${zafira.jwt.authTokenExp}" />
 		<constructor-arg index="2"
 			value="${zafira.jwt.refreshTokenExp}" />
-	</bean>
+	</bean>-->
 
 	<!-- Use for needed object with @Service annotaion autowire if object has 
 		interface implementation -->
