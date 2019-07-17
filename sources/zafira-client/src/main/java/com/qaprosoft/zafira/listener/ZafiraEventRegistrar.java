@@ -54,7 +54,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.util.Arrays;
@@ -119,8 +118,9 @@ public class ZafiraEventRegistrar implements TestLifecycleAware {
     public void onSuiteStart(SuiteAdapter adapter) {
         boolean initialized = initializeZafira(adapter);
         // Exit on initialization failure
-        if (!initialized)
+        if (!initialized) {
             return;
+        }
 
         try {
             // TODO: investigate possibility to remove methods from suite
@@ -247,7 +247,7 @@ public class ZafiraEventRegistrar implements TestLifecycleAware {
                 // new test run registration
                 String testArgs = adapter.getParameters().toString();
 
-                String group = adapter.getMethodAdapter().getTestClassName();;
+                String group = adapter.getMethodAdapter().getTestClassName();
                 group = group.substring(0, group.lastIndexOf("."));
 
                 String[] dependsOnMethods = adapter.getMethodAdapter().getMethodDependsOnMethods();
@@ -276,26 +276,25 @@ public class ZafiraEventRegistrar implements TestLifecycleAware {
         if (!ZAFIRA_ENABLED) {
             return;
         }
-
-        try {
-            finishTest(adapter, Status.PASSED);
-        } catch (Throwable e) {
-            LOGGER.error("Undefined error during test case/method finish!", e);
-        }
+        finishTest(adapter, Status.PASSED);
     }
 
     @Override
     public void onTestFailure(TestResultAdapter adapter) {
-        processResultOnTestFailure(adapter);
+        if (!ZAFIRA_ENABLED) {
+            return;
+        }
+        finishTest(adapter, Status.FAILED);
     }
 
     @Override
     public void onTestSkipped(TestResultAdapter adapter) {
-        if (!ZAFIRA_ENABLED)
+        if (!ZAFIRA_ENABLED) {
             return;
+        }
         // Test is skipped as ALREADY_PASSED
-        if (adapter.getThrowable() != null && adapter.getThrowable().getMessage() != null
-                && adapter.getThrowable().getMessage().startsWith("ALREADY_PASSED")) {
+        Throwable exception = adapter.getThrowable();
+        if (exception != null && exception.getMessage() != null && exception.getMessage().startsWith("ALREADY_PASSED")) {
             return;
         }
 
@@ -398,7 +397,7 @@ public class ZafiraEventRegistrar implements TestLifecycleAware {
 
             if (ZAFIRA_ENABLED) {
                 zc = ZafiraSingleton.INSTANCE.getClient();
-                if(zc != null) {
+                if (zc != null) {
                     ZAFIRA_ENABLED = zc.isAvailable();
 
                     this.testRunTypeService = new TestRunTypeServiceImpl(zc);
@@ -445,7 +444,7 @@ public class ZafiraEventRegistrar implements TestLifecycleAware {
     private String getFullStackTrace(TestResultAdapter adapter) {
         StringBuilder sb = new StringBuilder();
         if (adapter.getThrowable() == null) {
-            if (adapter.getStatus().getCode() == TestResultStatus.SKIP.getCode()) {
+            if (adapter.getStatus() == TestResultStatus.SKIP) {
                 // Identify is it due to the dependent failure or exception in before suite/class/method
                 String[] methods = adapter.getMethodAdapter().getMethodDependsOnMethods();
                 // Find if any parent method failed/skipped
@@ -479,32 +478,10 @@ public class ZafiraEventRegistrar implements TestLifecycleAware {
     private String getDependentMethodName(String[] methods, String testName) {
         String result = null;
         boolean contains = Arrays.stream(methods).anyMatch(method -> method.contains(testName));
-        if(contains) {
+        if (contains) {
             result = testName;
         }
         return result;
-    }
-
-    /**
-     * TestRunShutdownHook - aborts test run when CI job is aborted.
-     */
-    public static class TestRunShutdownHook extends Thread {
-
-        private final TestRunTypeService testRunTypeService;
-        private final TestRunType testRun;
-
-        TestRunShutdownHook(TestRunTypeService testRunTypeService, TestRunType testRun) {
-            this.testRunTypeService = testRunTypeService;
-            this.testRun = testRun;
-        }
-
-        @Override
-        public void run() {
-            if (testRun != null) {
-                boolean aborted = testRunTypeService.abort(testRun.getId());
-                LOGGER.info("TestRunShutdownHook was executed with result: " + aborted);
-            }
-        }
     }
 
     public static String getThreadCiTestId() {
@@ -514,18 +491,7 @@ public class ZafiraEventRegistrar implements TestLifecycleAware {
         return threadCiTestId.get();
     }
 
-    private void processResultOnTestFailure(TestResultAdapter adapter) {
-        if (!ZAFIRA_ENABLED)
-            return;
-
-        try {
-            finishTest(adapter, Status.FAILED);
-        } catch (Throwable e) {
-            LOGGER.error("Undefined error during test case/method finish!", e);
-        }
-    }
-
-    private TestType populateTestResult(TestResultAdapter adapter, Status status, String message) throws JAXBException {
+    private TestType populateTestResult(TestResultAdapter adapter, Status status, String message) {
         long threadId = Thread.currentThread().getId();
         TestType test = threadTest.get();// testByThread.get(threadId);
         final Long finishTime = new Date().getTime();
@@ -560,10 +526,15 @@ public class ZafiraEventRegistrar implements TestLifecycleAware {
         return test;
     }
 
-    private void finishTest(TestResultAdapter adapter, Status status) throws JAXBException {
-        String fullStackTrace = getFullStackTrace(adapter);
-        TestType finishedTest = populateTestResult(adapter, status, fullStackTrace);
-        testTypeService.finishTest(finishedTest);
+    private void finishTest(TestResultAdapter adapter, Status status) {
+        try {
+            String fullStackTrace = getFullStackTrace(adapter);
+            TestType finishedTest = populateTestResult(adapter, status, fullStackTrace);
+            testTypeService.finishTest(finishedTest);
+        } catch (RuntimeException e) {
+            LOGGER.error("Undefined error during test case/method finish!", e);
+        }
+
     }
 
     private TestCaseType registerTestCase(TestResultAdapter adapter) {
@@ -584,6 +555,28 @@ public class ZafiraEventRegistrar implements TestLifecycleAware {
         String testMethod = configurator.getTestMethodName(adapter);
         Long testCaseSecondaryOwner = secondaryOwner != null ? secondaryOwner.getId() : null;
         return testCaseTypeService.registerTestCase(suite.getId(), primaryOwner.getId(), testCaseSecondaryOwner, testClass, testMethod);
+    }
+
+    /**
+     * TestRunShutdownHook - aborts test run when CI job is aborted.
+     */
+    public static class TestRunShutdownHook extends Thread {
+
+        private final TestRunTypeService testRunTypeService;
+        private final TestRunType testRun;
+
+        TestRunShutdownHook(TestRunTypeService testRunTypeService, TestRunType testRun) {
+            this.testRunTypeService = testRunTypeService;
+            this.testRun = testRun;
+        }
+
+        @Override
+        public void run() {
+            if (testRun != null) {
+                boolean aborted = testRunTypeService.abort(testRun.getId());
+                LOGGER.info("TestRunShutdownHook was executed with result: " + aborted);
+            }
+        }
     }
 
 }
