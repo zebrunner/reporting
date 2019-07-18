@@ -30,12 +30,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.qaprosoft.zafira.services.util.EventPushService.Type.TENANCIES;
 import static com.qaprosoft.zafira.services.util.EventPushService.Type.ZFR_CALLBACKS;
 
+@Component
 public class TenancyInitializer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TenancyInitializer.class);
@@ -57,9 +61,9 @@ public class TenancyInitializer {
     private final List<TenancyDbInitial> tenancyDbInitials;
     private final List<TenancyInitial> tenancyInitials;
 
-    public TenancyInitializer(List<TenancyDbInitial> tenancyDbInitials, List<TenancyInitial> tenancyInitials) {
-        this.tenancyDbInitials = tenancyDbInitials;
-        this.tenancyInitials = tenancyInitials;
+    public TenancyInitializer(Map<String, TenancyDbInitial> tenancyDbInitials, Map<String, TenancyInitial> tenancyInitials) {
+        this.tenancyDbInitials = new ArrayList<>(tenancyDbInitials.values());
+        this.tenancyInitials = new ArrayList<>(tenancyInitials.values());
     }
 
     /**

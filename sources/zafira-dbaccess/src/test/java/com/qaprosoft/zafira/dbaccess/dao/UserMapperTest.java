@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao;
 
+import com.qaprosoft.zafira.dbaccess.PersistenceTestConfig;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.GroupMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.UserSearchCriteria;
@@ -33,7 +34,7 @@ import java.util.List;
 import static org.testng.Assert.*;
 
 @Test
-@ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")
+@ContextConfiguration(classes = PersistenceTestConfig.class)
 public class UserMapperTest extends AbstractTestNGSpringContextTests {
     /**
      * Turn this on to enable this test
