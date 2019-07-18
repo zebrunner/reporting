@@ -3,7 +3,6 @@ package com.qaprosoft.zafira.dbaccess;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyDataSourceWrapper;
 import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.annotation.MapperScan;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,13 +10,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.beans.PropertyVetoException;
 
 @Configuration
-//@MapperScan(basePackages = {"com.qaprosoft.zafira.dbaccess.dao.mysql.management"}, sqlSessionFactoryRef = "managementSqlSessionFactory")
-//@EnableTransactionManagement
 public class PersistenceConfig {
 
     private static final String APP_SQL_SESSION_FACTORY_BEAN_NAME = "applicationSqlSessionFactory";
@@ -63,8 +59,10 @@ public class PersistenceConfig {
     }
 
     @Bean
-    public SqlSessionFactoryBean applicationSqlSessionFactory(@Autowired TenancyDataSourceWrapper tenancyAppDSWrapper,
-                                                              @Value("classpath*:/com/qaprosoft/zafira/dbaccess/dao/mappers/application/**/*.xml") Resource[] appMapperResources) {
+    public SqlSessionFactoryBean applicationSqlSessionFactory(
+            @Autowired TenancyDataSourceWrapper tenancyAppDSWrapper,
+            @Value("classpath*:/com/qaprosoft/zafira/dbaccess/dao/mappers/application/**/*.xml") Resource[] appMapperResources
+    ) {
         SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
         sessionFactoryBean.setDataSource(tenancyAppDSWrapper.getDataSource());
         sessionFactoryBean.setMapperLocations(appMapperResources);
@@ -72,8 +70,10 @@ public class PersistenceConfig {
     }
 
     @Bean
-    public SqlSessionFactoryBean managementSqlSessionFactory(@Autowired TenancyDataSourceWrapper tenancyMngDSWrapper,
-                                                             @Value("classpath*:/com/qaprosoft/zafira/dbaccess/dao/mappers/management/**/*.xml") Resource[] managementMapperResources) {
+    public SqlSessionFactoryBean managementSqlSessionFactory(
+            @Autowired TenancyDataSourceWrapper tenancyMngDSWrapper,
+            @Value("classpath*:/com/qaprosoft/zafira/dbaccess/dao/mappers/management/**/*.xml") Resource[] managementMapperResources
+    ) {
         SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
         sessionFactoryBean.setDataSource(tenancyMngDSWrapper.getDataSource());
         sessionFactoryBean.setMapperLocations(managementMapperResources);
@@ -106,7 +106,9 @@ public class PersistenceConfig {
         return new TenancyDataSourceWrapper(managementDataSource);
     }
 
-    private ComboPooledDataSource buildDataSource(String driverClass, String jdbcUrl, String dbUsername, String dbPassword, int maxPoolSize, int idleConnectionTestPeriod) throws PropertyVetoException {
+    private ComboPooledDataSource buildDataSource(String driverClass, String jdbcUrl, String dbUsername,
+                                                  String dbPassword, int maxPoolSize, int idleConnectionTestPeriod)
+            throws PropertyVetoException {
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
         dataSource.setDriverClass(driverClass);
         dataSource.setJdbcUrl(jdbcUrl);

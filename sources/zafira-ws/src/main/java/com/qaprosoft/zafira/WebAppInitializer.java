@@ -9,7 +9,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 
-public class AppInitializer implements WebApplicationInitializer {
+public class WebAppInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(ServletContext container) {
@@ -30,19 +30,5 @@ public class AppInitializer implements WebApplicationInitializer {
         container.addFilter("springSecurityFilterChain", new DelegatingFilterProxy())
                  .addMappingForUrlPatterns(null, true, "/*");
     }
-
-    /*// TODO: 2019-07-16 tenancy filter ? filter mappings? move to security initializer?
-    @Override
-    protected Filter[] getServletFilters() {
-        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
-        characterEncodingFilter.setEncoding("UTF-8");
-        characterEncodingFilter.setForceEncoding(true);
-        return new Filter[] {
-                new DelegatingFilterProxy(),
-                characterEncodingFilter,
-                new CORSFilter(),
-                new TenancyFilter()
-        };
-    }*/
 
 }

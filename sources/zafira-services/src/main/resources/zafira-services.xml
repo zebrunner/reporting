@@ -1,28 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:task="http://www.springframework.org/schema/task"
-	xmlns:cache="http://www.springframework.org/schema/cache"
-	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:cache="http://www.springframework.org/schema/cache"
+	   xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+
 		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.3.xsd
 		http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.5.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
-
-	<bean id="statisticsService"
-		class="com.qaprosoft.zafira.services.services.application.cache.StatisticsService">
-		<property name="cacheableService"
-			ref="testRunMapperCacheableService" />
-	</bean>
-
-<!--	<context:component-scan-->
-<!--		base-package="com.qaprosoft.zafira.services" />-->
-
-	<bean id="passwordEncryptor"
-		class="org.jasypt.util.password.BasicPasswordEncryptor" />
 
 	<bean id="messageJsonifier"
 		class="com.fasterxml.jackson.databind.ObjectMapper">
@@ -49,61 +34,38 @@
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
 
-	<!--<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"> 
-		<property name="defaultEncoding" value="UTF-8" /> <property name="javaMailProperties"> 
-		<props> <prop key="mail.smtp.auth">true</prop> <prop key="mail.smtp.starttls.enable">true</prop> 
-		</props> </property> </bean> -->
+<!--	<cache:annotation-driven />-->
 
-	<bean
-		class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean"
-		id="freemarkerConfiguration">
-		<property name="preferFileSystemAccess" value="true" />
-		<property name="templateLoaderPaths"
-			value="classpath:templates" />
-		<property name="defaultEncoding" value="UTF-8" />
-	</bean>
+<!--	<bean id="jedisConnectionFactory"-->
+<!--		class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">-->
+<!--		<property name="hostName" value="${zafira.redis.host}" />-->
+<!--		<property name="port" value="${zafira.redis.port}" />-->
+<!--		<property name="usePool" value="true" />-->
+<!--	</bean>-->
 
-	<cache:annotation-driven />
+<!--	<bean id="redisTemplate"-->
+<!--		class="org.springframework.data.redis.core.RedisTemplate">-->
+<!--		<property name="connectionFactory"-->
+<!--			ref="jedisConnectionFactory" />-->
+<!--	</bean>-->
 
-	<!--<bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager"> 
-		<property name="caches"> <set> <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
-		name="projects"/> <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
-		name="users"/> <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
-		name="testCases"/> <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
-		name="environments"/> <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
-		name="testRunStatistics"/> <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" 
-		name="groups"/> </set> </property> </bean> -->
-
-	<bean id="jedisConnectionFactory"
-		class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
-		<property name="hostName" value="${zafira.redis.host}" />
-		<property name="port" value="${zafira.redis.port}" />
-		<property name="usePool" value="true" />
-	</bean>
-
-	<bean id="redisTemplate"
-		class="org.springframework.data.redis.core.RedisTemplate">
-		<property name="connectionFactory"
-			ref="jedisConnectionFactory" />
-	</bean>
-
-	<bean id="cacheManager"
-		class="org.springframework.data.redis.cache.RedisCacheManager">
-		<constructor-arg name="redisOperations"
-			ref="redisTemplate" />
-		<property name="usePrefix" value="true" />
-		<property name="defaultExpiration" value="43200" />
-		<property name="cacheNames">
-			<list>
-				<value>projects</value>
-				<value>users</value>
-				<value>testCases</value>
-				<value>environments</value>
-				<value>testRunStatistics</value>
-				<value>groups</value>
-			</list>
-		</property>
-	</bean>
+<!--	<bean id="cacheManager"-->
+<!--		class="org.springframework.data.redis.cache.RedisCacheManager">-->
+<!--		<constructor-arg name="redisOperations"-->
+<!--			ref="redisTemplate" />-->
+<!--		<property name="usePrefix" value="true" />-->
+<!--		<property name="defaultExpiration" value="43200" />-->
+<!--		<property name="cacheNames">-->
+<!--			<list>-->
+<!--				<value>projects</value>-->
+<!--				<value>users</value>-->
+<!--				<value>testCases</value>-->
+<!--				<value>environments</value>-->
+<!--				<value>testRunStatistics</value>-->
+<!--				<value>groups</value>-->
+<!--			</list>-->
+<!--		</property>-->
+<!--	</bean>-->
 
 	<!--<bean id="jwtService"
 		class="com.qaprosoft.zafira.services.services.auth.JWTService">
@@ -117,7 +79,7 @@
 
 	<!-- Use for needed object with @Service annotaion autowire if object has 
 		interface implementation -->
-	<aop:aspectj-autoproxy proxy-target-class="true" />
+<!--	<aop:aspectj-autoproxy proxy-target-class="true" />-->
 
 	<bean id="tenancyInitializer"
 		class="com.qaprosoft.zafira.services.util.TenancyInitializer">
@@ -135,17 +97,17 @@
 	</bean>
 
 	<!-- RabbitMQ message broker -->
-	<rabbit:annotation-driven />
+<!--	<rabbit:annotation-driven />-->
 
-	<!-- TODO: replace zafira.rabbitmq.stomp.host -->
-	<rabbit:connection-factory
-		id="rabbitConnectionFactory" host="${zafira.rabbitmq.stomp.host}"
-		port="${zafira.rabbitmq.port}" username="${zafira.rabbitmq.user}"
-		password="${zafira.rabbitmq.pass}"
-		virtual-host="${zafira.rabbitmq.vhost}" cache-mode="CHANNEL" />
+<!--	&lt;!&ndash; TODO: replace zafira.rabbitmq.stomp.host &ndash;&gt;-->
+<!--	<rabbit:connection-factory-->
+<!--		id="rabbitConnectionFactory" host="${zafira.rabbitmq.stomp.host}"-->
+<!--		port="${zafira.rabbitmq.port}" username="${zafira.rabbitmq.user}"-->
+<!--		password="${zafira.rabbitmq.pass}"-->
+<!--		virtual-host="${zafira.rabbitmq.vhost}" cache-mode="CHANNEL" />-->
 
-	<rabbit:admin id="rabbitAdmin"
-		connection-factory="rabbitConnectionFactory" />
+<!--	<rabbit:admin id="rabbitAdmin"-->
+<!--		connection-factory="rabbitConnectionFactory" />-->
 
 	<rabbit:queue id="settingsQueue" durable="false"
 		auto-declare="true" auto-delete="true" />
@@ -172,19 +134,19 @@
 		</rabbit:bindings>
 	</rabbit:direct-exchange>
 
-	<bean id="jsonMessageConverter"
-		class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter" />
+<!--	<bean id="jsonMessageConverter"-->
+<!--		class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter" />-->
 
 	<rabbit:template exchange="eventsTopicExchange"
 		id="eventsTemplate" connection-factory="rabbitConnectionFactory"
 		message-converter="jsonMessageConverter" />
 
-	<bean id="rabbitListenerContainerFactory"
-		class="org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory">
-		<property name="connectionFactory"
-			ref="rabbitConnectionFactory" />
-		<property name="concurrentConsumers" value="1" />
-		<property name="maxConcurrentConsumers" value="25" />
-	</bean>
+<!--	<bean id="rabbitListenerContainerFactory"-->
+<!--		class="org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory">-->
+<!--		<property name="connectionFactory"-->
+<!--			ref="rabbitConnectionFactory" />-->
+<!--		<property name="concurrentConsumers" value="1" />-->
+<!--		<property name="maxConcurrentConsumers" value="25" />-->
+<!--	</bean>-->
 
 </beans>
