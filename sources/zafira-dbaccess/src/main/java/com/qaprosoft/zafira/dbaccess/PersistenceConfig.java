@@ -4,7 +4,6 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyDataSourceWrapper;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,18 +48,18 @@ public class PersistenceConfig {
     }
 
     @Bean
-    public DataSourceTransactionManager transactionManager(@Autowired TenancyDataSourceWrapper tenancyAppDSWrapper) {
+    public DataSourceTransactionManager transactionManager(TenancyDataSourceWrapper tenancyAppDSWrapper) {
         return new DataSourceTransactionManager(tenancyAppDSWrapper.getDataSource());
     }
 
     @Bean
-    public DataSourceTransactionManager managementTransactionManager(@Autowired TenancyDataSourceWrapper tenancyMngDSWrapper) {
+    public DataSourceTransactionManager managementTransactionManager(TenancyDataSourceWrapper tenancyMngDSWrapper) {
         return new DataSourceTransactionManager(tenancyMngDSWrapper.getDataSource());
     }
 
     @Bean
     public SqlSessionFactoryBean applicationSqlSessionFactory(
-            @Autowired TenancyDataSourceWrapper tenancyAppDSWrapper,
+            TenancyDataSourceWrapper tenancyAppDSWrapper,
             @Value("classpath*:/com/qaprosoft/zafira/dbaccess/dao/mappers/application/**/*.xml") Resource[] appMapperResources
     ) {
         SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
@@ -71,7 +70,7 @@ public class PersistenceConfig {
 
     @Bean
     public SqlSessionFactoryBean managementSqlSessionFactory(
-            @Autowired TenancyDataSourceWrapper tenancyMngDSWrapper,
+            TenancyDataSourceWrapper tenancyMngDSWrapper,
             @Value("classpath*:/com/qaprosoft/zafira/dbaccess/dao/mappers/management/**/*.xml") Resource[] managementMapperResources
     ) {
         SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
@@ -97,12 +96,12 @@ public class PersistenceConfig {
     }
 
     @Bean
-    public TenancyDataSourceWrapper tenancyAppDSWrapper(@Autowired ComboPooledDataSource appDataSource) {
+    public TenancyDataSourceWrapper tenancyAppDSWrapper(ComboPooledDataSource appDataSource) {
         return new TenancyDataSourceWrapper(appDataSource);
     }
 
     @Bean
-    public TenancyDataSourceWrapper tenancyMngDSWrapper(@Autowired ComboPooledDataSource managementDataSource) {
+    public TenancyDataSourceWrapper tenancyMngDSWrapper(ComboPooledDataSource managementDataSource) {
         return new TenancyDataSourceWrapper(managementDataSource);
     }
 

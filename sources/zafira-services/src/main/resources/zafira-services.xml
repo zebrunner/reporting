@@ -9,23 +9,23 @@
 		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.3.xsd
 		http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.5.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-	<bean id="messageJsonifier"
-		class="com.fasterxml.jackson.databind.ObjectMapper">
-		<property name="serializationInclusion" value="NON_NULL" />
-	</bean>
+<!--	<bean id="messageJsonifier"-->
+<!--		class="com.fasterxml.jackson.databind.ObjectMapper">-->
+<!--		<property name="serializationInclusion" value="NON_NULL" />-->
+<!--	</bean>-->
 
-	<bean
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="targetObject" ref="messageJsonifier" />
-		<property name="targetMethod" value="configure" />
-		<property name="arguments">
-			<list>
-				<value
-					type="com.fasterxml.jackson.databind.SerializationFeature">FAIL_ON_EMPTY_BEANS</value>
-				<value>false</value>
-			</list>
-		</property>
-	</bean>
+<!--	<bean-->
+<!--		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">-->
+<!--		<property name="targetObject" ref="messageJsonifier" />-->
+<!--		<property name="targetMethod" value="configure" />-->
+<!--		<property name="arguments">-->
+<!--			<list>-->
+<!--				<value-->
+<!--					type="com.fasterxml.jackson.databind.SerializationFeature">FAIL_ON_EMPTY_BEANS</value>-->
+<!--				<value>false</value>-->
+<!--			</list>-->
+<!--		</property>-->
+<!--	</bean>-->
 
 	<bean id="serviceMessageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
@@ -109,37 +109,34 @@
 <!--	<rabbit:admin id="rabbitAdmin"-->
 <!--		connection-factory="rabbitConnectionFactory" />-->
 
-	<rabbit:queue id="settingsQueue" durable="false"
-		auto-declare="true" auto-delete="true" />
+<!--	<rabbit:queue id="settingsQueue" durable="false"-->
+<!--		auto-declare="true" auto-delete="true" />-->
 
-	<rabbit:queue id="tenanciesQueue" durable="false"
-		auto-declare="true" auto-delete="true" />
+<!--	<rabbit:queue id="tenanciesQueue" durable="false"-->
+<!--		auto-declare="true" auto-delete="true" />-->
 
-	<rabbit:queue id="zfrEventsQueue" name="zfrEventsQueue"
-		durable="false" auto-declare="true" auto-delete="true" />
+<!--	<rabbit:queue id="zfrEventsQueue" name="zfrEventsQueue"-->
+<!--		durable="false" auto-declare="true" auto-delete="true" />-->
 
-	<rabbit:queue id="zfrCallbacksQueue"
-		name="zfrCallbacksQueue" durable="false" auto-declare="true"
-		auto-delete="true" />
+<!--	<rabbit:queue id="zfrCallbacksQueue"-->
+<!--		name="zfrCallbacksQueue" durable="false" auto-declare="true"-->
+<!--		auto-delete="true" />-->
 
-	<rabbit:direct-exchange id="eventsTopicExchange"
-		name="events" durable="false" auto-declare="true" auto-delete="true">
-		<rabbit:bindings>
-			<rabbit:binding queue="settingsQueue" key="settings" />
-			<rabbit:binding queue="tenanciesQueue" key="tenancies" />
-			<rabbit:binding queue="zfrEventsQueue"
-				key="zfr_events" />
-			<rabbit:binding queue="zfrCallbacksQueue"
-				key="zfr_callbacks" />
-		</rabbit:bindings>
-	</rabbit:direct-exchange>
+<!--	<rabbit:direct-exchange id="eventsTopicExchange" name="events" durable="false" auto-declare="true" auto-delete="true">-->
+<!--		<rabbit:bindings>-->
+<!--			<rabbit:binding queue="settingsQueue" key="settings" />-->
+<!--			<rabbit:binding queue="tenanciesQueue" key="tenancies" />-->
+<!--			<rabbit:binding queue="zfrEventsQueue" key="zfr_events" />-->
+<!--			<rabbit:binding queue="zfrCallbacksQueue" key="zfr_callbacks" />-->
+<!--		</rabbit:bindings>-->
+<!--	</rabbit:direct-exchange>-->
 
 <!--	<bean id="jsonMessageConverter"-->
 <!--		class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter" />-->
 
-	<rabbit:template exchange="eventsTopicExchange"
-		id="eventsTemplate" connection-factory="rabbitConnectionFactory"
-		message-converter="jsonMessageConverter" />
+<!--	<rabbit:template exchange="eventsTopicExchange"-->
+<!--		id="eventsTemplate" connection-factory="rabbitConnectionFactory"-->
+<!--		message-converter="jsonMessageConverter" />-->
 
 <!--	<bean id="rabbitListenerContainerFactory"-->
 <!--		class="org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory">-->

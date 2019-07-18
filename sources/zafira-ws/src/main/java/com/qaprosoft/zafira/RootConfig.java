@@ -3,14 +3,12 @@ package com.qaprosoft.zafira;
 import com.qaprosoft.zafira.ws.util.dozer.NullSafeDozerBeanMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 import java.util.Arrays;
 
 @ComponentScan("com.qaprosoft.zafira")
-@ImportResource("classpath:zafira-services.xml")
 @PropertySource("classpath:environment.properties")
 public class RootConfig {
 
