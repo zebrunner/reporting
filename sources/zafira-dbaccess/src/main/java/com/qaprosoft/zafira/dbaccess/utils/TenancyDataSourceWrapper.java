@@ -34,11 +34,7 @@ public class TenancyDataSourceWrapper {
 
     private final DataSource dataSource;
 
-    public TenancyDataSourceWrapper(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    protected TenancyDataSourceWrapper(ComboPooledDataSource ds) {
+    public TenancyDataSourceWrapper(ComboPooledDataSource ds) {
         this.dataSource = DataSourceInterceptor.wrapInterceptor(new DataSourceInterceptor(ds) {
             @Override
             protected Connection getConnection(ComboPooledDataSource delegate) throws SQLException {

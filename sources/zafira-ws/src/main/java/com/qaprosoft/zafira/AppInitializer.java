@@ -3,6 +3,7 @@ package com.qaprosoft.zafira;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.ServletContext;
@@ -25,6 +26,23 @@ public class AppInitializer implements WebApplicationInitializer {
         ServletRegistration.Dynamic dispatcher = container.addServlet("dispatcher", new DispatcherServlet(dispatcherContext));
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
+
+        container.addFilter("springSecurityFilterChain", new DelegatingFilterProxy())
+                 .addMappingForUrlPatterns(null, true, "/*");
     }
+
+    /*// TODO: 2019-07-16 tenancy filter ? filter mappings? move to security initializer?
+    @Override
+    protected Filter[] getServletFilters() {
+        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
+        characterEncodingFilter.setEncoding("UTF-8");
+        characterEncodingFilter.setForceEncoding(true);
+        return new Filter[] {
+                new DelegatingFilterProxy(),
+                characterEncodingFilter,
+                new CORSFilter(),
+                new TenancyFilter()
+        };
+    }*/
 
 }

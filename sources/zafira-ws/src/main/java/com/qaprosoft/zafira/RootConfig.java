@@ -9,8 +9,8 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 import java.util.Arrays;
 
-@ComponentScan
-@ImportResource(value = {"classpath:zafira-models.xml", "classpath:zafira-app-dbaccess.xml", "classpath:zafira-services.xml"})
+@ComponentScan(basePackages = {"com.qaprosoft.zafira"})
+@ImportResource(value = {"classpath:zafira-services.xml"})
 @PropertySource("classpath:environment.properties")
 public class RootConfig {
 

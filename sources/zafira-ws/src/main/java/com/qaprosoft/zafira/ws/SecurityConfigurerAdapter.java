@@ -5,6 +5,7 @@ import com.qaprosoft.zafira.ws.security.filter.CORSFilter;
 import com.qaprosoft.zafira.ws.security.filter.JwtTokenAuthenticationFilter;
 import com.qaprosoft.zafira.ws.security.filter.RestAccessDeniedHandler;
 import com.qaprosoft.zafira.ws.security.filter.SecurityAuthenticationEntryPoint;
+import com.qaprosoft.zafira.ws.security.filter.TenancyFilter;
 import com.qaprosoft.zafira.ws.security.ldap.LDAPAuthenticationProvider;
 import org.jasypt.springsecurity3.authentication.encoding.PasswordEncoder;
 import org.jasypt.util.password.BasicPasswordEncryptor;
@@ -67,11 +68,26 @@ public class SecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
     private final UserPassAuthService userPassAuthService;
     private final LDAPAuthenticationProvider ldapProvider;
     private final JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter;
+    private final CORSFilter corsFilter;
+    private final SecurityAuthenticationEntryPoint securityAuthenticationEntryPoint;
+    private final RestAccessDeniedHandler restAccessDeniedHandler;
+    private final TenancyFilter tenancyFilter;
 
-    public SecurityConfigurerAdapter(UserPassAuthService userPassAuthService, LDAPAuthenticationProvider ldapProvider, JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter) {
+    public SecurityConfigurerAdapter(UserPassAuthService userPassAuthService,
+                                     LDAPAuthenticationProvider ldapProvider,
+                                     JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter,
+                                     CORSFilter corsFilter,
+                                     SecurityAuthenticationEntryPoint securityAuthenticationEntryPoint,
+                                     RestAccessDeniedHandler restAccessDeniedHandler,
+                                     TenancyFilter tenancyFilter
+    ) {
         this.userPassAuthService = userPassAuthService;
         this.ldapProvider = ldapProvider;
         this.jwtTokenAuthenticationFilter = jwtTokenAuthenticationFilter;
+        this.corsFilter = corsFilter;
+        this.securityAuthenticationEntryPoint = securityAuthenticationEntryPoint;
+        this.restAccessDeniedHandler = restAccessDeniedHandler;
+        this.tenancyFilter = tenancyFilter;
     }
 
     @Override
@@ -80,11 +96,12 @@ public class SecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .exceptionHandling().authenticationEntryPoint(new SecurityAuthenticationEntryPoint())
+                .exceptionHandling().authenticationEntryPoint(securityAuthenticationEntryPoint)
                 .and()
-                .exceptionHandling().accessDeniedHandler(new RestAccessDeniedHandler())
+                .exceptionHandling().accessDeniedHandler(restAccessDeniedHandler)
                 .and()
-                .addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class)
+                .addFilterBefore(corsFilter, ChannelProcessingFilter.class)
+                .addFilterBefore(tenancyFilter, CORSFilter.class)
                 .addFilterAfter(jwtTokenAuthenticationFilter, ExceptionTranslationFilter.class)
                 .authorizeRequests()
                 .antMatchers(PUBLIC_API_PATTERNS).permitAll()
