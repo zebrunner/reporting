@@ -43,7 +43,7 @@ public class XmlConfigurationUtil {
     public static Map<String, String> parseConfigToMap(Configuration configuration){
         return configuration.getArg()
                             .stream()
-                            .collect(HashMap::new, (m, v)->m.put(v.getKey(), v.getValue()), HashMap::putAll);
+                            .collect(HashMap::new, (m, v) -> m.put(v.getKey(), v.getValue()), HashMap::putAll);
     }
 
     /**
