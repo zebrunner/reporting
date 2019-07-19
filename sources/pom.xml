@@ -109,7 +109,6 @@
     </properties>
     <modules>
         <module>zafira-models</module>
-        <module>zafira-client</module>
         <module>zafira-dbaccess</module>
         <module>zafira-services</module>
         <module>zafira-ws</module>
