@@ -9,8 +9,8 @@ import org.apache.commons.lang.StringUtils;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import java.io.ByteArrayInputStream;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class XmlConfigurationUtil {
 
@@ -43,7 +43,7 @@ public class XmlConfigurationUtil {
     public static Map<String, String> parseConfigToMap(Configuration configuration){
         return configuration.getArg()
                             .stream()
-                            .collect(Collectors.toMap(Argument::getKey, Argument::getValue));
+                            .collect(HashMap::new, (m, v) -> m.put(v.getKey(), v.getValue()), HashMap::putAll);
     }
 
     /**
