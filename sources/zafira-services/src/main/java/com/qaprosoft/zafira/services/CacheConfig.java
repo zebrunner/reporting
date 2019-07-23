@@ -42,7 +42,7 @@ public class CacheConfig {
         connectionFactory.setHostName(hostname);
         connectionFactory.setPort(port);
         connectionFactory.setUsePool(Boolean.TRUE);
-        return new JedisConnectionFactory();
+        return connectionFactory;
     }
 
     @Bean
