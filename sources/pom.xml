@@ -96,7 +96,7 @@
         <jira-client.version>0.5</jira-client.version>
         <commons-beanutils.version>1.9.3</commons-beanutils.version>
         <jjwt.version>0.7.0</jjwt.version>
-        <slack-java-webhook.version>0.0.7</slack-java-webhook.version>
+        <slack-client.version>1.7.5</slack-client.version>
         <amqp-client.version>4.9.0</amqp-client.version>
         <amqp-spring-core>1.7.11.RELEASE</amqp-spring-core>
         <validation-api.version>1.1.0.Final</validation-api.version>
@@ -532,9 +532,9 @@
                 <version>${jjwt.version}</version>
             </dependency>
             <dependency>
-                <groupId>in.ashwanthkumar</groupId>
-                <artifactId>slack-java-webhook</artifactId>
-                <version>${slack-java-webhook.version}</version>
+                <groupId>com.github.seratch</groupId>
+                <artifactId>jslack</artifactId>
+                <version>${slack-client.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.rabbitmq</groupId>

@@ -243,10 +243,10 @@
 			<artifactId>jjwt</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>in.ashwanthkumar</groupId>
-			<artifactId>slack-java-webhook</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>com.github.seratch</groupId>
+            <artifactId>jslack</artifactId>
+        </dependency>
 
 		<dependency>
 			<groupId>org.elasticsearch</groupId>

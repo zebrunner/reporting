@@ -15,32 +15,30 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
-import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_WEB_HOOK_URL;
-import static com.qaprosoft.zafira.models.db.Setting.Tool.SLACK;
+import com.github.seratch.jslack.api.model.Attachment;
+import com.github.seratch.jslack.api.model.Field;
+import com.github.seratch.jslack.api.webhook.Payload;
+import com.github.seratch.jslack.api.webhook.WebhookResponse;
+import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.services.exceptions.SlackNotificationNotSendException;
+import com.qaprosoft.zafira.services.services.application.SettingsService;
+import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
+import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
+import com.qaprosoft.zafira.services.services.application.integration.context.SlackContext;
+import com.qaprosoft.zafira.services.util.URLResolver;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
-import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
-import com.qaprosoft.zafira.services.util.URLResolver;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
-
-import com.google.api.client.http.HttpResponseException;
-import com.google.api.client.http.HttpStatusCodes;
-import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.services.services.application.SettingsService;
-import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
-import com.qaprosoft.zafira.services.services.application.integration.context.SlackContext;
-
-import in.ashwanthkumar.slack.webhook.SlackAttachment;
-import in.ashwanthkumar.slack.webhook.SlackAttachment.Field;
-import in.ashwanthkumar.slack.webhook.SlackMessage;
-import org.springframework.stereotype.Component;
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_WEB_HOOK_URL;
+import static com.qaprosoft.zafira.models.db.Setting.Tool.SLACK;
 
 @Component
 public class SlackService extends AbstractIntegration<SlackContext> {
@@ -77,12 +75,15 @@ public class SlackService extends AbstractIntegration<SlackContext> {
         return mapContext(context -> {
             boolean result = false;
             try {
-                push(null, new SlackMessage(StringUtils.EMPTY));
-                result = true;
-            } catch (IOException e) {
-                if (((HttpResponseException) e).getStatusCode() != HttpStatusCodes.STATUS_CODE_NOT_FOUND) {
+                WebhookResponse response = testPush();
+                // valid response code if we test webhook with empty payload
+                if (response.getCode() == 400) {
                     result = true;
+                } else {
+                    throw new SlackNotificationNotSendException("Unable to push Slack notification: " + response.getCode() + " " + response.getMessage());
                 }
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
             }
             return result;
         }).orElse(false);
@@ -107,31 +108,55 @@ public class SlackService extends AbstractIntegration<SlackContext> {
             String attachmentColor = determineColor(tr);
             String mainMessage = customizedMessage + String.format(INFO_PATTERN, buildRunInfo(tr), zafiraUrl, jenkinsUrl);
             String resultsMessage = String.format(RESULTS_PATTERN, tr.getPassed(), tr.getFailed(), tr.getFailedAsKnown(), tr.getSkipped());
-            SlackAttachment attachment = generateSlackAttachment(mainMessage, resultsMessage, attachmentColor, tr.getComments());
-            Arrays.stream(channels.split(",")).forEach(channel -> {
-                try {
-                    push(channel, attachment);
-                } catch (IOException e) {
-                    LOGGER.error("Unable to push Slack notification");
-                }
-            });
+            List<Attachment> attachments = getAttachments(generateSlackAttachment(mainMessage, resultsMessage, attachmentColor, tr.getComments()), null);
+            Arrays.stream(channels.split(","))
+                  .forEach(channel -> push(channel, attachments));
         }
     }
 
-    private SlackAttachment generateSlackAttachment(String mainMessage, String messageResults, String attachmentColor, String comments) {
-        SlackAttachment slackAttachment = new SlackAttachment("");
-        slackAttachment
-                .preText(mainMessage)
-                .color(attachmentColor)
-                .addField(new Field("Test Results", messageResults, false))
-                .fallback(mainMessage + "\n" + messageResults);
+    private List<Attachment> getAttachments(Attachment attachment, List<Attachment> attachments) {
+        if(attachments == null) {
+            attachments = new ArrayList<>();
+        }
+        attachments.add(attachment);
+        return attachments;
+    }
+
+    private Attachment generateSlackAttachment(String mainMessage, String messageResults, String attachmentColor, String comments) {
+        List<Field> fields = getFields(buildField("Test Results", messageResults), null);
+        Attachment attachment = buildAttachment(mainMessage, messageResults, attachmentColor, fields);
         if (comments != null) {
-            slackAttachment.addField(new Field("Comments", comments, false));
+            getFields(buildField("Comments", comments), attachment.getFields());
         }
-        return slackAttachment;
+        return attachment;
     }
 
-    public String getWebhook() {
+    private List<Field> getFields(Field testResultsField, List<Field> fields) {
+        if(fields == null){
+            fields = new ArrayList<>();
+        }
+        fields.add(testResultsField);
+        return fields;
+    }
+
+    private Attachment buildAttachment(String mainMessage, String messageResults, String attachmentColor, List<Field> fields) {
+        return Attachment.builder()
+                         .pretext(mainMessage)
+                         .color(attachmentColor)
+                         .fields(fields)
+                         .fallback(mainMessage + "\n" + messageResults)
+                         .build();
+    }
+
+    private Field buildField(String name, String value) {
+        return Field.builder()
+                    .title(name)
+                    .value(value)
+                    .valueShortEnough(false)
+                    .build();
+    }
+
+    public String getWebHook() {
         String wH = null;
         Setting slackWebHookURL = settingsService.getSettingByType(SLACK_WEB_HOOK_URL);
         if (slackWebHookURL != null) {
@@ -198,17 +223,28 @@ public class SlackService extends AbstractIntegration<SlackContext> {
         return "warning";
     }
 
-    private void push(String channel, SlackAttachment slackAttachment) throws IOException {
+    private void push(String channel, List<Attachment> slackAttachments) {
         String webhookUrl = context().getWebhookUrl();
-        context().getSlackService()
-                 .push(webhookUrl, new SlackMessage(), author, image, channel, null, Collections.singletonList(slackAttachment));
+        Payload payload = Payload.builder()
+                                 .channel(channel)
+                                 .attachments(slackAttachments)
+                                 .build();
+        WebhookResponse response;
+        try {
+            response = context().getSlack().send(webhookUrl, payload);
+        } catch (IOException e) {
+            throw new SlackNotificationNotSendException(e.getMessage());
+        }
+        if (response.getCode() != 200) {
+            throw new SlackNotificationNotSendException("Unable to push Slack notification: " + response.getCode() + " " + response.getMessage());
+        }
     }
 
-    private void push(String channel, SlackMessage message) throws IOException {
-        String webhookUrl = context().getWebhookUrl();
-        context().getSlackService()
-                 .push(webhookUrl, message, author, image, channel, null, new ArrayList<>());
-
+    private WebhookResponse testPush() throws IOException {
+        String webHookUrl = context().getWebhookUrl();
+        Payload payload = Payload.builder()
+                                 .build();
+        return context().getSlack().send(webHookUrl, payload);
     }
 
 }

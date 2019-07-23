@@ -112,7 +112,7 @@ public class ConfigurationAPIController extends AbstractController {
     public Map<String, Object> isSlackAvailable(@PathVariable("id") long id) {
         Map<String, Object> config = new HashMap<>();
         TestRun tr = testRunService.getTestRunByIdFull(id);
-        boolean available = slackService.getWebhook() != null && StringUtils.isNotEmpty(tr.getSlackChannels())
+        boolean available = slackService.getWebHook() != null && StringUtils.isNotEmpty(tr.getSlackChannels())
                 && slackService.isEnabledAndConnected();
         config.put("available", available);
         return config;
@@ -124,7 +124,7 @@ public class ConfigurationAPIController extends AbstractController {
     @GetMapping("/slack")
     public Map<String, Object> isSlackAvailable() {
         Map<String, Object> config = new HashMap<>();
-        boolean available = slackService.getWebhook() != null && slackService.isEnabledAndConnected();
+        boolean available = slackService.getWebHook() != null && slackService.isEnabledAndConnected();
         config.put("available", available);
         return config;
     }
