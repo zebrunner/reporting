@@ -22,18 +22,18 @@ import java.util.Map;
 
 public class SlackContext extends AbstractContext {
 
-    private final String webhookUrl;
+    private final String webHookUrl;
     private final Slack slack;
 
     public SlackContext(Map<Setting.SettingType, String> settings) {
         super(settings, settings.get(Setting.SettingType.SLACK_ENABLED));
 
-        this.webhookUrl = settings.get(Setting.SettingType.SLACK_WEB_HOOK_URL);
+        this.webHookUrl = settings.get(Setting.SettingType.SLACK_WEB_HOOK_URL);
         this.slack = Slack.getInstance();
     }
 
-    public String getWebhookUrl() {
-        return webhookUrl;
+    public String getWebHookUrl() {
+        return webHookUrl;
     }
 
     public Slack getSlack() {

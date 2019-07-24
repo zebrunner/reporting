@@ -19,7 +19,6 @@ import com.github.seratch.jslack.api.model.Attachment;
 import com.github.seratch.jslack.api.model.Field;
 import com.github.seratch.jslack.api.webhook.Payload;
 import com.github.seratch.jslack.api.webhook.WebhookResponse;
-import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.services.exceptions.SlackNotificationNotSendException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
@@ -32,12 +31,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_WEB_HOOK_URL;
 import static com.qaprosoft.zafira.models.db.Setting.Tool.SLACK;
 
 @Component
@@ -53,19 +53,16 @@ public class SlackService extends AbstractIntegration<SlackContext> {
     private final URLResolver urlResolver;
     private final JenkinsService jenkinsService;
     private final SettingsService settingsService;
-    private final CryptoService cryptoService;
 
     public SlackService(URLResolver urlResolver,
-            JenkinsService jenkinsService,
-            SettingsService settingsService,
-            CryptoService cryptoService,
-            @Value("${zafira.slack.image}") String image,
-            @Value("${zafira.slack.author}") String author) {
-        super(settingsService, cryptoService, SLACK, SlackContext.class);
+                        JenkinsService jenkinsService,
+                        SettingsService settingsService,
+                        @Value("${zafira.slack.image}") String image,
+                        @Value("${zafira.slack.author}") String author) {
+        super(settingsService, SLACK, SlackContext.class);
         this.urlResolver = urlResolver;
         this.jenkinsService = jenkinsService;
         this.settingsService = settingsService;
-        this.cryptoService = cryptoService;
         this.image = image;
         this.author = author;
     }
@@ -75,7 +72,7 @@ public class SlackService extends AbstractIntegration<SlackContext> {
         return mapContext(context -> {
             boolean result = false;
             try {
-                WebhookResponse response = testPush();
+                WebhookResponse response = pushNotificationToChannel("", null);
                 // valid response code if we test webhook with empty payload
                 if (response.getCode() == 400) {
                     result = true;
@@ -89,62 +86,86 @@ public class SlackService extends AbstractIntegration<SlackContext> {
         }).orElse(false);
     }
 
-    public void sendStatusOnFinish(TestRun testRun) {
-        String onFinishMessage = String.format(ON_FINISH_PATTERN, testRun.getId(), countElapsedInSMH(testRun.getElapsed()),
+    public void sendNotificationsOnFinish(TestRun testRun) {
+        if (StringUtils.isEmpty(testRun.getSlackChannels())) {
+            throw new SlackNotificationNotSendException("No slack channels provided for testRun");
+        }
+        String onFinishMessage = String.format(ON_FINISH_PATTERN, testRun.getId(), LocalTime.ofSecondOfDay(testRun.getElapsed()),
                 TestRunResultsEmail.buildStatusText(testRun));
-        sendNotification(testRun, onFinishMessage);
+        Attachment attachment = getNotificationAttachment(testRun, onFinishMessage);
+        String channels = testRun.getSlackChannels();
+        sendNotificationsToChannels(channels, Collections.singletonList(attachment));
     }
 
-    public void sendStatusReviewed(TestRun testRun) {
-        String reviewedMessage = String.format(REVIEWED_PATTERN, testRun.getId(), TestRunResultsEmail.buildStatusText(testRun));
-        sendNotification(testRun, reviewedMessage);
-    }
-
-    private void sendNotification(TestRun tr, String customizedMessage) {
-        String channels = tr.getSlackChannels();
-        if (StringUtils.isNotEmpty(channels)) {
-            String zafiraUrl = urlResolver.buildWebURL() + "/tests/runs/" + tr.getId();
-            String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber();
-            String attachmentColor = determineColor(tr);
-            String mainMessage = customizedMessage + String.format(INFO_PATTERN, buildRunInfo(tr), zafiraUrl, jenkinsUrl);
-            String resultsMessage = String.format(RESULTS_PATTERN, tr.getPassed(), tr.getFailed(), tr.getFailedAsKnown(), tr.getSkipped());
-            List<Attachment> attachments = getAttachments(generateSlackAttachment(mainMessage, resultsMessage, attachmentColor, tr.getComments()), null);
-            Arrays.stream(channels.split(","))
-                  .forEach(channel -> push(channel, attachments));
+    public void sendNotificationsOnReview(TestRun testRun) {
+        if (StringUtils.isEmpty(testRun.getSlackChannels())) {
+            throw new SlackNotificationNotSendException("No slack channels provided for testRun");
         }
+        String onReviewMessage = String.format(REVIEWED_PATTERN, testRun.getId(), TestRunResultsEmail.buildStatusText(testRun));
+        Attachment attachment = getNotificationAttachment(testRun, onReviewMessage);
+        String channels = testRun.getSlackChannels();
+        sendNotificationsToChannels(channels, Collections.singletonList(attachment));
     }
 
-    private List<Attachment> getAttachments(Attachment attachment, List<Attachment> attachments) {
-        if(attachments == null) {
-            attachments = new ArrayList<>();
+    private void sendNotificationsToChannels(String channels, List<Attachment> attachments) {
+        Arrays.stream(channels.split(","))
+              .forEach(channel -> pushNotificationToChannel(channel, attachments));
+    }
+
+    private WebhookResponse pushNotificationToChannel(String channel, List<Attachment> slackAttachments) {
+        String webHookUrl = context().getWebHookUrl();
+        Payload payload = Payload.builder()
+                                 .channel(channel)
+                                 .attachments(slackAttachments)
+                                 .build();
+        WebhookResponse response;
+        try {
+            response = context().getSlack().send(webHookUrl, payload);
+        } catch (IOException e) {
+            throw new SlackNotificationNotSendException(e.getMessage());
         }
-        attachments.add(attachment);
-        return attachments;
+        return response;
     }
 
-    private Attachment generateSlackAttachment(String mainMessage, String messageResults, String attachmentColor, String comments) {
-        List<Field> fields = getFields(buildField("Test Results", messageResults), null);
-        Attachment attachment = buildAttachment(mainMessage, messageResults, attachmentColor, fields);
+    private Attachment getNotificationAttachment(TestRun testRun, String notificationCauseMessage) {
+        String headerMessage = getNotificationMessage(testRun, notificationCauseMessage);
+        String testRunResultsMessage = String.format(RESULTS_PATTERN, testRun.getPassed(), testRun.getFailed(), testRun.getFailedAsKnown(), testRun.getSkipped());
+        String fullMessage = headerMessage + "\n" + testRunResultsMessage;
+        String attachmentColor = getAttachmentColor(testRun);
+
+        List<Field> fields = getFields(buildField("Test Results", testRunResultsMessage), null);
+        Attachment attachment = buildAttachment(headerMessage, fullMessage, attachmentColor, fields);
+
+        String comments = testRun.getComments();
         if (comments != null) {
             getFields(buildField("Comments", comments), attachment.getFields());
         }
         return attachment;
     }
 
+    private String getNotificationMessage(TestRun testRun, String notificationCauseMessage) {
+        String zafiraUrl = urlResolver.buildWebURL() + "/tests/runs/" + testRun.getId();
+        String jenkinsUrl = testRun.getJob().getJobURL() + "/" + testRun.getBuildNumber();
+        String testRunHeaderInfoMessage = getTestRunInfoMessage(testRun);
+        return notificationCauseMessage + String.format(INFO_PATTERN, testRunHeaderInfoMessage, zafiraUrl, jenkinsUrl);
+    }
+
     private List<Field> getFields(Field testResultsField, List<Field> fields) {
-        if(fields == null){
+        if (fields == null) {
             fields = new ArrayList<>();
         }
         fields.add(testResultsField);
         return fields;
     }
 
-    private Attachment buildAttachment(String mainMessage, String messageResults, String attachmentColor, List<Field> fields) {
+    private Attachment buildAttachment(String mainMessage, String fullMessage, String attachmentColor, List<Field> fields) {
         return Attachment.builder()
                          .pretext(mainMessage)
                          .color(attachmentColor)
                          .fields(fields)
-                         .fallback(mainMessage + "\n" + messageResults)
+                         .fallback(fullMessage)
+                         .authorName(author)
+                         .imageUrl(image)
                          .build();
     }
 
@@ -156,95 +177,46 @@ public class SlackService extends AbstractIntegration<SlackContext> {
                     .build();
     }
 
-    public String getWebHook() {
-        String wH = null;
-        Setting slackWebHookURL = settingsService.getSettingByType(SLACK_WEB_HOOK_URL);
-        if (slackWebHookURL != null) {
-            if (slackWebHookURL.isEncrypted()) {
-                try {
-                    slackWebHookURL.setValue(cryptoService.decrypt(slackWebHookURL.getValue()));
-                } catch (Exception e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
-            }
-            wH = slackWebHookURL.getValue();
-        }
-        if (wH != null && !StringUtils.isEmpty(wH)) {
-            return wH;
-        }
-        return wH;
-    }
-
-    private String buildRunInfo(TestRun tr) {
+    /**
+     * Concats info about TestRun
+     * Ex. UNKNOWN | Carina Demo Tests - API sample tests | DEMO | API
+     *
+     * @param testRun
+     * @return
+     */
+    private String getTestRunInfoMessage(TestRun testRun) {
         StringBuilder sbInfo = new StringBuilder();
-        sbInfo.append(tr.getProject().getName());
-        Map<String, String> jenkinsParams = jenkinsService.getBuildParametersMap(tr.getJob(), tr.getBuildNumber()).orElse(null);
+        sbInfo.append(testRun.getProject().getName());
+        Map<String, String> jenkinsParams = jenkinsService.getBuildParametersMap(testRun.getJob(), testRun.getBuildNumber()).orElse(null);
         if (jenkinsParams != null && jenkinsParams.get("groups") != null) {
             sbInfo.append("(");
             sbInfo.append(jenkinsParams.get("groups"));
             sbInfo.append(")");
         }
         sbInfo.append(" | ");
-        sbInfo.append(tr.getTestSuite().getName());
+        sbInfo.append(testRun.getTestSuite().getName());
         sbInfo.append(" | ");
-        sbInfo.append(tr.getEnv());
+        sbInfo.append(testRun.getEnv());
         sbInfo.append(" | ");
-        sbInfo.append(tr.getPlatform() == null ? "no_platform" : tr.getPlatform());
-        if (tr.getAppVersion() != null) {
+        sbInfo.append(testRun.getPlatform() == null ? "no_platform" : testRun.getPlatform());
+        if (testRun.getAppVersion() != null) {
             sbInfo.append(" | ");
-            sbInfo.append(tr.getAppVersion());
+            sbInfo.append(testRun.getAppVersion());
         }
         return sbInfo.toString();
     }
 
-    private String countElapsedInSMH(Integer elapsed) {
-        if (elapsed != null) {
-            int s = elapsed % 60;
-            int m = (elapsed / 60) % 60;
-            int h = (elapsed / (60 * 60)) % 24;
-            StringBuilder sb = new StringBuilder(String.format("%02d sec", s));
-            if (m > 0)
-                sb.insert(0, String.format("%02d min ", m));
-            if (h > 0)
-                sb.insert(0, String.format("%02d h ", h));
-            return sb.toString();
-        }
-        return null;
-    }
-
-    private String determineColor(TestRun tr) {
-        if (tr.getPassed() > 0 && tr.getFailed() == 0 && tr.getSkipped() == 0) {
+    private String getAttachmentColor(TestRun testRun) {
+        if (testRun.getPassed() > 0 && testRun.getFailed() == 0 && testRun.getSkipped() == 0) {
             return "good";
         }
-        if (tr.getPassed() == 0 && tr.getFailed() == 0 && tr.getFailedAsKnown() == 0
-                && tr.getSkipped() == 0) {
+        if (testRun.getPassed() == 0 && testRun.getFailed() == 0 && testRun.getFailedAsKnown() == 0
+                && testRun.getSkipped() == 0) {
             return "danger";
         }
         return "warning";
     }
 
-    private void push(String channel, List<Attachment> slackAttachments) {
-        String webhookUrl = context().getWebhookUrl();
-        Payload payload = Payload.builder()
-                                 .channel(channel)
-                                 .attachments(slackAttachments)
-                                 .build();
-        WebhookResponse response;
-        try {
-            response = context().getSlack().send(webhookUrl, payload);
-        } catch (IOException e) {
-            throw new SlackNotificationNotSendException(e.getMessage());
-        }
-        if (response.getCode() != 200) {
-            throw new SlackNotificationNotSendException("Unable to push Slack notification: " + response.getCode() + " " + response.getMessage());
-        }
-    }
 
-    private WebhookResponse testPush() throws IOException {
-        String webHookUrl = context().getWebhookUrl();
-        Payload payload = Payload.builder()
-                                 .build();
-        return context().getSlack().send(webHookUrl, payload);
-    }
 
 }

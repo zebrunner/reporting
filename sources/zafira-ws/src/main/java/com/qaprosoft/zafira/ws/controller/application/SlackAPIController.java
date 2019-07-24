@@ -51,7 +51,7 @@ public class SlackAPIController extends AbstractController {
     @GetMapping("/testrun/{id}/review")
     public void sendOnReviewNotification(@PathVariable("id") long id) {
         TestRun testRun = testRunService.getTestRunByIdFull(id);
-        slackService.sendStatusReviewed(testRun);
+        slackService.sendNotificationsOnReview(testRun);
     }
 
     @ResponseStatusDetails
@@ -64,7 +64,7 @@ public class SlackAPIController extends AbstractController {
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
         testRun.setSlackChannels(channels);
         testRunService.updateTestRun(testRun);
-        slackService.sendStatusOnFinish(testRun);
+        slackService.sendNotificationsOnFinish(testRun);
     }
 
 }

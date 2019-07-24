@@ -63,9 +63,6 @@ public class ConfigurationAPIController extends AbstractController {
     @Autowired
     private SlackService slackService;
 
-    @Autowired
-    private TestRunService testRunService;
-
     @ResponseStatusDetails
     @ApiOperation(value = "Get version", nickname = "getVersion", httpMethod = "GET", response = Map.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -102,30 +99,6 @@ public class ConfigurationAPIController extends AbstractController {
     public Map<String, Object> getJiraConfig() {
         Map<String, Object> config = new HashMap<>();
         config.put("connected", jiraService.isEnabledAndConnected());
-        return config;
-    }
-
-    @ResponseStatusDetails
-    @ApiOperation(value = "Is slack available for test run", nickname = "isSlackAvailableForRun", httpMethod = "GET", response = Map.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @GetMapping("/slack/{id}")
-    public Map<String, Object> isSlackAvailable(@PathVariable("id") long id) {
-        Map<String, Object> config = new HashMap<>();
-        TestRun tr = testRunService.getTestRunByIdFull(id);
-        boolean available = slackService.getWebHook() != null && StringUtils.isNotEmpty(tr.getSlackChannels())
-                && slackService.isEnabledAndConnected();
-        config.put("available", available);
-        return config;
-    }
-
-    @ResponseStatusDetails
-    @ApiOperation(value = "Is slack available", nickname = "isSlackAvailable", httpMethod = "GET", response = Map.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @GetMapping("/slack")
-    public Map<String, Object> isSlackAvailable() {
-        Map<String, Object> config = new HashMap<>();
-        boolean available = slackService.getWebHook() != null && slackService.isEnabledAndConnected();
-        config.put("available", available);
         return config;
     }
 
