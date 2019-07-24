@@ -15,12 +15,14 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
+import com.github.seratch.jslack.api.methods.SlackApiException;
+import com.github.seratch.jslack.api.methods.request.auth.AuthTestRequest;
+import com.github.seratch.jslack.api.methods.response.auth.AuthTestResponse;
+import com.github.seratch.jslack.api.methods.response.chat.ChatPostMessageResponse;
 import com.github.seratch.jslack.api.model.Attachment;
 import com.github.seratch.jslack.api.model.Field;
-import com.github.seratch.jslack.api.webhook.Payload;
-import com.github.seratch.jslack.api.webhook.WebhookResponse;
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.services.exceptions.SlackNotificationNotSendException;
+import com.qaprosoft.zafira.services.exceptions.SlackException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
@@ -52,17 +54,16 @@ public class SlackService extends AbstractIntegration<SlackContext> {
     private final String author;
     private final URLResolver urlResolver;
     private final JenkinsService jenkinsService;
-    private final SettingsService settingsService;
 
     public SlackService(URLResolver urlResolver,
                         JenkinsService jenkinsService,
                         SettingsService settingsService,
+                        CryptoService cryptoService,
                         @Value("${zafira.slack.image}") String image,
                         @Value("${zafira.slack.author}") String author) {
-        super(settingsService, SLACK, SlackContext.class);
+        super(settingsService, cryptoService, SLACK, SlackContext.class);
         this.urlResolver = urlResolver;
         this.jenkinsService = jenkinsService;
-        this.settingsService = settingsService;
         this.image = image;
         this.author = author;
     }
@@ -72,12 +73,16 @@ public class SlackService extends AbstractIntegration<SlackContext> {
         return mapContext(context -> {
             boolean result = false;
             try {
-                WebhookResponse response = pushNotificationToChannel("", null);
-                // valid response code if we test webhook with empty payload
-                if (response.getCode() == 400) {
+                AuthTestRequest authTestRequest = AuthTestRequest.builder()
+                                                                 .token(context.getAccessToken())
+                                                                 .build();
+                AuthTestResponse authTestResponse = context.getSlack()
+                                                           .methods()
+                                                           .authTest(authTestRequest);
+                if (authTestResponse.isOk()) {
                     result = true;
                 } else {
-                    throw new SlackNotificationNotSendException("Unable to push Slack notification: " + response.getCode() + " " + response.getMessage());
+                    throw new SlackException("Authorization failed");
                 }
             } catch (Exception e) {
                 LOGGER.error(e.getMessage());
@@ -88,7 +93,7 @@ public class SlackService extends AbstractIntegration<SlackContext> {
 
     public void sendNotificationsOnFinish(TestRun testRun) {
         if (StringUtils.isEmpty(testRun.getSlackChannels())) {
-            throw new SlackNotificationNotSendException("No slack channels provided for testRun");
+            throw new SlackException("Unable to send notification, no slack channels provided for testRun");
         }
         String onFinishMessage = String.format(ON_FINISH_PATTERN, testRun.getId(), LocalTime.ofSecondOfDay(testRun.getElapsed()),
                 TestRunResultsEmail.buildStatusText(testRun));
@@ -99,7 +104,7 @@ public class SlackService extends AbstractIntegration<SlackContext> {
 
     public void sendNotificationsOnReview(TestRun testRun) {
         if (StringUtils.isEmpty(testRun.getSlackChannels())) {
-            throw new SlackNotificationNotSendException("No slack channels provided for testRun");
+            throw new SlackException("Unable to send notification, no slack channels provided for testRun");
         }
         String onReviewMessage = String.format(REVIEWED_PATTERN, testRun.getId(), TestRunResultsEmail.buildStatusText(testRun));
         Attachment attachment = getNotificationAttachment(testRun, onReviewMessage);
@@ -112,19 +117,21 @@ public class SlackService extends AbstractIntegration<SlackContext> {
               .forEach(channel -> pushNotificationToChannel(channel, attachments));
     }
 
-    private WebhookResponse pushNotificationToChannel(String channel, List<Attachment> slackAttachments) {
-        String webHookUrl = context().getWebHookUrl();
-        Payload payload = Payload.builder()
-                                 .channel(channel)
-                                 .attachments(slackAttachments)
-                                 .build();
-        WebhookResponse response;
+    private ChatPostMessageResponse pushNotificationToChannel(String channel, List<Attachment> slackAttachments) {
+        ChatPostMessageResponse postResponse;
         try {
-            response = context().getSlack().send(webHookUrl, payload);
-        } catch (IOException e) {
-            throw new SlackNotificationNotSendException(e.getMessage());
+            postResponse = context()
+                    .getSlack()
+                    .methods()
+                    .chatPostMessage(req -> req.token(context().getAccessToken())
+                                               .channel(channel)
+                                               .attachments(slackAttachments)
+                                               .username(author)
+                                               .iconUrl(image));
+        } catch (IOException | SlackApiException e) {
+            throw new SlackException(e.getMessage());
         }
-        return response;
+        return postResponse;
     }
 
     private Attachment getNotificationAttachment(TestRun testRun, String notificationCauseMessage) {
@@ -164,8 +171,6 @@ public class SlackService extends AbstractIntegration<SlackContext> {
                          .color(attachmentColor)
                          .fields(fields)
                          .fallback(fullMessage)
-                         .authorName(author)
-                         .imageUrl(image)
                          .build();
     }
 
@@ -216,7 +221,5 @@ public class SlackService extends AbstractIntegration<SlackContext> {
         }
         return "warning";
     }
-
-
 
 }

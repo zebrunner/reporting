@@ -103,6 +103,7 @@
         <httpcore.version>4.4.6</httpcore.version>
         <jsr311-api.version>1.1.1</jsr311-api.version>
         <google-sheets-version>v4-rev523-1.23.0</google-sheets-version>
+        <google-api-client.version>1.30.2</google-api-client.version>
         <reactor.version>2.0.8.RELEASE</reactor.version>
         <netty.version>4.1.28.Final</netty.version>
         <google-drive-version>v3-rev118-1.18.0-rc</google-drive-version>
@@ -464,7 +465,7 @@
             <dependency>
                 <groupId>com.google.api-client</groupId>
                 <artifactId>google-api-client</artifactId>
-                <version>1.30.2</version>
+                <version>${google-api-client.version}</version>
             </dependency>
             <dependency>
                 <groupId>log4j</groupId>

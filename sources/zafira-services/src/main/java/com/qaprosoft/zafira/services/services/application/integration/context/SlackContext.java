@@ -23,17 +23,23 @@ import java.util.Map;
 public class SlackContext extends AbstractContext {
 
     private final String webHookUrl;
+    private final String accessToken;
     private final Slack slack;
 
     public SlackContext(Map<Setting.SettingType, String> settings) {
         super(settings, settings.get(Setting.SettingType.SLACK_ENABLED));
 
+        this.accessToken = settings.get(Setting.SettingType.SLACK_OAUTH_ACCESS_TOKEN);
         this.webHookUrl = settings.get(Setting.SettingType.SLACK_WEB_HOOK_URL);
         this.slack = Slack.getInstance();
     }
 
     public String getWebHookUrl() {
         return webHookUrl;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
     }
 
     public Slack getSlack() {

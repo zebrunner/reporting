@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -215,13 +216,6 @@ TestRunSpreadsheetService {
     }
 
     private String getElapsed(TestRun testRun) {
-        String result = null;
-        if (testRun.getElapsed() != null) {
-            int s = testRun.getElapsed() % 60;
-            int m = (testRun.getElapsed() / 60) % 60;
-            int h = (testRun.getElapsed() / (60 * 60)) % 24;
-            result = String.format("%02d:%02d:%02d", h, m, s);
-        }
-        return result;
+        return testRun.getElapsed() != null ? LocalTime.ofSecondOfDay(testRun.getElapsed()).toString() : null;
     }
 }

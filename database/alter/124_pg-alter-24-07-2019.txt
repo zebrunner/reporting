@@ -1,0 +1,7 @@
+SET SCHEMA 'zafira';
+
+select check_version(124);
+
+INSERT INTO SETTINGS (NAME, VALUE, TOOL) VALUES ('SLACK_OAUTH_ACCESS_TOKEN', '', 'SLACK')
+
+select add_version(124);
