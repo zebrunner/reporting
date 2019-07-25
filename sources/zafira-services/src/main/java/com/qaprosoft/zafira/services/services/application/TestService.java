@@ -502,7 +502,6 @@ public class TestService {
      * 
      * @param testId - test ID for tags
      * @param tags - set of tags
-     * @throws ServiceException
      */
     @Transactional(rollbackFor = Exception.class)
     public Set<Tag> saveTags(Long testId, Set<Tag> tags) {
