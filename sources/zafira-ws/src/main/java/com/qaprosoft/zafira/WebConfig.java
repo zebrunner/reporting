@@ -52,8 +52,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     private final boolean debugMode;
 
-    // TODO: 2019-07-17 default value :false does not work
-    public WebConfig(@Value("${zafira.debugMode}") boolean debugMode) {
+    public WebConfig(@Value("${zafira.debugMode:false}") boolean debugMode) {
         this.debugMode = debugMode;
     }
 
@@ -116,9 +115,17 @@ public class WebConfig extends WebMvcConfigurerAdapter {
                 .build();
     }
 
+    /**
+     * Registers placeholder configurer to resolve properties
+     * Order is required, `cause  there is at least one placeholder configurer in servlet context by default.
+     * Order is necessary to resolve their conflicts
+     * @return a created placeholder configurer
+     */
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
+        PropertySourcesPlaceholderConfigurer placeholderConfigurer = new PropertySourcesPlaceholderConfigurer();
+        placeholderConfigurer.setOrder(Integer.MIN_VALUE);
+        return placeholderConfigurer;
     }
 
 }
