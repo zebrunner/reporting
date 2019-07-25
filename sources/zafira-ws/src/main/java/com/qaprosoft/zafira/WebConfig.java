@@ -38,17 +38,17 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
-/**
- * Component scan needs to scan controllers
- */
 @EnableWebMvc
 @EnableAsync
 @EnableSwagger2
 @ComponentScan(basePackages = {"com.qaprosoft.zafira.ws"})
 @PropertySource("classpath:environment.properties")
 public class WebConfig extends WebMvcConfigurerAdapter {
+
+    private static final String BASENAME_LOCATION = "i18n/messages";
 
     private final boolean debugMode;
 
@@ -66,8 +66,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasename("i18n/messages");
-        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setBasename(BASENAME_LOCATION);
+        messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
         return messageSource;
     }
 
