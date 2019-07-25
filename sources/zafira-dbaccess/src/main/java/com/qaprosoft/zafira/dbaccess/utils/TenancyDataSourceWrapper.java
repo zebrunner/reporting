@@ -30,11 +30,11 @@ import com.qaprosoft.zafira.models.db.Tenancy;
  */
 public class TenancyDataSourceWrapper {
 
-    private DataSource dataSource;
-
     private static final String SET_SEARCH_PATH_SQL = "SET search_path TO '%s';";
 
-    protected TenancyDataSourceWrapper(ComboPooledDataSource ds) {
+    private final DataSource dataSource;
+
+    public TenancyDataSourceWrapper(ComboPooledDataSource ds) {
         this.dataSource = DataSourceInterceptor.wrapInterceptor(new DataSourceInterceptor(ds) {
             @Override
             protected Connection getConnection(ComboPooledDataSource delegate) throws SQLException {

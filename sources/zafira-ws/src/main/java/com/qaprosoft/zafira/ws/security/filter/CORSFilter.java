@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CORSFilter implements Filter {
+
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;

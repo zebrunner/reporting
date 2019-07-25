@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao;
 
+import com.qaprosoft.zafira.dbaccess.PersistenceTestConfig;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.PermissionMapper;
 import com.qaprosoft.zafira.models.db.Permission;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNull;
 
 @Test
-@ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")
+@ContextConfiguration(classes = PersistenceTestConfig.class)
 public class PermissionMapperTest extends AbstractTestNGSpringContextTests {
 
     @Autowired

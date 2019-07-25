@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.function.Function;
 
-@Component(value = "testRunMapperCacheableService")
+@Component
 public class TestRunMapperCacheableService implements ICacheableService<Long, TestRunStatistics> {
     private static final long serialVersionUID = 4700339467519700561L;
 

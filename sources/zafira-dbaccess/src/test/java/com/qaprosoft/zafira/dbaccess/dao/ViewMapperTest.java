@@ -17,6 +17,7 @@ package com.qaprosoft.zafira.dbaccess.dao;
 
 import java.util.List;
 
+import com.qaprosoft.zafira.dbaccess.PersistenceTestConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -29,7 +30,7 @@ import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.db.View;
 
 @Test
-@ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")
+@ContextConfiguration(classes = PersistenceTestConfig.class)
 public class ViewMapperTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private ViewMapper viewMapper;

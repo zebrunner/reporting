@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import com.qaprosoft.zafira.dbaccess.PersistenceTestConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -35,7 +36,7 @@ import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestConfig;
 
 @org.testng.annotations.Test
-@ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")
+@ContextConfiguration(classes = PersistenceTestConfig.class)
 public class TestMapperTest extends AbstractTestNGSpringContextTests {
     /**
      * Turn this on to enable this test

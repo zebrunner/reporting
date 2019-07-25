@@ -19,6 +19,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNull;
 
+import com.qaprosoft.zafira.dbaccess.PersistenceTestConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -28,7 +29,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.SettingsMapper;
 import com.qaprosoft.zafira.models.db.Setting;
 
 @Test
-@ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")
+@ContextConfiguration(classes = PersistenceTestConfig.class)
 public class SettingsMapperTest extends AbstractTestNGSpringContextTests {
     private static final boolean ENABLED = false;
 
