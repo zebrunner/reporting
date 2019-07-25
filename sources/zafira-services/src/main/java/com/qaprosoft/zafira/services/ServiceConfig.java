@@ -28,6 +28,9 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 public class ServiceConfig {
 
+    private static final String TEMPLATE_LOADER_PATHS = "classpath:templates";
+    private static final String BASENAME_LOCATION = "classpath:i18n/services/messages";
+
     @Bean
     public PasswordEncryptor passwordEncryptor() {
         return new BasicPasswordEncryptor();
@@ -37,7 +40,7 @@ public class ServiceConfig {
     public FreeMarkerConfigurationFactoryBean freemarkerConfiguration() {
         FreeMarkerConfigurationFactoryBean factoryBean = new FreeMarkerConfigurationFactoryBean();
         factoryBean.setPreferFileSystemAccess(Boolean.TRUE);
-        factoryBean.setTemplateLoaderPaths("classpath:templates");
+        factoryBean.setTemplateLoaderPaths(TEMPLATE_LOADER_PATHS);
         factoryBean.setDefaultEncoding(StandardCharsets.UTF_8.name());
         return factoryBean;
     }
@@ -45,8 +48,8 @@ public class ServiceConfig {
     @Bean
     public MessageSource serviceMessageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasename("classpath:i18n/services/messages");
-        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setBasename(BASENAME_LOCATION);
+        messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
         return messageSource;
     }
 

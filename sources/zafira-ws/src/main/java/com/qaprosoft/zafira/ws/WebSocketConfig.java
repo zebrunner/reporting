@@ -26,13 +26,8 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 @EnableWebSocketMessageBroker
 public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
-    private static final String[] STOMP_ENDPOINTS = new String[] {
-            "/api/websockets"
-    };
-
-    private static final String[] STOMP_BROKER_DESTINATIONS = new String[] {
-            "/topic"
-    };
+    private static final String[] STOMP_ENDPOINTS = new String[]{"/api/websockets"};
+    private static final String[] STOMP_BROKER_DESTINATIONS = new String[]{"/topic"};
 
     private final String host;
     private final int port;

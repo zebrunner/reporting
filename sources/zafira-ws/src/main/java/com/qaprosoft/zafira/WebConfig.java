@@ -38,11 +38,9 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
-/**
- * Component scan needs to scan controllers
- */
 @EnableWebMvc
 @EnableAsync
 @EnableSwagger2
@@ -50,10 +48,11 @@ import java.util.Locale;
 @PropertySource("classpath:environment.properties")
 public class WebConfig extends WebMvcConfigurerAdapter {
 
+    private static final String BASENAME_LOCATION = "i18n/messages";
+
     private final boolean debugMode;
 
-    // TODO: 2019-07-17 default value :false does not work
-    public WebConfig(@Value("${zafira.debugMode}") boolean debugMode) {
+    public WebConfig(@Value("${zafira.debugMode:false}") boolean debugMode) {
         this.debugMode = debugMode;
     }
 
@@ -66,8 +65,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasename("i18n/messages");
-        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setBasename(BASENAME_LOCATION);
+        messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
         return messageSource;
     }
 
@@ -116,9 +115,17 @@ public class WebConfig extends WebMvcConfigurerAdapter {
                 .build();
     }
 
+    /**
+     * Registers placeholder configurer to resolve properties
+     * Order is required, `cause  there is at least one placeholder configurer in servlet context by default.
+     * Order is necessary to resolve their conflicts
+     * @return a created placeholder configurer
+     */
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
+        PropertySourcesPlaceholderConfigurer placeholderConfigurer = new PropertySourcesPlaceholderConfigurer();
+        placeholderConfigurer.setOrder(Integer.MIN_VALUE);
+        return placeholderConfigurer;
     }
 
 }
