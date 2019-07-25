@@ -1,28 +1,30 @@
-*.class
-.mtj.tmp/
-*.jar
-*.war
-*.ear
-.settings
-target
+### Gradle ###
+.gradle
+/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+### STS ###
+.apt_generated
 .classpath
+.factorypath
 .project
-.idea
-*.iml
+.settings
 .springBeans
-*/bin
-**/test-output
-*.bak
-hs_err_pid*
-node
-node_modules
-etc
-.tmp
-dist
-bower_components
-/pgdata
-/esdata
-/sources/zafira-ws/phantomjs*
-/sources/client_secret.json
-site
-package-lock.json
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### DB ###
+/pgdata/
