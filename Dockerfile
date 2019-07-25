@@ -61,8 +61,6 @@ ENV ZAFIRA_ELASTICSEARCH_URL=
 ENV ZAFIRA_GITHUB_CLIENT_ID=
 ENV ZAFIRA_GITHUB_CLIENT_SECRET=
 
-ENV JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8002
-
 RUN apt-get update && apt-get install zip
 RUN mkdir ${CATALINA_HOME}/shared
 

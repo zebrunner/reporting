@@ -60,8 +60,7 @@ services:
       - elasticsearch
   zafira:
     container_name: zfr_zafira_back_end
-    # image: qaprosoft/zafira:4.0.59
-    build: .
+    image: qaprosoft/zafira:4.0.59
     ports:
       - 8080:8080
     env_file:
