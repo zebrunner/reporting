@@ -1,6 +1,6 @@
 ### Gradle ###
 .gradle
-/build/
+**/build/
 !gradle/wrapper/gradle-wrapper.jar
 
 ### STS ###
@@ -19,6 +19,10 @@
 *.ipr
 /out/
 
+/esdata
+/sources/zafira-ws/phantomjs*
+/sources/client_secret.json
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -28,3 +32,4 @@
 
 ### DB ###
 /pgdata/
+/database/*.bak
