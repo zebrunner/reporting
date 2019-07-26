@@ -19,7 +19,9 @@ public class ScmAccount extends AbstractEntity {
 
     private static final long serialVersionUID = 7205460418919094068L;
 
+    private String login;
     private String accessToken;
+    private String hostName;
     private String organizationName;
     private String repositoryName;
     private String avatarURL;
@@ -28,7 +30,7 @@ public class ScmAccount extends AbstractEntity {
     private Name name;
 
     public enum Name {
-        GITHUB
+        GITHUB, GITHUB_ENTERPRISE
     }
 
     public ScmAccount() {
@@ -44,12 +46,28 @@ public class ScmAccount extends AbstractEntity {
         this.repositoryName = repositoryName;
     }
 
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
     public String getAccessToken() {
         return accessToken;
     }
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public String getHostName() {
+        return hostName;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
     }
 
     public String getOrganizationName() {

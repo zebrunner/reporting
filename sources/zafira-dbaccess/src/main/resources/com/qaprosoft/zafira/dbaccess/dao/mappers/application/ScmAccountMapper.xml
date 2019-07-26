@@ -7,7 +7,7 @@
 	<insert id="createScmAccount" useGeneratedKeys="true"
 		keyProperty="id">
 		<![CDATA[
-			INSERT INTO SCM (ACCESS_TOKEN, ORGANIZATION, REPO, AVATAR_URL, REPOSITORY_URL, USER_ID, NAME)
+			INSERT INTO SCM (ACCESS_TOKEN, ORGANIZATION, REPO, AVATAR_URL, REPOSITORY_URL, USER_ID, NAME, HOST, LOGIN)
 			VALUES (
 				#{accessToken},
 				#{organizationName},
@@ -15,7 +15,9 @@
 			    #{avatarURL},
 			    #{repositoryURL},
 			    #{userId},
-			    #{name}
+			    #{name},
+			    #{hostName},
+			    #{login}
 			)
 		]]>
 	</insert>
@@ -25,7 +27,9 @@
 			SELECT
 				S.ID AS SCM_ID,
 				S.NAME AS SCM_NAME,
+			    S.LOGIN AS SCM_LOGIN,
 				S.ACCESS_TOKEN AS SCM_ACCESS_TOKEN,
+			    S.HOST AS SCM_HOST,
 				S.ORGANIZATION AS SCM_ORGANIZATION,
 				S.REPO AS SCM_REPO,
 				S.AVATAR_URL AS SCM_AVATAR_URL,
@@ -62,11 +66,21 @@
 			    SCM
 		]]>
 		<set>
+            <if test="null != login">
+                <![CDATA[
+                    LOGIN = #{login},
+		        ]]>
+            </if>
 			<if test="null != accessToken">
                 <![CDATA[
                     STATUS = #{status},
 		        ]]>
 			</if>
+            <if test="null != hostName">
+                <![CDATA[
+                   HOST = #{hostName},
+		        ]]>
+            </if>
 			<if test="null != organizationName">
                 <![CDATA[
                    ORGANIZATION = #{organizationName},
@@ -116,6 +130,8 @@
 		id="ScmAccountResultMap" autoMapping="false">
 		<id column="SCM_ID" property="id" />
 		<result column="SCM_NAME" property="name" />
+        <result column="SCM_HOST" property="hostName" />
+        <result column="SCM_LOGIN" property="login" />
 		<result column="SCM_ACCESS_TOKEN" property="accessToken" />
 		<result column="SCM_ORGANIZATION" property="organizationName" />
 		<result column="SCM_REPO" property="repositoryName" />

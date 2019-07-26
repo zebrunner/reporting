@@ -11,6 +11,10 @@
 			<a>id</a>
 			<b>id</b>
 		</field>
+        <field>
+            <a>hostName</a>
+            <b>hostName</b>
+        </field>
 		<field>
 			<a>organizationName</a>
 			<b>organizationName</b>
@@ -36,6 +40,10 @@
 			<a>id</a>
 			<b>id</b>
 		</field>
+        <field>
+            <a>hostName</a>
+            <b>hostName</b>
+        </field>
 		<field>
 			<a>organizationName</a>
 			<b>organizationName</b>

@@ -15,7 +15,6 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Launcher;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.JobResult;
