@@ -21,9 +21,6 @@ import com.github.seratch.jslack.api.methods.response.auth.AuthTestResponse;
 import com.github.seratch.jslack.api.methods.response.chat.ChatPostMessageResponse;
 import com.github.seratch.jslack.api.model.Attachment;
 import com.github.seratch.jslack.api.model.Field;
-import com.github.seratch.jslack.api.model.Message;
-import com.github.seratch.jslack.shortcut.model.ApiToken;
-import com.github.seratch.jslack.shortcut.model.ChannelName;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.services.exceptions.SlackException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
@@ -42,8 +39,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.SLACK;
 
@@ -136,11 +131,6 @@ public class SlackService extends AbstractIntegration<SlackContext> {
               });
     }
 
-    private boolean isMatchingTextFound(String messageIdentifier, String message){
-        Matcher matcher = Pattern.compile(".*" + messageIdentifier + ".*").matcher(message);
-        return matcher.find();
-    }
-
     private ChatPostMessageResponse pushNotificationToChannel(String channel, String threadTs, String text, List<Attachment> slackAttachments) {
         ChatPostMessageResponse postResponse;
         try {
@@ -161,13 +151,13 @@ public class SlackService extends AbstractIntegration<SlackContext> {
     }
 
     private Attachment getNotificationAttachment(TestRun testRun, String notificationCauseMessage) {
-        String headerMessage = getNotificationMessage(testRun, notificationCauseMessage);
-        String testRunResultsMessage = String.format(RESULTS_PATTERN, testRun.getPassed(), testRun.getFailed(), testRun.getFailedAsKnown(), testRun.getSkipped());
-        String fullMessage = headerMessage + "\n" + testRunResultsMessage;
+        String message = notificationCauseMessage + getTestRunInfoWithLinksMessage(testRun);
+
+        String testRunResultsAttachmentMessage = getTestRunResultsAttachmentMessage(testRun);
         String attachmentColor = getAttachmentColor(testRun);
 
-        List<Field> fields = getFields(buildField("Test Results", testRunResultsMessage), null);
-        Attachment attachment = buildAttachment(headerMessage, fullMessage, attachmentColor, fields);
+        List<Field> fields = getFields(buildField("Test Results", testRunResultsAttachmentMessage), null);
+        Attachment attachment = buildAttachment(message, attachmentColor, fields);
 
         String comments = testRun.getComments();
         if (comments != null) {
@@ -176,27 +166,23 @@ public class SlackService extends AbstractIntegration<SlackContext> {
         return attachment;
     }
 
-    private String getNotificationMessage(TestRun testRun, String notificationCauseMessage) {
+    private String getTestRunInfoWithLinksMessage(TestRun testRun) {
         String zafiraUrl = urlResolver.buildWebURL() + "/tests/runs/" + testRun.getId();
         String jenkinsUrl = testRun.getJob().getJobURL() + "/" + testRun.getBuildNumber();
-        String testRunHeaderInfoMessage = getTestRunInfoMessage(testRun);
-        return notificationCauseMessage + String.format(INFO_PATTERN, testRunHeaderInfoMessage, zafiraUrl, jenkinsUrl);
+        String testRunInfoMessage = getTestRunInfoMessage(testRun);
+        return String.format(INFO_PATTERN, testRunInfoMessage, zafiraUrl, jenkinsUrl);
     }
 
-    private List<Field> getFields(Field testResultsField, List<Field> fields) {
-        if (fields == null) {
-            fields = new ArrayList<>();
-        }
-        fields.add(testResultsField);
-        return fields;
+    private String getTestRunResultsAttachmentMessage(TestRun testRun) {
+        return String.format(RESULTS_PATTERN, testRun.getPassed(), testRun.getFailed(), testRun.getFailedAsKnown(), testRun.getSkipped());
     }
 
-    private Attachment buildAttachment(String mainMessage, String fullMessage, String attachmentColor, List<Field> fields) {
+    private Attachment buildAttachment(String message, String attachmentColor, List<Field> fields) {
         return Attachment.builder()
-                         .pretext(mainMessage)
+                         .pretext(message)
                          .color(attachmentColor)
+                         .fallback(message)
                          .fields(fields)
-                         .fallback(fullMessage)
                          .build();
     }
 
@@ -206,6 +192,14 @@ public class SlackService extends AbstractIntegration<SlackContext> {
                     .value(value)
                     .valueShortEnough(false)
                     .build();
+    }
+
+    private List<Field> getFields(Field testResultsField, List<Field> fields) {
+        if (fields == null) {
+            fields = new ArrayList<>();
+        }
+        fields.add(testResultsField);
+        return fields;
     }
 
     /**

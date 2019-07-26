@@ -50,7 +50,7 @@ public class Setting extends AbstractEntity {
                 SettingType.JENKINS_API_TOKEN_OR_PASSWORD,
                 SettingType.JENKINS_FOLDER,
                 SettingType.JENKINS_ENABLED),
-        SLACK(SettingType.SLACK_WEB_HOOK_URL, SettingType.SLACK_OAUTH_ACCESS_TOKEN, SettingType.SLACK_ENABLED),
+        SLACK(SettingType.SLACK_OAUTH_ACCESS_TOKEN, SettingType.SLACK_ENABLED),
         TESTRAIL(SettingType.TESTRAIL_URL, SettingType.TESTRAIL_ENABLED),
         QTEST(SettingType.QTEST_URL, SettingType.QTEST_ENABLED),
         EMAIL(
@@ -130,7 +130,6 @@ public class Setting extends AbstractEntity {
         JENKINS_API_TOKEN_OR_PASSWORD(true),
         JENKINS_FOLDER(false, false),
         JENKINS_ENABLED,
-        SLACK_WEB_HOOK_URL,
         SLACK_OAUTH_ACCESS_TOKEN(true),
         SLACK_ENABLED,
         TESTRAIL_URL(false, false),
