@@ -21,6 +21,9 @@ import com.github.seratch.jslack.api.methods.response.auth.AuthTestResponse;
 import com.github.seratch.jslack.api.methods.response.chat.ChatPostMessageResponse;
 import com.github.seratch.jslack.api.model.Attachment;
 import com.github.seratch.jslack.api.model.Field;
+import com.github.seratch.jslack.api.model.Message;
+import com.github.seratch.jslack.shortcut.model.ApiToken;
+import com.github.seratch.jslack.shortcut.model.ChannelName;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.services.exceptions.SlackException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
@@ -39,6 +42,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.SLACK;
 
@@ -112,12 +117,31 @@ public class SlackService extends AbstractIntegration<SlackContext> {
         sendNotificationsToChannels(channels, Collections.singletonList(attachment));
     }
 
-    private void sendNotificationsToChannels(String channels, List<Attachment> attachments) {
-        Arrays.stream(channels.split(","))
-              .forEach(channel -> pushNotificationToChannel(channel, attachments));
+    public void sendReplyToThread(String channelName, String messageTs, String reply){
+        ChatPostMessageResponse chatPostMessageResponse = pushNotificationToChannel(channelName, messageTs, reply, Collections.emptyList());
+        if(!chatPostMessageResponse.isOk()){
+            LOGGER.error(chatPostMessageResponse.getMessage() + "" + chatPostMessageResponse.getError());
+            throw new SlackException("Thread reply is not sent.");
+        }
     }
 
-    private ChatPostMessageResponse pushNotificationToChannel(String channel, List<Attachment> slackAttachments) {
+    private void sendNotificationsToChannels(String channels, List<Attachment> attachments) {
+        Arrays.stream(channels.split(","))
+              .forEach(channel -> {
+                  ChatPostMessageResponse chatPostMessageResponse = pushNotificationToChannel(channel, null, null, attachments);
+                  if(!chatPostMessageResponse.isOk()){
+                      LOGGER.error(chatPostMessageResponse.getMessage() + "" + chatPostMessageResponse.getError());
+                      throw new SlackException("Notification is not sent.");
+                  }
+              });
+    }
+
+    private boolean isMatchingTextFound(String messageIdentifier, String message){
+        Matcher matcher = Pattern.compile(".*" + messageIdentifier + ".*").matcher(message);
+        return matcher.find();
+    }
+
+    private ChatPostMessageResponse pushNotificationToChannel(String channel, String threadTs, String text, List<Attachment> slackAttachments) {
         ChatPostMessageResponse postResponse;
         try {
             postResponse = context()
@@ -125,6 +149,8 @@ public class SlackService extends AbstractIntegration<SlackContext> {
                     .methods()
                     .chatPostMessage(req -> req.token(context().getAccessToken())
                                                .channel(channel)
+                                               .threadTs(threadTs)
+                                               .text(text)
                                                .attachments(slackAttachments)
                                                .username(author)
                                                .iconUrl(image));
