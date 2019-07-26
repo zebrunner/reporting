@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.qaprosoft.zafira.models.dto.JenkinsLauncherType;
+import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,7 +64,7 @@ public class LauncherService {
     private final JWTService jwtService;
     private final GitHubService gitHubService;
     private final SeleniumService seleniumService;
-    private final String apiUrl;
+    private final URLResolver urlResolver;
 
     public LauncherService(LauncherMapper launcherMapper,
                            JenkinsService jenkinsService,
@@ -73,7 +73,7 @@ public class LauncherService {
                            JWTService jwtService,
                            GitHubService gitHubService,
                            SeleniumService seleniumService,
-                           @Value("${zafira.webservice.url}") String apiUrl) {
+                           URLResolver urlResolver) {
         this.launcherMapper = launcherMapper;
         this.jenkinsService = jenkinsService;
         this.scmAccountService = scmAccountService;
@@ -81,7 +81,7 @@ public class LauncherService {
         this.jwtService = jwtService;
         this.gitHubService = gitHubService;
         this.seleniumService = seleniumService;
-        this.apiUrl = apiUrl;
+        this.urlResolver = urlResolver;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -189,7 +189,7 @@ public class LauncherService {
         }
 
         jobParameters.put("zafira_enabled", "true");
-        jobParameters.put("zafira_service_url", apiUrl.replace("api", TenancyContext.getTenantName()));
+        jobParameters.put("zafira_service_url", urlResolver.buildWebserviceUrl());
         jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, TenancyContext.getTenantName()));
 
         String args = jobParameters.entrySet().stream()
@@ -227,7 +227,7 @@ public class LauncherService {
         jobParameters.put("githubUser", loginName);
         jobParameters.put("githubToken", accessToken);
         jobParameters.put("onlyUpdated", String.valueOf(false));
-        jobParameters.put("zafira_service_url", apiUrl.replace("api", tenantName));
+        jobParameters.put("zafira_service_url", urlResolver.buildWebserviceUrl());
         jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, tenantName));
 
         String args = jobParameters.entrySet().stream()

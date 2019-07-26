@@ -31,6 +31,9 @@ public class URLResolver {
     @Value("${zafira.web.url}")
     private String webURL;
 
+    @Value("${zafira.webservice.url}")
+    private String webserviceURL;
+
     /**
      * In case if multitenancy will resolve current tenancy id into the URL pattern: http://demo.qaprosoft.com/zafira.
      *
@@ -38,6 +41,10 @@ public class URLResolver {
      */
     public String buildWebURL() {
         return isMultitenant ? String.format(webURL, TenancyContext.getTenantName()) : webURL;
+    }
+
+    public String buildWebserviceUrl() {
+        return isMultitenant ? webserviceURL.replace("api", TenancyContext.getTenantName()) : webserviceURL;
     }
 
     public String getServiceURL() {
