@@ -31,11 +31,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qaprosoft.zafira.models.dto.errors.Error;
 import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
 import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
+import org.springframework.stereotype.Component;
 
 /**
  * The RestAccessDeniedHandler is called by the ExceptionTranslationFilter to handle all AccessDeniedExceptions. These
  * exceptions are thrown when the authentication is valid but access is not authorized.
  */
+@Component
 public class RestAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override

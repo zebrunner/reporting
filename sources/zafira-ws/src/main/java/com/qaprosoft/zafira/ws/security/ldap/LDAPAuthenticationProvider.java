@@ -33,6 +33,7 @@ import org.springframework.security.ldap.authentication.NullLdapAuthoritiesPopul
 import org.springframework.security.ldap.ppolicy.PasswordPolicyException;
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -45,13 +46,13 @@ import java.util.Optional;
  * 
  * @author brutskov
  */
+@Component
 public class LDAPAuthenticationProvider extends AbstractLdapAuthenticationProvider {
 
     @Autowired
     private ServletContext servletContext;
 
     private final LDAPUserDetailsContextMapper ldapUserDetailsContextMapper;
-
     private final LdapAuthoritiesPopulator authoritiesPopulator;
 
     public LDAPAuthenticationProvider(LDAPUserDetailsContextMapper ldapUserDetailsContextMapper) {

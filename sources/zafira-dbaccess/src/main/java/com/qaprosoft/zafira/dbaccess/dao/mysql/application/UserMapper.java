@@ -22,6 +22,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface UserMapper {
+
     void createUser(User user);
 
     User getUserById(long id);
@@ -51,4 +52,5 @@ public interface UserMapper {
     List<User> searchUsers(@Param("sc") UserSearchCriteria sc, @Param("publicDetails") Boolean publicDetails);
 
     Integer getUserSearchCount(@Param("sc") UserSearchCriteria sc, @Param("publicDetails") Boolean publicDetails);
+
 }

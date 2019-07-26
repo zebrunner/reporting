@@ -21,18 +21,20 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service uses for test runs caching
  * <h1>(isolation need for Spring target proxy objects)</h1>
  */
+@Component
 public class StatisticsService {
     private static final String TEST_RUN_STATISTICS_CACHE_NAME = "testRunStatistics";
 
-    private ICacheableService<Long, TestRunStatistics> cacheableService;
+    private final ICacheableService<Long, TestRunStatistics> cacheableService;
 
-    public void setCacheableService(ICacheableService<Long, TestRunStatistics> cacheableService) {
+    public StatisticsService(ICacheableService<Long, TestRunStatistics> cacheableService) {
         this.cacheableService = cacheableService;
     }
 

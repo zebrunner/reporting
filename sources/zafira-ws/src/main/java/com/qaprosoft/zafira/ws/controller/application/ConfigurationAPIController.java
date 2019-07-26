@@ -23,6 +23,7 @@ import com.qaprosoft.zafira.services.services.application.VersionService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.JiraService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.SlackService;
+import com.qaprosoft.zafira.services.util.URLResolver;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.Api;
@@ -63,6 +64,9 @@ public class ConfigurationAPIController extends AbstractController {
     @Autowired
     private SlackService slackService;
 
+    @Autowired
+    private URLResolver urlResolver;
+
     @ResponseStatusDetails
     @ApiOperation(value = "Get version", nickname = "getVersion", httpMethod = "GET", response = Map.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -71,6 +75,7 @@ public class ConfigurationAPIController extends AbstractController {
         Map<String, Object> config = new HashMap<>();
         config.put("service", versionService.getServiceVersion());
         config.put("client", versionService.getClientVersion());
+        config.put("service_url", urlResolver.buildWebserviceUrl());
         return config;
     }
 

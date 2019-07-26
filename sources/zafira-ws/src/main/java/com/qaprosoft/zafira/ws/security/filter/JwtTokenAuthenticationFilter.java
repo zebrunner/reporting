@@ -47,6 +47,7 @@ import io.jsonwebtoken.SignatureException;
 
 @Component
 public class JwtTokenAuthenticationFilter extends GenericFilterBean {
+
     @Autowired
     private JWTService jwtService;
 

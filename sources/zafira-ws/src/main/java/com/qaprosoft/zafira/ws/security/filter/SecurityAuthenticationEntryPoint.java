@@ -21,6 +21,7 @@ import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
 import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +38,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  *
  * For problems related to access (roles), see RestAccessDeniedHandler.
  */
+@Component
 public class SecurityAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override

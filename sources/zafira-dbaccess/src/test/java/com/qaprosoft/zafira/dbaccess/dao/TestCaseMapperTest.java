@@ -19,6 +19,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNull;
 
+import com.qaprosoft.zafira.dbaccess.PersistenceTestConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -31,7 +32,7 @@ import com.qaprosoft.zafira.models.db.TestCase;
 import com.qaprosoft.zafira.models.db.User;
 
 @Test
-@ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")
+@ContextConfiguration(classes = PersistenceTestConfig.class)
 public class TestCaseMapperTest extends AbstractTestNGSpringContextTests {
     /**
      * Turn this on to enable this test

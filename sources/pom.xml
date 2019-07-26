@@ -74,7 +74,6 @@
         <jtds.version>1.3.1</jtds.version>
         <maven-enforcer-plugin.version>1.3.1</maven-enforcer-plugin.version>
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
-        <maven-war-plugin.version>2.4</maven-war-plugin.version>
         <aspectj-maven-plugin.version>1.5</aspectj-maven-plugin.version>
         <tomcat-maven-plugin.version>1.1</tomcat-maven-plugin.version>
         <tomcat7-maven-plugin.version>2.2</tomcat7-maven-plugin.version>
@@ -111,7 +110,6 @@
     </properties>
     <modules>
         <module>zafira-models</module>
-        <module>zafira-client</module>
         <module>zafira-dbaccess</module>
         <module>zafira-services</module>
         <module>zafira-ws</module>

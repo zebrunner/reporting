@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao;
 
+import com.qaprosoft.zafira.dbaccess.PersistenceTestConfig;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.WidgetMapper;
 import com.qaprosoft.zafira.models.db.Widget;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
 @Test
-@ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")
+@ContextConfiguration(classes = PersistenceTestConfig.class)
 public class WidgetMapperTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private WidgetMapper widgetMapper;

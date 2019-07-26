@@ -38,8 +38,11 @@ public class ApiExceptionHandler {
 
     private static final String INTERNAL_SERVER_ERROR_MSG = "Unexpected error has occurred. Please try again later.";
 
-    @Value("${zafira.debugMode:false}")
-    private Boolean debugMode;
+    private final boolean debugMode;
+
+    public ApiExceptionHandler(@Value("${zafira.debugMode:false}") boolean debugMode) {
+        this.debugMode = debugMode;
+    }
 
     @ExceptionHandler(JobNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
