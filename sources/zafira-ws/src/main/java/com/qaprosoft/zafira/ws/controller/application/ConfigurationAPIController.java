@@ -74,6 +74,7 @@ public class ConfigurationAPIController extends AbstractController {
         Map<String, Object> config = new HashMap<>();
         config.put("service", versionService.getServiceVersion());
         config.put("client", versionService.getClientVersion());
+        config.put("service_url", versionService.getWebserviceURL());
         return config;
     }
 
