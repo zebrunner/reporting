@@ -1,10 +1,3 @@
-FROM maven:3.6.0-jdk-8 as build-stage
-
-WORKDIR /app
-COPY ./sources/ /app/
-COPY ./tools/maven/settings.xml ${MAVEN_CONFIG}/
-RUN mvn clean install -P zafira
-
 FROM tomcat:7-jre8
 
 ARG SERVICE_VER=1.0-SNAPSHOT
@@ -64,7 +57,7 @@ ENV ZAFIRA_GITHUB_CLIENT_SECRET=
 RUN apt-get update && apt-get install zip
 RUN mkdir ${CATALINA_HOME}/shared
 
-COPY --from=build-stage /app/zafira-ws/target/zafira-ws.war ${CATALINA_HOME}/temp/
+COPY ./sources/zafira-ws/build/libs/zafira-ws-2.0.war ${CATALINA_HOME}/temp/zafira-ws.war
 COPY tools/newrelic.zip ${CATALINA_HOME}/temp/
 COPY entrypoint.sh /
 
