@@ -40,8 +40,6 @@ public class GitHubService implements IScmService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GitHubService.class);
 
-    private static final String ENTERPRISE_API_URL = "http://%s/api/v3";
-
     @Autowired
     private GitHubHttpUtils gitHubHttpUtils;
 
@@ -126,7 +124,7 @@ public class GitHubService implements IScmService {
                 gitHub = GitHub.connectUsingOAuth(scmAccount.getAccessToken());
                 break;
             case GITHUB_ENTERPRISE:
-                String apiUrl = String.format(ENTERPRISE_API_URL, scmAccount.getHostName());
+                String apiUrl = scmAccount.getHostName();
                 gitHub = GitHub.connectToEnterpriseWithOAuth(apiUrl, scmAccount.getLogin(), scmAccount.getAccessToken());
                 break;
             default:
