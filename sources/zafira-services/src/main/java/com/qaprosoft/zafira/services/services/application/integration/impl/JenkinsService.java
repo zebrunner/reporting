@@ -180,8 +180,14 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
     }
 
     public JobResult abortJob(Job ciJob, Integer buildNumber) {
-        JobWithDetails job = getJobWithDetails(ciJob).orElseThrow(() -> new ForbiddenOperationException("Unable to abort CI job"));
-        return abortJob(job, buildNumber);
+        JobResult jobResult;
+        Optional<JobWithDetails> job = getJobWithDetails(ciJob);
+        if(job.isPresent()){
+            jobResult = abortJob(job.get(), buildNumber);
+        } else {
+            jobResult = new JobResult(null, false);
+        }
+        return jobResult;
     }
 
     private JobResult abortJob(JobWithDetails job, Integer buildNumber) {

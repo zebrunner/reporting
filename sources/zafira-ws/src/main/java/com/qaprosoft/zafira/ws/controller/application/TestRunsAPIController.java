@@ -446,7 +446,7 @@ public class TestRunsAPIController extends AbstractController {
 
         JobResult jobResult = jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber());
         if (!jobResult.isSuccess()) {
-            throw new UnableToAbortCIJobException();
+            throw new UnableToAbortCIJobException("Unable to abort CI job");
         }
     }
 
