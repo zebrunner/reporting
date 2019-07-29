@@ -1,5 +1,7 @@
 FROM tomcat:7-jre8
 
+ARG version=1.0-SNAPSHOT
+
 ARG SERVICE_VER=1.0-SNAPSHOT
 ARG CLIENT_VER=1.0-SNAPSHOT
 
@@ -57,7 +59,7 @@ ENV ZAFIRA_GITHUB_CLIENT_SECRET=
 RUN apt-get update && apt-get install zip
 RUN mkdir ${CATALINA_HOME}/shared
 
-COPY ./sources/zafira-ws/build/libs/zafira-ws-2.0.war ${CATALINA_HOME}/temp/zafira-ws.war
+COPY ./sources/zafira-ws/build/libs/zafira-ws-${version}.war ${CATALINA_HOME}/temp/zafira-ws.war
 COPY tools/newrelic.zip ${CATALINA_HOME}/temp/
 COPY entrypoint.sh /
 
