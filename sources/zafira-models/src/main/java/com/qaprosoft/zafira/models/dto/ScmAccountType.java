@@ -23,7 +23,7 @@ public class ScmAccountType extends AbstractType {
 
     private static final long serialVersionUID = 9120645976990419377L;
 
-    private String hostName;
+    private String apiVersion;
     private String organizationName;
     private String repositoryName;
     private String avatarURL;
@@ -32,12 +32,12 @@ public class ScmAccountType extends AbstractType {
     private ScmAccount.Name name;
     private String defaultBranch;
 
-    public String getHostName() {
-        return hostName;
+    public String getApiVersion() {
+        return apiVersion;
     }
 
-    public void setHostName(String hostName) {
-        this.hostName = hostName;
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
     }
 
     public String getOrganizationName() {

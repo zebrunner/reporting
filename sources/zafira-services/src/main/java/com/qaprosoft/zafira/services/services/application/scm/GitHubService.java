@@ -124,7 +124,7 @@ public class GitHubService implements IScmService {
                 gitHub = GitHub.connectUsingOAuth(scmAccount.getAccessToken());
                 break;
             case GITHUB_ENTERPRISE:
-                String apiUrl = scmAccount.getHostName();
+                String apiUrl = scmAccount.getApiVersion();
                 gitHub = GitHub.connectToEnterpriseWithOAuth(apiUrl, scmAccount.getLogin(), scmAccount.getAccessToken());
                 break;
             default:

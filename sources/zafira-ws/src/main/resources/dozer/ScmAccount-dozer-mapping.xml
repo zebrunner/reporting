@@ -12,8 +12,8 @@
 			<b>id</b>
 		</field>
         <field>
-            <a>hostName</a>
-            <b>hostName</b>
+            <a>apiVersion</a>
+            <b>apiVersion</b>
         </field>
 		<field>
 			<a>organizationName</a>
@@ -41,8 +41,8 @@
 			<b>id</b>
 		</field>
         <field>
-            <a>hostName</a>
-            <b>hostName</b>
+            <a>apiVersion</a>
+            <b>apiVersion</b>
         </field>
 		<field>
 			<a>organizationName</a>

@@ -7,7 +7,7 @@
 	<insert id="createScmAccount" useGeneratedKeys="true"
 		keyProperty="id">
 		<![CDATA[
-			INSERT INTO SCM (ACCESS_TOKEN, ORGANIZATION, REPO, AVATAR_URL, REPOSITORY_URL, USER_ID, NAME, HOST, LOGIN)
+			INSERT INTO SCM (ACCESS_TOKEN, ORGANIZATION, REPO, AVATAR_URL, REPOSITORY_URL, USER_ID, NAME, API_VERSION, LOGIN)
 			VALUES (
 				#{accessToken},
 				#{organizationName},
@@ -16,7 +16,7 @@
 			    #{repositoryURL},
 			    #{userId},
 			    #{name},
-			    #{hostName},
+			    #{apiVersion},
 			    #{login}
 			)
 		]]>
@@ -29,7 +29,7 @@
 				S.NAME AS SCM_NAME,
 			    S.LOGIN AS SCM_LOGIN,
 				S.ACCESS_TOKEN AS SCM_ACCESS_TOKEN,
-			    S.HOST AS SCM_HOST,
+			    S.API_VERSION AS SCM_API_VERSION,
 				S.ORGANIZATION AS SCM_ORGANIZATION,
 				S.REPO AS SCM_REPO,
 				S.AVATAR_URL AS SCM_AVATAR_URL,
@@ -76,9 +76,9 @@
                     STATUS = #{status},
 		        ]]>
 			</if>
-            <if test="null != hostName">
+            <if test="null != apiVersion">
                 <![CDATA[
-                   HOST = #{hostName},
+                   API_VERSION = #{apiVersion},
 		        ]]>
             </if>
 			<if test="null != organizationName">
@@ -130,7 +130,7 @@
 		id="ScmAccountResultMap" autoMapping="false">
 		<id column="SCM_ID" property="id" />
 		<result column="SCM_NAME" property="name" />
-        <result column="SCM_HOST" property="hostName" />
+        <result column="SCM_API_VERSION" property="apiVersion" />
         <result column="SCM_LOGIN" property="login" />
 		<result column="SCM_ACCESS_TOKEN" property="accessToken" />
 		<result column="SCM_ORGANIZATION" property="organizationName" />

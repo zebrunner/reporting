@@ -2,7 +2,7 @@ SET SCHEMA 'zafira';
 
 select check_version(125);
 
-ALTER TABLE SCM ADD COLUMN HOST varchar(255);
 ALTER TABLE SCM ADD COLUMN LOGIN varchar(255);
+ALTER TABLE SCM ADD COLUMN API_VERSION varchar(255);
 
 select add_version(125);

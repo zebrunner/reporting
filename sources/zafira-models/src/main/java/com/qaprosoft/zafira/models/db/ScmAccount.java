@@ -21,11 +21,11 @@ public class ScmAccount extends AbstractEntity {
 
     private String login;
     private String accessToken;
-    private String hostName;
     private String organizationName;
     private String repositoryName;
     private String avatarURL;
     private String repositoryURL;
+    private String apiVersion;
     private Long userId;
     private Name name;
 
@@ -62,12 +62,12 @@ public class ScmAccount extends AbstractEntity {
         this.accessToken = accessToken;
     }
 
-    public String getHostName() {
-        return hostName;
+    public String getApiVersion() {
+        return apiVersion;
     }
 
-    public void setHostName(String hostName) {
-        this.hostName = hostName;
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
     }
 
     public String getOrganizationName() {
