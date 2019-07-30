@@ -15,17 +15,19 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestSuiteMapper;
+import com.qaprosoft.zafira.models.db.TestSuite;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestSuiteMapper;
-import com.qaprosoft.zafira.models.db.TestSuite;
-
 @Service
 public class TestSuiteService {
-    @Autowired
-    private TestSuiteMapper testSuiteMapper;
+
+    private final TestSuiteMapper testSuiteMapper;
+
+    public TestSuiteService(TestSuiteMapper testSuiteMapper) {
+        this.testSuiteMapper = testSuiteMapper;
+    }
 
     @Transactional(rollbackFor = Exception.class)
     public void createTestSuite(TestSuite testSuite) {
