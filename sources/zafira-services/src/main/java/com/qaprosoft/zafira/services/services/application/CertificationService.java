@@ -35,14 +35,15 @@ public class CertificationService {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd");
 
-    @Autowired
-    private ElasticsearchService elasticsearchService;
+    private final ElasticsearchService elasticsearchService;
+    private final TestRunService testRunService;
+    private final TestService testService;
 
-    @Autowired
-    private TestRunService testRunService;
-
-    @Autowired
-    private TestService testService;
+    public CertificationService(ElasticsearchService elasticsearchService, TestRunService testRunService, TestService testService) {
+        this.elasticsearchService = elasticsearchService;
+        this.testRunService = testRunService;
+        this.testService = testService;
+    }
 
     public CertificationType getCertificationDetails(Long upstreamJobId, Integer upstreamJobBuildNumber) {
         if (!elasticsearchService.isClientInitialized()) {

@@ -20,7 +20,6 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
@@ -32,8 +31,11 @@ public class FreemarkerUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FreemarkerUtil.class);
 
-    @Autowired
-    private Configuration freemarkerConfiguration;
+    private final Configuration freemarkerConfiguration;
+
+    public FreemarkerUtil(Configuration freemarkerConfiguration) {
+        this.freemarkerConfiguration = freemarkerConfiguration;
+    }
 
     public String getFreeMarkerTemplateContent(String template, Object obj) {
         return getFreeMarkerTemplateContent(template, obj, true);

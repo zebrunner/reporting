@@ -41,8 +41,11 @@ public class GroupService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupService.class);
 
-    @Autowired
-    private GroupMapper groupMapper;
+    private final GroupMapper groupMapper;
+
+    public GroupService(GroupMapper groupMapper) {
+        this.groupMapper = groupMapper;
+    }
 
     @CachePut(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #group.id")
     @Transactional(rollbackFor = Exception.class)
