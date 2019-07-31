@@ -13,22 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira;
+package com.qaprosoft.zafira.ws;
 
+import com.qaprosoft.zafira.ws.util.dozer.NullSafeDozerBeanMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -39,29 +37,17 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Locale;
 
-@EnableWebMvc
 @EnableAsync
+@Configuration
 @EnableSwagger2
-@ComponentScan(basePackages = {"com.qaprosoft.zafira.ws"})
-@PropertySource("classpath:environment.properties")
-public class WebConfig extends WebMvcConfigurerAdapter {
+public class WebConfig implements WebMvcConfigurer {
 
-    private static final String BASENAME_LOCATION = "i18n/messages";
-
-    private final boolean debugMode;
-
-    public WebConfig(@Value("${zafira.debugMode:false}") boolean debugMode) {
-        this.debugMode = debugMode;
-    }
+    private static final String BASENAME_LOCATION = "classpath:i18n/messages";
 
     // TODO: 2019-07-17 not validated on service layer - try to move to web layer
-    @Override
-    public Validator getValidator() {
-        return validator();
-    }
-
     @Bean
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
@@ -71,34 +57,58 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public LocalValidatorFactoryBean validator() {
-        LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
-        bean.setValidationMessageSource(messageSource());
-        return bean;
-    }
-
-    @Bean
     public LocaleResolver localeResolver() {
         AcceptHeaderLocaleResolver localeResolver = new AcceptHeaderLocaleResolver();
         localeResolver.setDefaultLocale(Locale.US);
         return localeResolver;
     }
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("swagger-ui.html")
-                .addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+    @Bean
+    public LocalValidatorFactoryBean localValidator() {
+        LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
+        bean.setValidationMessageSource(messageSource());
+        return bean;
     }
 
     @Bean
-    public Docket api() {
+    public MethodValidationPostProcessor methodValidationPostProcessor() {
+        MethodValidationPostProcessor methodValidationPostProcessor = new MethodValidationPostProcessor();
+        methodValidationPostProcessor.setValidator(localValidator());
+        return methodValidationPostProcessor;
+    }
+
+    private static final String[] DOZER_MAPPING_FILES = new String[] {
+            "dozer/Filter-dozer-mapping.xml",
+            "dozer/Launcher-dozer-mapping.xml",
+            "dozer/TestSuite-dozer-mapping.xml",
+            "dozer/TestCase-dozer-mapping.xml",
+            "dozer/Test-dozer-mapping.xml",
+            "dozer/Job-dozer-mapping.xml",
+            "dozer/TestRun-dozer-mapping.xml",
+            "dozer/User-dozer-mapping.xml",
+            "dozer/Project-dozer-mapping.xml",
+            "dozer/TestArtifact-dozer-mapping.xml",
+            "dozer/Tenancy-dozer-mapping.xml",
+            "dozer/Invitation-dozer-mapping.xml",
+            "dozer/ScmAccount-dozer-mapping.xml",
+            "dozer/Tag-dozer-mapping.xml",
+            "dozer/WidgetTemplate-dozer-mapping.xml"
+    };
+
+    @Bean
+    public NullSafeDozerBeanMapper mapper() {
+        NullSafeDozerBeanMapper dozerBeanMapper = new NullSafeDozerBeanMapper();
+        dozerBeanMapper.setMappingFiles(Arrays.asList(DOZER_MAPPING_FILES));
+        return dozerBeanMapper;
+    }
+
+    @Bean
+    public Docket api(@Value("${zafira.debugMode:false}") boolean debugMode) {
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName("zafira-api")
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.qaprosoft.zafira.ws"))
-                .paths(PathSelectors.ant("/**"))
+                .paths(PathSelectors.any())
                 .build()
                 .enable(debugMode)
                 .apiInfo(apiInfo());
@@ -106,8 +116,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Spring MVC swagger document")
-                .description("End Points")
+                .title("Zafira API")
+                .description("Describes public and private endpoints behavior")
                 .termsOfServiceUrl("http://springfox.io")
                 .license("Apache License Version 2.0")
                 .licenseUrl("https://github.com/springfox/springfox/blob/master/LICENSE")
@@ -115,12 +125,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
                 .build();
     }
 
-    /**
-     * Registers placeholder configurer to resolve properties
-     * Order is required, `cause  there is at least one placeholder configurer in servlet context by default.
-     * Order is necessary to resolve their conflicts
-     * @return a created placeholder configurer
-     */
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
         PropertySourcesPlaceholderConfigurer placeholderConfigurer = new PropertySourcesPlaceholderConfigurer();
