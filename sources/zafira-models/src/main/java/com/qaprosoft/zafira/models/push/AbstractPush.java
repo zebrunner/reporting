@@ -26,7 +26,8 @@ public class AbstractPush {
         TEST_RUN("/topic/%s.testRuns"),
         TEST("/topic/%s.testRuns.%s.tests"),
         TEST_RUN_STATISTICS("/topic/%s.statistics"),
-        LAUNCHER("/topic/%s.launchers");
+        LAUNCHER("/topic/%s.launchers"),
+        LAUNCHER_RUN("/topic/%s.launcherRuns");
 
         private final String websocketPathTemplate;
 
