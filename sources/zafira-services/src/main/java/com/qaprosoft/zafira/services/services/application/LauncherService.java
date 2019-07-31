@@ -200,6 +200,8 @@ public class LauncherService {
 
         jobParameters.put("overrideFields", args);
 
+        // CiRunId is a random string, needs to define unique correlation between started launcher and real test run starting
+        // It must be returned with test run on start in testRun.ciRunId field
         String ciRunId = UUID.randomUUID().toString();
         jobParameters.put("ci_run_id", ciRunId);
 
