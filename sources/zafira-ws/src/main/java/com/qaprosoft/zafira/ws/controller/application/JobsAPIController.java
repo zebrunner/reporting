@@ -45,10 +45,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import javax.ws.rs.QueryParam;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -102,8 +102,7 @@ public class JobsAPIController extends AbstractController {
     @ApiOperation(value = "Get latest job test runs", nickname = "getLatestJobTestRuns", httpMethod = "POST", response = Map.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/views/{id}/tests/runs")
-    public Map<Long, TestRun> getLatestJobTestRuns(@QueryParam("env") String env, @RequestBody @Valid List<JobViewType> jobViews)
-            {
+    public Map<Long, TestRun> getLatestJobTestRuns(@RequestParam("env") String env, @RequestBody @Valid List<JobViewType> jobViews) {
         List<Long> jobIds = jobViews.stream()
                 .map(JobViewType::getJob)
                 .map(AbstractEntity::getId)
@@ -131,7 +130,7 @@ public class JobsAPIController extends AbstractController {
     public List<JobViewType> updateJobViews(
             @RequestBody @Valid List<JobViewType> jobViews,
             @PathVariable("id") long viewId,
-            @QueryParam("env") String env) {
+            @RequestParam("env") String env) {
         if (!CollectionUtils.isEmpty(jobViews)) {
             jobsService.deleteJobViews(viewId, env);
             for (JobViewType jobView : jobViews) {
@@ -161,7 +160,7 @@ public class JobsAPIController extends AbstractController {
     @ApiOperation(value = "Delete job views", nickname = "deleteJobViews", httpMethod = "DELETE")
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @DeleteMapping("views/{id}")
-    public void deleteJobViews(@PathVariable("id") long viewId, @QueryParam("env") String env) {
+    public void deleteJobViews(@PathVariable("id") long viewId, @RequestParam("env") String env) {
         jobsService.deleteJobViews(viewId, env);
     }
 

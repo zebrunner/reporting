@@ -64,7 +64,7 @@ public class TenancyFilter extends GenericFilterBean {
                 }
                 try {
                     InternetDomainName domain = InternetDomainName.from(host.replaceFirst("www.", ""));
-                    if (!domain.isTopPrivateDomain()) {
+                    if (!domain.isTopPrivateDomain() && domain.isUnderPublicSuffix()) {
                         String topDomain = domain.topPrivateDomain().toString();
                         String subDomain = domain.toString().replaceAll("." + topDomain, "");
                         TenancyContext.setTenantName(subDomain);

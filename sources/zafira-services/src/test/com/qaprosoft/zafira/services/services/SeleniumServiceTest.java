@@ -16,10 +16,6 @@
 package com.qaprosoft.zafira.services.services;
 
 import com.qaprosoft.zafira.models.db.Attachment;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebElement;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
