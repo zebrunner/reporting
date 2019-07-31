@@ -10,11 +10,7 @@ dependencies {
 
     compile project(':zafira-models')
 
-    compile dependencyManager.springCore
-    compile dependencyManager.springBeans
-    compile dependencyManager.springContext
-    compile dependencyManager.springJdbc
-    compile dependencyManager.springTx
+    compile dependencyManager.springBootStarterDataJdbc
     compile dependencyManager.postgres
     compile dependencyManager.c3p0
     compile dependencyManager.mybatis

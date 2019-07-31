@@ -11,16 +11,12 @@ dependencies {
     compile project(':zafira-dbaccess')
     compile project(':zafira-models')
 
+    implementation dependencyManager.springBootStarterAmqp
+    implementation dependencyManager.springBootStarterFreemarker
+    compile dependencyManager.springSecurityLdap
+
     compile dependencyManager.javaxMail
     compile dependencyManager.javaxMailApi
-    compile dependencyManager.freemarker
-    compile dependencyManager.springContext
-    compile dependencyManager.springContextSupport
-    compile dependencyManager.springTx
-    compile dependencyManager.springSecurityLdap
-    compile dependencyManager.springDataRedis
-    compile dependencyManager.jedis
-    compile dependencyManager.springRabbitMQ
     compile dependencyManager.commonsLang
     compile dependencyManager.commonsIo
     compile dependencyManager.commonsCodec
@@ -36,8 +32,6 @@ dependencies {
     compile dependencyManager.googleApiSheets
     compile dependencyManager.googleApiDrive
     compile dependencyManager.jacksonDatabind
-    compile dependencyManager.jasyptSpring
-    compile dependencyManager.selenium
     compile dependencyManager.awsSdk
     compile dependencyManager.jenkinsClient
     compile dependencyManager.jiraClient

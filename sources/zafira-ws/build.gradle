@@ -18,20 +18,13 @@ dependencies {
     compile project(':zafira-models')
     compile project(':zafira-services')
 
-    compile dependencyManager.springCore
-    compile dependencyManager.springMessaging
-    compile dependencyManager.springWebsocket
-    compile dependencyManager.springBeans
-    compile dependencyManager.springContext
-    compile dependencyManager.springWeb
-    compile dependencyManager.springMvc
-    compile dependencyManager.springSecurityCore
-    compile dependencyManager.springSecurityConfig
-    compile dependencyManager.springSecurityWeb
-    compile dependencyManager.springSecurityLdap
+    implementation dependencyManager.springBootStarterWeb
+    implementation dependencyManager.springBootStarterSecurity
+    implementation dependencyManager.springBootStarterWebsocket
+    implementation dependencyManager.springBootStarterReactorNetty
     compile dependencyManager.swagger
     compile dependencyManager.swaggerUi
-    compile dependencyManager.jasyptSpring
+    compile dependencyManager.jasypt
     compile dependencyManager.commonsLang
     compile dependencyManager.commonsIo
     compile dependencyManager.commonsFileupload
@@ -41,10 +34,5 @@ dependencies {
     compile dependencyManager.slf4jApi
     compile dependencyManager.logbackCore
     compile dependencyManager.logbackClassic
-    compile dependencyManager.jsr311Api
-    compile dependencyManager.reactorNet
-    compile dependencyManager.reactorCore
-    compile dependencyManager.nettyAll
-    providedCompile dependencyManager.javaxServletApi
-    
+
 }

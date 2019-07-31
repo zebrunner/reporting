@@ -8,9 +8,8 @@ def dependencyManager = rootProject.ext.dependencyManagement
 
 dependencies {
 
-    compile dependencyManager.springSecurityCore
-    compile dependencyManager.springDataCore
-    compile dependencyManager.springWeb
+    compile dependencyManager.springBootStarterDataJdbc
+    compile dependencyManager.springBootStarterSecurity
     compile dependencyManager.jacksonAnnotations
     compile dependencyManager.jacksonDatabind
     compile dependencyManager.hibernateValidator

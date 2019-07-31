@@ -4,6 +4,22 @@
 
 // todo add apache license (developers ? scm ? ), distributionManagement
 
+buildscript {
+    ext {
+        springBootVersion = '2.1.6.RELEASE'
+        dependencyManagementPluginVersion = '0.5.3.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("io.spring.gradle:dependency-management-plugin:${dependencyManagementPluginVersion}")
+    }
+}
+
+apply plugin: 'org.springframework.boot'
+
 allprojects {
     group = 'com.qaprosoft'
     version = "${version != 'unspecified' ? version : '1.0-SNAPSHOT'}"
@@ -14,6 +30,7 @@ apply from: 'dependencies.gradle'
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven-publish'
+    apply plugin: 'io.spring.dependency-management'
 
     repositories {
         mavenLocal()
@@ -25,6 +42,12 @@ subprojects {
     sourceCompatibility = '1.8'
 
     configurations.all {
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+        }
     }
 
     publishing {

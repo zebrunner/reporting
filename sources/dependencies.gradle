@@ -1,11 +1,7 @@
 ext {
 
-    spring_core_version = "4.3.23.RELEASE"
     spring_security_version = "4.2.13.RELEASE"
-    spring_data_version = "1.4.1.RELEASE"
     spring_test_version = "4.3.23.RELEASE"
-    spring_rabbitmq_version = "1.7.11.RELEASE"
-    spring_data_redis_version = "1.8.14.RELEASE"
     
     postgres_version = "42.2.4"
     c3p0_version = "0.9.5.4"
@@ -24,7 +20,6 @@ ext {
     jackson_databind_version = "2.9.9.1"
     jackson_version = "2.9.9"
 
-    javax_version = "3.1.0"
     javax_mail_version = "1.4.7"
     javax_mail_api_version = "1.5.5"
     javax_validation_version = "1.1.0.Final"
@@ -34,7 +29,6 @@ ext {
 
     google_sheets_version = "v4-rev523-1.23.0"
     google_drive_version = "v3-rev118-1.18.0-rc"
-    selenium_version = "2.53.0"
     aws_sdk_version = "1.11.386"
     jenkins_client_version = "0.3.7"
     jira_client_version = "0.5"
@@ -47,11 +41,6 @@ ext {
     jasypt_version = "1.9.1"
     dozer_version = "5.4.0"
     hibernate_validator_version = "5.2.4.Final"
-    jsr311_version = "1.1.1"
-    reactor_version = "2.0.8.RELEASE"
-    netty_version = "4.1.28.Final"
-    freemarker_version = "2.3.28"
-    jedis_version = "2.9.0"
     joda_time_version = "2.3"
     guava_version = "19.0"
     jwt_version = "0.7.0"
@@ -59,24 +48,14 @@ ext {
 
     dependencyManagement = [
 
-            springCore : "org.springframework:spring-core:$spring_core_version",
-            springMessaging : "org.springframework:spring-messaging:$spring_core_version",
-            springWebsocket : "org.springframework:spring-websocket:$spring_core_version",
-            springBeans : "org.springframework:spring-beans:$spring_core_version",
-            springContext : "org.springframework:spring-context:$spring_core_version",
-            springContextSupport : "org.springframework:spring-context-support:$spring_core_version",
-            springTx : "org.springframework:spring-tx:$spring_core_version",
-            springWeb : "org.springframework:spring-web:$spring_core_version",
-            springMvc : "org.springframework:spring-webmvc:$spring_core_version",
-            springJdbc : "org.springframework:spring-jdbc:$spring_core_version",
-            springDataCore: "org.springframework.data:spring-data-commons-core:$spring_data_version",
+            springBootStarterWeb : "org.springframework.boot:spring-boot-starter-web",
+            springBootStarterSecurity : "org.springframework.boot:spring-boot-starter-security",
+            springBootStarterDataJdbc : "org.springframework.boot:spring-boot-starter-data-jdbc",
+            springBootStarterAmqp : "org.springframework.boot:spring-boot-starter-amqp",
+            springBootStarterFreemarker : "org.springframework.boot:spring-boot-starter-freemarker",
+            springBootStarterWebsocket: "org.springframework.boot:spring-boot-starter-websocket",
+            springBootStarterReactorNetty: "org.springframework.boot:spring-boot-starter-reactor-netty",
             springTest : "org.springframework:spring-test:$spring_test_version",
-            springRabbitMQ : "org.springframework.amqp:spring-rabbit:$spring_rabbitmq_version",
-            springDataRedis : "org.springframework.data:spring-data-redis:$spring_data_redis_version",
-
-            springSecurityCore : "org.springframework.security:spring-security-core:$spring_security_version",
-            springSecurityConfig : "org.springframework.security:spring-security-config:$spring_security_version",
-            springSecurityWeb : "org.springframework.security:spring-security-web:$spring_security_version",
             springSecurityLdap : "org.springframework.security:spring-security-ldap:$spring_security_version",
 
             postgres : "org.postgresql:postgresql:$postgres_version",
@@ -88,7 +67,6 @@ ext {
             swaggerUi : "io.springfox:springfox-swagger-ui:$swagger_version",
 
             jasypt : "org.jasypt:jasypt:$jasypt_version",
-            jasyptSpring : "org.jasypt:jasypt-springsecurity3:$jasypt_version",
 
             commonsLang : "commons-lang:commons-lang:$commons_lang_version",
             commonsIo : "commons-io:commons-io:$commons_io_version",
@@ -106,22 +84,14 @@ ext {
             slf4jApi : "org.slf4j:slf4j-api:$slf4j_version",
             logbackCore : "ch.qos.logback:logback-core:$logback_version",
             logbackClassic : "ch.qos.logback:logback-classic:$logback_version",
-            jsr311Api : "javax.ws.rs:jsr311-api:$jsr311_version",
-            reactorNet : "io.projectreactor:reactor-net:$reactor_version",
-            reactorCore : "io.projectreactor:reactor-core:$reactor_version",
-            nettyAll : "io.netty:netty-all:$netty_version",
-            javaxServletApi : "javax.servlet:javax.servlet-api:$javax_version",
             javaxMail : "javax.mail:mail:$javax_mail_version",
             javaxMailApi : "javax.mail:javax.mail-api:$javax_mail_api_version",
             javaxValidation : "javax.validation:validation-api:$javax_validation_version",
 
-            freemarker : "org.freemarker:freemarker:$freemarker_version",
-            jedis : "redis.clients:jedis:$jedis_version",
             jodaTime : "joda-time:joda-time:$joda_time_version",
             guava : "com.google.guava:guava:$guava_version",
             googleApiSheets : "com.google.apis:google-api-services-sheets:$google_sheets_version",
             googleApiDrive : "com.google.apis:google-api-services-drive:$google_drive_version",
-            selenium : "org.seleniumhq.selenium:selenium-java:$selenium_version",
             awsSdk : "com.amazonaws:aws-java-sdk:$aws_sdk_version",
             jenkinsClient : "com.offbytwo.jenkins:jenkins-client:$jenkins_client_version",
             jiraClient : "net.rcarz:jira-client:$jira_client_version",
