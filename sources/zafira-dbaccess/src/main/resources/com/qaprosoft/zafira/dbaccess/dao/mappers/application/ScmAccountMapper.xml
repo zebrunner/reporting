@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper
-	namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.ScmAccountMapper">
+        namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.ScmAccountMapper">
 
     <insert id="createScmAccount" useGeneratedKeys="true"
             keyProperty="id">
@@ -39,25 +39,25 @@
         ]]>
 	</sql>
 
-	<select id="getScmAccountById" resultMap="ScmAccountResultMap">
-		<include refid="getScmAccount" />
+    <select id="getScmAccountById" resultMap="ScmAccountResultMap">
+        <include refid="getScmAccount"/>
         <![CDATA[
 			WHERE S.ID = #{id};
 		]]>
-	</select>
+    </select>
 
-	<select id="getScmAccountByRepo" resultMap="ScmAccountResultMap">
-		<include refid="getScmAccount" />
+    <select id="getScmAccountByRepo" resultMap="ScmAccountResultMap">
+        <include refid="getScmAccount"/>
         <![CDATA[
 			WHERE S.REPO = #{repo};
 		]]>
-	</select>
+    </select>
 
-	<select id="getAllScmAccounts" resultMap="ScmAccountResultMap">
-		<include refid="getScmAccount" />
-	</select>
+    <select id="getAllScmAccounts" resultMap="ScmAccountResultMap">
+        <include refid="getScmAccount"/>
+    </select>
 
-	<update id="updateScmAccount">
+    <update id="updateScmAccount">
         <![CDATA[
 			UPDATE
 			    SCM
@@ -108,23 +108,24 @@
 			WHERE
 			    ID = #{id}
 		]]>
-	</update>
+    </update>
 
-	<sql id="deleteScmAccountSql">
+    <sql id="deleteScmAccountSql">
 		<![CDATA[
-			DELETE FROM SCM
-		]]>
+        DELETE
+        FROM SCM
+        ]]>
 	</sql>
 
-	<delete id="deleteScmAccountById">
-		<include refid="deleteScmAccountSql" />
+    <delete id="deleteScmAccountById">
+        <include refid="deleteScmAccountSql"/>
         <![CDATA[
 			WHERE ID = #{id}
 		]]>
-	</delete>
+    </delete>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.ScmAccount"
-		id="ScmAccountResultMap" autoMapping="false">
+    <resultMap type="com.qaprosoft.zafira.models.db.ScmAccount"
+               id="ScmAccountResultMap" autoMapping="false">
         <id column="SCM_ID" property="id"/>
         <result column="SCM_NAME" property="name"/>
         <result column="SCM_API_VERSION" property="apiVersion"/>
@@ -137,6 +138,6 @@
         <result column="SCM_USER_ID" property="userId"/>
         <result column="SCM_MODIFIED_AT" property="modifiedAt"/>
         <result column="SCM_CREATED_AT" property="createdAt"/>
-	</resultMap>
+    </resultMap>
 
 </mapper>
