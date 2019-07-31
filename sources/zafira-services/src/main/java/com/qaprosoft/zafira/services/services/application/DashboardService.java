@@ -15,29 +15,30 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.util.List;
-import java.util.Map;
-
-import com.qaprosoft.zafira.models.dto.user.UserType;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.DashboardMapper;
 import com.qaprosoft.zafira.models.db.Attribute;
 import com.qaprosoft.zafira.models.db.Dashboard;
 import com.qaprosoft.zafira.models.db.Widget;
+import com.qaprosoft.zafira.models.dto.user.UserType;
+import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class DashboardService {
-    @Autowired
-    private DashboardMapper dashboardMapper;
 
-    @Autowired
-    private UserPreferenceService userPreferenceService;
+    private final DashboardMapper dashboardMapper;
+    private final UserPreferenceService userPreferenceService;
+
+    public DashboardService(DashboardMapper dashboardMapper, UserPreferenceService userPreferenceService) {
+        this.dashboardMapper = dashboardMapper;
+        this.userPreferenceService = userPreferenceService;
+    }
 
     @Transactional(rollbackFor = Exception.class)
     public Dashboard createDashboard(Dashboard dashboard) {

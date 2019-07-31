@@ -1,0 +1,20 @@
+// Property expansion task: propagates properties from gradle.properties to application configuration
+
+import org.apache.tools.ant.filters.ReplaceTokens
+
+processResources {
+    with copySpec {
+        from 'src/main/resources'
+        include '**/application*.yml'
+        include '**/application*.yaml'
+        include '**/environment*.properties'
+        project.properties.findAll().each {
+            prop ->
+                if (prop.value != null) {
+                    filter(ReplaceTokens, tokens: [ (prop.key): prop.value])
+                    filter(ReplaceTokens, tokens: [ ('project.' + prop.key): prop.value])
+                }
+        }
+        //filter(ReplaceTokens, tokens: ["api.version": project.property("version")])
+    }
+}

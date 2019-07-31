@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.qaprosoft.zafira.models.dto.JenkinsLauncherType;
@@ -161,7 +162,7 @@ public class LauncherService {
     }
 
     @Transactional(readOnly = true)
-    public void buildLauncherJob(Launcher launcher, User user) throws IOException, ServiceException {
+    public String buildLauncherJob(Launcher launcher, User user) throws IOException, ServiceException {
 
         ScmAccount scmAccount = scmAccountService.getScmAccountById(launcher.getScmAccount().getId());
         if (scmAccount == null)
@@ -199,10 +200,17 @@ public class LauncherService {
 
         jobParameters.put("overrideFields", args);
 
+        // CiRunId is a random string, needs to define unique correlation between started launcher and real test run starting
+        // It must be returned with test run on start in testRun.ciRunId field
+        String ciRunId = UUID.randomUUID().toString();
+        jobParameters.put("ci_run_id", ciRunId);
+
         if (!JenkinsService.checkArguments(jobParameters))
             throw new ServiceException("Required arguments not found");
 
         jenkinsService.buildJob(job, jobParameters);
+
+        return ciRunId;
     }
 
     @Transactional(readOnly = true)
@@ -258,4 +266,5 @@ public class LauncherService {
     public Integer getBuildNumber(String queueItemUrl) {
         return jenkinsService.getBuildNumber(new QueueReference(queueItemUrl));
     }
+
 }

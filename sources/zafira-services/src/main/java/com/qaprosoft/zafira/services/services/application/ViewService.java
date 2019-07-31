@@ -15,19 +15,21 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.ViewMapper;
+import com.qaprosoft.zafira.models.db.View;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.ViewMapper;
-import com.qaprosoft.zafira.models.db.View;
+import java.util.List;
 
 @Service
 public class ViewService {
-    @Autowired
-    private ViewMapper viewMapper;
+
+    private final ViewMapper viewMapper;
+
+    public ViewService(ViewMapper viewMapper) {
+        this.viewMapper = viewMapper;
+    }
 
     @Transactional(readOnly = true)
     public List<View> getAllViews(Long projectId) {
