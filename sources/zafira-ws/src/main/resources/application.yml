@@ -1,0 +1,93 @@
+### Embedded Web server configuration
+server:
+  port: 8081
+  servlet:
+    context-path: /zafira-gradle
+
+### Spring Boot managed beans configuration
+spring:
+  cache:
+    cache-names: projects, users, testCases, environments, testRunStatistics, groups
+    redis:
+      use-key-prefix: true
+      time-to-live: 43200 # usePool is auto?
+  redis:
+    host: @zafira.redis.host@
+    port: @zafira.redis.port@
+  rabbitmq:
+    host: @zafira.rabbitmq.stomp.host@
+    port: @zafira.rabbitmq.port@
+    username: @zafira.rabbitmq.user@
+    password: @zafira.rabbitmq.pass@
+    virtual-host: /
+    listener:
+      simple:
+        concurrency: 1
+        max-concurrency: 25
+    template:
+      exchange: eventsTopicExchange
+  freemarker:
+    template-loader-path: classpath:/templates/
+    suffix: ftl
+
+zafira:
+  webservice:
+    url: @zafira.url@@zafira.ws.path@
+  web:
+    url: @zafira.url@@zafira.web.path@
+  service:
+    version: @zafira.service.version@
+  client:
+    version: @zafira.client.version@
+  multitenant: @zafira.multitenant@
+  debugMode: @zafira.debugMode@
+  artifacts:
+    useProxy: @zafira.artifacts.useProxy@
+  admin:
+    username: @zafira.admin.username@
+    password: @zafira.admin.password@
+    group: @zafira.admin.group@
+  elasticsearch:
+    url: @zafira.elasticsearch.url@
+    user: @zafira.elasticsearch.user@
+    pass: @zafira.elasticsearch.pass@
+  redis:
+    host: @zafira.redis.host@
+    port: @zafira.redis.port@
+  rabbitmq:
+    host: @zafira.rabbitmq.host@
+    port: @zafira.rabbitmq.port@
+    vhost: /
+    user: @zafira.rabbitmq.user@
+    pass: @zafira.rabbitmq.pass@
+    stomp:
+      host: @zafira.rabbitmq.stomp.host@
+      port: @zafira.rabbitmq.stomp.port@
+  db:
+    jdbc:
+      driverClass: @zafira.db.jdbc.driverClass@
+      url: @zafira.db.jdbc.url@
+      user: @zafira.db.jdbc.user@
+      password: @zafira.db.jdbc.password@
+    c3p0:
+      maxPoolSize: @zafira.db.c3p0.maxPoolSize@
+      idleConnectionTestPeriod: 30000
+  jwt:
+    secret: @zafira.jwt.secret@
+    authTokenExp: 300
+    refreshTokenExp: 10080
+  crypto_salt: @zafira.crypto_salt@
+  slack:
+    image: https://s3-us-west-1.amazonaws.com/zebrunner/common/zfr-email.png
+    author: zafira notifications
+  amazon:
+    token:
+      expiration: 43200
+  google:
+    token:
+      expiration: 43200
+  scm:
+    github:
+      client:
+        id: @zafira.scm.github.client.id@
+        secret: @zafira.scm.github.client.secret@
