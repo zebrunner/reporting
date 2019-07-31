@@ -20,14 +20,12 @@ import org.jasypt.util.password.PasswordEncryptor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
 
 import java.nio.charset.StandardCharsets;
 
 @Configuration
-@EnableAspectJAutoProxy
 public class ServiceConfig {
 
     private static final String TEMPLATE_LOADER_PATHS = "classpath:templates";

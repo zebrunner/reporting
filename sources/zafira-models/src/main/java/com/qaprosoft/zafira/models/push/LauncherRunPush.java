@@ -15,35 +15,27 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.push;
 
-import com.qaprosoft.zafira.models.dto.LauncherType;
+import com.qaprosoft.zafira.models.db.Launcher;
 
-import java.util.List;
+public class LauncherRunPush extends AbstractPush {
 
-import static com.qaprosoft.zafira.models.push.AbstractPush.Type.LAUNCHER;
+    private final Launcher launcher;
+    private final String ciRunId;
 
-public class LauncherPush extends AbstractPush {
-
-    private final List<LauncherType> launchers;
-    private final Long userId;
-    private final boolean success;
-
-    public LauncherPush(List<LauncherType> launchers, Long userId, boolean success) {
-        super(LAUNCHER);
-        this.launchers = launchers;
-        this.userId = userId;
-        this.success = success;
+    public LauncherRunPush(Launcher launcher, String ciRunId) {
+        super(Type.LAUNCHER_RUN);
+        launcher.setJob(null);
+        launcher.setScmAccount(null);
+        this.launcher = launcher;
+        this.ciRunId = ciRunId;
     }
 
-    public List<LauncherType> getLaunchers() {
-        return launchers;
+    public Launcher getLauncher() {
+        return launcher;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public boolean isSuccess() {
-        return success;
+    public String getCiRunId() {
+        return ciRunId;
     }
 
 }

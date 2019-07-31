@@ -15,12 +15,6 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.FilterMapper;
 import com.qaprosoft.zafira.models.db.Filter;
 import com.qaprosoft.zafira.models.dto.filter.FilterType;
@@ -28,19 +22,21 @@ import com.qaprosoft.zafira.models.dto.filter.StoredSubject;
 import com.qaprosoft.zafira.models.dto.filter.Subject;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class FilterService {
 
-    @Autowired
-    private FilterMapper filterMapper;
-
+    private final FilterMapper filterMapper;
+    private final FreemarkerUtil freemarkerUtil;
     private StoredSubject storedSubject;
 
-    @Autowired
-    private FreemarkerUtil freemarkerUtil;
-
-    public FilterService() {
+    public FilterService(FilterMapper filterMapper, FreemarkerUtil freemarkerUtil) {
+        this.filterMapper = filterMapper;
+        this.freemarkerUtil = freemarkerUtil;
         this.storedSubject = new StoredSubject();
     }
 
