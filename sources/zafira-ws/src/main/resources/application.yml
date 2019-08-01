@@ -1,8 +1,8 @@
 ### Embedded Web server configuration
 server:
-  port: 8081
+  port: 8080
   servlet:
-    context-path: /zafira-gradle
+    context-path: /zafira-ws
 
 ### Spring Boot managed beans configuration
 spring:
