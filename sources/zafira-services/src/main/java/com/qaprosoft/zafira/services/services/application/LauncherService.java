@@ -223,7 +223,7 @@ public class LauncherService {
         String repositoryName = scmAccount.getRepositoryName();
         String organizationName = scmAccount.getOrganizationName();
         String accessToken = scmAccount.getAccessToken();
-        String loginName = gitHubService.getLoginName(accessToken);
+        String loginName = gitHubService.getLoginName(scmAccount);
 
         Map<String, String> jobParameters = new HashMap<>();
         jobParameters.put("userId", String.valueOf(user.getId()));

@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.scm;
 
+import com.qaprosoft.zafira.models.db.ScmAccount;
 import com.qaprosoft.zafira.models.dto.scm.Organization;
 import com.qaprosoft.zafira.models.dto.scm.Repository;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -26,12 +27,12 @@ public interface IScmService {
 
     String getClientId();
 
-    List<Organization> getOrganizations(String accessToken) throws IOException, ServiceException;
+    List<Organization> getOrganizations(ScmAccount scmAccount) throws IOException, ServiceException;
 
-    List<Repository> getRepositories(String accessToken, String organizationName) throws IOException, ServiceException;
+    List<Repository> getRepositories(ScmAccount scmAccount, String organizationName) throws IOException, ServiceException;
 
-    Repository getRepository(String accessToken, String organizationName, String repositoryName);
+    Repository getRepository(ScmAccount scmAccount);
 
-    String getLoginName(String accessToken);
+    String getLoginName(ScmAccount scmAccount);
 
 }
