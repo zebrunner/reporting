@@ -43,7 +43,7 @@ ext {
     slack_client_version = "1.7.8"
     elasticsearch_client_version = "6.6.0"
     
-    swagger_version = "2.6.0"
+    swagger_version = "2.9.2"
     jasypt_version = "1.9.1"
     dozer_version = "5.4.0"
     hibernate_validator_version = "5.2.4.Final"
