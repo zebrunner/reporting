@@ -15,29 +15,28 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.context;
 
+import com.github.seratch.jslack.Slack;
 import com.qaprosoft.zafira.models.db.Setting;
-import in.ashwanthkumar.slack.webhook.service.SlackService;
 
 import java.util.Map;
 
 public class SlackContext extends AbstractContext {
 
-    private final String webhookUrl;
-    private final SlackService slackService;
+    private final String accessToken;
+    private final Slack slack;
 
     public SlackContext(Map<Setting.SettingType, String> settings) {
         super(settings, settings.get(Setting.SettingType.SLACK_ENABLED));
 
-        this.webhookUrl = settings.get(Setting.SettingType.SLACK_WEB_HOOK_URL);
-        this.slackService = new SlackService();
+        this.accessToken = settings.get(Setting.SettingType.SLACK_OAUTH_ACCESS_TOKEN);
+        this.slack = Slack.getInstance();
     }
 
-    public String getWebhookUrl() {
-        return webhookUrl;
+    public String getAccessToken() {
+        return accessToken;
     }
 
-    public SlackService getSlackService() {
-        return slackService;
+    public Slack getSlack() {
+        return slack;
     }
-
 }
