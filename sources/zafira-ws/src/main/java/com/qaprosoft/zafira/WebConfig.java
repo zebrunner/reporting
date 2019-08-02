@@ -45,7 +45,7 @@ import java.util.Locale;
 @EnableWebMvc
 @EnableAsync
 @EnableSwagger2
-@ComponentScan(basePackages = {"com.qaprosoft.zafira.ws"})
+@ComponentScan("com.qaprosoft.zafira.ws")
 @PropertySource("classpath:environment.properties")
 public class WebConfig extends WebMvcConfigurerAdapter {
 
@@ -129,7 +129,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return placeholderConfigurer;
     }
 
-    @Bean(name = "multipartResolver")
+    @Bean
     public CommonsMultipartResolver multipartResolver() {
         return new CommonsMultipartResolver();
     }
