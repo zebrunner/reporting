@@ -40,7 +40,7 @@ ext {
     jira_client_version = "0.5"
     github_api_version = "1.95"
     jgit_version = "5.1.3.201810200350-r"
-    slack_client_version = "1.7.8"
+    slack_client_version = "0.0.7"
     elasticsearch_client_version = "6.6.0"
     
     swagger_version = "2.9.2"
@@ -128,7 +128,7 @@ ext {
             githubApiClient : "org.kohsuke:github-api:$github_api_version",
             jgit : "org.eclipse.jgit:org.eclipse.jgit:$jgit_version",
             jwt : "io.jsonwebtoken:jjwt:$jwt_version",
-            slackClient : "com.github.seratch:jslack:$slack_client_version",
+            slackClient : "in.ashwanthkumar:slack-java-webhook:$slack_client_version",
             elasticsearchClient : "org.elasticsearch:elasticsearch:$elasticsearch_client_version",
             elasticsearchHightLevelClient : "org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticsearch_client_version",
             testNG : "org.testng:testng:$testng_version",

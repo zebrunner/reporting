@@ -16,7 +16,6 @@
 package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.dto.SlackReplyType;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.SlackService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
@@ -30,8 +29,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,7 +51,7 @@ public class SlackAPIController extends AbstractController {
     @GetMapping("/testrun/{id}/review")
     public void sendOnReviewNotification(@PathVariable("id") long id) {
         TestRun testRun = testRunService.getTestRunByIdFull(id);
-        slackService.sendNotificationsOnReview(testRun);
+        slackService.sendStatusReviewed(testRun);
     }
 
     @ResponseStatusDetails
@@ -67,17 +64,7 @@ public class SlackAPIController extends AbstractController {
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
         testRun.setSlackChannels(channels);
         testRunService.updateTestRun(testRun);
-        slackService.sendNotificationsOnFinish(testRun);
+        slackService.sendStatusOnFinish(testRun);
     }
 
-    @ResponseStatusDetails
-    @ApiOperation(value = "Send reply to message thread", nickname = "sendReplyToMessageThread", httpMethod = "POST")
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @PostMapping("/thread/reply")
-    public void sendReplyToMessageThread(@RequestBody SlackReplyType slackReplyType){
-        String channelName = slackReplyType.getChannelName();
-        String messageTs = slackReplyType.getMessageTs();
-        String reply = slackReplyType.getReply();
-        slackService.sendReplyToThread(channelName, messageTs, reply);
-    }
 }
