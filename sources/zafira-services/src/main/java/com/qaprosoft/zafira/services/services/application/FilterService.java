@@ -66,8 +66,13 @@ public class FilterService {
     }
 
     @Transactional(readOnly = true)
-    public Filter getFilterByName(String name) {
-        return filterMapper.getFilterByName(name);
+    public List<Filter> getAllFilters() {
+        return filterMapper.getAllFilters();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Filter> getFiltersByName(String name) {
+        return filterMapper.getFiltersByName(name);
     }
 
     @Transactional(readOnly = true)
@@ -81,7 +86,7 @@ public class FilterService {
         if (dbFilter == null) {
             throw new ServiceException("No filters found by id: " + filter.getId());
         }
-        if (!filter.getName().equals(dbFilter.getName()) && getFilterByName(filter.getName()) != null) {
+        if (!filter.getName().equals(dbFilter.getName()) && isFilterExists(filter)) {
             throw new ServiceException("Filter with name '" + filter.getName() + "' already exists");
         }
         dbFilter.setName(filter.getName());
@@ -104,4 +109,17 @@ public class FilterService {
     public String getTemplate(FilterType filter, Template template) {
         return freemarkerUtil.getFreeMarkerTemplateContent(template.getPath(), filter);
     }
+
+    public boolean isFilterExists(Filter filter) {
+        boolean result;
+        List<Filter> filters = getFiltersByName(filter.getName());
+
+        if (filter.isPublicAccess()) {
+            result = filters.stream().anyMatch(f -> f.getName().equals(filter.getName()) && f.isPublicAccess());
+        } else {
+            result = filters.stream().anyMatch(f -> f.getName().equals(filter.getName()) && f.getUserId().equals(filter.getUserId()) && !f.isPublicAccess());
+        }
+        return result;
+    }
+
 }
