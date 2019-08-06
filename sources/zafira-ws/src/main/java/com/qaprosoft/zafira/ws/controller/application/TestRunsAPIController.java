@@ -270,6 +270,9 @@ public class TestRunsAPIController extends AbstractController {
         List<TestRunType> testRunTypes = new ArrayList<>();
         if (testRuns != null) {
             testRunTypes = testRuns.stream().map(testRun -> {
+                if (StringUtils.isNotEmpty(testRun.getComments()) && !testRun.isReviewed()) {
+                    testRun.setComments(null);
+                }
                 if (doRebuild) {
                     try {
                         boolean success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(),
