@@ -22,6 +22,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface InvitationMapper {
+
     void createInvitation(Invitation invitation);
 
     Invitation getInvitationByCode(String code);
