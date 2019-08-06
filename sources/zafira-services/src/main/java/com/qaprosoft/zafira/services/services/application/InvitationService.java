@@ -141,21 +141,21 @@ public class InvitationService {
 
     @Transactional(rollbackFor = Exception.class)
     public Invitation retryInvitation(Long principalId, String email) {
-        Invitation invitationFromDb = getInvitationByEmail(email);
-        if (invitationFromDb == null) {
+        Invitation invitation = getInvitationByEmail(email);
+        if (invitation == null) {
             throw new EntityNotExistsException(Invitation.class, false);
         }
-        if (invitationFromDb.getStatus().equals(Invitation.Status.ACCEPTED)) {
+        if (invitation.getStatus().equals(Invitation.Status.ACCEPTED)) {
             throw new ServiceException("Cannot retry invitation due invitation is accepted yet.");
         }
         String token = generateToken();
-        invitationFromDb.setToken(token);
-        invitationFromDb.setCreatedBy(userService.getUserById(principalId));
-        invitationFromDb = updateInvitation(invitationFromDb);
-        sendEmail(invitationFromDb);
+        invitation.setToken(token);
+        invitation.setCreatedBy(userService.getUserById(principalId));
+        invitation = updateInvitation(invitation);
+        sendEmail(invitation);
 
-        insertInvitationUrl(invitationFromDb);
-        return invitationFromDb;
+        insertInvitationUrl(invitation);
+        return invitation;
     }
 
     @Transactional(readOnly = true)
@@ -174,13 +174,17 @@ public class InvitationService {
 
     @Transactional(readOnly = true)
     public List<Invitation> getAllInvitations() {
-        return invitationMapper.getAllInvitations().stream().peek(this::insertInvitationUrl).collect(Collectors.toList());
+        return invitationMapper.getAllInvitations().stream()
+                               .peek(this::insertInvitationUrl)
+                               .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public SearchResult<Invitation> search(SearchCriteria sc) {
         List<Invitation> invitations = invitationMapper.search(sc);
-        invitations = invitations.stream().peek(this::insertInvitationUrl).collect(Collectors.toList());
+        invitations = invitations.stream()
+                                 .peek(this::insertInvitationUrl)
+                                 .collect(Collectors.toList());
         Integer totalCount = invitationMapper.searchCount(sc);
 
         SearchResult<Invitation> sr = new SearchResult<>();
@@ -223,14 +227,14 @@ public class InvitationService {
 
     private void sendEmail(Invitation invitation) {
         IEmailMessage userInviteEmail = LDAP.equals(invitation.getSource())
-                ? new UserInviteEmail(invitation.getInvitationUrl(), zafiraLogoURL, urlResolver.buildWebURL())
-                : new UserInviteLdapEmail(invitation.getInvitationUrl(), zafiraLogoURL, urlResolver.buildWebURL());
+                ? new UserInviteEmail(invitation.getUrl(), zafiraLogoURL, urlResolver.buildWebURL())
+                : new UserInviteLdapEmail(invitation.getUrl(), zafiraLogoURL, urlResolver.buildWebURL());
         emailService.sendEmail(userInviteEmail, invitation.getEmail());
     }
 
     private void insertInvitationUrl(Invitation invitation) {
         if (invitation != null) {
-            invitation.setInvitationUrl(urlResolver.buildInvitationUrl(invitation.getToken()));
+            invitation.setUrl(urlResolver.buildInvitationUrl(invitation.getToken()));
         }
     }
 
