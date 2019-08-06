@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import static com.qaprosoft.zafira.models.db.Group.Role.ROLE_ADMIN;
 import static com.qaprosoft.zafira.models.db.User.Source.LDAP;
@@ -86,6 +87,8 @@ public class InvitationService {
         invitation.setCreatedBy(userService.getUserById(principalId));
         invitation.setStatus(Invitation.Status.PENDING);
         invitationMapper.createInvitation(invitation);
+
+        insertInvitationUrl(invitation);
         return invitation;
     }
 
@@ -138,39 +141,50 @@ public class InvitationService {
 
     @Transactional(rollbackFor = Exception.class)
     public Invitation retryInvitation(Long principalId, String email) {
-        Invitation invitationFromDb = getInvitationByEmail(email);
-        if (invitationFromDb == null) {
+        Invitation invitation = getInvitationByEmail(email);
+        if (invitation == null) {
             throw new EntityNotExistsException(Invitation.class, false);
         }
-        if (invitationFromDb.getStatus().equals(Invitation.Status.ACCEPTED)) {
+        if (invitation.getStatus().equals(Invitation.Status.ACCEPTED)) {
             throw new ServiceException("Cannot retry invitation due invitation is accepted yet.");
         }
         String token = generateToken();
-        invitationFromDb.setToken(token);
-        invitationFromDb.setCreatedBy(userService.getUserById(principalId));
-        invitationFromDb = updateInvitation(invitationFromDb);
-        sendEmail(invitationFromDb);
-        return invitationFromDb;
+        invitation.setToken(token);
+        invitation.setCreatedBy(userService.getUserById(principalId));
+        invitation = updateInvitation(invitation);
+        sendEmail(invitation);
+
+        insertInvitationUrl(invitation);
+        return invitation;
     }
 
     @Transactional(readOnly = true)
     public Invitation getInvitationByToken(String token) {
-        return invitationMapper.getInvitationByCode(token);
+        Invitation invitation = invitationMapper.getInvitationByCode(token);
+        insertInvitationUrl(invitation);
+        return invitation;
     }
 
     @Transactional(readOnly = true)
     public Invitation getInvitationByEmail(String email) {
-        return invitationMapper.getInvitationByEmail(email);
+        Invitation invitation = invitationMapper.getInvitationByEmail(email);
+        insertInvitationUrl(invitation);
+        return invitation;
     }
 
     @Transactional(readOnly = true)
     public List<Invitation> getAllInvitations() {
-        return invitationMapper.getAllInvitations();
+        return invitationMapper.getAllInvitations().stream()
+                               .peek(this::insertInvitationUrl)
+                               .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public SearchResult<Invitation> search(SearchCriteria sc) {
         List<Invitation> invitations = invitationMapper.search(sc);
+        invitations = invitations.stream()
+                                 .peek(this::insertInvitationUrl)
+                                 .collect(Collectors.toList());
         Integer totalCount = invitationMapper.searchCount(sc);
 
         SearchResult<Invitation> sr = new SearchResult<>();
@@ -213,9 +227,15 @@ public class InvitationService {
 
     private void sendEmail(Invitation invitation) {
         IEmailMessage userInviteEmail = LDAP.equals(invitation.getSource())
-                ? new UserInviteEmail(invitation.getToken(), zafiraLogoURL, urlResolver.buildWebURL())
-                : new UserInviteLdapEmail(invitation.getToken(), zafiraLogoURL, urlResolver.buildWebURL());
+                ? new UserInviteEmail(invitation.getUrl(), zafiraLogoURL, urlResolver.buildWebURL())
+                : new UserInviteLdapEmail(invitation.getUrl(), zafiraLogoURL, urlResolver.buildWebURL());
         emailService.sendEmail(userInviteEmail, invitation.getEmail());
+    }
+
+    private void insertInvitationUrl(Invitation invitation) {
+        if (invitation != null) {
+            invitation.setUrl(urlResolver.buildInvitationUrl(invitation.getToken()));
+        }
     }
 
 }

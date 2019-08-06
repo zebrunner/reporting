@@ -25,6 +25,7 @@ public class Invitation extends AbstractEntity {
     private Status status;
     private User.Source source;
     private Long groupId;
+    private String url;
 
     public enum Status {
         PENDING,
@@ -87,7 +88,16 @@ public class Invitation extends AbstractEntity {
         this.groupId = groupId;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public boolean isValid() {
         return this.status != null && this.getStatus().equals(Status.PENDING);
     }
+
 }

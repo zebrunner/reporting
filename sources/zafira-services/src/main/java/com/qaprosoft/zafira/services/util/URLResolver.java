@@ -25,6 +25,8 @@ import java.util.regex.Pattern;
 @Component
 public class URLResolver {
 
+    private static final String SIGNUP_PATH_PATTERN = "%s/signup?token=%s";
+
     @Value("${zafira.multitenant}")
     private boolean isMultitenant;
 
@@ -51,6 +53,10 @@ public class URLResolver {
         return getUrlFromWebUrl(buildWebURL());
     }
 
+    public String buildInvitationUrl(String token) {
+        return String.format(SIGNUP_PATH_PATTERN, buildWebURL(), token);
+    }
+
     private static String getUrlFromWebUrl(String webUrl) {
         String result = null;
         Matcher matcher = Pattern.compile("^.+(?=/)").matcher(webUrl);
@@ -59,5 +65,6 @@ public class URLResolver {
         }
         return result;
     }
+
 
 }
