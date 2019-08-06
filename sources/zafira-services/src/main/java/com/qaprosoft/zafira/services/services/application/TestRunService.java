@@ -33,12 +33,15 @@ import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
+import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
+import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang.StringUtils;
@@ -54,6 +57,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -67,6 +71,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_URL;
 import static com.qaprosoft.zafira.models.db.Status.ABORTED;
@@ -109,6 +114,9 @@ public class TestRunService {
 
     @Autowired
     private TestService testService;
+
+    @Autowired
+    private JenkinsService jenkinsService;
 
     @Autowired
     private FreemarkerUtil freemarkerUtil;
@@ -404,6 +412,36 @@ public class TestRunService {
     @Transactional(rollbackFor = Exception.class)
     public List<TestRun> getTestRunsForSmartRerun(JobSearchCriteria sc) {
         return testRunMapper.getTestRunsForSmartRerun(sc);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public List<TestRun> executeSmartRerun(JobSearchCriteria sc, boolean doRebuild, boolean rerunFailures) {
+        if (rerunFailures && sc.getFailurePercent() == null) {
+            sc.setFailurePercent(0);
+        }
+        List<TestRun> testRuns = getTestRunsForSmartRerun(sc);
+        testRuns.forEach(testRun -> {
+            resetTestRunComments(testRun);
+            if (doRebuild) {
+                try {
+                    boolean success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
+                    if (!success) {
+                        throw new UnableToRebuildCIJobException();
+                    }
+                } catch (UnableToRebuildCIJobException e) {
+                    LOGGER.error("Problems with job building occurred", e);
+                }
+            }
+        });
+        return testRuns;
+    }
+
+    private void resetTestRunComments(TestRun testRun){
+        TestRun testRunFull = getTestRunByIdFull(testRun.getId());
+        if (StringUtils.isNotEmpty(testRunFull.getComments())) {
+            testRunFull.setComments(null);
+            updateTestRun(testRunFull);
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)

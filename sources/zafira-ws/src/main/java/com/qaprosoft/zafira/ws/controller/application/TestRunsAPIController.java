@@ -259,35 +259,16 @@ public class TestRunsAPIController extends AbstractController {
     @ApiOperation(value = "Rerun jobs", nickname = "smartRerun", httpMethod = "POST", response = SearchResult.class)
     @PostMapping("/rerun/jobs")
     public List<TestRunType> rerunJobs(
-            @RequestParam(value = "doRebuild", defaultValue = "false", required = false) Boolean doRebuild,
-            @RequestParam(value = "rerunFailures", defaultValue = "true", required = false) Boolean rerunFailures,
+            @RequestParam(value = "doRebuild", defaultValue = "false", required = false) boolean doRebuild,
+            @RequestParam(value = "rerunFailures", defaultValue = "true", required = false) boolean rerunFailures,
             @RequestBody JobSearchCriteria sc) {
 
         if (rerunFailures && sc.getFailurePercent() == null) {
             sc.setFailurePercent(0);
         }
-        List<TestRun> testRuns = testRunService.getTestRunsForSmartRerun(sc);
-        List<TestRunType> testRunTypes = new ArrayList<>();
-        if (testRuns != null) {
-            testRunTypes = testRuns.stream().map(testRun -> {
-                if (StringUtils.isNotEmpty(testRun.getComments()) && !testRun.isReviewed()) {
-                    testRun.setComments(null);
-                }
-                if (doRebuild) {
-                    try {
-                        boolean success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(),
-                                rerunFailures);
-                        if (!success) {
-                            throw new UnableToRebuildCIJobException();
-                        }
-                    } catch (UnableToRebuildCIJobException e) {
-                        LOGGER.error("Problems with job building occurred", e);
-                    }
-                }
-                return mapper.map(testRun, TestRunType.class);
-            }).collect(Collectors.toList());
-        }
-        return testRunTypes;
+        List<TestRun> testRuns = testRunService.executeSmartRerun(sc, doRebuild, rerunFailures);
+        return testRuns.stream()
+                       .map(testRun -> mapper.map(testRun, TestRunType.class)).collect(Collectors.toList());
     }
 
     @ResponseStatusDetails
