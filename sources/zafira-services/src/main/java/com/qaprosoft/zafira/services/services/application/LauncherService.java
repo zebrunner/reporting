@@ -198,7 +198,7 @@ public class LauncherService {
                                    .map(param -> param.getKey() + "=" + param.getValue())
                                    .collect(Collectors.joining(","));
 
-        jobParameters.put("overrideFields", args);
+        jobParameters.put("zafiraFields", args);
 
         // CiRunId is a random string, needs to define unique correlation between started launcher and real test run starting
         // It must be returned with test run on start in testRun.ciRunId field
@@ -241,7 +241,7 @@ public class LauncherService {
         String args = jobParameters.entrySet().stream()
                                    .map(param -> param.getKey() + "=" + param.getValue()).collect(Collectors.joining(","));
 
-        jobParameters.put("overrideFields", args);
+        jobParameters.put("zafiraFields", args);
 
         JobResult result = jenkinsService.buildScannerJob(repositoryName, jobParameters, rescan);
         if (result == null || !result.isSuccess()) {
