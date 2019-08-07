@@ -64,6 +64,6 @@ COPY ./sources/zafira-ws/build/libs/zafira-ws-${version}.war ${CATALINA_HOME}/te
 COPY tools/newrelic.zip ${CATALINA_HOME}/temp/
 COPY entrypoint.sh /
 
-EXPOSE 8080 8002
+EXPOSE 8080
 
 ENTRYPOINT /entrypoint.sh

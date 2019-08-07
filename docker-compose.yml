@@ -79,7 +79,7 @@ services:
     restart: always
   zafira-ui:
     container_name: zfr_zafira_ui
-    image: qaprosoft/zafira-ui:1.8
+    image: qaprosoft/zafira-ui:1.16
     ports:
       - 80:80
     environment:
