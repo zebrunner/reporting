@@ -58,11 +58,12 @@ ENV ZAFIRA_GITHUB_CLIENT_SECRET=
 
 RUN apt-get update && apt-get install zip
 RUN mkdir ${CATALINA_HOME}/shared
+RUN mkdir /opt/assets
 
 COPY ./sources/zafira-ws/build/libs/zafira-ws-${version}.war ${CATALINA_HOME}/temp/zafira-ws.war
 COPY tools/newrelic.zip ${CATALINA_HOME}/temp/
 COPY entrypoint.sh /
 
-EXPOSE 8080
+EXPOSE 8080 8002
 
 ENTRYPOINT /entrypoint.sh
