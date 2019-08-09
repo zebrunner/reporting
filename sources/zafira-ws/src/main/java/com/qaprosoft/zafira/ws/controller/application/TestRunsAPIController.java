@@ -261,14 +261,12 @@ public class TestRunsAPIController extends AbstractController {
     public List<TestRunType> rerunJobs(
             @RequestParam(value = "doRebuild", defaultValue = "false", required = false) boolean doRebuild,
             @RequestParam(value = "rerunFailures", defaultValue = "true", required = false) boolean rerunFailures,
-            @RequestBody JobSearchCriteria sc) {
-
-        if (rerunFailures && sc.getFailurePercent() == null) {
-            sc.setFailurePercent(0);
-        }
+            @RequestBody JobSearchCriteria sc
+    ) {
         List<TestRun> testRuns = testRunService.executeSmartRerun(sc, doRebuild, rerunFailures);
         return testRuns.stream()
-                       .map(testRun -> mapper.map(testRun, TestRunType.class)).collect(Collectors.toList());
+                       .map(testRun -> mapper.map(testRun, TestRunType.class))
+                       .collect(Collectors.toList());
     }
 
     @ResponseStatusDetails

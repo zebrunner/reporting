@@ -33,7 +33,6 @@ import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
-import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -57,7 +56,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -71,7 +69,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_URL;
 import static com.qaprosoft.zafira.models.db.Status.ABORTED;
@@ -415,21 +412,17 @@ public class TestRunService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public List<TestRun> executeSmartRerun(JobSearchCriteria sc, boolean doRebuild, boolean rerunFailures) {
+    public List<TestRun> executeSmartRerun(JobSearchCriteria sc, boolean rerunRequired, boolean rerunFailures) {
         if (rerunFailures && sc.getFailurePercent() == null) {
             sc.setFailurePercent(0);
         }
         List<TestRun> testRuns = getTestRunsForSmartRerun(sc);
         testRuns.forEach(testRun -> {
             resetTestRunComments(testRun);
-            if (doRebuild) {
-                try {
-                    boolean success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
-                    if (!success) {
-                        throw new UnableToRebuildCIJobException();
-                    }
-                } catch (UnableToRebuildCIJobException e) {
-                    LOGGER.error("Problems with job building occurred", e);
+            if (rerunRequired) {
+                boolean success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
+                if (!success) {
+                    LOGGER.error("Problems with job building occurred. Job url: " + testRun.getJob().getJobURL());
                 }
             }
         });
