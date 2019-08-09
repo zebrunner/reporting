@@ -61,31 +61,42 @@ public abstract class AbstractIntegration<T extends AbstractContext> implements 
         if (settingsService != null && contextClass != null) {
             try {
                 List<Setting> settings = settingsService.getSettingsByTool(tool);
-                boolean hasBinarySetting = hasBinarySetting(settings);
-                Map<Setting.SettingType, Object> mappedSettings = new HashMap<>();
-                settings.forEach(setting -> {
-                    Setting.SettingType toolSetting = Setting.SettingType.valueOf(setting.getName());
-                    if (toolSetting.isRequired() && StringUtils.isBlank(setting.getValue())) {
-                        removeContext();
-                        throw new IntegrationException("Integration tool '" + tool + "' data is malformed. Setting '" + setting.getName() + "' is required");
-                    }
-                    if (setting.isEncrypted()) {
-                        setting.setValue(mapEncrypted(setting));
-                    }
-                    if (!ArrayUtils.isEmpty(setting.getFile())) {
-                        mappedSettings.put(toolSetting, setting);
-                    }
-                    Object value = hasBinarySetting ? setting : setting.getValue();
-                    mappedSettings.put(toolSetting, value);
-                });
-                T context = createContextInstance(mappedSettings);
-                putContext(context);
+                Setting enabledSetting = getEnabledSetting(settings);
+                // skip initialisation if tool is disabled
+                if (Boolean.valueOf(enabledSetting.getValue())) {
+                    boolean hasBinarySetting = hasBinarySetting(settings);
+                    Map<Setting.SettingType, Object> mappedSettings = new HashMap<>();
+                    settings.forEach(setting -> {
+                        Setting.SettingType toolSetting = Setting.SettingType.valueOf(setting.getName());
+                        if (toolSetting.isRequired() && StringUtils.isBlank(setting.getValue())) {
+                            removeContext();
+                            throw new IntegrationException("Integration tool '" + tool + "' data is malformed. Setting '" + setting.getName() + "' is required");
+                        }
+                        if (setting.isEncrypted()) {
+                            setting.setValue(mapEncrypted(setting));
+                        }
+                        if (!ArrayUtils.isEmpty(setting.getFile())) {
+                            mappedSettings.put(toolSetting, setting);
+                        }
+                        Object value = hasBinarySetting ? setting : setting.getValue();
+                        mappedSettings.put(toolSetting, value);
+                    });
+                    T context = createContextInstance(mappedSettings);
+                    putContext(context);
+                }
             } catch (InstantiationException e) {
                 throw new IntegrationException(e.getMessage(), e);
             } catch (Exception e) {
                 LOGGER.error("Unable to initialize '" + tool + "' settings", e);
             }
         }
+    }
+
+    private Setting getEnabledSetting(List<Setting> settings) {
+        return settings.stream()
+                       .filter(setting -> setting.getName().endsWith("_ENABLED")) // it is assumed that there's exactly one setting indicating if tool is enabled
+                       .findFirst()
+                       .orElseThrow(() -> new IntegrationException("Integration tool '" + tool + "' data is malformed. 'Enabled' property is not set"));
     }
 
     @Override
