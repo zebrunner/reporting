@@ -30,6 +30,7 @@
 /nbdist/
 /.nb-gradle/
 
-### DB ###
+### Container mounts ###
 /pgdata/
 /database/*.bak
+/assets/

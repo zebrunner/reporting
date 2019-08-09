@@ -61,6 +61,8 @@ services:
   zafira:
     container_name: zfr_zafira_back_end
     image: qaprosoft/zafira:4.0.65
+    volumes:
+      - ./assets:/opt/assets
     ports:
       - 8080:8080
     env_file:
