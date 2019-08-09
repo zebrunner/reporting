@@ -37,8 +37,10 @@ import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
+import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
+import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang.StringUtils;
@@ -109,6 +111,9 @@ public class TestRunService {
 
     @Autowired
     private TestService testService;
+
+    @Autowired
+    private JenkinsService jenkinsService;
 
     @Autowired
     private FreemarkerUtil freemarkerUtil;
@@ -404,6 +409,32 @@ public class TestRunService {
     @Transactional(rollbackFor = Exception.class)
     public List<TestRun> getTestRunsForSmartRerun(JobSearchCriteria sc) {
         return testRunMapper.getTestRunsForSmartRerun(sc);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public List<TestRun> executeSmartRerun(JobSearchCriteria sc, boolean rerunRequired, boolean rerunFailures) {
+        if (rerunFailures && sc.getFailurePercent() == null) {
+            sc.setFailurePercent(0);
+        }
+        List<TestRun> testRuns = getTestRunsForSmartRerun(sc);
+        testRuns.forEach(testRun -> {
+            resetTestRunComments(testRun);
+            if (rerunRequired) {
+                boolean success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
+                if (!success) {
+                    LOGGER.error("Problems with job building occurred. Job url: " + testRun.getJob().getJobURL());
+                }
+            }
+        });
+        return testRuns;
+    }
+
+    private void resetTestRunComments(TestRun testRun){
+        TestRun testRunFull = getTestRunByIdFull(testRun.getId());
+        if (StringUtils.isNotEmpty(testRunFull.getComments())) {
+            testRunFull.setComments(null);
+            updateTestRun(testRunFull);
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
