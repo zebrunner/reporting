@@ -36,6 +36,7 @@ import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.model.Build;
 import com.offbytwo.jenkins.model.QueueItem;
 import com.qaprosoft.zafira.models.dto.JobResult;
+import com.qaprosoft.zafira.services.exceptions.ExternalSystemException;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import org.apache.commons.lang.StringUtils;
@@ -273,7 +274,7 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
             try {
                 job = context.getJenkinsServer().getJob(jobName);
             } catch (IOException e) {
-                throw new RuntimeException(e.getMessage(), e);
+                throw new ExternalSystemException(e.getMessage(), e);
             }
             return job;
         });
@@ -313,7 +314,7 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
                 FolderJob folderJob = new FolderJob(folderName, folderUrl);
                 job = context().getJenkinsServer().getJob(folderJob, jobName);
             } catch (IOException e) {
-                throw new RuntimeException(e.getMessage(), e);
+                throw new ExternalSystemException(e.getMessage(), e);
             }
             return job;
         });
