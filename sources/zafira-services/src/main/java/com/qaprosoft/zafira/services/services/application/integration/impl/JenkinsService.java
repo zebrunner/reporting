@@ -306,12 +306,12 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
     private Optional<JobWithDetails> getJobByURL(String jobUrl) {
         return mapContext(context -> {
             JobWithDetails job;
+            String folderUrl = jobUrl.substring(0, jobUrl.lastIndexOf("job/"));
+            Path path = Paths.get(jobUrl);
+            String jobName = path.getName(path.getNameCount() - 1).toString();
+            String folderName = path.getName(path.getNameCount() - 3).toString();
+            FolderJob folderJob = new FolderJob(folderName, folderUrl);
             try {
-                String folderUrl = jobUrl.substring(0, jobUrl.lastIndexOf("job/"));
-                Path path = Paths.get(jobUrl);
-                String jobName = path.getName(path.getNameCount() - 1).toString();
-                String folderName = path.getName(path.getNameCount() - 3).toString();
-                FolderJob folderJob = new FolderJob(folderName, folderUrl);
                 job = context().getJenkinsServer().getJob(folderJob, jobName);
             } catch (IOException e) {
                 throw new ExternalSystemException(e.getMessage(), e);
