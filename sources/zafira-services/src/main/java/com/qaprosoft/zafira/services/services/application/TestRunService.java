@@ -80,8 +80,11 @@ import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.readArgume
 
 @Service
 public class TestRunService {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TestRunService.class);
     public static final String DEFAULT_PROJECT = "UNKNOWN";
+
+    private static final String ERR_MSG_TEST_RUN_NOT_FOUND = "No test runs found by ID: %s";
 
     public enum FailureCause {
         UNRECOGNIZED_FAILURE("UNRECOGNIZED FAILURE"),
@@ -515,6 +518,11 @@ public class TestRunService {
         return emailContent;
     }
 
+    /**
+     * Generates a string with test run html report
+     * @param id - test run id or test run ciRunId to find
+     * @return built test run report or null if test run is not found
+     */
     @Transactional(readOnly = true)
     public String exportTestRunHTML(final String id) {
         String result = null;
@@ -530,7 +538,7 @@ public class TestRunService {
             email.setSuccessRate(calculateSuccessRate(testRun));
             result = freemarkerUtil.getFreeMarkerTemplateContent(email.getType().getTemplateName(), email);
         } else {
-            LOGGER.error("No test runs found by ID: " + id);
+            LOGGER.error(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
         }
         return result;
     }
