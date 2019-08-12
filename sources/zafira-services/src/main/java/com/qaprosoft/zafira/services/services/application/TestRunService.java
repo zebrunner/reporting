@@ -517,19 +517,22 @@ public class TestRunService {
 
     @Transactional(readOnly = true)
     public String exportTestRunHTML(final String id) {
+        String result = null;
         TestRun testRun = getTestRunByIdFull(id);
-        if (testRun == null) {
-            throw new TestRunNotFoundException("No test runs found by ID: " + id);
+        if (testRun != null) {
+            Configuration configuration = readArguments(testRun.getConfigXML());
+            configuration.getArg().add(new Argument("zafira_service_url", urlResolver.buildWebURL()));
+
+            List<Test> tests = testService.getTestsByTestRunId(id);
+
+            TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
+            email.setJiraURL(settingsService.getSettingByType(JIRA_URL));
+            email.setSuccessRate(calculateSuccessRate(testRun));
+            result = freemarkerUtil.getFreeMarkerTemplateContent(email.getType().getTemplateName(), email);
+        } else {
+            LOGGER.error("No test runs found by ID: " + id);
         }
-        Configuration configuration = readArguments(testRun.getConfigXML());
-        configuration.getArg().add(new Argument("zafira_service_url", urlResolver.buildWebURL()));
-
-        List<Test> tests = testService.getTestsByTestRunId(id);
-
-        TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
-        email.setJiraURL(settingsService.getSettingByType(JIRA_URL));
-        email.setSuccessRate(calculateSuccessRate(testRun));
-        return freemarkerUtil.getFreeMarkerTemplateContent(email.getType().getTemplateName(), email);
+        return result;
     }
 
     public static int calculateSuccessRate(TestRun testRun) {
