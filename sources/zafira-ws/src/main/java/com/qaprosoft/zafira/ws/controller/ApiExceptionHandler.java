@@ -27,6 +27,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
 
@@ -35,6 +36,8 @@ import java.util.List;
  */
 @RestControllerAdvice
 public class ApiExceptionHandler {
+
+    private static final String MSG_METHOD_ARGUMENT_TYPE_MISMATCH = "Request parameter has invalid type.";
 
     private static final String INTERNAL_SERVER_ERROR_MSG = "Unexpected error has occurred. Please try again later.";
 
@@ -182,6 +185,14 @@ public class ApiExceptionHandler {
         ErrorResponse result = new ErrorResponse();
         result.setError(new Error(ErrorCode.UNHEALTHY_STATUS, "reason", e.getMessage()));
         return result;
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.INVALID_VALUE, e.getName(), MSG_METHOD_ARGUMENT_TYPE_MISMATCH));
+        return response;
     }
 
     @ExceptionHandler(Exception.class)

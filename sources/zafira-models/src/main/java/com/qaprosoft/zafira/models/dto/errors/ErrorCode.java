@@ -16,7 +16,6 @@
 package com.qaprosoft.zafira.models.dto.errors;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.qaprosoft.zafira.models.dto.errors.ErrorCodeSerializer;
 
 @JsonSerialize(using = ErrorCodeSerializer.class)
 public enum ErrorCode {

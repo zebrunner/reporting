@@ -61,7 +61,7 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
 
     private static final Logger logger = LoggerFactory.getLogger(JenkinsService.class);
 
-    private static final String[] REQUIRED_ARGS = new String[] { "scmURL", "branch", "overrideFields" };
+    private static final String[] REQUIRED_ARGS = new String[] { "scmURL", "branch", "zafiraFields" };
 
     private static final String ERR_MSG_UNABLE_RUN_JOB = "Unable to build '%s' job";
 

@@ -10,7 +10,7 @@ public interface FilterMapper {
 
     Filter getFilterById(Long id);
 
-    Filter getFilterByName(String name);
+    List<Filter> getFiltersByName(String name);
 
     List<Filter> getAllFilters();
 

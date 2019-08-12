@@ -73,7 +73,7 @@
 		]]>
 	</select>
 
-	<select id="getFilterByName" resultMap="FilterResultMap">
+	<select id="getFiltersByName" resultMap="FilterResultMap">
 		<include refid="getFilters" />
         <![CDATA[
 			WHERE F.NAME = #{name};

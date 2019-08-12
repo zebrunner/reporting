@@ -37,8 +37,10 @@ import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
+import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
+import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang.StringUtils;
@@ -80,8 +82,11 @@ import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.readArgume
 
 @Service
 public class TestRunService {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TestRunService.class);
     public static final String DEFAULT_PROJECT = "UNKNOWN";
+
+    private static final String ERR_MSG_TEST_RUN_NOT_FOUND = "No test runs found by ID: %s";
 
     public enum FailureCause {
         UNRECOGNIZED_FAILURE("UNRECOGNIZED FAILURE"),
@@ -109,6 +114,9 @@ public class TestRunService {
 
     @Autowired
     private TestService testService;
+
+    @Autowired
+    private JenkinsService jenkinsService;
 
     @Autowired
     private FreemarkerUtil freemarkerUtil;
@@ -407,6 +415,32 @@ public class TestRunService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public List<TestRun> executeSmartRerun(JobSearchCriteria sc, boolean rerunRequired, boolean rerunFailures) {
+        if (rerunFailures && sc.getFailurePercent() == null) {
+            sc.setFailurePercent(0);
+        }
+        List<TestRun> testRuns = getTestRunsForSmartRerun(sc);
+        testRuns.forEach(testRun -> {
+            resetTestRunComments(testRun);
+            if (rerunRequired) {
+                boolean success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
+                if (!success) {
+                    LOGGER.error("Problems with job building occurred. Job url: " + testRun.getJob().getJobURL());
+                }
+            }
+        });
+        return testRuns;
+    }
+
+    private void resetTestRunComments(TestRun testRun){
+        TestRun testRunFull = getTestRunByIdFull(testRun.getId());
+        if (StringUtils.isNotEmpty(testRunFull.getComments())) {
+            testRunFull.setComments(null);
+            updateTestRun(testRunFull);
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public TestRun calculateTestRunResult(long id, boolean finishTestRun) {
         TestRun testRun = getNotNullTestRunById(id);
 
@@ -515,21 +549,29 @@ public class TestRunService {
         return emailContent;
     }
 
+    /**
+     * Generates a string with test run html report
+     * @param id - test run id or test run ciRunId to find
+     * @return built test run report or null if test run is not found
+     */
     @Transactional(readOnly = true)
     public String exportTestRunHTML(final String id) {
+        String result = null;
         TestRun testRun = getTestRunByIdFull(id);
-        if (testRun == null) {
-            throw new TestRunNotFoundException("No test runs found by ID: " + id);
+        if (testRun != null) {
+            Configuration configuration = readArguments(testRun.getConfigXML());
+            configuration.getArg().add(new Argument("zafira_service_url", urlResolver.buildWebURL()));
+
+            List<Test> tests = testService.getTestsByTestRunId(id);
+
+            TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
+            email.setJiraURL(settingsService.getSettingByType(JIRA_URL));
+            email.setSuccessRate(calculateSuccessRate(testRun));
+            result = freemarkerUtil.getFreeMarkerTemplateContent(email.getType().getTemplateName(), email);
+        } else {
+            LOGGER.error(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
         }
-        Configuration configuration = readArguments(testRun.getConfigXML());
-        configuration.getArg().add(new Argument("zafira_service_url", urlResolver.buildWebURL()));
-
-        List<Test> tests = testService.getTestsByTestRunId(id);
-
-        TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
-        email.setJiraURL(settingsService.getSettingByType(JIRA_URL));
-        email.setSuccessRate(calculateSuccessRate(testRun));
-        return freemarkerUtil.getFreeMarkerTemplateContent(email.getType().getTemplateName(), email);
+        return result;
     }
 
     public static int calculateSuccessRate(TestRun testRun) {

@@ -3,7 +3,8 @@ package com.qaprosoft.zafira.ws.controller.application;
 import com.qaprosoft.zafira.models.db.Filter;
 import com.qaprosoft.zafira.models.dto.filter.FilterType;
 import com.qaprosoft.zafira.models.dto.filter.Subject;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.EntityAlreadyExistsException;
+import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.services.application.FilterService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -14,7 +15,6 @@ import io.swagger.annotations.ApiOperation;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,15 +46,16 @@ public class FiltersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping()
     public FilterType createFilter(@RequestBody @Valid FilterType filterType) {
-        if (filterService.getFilterByName(filterType.getName()) != null) {
-            throw new ServiceException("Filter with name '" + filterType.getName() + "' already exists");
-        }
-        if (filterType.isPublicAccess() && !isAdmin()) {
-            filterType.setPublicAccess(false);
-        }
+        filterType.setUserId(getPrincipalId());
         filterType.getSubject().sortCriterias();
         Filter filter = mapper.map(filterType, Filter.class);
-        filter.setUserId(getPrincipalId());
+
+        if (filterService.isFilterExists(filter)) {
+            throw new EntityAlreadyExistsException("name", Filter.class, false);
+        }
+        if (filter.isPublicAccess() && !isAdmin()) {
+            filter.setPublicAccess(false);
+        }
         return mapper.map(filterService.createFilter(filter), FilterType.class);
     }
 
@@ -71,9 +72,12 @@ public class FiltersAPIController extends AbstractController {
     @ResponseStatusDetails
     @ApiOperation(value = "Update filter", nickname = "updateFilter", httpMethod = "PUT", response = FilterType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @PreAuthorize("isOwner(@filterService.getFilterById(#filterType.id), 'userId')")
     @PutMapping()
     public FilterType updateFilter(@RequestBody @Valid FilterType filterType) {
+        Filter filter = filterService.getFilterById(filterType.getId());
+        if (filter != null && !filter.getUserId().equals(getPrincipalId())) {
+            throw new IllegalOperationException("Cannot access to update filter");
+        }
         filterType.getSubject().sortCriterias();
         return mapper.map(filterService.updateFilter(mapper.map(filterType, Filter.class), isAdmin()), FilterType.class);
     }
@@ -81,9 +85,12 @@ public class FiltersAPIController extends AbstractController {
     @ResponseStatusDetails
     @ApiOperation(value = "Delete filter", nickname = "deleteFilter", httpMethod = "DELETE")
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @PreAuthorize("isOwner(@filterService.getFilterById(#id), 'userId')")
     @DeleteMapping("/{id}")
     public void deleteFilter(@PathVariable("id") Long id) {
+        Filter filter = filterService.getFilterById(id);
+        if (filter != null && !filter.getUserId().equals(getPrincipalId())) {
+            throw new IllegalOperationException("Cannot access to delete filter");
+        }
         filterService.deleteFilterById(id);
     }
 

@@ -52,9 +52,14 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     private static final String BASENAME_LOCATION = "i18n/messages";
 
     private final boolean debugMode;
+    private final boolean multitenant;
 
-    public WebConfig(@Value("${zafira.debugMode:false}") boolean debugMode) {
+    public WebConfig(
+            @Value("${zafira.debugMode:false}") boolean debugMode,
+            @Value("${zafira.multitenant}") boolean multitenant
+    ) {
         this.debugMode = debugMode;
+        this.multitenant = multitenant;
     }
 
     // TODO: 2019-07-17 not validated on service layer - try to move to web layer
@@ -91,6 +96,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
                 .addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        if (!multitenant) {
+            // add extra resource handler to serve local resources - single host deployment only
+            registry.addResourceHandler("/assets/**")
+                    .addResourceLocations("file:/opt/assets/");
+        }
     }
 
     @Bean
