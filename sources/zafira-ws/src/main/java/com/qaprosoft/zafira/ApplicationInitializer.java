@@ -1,13 +1,8 @@
 package com.qaprosoft.zafira;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class ApplicationInitializer {
-
-    public static void main(String[] args) {
-        SpringApplication.run(ApplicationInitializer.class, args);
-    }
-
+public class ApplicationInitializer extends SpringBootServletInitializer {
 }
