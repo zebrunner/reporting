@@ -1,53 +1,21 @@
 # Profile
 
-Navigate to **Username > My profile** in top navigation menu to customize your Zafira user preferences.
+Click profile icon in lower left corner of the page to open your **User profile**.
 
 <p align="center">
-  <img src="../img/my_profile_menu.png">
+  <img src="img/my_profile_menu.png">
 </p>
 
-On hover on round area near your first name 'settings' icon appears, click it and change existing picture of your profile or upload a new one.
+If you are willing to change the profile photo, navigate to the same icon on your profile page to upload it.
+
+In **Personal data** area is displayed user personal information. *Username* and *Email* both are set on profile creation and cannot be changed, *First Name* and *Last Name* are editable.
+
+In **Access token** area integration data could be obtained. Copy *Service URL* and *Access token* (previously generated) to get integrated with Zafira.
 
 <p align="center">
-  <img src="../img/my_profile_change_photo.png">
+  <img src="img/my_profile_change_password.png">
 </p>
 
-<p align="center">
-  <img src="../img/my_profile_upload_image.png">
-</p>
-
-In **User profile** area personal user information such as first name, last name and email address  can be changed.
-
-Edit values in the corresponding fields and click *Save* button.
-
-<p align="center">
-  <img src="../img/my_profile_user_profile.png">
-</p>
-
-In **Preferences** area Zafira system settings are available:
-
-* Color schema
-* Default dashboard
-* Widget refresh interval
-
-*Color schema* provides choice between Light and Black options.
-
-*Default dashboard* will be the page opened after Zafira login. General dashboard by default.
-
-*Widget refresh interval* is applied when Refreshable option is picked for widget and lets widget to refresh its data according to the chosen time interval (30 sec, 1 min, 2 min, 5 min). Disabled by default.
-
-<p align="center">
-  <img src="../img/my_profile_preferences.png">
-</p>
-
-In **Change password** area user can update current password. Password must contain not less than 6 characters.
-
-<p align="center">
-  <img src="../img/my_profile_change_password.png">
-</p>
+In **Change password** area user can update current password. Password must contain not less than 5 characters (could be letters, numbers, special symbols).
 
 In **Access token** area token required for Zafira integration can be generated and copied .
-
-<p align="center">
-  <img src="../img/my_profile_access_token.png">
-</p>
