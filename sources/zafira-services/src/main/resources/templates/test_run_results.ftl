@@ -13,17 +13,30 @@
     <#return result>
 </#function>
 
-<div id="container" style="width: 98%; padding: 10px; margin: 0; background: #EBEBE0; color: #717171; font-family: Calibri;">
+<div id="container" style="width: 98%;
+                           padding: 10px;
+                           margin: 0;
+                           background: #ffffff;
+                           font-family: Arial, serif;">
 	<div id="summary">
-        <h2 align="center" style="background-color: gray; color: white; padding: 10px; margin: 0;">${subject}</h2>
+        <h2 style="background-color: #F3F3F4;
+                   padding: 10px;
+                   margin: 0;
+                   clear: both;
+                   font-size: 20px;
+                   font-weight: bold;
+                   line-height: 1.5;
+                   text-align: left;
+                   color: #011627;">${subject}</h2>
         <br/>
-        <h2 style="clear: both; margin: 0;">Summary:</h2>
         <hr/>
         <table>
            	<#if testRun.env??>
-            <tr>
-                <td style="width: 120px;">Environment:</td>
-                <td>
+            <tr style="font-size: 16px;
+                       line-height: 1.63;
+                       text-align: left;">
+                <td style="width: 120px;color: #808a93;">Environment:</td>
+                <td style="font-weight: bold;color: #011627;">
                     ${testRun.env}
                     <#if configuration['url']?? && (configuration['url'] != 'NULL') && (configuration['url'] != '')>
                          - <a href="${configuration['url']}">${configuration['url']}</a>
@@ -32,14 +45,19 @@
             </tr>
             </#if>
             <#if configuration['app_version'] ??>
-            <tr>
-                <td>Version:</td>
-                <td>${configuration['app_version']} </td>
+            <tr style="font-size: 16px;
+                       line-height: 1.63;
+                       text-align: left;">
+                <td style="color: #808a93" >Version:</td>
+                <td style="font-weight: bold;color: #011627;">${configuration['app_version']} </td>
             </tr>
             </#if>
+            <tr style="font-size: 16px;
+                       line-height: 1.63;
+                       text-align: left;">
             <#if configuration['mobile_platform_name']?? || configuration['mobile_device_name']?? || configuration['browser']?? || ((configuration['platform'] ??) && (configuration['platform']?lower_case == 'api'))>
-                <td>Platform:</td>
-                <td>
+                <td style="color: #808a93">Platform:</td>
+                <td style="font-weight: bold;color: #011627;">
                     <#if configuration['platform']?? && (configuration['platform'] != 'NULL') && (configuration['platform'] != '') && (configuration['platform'] != '*')>
                         ${configuration['platform']}
                     </#if>
@@ -67,71 +85,81 @@
                     </#if>
                 </td>
             </#if>
-            <tr>
-                <td>Finished:</td>
-                <td>${testRun.modifiedAt?string["HH:mm yyyy.MM.dd"]}</td>
+            </tr>
+            <tr style="font-size: 16px;
+                       line-height: 1.63;
+                       text-align: left;">
+                <td style="color: #808a93" >Finished:</td>
+                <td  style="font-weight: bold;color: #011627;">${testRun.modifiedAt?string["HH:mm yyyy.MM.dd"]}</td>
             </tr>
             <#if elapsed??>
-            <tr>
-                <td>Elapsed:</td>
-                <td>${elapsed}</td>
+            <tr style="font-size: 16px;
+                       line-height: 1.63;
+                       text-align: left;">
+                <td style="color: #808a93">Elapsed:</td>
+                <td style="font-weight: bold;color: #011627;">${elapsed}</td>
             </tr>
             </#if>
-            <tr>
-                <td>Test job URL:</td>
-                <td>
+            <tr style="font-size: 16px;
+                       line-height: 1.63;
+                       text-align: left;">
+                <td style="color: #808a93">Test job URL:</td>
+                <td style="font-weight: bold;color: #011627;">
                     <#if configuration['zafira_service_url']?? && (configuration['zafira_service_url'] != 'NULL') && (configuration['zafira_service_url'] != '')>
                         <a href="${configuration['zafira_service_url']}/tests/runs/${testRun.id?c}">Zafira</a>
                     </#if>
                 </td>
             </tr>
             <#if testRun.comments??>
-            <tr>
-                <td>Comments:</td>
-                <td>
-                    <pre style="white-space: pre-line;">
+            <tr style="font-size: 16px;
+                       line-height: 1.63;
+                       text-align: left;">
+                <td style="color: #808a93" >Comments:</td>
+                <td style="font-weight: bold;color: #011627; ">
+                    <pre style="white-space: pre-line; margin: 0; font-family: Arial, serif;">
                         ${testRun.comments?trim[0..*255]}
                     </pre>
                 </td>
             </tr>
             </#if>
-            <tr>
-                <td>Success rate:</td>
-                <td>${successRate}%
+            <tr style="font-size: 16px;
+                       line-height: 1.63;
+                       text-align: left;">
+                <td style="color: #808a93">Success rate:</td>
+                <td style="font-weight: bold;color: #011627;">${successRate}%</td>
+            </tr>
+            <tr style="font-size: 16px;
+                       line-height: 1.63;
+                       text-align: left;">
+                <td style="color: #808a93"></td>
+                <td style="font-weight: bold;color: #011627;">
                     <#if (testRun.passed > 0)>
-                        <span class="pass" style="color: #5DBA65;">
-                            Passed: ${testRun.passed}
-                        </span>
+                        <span>Passed: </span>
+                        <span style="color: #44c480">${testRun.passed}</span>
                     </#if>
                     <#if (testRun.failed > 0)>
-                        <span class="fail" style="color: #E83A3A;">
-                            Failed: ${testRun.failed}
-                        </span>
+                        <span>Failed: </span>
+                        <span style="color: #ec4e5d">${testRun.failed}</span>
                     </#if>
                     <#if (testRun.failedAsKnown > 0)>
-                        <span class="fail" style="color: #B51E1E;">
-                            Known issue: ${testRun.failedAsKnown}
-                        </span>
+                        <span>Known issue: </span>
+                        <span style="color: #BD4D50">${testRun.failedAsKnown}</span>
                     </#if>
                     <#if (testRun.failedAsBlocker > 0)>
-                        <span class="fail" style="color: #B51E1E;">
-                            Blockers: ${testRun.failedAsBlocker}
-                        </span>
+                        <span>Blockers: </span>
+                        <span style="color: #BD4D50">${testRun.failedAsBlocker}</span>
                     </#if>
                     <#if (testRun.skipped > 0)>
-                        <span class="skip" style="color: #f0c800;">
-                            Skipped: ${testRun.skipped}
-                        </span>
+                        <span>Skipped: </span>
+                        <span style="color: #eab73d">${testRun.skipped}</span>
                     </#if>
                     <#if (testRun.aborted > 0)>
-                        <span class="skip" style="color: #C5C5C5;">
-                            Aborted: ${testRun.aborted}
-                        </span>
+                        <span>Aborted: </span>
+                        <span style="color: #828A92">${testRun.aborted}</span>
                     </#if>
                     <#if (testRun.queued > 0)>
-                        <span class="skip" style="color: #b7c2c5;">
-                            Queued: ${testRun.queued}
-                        </span>
+                        <span>Queued: </span>
+                        <span style="color: #A7AEB3">${testRun.queued}</span>
                     </#if>
                     <#if successRate?number != 100>
                         <span>
@@ -141,17 +169,21 @@
                 </td>
             </tr>
             <#if configuration['language']?? && configuration['language'] != '' && configuration['language'] != 'en_US' && configuration['language'] != 'en' && configuration['language'] != 'US'>
-            <tr>
-                <td>Language: </td>
-                <td>
+            <tr style="font-size: 16px;
+                       line-height: 1.63;
+                       text-align: left;">
+                <td style="color: #808a93">Language: </td>
+                <td style="font-weight: bold;color: #011627;">
                     ${configuration['language']}
                 </td>
             </tr>
             </#if>
             <#if configuration['locale']?? && configuration['locale'] != '' && configuration['locale'] != 'en_US' && configuration['locale'] != 'en' && configuration['locale'] != 'US'>
-                <tr>
-                    <td>Locale: </td>
-                    <td>
+                <tr style="font-size: 16px;
+                           line-height: 1.63;
+                           text-align: left;">
+                    <td style="color: #808a93">Locale: </td>
+                    <td style="font-weight: bold;color: #011627;">
                         ${configuration['locale']}
                     </td>
                 </tr>
@@ -160,30 +192,59 @@
     </div>
     <br/>
 	<div id="results">
-        <h2 style="margin: 0;">Test results:</h2>
-        <hr/>
-        <table cellspacing="0" cellpadding="0" style="width: 100%;">
-            <tr>
-                <th width="10%" align="center">Result</th>
-                <th width="60%" align="center">Test name</th>
-                <th width="10%" align="center">Jira</th>
-                <th width="10%" align="center">Test info</th>
+        <table style="width: 100%;">
+            <tr style="background-color: #EEEFF0;
+                       padding: 7px;
+                       font-size: 12px;
+                       font-weight: bold;
+                       line-height: 2.17;
+                       text-align: center;
+                       color: #011627;">
+                <th style="padding-left: 7px;width: 10%;">Result</th>
+                <th style="padding: 7px;width: 60%;">Test name</th>
+                <th style="padding-left: 7px;width: 10%;">Jira</th>
+                <th style="padding-left: 7px;width: 10%;">Test info</th>
             </tr>
             <#assign testList = tests?sort_by("id")>
             <#list testList?sort_by("notNullTestGroup") as test>
                 <#assign currentGroup = test.notNullTestGroup>
                 <#if currentGroup != previousGroup!''>
-                    <td colspan="4" style="background-color: gray;border: 1px solid white;padding: 5px;color: white;background-position: initial initial;background-repeat: initial initial;">
-                        ${currentGroup}
-                    </td>
+                    <tr style="background-color: #EEEFF0;
+                               font-size: 12px;
+                               font-weight: bold;
+                               line-height: 2.17;
+                               color: #011627;
+                               text-align: left;
+                               padding-left: 7px;">
+                        <td style="padding-left: 7px;" colspan="4" >
+                            ${currentGroup}
+                        </td>
+                    </tr>
                 </#if>
                 <#assign previousGroup = currentGroup>
-            	<#if !(showOnlyFailures == true && test.status == 'PASSED')>
-	            	<tr style="background: <#if test.status == 'PASSED'>#66C266</#if><#if test.status == 'ABORTED'>#C5C5C5</#if><#if test.status == 'FAILED'><#if test.knownIssue?? && test.knownIssue != true || test.blocker>#FF5C33<#else>#D87A7A</#if></#if><#if test.status == 'SKIPPED'>#DEB887</#if>" >
-	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+
+                <#if !(showOnlyFailures == true && test.status == 'PASSED')>
+                    <tr  style="background:
+                    <#if test.status == 'PASSED'>#44c480</#if>
+                    <#if test.status == 'ABORTED'>#828A92</#if>
+                    <#if test.status == 'FAILED'>
+                        <#if test.knownIssue?? && test.knownIssue != true || test.blocker>#ec4e5d<#else>#BD4D50</#if>
+                    </#if>
+                    <#if test.status == 'SKIPPED'>#eab73d</#if>
+                    <#if test.status == 'QUEUED'>#A7AEB3</#if>">
+	            		<td style="font-size: 13px;
+                            font-weight: bold;
+                            line-height: 1.38;
+                            text-align: center;
+                            color: #ffffff;">
 	            			${test.status}
 	            		</td>
-	            		<td style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+	            		<td style="font-size: 14px;
+                            line-height: 1.29;
+                            text-align: left;
+                            color: #ffffff;
+                            padding: 5px;
+                            margin: 2px;">
 	            			<span>${test.name}</span>
                             <#if ((test.startTime ?? && test.finishTime??) || (test.testConfig ?? && test.testConfig.device ??) || test.owner ??)>
                                 <div>
@@ -207,16 +268,56 @@
                                 </div>
                             </#if>
 	            			<#if test.status == 'FAILED' && test.message?? && test.message != ''>
-	            				<pre style="background:#ffcccc; color: black; padding: 5px; margin: 2px 0px 2px 0px; max-width: 1000px; white-space: pre-line; word-wrap: break-word;">
+                                <#if test.knownIssue?? && test.knownIssue != true || test.blocker>
+                                    <pre style="background-color: #EBACB1;
+                                                font-family: Arial, serif;
+                                                font-size: 14px;
+                                                line-height: 1.29;
+                                                text-align: left;
+                                                color: #011627;
+                                                padding: 5px;
+                                                margin: 2px;
+                                                max-width: 1000px;
+                                                white-space: pre-line;
+                                                word-wrap: break-word;">
 	            					<#if showStacktrace?? && showStacktrace == false && test.message?contains('\n')>
                                         ${test.message?trim?substring(0, test.message?trim?index_of('\n'))}
                                     <#else>
                                         ${test.message?trim}
                                     </#if>
-	            				</pre>
+	            				    </pre>
+                                <#else>
+                                    <pre style="background-color: #DCA4A9;
+                                                font-family: Arial, serif;
+                                                font-size: 14px;
+                                                line-height: 1.29;
+                                                text-align: left;
+                                                color: #011627;
+                                                padding: 5px;
+                                                margin: 2px;
+                                                max-width: 1000px;
+                                                white-space: pre-line;
+                                                word-wrap: break-word;">
+	            					<#if showStacktrace?? && showStacktrace == false && test.message?contains('\n')>
+                                        ${test.message?trim?substring(0, test.message?trim?index_of('\n'))}
+                                    <#else>
+                                        ${test.message?trim}
+                                    </#if>
+	            				    </pre>
+                                </#if>
 	            			</#if>
 	            			<#if test.status == 'SKIPPED' && test.message?? && test.message != ''>
-	            				<pre style="background:#ffe4b5; color: black; padding: 5px; margin: 2px 0px 2px 0px; max-width: 1000px; white-space: pre-line; word-wrap: break-word;">
+	            				<pre style="background-color: #f3d688;
+                                            font-family: Arial, serif;
+                                            font-size: 14px;
+                                            line-height: 1.29;
+                                            text-align: left;
+                                            color: #011627;
+                                            padding: 5px;
+                                            margin: 2px;
+                                            max-width: 1000px;
+                                            white-space: pre-line;
+                                            word-wrap: break-word;">
                                     <#if showStacktrace?? && showStacktrace == false && test.message?contains('\n')>
                                         ${test.message?trim?substring(0, test.message?trim?index_of('\n'))}
                                     <#else>
@@ -225,19 +326,31 @@
 	            				</pre>
 	            			</#if>
 	            		</td>
-                        <td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+                        <td style="font-size: 13px;
+                            font-weight: bold;
+                            line-height: 1.38;
+                            text-align: center;
+                            color: #ffffff;">
                             <#list test.workItems as workItem>
                                 <#if workItem.type == 'BUG' && (jiraURL?contains('atlassian') || jiraURL?contains('jira'))>
-                                    <a href='${jiraURL}/browse/${workItem.jiraId}' target="_blank"
-                                       style="background: #d9534f; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">
+                                    <a style="font-size: 13px;
+                                              font-weight: bold;
+                                              line-height: 1.38;
+                                              text-align: center;
+                                              color: #ffffff;"
+                                       href='${jiraURL}/browse/${workItem.jiraId}' target="_blank">
                                         <#if workItem.blocker?? && workItem.blocker>
                                             <span>BLOCKER<br/></span>
                                         </#if>
                                         ${workItem.jiraId}
                                     </a>
                                 <#elseif workItem.type == 'BUG'>
-                                    <a href='${jiraURL}/${workItem.jiraId}' target="_blank"
-                                       style="background: #d9534f; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">
+                                    <a style="font-size: 13px;
+                                              font-weight: bold;
+                                              line-height: 1.38;
+                                              text-align: center;
+                                              color: #ffffff;"
+                                       href='${jiraURL}/${workItem.jiraId}' target="_blank">
                                         <#if workItem.blocker?? && workItem.blocker>
                                             <span>BLOCKER<br/></span>
                                         </#if>
@@ -245,17 +358,38 @@
                                     </a>
                                 </#if>
                                 <#if workItem.type == 'TASK' && (jiraURL?contains('atlassian') || jiraURL?contains('jira'))>
-                                    <a href='${jiraURL}/browse/${workItem.jiraId}' target="_blank"
-                                       style="background: #337ab7; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">${workItem.jiraId}</a>
+                                    <a style="font-size: 13px;
+                                              font-weight: bold;
+                                              line-height: 1.38;
+                                              text-align: center;
+                                              color: #ffffff;"
+                                       href='${jiraURL}/browse/${workItem.jiraId}' target="_blank">
+                                        ${workItem.jiraId}
+                                    </a>
                                 <#elseif workItem.type == 'TASK'>
-                                    <a href='${jiraURL}/${workItem.jiraId}' target="_blank"
-                                       style="background: #337ab7; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">${workItem.jiraId}</a>
+                                    <a style="font-size: 13px;
+                                       font-weight: bold;
+                                       line-height: 1.38;
+                                       text-align: center;
+                                       color: #ffffff;"
+                                       href='${jiraURL}/${workItem.jiraId}' target="_blank">
+                                        ${workItem.jiraId}
+                                    </a>
                                 </#if>
                             </#list>
 	                    </td>
-                        <td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+                        <td style="font-size: 13px;
+                                   font-weight: bold;
+                                   line-height: 1.38;
+                                   text-align: center;
+                                   color: #ffffff;">
                             <#if configuration['zafira_service_url']?? && (configuration['zafira_service_url'] != 'NULL') && (configuration['zafira_service_url'] != '')>
-                                <a href="${configuration['zafira_service_url']}/tests/runs/${testRun.id?c}/info/${test.id?c}" style='color: white;'>Logs</a>
+                                <a style="font-size: 13px;
+                                          font-weight: bold;
+                                          line-height: 1.38;
+                                          text-align: center;
+                                          color: #ffffff;"
+                                   href="${configuration['zafira_service_url']}/tests/runs/${testRun.id?c}/info/${test.id?c}">Logs</a>
                             </#if>
                         </td>
 	            	</tr>

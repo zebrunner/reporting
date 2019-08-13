@@ -13,32 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
+package com.qaprosoft.zafira.models.push;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchCriteria;
-import com.qaprosoft.zafira.models.db.Invitation;
-import org.apache.ibatis.annotations.Param;
+import com.qaprosoft.zafira.models.db.Launcher;
 
-import java.util.List;
+public class LauncherRunPush extends AbstractPush {
 
-public interface InvitationMapper {
+    private final Launcher launcher;
+    private final String ciRunId;
 
-    void createInvitation(Invitation invitation);
+    public LauncherRunPush(Launcher launcher, String ciRunId) {
+        super(Type.LAUNCHER_RUN);
+        launcher.setJob(null);
+        launcher.setScmAccount(null);
+        this.launcher = launcher;
+        this.ciRunId = ciRunId;
+    }
 
-    Invitation getInvitationByCode(String code);
+    public Launcher getLauncher() {
+        return launcher;
+    }
 
-    Invitation getInvitationByEmail(String email);
-
-    List<Invitation> getAllInvitations();
-
-    void updateInvitation(Invitation invitation);
-
-    void deleteInvitationById(Long id);
-
-    void deleteInvitationByEmail(String email);
-
-    List<Invitation> search(@Param("sc") SearchCriteria sc);
-
-    Integer searchCount(@Param("sc") SearchCriteria sc);
+    public String getCiRunId() {
+        return ciRunId;
+    }
 
 }

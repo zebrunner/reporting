@@ -19,6 +19,7 @@ import com.qaprosoft.zafira.models.db.*;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,12 +42,7 @@ public class TestRunResultsEmail implements IEmailMessage {
         }
         this.testRun = testRun;
         this.tests = tests;
-        if (testRun.getElapsed() != null) {
-            int s = testRun.getElapsed() % 60;
-            int m = (testRun.getElapsed() / 60) % 60;
-            int h = (testRun.getElapsed() / (60 * 60)) % 24;
-            this.elapsed = String.format("%02d:%02d:%02d", h, m, s);
-        }
+        this.elapsed = testRun.getElapsed() != null ? LocalTime.ofSecondOfDay(testRun.getElapsed()).toString() : null;
     }
 
     public Map<String, String> getConfiguration() {

@@ -19,19 +19,19 @@ public class UserInviteEmail extends AbstractEmail {
 
     private static final String SUBJECT = "Join the workspace";
 
-    private final String token;
     private final String zafiraLogoURL;
     private final String workspaceURL;
+    private final String invitationUrl;
 
-    public UserInviteEmail(String token, String zafiraLogoURL, String workspaceURL) {
+    public UserInviteEmail(String invitationUrl, String zafiraLogoURL, String workspaceURL) {
         super(SUBJECT, EmailType.USER_INVITE, zafiraLogoURL, workspaceURL);
-        this.token = token;
+        this.invitationUrl = invitationUrl;
         this.zafiraLogoURL = zafiraLogoURL;
         this.workspaceURL = workspaceURL;
     }
 
-    public String getToken() {
-        return token;
+    public String getInvitationUrl() {
+        return invitationUrl;
     }
 
     public String getZafiraLogoURL() {

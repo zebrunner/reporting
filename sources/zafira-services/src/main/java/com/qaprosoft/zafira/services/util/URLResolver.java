@@ -25,11 +25,16 @@ import java.util.regex.Pattern;
 @Component
 public class URLResolver {
 
+    private static final String SIGNUP_PATH_PATTERN = "%s/signup?token=%s";
+
     @Value("${zafira.multitenant}")
     private boolean isMultitenant;
 
     @Value("${zafira.web.url}")
     private String webURL;
+
+    @Value("${zafira.webservice.url}")
+    private String webserviceURL;
 
     /**
      * In case if multitenancy will resolve current tenancy id into the URL pattern: http://demo.qaprosoft.com/zafira.
@@ -40,8 +45,16 @@ public class URLResolver {
         return isMultitenant ? String.format(webURL, TenancyContext.getTenantName()) : webURL;
     }
 
+    public String buildWebserviceUrl() {
+        return isMultitenant ? webserviceURL.replace("api", TenancyContext.getTenantName()) : webserviceURL;
+    }
+
     public String getServiceURL() {
         return getUrlFromWebUrl(buildWebURL());
+    }
+
+    public String buildInvitationUrl(String token) {
+        return String.format(SIGNUP_PATH_PATTERN, buildWebURL(), token);
     }
 
     private static String getUrlFromWebUrl(String webUrl) {
@@ -52,5 +65,6 @@ public class URLResolver {
         }
         return result;
     }
+
 
 }

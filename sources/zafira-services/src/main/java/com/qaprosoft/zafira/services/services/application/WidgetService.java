@@ -38,17 +38,17 @@ public class WidgetService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WidgetService.class);
 
-    @Autowired
-    private WidgetMapper widgetMapper;
+    private final WidgetMapper widgetMapper;
+    private final FreemarkerUtil freemarkerUtil;
+    private final URLResolver urlResolver;
+    private final SettingsService settingsService;
 
-    @Autowired
-    private FreemarkerUtil freemarkerUtil;
-
-    @Autowired
-    private URLResolver urlResolver;
-
-    @Autowired
-    private SettingsService settingsService;
+    public WidgetService(WidgetMapper widgetMapper, FreemarkerUtil freemarkerUtil, URLResolver urlResolver, SettingsService settingsService) {
+        this.widgetMapper = widgetMapper;
+        this.freemarkerUtil = freemarkerUtil;
+        this.urlResolver = urlResolver;
+        this.settingsService = settingsService;
+    }
 
     public enum DefaultParam {
         SERVICE_URL("serviceUrl"),

@@ -24,8 +24,10 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -47,7 +49,12 @@ public class WebConfig implements WebMvcConfigurer {
 
     private static final String BASENAME_LOCATION = "classpath:i18n/messages";
 
-    // TODO: 2019-07-17 not validated on service layer - try to move to web layer
+    private final boolean multitenant;
+
+    public WebConfig(@Value("${zafira.multitenant}") boolean multitenant) {
+        this.multitenant = multitenant;
+    }
+
     @Bean
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
@@ -57,23 +64,36 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public LocaleResolver localeResolver() {
-        AcceptHeaderLocaleResolver localeResolver = new AcceptHeaderLocaleResolver();
-        localeResolver.setDefaultLocale(Locale.US);
-        return localeResolver;
-    }
-
-    @Bean
-    public LocalValidatorFactoryBean localValidator() {
+    public LocalValidatorFactoryBean validator() {
         LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
         bean.setValidationMessageSource(messageSource());
         return bean;
     }
 
     @Bean
+    public LocaleResolver localeResolver() {
+        AcceptHeaderLocaleResolver localeResolver = new AcceptHeaderLocaleResolver();
+        localeResolver.setDefaultLocale(Locale.US);
+        return localeResolver;
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        if (!multitenant) {
+            // add extra resource handler to serve local resources - single host deployment only
+            registry.addResourceHandler("/assets/**")
+                    .addResourceLocations("file:/opt/assets/");
+        }
+    }
+
+    @Bean
     public MethodValidationPostProcessor methodValidationPostProcessor() {
         MethodValidationPostProcessor methodValidationPostProcessor = new MethodValidationPostProcessor();
-        methodValidationPostProcessor.setValidator(localValidator());
+        methodValidationPostProcessor.setValidator(validator());
         return methodValidationPostProcessor;
     }
 
@@ -97,9 +117,9 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public NullSafeDozerBeanMapper mapper() {
-        NullSafeDozerBeanMapper dozerBeanMapper = new NullSafeDozerBeanMapper();
-        dozerBeanMapper.setMappingFiles(Arrays.asList(DOZER_MAPPING_FILES));
-        return dozerBeanMapper;
+        NullSafeDozerBeanMapper beanMapper = new NullSafeDozerBeanMapper();
+        beanMapper.setMappingFiles(Arrays.asList(DOZER_MAPPING_FILES));
+        return beanMapper;
     }
 
     @Bean
@@ -125,11 +145,22 @@ public class WebConfig implements WebMvcConfigurer {
                 .build();
     }
 
+    /**
+     * Registers placeholder configurer to resolve properties
+     * Order is required, `cause  there is at least one placeholder configurer in servlet context by default.
+     * Order is necessary to resolve their conflicts
+     * @return a created placeholder configurer
+     */
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
         PropertySourcesPlaceholderConfigurer placeholderConfigurer = new PropertySourcesPlaceholderConfigurer();
         placeholderConfigurer.setOrder(Integer.MIN_VALUE);
         return placeholderConfigurer;
+    }
+
+    @Bean
+    public CommonsMultipartResolver multipartResolver() {
+        return new CommonsMultipartResolver();
     }
 
 }

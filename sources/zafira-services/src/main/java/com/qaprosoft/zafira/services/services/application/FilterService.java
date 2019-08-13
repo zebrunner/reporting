@@ -15,12 +15,6 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.FilterMapper;
 import com.qaprosoft.zafira.models.db.Filter;
 import com.qaprosoft.zafira.models.dto.filter.FilterType;
@@ -28,19 +22,21 @@ import com.qaprosoft.zafira.models.dto.filter.StoredSubject;
 import com.qaprosoft.zafira.models.dto.filter.Subject;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class FilterService {
 
-    @Autowired
-    private FilterMapper filterMapper;
-
+    private final FilterMapper filterMapper;
+    private final FreemarkerUtil freemarkerUtil;
     private StoredSubject storedSubject;
 
-    @Autowired
-    private FreemarkerUtil freemarkerUtil;
-
-    public FilterService() {
+    public FilterService(FilterMapper filterMapper, FreemarkerUtil freemarkerUtil) {
+        this.filterMapper = filterMapper;
+        this.freemarkerUtil = freemarkerUtil;
         this.storedSubject = new StoredSubject();
     }
 
@@ -70,8 +66,13 @@ public class FilterService {
     }
 
     @Transactional(readOnly = true)
-    public Filter getFilterByName(String name) {
-        return filterMapper.getFilterByName(name);
+    public List<Filter> getAllFilters() {
+        return filterMapper.getAllFilters();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Filter> getFiltersByName(String name) {
+        return filterMapper.getFiltersByName(name);
     }
 
     @Transactional(readOnly = true)
@@ -85,7 +86,7 @@ public class FilterService {
         if (dbFilter == null) {
             throw new ServiceException("No filters found by id: " + filter.getId());
         }
-        if (!filter.getName().equals(dbFilter.getName()) && getFilterByName(filter.getName()) != null) {
+        if (!filter.getName().equals(dbFilter.getName()) && isFilterExists(filter)) {
             throw new ServiceException("Filter with name '" + filter.getName() + "' already exists");
         }
         dbFilter.setName(filter.getName());
@@ -108,4 +109,17 @@ public class FilterService {
     public String getTemplate(FilterType filter, Template template) {
         return freemarkerUtil.getFreeMarkerTemplateContent(template.getPath(), filter);
     }
+
+    public boolean isFilterExists(Filter filter) {
+        boolean result;
+        List<Filter> filters = getFiltersByName(filter.getName());
+
+        if (filter.isPublicAccess()) {
+            result = filters.stream().anyMatch(f -> f.getName().equals(filter.getName()) && f.isPublicAccess());
+        } else {
+            result = filters.stream().anyMatch(f -> f.getName().equals(filter.getName()) && f.getUserId().equals(filter.getUserId()) && !f.isPublicAccess());
+        }
+        return result;
+    }
+
 }

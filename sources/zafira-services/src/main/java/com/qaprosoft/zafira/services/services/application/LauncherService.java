@@ -21,11 +21,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.qaprosoft.zafira.models.dto.JenkinsLauncherType;
+import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,7 +65,7 @@ public class LauncherService {
     private final JWTService jwtService;
     private final GitHubService gitHubService;
     private final SeleniumService seleniumService;
-    private final String apiUrl;
+    private final URLResolver urlResolver;
 
     public LauncherService(LauncherMapper launcherMapper,
                            JenkinsService jenkinsService,
@@ -73,7 +74,7 @@ public class LauncherService {
                            JWTService jwtService,
                            GitHubService gitHubService,
                            SeleniumService seleniumService,
-                           @Value("${zafira.webservice.url}") String apiUrl) {
+                           URLResolver urlResolver) {
         this.launcherMapper = launcherMapper;
         this.jenkinsService = jenkinsService;
         this.scmAccountService = scmAccountService;
@@ -81,7 +82,7 @@ public class LauncherService {
         this.jwtService = jwtService;
         this.gitHubService = gitHubService;
         this.seleniumService = seleniumService;
-        this.apiUrl = apiUrl;
+        this.urlResolver = urlResolver;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -161,7 +162,7 @@ public class LauncherService {
     }
 
     @Transactional(readOnly = true)
-    public void buildLauncherJob(Launcher launcher, User user) throws IOException, ServiceException {
+    public String buildLauncherJob(Launcher launcher, User user) throws IOException, ServiceException {
 
         ScmAccount scmAccount = scmAccountService.getScmAccountById(launcher.getScmAccount().getId());
         if (scmAccount == null)
@@ -189,7 +190,7 @@ public class LauncherService {
         }
 
         jobParameters.put("zafira_enabled", "true");
-        jobParameters.put("zafira_service_url", apiUrl.replace("api", TenancyContext.getTenantName()));
+        jobParameters.put("zafira_service_url", urlResolver.buildWebserviceUrl());
         jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, TenancyContext.getTenantName()));
 
         String args = jobParameters.entrySet().stream()
@@ -197,12 +198,19 @@ public class LauncherService {
                                    .map(param -> param.getKey() + "=" + param.getValue())
                                    .collect(Collectors.joining(","));
 
-        jobParameters.put("overrideFields", args);
+        jobParameters.put("zafiraFields", args);
+
+        // CiRunId is a random string, needs to define unique correlation between started launcher and real test run starting
+        // It must be returned with test run on start in testRun.ciRunId field
+        String ciRunId = UUID.randomUUID().toString();
+        jobParameters.put("ci_run_id", ciRunId);
 
         if (!JenkinsService.checkArguments(jobParameters))
             throw new ServiceException("Required arguments not found");
 
         jenkinsService.buildJob(job, jobParameters);
+
+        return ciRunId;
     }
 
     @Transactional(readOnly = true)
@@ -215,7 +223,7 @@ public class LauncherService {
         String repositoryName = scmAccount.getRepositoryName();
         String organizationName = scmAccount.getOrganizationName();
         String accessToken = scmAccount.getAccessToken();
-        String loginName = gitHubService.getLoginName(accessToken);
+        String loginName = gitHubService.getLoginName(scmAccount);
 
         Map<String, String> jobParameters = new HashMap<>();
         jobParameters.put("userId", String.valueOf(user.getId()));
@@ -227,13 +235,13 @@ public class LauncherService {
         jobParameters.put("githubUser", loginName);
         jobParameters.put("githubToken", accessToken);
         jobParameters.put("onlyUpdated", String.valueOf(false));
-        jobParameters.put("zafira_service_url", apiUrl.replace("api", tenantName));
+        jobParameters.put("zafira_service_url", urlResolver.buildWebserviceUrl());
         jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, tenantName));
 
         String args = jobParameters.entrySet().stream()
                                    .map(param -> param.getKey() + "=" + param.getValue()).collect(Collectors.joining(","));
 
-        jobParameters.put("overrideFields", args);
+        jobParameters.put("zafiraFields", args);
 
         JobResult result = jenkinsService.buildScannerJob(repositoryName, jobParameters, rescan);
         if (result == null || !result.isSuccess()) {
@@ -258,4 +266,5 @@ public class LauncherService {
     public Integer getBuildNumber(String queueItemUrl) {
         return jenkinsService.getBuildNumber(new QueueReference(queueItemUrl));
     }
+
 }

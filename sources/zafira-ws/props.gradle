@@ -1,5 +1,3 @@
-// Property expansion task: propagates properties from gradle.properties to application configuration
-
 import org.apache.tools.ant.filters.ReplaceTokens
 
 processResources {
@@ -15,6 +13,5 @@ processResources {
                     filter(ReplaceTokens, tokens: [ ('project.' + prop.key): prop.value])
                 }
         }
-        //filter(ReplaceTokens, tokens: ["api.version": project.property("version")])
     }
 }

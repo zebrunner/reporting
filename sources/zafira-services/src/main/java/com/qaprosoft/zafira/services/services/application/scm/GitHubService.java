@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.scm;
 
+import com.qaprosoft.zafira.models.db.ScmAccount;
 import com.qaprosoft.zafira.models.dto.scm.Organization;
 import com.qaprosoft.zafira.models.dto.scm.Repository;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -53,18 +54,20 @@ public class GitHubService implements IScmService {
     }
 
     @Override
-    public List<Repository> getRepositories(String accessToken, String organizationName) throws IOException, ServiceException {
-        GitHub gitHub = GitHub.connectUsingOAuth(accessToken);
+    public List<Repository> getRepositories(ScmAccount scmAccount, String organizationName) throws IOException, ServiceException {
+        GitHub gitHub = connectToGitHub(scmAccount);
         GHPerson person = StringUtils.isBlank(organizationName) ? gitHub.getMyself() : gitHub.getOrganization(organizationName);
         return person.listRepositories().asList().stream().map(this::mapRepository).collect(Collectors.toList());
     }
 
     @Override
-    public Repository getRepository(String accessToken, String organizationName, String repositoryName) {
+    public Repository getRepository(ScmAccount scmAccount) {
+        String organizationName = scmAccount.getOrganizationName();
+        String repositoryName = scmAccount.getRepositoryName();
         GHRepository repository = null;
         if (!StringUtils.isBlank(organizationName) && !StringUtils.isBlank(repositoryName)) {
             try {
-                GitHub gitHub = GitHub.connectUsingOAuth(accessToken);
+                GitHub gitHub = connectToGitHub(scmAccount);
                 String repositoryAbsoluteName = organizationName + "/" + repositoryName;
                 repository = gitHub.getRepository(repositoryAbsoluteName);
             } catch (IOException e) {
@@ -75,8 +78,8 @@ public class GitHubService implements IScmService {
     }
 
     @Override
-    public List<Organization> getOrganizations(String accessToken) throws IOException, ServiceException {
-        GitHub gitHub = GitHub.connectUsingOAuth(accessToken);
+    public List<Organization> getOrganizations(ScmAccount scmAccount) throws IOException, ServiceException {
+        GitHub gitHub = connectToGitHub(scmAccount);
         List<Organization> organizations = gitHub.getMyself().getAllOrganizations().stream().map(organization -> {
             Organization result = new Organization(organization.getLogin());
             result.setAvatarURL(organization.getAvatarUrl());
@@ -94,11 +97,11 @@ public class GitHubService implements IScmService {
     }
 
     @Override
-    public String getLoginName(String accessToken) {
+    public String getLoginName(ScmAccount scmAccount) {
         String result = null;
         GitHub gitHub;
         try {
-            gitHub = GitHub.connectUsingOAuth(accessToken);
+            gitHub = connectToGitHub(scmAccount);
             result = gitHub.getMyself().getLogin();
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
@@ -114,4 +117,19 @@ public class GitHubService implements IScmService {
         return repo;
     }
 
+    private GitHub connectToGitHub(ScmAccount scmAccount) throws IOException {
+        GitHub gitHub;
+        switch (scmAccount.getName()) {
+            case GITHUB:
+                gitHub = GitHub.connectUsingOAuth(scmAccount.getAccessToken());
+                break;
+            case GITHUB_ENTERPRISE:
+                String apiUrl = scmAccount.getApiVersion();
+                gitHub = GitHub.connectToEnterpriseWithOAuth(apiUrl, scmAccount.getLogin(), scmAccount.getAccessToken());
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + scmAccount.getName());
+        }
+        return gitHub;
+    }
 }

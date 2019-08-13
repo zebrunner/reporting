@@ -17,17 +17,16 @@ package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.Attachment;
 import com.qaprosoft.zafira.models.dto.EmailType;
-import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.services.services.application.EmailService;
+import com.qaprosoft.zafira.services.services.application.UploadService;
 import com.qaprosoft.zafira.services.services.application.emails.CommonEmail;
-import com.qaprosoft.zafira.services.services.application.integration.impl.AmazonService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,17 +50,22 @@ import static com.qaprosoft.zafira.models.dto.aws.FileUploadType.Type;
 @RestController
 public class UploadController extends AbstractController {
 
-    @Autowired
-    private AmazonService amazonService;
+    private final EmailService emailService;
+    private final UploadService uploadService;
 
-    @Autowired
-    private EmailService emailService;
+    @Value("${zafira.multitenant}")
+    private boolean multitenant;
+
+    public UploadController(EmailService emailService, UploadService uploadService) {
+        this.emailService = emailService;
+        this.uploadService = uploadService;
+    }
 
     @ApiOperation(value = "Upload file", nickname = "uploadFile", httpMethod = "POST", response = String.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping()
     public String uploadFile(@RequestHeader("FileType") Type type, @RequestParam("file") MultipartFile file) {
-        return String.format("{\"url\": \"%s\"}", amazonService.saveFile(new FileUploadType(file, type)));
+        return uploadService.upload(type, file);
     }
 
     @ApiOperation(value = "Send image by email", nickname = "sendImageByEmail", httpMethod = "POST")
@@ -74,11 +78,15 @@ public class UploadController extends AbstractController {
                 "." + FilenameUtils.getExtension(file.getOriginalFilename()));
         file.transferTo(attachment);
         attachments.add(new Attachment(email.getSubject(), attachment));
-        emailService.sendEmail(new CommonEmail(email.getSubject(), email.getText(), attachments), email.getRecipients()
-                .trim()
-                .replaceAll(",", " ")
-                .replaceAll(";", " ")
-                .split(" "));
+        String[] recipients = obtainRecipients(email.getRecipients());
+        emailService.sendEmail(new CommonEmail(email.getSubject(), email.getText(), attachments), recipients);
+    }
+
+    private String[] obtainRecipients(String recipientsLine) {
+        return recipientsLine.trim()
+                             .replaceAll(",", " ")
+                             .replaceAll(";", " ")
+                             .split(" ");
     }
 
 }

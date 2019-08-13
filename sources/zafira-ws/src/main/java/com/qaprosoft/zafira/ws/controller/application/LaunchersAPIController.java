@@ -15,7 +15,6 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Launcher;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.JobResult;
@@ -23,6 +22,7 @@ import com.qaprosoft.zafira.models.dto.LauncherScannerType;
 import com.qaprosoft.zafira.models.dto.LauncherType;
 import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
 import com.qaprosoft.zafira.models.push.LauncherPush;
+import com.qaprosoft.zafira.models.push.LauncherRunPush;
 import com.qaprosoft.zafira.services.services.application.LauncherService;
 import com.qaprosoft.zafira.services.services.application.UserService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
@@ -124,7 +124,10 @@ public class LaunchersAPIController extends AbstractController {
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @PostMapping("/build")
     public void build(@RequestBody @Valid LauncherType launcherType) throws IOException {
-        launcherService.buildLauncherJob(mapper.map(launcherType, Launcher.class), userService.getNotNullUserById(getPrincipalId()));
+        Launcher launcher = mapper.map(launcherType, Launcher.class);
+        User principal = userService.getNotNullUserById(getPrincipalId());
+        String ciRunId = launcherService.buildLauncherJob(launcher, principal);
+        websocketTemplate.convertAndSend(getLauncherRunsWebsocketPath(), new LauncherRunPush(launcher, ciRunId));
     }
 
     @ResponseStatusDetails

@@ -74,7 +74,7 @@ public class ScmAccountService {
         if(scmAccount == null) {
             throw new ForbiddenOperationException("Unable to retrieve scm account default branch name");
         }
-        Repository repository = gitHubService.getRepository(scmAccount.getAccessToken(), scmAccount.getOrganizationName(), scmAccount.getRepositoryName());
+        Repository repository = gitHubService.getRepository(scmAccount);
         if(repository == null) {
             throw new ForbiddenOperationException("Unable to retrieve scm account default branch name");
         }

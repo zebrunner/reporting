@@ -25,6 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import static com.qaprosoft.zafira.models.push.AbstractPush.Type.LAUNCHER;
+import static com.qaprosoft.zafira.models.push.AbstractPush.Type.LAUNCHER_RUN;
 import static com.qaprosoft.zafira.models.push.AbstractPush.Type.TEST;
 import static com.qaprosoft.zafira.models.push.AbstractPush.Type.TEST_RUN;
 import static com.qaprosoft.zafira.models.push.AbstractPush.Type.TEST_RUN_STATISTICS;
@@ -45,6 +46,10 @@ public abstract class AbstractController {
 
     protected String getLaunchersWebsocketPath() {
         return buildWebSocketPath(LAUNCHER, TenancyContext.getTenantName());
+    }
+
+    protected String getLauncherRunsWebsocketPath() {
+        return buildWebSocketPath(LAUNCHER_RUN, TenancyContext.getTenantName());
     }
 
     private String buildWebSocketPath(AbstractPush.Type type, Object... parameters) {

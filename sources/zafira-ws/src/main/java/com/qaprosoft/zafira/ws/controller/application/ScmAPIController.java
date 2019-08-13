@@ -163,7 +163,7 @@ public class ScmAPIController extends AbstractController {
         if (scmAccount == null) {
             throw new ForbiddenOperationException("Unable to list organizations");
         }
-        return gitHubService.getOrganizations(scmAccount.getAccessToken());
+        return gitHubService.getOrganizations(scmAccount);
     }
 
     @ResponseStatusDetails
@@ -181,13 +181,13 @@ public class ScmAPIController extends AbstractController {
 
         List<ScmAccount> allAccounts = scmAccountService.getAllScmAccounts();
         List<String> repositoryUrls = allAccounts.stream()
-                .map(ScmAccount::getRepositoryURL)
-                .collect(Collectors.toList());
+                                                 .map(ScmAccount::getRepositoryURL)
+                                                 .collect(Collectors.toList());
 
-        List<Repository> repositories = gitHubService.getRepositories(scmAccount.getAccessToken(), organizationName);
+        List<Repository> repositories = gitHubService.getRepositories(scmAccount, organizationName);
         return repositories.stream()
-                .filter(repository -> !repositoryUrls.contains(repository.getUrl()))
-                .collect(Collectors.toList());
+                           .filter(repository -> !repositoryUrls.contains(repository.getUrl()))
+                           .collect(Collectors.toList());
     }
 
 }
