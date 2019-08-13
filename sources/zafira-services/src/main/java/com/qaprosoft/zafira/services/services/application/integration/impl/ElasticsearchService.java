@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
 import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.services.exceptions.ExternalSystemException;
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import com.qaprosoft.zafira.services.util.ElasticsearchResultHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +53,8 @@ import static com.qaprosoft.zafira.models.db.Setting.Tool.ELASTICSEARCH;
 @SuppressWarnings("rawtypes")
 @Component
 public class ElasticsearchService extends AbstractIntegration {
+
+    private static final String ERR_MSG_SEARCH_SCREENSHOTS = "Cannot get screenshots from elasticsearch";
 
     private final String url;
     private final String user;
@@ -98,7 +101,7 @@ public class ElasticsearchService extends AbstractIntegration {
                     }
                 }
             } catch (IOException e) {
-                throw new RuntimeException("Cannot get screenshots from elasticsearch", e);
+                throw new ExternalSystemException(ERR_MSG_SEARCH_SCREENSHOTS, e);
             }
         }
         return result;
