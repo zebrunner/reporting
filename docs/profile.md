@@ -16,6 +16,4 @@ In **Access token** area integration data could be obtained. Copy *Service URL* 
   <img src="img/my_profile_change_password.png">
 </p>
 
-In **Change password** area user can update current password. Password must contain not less than 5 characters (could be letters, numbers, special symbols).
-
-In **Access token** area token required for Zafira integration can be generated and copied .
+In **Change password** area there are fields for the current password update. The new password must contain not less than 5 characters which could be letters, numbers, special symbols.
