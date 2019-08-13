@@ -31,4 +31,6 @@ dependencies {
     compile dependencyManager.logbackCore
     compile dependencyManager.logbackClassic
 
+    providedRuntime dependencyManager.springBootStarterTomcat
+
 }

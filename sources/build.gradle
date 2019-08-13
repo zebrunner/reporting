@@ -1,18 +1,17 @@
 buildscript {
     ext {
-        springBootVersion = '2.1.6.RELEASE'
-        dependencyManagementPluginVersion = '0.5.3.RELEASE'
+        springBootVersion = '2.1.7.RELEASE'
     }
     repositories {
         mavenCentral()
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath("io.spring.gradle:dependency-management-plugin:${dependencyManagementPluginVersion}")
     }
 }
 
 apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
 
 allprojects {
     group = 'com.qaprosoft'
