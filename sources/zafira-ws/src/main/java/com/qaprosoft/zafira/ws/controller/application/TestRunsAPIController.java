@@ -192,9 +192,12 @@ public class TestRunsAPIController extends AbstractController {
         if (testRun == null) {
             throw new TestRunNotFoundException("Test run not found for abort!");
         }
-
+        String abortCauseValue = abortCause.getComment();
+        if(abortCauseValue != null) {
+            abortCauseValue = URLDecoder.decode(abortCauseValue, "UTF-8");
+        }
         if (Status.IN_PROGRESS.equals(testRun.getStatus()) || Status.QUEUED.equals(testRun.getStatus())) {
-            testRunService.abortTestRun(testRun, URLDecoder.decode(abortCause.getComment(), "UTF-8"));
+            testRunService.abortTestRun(testRun, abortCauseValue);
             for (Test test : testService.getTestsByTestRunId(testRun.getId())) {
                 if (Status.ABORTED.equals(test.getStatus())) {
                     websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
