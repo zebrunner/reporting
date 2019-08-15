@@ -6,8 +6,6 @@ description = 'zafira-web'
 
 def dependencyManager = rootProject.ext.dependencyManagement
 
-apply from: 'props.gradle'
-
 dependencies {
 
     compile project(':zafira-dbaccess')
