@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration;
 
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
@@ -77,7 +78,7 @@ public abstract class AbstractIntegration<T extends AbstractContext> implements 
                         Setting.SettingType toolSetting = Setting.SettingType.valueOf(setting.getName());
                         if (toolSetting.isRequired() && StringUtils.isBlank(setting.getValue())) {
                             removeContext();
-                            throw new IntegrationException("Integration tool '" + tool + "' data is malformed. Setting '" + setting.getName() + "' is required");
+                            throw new IntegrationException("Integration tool '" + tool + "' data is malformed for tenant : [" + TenancyContext.getTenantName() + "]. Setting '" + setting.getName() + "' is required");
                         }
                         if (setting.isEncrypted()) {
                             setting.setValue(mapEncrypted(setting));
@@ -94,7 +95,7 @@ public abstract class AbstractIntegration<T extends AbstractContext> implements 
             } catch (InstantiationException e) {
                 throw new IntegrationException(e.getMessage(), e);
             } catch (Exception e) {
-                LOGGER.error("Unable to initialize '" + tool + "' settings", e);
+                LOGGER.error("Unable to initialize '" + tool + "' settings for tenant: [" + TenancyContext.getTenantName() + "]", e);
             }
         }
     }
