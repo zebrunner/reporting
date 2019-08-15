@@ -23,6 +23,7 @@ ext {
     javax_mail_version = "1.4.7"
     javax_mail_api_version = "1.5.5"
     javax_validation_version = "1.1.0.Final"
+    javax_xml_bind_version_api = "2.3.1"
 
     slf4j_version = "1.7.5"
     logback_version = "1.1.10"
@@ -89,6 +90,7 @@ ext {
             javaxMail : "javax.mail:mail:$javax_mail_version",
             javaxMailApi : "javax.mail:javax.mail-api:$javax_mail_api_version",
             javaxValidation : "javax.validation:validation-api:$javax_validation_version",
+            javaxXmlBindApi : "javax.xml.bind:jaxb-api:$javax_xml_bind_version_api",
 
             jodaTime : "joda-time:joda-time:$joda_time_version",
             guava : "com.google.guava:guava:$guava_version",

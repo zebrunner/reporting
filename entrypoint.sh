@@ -1,35 +1,35 @@
 #!/bin/bash
 
 # Change Zafira API URL
-cd $CATALINA_HOME/temp
+#cd $CATALINA_HOME/temp
 
-if [ "$ZAFIRA_LDAP_ENABLED" == "true" ];
-then
-  unzip -qq zafira-ws.war -d zafira-ws
-  rm -rf zafira-ws.war
-  sed -i -e 's#<!-- security:authentication-provider ref="ldapAuthProvider"  / -->#<security:authentication-provider ref="ldapAuthProvider"/>#g' zafira-ws/WEB-INF/spring-security.xml
-  cd zafira-ws && zip -r ../zafira-ws.war * && cd ..
-fi
+#if [ "$ZAFIRA_LDAP_ENABLED" == "true" ];
+#then
+#  unzip -qq zafira-ws.jar -d zafira-ws
+#  rm -rf zafira-ws.jar
+#  sed -i -e 's#<!-- security:authentication-provider ref="ldapAuthProvider"  / -->#<security:authentication-provider ref="ldapAuthProvider"/>#g' zafira-ws/WEB-INF/spring-security.xml
+#  cd zafira-ws && zip -r ../zafira-ws.war * && cd ..
+#fi
 
 # Place WAR to webapps
-cp zafira-ws.war $CATALINA_HOME/webapps/zafira-ws.war
+#cp zafira-ws.war $CATALINA_HOME/webapps/zafira-ws.war
 
 # Clear temp
-rm -rf zafira*
+#rm -rf zafira*
 
 # Install Newrelic if license key specified
-if [ ! -z "$ZAFIRA_NEWRELIC_KEY" ];
-then
-  unzip $CATALINA_HOME/temp/newrelic.zip -d $CATALINA_HOME/
-  cd $CATALINA_HOME/newrelic
-  sed -i -e 's#ZAFIRA_NEWRELIC_ENABLED#'"$ZAFIRA_NEWRELIC_ENABLED"'#g' newrelic.yml
-  sed -i -e 's#ZAFIRA_NEWRELIC_KEY#'"$ZAFIRA_NEWRELIC_KEY"'#g' newrelic.yml
-  sed -i -e 's#ZAFIRA_NEWRELIC_APP#'"$ZAFIRA_NEWRELIC_APP"'#g' newrelic.yml
-  sed -i -e 's#ZAFIRA_NEWRELIC_AUDIT_MODE#'"$ZAFIRA_NEWRELIC_AUDIT_MODE"'#g' newrelic.yml
-  sed -i -e 's#ZAFIRA_NEWRELIC_LOG_LEVEL#'"$ZAFIRA_NEWRELIC_LOG_LEVEL"'#g' newrelic.yml
-  java -jar newrelic.jar install
-  cd ..
-fi
+#if [ ! -z "$ZAFIRA_NEWRELIC_KEY" ];
+#then
+#  unzip $CATALINA_HOME/temp/newrelic.zip -d $CATALINA_HOME/
+#  cd $CATALINA_HOME/newrelic
+#  sed -i -e 's#ZAFIRA_NEWRELIC_ENABLED#'"$ZAFIRA_NEWRELIC_ENABLED"'#g' newrelic.yml
+#  sed -i -e 's#ZAFIRA_NEWRELIC_KEY#'"$ZAFIRA_NEWRELIC_KEY"'#g' newrelic.yml
+#  sed -i -e 's#ZAFIRA_NEWRELIC_APP#'"$ZAFIRA_NEWRELIC_APP"'#g' newrelic.yml
+#  sed -i -e 's#ZAFIRA_NEWRELIC_AUDIT_MODE#'"$ZAFIRA_NEWRELIC_AUDIT_MODE"'#g' newrelic.yml
+#  sed -i -e 's#ZAFIRA_NEWRELIC_LOG_LEVEL#'"$ZAFIRA_NEWRELIC_LOG_LEVEL"'#g' newrelic.yml
+#  java -jar newrelic.jar install
+#  cd ..
+#fi
 
 # Run Tomcat
 echo zafira.multitenant=$ZAFIRA_MULTITENANT >> $CATALINA_HOME/conf/catalina.properties

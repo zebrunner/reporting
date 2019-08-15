@@ -11,6 +11,7 @@ dependencies {
     compile dependencyManager.c3p0
     compile dependencyManager.mybatis
     compile dependencyManager.springMybatis
+    compile dependencyManager.javaxXmlBindApi
     testCompile dependencyManager.testNG
     testCompile dependencyManager.springTest
 

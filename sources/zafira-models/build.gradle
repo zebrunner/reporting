@@ -11,5 +11,6 @@ dependencies {
     compile dependencyManager.hibernateValidator
     compile dependencyManager.javaxValidation
     compile dependencyManager.jacksonCore
+    compile dependencyManager.javaxXmlBindApi
 
 }
