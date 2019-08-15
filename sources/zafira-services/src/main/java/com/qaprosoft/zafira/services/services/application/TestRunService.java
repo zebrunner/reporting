@@ -37,7 +37,6 @@ import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
 import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
@@ -389,7 +388,7 @@ public class TestRunService {
                     }
                 }
             }
-            testRun = addComment(testRun.getId(), abortCause);
+            testRun.setComments(abortCause);
             testRun.setStatus(Status.ABORTED);
             updateTestRun(testRun);
             calculateTestRunResult(testRun.getId(), true);
@@ -399,14 +398,18 @@ public class TestRunService {
 
     @Transactional(rollbackFor = Exception.class)
     public TestRun markAsReviewed(Long id, String comment) {
-        TestRun tr = addComment(id, comment);
-        if (!"undefined failure".equalsIgnoreCase(comment)) {
-            tr.setReviewed(true);
+        TestRun testRun = getTestRunById(id);
+        if (testRun == null) {
+            throw new ServiceException("No test run found by ID: " + id);
         }
-        tr = updateTestRun(tr);
-        TestRunStatistics.Action action = tr.isReviewed() ? TestRunStatistics.Action.MARK_AS_REVIEWED : TestRunStatistics.Action.MARK_AS_NOT_REVIEWED;
-        updateStatistics(tr.getId(), action);
-        return tr;
+        testRun.setComments(comment);
+        if (!"undefined failure".equalsIgnoreCase(comment)) {
+            testRun.setReviewed(true);
+        }
+        testRun = updateTestRun(testRun);
+        TestRunStatistics.Action action = testRun.isReviewed() ? TestRunStatistics.Action.MARK_AS_REVIEWED : TestRunStatistics.Action.MARK_AS_NOT_REVIEWED;
+        updateStatistics(testRun.getId(), action);
+        return testRun;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -590,17 +593,6 @@ public class TestRunService {
             }
         }
         return failure;
-    }
-
-    @Transactional
-    public TestRun addComment(long id, String comment) {
-        TestRun testRun = getTestRunById(id);
-        if (testRun == null) {
-            throw new ServiceException("No test run found by ID: " + id);
-        }
-        testRun.setComments(comment);
-        updateTestRun(testRun);
-        return testRunMapper.getTestRunByIdFull(id);
     }
 
     @Transactional(readOnly = true)
