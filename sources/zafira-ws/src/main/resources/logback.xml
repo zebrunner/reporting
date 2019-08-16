@@ -14,13 +14,10 @@
 
         <file>${catalina.home}/logs/zafira-app.log</file>
 
-        <rollingPolicy
-                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${catalina.home}/logs/zafira-app-%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
             <maxHistory>5</maxHistory>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>10MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxFileSize>10MB</maxFileSize>
         </rollingPolicy>
     </appender>
 
