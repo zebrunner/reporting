@@ -12,14 +12,17 @@ spring:
       use-key-prefix: true
       time-to-live: 43200
   redis:
-    host: ${zafira.redis.host}
-    port: ${zafira.redis.port}
+    host: ${redis.host}
+    port: ${redis.port}
   rabbitmq:
-    host: ${zafira.rabbitmq.stomp.host}
-    port: ${zafira.rabbitmq.port}
-    username: ${zafira.rabbitmq.user}
-    password: ${zafira.rabbitmq.pass}
+    host: ${rabbitmq.host}
+    port: ${rabbitmq.port}
+    username: ${rabbitmq.username}
+    password: ${rabbitmq.password}
     virtual-host: /
+    stomp:
+      host: ${rabbitmq.stomp.host}
+      port: ${rabbitmq.stomp.port}
     listener:
       simple:
         concurrency: 1
@@ -30,64 +33,54 @@ spring:
     template-loader-path: classpath:/templates/
     suffix: ftl
 
+### Datasource settings
+datasource:
+  driver-class: org.postgresql.Driver
+  url: ${database.url}
+  username: ${database.username}
+  password: ${database.password}
+  pool-size: ${database.pool.size}
+  idle-connection-test-period: 30000
+
+### ElasticSearch settings
+elasticsearch:
+  url: ${elasticsearch.url}
+  username: ${elasticsearch.username}
+  password: ${elasticsearch.password}
+
+### GitHub settings
+github:
+  client-id: ${github.client.id}
+  client-secret: ${github.client.secret}
+
+### Auth settings
+auth:
+  token:
+    expiration: 300
+    refresh-expiration: 10080
+    secret: ${auth.token.secret}
+
+### Zafira settings
 zafira:
-  webservice:
-    url: ${zafira.url}:${zafira.ws.path}
-  web:
-    url: ${zafira.url}:${zafira.web.path}
-  service:
-    version: ${zafira.service.version}
-  client:
-    version: ${zafira.client.version}
   multitenant: ${zafira.multitenant}
-  debugMode: ${zafira.debug.mode}
-  artifacts:
-    useProxy: false
+  version: ${zafira.version}
+  client-version: ${zafira.client.version}
+  debug-enabled: ${zafira.debug.enabled}
+  app-url: ${zafira.app.url}
+  web-context-path: ${zafira.web.context.path}
+  rest-context-path: ${zafira.rest.context.path}
+  web-url: ${zafira.app-url}/${zafira.web-context-path}
+  rest-url: ${zafira.app-url}/${zafira.rest-context-path}
+  use-artifact-proxy: ${zafira.use.artifact.proxy}
+  slack:
+    image-url: https://s3-us-west-1.amazonaws.com/zebrunner/common/zfr-email.png
+    author: zafira notifications
   admin:
     username: ${zafira.admin.username}
-    password: ${zafira.admin.password}
+    password: ${zafora.admin.password}
     group: ${zafira.admin.group}
-  elasticsearch:
-    url: ${zafira.elasticsearch.url}
-    user: ${zafira.elasticsearch.user}
-    pass: ${zafira.elasticsearch.pass}
-  redis:
-    host: ${zafira.redis.host}
-    port: ${zafira.redis.port}
-  rabbitmq:
-    host: ${zafira.rabbitmq.host}
-    port: ${zafira.rabbitmq.port}
-    vhost: /
-    user: ${zafira.rabbitmq.user}
-    pass: ${zafira.rabbitmq.pass}
-    stomp:
-      host: ${zafira.rabbitmq.stomp.host}
-      port: ${zafira.rabbitmq.stomp.port}
-  db:
-    jdbc:
-      driverClass: org.postgresql.Driver
-      url: ${zafira.jdbc.url}
-      user: ${zafira.jdbc.user}
-      password: ${zafira.jdbc.pass}
-    c3p0:
-      maxPoolSize: ${zafira.jdbc.pool.size}
-      idleConnectionTestPeriod: 30000
-  jwt:
-    secret: ${zafira.jwt.secret}
-    authTokenExp: 300
-    refreshTokenExp: 10080
-  crypto_salt: ${zafira.crypto_salt}
-  slack:
-    image: https://s3-us-west-1.amazonaws.com/zebrunner/common/zfr-email.png
-    author: zafira notifications
-  amazon:
-    token:
-      expiration: 43200
-  google:
-    token:
-      expiration: 43200
-  scm:
-    github:
-      client:
-        id: ${zafira.scm.github.client.id}
-        secret: ${zafira.scm.github.client.secret}
+
+### Other application settings
+crypto-salt: ${crypto.salt}
+amazon-token-expiration: 43200
+google-token-expiration: 43200

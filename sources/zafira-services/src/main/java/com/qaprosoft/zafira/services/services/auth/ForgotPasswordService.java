@@ -36,10 +36,12 @@ public class ForgotPasswordService {
     private final EmailService emailService;
     private final UserService userService;
 
-    public ForgotPasswordService(@Value("${zafira.slack.image}") String zafiraLogoURL,
+    public ForgotPasswordService(
+            @Value("${zafira.slack.image-url}") String zafiraLogoURL,
             URLResolver urlResolver,
             EmailService emailService,
-            UserService userService) {
+            UserService userService
+    ) {
         this.zafiraLogoURL = zafiraLogoURL;
         this.urlResolver = urlResolver;
         this.emailService = emailService;

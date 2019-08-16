@@ -62,9 +62,9 @@ public class ElasticsearchService extends AbstractIntegration {
     private RestHighLevelClient client;
 
     public ElasticsearchService(
-            @Value("${zafira.elasticsearch.url}") String url,
-            @Value("${zafira.elasticsearch.user}") String user,
-            @Value("${zafira.elasticsearch.pass}") String password
+            @Value("${elasticsearch.url}") String url,
+            @Value("${elasticsearch.username}") String user,
+            @Value("${elasticsearch.password}") String password
     ) {
         super(ELASTICSEARCH);
         this.url = url;

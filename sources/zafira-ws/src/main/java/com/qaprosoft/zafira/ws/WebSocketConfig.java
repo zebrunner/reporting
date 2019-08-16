@@ -37,12 +37,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final String systemPasscode;
 
     public WebSocketConfig(
-            @Value("${zafira.rabbitmq.stomp.host}") String host,
-            @Value("${zafira.rabbitmq.stomp.port}") int port,
-            @Value("${zafira.rabbitmq.user}") String clientUser,
-            @Value("${zafira.rabbitmq.pass}") String clientPasscode,
-            @Value("${zafira.rabbitmq.user}") String systemUser,
-            @Value("${zafira.rabbitmq.pass}") String systemPasscode) {
+            @Value("${rabbitmq.stomp.host}") String host,
+            @Value("${rabbitmq.stomp.port}") int port,
+            @Value("${rabbitmq.username}") String clientUser,
+            @Value("${rabbitmq.password}") String clientPasscode,
+            @Value("${rabbitmq.username}") String systemUser,
+            @Value("${rabbitmq.password}") String systemPasscode) {
         this.host = host;
         this.port = port;
         this.clientUser = clientUser;

@@ -43,7 +43,7 @@ public class ApiExceptionHandler {
 
     private final boolean debugMode;
 
-    public ApiExceptionHandler(@Value("${zafira.debugMode:false}") boolean debugMode) {
+    public ApiExceptionHandler(@Value("${zafira.debug-enabled:false}") boolean debugMode) {
         this.debugMode = debugMode;
     }
 

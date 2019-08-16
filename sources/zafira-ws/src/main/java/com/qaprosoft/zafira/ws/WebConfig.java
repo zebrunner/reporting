@@ -123,7 +123,7 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public Docket api(@Value("${zafira.debugMode:false}") boolean debugMode) {
+    public Docket api(@Value("${zafira.debug-enabled:false}") boolean debugMode) {
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName("zafira-api")
                 .select()

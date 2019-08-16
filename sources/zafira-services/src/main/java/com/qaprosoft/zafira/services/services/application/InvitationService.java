@@ -56,7 +56,7 @@ public class InvitationService {
     private final UserService userService;
     private final GroupService groupService;
 
-    public InvitationService(@Value("${zafira.slack.image}") String zafiraLogoURL,
+    public InvitationService(@Value("${zafira.slack.image-url}") String zafiraLogoURL,
             URLResolver urlResolver,
             InvitationMapper invitationMapper,
             EmailService emailService,
