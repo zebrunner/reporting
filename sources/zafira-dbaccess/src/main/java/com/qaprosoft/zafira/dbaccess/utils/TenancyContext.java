@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.dbaccess.utils;
 
 import com.qaprosoft.zafira.models.db.Tenancy;
+import org.slf4j.MDC;
 
 /**
  * TenancyContext - stores client tenant ID.
@@ -28,6 +29,7 @@ public class TenancyContext {
 
     public static void setTenantName(String tenantName) {
         tenant.set(tenantName != null ? tenantName.toLowerCase() : null);
+        MDC.put("tenant.name", tenantName);
     }
 
     public static String getTenantName() {

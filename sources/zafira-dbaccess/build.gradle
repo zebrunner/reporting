@@ -16,6 +16,8 @@ dependencies {
     compile dependencyManager.springMybatis
     testCompile dependencyManager.testNG
     testCompile dependencyManager.springTest
+
+    compile dependencyManager.slf4jApi
 }
 
 test {
