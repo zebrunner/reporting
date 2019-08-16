@@ -49,9 +49,6 @@ ext {
 
     dependencyManagement = [
 
-//            springBootStarterTomcat : "org.springframework.boot:spring-boot-starter-tomcat",
-
-
             springBootStarterWeb : "org.springframework.boot:spring-boot-starter-web",
             springBootStarterSecurity : "org.springframework.boot:spring-boot-starter-security",
             springBootStarterDataJdbc : "org.springframework.boot:spring-boot-starter-data-jdbc",

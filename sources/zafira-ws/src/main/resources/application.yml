@@ -10,7 +10,7 @@ spring:
     cache-names: projects, users, testCases, environments, testRunStatistics, groups
     redis:
       use-key-prefix: true
-      time-to-live: 43200 # usePool is auto?
+      time-to-live: 43200
   redis:
     host: ${zafira.redis.host}
     port: ${zafira.redis.port}
@@ -40,9 +40,9 @@ zafira:
   client:
     version: ${zafira.client.version}
   multitenant: ${zafira.multitenant}
-  debugMode: ${zafira.debugMode}
+  debugMode: ${zafira.debug.mode}
   artifacts:
-    useProxy: ${zafira.artifacts.useProxy}
+    useProxy: false
   admin:
     username: ${zafira.admin.username}
     password: ${zafira.admin.password}
@@ -66,11 +66,11 @@ zafira:
   db:
     jdbc:
       driverClass: org.postgresql.Driver
-      url: ${zafira.db.jdbc.url}
-      user: ${zafira.db.jdbc.user}
-      password: ${zafira.db.jdbc.password}
+      url: ${zafira.jdbc.url}
+      user: ${zafira.jdbc.user}
+      password: ${zafira.jdbc.pass}
     c3p0:
-      maxPoolSize: ${zafira.db.c3p0.maxPoolSize}
+      maxPoolSize: ${zafira.jdbc.pool.size}
       idleConnectionTestPeriod: 30000
   jwt:
     secret: ${zafira.jwt.secret}
