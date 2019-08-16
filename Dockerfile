@@ -2,11 +2,11 @@ FROM openjdk:11-jdk-slim
 
 ARG version=1.0-SNAPSHOT
 
-ARG SERVICE_VER=1.0-SNAPSHOT
-ARG CLIENT_VER=1.0-SNAPSHOT
-
-ENV ZAFIRA_SERVICE_VERSION=${SERVICE_VER}
-ENV ZAFIRA_CLIENT_VERSION=${CLIENT_VER}
+#ARG SERVICE_VER=1.0-SNAPSHOT
+#ARG CLIENT_VER=1.0-SNAPSHOT
+#
+#ENV ZAFIRA_SERVICE_VERSION=${SERVICE_VER}
+#ENV ZAFIRA_CLIENT_VERSION=${CLIENT_VER}
 #ENV ZAFIRA_MULTITENANT=false
 #ENV ZAFIRA_URL=http://localhost:8080
 #ENV ZAFIRA_WS_URL=
@@ -58,9 +58,13 @@ ENV ZAFIRA_CLIENT_VERSION=${CLIENT_VER}
 
 #RUN apt-get update && apt-get install zip
 #RUN mkdir ${CATALINA_HOME}/shared
+
 RUN mkdir /opt/assets
 
 COPY ./sources/zafira-ws/build/libs/zafira-ws-${version}.jar /app/zafira-ws.jar
+
+CMD ["java", "-jar", "/app/zafira-ws.jar"]
+
 #COPY tools/newrelic.zip ${CATALINA_HOME}/temp/
 #COPY entrypoint.sh /
 

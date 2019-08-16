@@ -1,5 +1,5 @@
 plugins {
-    id 'war'
+    id 'java'
 }
 
 description = 'zafira-web'
@@ -29,6 +29,6 @@ dependencies {
     compile dependencyManager.logbackCore
     compile dependencyManager.logbackClassic
 
-    providedRuntime dependencyManager.springBootStarterTomcat
+//    providedRuntime dependencyManager.springBootStarterTomcat
 
 }

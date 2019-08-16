@@ -31,8 +31,8 @@ subprojects {
         }
     }
 
-    sourceCompatibility = '1.11'
-    targetCompatibility = '1.11'
+    sourceCompatibility = '11'
+    targetCompatibility = '11'
 
     configurations.all {
     }
@@ -45,5 +45,11 @@ subprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
+    }
+
+    jar {
+        manifest {
+            attributes 'Main-Class': 'com.qaprosoft.zafira.ApplicationInitializer'
+        }
     }
 }
