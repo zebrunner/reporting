@@ -1,45 +1,34 @@
 description = 'zafira-service'
 
-def dependencyManager = rootProject.ext.dependencyManagement
+def libraries = rootProject.ext.dependencyManagement
 
 dependencies {
 
     compile project(':zafira-dbaccess')
     compile project(':zafira-models')
 
-    implementation dependencyManager.springBootStarterAmqp
-    implementation dependencyManager.springBootStarterFreemarker
-    compile dependencyManager.springSecurityLdap
+    implementation libraries.boot_starter_amqp
+    implementation libraries.boot_starter_freemarker
 
-    compile dependencyManager.javaxMail
-    compile dependencyManager.javaxMailApi
-    compile dependencyManager.commonsLang
-    compile dependencyManager.commonsIo
-    compile dependencyManager.commonsCodec
-    compile dependencyManager.commonsValidator
-    compile dependencyManager.apacheHttpClient
-    compile dependencyManager.commonsCollections
-    compile dependencyManager.jasypt
-    compile dependencyManager.jodaTime
-    compile dependencyManager.slf4jApi
-    compile dependencyManager.logbackCore
-    compile dependencyManager.logbackClassic
-    compile dependencyManager.guava
-    compile dependencyManager.googleApiSheets
-    compile dependencyManager.googleApiDrive
-    compile dependencyManager.jacksonDatabind
-    compile dependencyManager.awsSdk
-    compile dependencyManager.jenkinsClient
-    compile dependencyManager.jiraClient
-    compile dependencyManager.githubApiClient
-    compile dependencyManager.jgit
-    compile dependencyManager.commonsBeanUtils
-    compile dependencyManager.jwt
-    compile dependencyManager.slackClient
-    compile dependencyManager.elasticsearchClient
-    compile dependencyManager.elasticsearchHightLevelClient
-    testCompile dependencyManager.testNG
-    testCompile dependencyManager.springTest
+    compile libraries.spring_security_ldap
+    compile libraries.javax_mail
+    compile libraries.commons_lang
+    compile libraries.commons_io
+    compile libraries.commons_codec
+    compile libraries.commons_validator
+    compile libraries.apache_http_client
+    compile libraries.apache_commons_collections
+    compile libraries.jasypt
+    compile libraries.joda_time
+    compile libraries.logging
+    compile libraries.google_api_services
+    compile libraries.jackson_databind
+    compile libraries.commons_beanutils
+    compile libraries.jwt
+    compile libraries.integration_clients
+
+    testCompile libraries.testNG
+    testCompile libraries.spring_test
 
 }
 

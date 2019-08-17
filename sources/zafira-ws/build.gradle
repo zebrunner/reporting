@@ -5,7 +5,7 @@ plugins {
 
 description = 'zafira-web'
 
-def dependencyManager = rootProject.ext.dependencyManagement
+def libraries = rootProject.ext.dependencyManagement
 
 dependencies {
 
@@ -13,21 +13,19 @@ dependencies {
     compile project(':zafira-models')
     compile project(':zafira-services')
 
-    implementation dependencyManager.springBootStarterWeb
-    implementation dependencyManager.springBootStarterSecurity
-    implementation dependencyManager.springBootStarterWebsocket
-    implementation dependencyManager.springBootStarterReactorNetty
-    compile dependencyManager.swagger
-    compile dependencyManager.swaggerUi
-    compile dependencyManager.jasypt
-    compile dependencyManager.commonsLang
-    compile dependencyManager.commonsIo
-    compile dependencyManager.commonsFileupload
-    compile dependencyManager.dozer
-    compile dependencyManager.jacksonDatabind
-    compile dependencyManager.hibernateValidator
-    compile dependencyManager.slf4jApi
-    compile dependencyManager.logbackCore
-    compile dependencyManager.logbackClassic
+    implementation libraries.boot_starter_web
+    implementation libraries.boot_starter_security
+    implementation libraries.boot_starter_websocket
+    implementation libraries.boot_starter_reactor_netty
+
+    compile libraries.swagger
+    compile libraries.jasypt
+    compile libraries.commons_lang
+    compile libraries.commons_io
+    compile libraries.commons_fileupload
+    compile libraries.dozer
+    compile libraries.jackson_databind
+    compile libraries.hibernate_validator
+    compile libraries.logging
 
 }

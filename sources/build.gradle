@@ -20,6 +20,13 @@ allprojects {
 
 apply from: 'dependencies.gradle'
 
+repositories {
+    mavenLocal()
+    maven {
+        url = 'http://repo.maven.apache.org/maven2'
+    }
+}
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'
