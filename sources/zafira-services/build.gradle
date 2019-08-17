@@ -27,11 +27,4 @@ dependencies {
     compile libraries.jwt
     compile libraries.integration_clients
 
-    testCompile libraries.testNG
-    testCompile libraries.spring_test
-
-}
-
-test {
-    useTestNG()
 }
