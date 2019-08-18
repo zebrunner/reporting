@@ -84,3 +84,4 @@ zafira:
 crypto-salt: ${crypto.salt}
 amazon-token-expiration: 43200
 google-token-expiration: 43200
+liquibase-enabled: true

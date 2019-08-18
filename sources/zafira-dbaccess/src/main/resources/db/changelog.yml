@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 01_create_timestamps_trigger
+      author: nsidorevich
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/001_test_changeset.sql
+            relativeToChangelogFile: true
+            splitStatements: false

@@ -10,6 +10,8 @@ dependencies {
     compile libraries.boot_starter_data_jdbc
     compile libraries.jaxb_api
 
+    implementation libraries.liquibase
+
     testCompile libraries.testNG
     testCompile libraries.spring_test
 
