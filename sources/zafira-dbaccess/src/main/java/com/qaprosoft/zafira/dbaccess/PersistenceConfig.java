@@ -16,12 +16,11 @@
 package com.qaprosoft.zafira.dbaccess;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyDataSourceWrapper;
 import liquibase.integration.spring.MultiTenantSpringLiquibase;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +30,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import java.beans.PropertyVetoException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Configuration
@@ -144,15 +145,37 @@ public class PersistenceConfig {
 
     @Bean
     @ConditionalOnProperty(name = "liquibase-enabled", havingValue = "true")
-    public MultiTenantSpringLiquibase dbStateManager(
-            @Autowired @Qualifier("tenancyAppDSWrapper") TenancyDataSourceWrapper tenancyAppDSWrapper
-    ) {
-        List<String> tenancies = List.of("zafira", "test", "test2");
+    public MultiTenantSpringLiquibase dbStateManager(TenancyDataSourceWrapper tenancyAppDSWrapper) {
+        List<String> tenancies = new TenancyContextAwareList<>();
+        tenancies.addAll(List.of("zafira", "test", "test2"));
         MultiTenantSpringLiquibase liquibase = new MultiTenantSpringLiquibase();
         liquibase.setDataSource(tenancyAppDSWrapper.getDataSource());
         liquibase.setSchemas(tenancies);
         liquibase.setChangeLog(CHANGE_LOG_PATH);
         return liquibase;
+    }
+
+    private static class TenancyContextAwareList<E> extends ArrayList<E> {
+
+        @Override
+        public Iterator<E> iterator() {
+            return new Iterator<>() {
+
+                private final Iterator<E> iterator = TenancyContextAwareList.super.iterator();
+
+                @Override
+                public boolean hasNext() {
+                    return iterator.hasNext();
+                }
+
+                @Override
+                public E next() {
+                    E entity = iterator.next();
+                    TenancyContext.setTenantName(entity.toString());
+                    return entity;
+                }
+            };
+        }
     }
 
 }
