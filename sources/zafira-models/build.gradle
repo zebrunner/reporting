@@ -9,6 +9,6 @@ dependencies {
     compile libraries.jackson_databind
     compile libraries.hibernate_validator
     compile libraries.javax_validation
-    compile libraries.jaxb_api
+    compile libraries.jaxb
 
 }
