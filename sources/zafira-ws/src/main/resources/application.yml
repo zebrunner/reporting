@@ -81,14 +81,16 @@ zafira:
     username: ${zafira.admin.username}
     password: ${zafora.admin.password}
     group: ${zafira.admin.group}
-  liquibase:
-    tenants:
-      manage-specific-tenants-only: true
-      managed-tenants: zafira, test
-    labels:
-      manage-specific-labels-only: true
-      managed-labels-expression: '!sprint1'
-    enabled: true
+
+### Db management
+db-state-management:
+  tenants:
+    manage-specific-tenants-only: true
+    managed-tenants: zafira, test
+  labels:
+    manage-specific-labels-only: true
+    managed-labels-expression: '!sprint1'
+  enabled: true
 
 ### Other application settings
 crypto-salt: ${crypto.salt}

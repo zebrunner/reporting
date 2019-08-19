@@ -30,7 +30,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Component
-@ConditionalOnProperty(name = "zafira.liquibase.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "db-state-management.enabled", havingValue = "true")
 public class DbStateManager {
 
     private static final String CHANGE_LOG_PATH = "classpath:db/changelog.yml";
@@ -43,10 +43,10 @@ public class DbStateManager {
 
     public DbStateManager(
             TenancyMapper tenancyMapper,
-            @Value("${zafira.liquibase.tenants.manage-specific-tenants-only:false}") boolean manageSpecificTenantsOnly,
-            @Value("${zafira.liquibase.tenants.managed-tenants}") List<String> managedTenants,
-            @Value("${zafira.liquibase.labels.manage-specific-labels-only:false}") boolean manageSpecificLabelsOnly,
-            @Value("${zafira.liquibase.labels.managed-labels-expression}") String manageLabelsExpression
+            @Value("${db-state-management.tenants.manage-specific-tenants-only:false}") boolean manageSpecificTenantsOnly,
+            @Value("${db-state-management.tenants.managed-tenants}") List<String> managedTenants,
+            @Value("${db-state-management.labels.manage-specific-labels-only:false}") boolean manageSpecificLabelsOnly,
+            @Value("${db-state-management.labels.managed-labels-expression}") String manageLabelsExpression
             ) {
         this.tenancyMapper = tenancyMapper;
         this.manageSpecificTenantsOnly = manageSpecificTenantsOnly;
