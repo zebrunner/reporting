@@ -130,7 +130,7 @@ public class JobsAPIController extends AbstractController {
             @RequestBody @Valid List<JobViewType> jobViews,
             @PathVariable("id") long viewId,
             @RequestParam("env") String env) {
-        if (!(jobViews == null || jobViews.isEmpty())) {
+        if (jobViews != null && !jobViews.isEmpty()) {
             jobsService.deleteJobViews(viewId, env);
             for (JobViewType jobView : jobViews) {
                 jobView = mapper.map(jobsService.createJobView(mapper.map(jobView, JobView.class)), JobViewType.class);

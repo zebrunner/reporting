@@ -51,7 +51,7 @@ public class TagService {
     @Transactional(rollbackFor = Exception.class)
     public Set<Tag> createTags(Set<Tag> tags) {
         Set<Tag> result = new HashSet<>();
-        if (!(tags == null || tags.isEmpty())) {
+        if (tags != null && !tags.isEmpty()) {
             result = tags.stream().map(this::createTag).collect(Collectors.toSet());
         }
         return result;

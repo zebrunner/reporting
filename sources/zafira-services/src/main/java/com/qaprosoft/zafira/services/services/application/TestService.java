@@ -104,7 +104,7 @@ public class TestService {
             if ((test.getId() == null || test.getId() == 0)) {
                 createTest(test);
 
-                if (!(jiraIds == null || jiraIds.isEmpty())) {
+                if (jiraIds != null && !jiraIds.isEmpty()) {
                     for (String jiraId : jiraIds) {
                         if (StringUtils.isNotEmpty(jiraId)) {
                             WorkItem workItem = workItemService.createOrGetWorkItem(new WorkItem(jiraId));
@@ -216,7 +216,7 @@ public class TestService {
 
             // Save artifacts
             Set<TestArtifact> testArtifacts = test.getArtifacts();
-            if (!(testArtifacts == null || testArtifacts.isEmpty())) {
+            if (testArtifacts != null && !testArtifacts.isEmpty()) {
                 existingTest.setArtifacts(new HashSet<>());
                 testArtifacts.stream().filter(TestArtifact::isValid).forEach(artifact -> {
                     artifact.setTestId(test.getId());

@@ -112,7 +112,7 @@ public class SettingsService {
     @Transactional(rollbackFor = Exception.class)
     public ConnectedToolType updateSettings(List<Setting> settings) {
         ConnectedToolType connectedTool = null;
-        if (!(settings == null || settings.isEmpty())) {
+        if (settings != null && !settings.isEmpty()) {
             Tool tool = settings.get(0).getTool();
             validateSettingsOwns(settings, tool);
             settings.forEach(setting -> {
