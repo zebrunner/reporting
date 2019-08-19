@@ -35,6 +35,13 @@ spring:
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
 
+logging:
+  level:
+    liquibase:
+      executor.jvm.JdbcExecutor: ERROR
+      changelog: ERROR
+      lockservice: ERROR
+
 ### Datasource settings
 datasource:
   driver-class: org.postgresql.Driver
@@ -84,13 +91,13 @@ zafira:
 
 ### Db management
 db-state-management:
-  tenants:
-    manage-specific-tenants-only: true
-    managed-tenants: zafira, test
-  labels:
-    manage-specific-labels-only: true
-    managed-labels-expression: '!sprint1'
   enabled: true
+  manage-specific-tenants: true
+  managed-tenants: zafira
+  labels:
+    enabled: true
+    managed-expression: sprint1
+
 
 ### Other application settings
 crypto-salt: ${crypto.salt}

@@ -18,11 +18,14 @@ package com.qaprosoft.zafira.dbaccess.utils;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.management.TenancyMapper;
 import com.qaprosoft.zafira.models.db.Tenancy;
 import liquibase.integration.spring.MultiTenantSpringLiquibase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -33,40 +36,53 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(name = "db-state-management.enabled", havingValue = "true")
 public class DbStateManager {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DbStateManager.class);
+
     private static final String CHANGE_LOG_PATH = "classpath:db/changelog.yml";
 
+    private final TenancyDataSourceWrapper tenancyAppDSWrapper;
     private final TenancyMapper tenancyMapper;
     private final boolean manageSpecificTenantsOnly;
     private final List<String> managedTenants;
     private final boolean manageSpecificLabelsOnly;
     private final String managedLabelsExpression;
+    private final ResourceLoader resourceLoader;
 
     public DbStateManager(
             TenancyMapper tenancyMapper,
-            @Value("${db-state-management.tenants.manage-specific-tenants-only:false}") boolean manageSpecificTenantsOnly,
-            @Value("${db-state-management.tenants.managed-tenants}") List<String> managedTenants,
-            @Value("${db-state-management.labels.manage-specific-labels-only:false}") boolean manageSpecificLabelsOnly,
-            @Value("${db-state-management.labels.managed-labels-expression}") String manageLabelsExpression
+            TenancyDataSourceWrapper tenancyAppDSWrapper,
+            @Value("${db-state-management.manage-specific-tenants:false}") boolean manageSpecificTenantsOnly,
+            @Value("${db-state-management.managed-tenants:#{T(java.util.Collections).emptyList()}}") List<String> managedTenants,
+            @Value("${db-state-management.labels.enabled:false}") boolean manageSpecificLabelsOnly,
+            @Value("${db-state-management.labels.managed-expression:@null}") String manageLabelsExpression,
+            ResourceLoader resourceLoader
             ) {
         this.tenancyMapper = tenancyMapper;
+        this.tenancyAppDSWrapper = tenancyAppDSWrapper;
         this.manageSpecificTenantsOnly = manageSpecificTenantsOnly;
         this.managedTenants = managedTenants;
         this.manageSpecificLabelsOnly = manageSpecificLabelsOnly;
         this.managedLabelsExpression = manageLabelsExpression;
+        this.resourceLoader = resourceLoader;
     }
 
-    @Bean
-    public MultiTenantSpringLiquibase liquibase(TenancyDataSourceWrapper tenancyAppDSWrapper) {
+    @PostConstruct
+    public void executeOnSchemas() {
         List<String> tenancies = manageSpecificTenantsOnly ? managedTenants : getAllTenantNames();
         MultiTenantSpringLiquibase liquibase = new MultiTenantSpringLiquibase();
         liquibase.setDataSource(tenancyAppDSWrapper.getDataSource());
         liquibase.setSchemas(tenancies);
         liquibase.setChangeLog(CHANGE_LOG_PATH);
+        liquibase.setResourceLoader(resourceLoader);
 
-        if (manageSpecificLabelsOnly) {
+        if (manageSpecificLabelsOnly && managedLabelsExpression != null) {
             liquibase.setLabels(managedLabelsExpression);
         }
-        return liquibase;
+        try {
+            liquibase.afterPropertiesSet();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 
     private List<String> getAllTenantNames() {
