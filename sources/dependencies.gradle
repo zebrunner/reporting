@@ -55,7 +55,7 @@ ext {
         javax_validation : "javax.validation:validation-api:1.1.0.Final",
         hibernate_validator : "org.hibernate:hibernate-validator:5.2.4.Final",
 
-        jaxb_api : ["javax.xml.bind:jaxb-api:2.3.1", // to be replaced with modern alternative
+        jaxb : ["javax.xml.bind:jaxb-api:2.3.1", // to be replaced with modern alternative
                    "org.glassfish.jaxb:jaxb-runtime:2.3.2"],
 
         joda_time : "joda-time:joda-time:2.3", // to be replaced with JDK tools
