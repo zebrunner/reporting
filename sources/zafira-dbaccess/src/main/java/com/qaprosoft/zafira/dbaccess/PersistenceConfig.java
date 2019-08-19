@@ -17,13 +17,9 @@ package com.qaprosoft.zafira.dbaccess;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyDataSourceWrapper;
-import liquibase.integration.spring.MultiTenantSpringLiquibase;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -31,7 +27,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import java.beans.PropertyVetoException;
-import java.util.List;
 
 @Configuration
 public class PersistenceConfig {
@@ -41,8 +36,6 @@ public class PersistenceConfig {
 
     private static final String MNG_SQL_SESSION_FACTORY_BEAN_NAME = "managementSqlSessionFactory";
     private static final String MNG_MAPPERS_BASE_PACKAGE = "com.qaprosoft.zafira.dbaccess.dao.mysql.management";
-
-    private static final String CHANGE_LOG_PATH = "classpath:db/changelog.yml";
 
     @Bean
     public ComboPooledDataSource appDataSource(
@@ -140,19 +133,6 @@ public class PersistenceConfig {
         dataSource.setMaxPoolSize(maxPoolSize);
         dataSource.setIdleConnectionTestPeriod(idleConnectionTestPeriod);
         return dataSource;
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = "liquibase-enabled", havingValue = "true")
-    public MultiTenantSpringLiquibase dbStateManager(
-            @Autowired @Qualifier("tenancyAppDSWrapper") TenancyDataSourceWrapper tenancyAppDSWrapper
-    ) {
-        List<String> tenancies = List.of("zafira", "test", "test2");
-        MultiTenantSpringLiquibase liquibase = new MultiTenantSpringLiquibase();
-        liquibase.setDataSource(tenancyAppDSWrapper.getDataSource());
-        liquibase.setSchemas(tenancies);
-        liquibase.setChangeLog(CHANGE_LOG_PATH);
-        return liquibase;
     }
 
 }
