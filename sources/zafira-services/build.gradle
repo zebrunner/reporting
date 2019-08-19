@@ -15,7 +15,6 @@ dependencies {
     compile libraries.jaxb
     compile libraries.commons_lang
     compile libraries.commons_io
-    compile libraries.commons_validator
     compile libraries.apache_http_client
     compile libraries.jasypt
     compile libraries.joda_time
