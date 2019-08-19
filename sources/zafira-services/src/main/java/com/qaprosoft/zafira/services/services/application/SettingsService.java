@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.qaprosoft.zafira.services.services.application.integration.Integration;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -113,7 +112,7 @@ public class SettingsService {
     @Transactional(rollbackFor = Exception.class)
     public ConnectedToolType updateSettings(List<Setting> settings) {
         ConnectedToolType connectedTool = null;
-        if (!CollectionUtils.isEmpty(settings)) {
+        if (!(settings == null || settings.isEmpty())) {
             Tool tool = settings.get(0).getTool();
             validateSettingsOwns(settings, tool);
             settings.forEach(setting -> {

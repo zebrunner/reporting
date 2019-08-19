@@ -16,7 +16,6 @@ dependencies {
     compile libraries.commons_io
     compile libraries.commons_validator
     compile libraries.apache_http_client
-    compile libraries.apache_commons_collections
     compile libraries.jasypt
     compile libraries.joda_time
     compile libraries.logging

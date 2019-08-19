@@ -32,7 +32,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.collections4.CollectionUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -131,7 +130,7 @@ public class JobsAPIController extends AbstractController {
             @RequestBody @Valid List<JobViewType> jobViews,
             @PathVariable("id") long viewId,
             @RequestParam("env") String env) {
-        if (!CollectionUtils.isEmpty(jobViews)) {
+        if (!(jobViews == null || jobViews.isEmpty())) {
             jobsService.deleteJobViews(viewId, env);
             for (JobViewType jobView : jobViews) {
                 jobView = mapper.map(jobsService.createJobView(mapper.map(jobView, JobView.class)), JobViewType.class);

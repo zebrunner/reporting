@@ -32,7 +32,6 @@ ext {
         commons_beanutils : "commons-beanutils:commons-beanutils:1.9.3",
 
         apache_http_client : "org.apache.httpcomponents:httpclient:4.5.3",
-        apache_commons_collections : "org.apache.commons:commons-collections4:4.0",
 
         dozer: dependencies.create("net.sf.dozer:dozer:5.4.0") {
             exclude module: "slf4j-log4j12"
