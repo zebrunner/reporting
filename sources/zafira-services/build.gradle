@@ -14,7 +14,6 @@ dependencies {
     compile libraries.javax_mail
     compile libraries.commons_lang
     compile libraries.commons_io
-    compile libraries.commons_codec
     compile libraries.commons_validator
     compile libraries.apache_http_client
     compile libraries.apache_commons_collections
