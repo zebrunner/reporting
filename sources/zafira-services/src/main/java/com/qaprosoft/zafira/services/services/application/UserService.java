@@ -84,6 +84,7 @@ public class UserService implements TenancyDbInitial {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void initDb() {
         if (!StringUtils.isBlank(adminUsername) && !StringUtils.isBlank(adminPassword)) {
             try {
