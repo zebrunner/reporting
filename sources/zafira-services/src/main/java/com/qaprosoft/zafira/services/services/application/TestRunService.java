@@ -145,7 +145,7 @@ public class TestRunService {
             .maximumSize(100000)
             .expireAfterWrite(150, TimeUnit.MILLISECONDS)
             .build(
-                    new CacheLoader<Long, Lock>() {
+                    new CacheLoader<>() {
                         public Lock load(Long key) {
                             return new ReentrantLock();
                         }

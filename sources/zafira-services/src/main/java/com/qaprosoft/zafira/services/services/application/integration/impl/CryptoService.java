@@ -104,7 +104,7 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
     public String generateKey() {
         String key = null;
         try {
-            if (!mapContext(CryptoContext::getType).isPresent()) {
+            if (mapContext(CryptoContext::getType).isEmpty()) {
                 init();
                 return null;
             }

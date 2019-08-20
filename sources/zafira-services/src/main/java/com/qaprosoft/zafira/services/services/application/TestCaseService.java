@@ -45,7 +45,7 @@ public class TestCaseService {
             .maximumSize(100000)
             .expireAfterWrite(15, TimeUnit.SECONDS)
             .build(
-                    new CacheLoader<String, Lock>() {
+                    new CacheLoader<>() {
                         public Lock load(String key) {
                             return new ReentrantLock();
                         }

@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration;
 
-import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
