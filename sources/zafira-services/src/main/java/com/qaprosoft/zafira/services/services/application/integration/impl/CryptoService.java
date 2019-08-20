@@ -47,7 +47,7 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
     private final String salt;
 
     public CryptoService(SettingsService settingsService,
-            @Value("${crypto_salt}") String salt) {
+            @Value("${crypto-salt}") String salt) {
         super(settingsService, CRYPTO, CryptoContext.class);
         this.settingsService = settingsService;
         this.salt = salt;
