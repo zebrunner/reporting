@@ -9,13 +9,4 @@
 #            path: changeset/001_first_changeset.sql
 #            relativeToChangelogFile: true
 #            splitStatements: false
-#  - changeSet:
-#      id: 02_create_timestamps_trigger
-#      labels: sprint2
-#      author: nsidorevich
-#      changes:
-#        - sqlFile:
-#            encoding: utf8
-#            path: changeset/002_test_changeset.sql
-#            relativeToChangelogFile: true
-#            splitStatements: false
+

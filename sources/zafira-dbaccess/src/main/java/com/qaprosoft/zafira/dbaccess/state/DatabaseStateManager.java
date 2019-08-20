@@ -62,7 +62,7 @@ public class DatabaseStateManager {
             TenancyMapper tenancyMapper,
             TenancyDataSourceWrapper tenancyAppDSWrapper,
             @Value("${db-state-management.manage-specific-tenants:false}") boolean manageSpecificTenantsOnly,
-            @Value("${db-state-management.managed-tenants:#{T(java.util.Collections).emptyList()}}") List<String> managedTenants,
+            @Value("${db-state-management.managed-tenants:#{T(java.util.Collections).emptyList()}}") TenancyList<String> managedTenants,
             @Value("${db-state-management.labels.enabled:false}") boolean manageSpecificLabelsOnly,
             @Value("${db-state-management.labels.managed-expression:@null}") String manageLabelsExpression,
             ResourceLoader resourceLoader

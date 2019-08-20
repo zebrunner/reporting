@@ -96,7 +96,7 @@ auth:
 ### Db management
 db-state-management:
   # disabled by default
-  enabled: true
+  enabled: ${database.state.management.enabled}
 
 ### Other application settings
 crypto-salt: ${crypto.salt}
