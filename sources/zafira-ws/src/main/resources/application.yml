@@ -1,3 +1,23 @@
+### Zafira settings
+zafira:
+  multitenant: ${zafira.multitenant}
+  version: ${zafira.version}
+  client-version: ${zafira.client.version}
+  debug-enabled: ${zafira.debug.enabled}
+  app-url: ${zafira.app.url}
+  web-context-path: ${zafira.web.context.path}
+  rest-context-path: ${zafira.rest.context.path}
+  web-url: ${zafira.app-url}/${zafira.web-context-path}
+  rest-url: ${zafira.app-url}/${zafira.rest-context-path}
+  use-artifact-proxy: ${zafira.use.artifact.proxy}
+  slack:
+    image-url: https://s3-us-west-1.amazonaws.com/zebrunner/common/zfr-email.png
+    author: zafira notifications
+  admin:
+    username: ${zafira.admin.username}
+    password: ${zafora.admin.password}
+    group: ${zafira.admin.group}
+
 ### Embedded Web server configuration
 server:
   port: 8080
@@ -33,11 +53,15 @@ spring:
     template-loader-path: classpath:/templates/
     suffix: ftl
   autoconfigure:
+    # since Boot detects liquibase library on classpath it'll try to prodivde a configuration and supply autoconfigured datasource
+    # however for Zafira we do not use datasource autoconfiguration that's why need to disable this
     exclude: org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
 
+### Logging configuration. See logback.xml for more
 logging:
   level:
     liquibase:
+      # reducing number of logs by liquibase to keep only most relevant ones
       executor.jvm.JdbcExecutor: ERROR
       changelog: ERROR
       lockservice: ERROR
@@ -69,35 +93,10 @@ auth:
     refresh-expiration: 10080
     secret: ${auth.token.secret}
 
-### Zafira settings
-zafira:
-  multitenant: ${zafira.multitenant}
-  version: ${zafira.version}
-  client-version: ${zafira.client.version}
-  debug-enabled: ${zafira.debug.enabled}
-  app-url: ${zafira.app.url}
-  web-context-path: ${zafira.web.context.path}
-  rest-context-path: ${zafira.rest.context.path}
-  web-url: ${zafira.app-url}/${zafira.web-context-path}
-  rest-url: ${zafira.app-url}/${zafira.rest-context-path}
-  use-artifact-proxy: ${zafira.use.artifact.proxy}
-  slack:
-    image-url: https://s3-us-west-1.amazonaws.com/zebrunner/common/zfr-email.png
-    author: zafira notifications
-  admin:
-    username: ${zafira.admin.username}
-    password: ${zafora.admin.password}
-    group: ${zafira.admin.group}
-
 ### Db management
 db-state-management:
+  # disabled by default
   enabled: true
-  manage-specific-tenants: true
-  managed-tenants: zafira
-  labels:
-    enabled: true
-    managed-expression: sprint1
-
 
 ### Other application settings
 crypto-salt: ${crypto.salt}

@@ -22,7 +22,6 @@ ext {
 
         liquibase: "org.liquibase:liquibase-core:3.7.0",
 
-
         swagger: [
             "io.springfox:springfox-swagger2:2.9.2",
             "io.springfox:springfox-swagger-ui:2.9.2"

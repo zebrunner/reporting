@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.dbaccess.utils;
+package com.qaprosoft.zafira.dbaccess.state;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.management.TenancyMapper;
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
+import com.qaprosoft.zafira.dbaccess.utils.TenancyDataSourceWrapper;
 import com.qaprosoft.zafira.models.db.Tenancy;
 import liquibase.integration.spring.MultiTenantSpringLiquibase;
 import org.slf4j.Logger;
@@ -56,7 +58,7 @@ public class DbStateManager {
             @Value("${db-state-management.labels.enabled:false}") boolean manageSpecificLabelsOnly,
             @Value("${db-state-management.labels.managed-expression:@null}") String manageLabelsExpression,
             ResourceLoader resourceLoader
-            ) {
+    ) {
         this.tenancyMapper = tenancyMapper;
         this.tenancyAppDSWrapper = tenancyAppDSWrapper;
         this.manageSpecificTenantsOnly = manageSpecificTenantsOnly;
@@ -67,35 +69,67 @@ public class DbStateManager {
     }
 
     @PostConstruct
-    public void executeOnSchemas() {
-        List<String> tenancies = manageSpecificTenantsOnly ? managedTenants : getAllTenantNames();
+    private void updateDatabase() {
+        List<String> schemas = obtainManagedSchemas();
+
         MultiTenantSpringLiquibase liquibase = new MultiTenantSpringLiquibase();
         liquibase.setDataSource(tenancyAppDSWrapper.getDataSource());
-        liquibase.setSchemas(tenancies);
         liquibase.setChangeLog(CHANGE_LOG_PATH);
         liquibase.setResourceLoader(resourceLoader);
+        liquibase.setSchemas(schemas);
 
         if (manageSpecificLabelsOnly && managedLabelsExpression != null) {
             liquibase.setLabels(managedLabelsExpression);
         }
-        try {
-            liquibase.afterPropertiesSet();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+
+        executeOnAllSchemas(liquibase);
+    }
+
+    //todo update
+    private List<String> obtainManagedSchemas() {
+        List<String> allTenants = getAllTenantNames();
+
+        if (manageSpecificTenantsOnly) {
+            if (managedTenants.isEmpty()) {
+                // message: Database state management error: managed schemas set is empty, aborting
+                throw new DbStateManagementException();
+            } else if (!allTenants.containsAll(managedTenants)) {
+                // message: Database state management error: not all managed schemas were recognized, aborting
+                throw new DbStateManagementException();
+            } else {
+                return managedTenants;
+            }
+        } else {
+            return allTenants;
         }
     }
 
     private List<String> getAllTenantNames() {
-        return tenancyMapper.getAllTenancies().stream()
-                            .map(Tenancy::getName)
-                            .collect(Collectors.toCollection((Supplier<TenancyList<String>>) TenancyList::new));
+        List<Tenancy> tenancies = tenancyMapper.getAllTenancies();
+        return tenancies.stream()
+                        .map(Tenancy::getName)
+                        .collect(Collectors.toCollection((Supplier<TenancyList<String>>) TenancyList::new));
     }
 
+    private void executeOnAllSchemas(MultiTenantSpringLiquibase liquibase) {
+        try {
+            liquibase.afterPropertiesSet();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            // we need to explicitly abort startup to make sure that application won't try to connect to outdated database
+            throw new DbStateManagementException();
+        }
+    }
+
+    /**
+     * Required to override ArrayList iteration mechanism in order to properly populate TenancyContext content
+     * @param <E>
+     */
     private static class TenancyList<E> extends ArrayList<E> {
 
         @Override
         public Iterator<E> iterator() {
-            return new Iterator<E>() {
+            return new Iterator<>() {
 
                 private final Iterator<E> iterator = TenancyList.super.iterator();
 
