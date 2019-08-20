@@ -52,6 +52,9 @@ spring:
   freemarker:
     template-loader-path: classpath:/templates/
     suffix: ftl
+  jackson:
+    serialization:
+      write-dates-as-timestamps: true
   autoconfigure:
     # since Boot detects liquibase library on classpath it'll try to prodivde a configuration and supply autoconfigured datasource
     # however for Zafira we do not use datasource autoconfiguration that's why need to disable this
