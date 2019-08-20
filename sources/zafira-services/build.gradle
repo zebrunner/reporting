@@ -12,18 +12,15 @@ dependencies {
 
     compile libraries.spring_security_ldap
     compile libraries.javax_mail
+    compile libraries.jaxb
     compile libraries.commons_lang
     compile libraries.commons_io
-    compile libraries.commons_codec
-    compile libraries.commons_validator
     compile libraries.apache_http_client
-    compile libraries.apache_commons_collections
     compile libraries.jasypt
     compile libraries.joda_time
     compile libraries.logging
     compile libraries.google_api_services
     compile libraries.jackson_databind
-    compile libraries.commons_beanutils
     compile libraries.jwt
     compile libraries.integration_clients
 
