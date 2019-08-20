@@ -30,7 +30,7 @@ public class TenancyContext {
     public static void setTenantName(String tenantName) {
         tenantName = tenantName != null ? tenantName.toLowerCase() : null;
         tenant.set(tenantName);
-        MDC.put("tenant.name", tenantName);
+        MDC.put("tenant", tenantName);
     }
 
     public static String getTenantName() {
