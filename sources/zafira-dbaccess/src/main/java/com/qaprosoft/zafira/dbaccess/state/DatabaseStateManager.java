@@ -34,11 +34,19 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+/**
+ * Executes liquibase on all managed schemas. Runs on application startup if enabled. In case of failure throws
+ * {@link DatabaseStateManagementException} and aborts startup.
+ */
 @Component
 @ConditionalOnProperty(name = "db-state-management.enabled", havingValue = "true")
-public class DbStateManager {
+public class DatabaseStateManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DbStateManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseStateManager.class);
+
+    private static final String ERR_MSG_MANAGED_SCHEMAS_EMPTY = "Database state management error: managed schemas set is empty, aborting";
+    private static final String ERR_MSG_UNRECOGNIZED_MANAGED_SCHEMAS = "Database state management error: not all managed schemas were recognized, aborting";
+    private static final String ERR_MSG_GENERIC_STATE_MANAGEMET_ERROR = "Database state management error: patchset execution failed";
 
     private static final String CHANGE_LOG_PATH = "classpath:db/changelog.yml";
 
@@ -50,7 +58,7 @@ public class DbStateManager {
     private final String managedLabelsExpression;
     private final ResourceLoader resourceLoader;
 
-    public DbStateManager(
+    public DatabaseStateManager(
             TenancyMapper tenancyMapper,
             TenancyDataSourceWrapper tenancyAppDSWrapper,
             @Value("${db-state-management.manage-specific-tenants:false}") boolean manageSpecificTenantsOnly,
@@ -85,17 +93,14 @@ public class DbStateManager {
         executeOnAllSchemas(liquibase);
     }
 
-    //todo update
     private List<String> obtainManagedSchemas() {
         List<String> allTenants = getAllTenantNames();
 
         if (manageSpecificTenantsOnly) {
             if (managedTenants.isEmpty()) {
-                // message: Database state management error: managed schemas set is empty, aborting
-                throw new DbStateManagementException();
+                throw new DatabaseStateManagementException(ERR_MSG_MANAGED_SCHEMAS_EMPTY);
             } else if (!allTenants.containsAll(managedTenants)) {
-                // message: Database state management error: not all managed schemas were recognized, aborting
-                throw new DbStateManagementException();
+                throw new DatabaseStateManagementException(ERR_MSG_UNRECOGNIZED_MANAGED_SCHEMAS);
             } else {
                 return managedTenants;
             }
@@ -116,8 +121,7 @@ public class DbStateManager {
             liquibase.afterPropertiesSet();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            // we need to explicitly abort startup to make sure that application won't try to connect to outdated database
-            throw new DbStateManagementException();
+            throw new DatabaseStateManagementException(ERR_MSG_GENERIC_STATE_MANAGEMET_ERROR, e);
         }
     }
 
