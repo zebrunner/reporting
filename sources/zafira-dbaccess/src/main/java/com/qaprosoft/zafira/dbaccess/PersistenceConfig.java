@@ -22,6 +22,7 @@ import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
@@ -38,24 +39,24 @@ public class PersistenceConfig {
 
     @Bean
     public ComboPooledDataSource appDataSource(
-            @Value("${zafira.db.jdbc.driverClass}") String driverClass,
-            @Value("${zafira.db.jdbc.url}") String jdbcUrl,
-            @Value("${zafira.db.jdbc.user}") String dbUsername,
-            @Value("${zafira.db.jdbc.password}") String dbPassword,
-            @Value("${zafira.db.c3p0.maxPoolSize}") int maxPoolSize,
-            @Value("${zafira.db.c3p0.idleConnectionTestPeriod}") int idleConnectionTestPeriod
+            @Value("${datasource.driver-class}") String driverClass,
+            @Value("${datasource.url}") String jdbcUrl,
+            @Value("${datasource.username}") String dbUsername,
+            @Value("${datasource.password}") String dbPassword,
+            @Value("${datasource.pool-size}") int maxPoolSize,
+            @Value("${datasource.idle-connection-test-period}") int idleConnectionTestPeriod
     ) throws PropertyVetoException {
         return buildDataSource(driverClass, jdbcUrl, dbUsername, dbPassword, maxPoolSize, idleConnectionTestPeriod);
     }
 
     @Bean
     public ComboPooledDataSource managementDataSource(
-            @Value("${zafira.db.jdbc.driverClass}") String driverClass,
-            @Value("${zafira.db.jdbc.url}") String jdbcUrl,
-            @Value("${zafira.db.jdbc.user}") String dbUsername,
-            @Value("${zafira.db.jdbc.password}") String dbPassword,
-            @Value("${zafira.db.c3p0.maxPoolSize}") int maxPoolSize,
-            @Value("${zafira.db.c3p0.idleConnectionTestPeriod}") int idleConnectionTestPeriod
+            @Value("${datasource.driver-class}") String driverClass,
+            @Value("${datasource.url}") String jdbcUrl,
+            @Value("${datasource.username}") String dbUsername,
+            @Value("${datasource.password}") String dbPassword,
+            @Value("${datasource.pool-size}") int maxPoolSize,
+            @Value("${datasource.idle-connection-test-period}") int idleConnectionTestPeriod
     ) throws PropertyVetoException {
         ComboPooledDataSource dataSource = buildDataSource(driverClass, jdbcUrl, dbUsername, dbPassword, maxPoolSize, idleConnectionTestPeriod);
         dataSource.setIdentityToken("management");
@@ -63,6 +64,7 @@ public class PersistenceConfig {
     }
 
     @Bean
+    @Primary
     public DataSourceTransactionManager transactionManager(TenancyDataSourceWrapper tenancyAppDSWrapper) {
         return new DataSourceTransactionManager(tenancyAppDSWrapper.getDataSource());
     }

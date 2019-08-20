@@ -1,138 +1,80 @@
 ext {
 
-    spring_core_version = "4.3.23.RELEASE"
-    spring_security_version = "4.2.13.RELEASE"
-    spring_data_version = "1.4.1.RELEASE"
-    spring_test_version = "4.3.23.RELEASE"
-    spring_rabbitmq_version = "1.7.11.RELEASE"
-    spring_data_redis_version = "1.8.14.RELEASE"
-    
-    postgres_version = "42.2.4"
-    c3p0_version = "0.9.5.4"
-    mybatis_version = "3.2.3"
-    spring_mybatis_version = "1.3.0"
-    
-    commons_lang_version = "2.6"
-    commons_io_version = "2.4"
-    commons_fileupload_version = "1.3.3"
-    commons_codec_version = "1.8"
-    commons_validator_version = "1.4.0"
-    apache_http_client_version = "4.5.3"
-    commons_collections_version = "4.0"
-    commons_beanutils_version = "1.9.3"
-
-    jackson_databind_version = "2.9.9.1"
-    jackson_version = "2.9.9"
-
-    javax_version = "3.1.0"
-    javax_mail_version = "1.4.7"
-    javax_mail_api_version = "1.5.5"
-    javax_validation_version = "1.1.0.Final"
-
-    slf4j_version = "1.7.5"
-    logback_version = "1.1.10"
-
-    google_sheets_version = "v4-rev523-1.23.0"
-    google_drive_version = "v3-rev118-1.18.0-rc"
-    selenium_version = "2.53.0"
-    aws_sdk_version = "1.11.386"
-    jenkins_client_version = "0.3.7"
-    jira_client_version = "0.5"
-    github_api_version = "1.95"
-    jgit_version = "5.1.3.201810200350-r"
-    slack_client_version = "0.0.7"
-    elasticsearch_client_version = "6.6.0"
-    
-    swagger_version = "2.9.2"
-    jasypt_version = "1.9.1"
-    dozer_version = "5.4.0"
-    hibernate_validator_version = "5.2.4.Final"
-    jsr311_version = "1.1.1"
-    reactor_version = "2.0.8.RELEASE"
-    netty_version = "4.1.28.Final"
-    freemarker_version = "2.3.28"
-    jedis_version = "2.9.0"
-    joda_time_version = "2.3"
-    guava_version = "19.0"
-    jwt_version = "0.7.0"
-    testng_version = "6.14.3"
-
+    //noinspection GroovyAssignabilityCheck
     dependencyManagement = [
 
-            springCore : "org.springframework:spring-core:$spring_core_version",
-            springMessaging : "org.springframework:spring-messaging:$spring_core_version",
-            springWebsocket : "org.springframework:spring-websocket:$spring_core_version",
-            springBeans : "org.springframework:spring-beans:$spring_core_version",
-            springContext : "org.springframework:spring-context:$spring_core_version",
-            springContextSupport : "org.springframework:spring-context-support:$spring_core_version",
-            springTx : "org.springframework:spring-tx:$spring_core_version",
-            springWeb : "org.springframework:spring-web:$spring_core_version",
-            springMvc : "org.springframework:spring-webmvc:$spring_core_version",
-            springJdbc : "org.springframework:spring-jdbc:$spring_core_version",
-            springDataCore: "org.springframework.data:spring-data-commons-core:$spring_data_version",
-            springTest : "org.springframework:spring-test:$spring_test_version",
-            springRabbitMQ : "org.springframework.amqp:spring-rabbit:$spring_rabbitmq_version",
-            springDataRedis : "org.springframework.data:spring-data-redis:$spring_data_redis_version",
+        boot_starter_web : "org.springframework.boot:spring-boot-starter-web",
+        boot_starter_security : "org.springframework.boot:spring-boot-starter-security",
+        boot_starter_data_jdbc : "org.springframework.boot:spring-boot-starter-data-jdbc",
+        boot_starter_amqp : "org.springframework.boot:spring-boot-starter-amqp",
+        boot_starter_freemarker : "org.springframework.boot:spring-boot-starter-freemarker",
+        boot_starter_websocket: "org.springframework.boot:spring-boot-starter-websocket",
+        boot_starter_reactor_netty: "org.springframework.boot:spring-boot-starter-reactor-netty",
+        spring_security_ldap : "org.springframework.security:spring-security-ldap:4.2.13.RELEASE",
+        spring_test : "org.springframework:spring-test:4.3.23.RELEASE",
 
-            springSecurityCore : "org.springframework.security:spring-security-core:$spring_security_version",
-            springSecurityConfig : "org.springframework.security:spring-security-config:$spring_security_version",
-            springSecurityWeb : "org.springframework.security:spring-security-web:$spring_security_version",
-            springSecurityLdap : "org.springframework.security:spring-security-ldap:$spring_security_version",
+        persistence_core: [
+            "org.postgresql:postgresql:42.2.4",
+            "com.mchange:c3p0:0.9.5.4",
+            "org.mybatis:mybatis:3.2.3",
+            "org.mybatis:mybatis-spring:1.3.0"
+        ],
 
-            postgres : "org.postgresql:postgresql:$postgres_version",
-            c3p0 : "com.mchange:c3p0:$c3p0_version",
-            mybatis: "org.mybatis:mybatis:$mybatis_version",
-            springMybatis : "org.mybatis:mybatis-spring:$spring_mybatis_version",
+        swagger: [
+            "io.springfox:springfox-swagger2:2.9.2",
+            "io.springfox:springfox-swagger-ui:2.9.2"
+        ],
 
-            swagger : "io.springfox:springfox-swagger2:$swagger_version",
-            swaggerUi : "io.springfox:springfox-swagger-ui:$swagger_version",
+        commons_lang : "commons-lang:commons-lang:2.6",
+        commons_io : "commons-io:commons-io:2.4",
+        commons_fileupload : "commons-fileupload:commons-fileupload:1.3.3",
 
-            jasypt : "org.jasypt:jasypt:$jasypt_version",
-            jasyptSpring : "org.jasypt:jasypt-springsecurity3:$jasypt_version",
+        apache_http_client : "org.apache.httpcomponents:httpclient:4.5.3",
 
-            commonsLang : "commons-lang:commons-lang:$commons_lang_version",
-            commonsIo : "commons-io:commons-io:$commons_io_version",
-            commonsFileupload : "commons-fileupload:commons-fileupload:$commons_fileupload_version",
-            commonsCodec : "commons-codec:commons-codec:$commons_codec_version",
-            commonsValidator : "commons-validator:commons-validator:$commons_validator_version",
-            apacheHttpClient : "org.apache.httpcomponents:httpclient:$apache_http_client_version",
-            commonsCollections : "org.apache.commons:commons-collections4:$commons_collections_version",
-            commonsBeanUtils : "commons-beanutils:commons-beanutils:$commons_beanutils_version",
+        dozer: dependencies.create("net.sf.dozer:dozer:5.4.0") {
+            exclude module: "slf4j-log4j12"
+            force = true
+        },
 
-            dozer : "net.sf.dozer:dozer:$dozer_version",
-            jacksonDatabind : "com.fasterxml.jackson.core:jackson-databind:$jackson_databind_version",
-            jacksonAnnotations : "com.fasterxml.jackson.core:jackson-annotations:$jackson_version",
-            hibernateValidator : "org.hibernate:hibernate-validator:$hibernate_validator_version",
-            slf4jApi : "org.slf4j:slf4j-api:$slf4j_version",
-            logbackCore : "ch.qos.logback:logback-core:$logback_version",
-            logbackClassic : "ch.qos.logback:logback-classic:$logback_version",
-            jsr311Api : "javax.ws.rs:jsr311-api:$jsr311_version",
-            reactorNet : "io.projectreactor:reactor-net:$reactor_version",
-            reactorCore : "io.projectreactor:reactor-core:$reactor_version",
-            nettyAll : "io.netty:netty-all:$netty_version",
-            javaxServletApi : "javax.servlet:javax.servlet-api:$javax_version",
-            javaxMail : "javax.mail:mail:$javax_mail_version",
-            javaxMailApi : "javax.mail:javax.mail-api:$javax_mail_api_version",
-            javaxValidation : "javax.validation:validation-api:$javax_validation_version",
+        jackson_databind : "com.fasterxml.jackson.core:jackson-databind:2.9.9",
 
-            freemarker : "org.freemarker:freemarker:$freemarker_version",
-            jedis : "redis.clients:jedis:$jedis_version",
-            jodaTime : "joda-time:joda-time:$joda_time_version",
-            guava : "com.google.guava:guava:$guava_version",
-            googleApiSheets : "com.google.apis:google-api-services-sheets:$google_sheets_version",
-            googleApiDrive : "com.google.apis:google-api-services-drive:$google_drive_version",
-            selenium : "org.seleniumhq.selenium:selenium-java:$selenium_version",
-            awsSdk : "com.amazonaws:aws-java-sdk:$aws_sdk_version",
-            jenkinsClient : "com.offbytwo.jenkins:jenkins-client:$jenkins_client_version",
-            jiraClient : "net.rcarz:jira-client:$jira_client_version",
-            githubApiClient : "org.kohsuke:github-api:$github_api_version",
-            jgit : "org.eclipse.jgit:org.eclipse.jgit:$jgit_version",
-            jwt : "io.jsonwebtoken:jjwt:$jwt_version",
-            slackClient : "in.ashwanthkumar:slack-java-webhook:$slack_client_version",
-            elasticsearchClient : "org.elasticsearch:elasticsearch:$elasticsearch_client_version",
-            elasticsearchHightLevelClient : "org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticsearch_client_version",
-            testNG : "org.testng:testng:$testng_version",
-            jacksonCore : "com.fasterxml.jackson.core:jackson-core:$jackson_version"
+        logging: [
+            "org.slf4j:slf4j-api:1.7.5",
+            "ch.qos.logback:logback-classic:1.1.10"
+        ],
+
+        javax_mail: [
+            "javax.mail:mail:1.4.7",
+            "javax.mail:javax.mail-api:1.5.5"
+        ],
+
+        javax_validation : "javax.validation:validation-api:1.1.0.Final",
+        hibernate_validator : "org.hibernate:hibernate-validator:5.2.4.Final",
+
+        jaxb : [
+            "javax.xml.bind:jaxb-api:2.3.1", // to be replaced with modern alternative
+            "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+        ],
+
+        joda_time : "joda-time:joda-time:2.3", // to be replaced with JDK tools
+
+        google_api_services: [
+            "com.google.apis:google-api-services-sheets:v4-rev523-1.23.0",
+            "com.google.apis:google-api-services-drive:v3-rev118-1.18.0-rc"
+        ],
+
+        integration_clients: [
+            "com.amazonaws:aws-java-sdk:1.11.386",
+            "com.offbytwo.jenkins:jenkins-client:0.3.7",
+            "net.rcarz:jira-client:0.5",
+            "org.kohsuke:github-api:1.95",
+            "in.ashwanthkumar:slack-java-webhook:0.0.7",
+            "org.elasticsearch.client:elasticsearch-rest-high-level-client:6.6.0"
+        ],
+
+        jasypt : "org.jasypt:jasypt:1.9.1",
+        jwt : "io.jsonwebtoken:jjwt:0.7.0",
+        testNG : "org.testng:testng:6.14.3"
 
     ]
 

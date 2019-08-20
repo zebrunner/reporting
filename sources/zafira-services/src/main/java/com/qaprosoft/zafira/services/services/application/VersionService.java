@@ -20,13 +20,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class VersionService {
-    @Value("${zafira.service.version}")
+    @Value("${zafira.version}")
     private String serviceVersion;
 
-    @Value("${zafira.client.version}")
+    @Value("${zafira.client-version}")
     private String clientVersion;
 
-    @Value("${zafira.webservice.url}")
+    @Value("${zafira.rest-url}")
     private String webserviceURL;
 
     public String getServiceVersion() {

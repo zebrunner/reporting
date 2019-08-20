@@ -111,7 +111,7 @@ public class AuthAPIController extends AbstractController {
     @Value("${zafira.multitenant}")
     private boolean isMultitenant;
 
-    @Value("${zafira.artifacts.useProxy:false}")
+    @Value("${zafira.use-artifact-proxy:false}")
     private boolean useArtifactsProxy;
 
     @ResponseStatusDetails

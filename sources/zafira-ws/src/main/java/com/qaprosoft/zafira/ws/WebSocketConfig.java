@@ -18,13 +18,13 @@ package com.qaprosoft.zafira.ws;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private static final String[] STOMP_ENDPOINTS = new String[]{"/api/websockets"};
     private static final String[] STOMP_BROKER_DESTINATIONS = new String[]{"/topic"};
@@ -37,12 +37,12 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
     private final String systemPasscode;
 
     public WebSocketConfig(
-            @Value("${zafira.rabbitmq.stomp.host}") String host,
-            @Value("${zafira.rabbitmq.stomp.port}") int port,
-            @Value("${zafira.rabbitmq.user}") String clientUser,
-            @Value("${zafira.rabbitmq.pass}") String clientPasscode,
-            @Value("${zafira.rabbitmq.user}") String systemUser,
-            @Value("${zafira.rabbitmq.pass}") String systemPasscode) {
+            @Value("${rabbitmq.stomp.host}") String host,
+            @Value("${rabbitmq.stomp.port}") int port,
+            @Value("${rabbitmq.username}") String clientUser,
+            @Value("${rabbitmq.password}") String clientPasscode,
+            @Value("${rabbitmq.username}") String systemUser,
+            @Value("${rabbitmq.password}") String systemPasscode) {
         this.host = host;
         this.port = port;
         this.clientUser = clientUser;

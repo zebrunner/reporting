@@ -20,6 +20,7 @@ import static com.qaprosoft.zafira.models.db.Setting.Tool.CRYPTO;
 import static com.qaprosoft.zafira.services.services.application.integration.context.CryptoContext.CryptoAdditionalProperty.SALT;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -29,7 +30,6 @@ import javax.crypto.SecretKey;
 
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -47,7 +47,7 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
     private final String salt;
 
     public CryptoService(SettingsService settingsService,
-            @Value("${zafira.crypto_salt}") String salt) {
+            @Value("${crypto_salt}") String salt) {
         super(settingsService, CRYPTO, CryptoContext.class);
         this.settingsService = settingsService;
         this.salt = salt;
@@ -108,8 +108,7 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
                 init();
                 return null;
             }
-            key = new String(Base64
-                    .encodeBase64(generateKey(context().getType(), context().getSize()).getEncoded()));
+            key = Base64.getEncoder().encodeToString(generateKey(context().getType(), context().getSize()).getEncoded());
         } catch (Exception e) {
             LOGGER.error("Unable to generate key: " + e.getMessage());
         }

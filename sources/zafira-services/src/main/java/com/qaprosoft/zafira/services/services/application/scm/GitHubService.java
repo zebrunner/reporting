@@ -43,10 +43,10 @@ public class GitHubService implements IScmService {
     @Autowired
     private GitHubHttpUtils gitHubHttpUtils;
 
-    @Value("${zafira.scm.github.client.id}")
+    @Value("${github.client-id}")
     private String gitHubClientId;
 
-    @Value("${zafira.scm.github.client.secret}")
+    @Value("${github.client-secret}")
     private String gitHubSecret;
 
     public String getAccessToken(String code) throws IOException, URISyntaxException {
