@@ -32,6 +32,9 @@ spring:
   freemarker:
     template-loader-path: classpath:/templates/
     suffix: ftl
+  jackson:
+    serialization:
+      write-dates-as-timestamps: true
 
 ### Datasource settings
 datasource:
