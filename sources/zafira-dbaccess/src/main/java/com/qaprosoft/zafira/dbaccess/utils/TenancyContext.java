@@ -28,7 +28,8 @@ public class TenancyContext {
     private static final ThreadLocal<String> tenant = new InheritableThreadLocal<>();
 
     public static void setTenantName(String tenantName) {
-        tenant.set(tenantName != null ? tenantName.toLowerCase() : null);
+        tenantName = tenantName != null ? tenantName.toLowerCase() : null;
+        tenant.set(tenantName);
         MDC.put("tenant.name", tenantName);
     }
 
