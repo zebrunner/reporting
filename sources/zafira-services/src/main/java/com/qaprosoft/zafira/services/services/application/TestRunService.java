@@ -74,8 +74,8 @@ import static com.qaprosoft.zafira.models.db.Status.IN_PROGRESS;
 import static com.qaprosoft.zafira.models.db.Status.PASSED;
 import static com.qaprosoft.zafira.models.db.Status.QUEUED;
 import static com.qaprosoft.zafira.models.db.Status.SKIPPED;
-import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
-import static com.qaprosoft.zafira.services.util.DateFormatter.calculateDurationFromDate;
+import static com.qaprosoft.zafira.services.util.DateTimeUtil.actualizeSearchCriteriaDate;
+import static com.qaprosoft.zafira.services.util.DateTimeUtil.calculateDurationFromDate;
 import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.readArguments;
 
 @Service

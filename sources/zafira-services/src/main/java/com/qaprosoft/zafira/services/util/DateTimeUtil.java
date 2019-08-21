@@ -29,7 +29,7 @@ import java.util.Date;
  * 
  * @author itsvirko
  */
-public class DateFormatter {
+public class DateTimeUtil {
     public static void actualizeSearchCriteriaDate(DateSearchCriteria sc) {
         if (sc.getDate() != null) {
             if (isToday(sc.getDate())) {
@@ -54,13 +54,6 @@ public class DateFormatter {
         return Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
-    /**
-     * Converts
-     * @param dateToConvert
-     * into LocalDateTime format.
-     * @return LocalDateTime value.
-     */
-
     public static LocalDateTime convertToLocalDateTime(Date dateToConvert) {
         return dateToConvert.toInstant()
                             .atZone(ZoneId.systemDefault())
@@ -68,36 +61,21 @@ public class DateFormatter {
     }
 
     /**
-     * Calculates number of seconds since Date
-     * @param startedAtDate
-     * till the current moment.
-     * @return Integer value.
+     * Calculates number of seconds since Date startedAtDate till the current moment.
      */
-
     public static Integer calculateDurationFromDate(Date startedAtDate){
         Duration duration = calculateDuration(startedAtDate, Calendar.getInstance().getTime());
         return Long.valueOf(duration.toSeconds()).intValue();
     }
 
     /**
-     * Calculates date from now till
-     * @param durationInSeconds
-     * is passed.
-     * @return Date value.
+     * Calculates date from now till number of durationInSeconds is passed.
      */
-
     public static Date calculateDurationToDate(Integer durationInSeconds){
         LocalDateTime localDateTime = LocalDateTime.now();
         LocalDateTime finishedAtTime = localDateTime.plusSeconds(durationInSeconds.longValue());
         return Date.from(finishedAtTime.atZone( ZoneId.systemDefault()).toInstant());
     }
-
-    /**
-     * Calculates duration between
-     * @param startedAtDate and
-     * @param finishedAtDate .
-     * @return Duration object as value.
-     */
 
     public static Duration calculateDuration(Date startedAtDate, Date finishedAtDate){
         LocalDateTime startedAt = convertToLocalDateTime(startedAtDate);

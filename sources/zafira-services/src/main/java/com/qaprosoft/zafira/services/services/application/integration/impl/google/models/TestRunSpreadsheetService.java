@@ -41,7 +41,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static com.qaprosoft.zafira.services.util.DateFormatter.calculateDuration;
+import static com.qaprosoft.zafira.services.util.DateTimeUtil.calculateDuration;
 import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.getConfigValueByName;
 import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.isConfigValueIsEmpty;
 

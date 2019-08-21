@@ -19,8 +19,8 @@ import org.dozer.DozerConverter;
 
 import java.util.Date;
 
-import static com.qaprosoft.zafira.services.util.DateFormatter.calculateDurationFromDate;
-import static com.qaprosoft.zafira.services.util.DateFormatter.calculateDurationToDate;
+import static com.qaprosoft.zafira.services.util.DateTimeUtil.calculateDurationFromDate;
+import static com.qaprosoft.zafira.services.util.DateTimeUtil.calculateDurationToDate;
 
 /**
  * ExpirationDateConverter - converts expiresIn seconds to expidationDate.
