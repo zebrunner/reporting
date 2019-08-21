@@ -73,6 +73,7 @@ public class DateFormatter {
      * till the current moment.
      * @return Integer value.
      */
+
     public static Integer calculateDurationFromDate(Date startedAtDate){
         Duration duration = calculateDuration(startedAtDate, Calendar.getInstance().getTime());
         return Long.valueOf(duration.toSeconds()).intValue();
@@ -97,6 +98,7 @@ public class DateFormatter {
      * @param finishedAtDate .
      * @return Duration object as value.
      */
+
     public static Duration calculateDuration(Date startedAtDate, Date finishedAtDate){
         LocalDateTime startedAt = convertToLocalDateTime(startedAtDate);
         LocalDateTime finishedAt = convertToLocalDateTime(finishedAtDate);
