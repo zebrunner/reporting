@@ -62,12 +62,8 @@ public abstract class AbstractIntegration<T extends AbstractContext> implements 
             try {
                 List<Setting> settings = settingsService.getSettingsByTool(tool);
 
-                boolean enabled = true;
-                // crypto is the only tool without enabled/disabled indication
-                if (!Setting.Tool.CRYPTO.equals(tool)) {
-                    Setting enabledSetting = getEnabledSetting(settings);
-                    enabled = Boolean.valueOf(enabledSetting.getValue());
-                }
+                Setting enabledSetting = getEnabledSetting(settings);
+                boolean enabled = Boolean.valueOf(enabledSetting.getValue());
 
                 // skip initialisation if tool is disabled
                 if (enabled) {

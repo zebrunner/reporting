@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-@SuppressWarnings("rawtypes")
 public class IntegrationService {
 
     private final Map<Setting.Tool, Integration> integrations;

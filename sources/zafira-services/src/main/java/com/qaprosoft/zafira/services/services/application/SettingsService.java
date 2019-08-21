@@ -52,13 +52,16 @@ public class SettingsService {
 
     private final SettingsMapper settingsMapper;
     private final IntegrationService integrationService;
+    private final CryptoService cryptoService;
     private final EventPushService<ReinitEventMessage> eventPushService;
 
     public SettingsService(SettingsMapper settingsMapper,
             @Lazy IntegrationService integrationService,
+            @Lazy CryptoService cryptoService,
             EventPushService<ReinitEventMessage> eventPushService) {
         this.settingsMapper = settingsMapper;
         this.integrationService = integrationService;
+        this.cryptoService = cryptoService;
         this.eventPushService = eventPushService;
     }
 
@@ -80,7 +83,7 @@ public class SettingsService {
     @Transactional(readOnly = true)
     public Map<Tool, Boolean> getToolsStatuses() {
         return Arrays.stream(Tool.values())
-                .filter(tool -> !Arrays.asList(Tool.CRYPTO, Tool.ELASTICSEARCH).contains(tool))
+                .filter(tool -> !Tool.ELASTICSEARCH.equals(tool))
                 .collect(Collectors.toMap(tool -> tool, tool -> integrationService.getServiceByTool(tool).isEnabledAndConnected()));
     }
 
@@ -101,7 +104,7 @@ public class SettingsService {
     }
 
     public boolean isConnected(Tool tool) {
-        return tool != null && !tool.equals(Tool.CRYPTO) && integrationService.getServiceByTool(tool).isEnabledAndConnected();
+        return tool != null && integrationService.getServiceByTool(tool).isEnabledAndConnected();
     }
 
     @Transactional(readOnly = true)
@@ -161,7 +164,6 @@ public class SettingsService {
     @Transactional(rollbackFor = Exception.class)
     public void reEncrypt() {
         List<Setting> settings = getSettingsByEncrypted(true);
-        CryptoService cryptoService = getCryptoMQService();
         settings.forEach(setting -> {
             String decValue = cryptoService.decrypt(setting.getValue());
             setting.setValue(decValue);
@@ -172,11 +174,6 @@ public class SettingsService {
             setting.setValue(encValue);
             updateSetting(setting);
         });
-        notifyToolReinitiated(Tool.CRYPTO, TenancyContext.getTenantName());
-    }
-
-    private CryptoService getCryptoMQService() {
-        return integrationService.getServiceByTool(Tool.CRYPTO);
     }
 
     @Transactional(readOnly = true)
@@ -219,7 +216,6 @@ public class SettingsService {
                 setting.setEncrypted(false);
             } else {
                 if (!setting.getValue().equals(dbSetting.getValue())) {
-                    CryptoService cryptoService = integrationService.getServiceByTool(Tool.CRYPTO);
                     setting.setValue(cryptoService.encrypt(setting.getValue()));
                     setting.setEncrypted(true);
                 }

@@ -15,125 +15,75 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
-import static com.qaprosoft.zafira.models.db.Setting.SettingType.KEY;
-import static com.qaprosoft.zafira.models.db.Setting.Tool.CRYPTO;
-import static com.qaprosoft.zafira.services.services.application.integration.context.CryptoContext.CryptoAdditionalProperty.SALT;
-
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
+import javax.annotation.PostConstruct;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
-import com.qaprosoft.zafira.services.exceptions.IntegrationException;
-import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import org.apache.commons.lang.StringUtils;
+import org.jasypt.util.text.BasicTextEncryptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.EncryptorInitializationException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
-import com.qaprosoft.zafira.services.services.application.integration.context.CryptoContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class CryptoService extends AbstractIntegration<CryptoContext> {
+public class CryptoService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CryptoService.class);
 
     private final SettingsService settingsService;
     private final String salt;
 
     public CryptoService(SettingsService settingsService,
             @Value("${crypto-salt}") String salt) {
-        super(settingsService, CRYPTO, CryptoContext.class);
         this.settingsService = settingsService;
         this.salt = salt;
     }
 
-    @Override
+    @PostConstruct
     public void init() {
-        super.init();
-        String key = getKey().orElseThrow(() -> new IntegrationException("Create an integration context before key generating"));
-        if (context().getBasicTextEncryptor() == null || !key.equals(context().getKey())) {
-            initCryptoTool(key);
-        }
-    }
-
-    @Override
-    public Map<CryptoContext.CryptoAdditionalProperty, String> additionalContextProperties() {
-        Map<CryptoContext.CryptoAdditionalProperty, String> additionalProperties = new HashMap<>();
-        additionalProperties.put(SALT, salt);
-        return additionalProperties;
-    }
-
-    private void initCryptoTool(String key) {
-        try {
-            if (!StringUtils.isEmpty(key)) {
-                context().setKey(key);
-            } else {
-                throw new EncryptorInitializationException();
-            }
-        } catch (Exception e) {
-            LOGGER.error("Unable to initialize Crypto Tool, salt or key might be null: " + e.getMessage(), e);
-        }
+        generateKeyIfNeed();
     }
 
     public String encrypt(String strToEncrypt) {
-        return context().getBasicTextEncryptor().encrypt(strToEncrypt);
+        BasicTextEncryptor basicTextEncryptor = getBasicTextEncryptor();
+        return basicTextEncryptor.encrypt(strToEncrypt);
     }
 
     public String decrypt(String strToDecrypt) {
-        return context().getBasicTextEncryptor().decrypt(strToDecrypt);
+        BasicTextEncryptor basicTextEncryptor = getBasicTextEncryptor();
+        return basicTextEncryptor.decrypt(strToDecrypt);
     }
 
     @Transactional(readOnly = true)
-    public Optional<String> getKey() {
-        return mapContext(context -> {
-            String result = settingsService.getSettingByType(KEY).getValue();
-            if (StringUtils.isBlank(result)) {
-                result = generateKey();
-            }
-            return result;
-        });
+    public void generateKeyIfNeed() {
+        String result = getCryptoKey();
+        if (StringUtils.isBlank(result)) {
+            regenerateKey();
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public String generateKey() {
+    public void regenerateKey() {
         String key = null;
+        String cryptoKeyType = getCryptoKeyType();
+        int cryptoKeySize = getCryptoKeySize();
         try {
-            if (mapContext(CryptoContext::getType).isEmpty()) {
-                init();
-                return null;
-            }
-            key = Base64.getEncoder().encodeToString(generateKey(context().getType(), context().getSize()).getEncoded());
+            key = Base64.getEncoder().encodeToString(generateKey(cryptoKeyType, cryptoKeySize).getEncoded());
         } catch (Exception e) {
             LOGGER.error("Unable to generate key: " + e.getMessage());
         }
-        Setting keySetting = settingsService.getSettingByType(KEY);
+        Setting keySetting = settingsService.getSettingByName("KEY");
         keySetting.setValue(key);
         settingsService.updateSetting(keySetting);
-        return key;
-    }
-
-    public void regenerateKey() {
-        String key = generateKey();
-        context().setKey(key);
-    }
-
-    public String getSalt() {
-        return salt;
-    }
-
-    @Override
-    public boolean isConnected() {
-        try {
-            return context().getKey() != null && salt != null;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     private static SecretKey generateKey(String keyType, int size) throws NoSuchAlgorithmException {
@@ -141,6 +91,36 @@ public class CryptoService extends AbstractIntegration<CryptoContext> {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(keyType);
         keyGenerator.init(size);
         return keyGenerator.generateKey();
+    }
+
+    private BasicTextEncryptor getBasicTextEncryptor() {
+        String key = getCryptoKey();
+        BasicTextEncryptor basicTextEncryptor = new BasicTextEncryptor();
+        try {
+            if (!StringUtils.isEmpty(key)) {
+                basicTextEncryptor.setPassword(key + salt);
+            } else {
+                throw new EncryptorInitializationException();
+            }
+        } catch (Exception e) {
+            LOGGER.error("Unable to initialize Crypto Tool, salt or key might be null: " + e.getMessage(), e);
+        }
+        return basicTextEncryptor;
+    }
+
+    private String getCryptoKey() {
+        Setting setting = settingsService.getSettingByName("KEY");
+        return setting.getValue();
+    }
+
+    private String getCryptoKeyType() {
+        Setting setting = settingsService.getSettingByName("CRYPTO_KEY_TYPE");
+        return setting.getValue();
+    }
+
+    private int getCryptoKeySize() {
+        Setting setting = settingsService.getSettingByName("CRYPTO_KEY_SIZE");
+        return Integer.parseInt(setting.getValue());
     }
 
 }

@@ -77,8 +77,7 @@ public class Setting extends AbstractEntity {
                 SettingType.SELENIUM_URL,
                 SettingType.SELENIUM_USER,
                 SettingType.SELENIUM_PASSWORD,
-                SettingType.SELENIUM_ENABLED),
-        CRYPTO(1, SettingType.CRYPTO_KEY_TYPE, SettingType.CRYPTO_ALGORITHM, SettingType.CRYPTO_KEY_SIZE, SettingType.KEY);
+                SettingType.SELENIUM_ENABLED);
 
         private final List<SettingType> toolSettings;
         private int priority;
@@ -154,10 +153,6 @@ public class Setting extends AbstractEntity {
         LDAP_MANAGER_USER,
         LDAP_MANAGER_PASSWORD(true),
         LDAP_ENABLED,
-        CRYPTO_KEY_TYPE,
-        CRYPTO_ALGORITHM(false, false),
-        CRYPTO_KEY_SIZE,
-        KEY(false, false),
         RABBITMQ_HOST,
         RABBITMQ_PORT,
         RABBITMQ_USER,

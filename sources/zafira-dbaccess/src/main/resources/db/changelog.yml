@@ -1,4 +1,4 @@
-#databaseChangeLog:
+databaseChangeLog: []
 #  - changeSet:
 #      id: 01_create_timestamps_trigger
 #      labels: sprint1
