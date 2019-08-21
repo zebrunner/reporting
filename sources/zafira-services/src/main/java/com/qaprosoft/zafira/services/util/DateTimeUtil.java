@@ -60,17 +60,13 @@ public class DateTimeUtil {
                             .toLocalDateTime();
     }
 
-    /**
-     * Calculates number of seconds since Date startedAtDate till the current moment.
-     */
+    /** Calculates number of seconds since Date startedAtDate till the current moment. */
     public static Integer calculateDurationFromDate(Date startedAtDate){
         Duration duration = calculateDuration(startedAtDate, Calendar.getInstance().getTime());
         return Long.valueOf(duration.toSeconds()).intValue();
     }
 
-    /**
-     * Calculates date from now till number of durationInSeconds is passed.
-     */
+    /** Calculates date from now till number of durationInSeconds is passed. */
     public static Date calculateDurationToDate(Integer durationInSeconds){
         LocalDateTime localDateTime = LocalDateTime.now();
         LocalDateTime finishedAtTime = localDateTime.plusSeconds(durationInSeconds.longValue());
