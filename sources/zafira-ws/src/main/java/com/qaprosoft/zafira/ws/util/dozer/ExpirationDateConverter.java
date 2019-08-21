@@ -15,11 +15,11 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.util.dozer;
 
-import com.qaprosoft.zafira.services.util.DateFormatter;
 import org.dozer.DozerConverter;
 
 import java.util.Date;
 
+import static com.qaprosoft.zafira.services.util.DateFormatter.calculateDurationFromDate;
 import static com.qaprosoft.zafira.services.util.DateFormatter.calculateDurationToDate;
 
 /**
@@ -35,7 +35,7 @@ public class ExpirationDateConverter extends DozerConverter<Integer, Date> {
 
     @Override
     public Integer convertFrom(Date source, Integer destination) {
-        return source != null ? DateFormatter.calculateDurationFromDate(source) : null;
+        return source != null ? calculateDurationFromDate(source) : null;
     }
 
     @Override
