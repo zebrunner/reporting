@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
@@ -72,8 +71,6 @@ public class EmailService {
                 msg.setText(text, true);
                 if (hasAttachments) {
                     for (Attachment attachment : message.getAttachments()) {
-                        msg.addAttachment(attachment.getName() + "." + FilenameUtils.getExtension(attachment.getFile().getName()),
-                                attachment.getFile());
                         msg.addInline(attachment.getName().replaceAll(" ", "_"), attachment.getFile());
                     }
                 }
