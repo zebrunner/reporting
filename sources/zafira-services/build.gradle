@@ -17,7 +17,6 @@ dependencies {
     compile libraries.commons_io
     compile libraries.apache_http_client
     compile libraries.jasypt
-    compile libraries.joda_time
     compile libraries.logging
     compile libraries.google_api_services
     compile libraries.jackson_databind

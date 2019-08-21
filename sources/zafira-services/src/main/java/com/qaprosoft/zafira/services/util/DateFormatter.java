@@ -17,8 +17,11 @@ package com.qaprosoft.zafira.services.util;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.DateSearchCriteria;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -50,4 +53,54 @@ public class DateFormatter {
         LocalDate ld = new java.sql.Date(date.getTime()).toLocalDate();
         return Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
+
+    /**
+     * Converts
+     * @param dateToConvert
+     * into LocalDateTime format.
+     * @return LocalDateTime value.
+     */
+
+    public static LocalDateTime convertToLocalDateTime(Date dateToConvert) {
+        return dateToConvert.toInstant()
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDateTime();
+    }
+
+    /**
+     * Calculates number of seconds since Date
+     * @param startedAtDate
+     * till the current moment.
+     * @return Integer value.
+     */
+    public static Integer calculateDurationFromDate(Date startedAtDate){
+        Duration duration = calculateDuration(startedAtDate, Calendar.getInstance().getTime());
+        return Long.valueOf(duration.toSeconds()).intValue();
+    }
+
+    /**
+     * Calculates date from now till
+     * @param durationInSeconds
+     * is passed.
+     * @return Date value.
+     */
+
+    public static Date calculateDurationToDate(Integer durationInSeconds){
+        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDateTime finishedAtTime = localDateTime.plusSeconds(durationInSeconds.longValue());
+        return Date.from(finishedAtTime.atZone( ZoneId.systemDefault()).toInstant());
+    }
+
+    /**
+     * Calculates duration between
+     * @param startedAtDate and
+     * @param finishedAtDate .
+     * @return Duration object as value.
+     */
+    public static Duration calculateDuration(Date startedAtDate, Date finishedAtDate){
+        LocalDateTime startedAt = convertToLocalDateTime(startedAtDate);
+        LocalDateTime finishedAt = convertToLocalDateTime(finishedAtDate);
+        return Duration.between(startedAt, finishedAt);
+    }
+
 }
