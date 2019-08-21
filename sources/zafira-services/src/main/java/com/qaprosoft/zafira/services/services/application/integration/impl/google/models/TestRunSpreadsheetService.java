@@ -27,8 +27,6 @@ import com.qaprosoft.zafira.services.services.application.integration.impl.googl
 import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleSpreadsheetsService;
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.Interval;
-import org.joda.time.Period;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +34,14 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static com.qaprosoft.zafira.services.util.DateTimeUtil.calculateDuration;
 import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.getConfigValueByName;
 import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.isConfigValueIsEmpty;
 
@@ -125,13 +125,12 @@ TestRunSpreadsheetService {
             testResult.add(getNotNullSpreadsheetValue(test.getOwner()));
             testResult.add(getNotNullSpreadsheetValue(test.getSecondaryOwner()));
             testResult.add(getNotNullSpreadsheetValue(test.getTestConfig().getDevice()));
-            Period period = new Interval(test.getStartTime().getTime(), test.getFinishTime().getTime()).toPeriod();
-            StringBuilder elapsedTime = new StringBuilder();
-            elapsedTime.append(period.getDays() > 0 ? String.format("%d days", period.getDays()) : "");
-            elapsedTime.append(period.getHours() > 0 ? String.format(" %d hours", period.getHours()) : "");
-            elapsedTime.append(period.getMinutes() > 0 ? String.format(" %d minutes", period.getMinutes()) : "");
-            elapsedTime.append(period.getSeconds() > 0 ? String.format(" %d seconds", period.getSeconds()) : "");
-            testResult.add(getNotNullSpreadsheetValue(elapsedTime.toString()));
+            Duration duration = calculateDuration(test.getStartTime(), test.getFinishTime());
+            String elapsedTime = (duration.toDays() > 0 ? String.format("%d days", duration.toDays()) : "") +
+                    (duration.toHours() > 0 ? String.format(" %d hours", duration.toHours()) : "") +
+                    (duration.toMinutes() > 0 ? String.format(" %d minutes", duration.toMinutes()) : "") +
+                    (duration.toSeconds() > 0 ? String.format(" %d seconds", duration.toSeconds()) : "");
+            testResult.add(getNotNullSpreadsheetValue(elapsedTime));
             testResult.add(getNotNullSpreadsheetValue(new SimpleDateFormat("E, MM/dd/yyyy HH:mm:ss Z").format(test.getStartTime())));
             String hyperLink = "=HYPERLINK(\"%s\", \"%s\")\n";
             StringBuilder hyperLinks = new StringBuilder();
