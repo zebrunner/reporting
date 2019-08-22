@@ -1,101 +1,100 @@
 -- Groups of integrations like AUTOMATION_SERVER group includes jenkins, teamcity etc.
 DROP TABLE IF EXISTS INTEGRATION_GROUPS;
 CREATE TABLE IF NOT EXISTS INTEGRATION_GROUPS (
-                                                  ID SERIAL,
-                                                  NAME VARCHAR(50) NOT NULL,
-                                                  ICON_URL VARCHAR(255) NOT NULL,
-                                                  MULTIPLE_ALLOWED BOOLEAN NOT NULL DEFAULT FALSE,
-                                                  MODIFIED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                                                  CREATED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                                                  PRIMARY KEY (ID));
+    ID SERIAL,
+    NAME VARCHAR(50) NOT NULL,
+    ICON_URL VARCHAR(255) NOT NULL,
+    MULTIPLE_ALLOWED BOOLEAN NOT NULL DEFAULT FALSE,
+    MODIFIED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CREATED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (ID));
 CREATE UNIQUE INDEX INTEGRATION_GROUPS_NAME_UNIQUE ON INTEGRATION_GROUPS (NAME);
 CREATE TRIGGER update_timestamp_integration_groups BEFORE INSERT OR UPDATE ON INTEGRATION_GROUPS FOR EACH ROW EXECUTE PROCEDURE update_timestamp();
 
 -- Sub item of integration group
 DROP TABLE IF EXISTS INTEGRATION_TYPES;
 CREATE TABLE IF NOT EXISTS INTEGRATION_TYPES (
-                                                 ID SERIAL,
-                                                 NAME VARCHAR(50) NOT NULL,
-                                                 DISPLAY_NAME VARCHAR(50) NOT NULL,
-                                                 ICON_URL VARCHAR(255) NOT NULL,
-                                                 INTEGRATION_GROUP_ID INT NOT NULL,
-                                                 MODIFIED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                                                 CREATED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                                                 PRIMARY KEY (ID),
-                                                 CONSTRAINT fk_INTEGRATION_INTEGRATION_GROUP_ID1
-                                                     FOREIGN KEY (INTEGRATION_GROUP_ID)
-                                                         REFERENCES INTEGRATION_GROUPS (ID)
-                                                         ON DELETE NO ACTION
-                                                         ON UPDATE NO ACTION);
+     ID SERIAL,
+     NAME VARCHAR(50) NOT NULL,
+     DISPLAY_NAME VARCHAR(50) NOT NULL,
+     ICON_URL VARCHAR(255) NOT NULL,
+     INTEGRATION_GROUP_ID INT NOT NULL,
+     MODIFIED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+     CREATED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+     PRIMARY KEY (ID),
+     CONSTRAINT fk_INTEGRATION_INTEGRATION_GROUP_ID1
+         FOREIGN KEY (INTEGRATION_GROUP_ID)
+             REFERENCES INTEGRATION_GROUPS (ID)
+             ON DELETE NO ACTION
+             ON UPDATE NO ACTION);
 CREATE UNIQUE INDEX INTEGRATION_TYPES_NAME_UNIQUE ON INTEGRATION_TYPES (NAME);
 CREATE UNIQUE INDEX INTEGRATION_TYPES_DISPLAY_NAME_UNIQUE ON INTEGRATION_TYPES (DISPLAY_NAME);
 CREATE TRIGGER update_timestamp_integration_types BEFORE INSERT OR UPDATE ON INTEGRATION_TYPES FOR EACH ROW EXECUTE PROCEDURE update_timestamp();
 
 DROP TABLE IF EXISTS INTEGRATIONS;
 CREATE TABLE IF NOT EXISTS INTEGRATIONS (
-                                            ID SERIAL,
-                                            NAME VARCHAR(50) NOT NULL,
-                                            BACK_REFERENCE_ID VARCHAR(50) NULL,
-                                            "DEFAULT" BOOLEAN NOT NULL DEFAULT FALSE,
-                                            ENABLED BOOLEAN NOT NULL DEFAULT FALSE,
-                                            INTEGRATION_TYPE_ID INT NOT NULL,
-                                            MODIFIED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                                            CREATED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                                            PRIMARY KEY (ID),
-                                            CONSTRAINT fk_INTEGRATION_INTEGRATION_TYPE_ID1
-                                                FOREIGN KEY (INTEGRATION_TYPE_ID)
-                                                    REFERENCES INTEGRATION_TYPES (ID)
-                                                    ON DELETE NO ACTION
-                                                    ON UPDATE NO ACTION);
+    ID SERIAL,
+    NAME VARCHAR(50) NOT NULL,
+    BACK_REFERENCE_ID VARCHAR(50) NULL,
+    "DEFAULT" BOOLEAN NOT NULL DEFAULT FALSE,
+    ENABLED BOOLEAN NOT NULL DEFAULT FALSE,
+    INTEGRATION_TYPE_ID INT NOT NULL,
+    MODIFIED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CREATED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (ID),
+    CONSTRAINT fk_INTEGRATION_INTEGRATION_TYPE_ID1
+        FOREIGN KEY (INTEGRATION_TYPE_ID)
+            REFERENCES INTEGRATION_TYPES (ID)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION);
 CREATE UNIQUE INDEX INTEGRATIONS_BACK_REFERENCE_UNIQUE ON INTEGRATIONS (BACK_REFERENCE_ID);
 CREATE UNIQUE INDEX INTEGRATIONS_INTEGRATION_TYPE_ID_DEFAULT_UNIQUE ON INTEGRATIONS (INTEGRATION_TYPE_ID, "DEFAULT") WHERE "DEFAULT" = TRUE;
 CREATE TRIGGER update_timestamp_integrations BEFORE INSERT OR UPDATE ON INTEGRATIONS FOR EACH ROW EXECUTE PROCEDURE update_timestamp();
 
 DROP TABLE IF EXISTS INTEGRATION_PARAMS;
 CREATE TABLE IF NOT EXISTS INTEGRATION_PARAMS (
-                                                  ID SERIAL,
-                                                  NAME VARCHAR(50) NOT NULL,
-                                                  METADATA TEXT NULL,
-                                                  DEFAULT_VALUE TEXT NULL,
-                                                  MANDATORY BOOLEAN NOT NULL DEFAULT FALSE,
-                                                  NEED_ENCRYPTION BOOLEAN NOT NULL DEFAULT FALSE,
-                                                  INTEGRATION_TYPE_ID INT NOT NULL,
-                                                  MODIFIED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                                                  CREATED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                                                  PRIMARY KEY (ID),
-                                                  CONSTRAINT fk_INTEGRATION_PARAM_INTEGRATION_TYPE_ID1
-                                                      FOREIGN KEY (INTEGRATION_TYPE_ID)
-                                                          REFERENCES INTEGRATION_TYPES (ID)
-                                                          ON DELETE NO ACTION
-                                                          ON UPDATE NO ACTION);
+    ID SERIAL,
+    NAME VARCHAR(50) NOT NULL,
+    METADATA TEXT NULL,
+    DEFAULT_VALUE TEXT NULL,
+    MANDATORY BOOLEAN NOT NULL DEFAULT FALSE,
+    NEED_ENCRYPTION BOOLEAN NOT NULL DEFAULT FALSE,
+    INTEGRATION_TYPE_ID INT NOT NULL,
+    MODIFIED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CREATED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (ID),
+    CONSTRAINT fk_INTEGRATION_PARAM_INTEGRATION_TYPE_ID1
+      FOREIGN KEY (INTEGRATION_TYPE_ID)
+          REFERENCES INTEGRATION_TYPES (ID)
+          ON DELETE NO ACTION
+          ON UPDATE NO ACTION);
 CREATE UNIQUE INDEX INTEGRATION_PARAMS_NAME_INTEGRATION_TYPE_ID_UNIQUE ON INTEGRATION_PARAMS (NAME, INTEGRATION_TYPE_ID);
 CREATE TRIGGER update_timestamp_integration_params BEFORE INSERT OR UPDATE ON INTEGRATION_PARAMS FOR EACH ROW EXECUTE PROCEDURE update_timestamp();
 
 DROP TABLE IF EXISTS INTEGRATION_SETTINGS;
 CREATE TABLE IF NOT EXISTS INTEGRATION_SETTINGS (
-                                                    ID SERIAL,
-                                                    VALUE TEXT NULL,
-                                                    BINARY_DATA BYTEA NULL,
-                                                    ENCRYPTED BOOLEAN NOT NULL DEFAULT FALSE,
-                                                    INTEGRATION_ID INT NOT NULL,
-                                                    INTEGRATION_PARAM_ID INT NOT NULL,
-                                                    MODIFIED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                                                    CREATED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                                                    PRIMARY KEY (ID),
-                                                    CONSTRAINT fk_INTEGRATION_SETTING_INTEGRATION_ID1
-                                                        FOREIGN KEY (INTEGRATION_ID)
-                                                            REFERENCES INTEGRATIONS (ID)
-                                                            ON DELETE NO ACTION
-                                                            ON UPDATE NO ACTION,
-                                                    CONSTRAINT fk_INTEGRATION_SETTING_INTEGRATION_PARAM_ID1
-                                                        FOREIGN KEY (INTEGRATION_PARAM_ID)
-                                                            REFERENCES INTEGRATION_PARAMS (ID)
-                                                            ON DELETE NO ACTION
-                                                            ON UPDATE NO ACTION);
+    ID SERIAL,
+    VALUE TEXT NULL,
+    BINARY_DATA BYTEA NULL,
+    ENCRYPTED BOOLEAN NOT NULL DEFAULT FALSE,
+    INTEGRATION_ID INT NOT NULL,
+    INTEGRATION_PARAM_ID INT NOT NULL,
+    MODIFIED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CREATED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (ID),
+    CONSTRAINT fk_INTEGRATION_SETTING_INTEGRATION_ID1
+        FOREIGN KEY (INTEGRATION_ID)
+            REFERENCES INTEGRATIONS (ID)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION,
+    CONSTRAINT fk_INTEGRATION_SETTING_INTEGRATION_PARAM_ID1
+        FOREIGN KEY (INTEGRATION_PARAM_ID)
+            REFERENCES INTEGRATION_PARAMS (ID)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION);
 CREATE UNIQUE INDEX INTEGRATION_SETTINGS_INTEGRATION_PARAM_ID_INTEGRATION_ID_UNIQUE ON INTEGRATION_SETTINGS (INTEGRATION_PARAM_ID, INTEGRATION_ID);
 CREATE TRIGGER update_timestamp_integration_settings BEFORE INSERT OR UPDATE ON INTEGRATION_SETTINGS FOR EACH ROW EXECUTE PROCEDURE update_timestamp();
 
-set schema 'zafira';
 DO $$
 
     DECLARE SETTING_ROW SETTINGS%ROWTYPE;
@@ -162,7 +161,7 @@ DO $$
     END$$;
 
 ALTER TABLE JOBS ADD COLUMN AUTOMATION_SERVER_ID INT NULL;
-ALTER TABLE JOBS ADD CONSTRAINT fk_JOB_AUTOMATION_SERVER_ID1
+ALTER TABLE JOBS ADD CONSTRAINT fk_JOBS_AUTOMATION_SERVER_ID1
     FOREIGN KEY (AUTOMATION_SERVER_ID)
         REFERENCES INTEGRATIONS (ID)
         ON DELETE NO ACTION
