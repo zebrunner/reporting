@@ -1,12 +1,11 @@
-databaseChangeLog: []
-#  - changeSet:
-#      id: 01_create_timestamps_trigger
-#      labels: sprint1
-#      author: nsidorevich
-#      changes:
-#        - sqlFile:
-#            encoding: utf8
-#            path: changeset/001_first_changeset.sql
-#            relativeToChangelogFile: true
-#            splitStatements: false
-
+databaseChangeLog:
+  - changeSet:
+      id: 01_create_integrations_structure
+      labels: stable
+      author: brutskov
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/001_create_integrations_structure.sql
+            relativeToChangelogFile: true
+            splitStatements: false
