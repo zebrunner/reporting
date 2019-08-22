@@ -17,7 +17,6 @@ package com.qaprosoft.zafira.services.services.application.integration.impl;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.ExternalSystemException;
-import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import com.qaprosoft.zafira.services.util.ElasticsearchResultHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
@@ -35,6 +34,8 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -48,11 +49,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import static com.qaprosoft.zafira.models.db.Setting.Tool.ELASTICSEARCH;
-
 @SuppressWarnings("rawtypes")
 @Component
-public class ElasticsearchService extends AbstractIntegration {
+public class ElasticsearchService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ElasticsearchService.class);
 
     private static final String ERR_MSG_SEARCH_SCREENSHOTS = "Cannot get screenshots from elasticsearch";
 
@@ -66,7 +67,6 @@ public class ElasticsearchService extends AbstractIntegration {
             @Value("${elasticsearch.username}") String user,
             @Value("${elasticsearch.password}") String password
     ) {
-        super(ELASTICSEARCH);
         this.url = url;
         this.user = user;
         this.password = password;
@@ -141,15 +141,6 @@ public class ElasticsearchService extends AbstractIntegration {
         }
     }
 
-    @Override
-    public void init() {
-    }
-
-    @Override
-    public boolean isConnected() {
-        return true;
-    }
-
     private static RestClientBuilder getBuilder(String path) {
         String prefix;
         HttpHost host;
@@ -215,4 +206,5 @@ public class ElasticsearchService extends AbstractIntegration {
     private Optional<RestHighLevelClient> getClient() {
         return Optional.ofNullable(this.client);
     }
+
 }

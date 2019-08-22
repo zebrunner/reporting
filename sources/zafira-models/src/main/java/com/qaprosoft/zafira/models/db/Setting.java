@@ -43,7 +43,6 @@ public class Setting extends AbstractEntity {
                 SettingType.RABBITMQ_PASSWORD),
         GOOGLE(SettingType.GOOGLE_CLIENT_SECRET_ORIGIN, SettingType.GOOGLE_ENABLED),
         JIRA(SettingType.JIRA_URL, SettingType.JIRA_USER, SettingType.JIRA_PASSWORD, SettingType.JIRA_CLOSED_STATUS, SettingType.JIRA_ENABLED),
-        ELASTICSEARCH,
         JENKINS(
                 SettingType.JENKINS_URL,
                 SettingType.JENKINS_USER,

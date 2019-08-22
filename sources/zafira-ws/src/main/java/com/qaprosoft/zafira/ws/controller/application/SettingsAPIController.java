@@ -34,10 +34,8 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.Setting.Tool;
 import com.qaprosoft.zafira.models.dto.ConnectedToolType;
 import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.AmazonService;
-import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.Api;
@@ -59,20 +57,17 @@ public class SettingsAPIController extends AbstractController {
     private final AmazonService amazonService;
     private final GoogleService googleService;
     private final SettingsService settingsService;
-    private final CryptoService cryptoService;
     private final Integer amazonTokenExpiration;
     private final Long googleTokenExpiration;
 
     public SettingsAPIController(AmazonService amazonService,
             GoogleService googleService,
             SettingsService settingsService,
-            CryptoService cryptoService,
             @Value("${amazon-token-expiration}") Integer amazonTokenExpiration,
             @Value("${google-token-expiration}") Long googleTokenExpiration) {
         this.amazonService = amazonService;
         this.googleService = googleService;
         this.settingsService = settingsService;
-        this.cryptoService = cryptoService;
         this.amazonTokenExpiration = amazonTokenExpiration;
         this.googleTokenExpiration = googleTokenExpiration;
     }
@@ -81,22 +76,8 @@ public class SettingsAPIController extends AbstractController {
     @ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("tool/{tool}")
-    public List<Setting> getSettingsByTool(@PathVariable("tool") Tool tool, @RequestParam(value = "decrypt", required = false) boolean decrypt) {
-        List<Setting> settings = settingsService.getSettingsByTool(tool);
-
-        if (decrypt) {
-            if (!tool.isDecrypt()) {
-                throw new ForbiddenOperationException();
-            }
-            for (Setting setting : settings) {
-                if (setting.isEncrypted()) {
-                    setting.setValue(cryptoService.decrypt(setting.getValue()));
-                    setting.setEncrypted(false);
-                }
-            }
-        }
-
-        return settings;
+    public List<Setting> getSettingsByTool(@PathVariable("tool") String tool, @RequestParam(value = "decrypt", required = false) boolean decrypt) {
+        return settingsService.getSettingsByTool(tool, decrypt);
     }
 
     @ResponseStatusDetails

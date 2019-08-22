@@ -53,15 +53,18 @@ public class SettingsService {
     private final SettingsMapper settingsMapper;
     private final IntegrationService integrationService;
     private final CryptoService cryptoService;
+    private final ElasticsearchService elasticsearchService;
     private final EventPushService<ReinitEventMessage> eventPushService;
 
     public SettingsService(SettingsMapper settingsMapper,
             @Lazy IntegrationService integrationService,
             @Lazy CryptoService cryptoService,
+            ElasticsearchService elasticsearchService,
             EventPushService<ReinitEventMessage> eventPushService) {
         this.settingsMapper = settingsMapper;
         this.integrationService = integrationService;
         this.cryptoService = cryptoService;
+        this.elasticsearchService = elasticsearchService;
         this.eventPushService = eventPushService;
     }
 
@@ -83,19 +86,34 @@ public class SettingsService {
     @Transactional(readOnly = true)
     public Map<Tool, Boolean> getToolsStatuses() {
         return Arrays.stream(Tool.values())
-                .filter(tool -> !Tool.ELASTICSEARCH.equals(tool))
                 .collect(Collectors.toMap(tool -> tool, tool -> integrationService.getServiceByTool(tool).isEnabledAndConnected()));
+    }
+
+    public List<Setting> getSettingsByTool(String toolName, boolean decrypt) {
+        List<Setting> result;
+        if ("ELASTICSEARCH".equals(toolName)) {
+            result = elasticsearchService.getSettings();
+        } else {
+            Tool tool = Tool.valueOf(toolName);
+            result = getSettingsByTool(tool);
+            if (decrypt) {
+                if (!tool.isDecrypt()) {
+                    throw new ForbiddenOperationException();
+                }
+                for (Setting setting : result) {
+                    if (setting.isEncrypted()) {
+                        setting.setValue(cryptoService.decrypt(setting.getValue()));
+                        setting.setEncrypted(false);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     @Transactional(readOnly = true)
     public List<Setting> getSettingsByTool(Tool tool) {
-        List<Setting> result;
-        if (tool == Tool.ELASTICSEARCH) {
-            result = getElasticsearchService().getSettings();
-        } else {
-            result = settingsMapper.getSettingsByTool(tool);
-        }
-        return result;
+        return settingsMapper.getSettingsByTool(tool);
     }
 
     @Transactional(readOnly = true)
@@ -240,10 +258,6 @@ public class SettingsService {
                 throw new ForbiddenOperationException(ERR_MSG_MULTIPLE_TOOLS_UPDATE);
             }
         });
-    }
-
-    private ElasticsearchService getElasticsearchService() {
-        return integrationService.getServiceByTool(Tool.ELASTICSEARCH);
     }
 
 }
