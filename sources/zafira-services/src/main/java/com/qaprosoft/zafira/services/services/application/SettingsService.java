@@ -39,8 +39,6 @@ import com.qaprosoft.zafira.models.dto.ConnectedToolType;
 import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
-import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
-import com.qaprosoft.zafira.services.services.application.integration.impl.ElasticsearchService;
 import com.qaprosoft.zafira.services.util.EventPushService;
 
 @Service

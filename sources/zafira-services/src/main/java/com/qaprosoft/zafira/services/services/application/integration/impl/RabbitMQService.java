@@ -17,6 +17,7 @@ package com.qaprosoft.zafira.services.services.application.integration.impl;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.RABBITMQ;
 
+import com.qaprosoft.zafira.services.services.application.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.Connection;

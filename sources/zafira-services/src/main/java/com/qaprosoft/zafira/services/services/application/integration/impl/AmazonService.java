@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.*;
 
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
+import com.qaprosoft.zafira.services.services.application.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.io.FilenameUtils;

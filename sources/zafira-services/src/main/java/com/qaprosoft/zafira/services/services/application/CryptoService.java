@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.integration.impl;
+package com.qaprosoft.zafira.services.services.application;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.EncryptorInitializationException;
-import com.qaprosoft.zafira.services.services.application.SettingsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

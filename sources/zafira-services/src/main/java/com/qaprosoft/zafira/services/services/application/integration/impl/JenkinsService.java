@@ -38,6 +38,7 @@ import com.offbytwo.jenkins.model.QueueItem;
 import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.services.exceptions.ExternalSystemException;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
+import com.qaprosoft.zafira.services.services.application.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import org.apache.commons.lang.StringUtils;
 
