@@ -37,7 +37,7 @@ Zafira uses integration with Amazon S3 service to store user profile photos and 
 * Click save, a green light indicates the correct integration status.
 
 <p>
-  <img style="border: 1px solid grey;" width="280px" height="420px" src="img/int_amazon.png">
+  <img style="border: 1px solid grey;" src="img/int_amazon.png">
 </p>
 
 
