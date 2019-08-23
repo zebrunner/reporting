@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.util;
 
-import com.qaprosoft.zafira.services.exceptions.UnableToSendRequestException;
+import com.qaprosoft.zafira.services.exceptions.ExternalSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -45,7 +45,7 @@ public class GitHubHttpUtils {
         try {
             httpResponse = this.httpClient.send(buildGetAccessTokenRequest(code, clientId, secret), HttpResponse.BodyHandlers.ofString());
         } catch (InterruptedException e) {
-            throw new UnableToSendRequestException(e.getMessage(), e);
+            throw new ExternalSystemException(e.getMessage(), e);
         }
         return getAccessToken(httpResponse.body().toString());
     }
