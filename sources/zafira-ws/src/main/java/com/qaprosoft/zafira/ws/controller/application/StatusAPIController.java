@@ -22,7 +22,6 @@ import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,8 +33,11 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 public class StatusAPIController extends AbstractController {
 
-    @Autowired
-    private SettingsService settingsService;
+    private final SettingsService settingsService;
+
+    public StatusAPIController(SettingsService settingsService) {
+        this.settingsService = settingsService;
+    }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get service status", nickname = "status", httpMethod = "GET", response = String.class)
