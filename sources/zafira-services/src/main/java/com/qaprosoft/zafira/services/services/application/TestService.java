@@ -33,7 +33,6 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 import com.qaprosoft.zafira.services.services.application.integration.impl.JiraService;
 import net.rcarz.jiraclient.Issue;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
@@ -105,7 +104,7 @@ public class TestService {
             if ((test.getId() == null || test.getId() == 0)) {
                 createTest(test);
 
-                if (CollectionUtils.isNotEmpty(jiraIds)) {
+                if (jiraIds != null && !jiraIds.isEmpty()) {
                     for (String jiraId : jiraIds) {
                         if (StringUtils.isNotEmpty(jiraId)) {
                             WorkItem workItem = workItemService.createOrGetWorkItem(new WorkItem(jiraId));
@@ -216,9 +215,10 @@ public class TestService {
             }
 
             // Save artifacts
-            if (!CollectionUtils.isEmpty(test.getArtifacts())) {
+            Set<TestArtifact> testArtifacts = test.getArtifacts();
+            if (testArtifacts != null && !testArtifacts.isEmpty()) {
                 existingTest.setArtifacts(new HashSet<>());
-                test.getArtifacts().stream().filter(TestArtifact::isValid).forEach(artifact -> {
+                testArtifacts.stream().filter(TestArtifact::isValid).forEach(artifact -> {
                     artifact.setTestId(test.getId());
                     existingTest.getArtifacts().add(artifact);
                     testArtifactService.createOrUpdateTestArtifact(artifact);
@@ -505,10 +505,13 @@ public class TestService {
      */
     @Transactional(rollbackFor = Exception.class)
     public Set<Tag> saveTags(Long testId, Set<Tag> tags) {
-        if (CollectionUtils.isNotEmpty(tags)) {
+        if (!(tags == null || tags.isEmpty())) {
             tags = tagService.createTags(tags);
-            Set<Tag> tagsToAdd = tags.stream().filter(tag -> tag.getId() != null && tag.getId() != 0).collect(Collectors.toSet());
-            if (CollectionUtils.isNotEmpty(tagsToAdd)) {
+            Set<Tag> tagsToAdd = tags.stream()
+                                     .filter(tag -> tag.getId() != null && tag.getId() != 0)
+                                     .collect(Collectors.toSet());
+
+            if (!tagsToAdd.isEmpty()) {
                 deleteTags(testId);
                 testMapper.addTags(testId, tagsToAdd);
             }

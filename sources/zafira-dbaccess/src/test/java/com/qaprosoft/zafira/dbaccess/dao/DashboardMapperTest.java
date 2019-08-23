@@ -47,12 +47,14 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
      */
     private static final boolean ENABLED = false;
 
-    private static final List<Widget> WIDGETS = new ArrayList<Widget>() {
+    private static final List<Widget> WIDGETS = new ArrayList<>() {
 
         private static final long serialVersionUID = 1L;
+
         {
             add(new Widget() {
                 private static final long serialVersionUID = 1L;
+
                 {
                     setModel("m1");
                     setSql("s1");

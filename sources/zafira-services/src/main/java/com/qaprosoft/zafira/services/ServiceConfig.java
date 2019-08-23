@@ -17,32 +17,23 @@ package com.qaprosoft.zafira.services;
 
 import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.jasypt.util.password.PasswordEncryptor;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
 
 import java.nio.charset.StandardCharsets;
 
 @Configuration
+@EnableCaching(proxyTargetClass = true)
 public class ServiceConfig {
 
-    private static final String TEMPLATE_LOADER_PATHS = "classpath:templates";
     private static final String BASENAME_LOCATION = "classpath:i18n/services/messages";
 
     @Bean
     public PasswordEncryptor passwordEncryptor() {
         return new BasicPasswordEncryptor();
-    }
-
-    @Bean
-    public FreeMarkerConfigurationFactoryBean freemarkerConfiguration() {
-        FreeMarkerConfigurationFactoryBean factoryBean = new FreeMarkerConfigurationFactoryBean();
-        factoryBean.setPreferFileSystemAccess(Boolean.TRUE);
-        factoryBean.setTemplateLoaderPaths(TEMPLATE_LOADER_PATHS);
-        factoryBean.setDefaultEncoding(StandardCharsets.UTF_8.name());
-        return factoryBean;
     }
 
     @Bean

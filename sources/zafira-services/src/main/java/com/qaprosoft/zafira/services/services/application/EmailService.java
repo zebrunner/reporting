@@ -17,12 +17,11 @@ package com.qaprosoft.zafira.services.services.application;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -42,14 +41,15 @@ public class EmailService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
 
+    private static final String EMAIL_REGEX = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
+
     private final MailSender mailSender;
     private final FreemarkerUtil freemarkerUtil;
-    private final EmailValidator validator;
 
     public EmailService(MailSender mailSender, FreemarkerUtil freemarkerUtil) {
         this.mailSender = mailSender;
         this.freemarkerUtil = freemarkerUtil;
-        this.validator = EmailValidator.getInstance();
     }
 
     public String sendEmail(final IEmailMessage message, final String... emails) {
@@ -71,8 +71,6 @@ public class EmailService {
                 msg.setText(text, true);
                 if (hasAttachments) {
                     for (Attachment attachment : message.getAttachments()) {
-                        msg.addAttachment(attachment.getName() + "." + FilenameUtils.getExtension(attachment.getFile().getName()),
-                                attachment.getFile());
                         msg.addInline(attachment.getName().replaceAll(" ", "_"), attachment.getFile());
                     }
                 }
@@ -96,11 +94,15 @@ public class EmailService {
 
     private String[] processRecipients(String... emails) {
         return Arrays.stream(emails).filter(email -> {
-            boolean isValid = validator.isValid(email);
+            boolean isValid = isValid(email);
             if (!isValid) {
                 LOGGER.info("Not valid recipient specified: " + email);
             }
-            return validator.isValid(email);
+            return isValid;
         }).toArray(String[]::new);
+    }
+
+    private boolean isValid(String email) {
+        return EMAIL_PATTERN.matcher(email).matches();
     }
 }

@@ -67,8 +67,8 @@ public class SettingsAPIController extends AbstractController {
             GoogleService googleService,
             SettingsService settingsService,
             CryptoService cryptoService,
-            @Value("${zafira.amazon.token.expiration}") Integer amazonTokenExpiration,
-            @Value("${zafira.google.token.expiration}") Long googleTokenExpiration) {
+            @Value("${amazon-token-expiration}") Integer amazonTokenExpiration,
+            @Value("${google-token-expiration}") Long googleTokenExpiration) {
         this.amazonService = amazonService;
         this.googleService = googleService;
         this.settingsService = settingsService;

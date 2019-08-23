@@ -16,7 +16,7 @@
 package com.qaprosoft.zafira.services.services.application;
 
 import static com.qaprosoft.zafira.models.db.User.Source.INTERNAL;
-import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
+import static com.qaprosoft.zafira.services.util.DateTimeUtil.actualizeSearchCriteriaDate;
 
 import javax.annotation.PostConstruct;
 
@@ -84,6 +84,7 @@ public class UserService implements TenancyDbInitial {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void initDb() {
         if (!StringUtils.isBlank(adminUsername) && !StringUtils.isBlank(adminPassword)) {
             try {

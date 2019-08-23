@@ -34,7 +34,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestCaseSearch
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestCase;
 
-import static com.qaprosoft.zafira.services.util.DateFormatter.*;
+import static com.qaprosoft.zafira.services.util.DateTimeUtil.*;
 
 @Service
 public class TestCaseService {
@@ -45,7 +45,7 @@ public class TestCaseService {
             .maximumSize(100000)
             .expireAfterWrite(15, TimeUnit.SECONDS)
             .build(
-                    new CacheLoader<String, Lock>() {
+                    new CacheLoader<>() {
                         public Lock load(String key) {
                             return new ReentrantLock();
                         }

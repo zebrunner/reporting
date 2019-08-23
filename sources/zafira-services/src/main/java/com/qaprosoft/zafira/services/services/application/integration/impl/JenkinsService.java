@@ -235,7 +235,7 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
         Map<String, String> jobParameters = null;
         try {
             Optional<JobWithDetails> nullableJob = getJobWithDetails(ciJob);
-            if (!nullableJob.isPresent()) {
+            if (nullableJob.isEmpty()) {
                 return Optional.empty();
             }
             jobParameters = nullableJob.get().getBuildByNumber(buildNumber).details().getParameters();

@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws;
 
+import com.qaprosoft.zafira.ws.security.PasswordEncoder;
 import com.qaprosoft.zafira.ws.security.UserPassAuthService;
 import com.qaprosoft.zafira.ws.security.filter.CORSFilter;
 import com.qaprosoft.zafira.ws.security.filter.JwtTokenAuthenticationFilter;
@@ -22,8 +23,6 @@ import com.qaprosoft.zafira.ws.security.filter.RestAccessDeniedHandler;
 import com.qaprosoft.zafira.ws.security.filter.SecurityAuthenticationEntryPoint;
 import com.qaprosoft.zafira.ws.security.filter.TenancyFilter;
 import com.qaprosoft.zafira.ws.security.ldap.LDAPAuthenticationProvider;
-import org.jasypt.springsecurity3.authentication.encoding.PasswordEncoder;
-import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -129,7 +128,6 @@ public class SecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userPassAuthService);
         PasswordEncoder passwordEncoder = new PasswordEncoder();
-        passwordEncoder.setPasswordEncryptor(new BasicPasswordEncryptor());
         authenticationProvider.setPasswordEncoder(passwordEncoder);
         return new ProviderManager(Collections.singletonList(authenticationProvider));
     }

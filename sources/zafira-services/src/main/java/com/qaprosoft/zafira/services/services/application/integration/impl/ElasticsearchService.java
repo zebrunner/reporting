@@ -62,9 +62,9 @@ public class ElasticsearchService extends AbstractIntegration {
     private RestHighLevelClient client;
 
     public ElasticsearchService(
-            @Value("${zafira.elasticsearch.url}") String url,
-            @Value("${zafira.elasticsearch.user}") String user,
-            @Value("${zafira.elasticsearch.pass}") String password
+            @Value("${elasticsearch.url}") String url,
+            @Value("${elasticsearch.username}") String user,
+            @Value("${elasticsearch.password}") String password
     ) {
         super(ELASTICSEARCH);
         this.url = url;
@@ -166,8 +166,9 @@ public class ElasticsearchService extends AbstractIntegration {
     }
 
     private static Map<String, String> prepareCorrelationIdMap(String correlationId) {
-        return new HashMap<String, String>() {
+        return new HashMap<>() {
             private static final long serialVersionUID = -4417816881742998170L;
+
             {
                 put("correlationId", correlationId);
             }
@@ -175,11 +176,13 @@ public class ElasticsearchService extends AbstractIntegration {
     }
 
     public List<Setting> getSettings() {
-        return new ArrayList<Setting>() {
+        return new ArrayList<>() {
             private static final long serialVersionUID = 7140283430898343120L;
+
             {
                 add(new Setting() {
                     private static final long serialVersionUID = 658548604106441383L;
+
                     {
                         setName("URL");
                         setValue(url);
@@ -187,6 +190,7 @@ public class ElasticsearchService extends AbstractIntegration {
                 });
                 add(new Setting() {
                     private static final long serialVersionUID = 6585486043214259383L;
+
                     {
                         setName("user");
                         setValue(user);
@@ -194,6 +198,7 @@ public class ElasticsearchService extends AbstractIntegration {
                 });
                 add(new Setting() {
                     private static final long serialVersionUID = 6585486425564259383L;
+
                     {
                         setName("password");
                         setValue(password);

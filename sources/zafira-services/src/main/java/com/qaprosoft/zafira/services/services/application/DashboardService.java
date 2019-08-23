@@ -98,7 +98,7 @@ public class DashboardService {
 
     @Transactional(rollbackFor = Exception.class)
     public Map<Long, Integer> updateDashboardsOrder(Map<Long, Integer> order) {
-        order.forEach((id, position) -> dashboardMapper.updateDashboardOrder(id, position));
+        order.forEach(dashboardMapper::updateDashboardOrder);
         return order;
     }
 
