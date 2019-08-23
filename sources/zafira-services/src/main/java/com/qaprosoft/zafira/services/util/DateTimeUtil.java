@@ -30,13 +30,13 @@ import java.util.Date;
 public class DateTimeUtil {
 
     /**
-     * Force set search criteria date to today's start of day
+     * Force set search criteria date to start of day
      * @param sc search criteria to be actualized
      */
     public static void actualizeSearchCriteriaDate(DateSearchCriteria sc) {
         Date date = sc.getDate();
         if (date != null) {
-            sc.setDate(toStartOfDay(new Date()));
+            sc.setDate(toStartOfDay(date));
         }
     }
 
