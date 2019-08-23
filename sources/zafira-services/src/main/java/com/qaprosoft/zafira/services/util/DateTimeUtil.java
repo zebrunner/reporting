@@ -52,6 +52,10 @@ public class DateTimeUtil {
         return Duration.between(toLocalDateTime(startDate), toLocalDateTime(endDate));
     }
 
+    public static LocalDate toLocalDate(Date date) {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
     private static Date toStartOfDay(Date date) {
         LocalDate localDate = toLocalDate(date);
         return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -59,10 +63,6 @@ public class DateTimeUtil {
 
     private static Date toDate(LocalDateTime localDateTime) {
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-    }
-
-    private static LocalDate toLocalDate(Date date) {
-        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
     private static LocalDateTime toLocalDateTime(Date date) {
