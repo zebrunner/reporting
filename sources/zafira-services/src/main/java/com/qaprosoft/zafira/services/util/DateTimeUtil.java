@@ -25,58 +25,48 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * DateFormatter utility class.
- * 
- * @author itsvirko
+ * Provides set of utility methods simplifying DateTime related conversions and calculation
  */
 public class DateTimeUtil {
+
+    /**
+     * Force set search criteria date to today's start of day
+     * @param sc search criteria to be actualized
+     */
     public static void actualizeSearchCriteriaDate(DateSearchCriteria sc) {
-        if (sc.getDate() != null) {
-            if (isToday(sc.getDate())) {
-                sc.setDate(formatDateToStartOfDay(new Date()));
-            } else {
-                sc.setDate(formatDateToStartOfDay(sc.getDate()));
-            }
+        Date date = sc.getDate();
+        if (date != null) {
+            sc.setDate(toStartOfDay(new Date()));
         }
     }
 
-    private static boolean isToday(Date date) {
-        boolean today = false;
-        LocalDate ld = new java.sql.Date(date.getTime()).toLocalDate();
-        if (ld.isEqual(LocalDate.now())) {
-            today = true;
-        }
-        return today;
+    public static long toSecondsSinceDateToNow(Date date){
+        return calculateDuration(date, Calendar.getInstance().getTime()).toSeconds();
     }
 
-    private static Date formatDateToStartOfDay(Date date) {
-        LocalDate ld = new java.sql.Date(date.getTime()).toLocalDate();
-        return Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    public static Date toDateSinceNowPlusSeconds(long durationInSeconds) {
+        return toDate(LocalDateTime.now().plusSeconds(durationInSeconds));
     }
 
-    public static LocalDateTime convertToLocalDateTime(Date dateToConvert) {
-        return dateToConvert.toInstant()
-                            .atZone(ZoneId.systemDefault())
-                            .toLocalDateTime();
+    public static Duration calculateDuration(Date startDate, Date endDate) {
+        return Duration.between(toLocalDateTime(startDate), toLocalDateTime(endDate));
     }
 
-    /** Calculates number of seconds since Date startedAtDate till the current moment. */
-    public static Integer calculateDurationFromDate(Date startedAtDate){
-        Duration duration = calculateDuration(startedAtDate, Calendar.getInstance().getTime());
-        return Long.valueOf(duration.toSeconds()).intValue();
+    private static Date toStartOfDay(Date date) {
+        LocalDate localDate = toLocalDate(date);
+        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
-    /** Calculates date from now till number of durationInSeconds is passed. */
-    public static Date calculateDurationToDate(Integer durationInSeconds){
-        LocalDateTime localDateTime = LocalDateTime.now();
-        LocalDateTime finishedAtTime = localDateTime.plusSeconds(durationInSeconds.longValue());
-        return Date.from(finishedAtTime.atZone( ZoneId.systemDefault()).toInstant());
+    private static Date toDate(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    public static Duration calculateDuration(Date startedAtDate, Date finishedAtDate){
-        LocalDateTime startedAt = convertToLocalDateTime(startedAtDate);
-        LocalDateTime finishedAt = convertToLocalDateTime(finishedAtDate);
-        return Duration.between(startedAt, finishedAt);
+    private static LocalDate toLocalDate(Date date) {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    private static LocalDateTime toLocalDateTime(Date date) {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
 }

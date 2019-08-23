@@ -26,6 +26,7 @@ import com.qaprosoft.zafira.services.services.application.TestService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleDriveService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleSpreadsheetsService;
+import com.qaprosoft.zafira.services.util.DateTimeUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static com.qaprosoft.zafira.services.util.DateTimeUtil.calculateDuration;
 import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.getConfigValueByName;
 import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.isConfigValueIsEmpty;
 
@@ -125,7 +125,7 @@ TestRunSpreadsheetService {
             testResult.add(getNotNullSpreadsheetValue(test.getOwner()));
             testResult.add(getNotNullSpreadsheetValue(test.getSecondaryOwner()));
             testResult.add(getNotNullSpreadsheetValue(test.getTestConfig().getDevice()));
-            Duration duration = calculateDuration(test.getStartTime(), test.getFinishTime());
+            Duration duration = DateTimeUtil.calculateDuration(test.getStartTime(), test.getFinishTime());
             String elapsedTime = (duration.toDays() > 0 ? String.format("%d days", duration.toDays()) : "") +
                     (duration.toHours() > 0 ? String.format(" %d hours", duration.toHours()) : "") +
                     (duration.toMinutes() > 0 ? String.format(" %d minutes", duration.toMinutes()) : "") +
