@@ -24,7 +24,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,11 +38,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class SlackAPIController extends AbstractController {
 
-    @Autowired
-    private SlackService slackService;
+    private final SlackService slackService;
+    private final TestRunService testRunService;
 
-    @Autowired
-    private TestRunService testRunService;
+    public SlackAPIController(SlackService slackService, TestRunService testRunService) {
+        this.slackService = slackService;
+        this.testRunService = testRunService;
+    }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Send notification on testrun review", nickname = "sendReviewNotification", httpMethod = "GET")
@@ -60,7 +61,8 @@ public class SlackAPIController extends AbstractController {
     @GetMapping("/testrun/{ciRunId}/finish")
     public void sendOnFinishNotification(
             @PathVariable("ciRunId") String ciRunId,
-            @RequestParam(value = "channels", required = false) String channels) {
+            @RequestParam(name = "channels", required = false) String channels
+    ) {
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
         testRun.setSlackChannels(channels);
         testRunService.updateTestRun(testRun);

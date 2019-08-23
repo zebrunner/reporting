@@ -25,7 +25,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -48,11 +47,13 @@ import java.util.List;
 @RestController
 public class ViewsAPIController extends AbstractController {
 
-    @Autowired
-    private Mapper mapper;
+    private final Mapper mapper;
+    private final ViewService viewService;
 
-    @Autowired
-    private ViewService viewService;
+    public ViewsAPIController(Mapper mapper, ViewService viewService) {
+        this.mapper = mapper;
+        this.viewService = viewService;
+    }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get view", nickname = "getViewById", httpMethod = "GET", response = View.class)

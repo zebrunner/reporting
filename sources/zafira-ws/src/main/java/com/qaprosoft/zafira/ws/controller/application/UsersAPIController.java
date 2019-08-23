@@ -34,7 +34,6 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -60,20 +59,20 @@ import java.util.Map;
 @RestController
 public class UsersAPIController extends AbstractController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final DashboardService dashboardService;
+    private final UserPreferenceService userPreferenceService;
+    private final AmazonService amazonService;
+    private final Mapper mapper;
 
-    @Autowired
-    DashboardService dashboardService;
-
-    @Autowired
-    private UserPreferenceService userPreferenceService;
-
-    @Autowired
-    private AmazonService amazonService;
-
-    @Autowired
-    private Mapper mapper;
+    public UsersAPIController(UserService userService, DashboardService dashboardService,
+                              UserPreferenceService userPreferenceService, AmazonService amazonService, Mapper mapper) {
+        this.userService = userService;
+        this.dashboardService = dashboardService;
+        this.userPreferenceService = userPreferenceService;
+        this.amazonService = amazonService;
+        this.mapper = mapper;
+    }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get user profile", nickname = "getUserProfile", httpMethod = "GET", response = UserType.class)
@@ -81,7 +80,7 @@ public class UsersAPIController extends AbstractController {
     @GetMapping("/profile")
     public UserType getUserProfile(@RequestParam(value = "username", required = false) String username) {
         User user = StringUtils.isEmpty(username) ? userService.getUserById(getPrincipalId())
-                : userService.getUserByUsername(username);
+                                                  : userService.getUserByUsername(username);
         if (user == null) {
             throw new UserNotFoundException();
         }
@@ -151,7 +150,8 @@ public class UsersAPIController extends AbstractController {
     @PostMapping("/search")
     public SearchResult<User> searchUsers(
             @Valid @RequestBody UserSearchCriteria searchCriteria,
-            @RequestParam(value = "public", required = false) boolean isPublic) {
+            @RequestParam(value = "public", required = false) boolean isPublic
+    ) {
         return userService.searchUsers(searchCriteria, isPublic);
     }
 
@@ -187,8 +187,7 @@ public class UsersAPIController extends AbstractController {
     @ApiOperation(value = "Delete user from group", nickname = "deleteUserFromGroup", httpMethod = "DELETE")
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
     @DeleteMapping("/{userId}/group/{groupId}")
-    public void deleteUserFromGroup(@PathVariable("groupId") long groupId, @PathVariable("userId") long userId)
-            {
+    public void deleteUserFromGroup(@PathVariable("groupId") long groupId, @PathVariable("userId") long userId) {
         userService.deleteUserFromGroup(groupId, userId);
     }
 
@@ -204,12 +203,8 @@ public class UsersAPIController extends AbstractController {
     @ApiOperation(value = "Update user preferences", nickname = "createDashboardAttribute", httpMethod = "PUT", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "{userId}/preferences", method = RequestMethod.PUT)
-    public List<UserPreference> createUserPreference(
-            @PathVariable("userId") long userId,
-            @RequestBody List<UserPreference> preferences) {
-        for (UserPreference preference : preferences) {
-            userPreferenceService.createOrUpdateUserPreference(preference);
-        }
+    public List<UserPreference> createUserPreference(@PathVariable("userId") long userId, @RequestBody List<UserPreference> preferences) {
+        preferences.forEach(userPreferenceService::createOrUpdateUserPreference);
         return userPreferenceService.getAllUserPreferences(userId);
     }
 

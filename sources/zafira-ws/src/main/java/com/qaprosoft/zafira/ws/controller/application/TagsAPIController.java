@@ -29,7 +29,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,14 +47,15 @@ import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.readArgume
 @RestController
 public class TagsAPIController extends AbstractController {
 
-    @Autowired
-    private TagService tagService;
+    private final TagService tagService;
+    private final TestRunService testRunService;
+    private final URLResolver urlResolver;
 
-    @Autowired
-    private TestRunService testRunService;
-
-    @Autowired
-    private URLResolver urlResolver;
+    public TagsAPIController(TagService tagService, TestRunService testRunService, URLResolver urlResolver) {
+        this.tagService = tagService;
+        this.testRunService = testRunService;
+        this.urlResolver = urlResolver;
+    }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get integration info", nickname = "getTestIntegrationInfo", httpMethod = "GET", response = IntegrationDataType.class)
@@ -63,7 +63,8 @@ public class TagsAPIController extends AbstractController {
     @GetMapping("/{ciRunId}/integration")
     public IntegrationDataType getIntegrationInfo(
             @PathVariable("ciRunId") String ciRunId,
-            @RequestParam("integrationTag") IntegrationTag integrationTag) {
+            @RequestParam("integrationTag") IntegrationTag integrationTag
+    ) {
         IntegrationDataType integrationData = new IntegrationDataType();
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
 
