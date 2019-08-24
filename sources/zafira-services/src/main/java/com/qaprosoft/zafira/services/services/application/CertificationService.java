@@ -20,9 +20,9 @@ import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.dto.CertificationType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.integration.impl.ElasticsearchService;
+import com.qaprosoft.zafira.services.util.DateTimeUtil;
 import org.springframework.stereotype.Component;
 
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Date;
@@ -74,19 +74,16 @@ public class CertificationService {
         List<Test> tests = testService.getTestsByTestRunId(testRunId);
         tests.forEach(test -> {
             String correlationId = testRun.getCiRunId() + "_" + test.getCiTestId();
-            String[] indices = buildIndices(test.getStartTime(), test.getFinishTime());
+            String[] indices = constructIndexNames(test.getStartTime(), test.getFinishTime());
             Map<String, String> screenshotsInfo = elasticsearchService.getScreenshotsInfo(correlationId, indices);
             screenshotsInfo.keySet()
                            .forEach(key -> certification.addScreenshot(screenshotsInfo.get(key), platform, key));
         });
     }
 
-    private String[] buildIndices(Date... dates) {
+    private String[] constructIndexNames(Date... dates) {
         return Arrays.stream(dates)
-                     .map(date -> "logs-" + date.toInstant()
-                                                .atZone(ZoneId.systemDefault())
-                                                .toLocalDate()
-                                                .format(FORMATTER))
+                     .map(date -> "logs-" + DateTimeUtil.toLocalDate(date).format(FORMATTER))
                      .toArray(String[]::new);
     }
 }

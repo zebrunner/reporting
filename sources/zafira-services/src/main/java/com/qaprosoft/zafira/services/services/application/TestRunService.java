@@ -40,6 +40,7 @@ import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
 import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
+import com.qaprosoft.zafira.services.util.DateTimeUtil;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang.StringUtils;
@@ -74,8 +75,6 @@ import static com.qaprosoft.zafira.models.db.Status.IN_PROGRESS;
 import static com.qaprosoft.zafira.models.db.Status.PASSED;
 import static com.qaprosoft.zafira.models.db.Status.QUEUED;
 import static com.qaprosoft.zafira.models.db.Status.SKIPPED;
-import static com.qaprosoft.zafira.services.util.DateTimeUtil.actualizeSearchCriteriaDate;
-import static com.qaprosoft.zafira.services.util.DateTimeUtil.calculateDurationFromDate;
 import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.readArguments;
 
 @Service
@@ -171,7 +170,7 @@ public class TestRunService {
 
     @Transactional(readOnly = true)
     public SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc) {
-        actualizeSearchCriteriaDate(sc);
+        DateTimeUtil.actualizeSearchCriteriaDate(sc);
         SearchResult<TestRun> results = new SearchResult<>();
         results.setPage(sc.getPage());
         results.setPageSize(sc.getPageSize());
@@ -477,7 +476,7 @@ public class TestRunService {
             }
         }
         if (finishTestRun && testRun.getStartedAt() != null) {
-            Integer elapsed = calculateDurationFromDate(testRun.getStartedAt());
+            Integer elapsed = ((Long) DateTimeUtil.toSecondsSinceDateToNow(testRun.getStartedAt())).intValue();
             // according to https://github.com/qaprosoft/zafira/issues/748
             if (testRun.getElapsed() != null) {
                 testRun.setElapsed(testRun.getElapsed() + elapsed);
