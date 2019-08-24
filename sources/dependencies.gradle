@@ -62,6 +62,8 @@ ext {
             "com.google.apis:google-api-services-sheets:v4-rev523-1.23.0",
             "com.google.apis:google-api-services-drive:v3-rev118-1.18.0-rc"
         ],
+        
+        lombok: "org.projectlombok:lombok",
 
         integration_clients: [
             "com.amazonaws:aws-java-sdk:1.11.386",
