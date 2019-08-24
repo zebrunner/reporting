@@ -16,7 +16,9 @@
 package com.qaprosoft.zafira.models.push;
 
 import com.qaprosoft.zafira.models.db.Launcher;
+import lombok.Getter;
 
+@Getter
 public class LauncherRunPush extends AbstractPush {
 
     private final Launcher launcher;
@@ -28,14 +30,6 @@ public class LauncherRunPush extends AbstractPush {
         launcher.setScmAccount(null);
         this.launcher = launcher;
         this.ciRunId = ciRunId;
-    }
-
-    public Launcher getLauncher() {
-        return launcher;
-    }
-
-    public String getCiRunId() {
-        return ciRunId;
     }
 
 }

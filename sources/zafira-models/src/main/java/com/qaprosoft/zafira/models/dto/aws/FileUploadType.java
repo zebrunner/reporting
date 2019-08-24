@@ -15,8 +15,16 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto.aws;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class FileUploadType {
 
     private MultipartFile file;
@@ -39,27 +47,4 @@ public class FileUploadType {
         }
     }
 
-    public FileUploadType() {
-    }
-
-    public FileUploadType(MultipartFile file, Type type) {
-        this.file = file;
-        this.type = type;
-    }
-
-    public MultipartFile getFile() {
-        return file;
-    }
-
-    public void setFile(MultipartFile file) {
-        this.file = file;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
 }

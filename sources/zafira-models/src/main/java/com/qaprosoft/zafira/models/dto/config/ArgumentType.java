@@ -15,17 +15,24 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto.config;
 
-import java.io.Serializable;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.io.Serializable;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "key", "value" })
 public class ArgumentType implements Serializable {
+
     private static final long serialVersionUID = 4556102912902781429L;
 
     @XmlElement(required = true)
@@ -37,35 +44,9 @@ public class ArgumentType implements Serializable {
     @XmlElement(required = true)
     protected String value;
 
-    public ArgumentType() {
-    }
-
     public ArgumentType(String key, String value) {
         this.key = key;
         this.value = value;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String value) {
-        this.key = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public boolean getUnique() {
-        return unique;
-    }
-
-    public void setUnique(boolean value) {
-        this.unique = value;
-    }
 }

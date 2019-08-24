@@ -15,14 +15,13 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto.errors;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class AdditionalErrorData {
+
     private Object value;
 
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
-    }
 }
