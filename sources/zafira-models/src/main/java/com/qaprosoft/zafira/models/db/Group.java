@@ -15,10 +15,17 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class Group extends AbstractEntity {
     private static final long serialVersionUID = -1122566583572312653L;
 
@@ -27,9 +34,6 @@ public class Group extends AbstractEntity {
     private Boolean invitable;
     private List<User> users;
     private Set<Permission> permissions;
-
-    public Group() {
-    }
 
     public Group(String name, Role role, Set<Permission> permissions) {
         this.name = name;
@@ -42,49 +46,10 @@ public class Group extends AbstractEntity {
         ROLE_ADMIN
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public Boolean getInvitable() {
-        return invitable;
-    }
-
-    public void setInvitable(Boolean invitable) {
-        this.invitable = invitable;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-
-    public Set<Permission> getPermissions() {
-        return permissions;
-    }
-
     public Set<String> getPermissionNames() {
-        return this.permissions.stream().map(permission -> permission.getName().name())
-                .collect(Collectors.toSet());
-    }
-
-    public void setPermissions(Set<Permission> permissions) {
-        this.permissions = permissions;
+        return this.permissions.stream()
+                               .map(permission -> permission.getName().name())
+                               .collect(Collectors.toSet());
     }
 
     public boolean hasPermissions() {

@@ -15,36 +15,21 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Tag extends AbstractEntity {
 
     private static final long serialVersionUID = 4886769517837569318L;
 
     private String name;
     private String value;
-
-    public Tag() {
-    }
-
-    public Tag(String name, String value) {
-        this.name = name;
-        this.value = value;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
 
     @Override
     public int hashCode() {

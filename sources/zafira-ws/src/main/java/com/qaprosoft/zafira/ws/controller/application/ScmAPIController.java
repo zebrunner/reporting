@@ -150,7 +150,7 @@ public class ScmAPIController extends AbstractController {
         if (StringUtils.isBlank(accessToken)) {
             throw new ForbiddenOperationException("Cannot recognize your authority");
         }
-        ScmAccount scmAccount = scmAccountService.createScmAccount(new ScmAccount(accessToken, ScmAccount.Name.GITHUB, getPrincipalId()));
+        ScmAccount scmAccount = scmAccountService.createScmAccount(new ScmAccount(accessToken, ScmAccount.Name.GITHUB));
         return mapper.map(scmAccount, ScmAccountType.class);
     }
 

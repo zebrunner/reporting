@@ -15,14 +15,22 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import javax.validation.constraints.NotNull;
+
+@Getter
+@Setter
+@NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
 public class TestSuiteType extends AbstractType {
+
     private static final long serialVersionUID = 6653114389767310676L;
+
     @NotNull
     private String name;
     @NotNull
@@ -31,45 +39,10 @@ public class TestSuiteType extends AbstractType {
     @NotNull
     private Long userId;
 
-    public TestSuiteType() {
-
-    }
-
     public TestSuiteType(String name, String fileName, Long userId) {
         this.name = name;
         this.userId = userId;
         this.fileName = fileName;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 }

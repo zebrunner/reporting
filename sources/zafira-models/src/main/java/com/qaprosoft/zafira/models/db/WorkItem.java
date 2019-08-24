@@ -17,9 +17,16 @@ package com.qaprosoft.zafira.models.db;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
 public class WorkItem extends AbstractEntity {
+
     private static final long serialVersionUID = 5440580857483390564L;
 
     private String jiraId;
@@ -31,16 +38,6 @@ public class WorkItem extends AbstractEntity {
     // TODO: think about default type
     private Type type = Type.TASK;
 
-    public enum Type {
-        TASK,
-        BUG,
-        COMMENT,
-        EVENT
-    }
-
-    public WorkItem() {
-    }
-
     public WorkItem(String jiraId) {
         this.jiraId = jiraId;
     }
@@ -50,59 +47,11 @@ public class WorkItem extends AbstractEntity {
         this.type = type;
     }
 
-    public String getJiraId() {
-        return jiraId;
+    public enum Type {
+        TASK,
+        BUG,
+        COMMENT,
+        EVENT
     }
 
-    public void setJiraId(String jiraId) {
-        this.jiraId = jiraId;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public boolean isBlocker() {
-        return blocker;
-    }
-
-    public void setBlocker(boolean blocker) {
-        this.blocker = blocker;
-    }
-
-    public Integer getHashCode() {
-        return hashCode;
-    }
-
-    public void setHashCode(Integer hashCode) {
-        this.hashCode = hashCode;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public Long getTestCaseId() {
-        return testCaseId;
-    }
-
-    public void setTestCaseId(Long testCaseId) {
-        this.testCaseId = testCaseId;
-    }
 }

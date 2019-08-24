@@ -15,12 +15,18 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qaprosoft.zafira.models.db.config.Argument;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.util.List;
+
+@Getter
+@Setter
+@NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
 public class TestConfig extends AbstractEntity {
     private static final long serialVersionUID = 5668009693004786533L;
@@ -35,9 +41,6 @@ public class TestConfig extends AbstractEntity {
     private String locale;
     private String language;
     private String device;
-
-    public TestConfig() {
-    }
 
     public TestConfig(long id) {
         super.setId(id);
@@ -74,83 +77,4 @@ public class TestConfig extends AbstractEntity {
         return this;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getEnv() {
-        return env;
-    }
-
-    public void setEnv(String env) {
-        this.env = env;
-    }
-
-    public String getPlatform() {
-        return platform;
-    }
-
-    public void setPlatform(String platform) {
-        this.platform = platform;
-    }
-
-    public String getPlatformVersion() {
-        return platformVersion;
-    }
-
-    public void setPlatformVersion(String platformVersion) {
-        this.platformVersion = platformVersion;
-    }
-
-    public String getBrowser() {
-        return browser;
-    }
-
-    public void setBrowser(String browser) {
-        this.browser = browser;
-    }
-
-    public String getBrowserVersion() {
-        return browserVersion;
-    }
-
-    public void setBrowserVersion(String browserVersion) {
-        this.browserVersion = browserVersion;
-    }
-
-    public String getAppVersion() {
-        return appVersion;
-    }
-
-    public void setAppVersion(String appVersion) {
-        this.appVersion = appVersion;
-    }
-
-    public String getLocale() {
-        return locale;
-    }
-
-    public void setLocale(String locale) {
-        this.locale = locale;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public String getDevice() {
-        return device;
-    }
-
-    public void setDevice(String device) {
-        this.device = device;
-    }
 }

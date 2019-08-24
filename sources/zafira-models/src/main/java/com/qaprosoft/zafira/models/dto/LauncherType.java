@@ -15,11 +15,15 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+@Getter
+@Setter
 public class LauncherType extends AbstractType {
 
     private static final long serialVersionUID = 7778329756348322538L;
@@ -36,45 +40,5 @@ public class LauncherType extends AbstractType {
 
     private JobType job;
     private boolean autoScan;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public ScmAccountType getScmAccountType() {
-        return scmAccountType;
-    }
-
-    public void setScmAccountType(ScmAccountType scmAccountType) {
-        this.scmAccountType = scmAccountType;
-    }
-
-    public JobType getJob() {
-        return job;
-    }
-
-    public void setJob(JobType job) {
-        this.job = job;
-    }
-
-    public boolean isAutoScan() {
-        return autoScan;
-    }
-
-    public void setAutoScan(boolean autoScan) {
-        this.autoScan = autoScan;
-    }
 
 }
