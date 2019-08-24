@@ -15,15 +15,18 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
-import java.util.List;
-import java.util.Set;
-
-import org.hibernate.validator.constraints.NotEmpty;
-
 import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.models.db.User;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import java.util.List;
+import java.util.Set;
+
+@Getter
+@Setter
 public class GroupType extends AbstractType {
 
     private static final long serialVersionUID = 4257992439033566293L;
@@ -37,43 +40,4 @@ public class GroupType extends AbstractType {
     private List<User> users;
     private Set<Permission> permissions;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Group.Role getRole() {
-        return role;
-    }
-
-    public void setRole(Group.Role role) {
-        this.role = role;
-    }
-
-    public Boolean getInvitable() {
-        return invitable;
-    }
-
-    public void setInvitable(Boolean invitable) {
-        this.invitable = invitable;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-
-    public Set<Permission> getPermissions() {
-        return permissions;
-    }
-
-    public void setPermissions(Set<Permission> permissions) {
-        this.permissions = permissions;
-    }
 }

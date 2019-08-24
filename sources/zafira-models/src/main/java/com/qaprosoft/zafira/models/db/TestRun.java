@@ -18,23 +18,21 @@ package com.qaprosoft.zafira.models.db;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
+@Setter
 @JsonInclude(Include.NON_NULL)
 public class TestRun extends AbstractEntity {
     private static final long serialVersionUID = -1847933012610222160L;
     private static final String NAME = "%s %s (%s) on %s %s";
+
     private Map<String, String> configuration = new HashMap<>();
-
-    public enum Initiator {
-        SCHEDULER,
-        UPSTREAM_JOB,
-        HUMAN
-    }
-
     private String ciRunId;
     private User user;
     private TestSuite testSuite;
@@ -73,70 +71,6 @@ public class TestRun extends AbstractEntity {
     private Integer queued;
     private boolean reviewed;
 
-    public boolean isReviewed() {
-        return reviewed;
-    }
-
-    public void setReviewed(boolean reviewed) {
-        this.reviewed = reviewed;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public TestSuite getTestSuite() {
-        return testSuite;
-    }
-
-    public void setTestSuite(TestSuite testSuite) {
-        this.testSuite = testSuite;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public String getScmURL() {
-        return scmURL;
-    }
-
-    public void setScmURL(String scmURL) {
-        this.scmURL = scmURL;
-    }
-
-    public String getScmBranch() {
-        return scmBranch;
-    }
-
-    public void setScmBranch(String scmBranch) {
-        this.scmBranch = scmBranch;
-    }
-
-    public String getScmCommit() {
-        return scmCommit;
-    }
-
-    public void setScmCommit(String scmCommit) {
-        this.scmCommit = scmCommit;
-    }
-
-    public String getConfigXML() {
-        return configXML;
-    }
-
-    public void setConfigXML(String configXML) {
-        this.configXML = configXML;
-    }
-
     public String getName(Map<String, String> configuration) {
         this.configuration = configuration;
         String appVersion = argumentIsPresent("app_version") ? this.configuration.get("app_version") + " - " : "";
@@ -173,220 +107,10 @@ public class TestRun extends AbstractEntity {
             return "";
     }
 
-    public WorkItem getWorkItem() {
-        return workItem;
-    }
-
-    public void setWorkItem(WorkItem workItem) {
-        this.workItem = workItem;
-    }
-
-    public Job getJob() {
-        return job;
-    }
-
-    public void setJob(Job job) {
-        this.job = job;
-    }
-
-    public Integer getBuildNumber() {
-        return buildNumber;
-    }
-
-    public void setBuildNumber(Integer buildNumber) {
-        this.buildNumber = buildNumber;
-    }
-
-    public Job getUpstreamJob() {
-        return upstreamJob;
-    }
-
-    public void setUpstreamJob(Job upstreamJob) {
-        this.upstreamJob = upstreamJob;
-    }
-
-    public Integer getUpstreamJobBuildNumber() {
-        return upstreamJobBuildNumber;
-    }
-
-    public void setUpstreamJobBuildNumber(Integer upstreamJobBuildNumber) {
-        this.upstreamJobBuildNumber = upstreamJobBuildNumber;
-    }
-
-    public Initiator getStartedBy() {
-        return startedBy;
-    }
-
-    public void setStartedBy(Initiator startedBy) {
-        this.startedBy = startedBy;
-    }
-
-    public String getCiRunId() {
-        return ciRunId;
-    }
-
-    public void setCiRunId(String ciRunId) {
-        this.ciRunId = ciRunId;
-    }
-
-    public Integer getPassed() {
-        return passed;
-    }
-
-    public void setPassed(Integer passed) {
-        this.passed = passed;
-    }
-
-    public Integer getFailed() {
-        return failed;
-    }
-
-    public void setFailed(Integer failed) {
-        this.failed = failed;
-    }
-
-    public Integer getFailedAsKnown() {
-        return failedAsKnown;
-    }
-
-    public void setFailedAsKnown(Integer failedAsKnown) {
-        this.failedAsKnown = failedAsKnown;
-    }
-
-    public Integer getFailedAsBlocker() {
-        return failedAsBlocker;
-    }
-
-    public void setFailedAsBlocker(Integer failedAsBlocker) {
-        this.failedAsBlocker = failedAsBlocker;
-    }
-
-    public Integer getSkipped() {
-        return skipped;
-    }
-
-    public void setSkipped(Integer skipped) {
-        this.skipped = skipped;
-    }
-
-    public Integer getInProgress() {
-        return inProgress;
-    }
-
-    public void setInProgress(Integer inProgress) {
-        this.inProgress = inProgress;
-    }
-
-    public Integer getAborted() {
-        return aborted;
-    }
-
-    public void setAborted(Integer aborted) {
-        this.aborted = aborted;
-    }
-
-    public Integer getQueued() {
-        return queued;
-    }
-
-    public void setQueued(Integer queued) {
-        this.queued = queued;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
-    public boolean isKnownIssue() {
-        return knownIssue;
-    }
-
-    public void setKnownIssue(boolean knownIssue) {
-        this.knownIssue = knownIssue;
-    }
-
-    public boolean isBlocker() {
-        return blocker;
-    }
-
-    public void setBlocker(boolean blocker) {
-        this.blocker = blocker;
-    }
-
-    public String getEnv() {
-        return env;
-    }
-
-    public void setEnv(String env) {
-        this.env = env;
-    }
-
-    public String getPlatform() {
-        return platform;
-    }
-
-    public void setPlatform(String platform) {
-        this.platform = platform;
-    }
-
-    public Date getStartedAt() {
-        return startedAt;
-    }
-
-    public void setStartedAt(Date startedAt) {
-        this.startedAt = startedAt;
-    }
-
-    public Integer getElapsed() {
-        return elapsed;
-    }
-
-    public void setElapsed(Integer elapsed) {
-        this.elapsed = elapsed;
-    }
-
-    public Integer getEta() {
-        return eta;
-    }
-
-    public void setEta(Integer eta) {
-        this.eta = eta;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
-    public String getSlackChannels() {
-        return slackChannels;
-    }
-
-    public void setSlackChannels(String slackChannels) {
-        this.slackChannels = slackChannels;
-    }
-
-    public String getAppVersion() {
-        return appVersion;
-    }
-
-    public void setAppVersion(String appVersion) {
-        this.appVersion = appVersion;
-    }
-
-    public TestConfig getConfig() {
-        return config;
-    }
-
-    public void setConfig(TestConfig config) {
-        this.config = config;
+    public enum Initiator {
+        SCHEDULER,
+        UPSTREAM_JOB,
+        HUMAN
     }
 
 }

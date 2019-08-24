@@ -15,15 +15,18 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.List;
 
+@Getter
+@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ScannedRepoLaunchersType implements Serializable {
 
@@ -37,37 +40,5 @@ public class ScannedRepoLaunchersType implements Serializable {
     private Long userId;
     private List<JenkinsLauncherType> jenkinsLaunchers;
     private boolean success;
-
-    public String getRepo() {
-        return repo;
-    }
-
-    public void setRepo(String repo) {
-        this.repo = repo;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public List<JenkinsLauncherType> getJenkinsLaunchers() {
-        return jenkinsLaunchers;
-    }
-
-    public void setJenkinsLaunchers(List<JenkinsLauncherType> jenkinsLaunchers) {
-        this.jenkinsLaunchers = jenkinsLaunchers;
-    }
-
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
 
 }
