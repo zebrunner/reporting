@@ -15,6 +15,11 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.push.events;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class EmailEventMessage extends EventMessage {
 
     private static final long serialVersionUID = -4025219522496590801L;
@@ -25,11 +30,4 @@ public class EmailEventMessage extends EventMessage {
         super(tenancy);
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 }

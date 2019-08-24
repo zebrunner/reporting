@@ -15,18 +15,22 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import org.hibernate.validator.constraints.NotEmpty;
-
 import java.io.Serializable;
 
+@Getter
+@Setter
 @JsonInclude(Include.NON_NULL)
 public class PasswordType implements Serializable {
+
     private static final long serialVersionUID = 8483235107118081307L;
 
     @NotNull
@@ -37,19 +41,4 @@ public class PasswordType implements Serializable {
     @Pattern(regexp = "^[A-Za-z0-9_@!#\"$%&'()*+,-./:;<>=?\\[\\]\\\\^`{}|~]+$")
     protected String password;
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

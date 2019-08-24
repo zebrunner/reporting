@@ -15,12 +15,22 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.push;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.UUID;
 
+@Getter
+@Setter
 public class AbstractPush {
 
     private Type type;
     private String uid;
+
+    public AbstractPush(Type type) {
+        this.type = type;
+        this.uid = UUID.randomUUID().toString();
+    }
 
     public enum Type {
         TEST_RUN("/topic/%s.testRuns"),
@@ -43,27 +53,6 @@ public class AbstractPush {
             return String.format(getWebsocketPathTemplate(), parameters);
         }
 
-    }
-
-    public AbstractPush(Type type) {
-        this.type = type;
-        this.uid = UUID.randomUUID().toString();
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
     }
 
 }

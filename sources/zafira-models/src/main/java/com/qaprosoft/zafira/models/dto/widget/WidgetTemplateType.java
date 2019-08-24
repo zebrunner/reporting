@@ -17,7 +17,11 @@ package com.qaprosoft.zafira.models.dto.widget;
 
 import com.qaprosoft.zafira.models.db.WidgetTemplate;
 import com.qaprosoft.zafira.models.dto.AbstractType;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class WidgetTemplateType extends AbstractType {
 
     private static final long serialVersionUID = 7998270816228259812L;
@@ -30,59 +34,4 @@ public class WidgetTemplateType extends AbstractType {
     private String legendConfig;
     private Boolean hidden;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public WidgetTemplate.Type getType() {
-        return type;
-    }
-
-    public void setType(WidgetTemplate.Type type) {
-        this.type = type;
-    }
-
-    public String getChartConfig() {
-        return chartConfig;
-    }
-
-    public void setChartConfig(String chartConfig) {
-        this.chartConfig = chartConfig;
-    }
-
-    public String getParamsConfig() {
-        return paramsConfig;
-    }
-
-    public void setParamsConfig(String paramsConfig) {
-        this.paramsConfig = paramsConfig;
-    }
-
-    public String getLegendConfig() {
-        return legendConfig;
-    }
-
-    public void setLegendConfig(String legendConfig) {
-        this.legendConfig = legendConfig;
-    }
-
-    public Boolean getHidden() {
-        return hidden;
-    }
-
-    public void setHidden(Boolean hidden) {
-        this.hidden = hidden;
-    }
 }

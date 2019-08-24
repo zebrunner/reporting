@@ -15,6 +15,11 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.push.events;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class TenancyResponseEventMessage extends EventMessage {
 
     private static final long serialVersionUID = -8149563995165621982L;
@@ -34,27 +39,4 @@ public class TenancyResponseEventMessage extends EventMessage {
         this.success = success;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getZafiraURL() {
-        return zafiraURL;
-    }
-
-    public void setZafiraURL(String zafiraURL) {
-        this.zafiraURL = zafiraURL;
-    }
-
-    public Boolean getSuccess() {
-        return success;
-    }
-
-    public void setSuccess(Boolean success) {
-        this.success = success;
-    }
 }
