@@ -2,13 +2,16 @@ package com.qaprosoft.zafira.dbaccess.persistence;
 
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
-//@Repository
-public interface IntegrationRepository extends CrudRepository<Integration, Long> {
+public interface IntegrationRepository extends Repository<Integration, Long> {
 
     @EntityGraph(value = "integration.expanded")
-    Optional<Integration> readById(Long name);
+    Optional<Integration> findById(Long name);
+
+    @EntityGraph(value = "integration.expanded")
+    List<Integration> findAll();
 }

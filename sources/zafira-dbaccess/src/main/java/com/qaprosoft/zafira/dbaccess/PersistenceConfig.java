@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -36,7 +37,7 @@ import java.util.Map;
 import java.util.Properties;
 
 @Configuration
-//@EnableJpaRepositories
+@EnableJpaRepositories
 public class PersistenceConfig {
 
     private static final String APP_SQL_SESSION_FACTORY_BEAN_NAME = "applicationSqlSessionFactory";
@@ -145,17 +146,19 @@ public class PersistenceConfig {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(TenancyDataSourceWrapper tenancyAppDSWrapper) {
-        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(tenancyAppDSWrapper.getDataSource());
-        em.setPackagesToScan("com.qaprosoft.zafira.models.entity");
-        em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-        em.setJpaProperties(jpaProperties());
+        LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
 
-        return em;
+        entityManagerFactoryBean.setDataSource(tenancyAppDSWrapper.getDataSource());
+        entityManagerFactoryBean.setPackagesToScan("com.qaprosoft.zafira.models.entity");
+        entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        entityManagerFactoryBean.setJpaProperties(jpaProperties());
+
+        return entityManagerFactoryBean;
     }
 
     private Properties jpaProperties() {
         Map<String, Object> props = new HashMap<>();
+
         props.put("hibernate.physical_naming_strategy", SpringPhysicalNamingStrategy.class.getName());
         props.put("hibernate.implicit_naming_strategy", SpringImplicitNamingStrategy.class.getName());
 
