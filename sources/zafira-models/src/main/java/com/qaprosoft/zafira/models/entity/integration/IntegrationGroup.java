@@ -13,6 +13,7 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @NoArgsConstructor
+//@ToString
 @Entity
 @Table(name = "integration_groups")
 public class IntegrationGroup {

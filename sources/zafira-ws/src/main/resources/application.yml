@@ -63,6 +63,7 @@ spring:
 ### Logging configuration. See logback.xml for more
 logging:
   level:
+    org.hibernate.SQL: DEBUG
     org.dozer.DozerBeanMapper: ERROR
     liquibase:
       # reducing number of logs by liquibase to keep only most relevant ones

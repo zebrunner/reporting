@@ -56,7 +56,7 @@ public class StatusAPIController extends AbstractController {
         } catch (Exception e) {
             throw new UnhealthyStateException("Service has no DB connection");
         }
-        return "Service is up and running. Integration: " + integrationRepository.findById(1L).orElse(null);
+        return "Service is up and running. Integration: " + integrationRepository.readById(1L).orElse(null);
     }
-\
+
 }
