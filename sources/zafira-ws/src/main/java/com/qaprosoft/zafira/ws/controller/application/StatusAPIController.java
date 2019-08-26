@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
+import com.qaprosoft.zafira.dbaccess.persistence.IntegrationRepository;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.UnhealthyStateException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
@@ -22,6 +23,7 @@ import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +36,9 @@ import springfox.documentation.annotations.ApiIgnore;
 public class StatusAPIController extends AbstractController {
 
     private final SettingsService settingsService;
+
+    @Autowired
+    private IntegrationRepository integrationRepository;
 
     public StatusAPIController(SettingsService settingsService) {
         this.settingsService = settingsService;
@@ -51,7 +56,7 @@ public class StatusAPIController extends AbstractController {
         } catch (Exception e) {
             throw new UnhealthyStateException("Service has no DB connection");
         }
-        return "Service is up and running";
+        return "Service is up and running. Integration: " + integrationRepository.findById(1L).orElse(null);
     }
-
+\
 }
