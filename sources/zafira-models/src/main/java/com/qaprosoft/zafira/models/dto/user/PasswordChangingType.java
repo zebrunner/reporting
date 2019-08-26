@@ -15,17 +15,15 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto.user;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class PasswordChangingType extends PasswordType {
 
     private static final long serialVersionUID = 6708214365157741315L;
 
     private String oldPassword;
 
-    public String getOldPassword() {
-        return oldPassword;
-    }
-
-    public void setOldPassword(String oldPassword) {
-        this.oldPassword = oldPassword;
-    }
 }

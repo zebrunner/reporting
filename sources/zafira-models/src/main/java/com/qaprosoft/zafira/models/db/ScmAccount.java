@@ -15,6 +15,13 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
 public class ScmAccount extends AbstractEntity {
 
     private static final long serialVersionUID = 7205460418919094068L;
@@ -33,10 +40,7 @@ public class ScmAccount extends AbstractEntity {
         GITHUB, GITHUB_ENTERPRISE
     }
 
-    public ScmAccount() {
-    }
-
-    public ScmAccount(String accessToken, Name name, Long userId) {
+    public ScmAccount(String accessToken, Name name) {
         this.accessToken = accessToken;
         this.name = name;
     }
@@ -44,78 +48,6 @@ public class ScmAccount extends AbstractEntity {
     public ScmAccount(String organizationName, String repositoryName) {
         this.organizationName = organizationName;
         this.repositoryName = repositoryName;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public String getApiVersion() {
-        return apiVersion;
-    }
-
-    public void setApiVersion(String apiVersion) {
-        this.apiVersion = apiVersion;
-    }
-
-    public String getOrganizationName() {
-        return organizationName;
-    }
-
-    public void setOrganizationName(String organizationName) {
-        this.organizationName = organizationName;
-    }
-
-    public String getRepositoryName() {
-        return repositoryName;
-    }
-
-    public void setRepositoryName(String repositoryName) {
-        this.repositoryName = repositoryName;
-    }
-
-    public String getAvatarURL() {
-        return avatarURL;
-    }
-
-    public void setAvatarURL(String avatarURL) {
-        this.avatarURL = avatarURL;
-    }
-
-    public String getRepositoryURL() {
-        return repositoryURL;
-    }
-
-    public void setRepositoryURL(String repositoryURL) {
-        this.repositoryURL = repositoryURL;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Name getName() {
-        return name;
-    }
-
-    public void setName(Name name) {
-        this.name = name;
     }
 
     @Override
@@ -132,4 +64,5 @@ public class ScmAccount extends AbstractEntity {
         String[] urlSlices = repositoryURL.split("//");
         return urlSlices[0] + "//" + accessToken + "@" + urlSlices[1];
     }
+
 }

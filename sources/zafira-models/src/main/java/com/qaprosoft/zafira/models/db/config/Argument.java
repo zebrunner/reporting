@@ -15,12 +15,17 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db.config;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+@Getter
+@Setter
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "key", "value" })
 public class Argument {
@@ -41,27 +46,4 @@ public class Argument {
         this.value = value;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String value) {
-        this.key = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public boolean getUnique() {
-        return unique;
-    }
-
-    public void setUnique(boolean value) {
-        this.unique = value;
-    }
 }

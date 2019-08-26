@@ -16,7 +16,11 @@
 package com.qaprosoft.zafira.models.push;
 
 import com.qaprosoft.zafira.models.db.TestRun;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class TestRunPush extends AbstractPush {
 
     private TestRun testRun;
@@ -26,11 +30,4 @@ public class TestRunPush extends AbstractPush {
         this.testRun = testRun;
     }
 
-    public TestRun getTestRun() {
-        return testRun;
-    }
-
-    public void setTestRun(TestRun testRun) {
-        this.testRun = testRun;
-    }
 }

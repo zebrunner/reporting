@@ -1,8 +1,13 @@
 package com.qaprosoft.zafira.models.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
+@Getter
+@Setter
 public class JobUrlType implements Serializable {
 
     private static final long serialVersionUID = 7898966367734619663L;
@@ -10,11 +15,4 @@ public class JobUrlType implements Serializable {
     @NotNull
     private String jobUrlValue;
 
-    public String getJobUrlValue() {
-        return jobUrlValue;
-    }
-
-    public void setJobUrlValue(String jobUrlValue) {
-        this.jobUrlValue = jobUrlValue;
-    }
 }

@@ -15,6 +15,11 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class TestInfo {
 
     private String tagValue;
@@ -23,43 +28,4 @@ public class TestInfo {
     private String message;
     private String defectId;
 
-    public String getTagValue() {
-        return tagValue;
-    }
-
-    public void setTagValue(String tagValue) {
-        this.tagValue = tagValue;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getDefectId() {
-        return defectId;
-    }
-
-    public void setDefectId(String defectId) {
-        this.defectId = defectId;
-    }
 }

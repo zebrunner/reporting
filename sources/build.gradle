@@ -27,6 +27,8 @@ repositories {
     }
 }
 
+def libraries = rootProject.ext.dependencyManagement
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'
@@ -42,6 +44,11 @@ subprojects {
     targetCompatibility = '11'
 
     configurations.all {
+    }
+
+    dependencies {
+        annotationProcessor libraries.lombok
+        compileOnly libraries.lombok
     }
 
     dependencyManagement {
