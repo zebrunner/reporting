@@ -4,11 +4,8 @@ zafira:
   version: ${zafira.version}
   client-version: ${zafira.client.version}
   debug-enabled: ${zafira.debug.enabled}
-  app-url: ${zafira.app.url}
-  web-context-path: ${zafira.web.context.path}
-  rest-context-path: ${zafira.rest.context.path}
-  web-url: ${zafira.app-url}/${zafira.web-context-path}
-  rest-url: ${zafira.app-url}/${zafira.rest-context-path}
+  web-url: ${zafira.web-host}/${zafira.web-context-path}
+  api-url: ${zafira.api-host}/${zafira.api-context-path}
   use-artifact-proxy: ${zafira.use.artifact.proxy}
   slack:
     image-url: https://s3-us-west-1.amazonaws.com/zebrunner/common/zfr-email.png

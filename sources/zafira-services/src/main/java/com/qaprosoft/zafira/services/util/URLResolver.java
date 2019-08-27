@@ -33,7 +33,7 @@ public class URLResolver {
     @Value("${zafira.web-url}")
     private String webURL;
 
-    @Value("${zafira.rest-url}")
+    @Value("${zafira.api-url}")
     private String webserviceURL;
 
     /**
