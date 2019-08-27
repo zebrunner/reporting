@@ -26,7 +26,7 @@ public class VersionService {
     @Value("${zafira.client-version}")
     private String clientVersion;
 
-    @Value("${zafira.rest-url}")
+    @Value("${zafira.api-url}")
     private String webserviceURL;
 
     public String getServiceVersion() {
