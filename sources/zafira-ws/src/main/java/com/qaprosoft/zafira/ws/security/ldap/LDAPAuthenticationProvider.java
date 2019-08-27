@@ -15,9 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.security.ldap;
 
-import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.services.services.application.integration.IntegrationTenancyStorage;
-import com.qaprosoft.zafira.services.services.application.integration.context.LDAPContext;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.AccessManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NamingException;
 import org.springframework.ldap.core.DirContextOperations;
@@ -38,7 +36,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Uses for load user from LDAP and recognize it.
@@ -51,6 +48,9 @@ public class LDAPAuthenticationProvider extends AbstractLdapAuthenticationProvid
 
     @Autowired
     private ServletContext servletContext;
+
+    @Autowired
+    private AccessManagementService accessManagementService;
 
     private final LDAPUserDetailsContextMapper ldapUserDetailsContextMapper;
     private final LdapAuthoritiesPopulator authoritiesPopulator;
@@ -92,13 +92,8 @@ public class LDAPAuthenticationProvider extends AbstractLdapAuthenticationProvid
         }
     }
 
-    private static LdapAuthenticator getAuthenticator() {
-        Optional<LDAPContext> ldapContext = getContext();
-        return ldapContext.<LdapAuthenticator> map(LDAPContext::getBindAuthenticator).orElse(null);
-    }
-
-    private static Optional<LDAPContext> getContext() {
-        return IntegrationTenancyStorage.getContext(Setting.Tool.LDAP);
+    private LdapAuthenticator getAuthenticator() {
+        return accessManagementService.getBindAuthenticator();
     }
 
     @Override

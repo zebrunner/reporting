@@ -12,14 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ *******************************************************************************//*
+
 package com.qaprosoft.zafira.ws.controller.application;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.google.GoogleService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,7 +36,7 @@ import com.qaprosoft.zafira.models.db.Setting.Tool;
 import com.qaprosoft.zafira.models.dto.ConnectedToolType;
 import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
-import com.qaprosoft.zafira.services.services.application.integration.impl.AmazonService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.StorageProviderService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.Api;
@@ -54,18 +55,18 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping(path = "api/settings", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SettingsAPIController extends AbstractController {
 
-    private final AmazonService amazonService;
+    private final StorageProviderService storageProviderService;
     private final GoogleService googleService;
     private final SettingsService settingsService;
     private final Integer amazonTokenExpiration;
     private final Long googleTokenExpiration;
 
-    public SettingsAPIController(AmazonService amazonService,
-            GoogleService googleService,
-            SettingsService settingsService,
-            @Value("${amazon-token-expiration}") Integer amazonTokenExpiration,
-            @Value("${google-token-expiration}") Long googleTokenExpiration) {
-        this.amazonService = amazonService;
+    public SettingsAPIController(StorageProviderService storageProviderService,
+                                 GoogleService googleService,
+                                 SettingsService settingsService,
+                                 @Value("${amazon-token-expiration}") Integer amazonTokenExpiration,
+                                 @Value("${google-token-expiration}") Long googleTokenExpiration) {
+        this.storageProviderService = storageProviderService;
         this.googleService = googleService;
         this.settingsService = settingsService;
         this.amazonTokenExpiration = amazonTokenExpiration;
@@ -134,7 +135,7 @@ public class SettingsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("amazon/creds")
     public SessionCredentials getSessionCredentials() {
-        return amazonService.getTemporarySessionCredentials(amazonTokenExpiration).orElse(null);
+        return storageProviderService.getTemporarySessionCredentials(amazonTokenExpiration).orElse(null);
     }
 
     @ApiOperation(value = "Get google session credentials", nickname = "getGoogleSessionCredentials", httpMethod = "GET", response = String.class)
@@ -155,3 +156,4 @@ public class SettingsAPIController extends AbstractController {
     }
 
 }
+*/

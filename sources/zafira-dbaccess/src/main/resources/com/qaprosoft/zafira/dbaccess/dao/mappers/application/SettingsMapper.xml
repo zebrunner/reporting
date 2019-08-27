@@ -9,10 +9,10 @@
 		<![CDATA[
 			INSERT INTO SETTINGS (NAME, VALUE, IS_ENCRYPTED, TOOL, FILE)
 			VALUES (#{name},
-					#{value},
+					#{value}/*,
                     #{isEncrypted},
                     #{tool},
-                    #{file, jdbcType=BINARY})
+                    #{file, jdbcType=BINARY})*/
 		]]>
 	</insert>
 
@@ -22,9 +22,9 @@
 				S.ID AS SETTING_ID,
 				S.NAME AS SETTING_NAME,
 				S.VALUE AS SETTING_VALUE,
-                S.IS_ENCRYPTED AS SETTING_IS_ENCRYPTED,
+                /*S.IS_ENCRYPTED AS SETTING_IS_ENCRYPTED,
                 S.TOOL AS SETTING_TOOL,
-                S.FILE AS SETTING_FILE,
+                S.FILE AS SETTING_FILE,*/
 				S.MODIFIED_AT AS SETTING_MODIFIED_AT,
 				S.CREATED_AT AS SETTING_CREATED_AT
 			FROM
@@ -39,7 +39,7 @@
 		]]>
 	</select>
 
-	<select id="getSettingsByIntegration"
+	<!--<select id="getSettingsByIntegration"
 		resultMap="SettingResultMap">
 		<include refid="getSetting" />
 		<if test="isIntegrationTool">
@@ -54,7 +54,7 @@
                     ORDER BY S.NAME;
             ]]>
 		</if>
-	</select>
+	</select>-->
 
 
 
@@ -65,7 +65,7 @@
 		]]>
 	</select>
 
-	<select id="getSettingsByTool" resultMap="SettingResultMap">
+	<!--<select id="getSettingsByTool" resultMap="SettingResultMap">
 		<include refid="getSetting" />
 		<![CDATA[
 			WHERE S.TOOL = #{tool}
@@ -79,7 +79,7 @@
 			WHERE S.IS_ENCRYPTED = #{isEncrypted}
 			ORDER BY S.NAME ASC;
 		]]>
-	</select>
+	</select>-->
 
 
 	<select id="getSettingByName" resultMap="SettingResultMap">
@@ -89,7 +89,7 @@
 		]]>
 	</select>
 
-	<select id="getTools"
+	<!--<select id="getTools"
 		resultType="com.qaprosoft.zafira.models.db.Setting$Tool">
 		<![CDATA[
 			SELECT
@@ -104,7 +104,7 @@
 			ASC
 			LIMIT 10000
 		]]>
-	</select>
+	</select>-->
 
 	<select id="getPostgresVersion" resultType="java.lang.String">
 		<![CDATA[
@@ -123,7 +123,7 @@
 						VALUE = #{value},
 					]]>
 		</if>
-		<if test="isEncrypted != null">
+		<!--<if test="isEncrypted != null">
 				<![CDATA[
 						IS_ENCRYPTED = #{isEncrypted},
 					]]>
@@ -137,7 +137,7 @@
 				<![CDATA[
 					FILE = #{file, jdbcType=BINARY},
 				]]>
-		</if>
+		</if>-->
 		<if test="name != null">
 				<![CDATA[
 						NAME = #{name}
@@ -183,9 +183,9 @@
 		<result column="SETTING_VALUE" property="value" />
 		<result column="SETTING_MODIFIED_AT" property="modifiedAt" />
 		<result column="SETTING_CREATED_AT" property="createdAt" />
-		<result column="SETTING_IS_ENCRYPTED" property="isEncrypted" />
+		<!--<result column="SETTING_IS_ENCRYPTED" property="isEncrypted" />
 		<result column="SETTING_TOOL" property="tool" />
-		<result column="SETTING_FILE" property="file" jdbcType="BINARY" />
+		<result column="SETTING_FILE" property="file" jdbcType="BINARY" />-->
 	</resultMap>
 
 </mapper>

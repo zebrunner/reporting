@@ -12,27 +12,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- ******************************************************************************/
+ *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration;
 
-import com.qaprosoft.zafira.models.db.Setting;
-import org.springframework.stereotype.Component;
+import com.qaprosoft.zafira.models.db.integration.Integration;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
-@Component
-public class IntegrationService {
+public interface IntegrationService {
 
-    private final Map<Setting.Tool, Integration> integrations;
+    Integration create(Integration integration, Long integrationTypeId);
 
-    public IntegrationService(Map<String, Integration> integrations) {
-        this.integrations = new HashMap<>();
-        integrations.forEach((beanName, integration) -> this.integrations.put(integration.getTool(), integration));
-    }
+    Integration retrieveById(Long id);
 
-    @SuppressWarnings("unchecked")
-    public <T extends Integration> T getServiceByTool(Setting.Tool tool) {
-        return (T) integrations.get(tool);
-    }
+    Integration retrieveByBackReferenceId(String backReferenceId);
+
+    List<Integration> retrieveAll();
+
+    List<Integration> retrieveByIntegrationTypeId(Long integrationTypeId);
+
+    Integration update(Integration integration);
+
 }

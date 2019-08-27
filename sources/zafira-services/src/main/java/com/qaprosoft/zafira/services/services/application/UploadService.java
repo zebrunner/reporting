@@ -2,7 +2,7 @@ package com.qaprosoft.zafira.services.services.application;
 
 import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.application.integration.impl.AmazonService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.StorageProviderService;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,15 +20,15 @@ public class UploadService {
     private final static String ASSETS_DIRECTORY = "/assets/";
     private final static String ASSETS_LOCATION = ASSETS_ROOT + ASSETS_DIRECTORY;
 
-    private final AmazonService amazonService;
+    private final StorageProviderService storageProviderService;
     private final URLResolver urlResolver;
 
     @Value("${zafira.multitenant}")
     private boolean multitenant;
 
 
-    public UploadService(AmazonService amazonService, URLResolver urlResolver) {
-        this.amazonService = amazonService;
+    public UploadService(StorageProviderService storageProviderService, URLResolver urlResolver) {
+        this.storageProviderService = storageProviderService;
         this.urlResolver = urlResolver;
     }
 
@@ -49,7 +49,7 @@ public class UploadService {
             // resource url is a concatenation or API root endpoint and relative path to document
             resourceUrl = urlResolver.buildWebserviceUrl() + ASSETS_DIRECTORY + filename;
         } else {
-            resourceUrl = amazonService.saveFile(new FileUploadType(file, type));
+            resourceUrl = storageProviderService.saveFile(new FileUploadType(file, type));
         }
 
         return String.format("{\"url\": \"%s\"}", resourceUrl);

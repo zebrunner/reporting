@@ -16,7 +16,7 @@
 package com.qaprosoft.zafira.services.util;
 
 import com.qaprosoft.zafira.models.push.events.EventMessage;
-import com.qaprosoft.zafira.services.services.application.integration.impl.RabbitMQService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.MessageBrokerService;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessagePostProcessor;
@@ -31,12 +31,12 @@ public class EventPushService<T extends EventMessage> {
     private static final String SUPPLIER_QUEUE_NAME_HEADER = "SUPPLIER_QUEUE";
 
     private final RabbitTemplate rabbitTemplate;
-    private final RabbitMQService rabbitMQService;
+    private final MessageBrokerService messageBrokerService;
 
     public EventPushService(RabbitTemplate rabbitTemplate,
-                            @Lazy RabbitMQService rabbitMQService) {
+                            @Lazy MessageBrokerService messageBrokerService) {
         this.rabbitTemplate = rabbitTemplate;
-        this.rabbitMQService = rabbitMQService;
+        this.messageBrokerService = messageBrokerService;
     }
 
     public enum Type {
@@ -79,14 +79,14 @@ public class EventPushService<T extends EventMessage> {
 
     private MessagePostProcessor setSupplierQueueNameHeader() {
         return message -> {
-            message.getMessageProperties().getHeaders().putIfAbsent(SUPPLIER_QUEUE_NAME_HEADER, rabbitMQService.getSettingQueueName());
+            message.getMessageProperties().getHeaders().putIfAbsent(SUPPLIER_QUEUE_NAME_HEADER, messageBrokerService.getSettingQueueName());
             return message;
         };
     }
 
 
     public boolean isSettingQueueConsumer(Message message) {
-        return rabbitMQService.getSettingQueueName().equals(getSupplierQueueNameHeader(message));
+        return messageBrokerService.getSettingQueueName().equals(getSupplierQueueNameHeader(message));
     }
 
     private String getSupplierQueueNameHeader(Message message) {

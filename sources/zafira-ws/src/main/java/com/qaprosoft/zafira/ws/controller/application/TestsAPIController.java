@@ -24,19 +24,19 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.models.dto.TestArtifactType;
+import com.qaprosoft.zafira.models.dto.TestCaseManagementIssueType;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.TestArtifactService;
 import com.qaprosoft.zafira.services.services.application.TestMetricService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
 import com.qaprosoft.zafira.services.services.application.TestService;
 import com.qaprosoft.zafira.services.services.application.WorkItemService;
 import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
-import com.qaprosoft.zafira.services.services.application.integration.impl.JiraService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.TestCaseManagementService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.Api;
@@ -44,7 +44,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import net.rcarz.jiraclient.Issue;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -88,7 +87,7 @@ public class TestsAPIController extends AbstractController {
     private WorkItemService workItemService;
 
     @Autowired
-    private JiraService jiraService;
+    private TestCaseManagementService testCaseManagementService;
 
     @Autowired
     private SimpMessagingTemplate websocketTemplate;
@@ -249,16 +248,15 @@ public class TestsAPIController extends AbstractController {
     @ApiIgnore
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/jira/{issue}")
-    public Issue getJiraIssue(@PathVariable("issue") String issue) {
-        return jiraService.getIssue(issue)
-                .orElseThrow(() -> new ForbiddenOperationException("Unable to retrieve jira issue"));
+    public TestCaseManagementIssueType getJiraIssue(@PathVariable("issue") String issue) {
+        return testCaseManagementService.getIssue(issue);
     }
 
     @ApiIgnore
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/jira/connect")
     public boolean getConnectionToJira() {
-        return jiraService.isEnabledAndConnected();
+        return testCaseManagementService.isEnabledAndConnected();
     }
 
     @ResponseStatusDetails

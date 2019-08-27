@@ -22,6 +22,10 @@ public class EntityNotExistsException extends ServiceException {
 
     private static final long serialVersionUID = 419121635807145174L;
 
+    public EntityNotExistsException(String message) {
+        super(message);
+    }
+
     public EntityNotExistsException(Class entityClass, boolean showStacktrace) {
         super(buildMessage(entityClass), null, showStacktrace);
     }

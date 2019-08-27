@@ -36,7 +36,7 @@ import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 import com.qaprosoft.zafira.services.services.application.GroupService;
 import com.qaprosoft.zafira.services.services.application.InvitationService;
 import com.qaprosoft.zafira.services.services.application.UserService;
-import com.qaprosoft.zafira.services.services.application.integration.impl.LdapService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.AccessManagementService;
 import com.qaprosoft.zafira.services.services.auth.ForgotPasswordService;
 import com.qaprosoft.zafira.services.services.auth.JWTService;
 import com.qaprosoft.zafira.services.util.URLResolver;
@@ -85,7 +85,7 @@ public class AuthAPIController extends AbstractController {
     private UserService userService;
 
     @Autowired
-    private LdapService ldapService;
+    private AccessManagementService accessManagementService;
 
     @Autowired
     private GroupService groupService;
@@ -176,7 +176,7 @@ public class AuthAPIController extends AbstractController {
             throw new ForbiddenOperationException();
         }
         if (invitation.getSource().equals(User.Source.LDAP)) {
-            if (ldapService.isEnabledAndConnected() && ldapService.searchUser(userType.getUsername()) == null) {
+            if (accessManagementService.isEnabledAndConnected() && accessManagementService.isUserExists(userType.getUsername())) {
                 throw new ForbiddenOperationException();
             }
         }

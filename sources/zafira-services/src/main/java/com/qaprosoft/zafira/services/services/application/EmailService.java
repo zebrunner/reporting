@@ -15,26 +15,20 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
 
 import com.qaprosoft.zafira.models.db.Attachment;
-import com.qaprosoft.zafira.services.services.application.integration.impl.MailSender;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.MailService;
 import com.qaprosoft.zafira.services.services.application.emails.IEmailMessage;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
-
-import javax.mail.MessagingException;
 
 @Component
 public class EmailService {
@@ -44,17 +38,17 @@ public class EmailService {
     private static final String EMAIL_REGEX = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
 
-    private final MailSender mailSender;
+    private final MailService mailService;
     private final FreemarkerUtil freemarkerUtil;
 
-    public EmailService(MailSender mailSender, FreemarkerUtil freemarkerUtil) {
-        this.mailSender = mailSender;
+    public EmailService(MailService mailService, FreemarkerUtil freemarkerUtil) {
+        this.mailService = mailService;
         this.freemarkerUtil = freemarkerUtil;
     }
 
     public String sendEmail(final IEmailMessage message, final String... emails) {
 
-        if (!mailSender.isEnabledAndConnected()) {
+        if (!mailService.isEnabledAndConnected()) {
             return null;
         }
 
@@ -67,7 +61,7 @@ public class EmailService {
                 MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachments);
                 msg.setSubject(message.getSubject());
                 msg.setTo(recipients);
-                msgSetFrom(msg);
+                mailService.setFromAddress(msg);
                 msg.setText(text, true);
                 if (hasAttachments) {
                     for (Attachment attachment : message.getAttachments()) {
@@ -75,21 +69,9 @@ public class EmailService {
                     }
                 }
             };
-            this.mailSender.send(preparator);
+            this.mailService.send(preparator);
         }
         return text;
-    }
-
-    private void msgSetFrom(MimeMessageHelper msg) throws UnsupportedEncodingException, MessagingException {
-        JavaMailSenderImpl javaMailSender = mailSender.getJavaMailSenderImpl()
-                .orElseThrow(() -> new ForbiddenOperationException("Unable to retrieve sender address"));
-        String fromAddress = mailSender.getFromAddress()
-                .orElseThrow(() -> new ForbiddenOperationException("Unable to retrieve sender address"));
-        if (!StringUtils.isBlank(fromAddress)) {
-            msg.setFrom(fromAddress, javaMailSender.getUsername());
-        } else {
-            msg.setFrom(javaMailSender.getUsername());
-        }
     }
 
     private String[] processRecipients(String... emails) {

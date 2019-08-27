@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationGroupMapper">
+
+    <sql id="integrationGroupBody">
+        <![CDATA[
+           IG.ID AS INTEGRATION_GROUP_ID,
+           IG.NAME AS INTEGRATION_GROUP_NAME,
+           IG.ICON_URL AS INTEGRATION_GROUP_ICON_URL,
+           IG.MULTIPLE_ALLOWED AS INTEGRATION_GROUP_MULTIPLE_ALLOWED,
+           IG.MODIFIED_AT AS INTEGRATION_GROUP_MODIFIED_AT,
+           IG.CREATED_AT AS INTEGRATION_GROUP_CREATED_AT
+        ]]>
+    </sql>
+
+    <sql id="find">
+        <![CDATA[
+            SELECT
+        ]]>
+        <include refid="integrationGroupBody"/>
+        <![CDATA[
+            ,
+        ]]>
+        <include refid="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationTypeMapper.integrationTypeBody"/>
+        <![CDATA[
+            ,
+        ]]>
+        <include refid="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationMapper.integrationBody"/>
+        <![CDATA[
+            ,
+        ]]>
+        <include refid="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationSettingMapper.integrationSettingBody"/>
+        <![CDATA[
+            ,
+        ]]>
+        <include refid="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationParamMapper.integrationParamBody"/>
+        <![CDATA[
+            FROM
+                INTEGRATION_GROUPS IG
+            LEFT JOIN
+                INTEGRATION_TYPES IT
+            ON
+                IG.ID = IT.INTEGRATION_GROUP_ID
+            LEFT JOIN
+                INTEGRATIONS I
+            ON
+                I.INTEGRATION_TYPE_ID = IT.ID
+            LEFT JOIN
+                INTEGRATION_SETTINGS INS
+            ON
+                INS.INTEGRATION_ID = I.ID
+            LEFT JOIN
+                INTEGRATION_PARAMS IP
+            ON
+                IP.ID = INS.INTEGRATION_PARAM_ID
+        ]]>
+    </sql>
+
+    <select id="findById" resultMap="IntegrationGroupResultMap">
+        <include refid="find"/>
+        <![CDATA[
+            WHERE
+                IG.ID = #{id}
+        ]]>
+    </select>
+
+    <select id="findByName" resultMap="IntegrationGroupResultMap">
+        <include refid="find"/>
+        <![CDATA[
+            WHERE
+                IG.NAME = #{name}
+        ]]>
+    </select>
+
+    <select id="findByIntegrationTypeId" resultMap="IntegrationGroupResultMap">
+        <include refid="find"/>
+        <![CDATA[
+            WHERE
+                IT.ID = #{integrationTypeId}
+        ]]>
+    </select>
+
+    <select id="findAll" resultMap="IntegrationGroupResultMap">
+        <include refid="find"/>
+    </select>
+
+    <resultMap type="com.qaprosoft.zafira.models.db.integration.IntegrationGroup" id="IntegrationGroupResultMap" autoMapping="false">
+        <id column="INTEGRATION_GROUP_ID" property="id" />
+        <result column="INTEGRATION_GROUP_NAME" property="name" />
+        <result column="INTEGRATION_GROUP_ICON_URL" property="iconUrl" />
+        <result column="INTEGRATION_GROUP_MULTIPLE_ALLOWED" property="multipleAllowed" />
+        <result column="INTEGRATION_GROUP_MODIFIED_AT" property="modifiedAt" />
+        <result column="INTEGRATION_GROUP_CREATED_AT" property="createdAt" />
+        <collection property="integrationTypes" ofType="com.qaprosoft.zafira.models.db.integration.IntegrationType" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationTypeMapper.IntegrationTypeResultMap"/>
+    </resultMap>
+
+</mapper>

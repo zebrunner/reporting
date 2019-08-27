@@ -32,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.offbytwo.jenkins.model.QueueReference;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherMapper;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Job;
@@ -45,9 +44,8 @@ import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.JenkinsJobNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ScmAccountNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.application.integration.context.JenkinsContext;
-import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
-import com.qaprosoft.zafira.services.services.application.integration.impl.SeleniumService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.AutomationServerService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.TestAutomationToolService;
 import com.qaprosoft.zafira.services.services.application.scm.GitHubService;
 import com.qaprosoft.zafira.services.services.application.scm.ScmAccountService;
 import com.qaprosoft.zafira.services.services.auth.JWTService;
@@ -55,50 +53,42 @@ import com.qaprosoft.zafira.services.services.auth.JWTService;
 @Service
 public class LauncherService {
 
-    private static final String LAUNCHER_JOB_URL_PATTERN = "%s/job/%s/job/launcher";
-    private static final String LAUNCHER_JOB_ROOT_URL_PATTERN = "%s/job/launcher";
-
     private final LauncherMapper launcherMapper;
-    private final JenkinsService jenkinsService;
+    private final AutomationServerService automationServerService;
     private final ScmAccountService scmAccountService;
     private final JobsService jobsService;
     private final JWTService jwtService;
     private final GitHubService gitHubService;
-    private final SeleniumService seleniumService;
+    private final TestAutomationToolService testAutomationToolService;
     private final URLResolver urlResolver;
 
     public LauncherService(LauncherMapper launcherMapper,
-                           JenkinsService jenkinsService,
+                           AutomationServerService automationServerService,
                            ScmAccountService scmAccountService,
                            JobsService jobsService,
                            JWTService jwtService,
                            GitHubService gitHubService,
-                           SeleniumService seleniumService,
+                           TestAutomationToolService testAutomationToolService,
                            URLResolver urlResolver) {
         this.launcherMapper = launcherMapper;
-        this.jenkinsService = jenkinsService;
+        this.automationServerService = automationServerService;
         this.scmAccountService = scmAccountService;
         this.jobsService = jobsService;
         this.jwtService = jwtService;
         this.gitHubService = gitHubService;
-        this.seleniumService = seleniumService;
+        this.testAutomationToolService = testAutomationToolService;
         this.urlResolver = urlResolver;
     }
 
     @Transactional(rollbackFor = Exception.class)
     public Launcher createLauncher(Launcher launcher, User owner) {
-        if (jenkinsService.isConnected()) {
-            JenkinsContext context = jenkinsService.context();
-            String jenkinsHost = context.getJenkinsHost();
-            String folder = context.getFolder();
-            String launcherJobUrl = StringUtils.isEmpty(folder) ?
-                    String.format(LAUNCHER_JOB_ROOT_URL_PATTERN, jenkinsHost) :
-                    String.format(LAUNCHER_JOB_URL_PATTERN, jenkinsHost, folder);
+        if (automationServerService.isEnabledAndConnected()) {
+            String launcherJobUrl = automationServerService.buildLauncherJobUrl();
             Job job = jobsService.getJobByJobURL(launcherJobUrl);
             if (job == null) {
-                job = jenkinsService.getJobByUrl(launcherJobUrl).orElseThrow(
+                job = automationServerService.getJobByUrl(launcherJobUrl).orElseThrow(
                         () -> new JenkinsJobNotFoundException("Job\n" + launcherJobUrl + "\nis not found on Jenkins"));
-                job.setJenkinsHost(jenkinsHost);
+                job.setJenkinsHost(automationServerService.getUrl());
                 job.setUser(owner);
                 jobsService.createJob(job);
             }
@@ -179,13 +169,8 @@ public class LauncherService {
         }
         
         // If Selenium integration is enabled pass selenium_host with basic auth as job argument
-        if(seleniumService.isConnected()) {
-            String seleniumURL = seleniumService.context().getUrl();
-            final String username = seleniumService.context().getUser();
-            final String password = seleniumService.context().getPassword();
-            if(StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
-                seleniumURL = String.format("%s//%s:%s@%s", seleniumURL.split("//")[0], username, password, seleniumURL.split("//")[1]);
-            }
+        if(testAutomationToolService.isEnabledAndConnected()) {
+            String seleniumURL = testAutomationToolService.buildUrl();
             jobParameters.put("selenium_host", seleniumURL);
         }
 
@@ -194,7 +179,7 @@ public class LauncherService {
         jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, TenancyContext.getTenantName()));
 
         String args = jobParameters.entrySet().stream()
-                                   .filter(param -> !Arrays.asList(JenkinsService.getRequiredArgs()).contains(param.getKey()))
+                                   .filter(param -> !Arrays.asList(AutomationServerService.getRequiredArgs()).contains(param.getKey()))
                                    .map(param -> param.getKey() + "=" + param.getValue())
                                    .collect(Collectors.joining(","));
 
@@ -205,10 +190,10 @@ public class LauncherService {
         String ciRunId = UUID.randomUUID().toString();
         jobParameters.put("ci_run_id", ciRunId);
 
-        if (!JenkinsService.checkArguments(jobParameters))
+        if (!AutomationServerService.checkArguments(jobParameters))
             throw new ServiceException("Required arguments not found");
 
-        jenkinsService.buildJob(job, jobParameters);
+        automationServerService.buildJob(job, jobParameters);
 
         return ciRunId;
     }
@@ -227,7 +212,7 @@ public class LauncherService {
 
         Map<String, String> jobParameters = new HashMap<>();
         jobParameters.put("userId", String.valueOf(user.getId()));
-        if (StringUtils.isNotEmpty(jenkinsService.context().getFolder())) {
+        if (StringUtils.isNotEmpty(automationServerService.getFolder())) {
             jobParameters.put("organization", organizationName);
         }
         jobParameters.put("repo", repositoryName);
@@ -243,7 +228,7 @@ public class LauncherService {
 
         jobParameters.put("zafiraFields", args);
 
-        JobResult result = jenkinsService.buildScannerJob(repositoryName, jobParameters, rescan);
+        JobResult result = automationServerService.buildScannerJob(repositoryName, jobParameters, rescan);
         if (result == null || !result.isSuccess()) {
             throw new ForbiddenOperationException("Repository scanner job is not started");
         }
@@ -257,14 +242,14 @@ public class LauncherService {
             throw new ServiceException("Scm account not found");
         }
         String repositoryName = scmAccount.getRepositoryName();
-        JobResult result = jenkinsService.abortScannerJob(repositoryName, buildNumber, rescan);
+        JobResult result = automationServerService.abortScannerJob(repositoryName, buildNumber, rescan);
         if (result == null || !result.isSuccess()) {
             throw new ForbiddenOperationException("Repository scanner job is not aborted");
         }
     }
 
     public Integer getBuildNumber(String queueItemUrl) {
-        return jenkinsService.getBuildNumber(new QueueReference(queueItemUrl));
+        return automationServerService.getBuildNumber(queueItemUrl);
     }
 
 }

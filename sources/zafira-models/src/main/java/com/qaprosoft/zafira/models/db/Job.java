@@ -25,6 +25,7 @@ public class Job extends AbstractEntity {
     private String name;
     private String jobURL;
     private String jenkinsHost;
+    private Long automationServerId;
     private User user = new User();
 
     public Job() {
@@ -72,6 +73,14 @@ public class Job extends AbstractEntity {
 
     public void setJenkinsHost(String jenkinsHost) {
         this.jenkinsHost = jenkinsHost;
+    }
+
+    public Long getAutomationServerId() {
+        return automationServerId;
+    }
+
+    public void setAutomationServerId(Long automationServerId) {
+        this.automationServerId = automationServerId;
     }
 
     @Override

@@ -25,7 +25,7 @@ import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 import com.qaprosoft.zafira.services.services.application.DashboardService;
 import com.qaprosoft.zafira.services.services.application.UserPreferenceService;
 import com.qaprosoft.zafira.services.services.application.UserService;
-import com.qaprosoft.zafira.services.services.application.integration.impl.AmazonService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.StorageProviderService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.Api;
@@ -70,7 +70,7 @@ public class UsersAPIController extends AbstractController {
     private UserPreferenceService userPreferenceService;
 
     @Autowired
-    private AmazonService amazonService;
+    private StorageProviderService storageProviderService;
 
     @Autowired
     private Mapper mapper;
@@ -130,7 +130,7 @@ public class UsersAPIController extends AbstractController {
     @DeleteMapping("/profile/photo")
     public void deleteUserProfilePhoto() {
         User user = userService.getUserById(getPrincipalId());
-        amazonService.removeFile(user.getPhotoURL());
+        storageProviderService.removeFile(user.getPhotoURL());
         user.setPhotoURL(StringUtils.EMPTY);
         userService.updateUser(user);
     }

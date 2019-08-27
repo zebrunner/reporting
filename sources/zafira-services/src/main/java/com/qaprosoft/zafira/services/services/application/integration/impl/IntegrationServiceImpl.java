@@ -1,0 +1,123 @@
+/*******************************************************************************
+ * Copyright 2013-2019 Qaprosoft (http://www.qaprosoft.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
+package com.qaprosoft.zafira.services.services.application.integration.impl;
+
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationMapper;
+import com.qaprosoft.zafira.models.db.integration.Integration;
+import com.qaprosoft.zafira.models.db.integration.IntegrationGroup;
+import com.qaprosoft.zafira.models.db.integration.IntegrationSetting;
+import com.qaprosoft.zafira.models.db.integration.IntegrationType;
+import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
+import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationSettingService;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationTypeService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+@Service
+public class IntegrationServiceImpl implements IntegrationService {
+
+    private static final String ERR_MSG_NOT_MULTIPLE_ALLOWED_INTEGRATION = "Integration with type '%s' is not multiple allowed";
+    private static final String ERR_MSG_INTEGRATION_NOT_FOUND_BY_ID = "Integration with id '%d' not found";
+    private static final String ERR_MSG_INTEGRATION_NOT_FOUND_BY_BACK_REFERENCE_ID = "Integration with back reference id '%s' not found";
+
+    private final IntegrationMapper integrationMapper;
+    private final IntegrationGroupService integrationGroupService;
+    private final IntegrationTypeService integrationTypeService;
+    private final IntegrationSettingService integrationSettingService;
+
+    public IntegrationServiceImpl(IntegrationMapper integrationMapper,
+                                  IntegrationGroupService integrationGroupService,
+                                  IntegrationTypeService integrationTypeService,
+                                  IntegrationSettingService integrationSettingService
+    ) {
+        this.integrationMapper = integrationMapper;
+        this.integrationGroupService = integrationGroupService;
+        this.integrationTypeService = integrationTypeService;
+        this.integrationSettingService = integrationSettingService;
+    }
+
+    // TODO: 2019-08-23 add notification and add to context mapping
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Integration create(Integration integration, Long integrationTypeId) {
+        verifyIntegration(integrationTypeId);
+        integrationMapper.create(integration, integrationTypeId);
+        Set<IntegrationSetting> integrationSettingSet = integrationSettingService.create(integration.getIntegrationSettings(), integration.getId());
+        integration.setIntegrationSettings(new ArrayList<>(integrationSettingSet));
+        return integration;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Integration retrieveById(Long id) {
+        Integration integration = integrationMapper.findById(id);
+        if (integration == null) {
+            throw new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_NOT_FOUND_BY_ID, id));
+        }
+        return integration;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Integration retrieveByBackReferenceId(String backReferenceId) {
+        Integration integration = integrationMapper.findByBackReferenceId(backReferenceId);
+        if (integration == null) {
+            throw new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_NOT_FOUND_BY_BACK_REFERENCE_ID, backReferenceId));
+        }
+        return integration;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Integration> retrieveAll() {
+        return integrationMapper.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Integration> retrieveByIntegrationTypeId(Long integrationTypeId) {
+        return integrationMapper.findByIntegrationTypeId(integrationTypeId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Integration update(Integration integration) {
+        IntegrationType integrationType = integrationTypeService.retrieveByIntegrationId(integration.getId());
+        verifyIntegration(integrationType.getId());
+        integrationMapper.update(integration);
+        integrationSettingService.update(integration.getIntegrationSettings(), integration.getId());
+        return integration;
+    }
+
+    private void verifyIntegration(Long integrationTypeId) {
+        IntegrationType integrationType = integrationTypeService.retrieveById(integrationTypeId);
+        IntegrationGroup integrationGroup = integrationGroupService.retrieveByIntegrationTypeId(integrationType.getId());
+        if (!integrationGroup.isMultipleAllowed()) {
+            List<Integration> integrations = retrieveByIntegrationTypeId(integrationType.getId());
+            if (integrations.size() != 0) {
+                throw new IllegalOperationException(String.format(ERR_MSG_NOT_MULTIPLE_ALLOWED_INTEGRATION, integrationType.getName()));
+            }
+        }
+    }
+
+}

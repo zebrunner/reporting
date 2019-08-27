@@ -31,8 +31,7 @@ import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
-import com.qaprosoft.zafira.services.services.application.integration.impl.JiraService;
-import net.rcarz.jiraclient.Issue;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.TestCaseManagementService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
@@ -48,7 +47,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -84,7 +82,7 @@ public class TestService {
     private TestRunService testRunService;
 
     @Autowired
-    private JiraService jiraService;
+    private TestCaseManagementService testCaseManagementService;
 
     @Autowired
     private TestArtifactService testArtifactService;
@@ -195,9 +193,7 @@ public class TestService {
                 WorkItem knownIssue = workItemService.getWorkItemByTestCaseIdAndHashCode(existingTest.getTestCaseId(),
                         getTestMessageHashCode(test.getMessage()));
                 if (knownIssue != null) {
-                    Optional<Issue> nullableIssueFromJira = jiraService.getIssue(knownIssue.getJiraId());
-                    boolean isJiraIdClosed = jiraService.isEnabledAndConnected() && nullableIssueFromJira.isPresent()
-                            && jiraService.isIssueClosed(nullableIssueFromJira.get());
+                    boolean isJiraIdClosed = testCaseManagementService.isEnabledAndConnected() && testCaseManagementService.isIssueClosed(knownIssue.getJiraId());
                     if (!isJiraIdClosed) {
                         existingTest.setKnownIssue(true);
                         existingTest.setBlocker(knownIssue.isBlocker());

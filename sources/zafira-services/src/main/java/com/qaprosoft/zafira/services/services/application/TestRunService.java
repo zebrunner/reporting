@@ -39,7 +39,8 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
-import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.AutomationServerService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.TestCaseManagementService;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang.StringUtils;
@@ -69,7 +70,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
-import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_URL;
 import static com.qaprosoft.zafira.models.db.Status.ABORTED;
 import static com.qaprosoft.zafira.models.db.Status.FAILED;
 import static com.qaprosoft.zafira.models.db.Status.IN_PROGRESS;
@@ -115,7 +115,7 @@ public class TestRunService {
     private TestService testService;
 
     @Autowired
-    private JenkinsService jenkinsService;
+    private AutomationServerService automationServerService;
 
     @Autowired
     private FreemarkerUtil freemarkerUtil;
@@ -130,7 +130,7 @@ public class TestRunService {
     private EmailService emailService;
 
     @Autowired
-    private SettingsService settingsService;
+    private TestCaseManagementService testCaseManagementService;
 
     @Autowired
     private JobsService jobsService;
@@ -426,7 +426,7 @@ public class TestRunService {
         testRuns.forEach(testRun -> {
             resetTestRunComments(testRun);
             if (rerunRequired) {
-                boolean success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
+                boolean success = automationServerService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
                 if (!success) {
                     LOGGER.error("Problems with job building occurred. Job url: " + testRun.getJob().getJobURL());
                 }
@@ -539,7 +539,7 @@ public class TestRunService {
             test.setArtifacts(new TreeSet<>(test.getArtifacts()));
         }
         TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
-        email.setJiraURL(settingsService.getSettingByType(JIRA_URL));
+        email.setJiraURL(testCaseManagementService.getUrl());
         email.setShowOnlyFailures(showOnlyFailures);
         email.setShowStacktrace(showStacktrace);
         email.setSuccessRate(calculateSuccessRate(testRun));
@@ -568,7 +568,7 @@ public class TestRunService {
             List<Test> tests = testService.getTestsByTestRunId(id);
 
             TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
-            email.setJiraURL(settingsService.getSettingByType(JIRA_URL));
+            email.setJiraURL(testCaseManagementService.getUrl());
             email.setSuccessRate(calculateSuccessRate(testRun));
             result = freemarkerUtil.getFreeMarkerTemplateContent(email.getType().getTemplateName(), email);
         } else {

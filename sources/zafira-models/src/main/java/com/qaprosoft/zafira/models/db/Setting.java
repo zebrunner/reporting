@@ -29,11 +29,11 @@ public class Setting extends AbstractEntity {
 
     private String name;
     private String value;
-    private boolean isEncrypted;
-    private Tool tool;
-    private byte[] file;
+    //private boolean isEncrypted;
+    //private Tool tool;
+    //private byte[] file;
 
-    public enum Tool {
+    /*public enum Tool {
         RABBITMQ(
                 true,
                 SettingType.RABBITMQ_ENABLED,
@@ -113,10 +113,10 @@ public class Setting extends AbstractEntity {
             Arrays.sort(result, Comparator.comparing(Tool::getPriority).reversed());
             return result;
         }
-    }
+    }*/
 
     public enum SettingType {
-        GOOGLE_CLIENT_SECRET_ORIGIN,
+        /*GOOGLE_CLIENT_SECRET_ORIGIN,
         GOOGLE_ENABLED,
         JIRA_URL,
         JIRA_USER,
@@ -160,7 +160,7 @@ public class Setting extends AbstractEntity {
         SELENIUM_URL,
         SELENIUM_USER(false, false),
         SELENIUM_PASSWORD(false, true),
-        SELENIUM_ENABLED,
+        SELENIUM_ENABLED,*/
         COMPANY_LOGO_URL;
 
         private final Boolean required;
@@ -204,32 +204,32 @@ public class Setting extends AbstractEntity {
         this.value = value;
     }
 
-    public boolean isEncrypted() {
-        return isEncrypted;
-    }
-
-    public void setEncrypted(boolean encrypted) {
-        isEncrypted = encrypted;
-    }
-
-    public Tool getTool() {
-        return tool;
-    }
-
-    public void setTool(Tool tool) {
-        this.tool = tool;
-    }
-
-    public byte[] getFile() {
-        return file;
-    }
-
-    public void setFile(byte[] file) {
-        this.file = file;
-    }
-
-    public boolean isValueForEncrypting() {
-        return this.tool != null && SettingType.valueOf(this.name).isEncrypted();
-    }
+//    public boolean isEncrypted() {
+//        return isEncrypted;
+//    }
+//
+//    public void setEncrypted(boolean encrypted) {
+//        isEncrypted = encrypted;
+//    }
+//
+//    public Tool getTool() {
+//        return tool;
+//    }
+//
+//    public void setTool(Tool tool) {
+//        this.tool = tool;
+//    }
+//
+//    public byte[] getFile() {
+//        return file;
+//    }
+//
+//    public void setFile(byte[] file) {
+//        this.file = file;
+//    }
+//
+//    public boolean isValueForEncrypting() {
+//        return this.tool != null && SettingType.valueOf(this.name).isEncrypted();
+//    }
 
 }

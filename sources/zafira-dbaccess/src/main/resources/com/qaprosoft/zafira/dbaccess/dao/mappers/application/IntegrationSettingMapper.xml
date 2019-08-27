@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationSettingMapper">
+
+    <insert id="create">
+        <![CDATA[
+            INSERT INTO INTEGRATION_SETTINGS(VALUE, BINARY_DATA, ENCRYPTED, INTEGRATION_ID, INTEGRATION_PARAM_ID) VALUES
+        ]]>
+        <foreach item="integrationSetting" index="index" collection="integrationSettings" open="" separator="," close=";">
+            <![CDATA[
+                (
+                    #{integrationSetting.value},
+                    #{integrationSetting.binaryData, jdbcType=BINARY},
+                    #{integrationSetting.encrypted},
+                    #{integrationId},
+                    #{integrationSetting.integrationParam.id}
+                )
+            ]]>
+        </foreach>
+    </insert>
+
+    <sql id="integrationSettingBody">
+        <![CDATA[
+            INS.ID AS INTEGRATION_SETTING_ID,
+            INS.VALUE AS INTEGRATION_SETTING_VALUE,
+            INS.BINARY_DATA AS INTEGRATION_SETTING_BINARY_DATA,
+            INS.ENCRYPTED AS INTEGRATION_SETTING_ENCRYPTED,
+            INS.MODIFIED_AT AS INTEGRATION_SETTING_MODIFIED_AT,
+            INS.CREATED_AT AS INTEGRATION_SETTING_CREATED_AT
+        ]]>
+    </sql>
+
+    <sql id="find">
+        <![CDATA[
+            SELECT
+        ]]>
+        <include refid="integrationSettingBody"/>
+        <![CDATA[
+            ,
+        ]]>
+        <include refid="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationParamMapper.integrationParamBody"/>
+        <![CDATA[
+            ,
+        ]]>
+        <include refid="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationMapper.integrationBody"/>
+        <![CDATA[
+            ,
+        ]]>
+        <include refid="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationTypeMapper.integrationTypeBody"/>
+        <![CDATA[
+            FROM
+                INTEGRATION_SETTINGS INS
+            LEFT JOIN
+                INTEGRATION_PARAMS IP
+            ON
+                INS.INTEGRATION_PARAM_ID = IP.ID
+            LEFT JOIN
+                INTEGRATIONS I
+            ON
+                INS.INTEGRATION_ID = I.ID
+            LEFT JOIN
+                INTEGRATION_TYPES IT
+            ON
+                IP.INTEGRATION_TYPE_ID = IT.ID
+        ]]>
+    </sql>
+
+    <select id="findById" resultMap="IntegrationSettingResultMap">
+        <include refid="find"/>
+        <![CDATA[
+            WHERE
+                INS.ID = #{id}
+        ]]>
+    </select>
+
+    <select id="findByIntegrationIdAndParamName" resultMap="IntegrationSettingResultMap">
+        <include refid="find"/>
+        <![CDATA[
+            WHERE
+                INS.INTEGRATION_ID = #{integrationId} AND IP.NAME = #{paramName}
+        ]]>
+    </select>
+
+    <select id="findByIntegrationTypeNameAndParamName" resultMap="IntegrationSettingResultMap">
+        <include refid="find"/>
+        <![CDATA[
+            WHERE
+                IT.NAME = #{integrationTypeName} AND IP.NAME = #{paramName} AND I.DEFAULT = TRUE
+        ]]>
+    </select>
+
+    <select id="findAll" resultMap="IntegrationSettingResultMap">
+        <include refid="find"/>
+    </select>
+
+    <update id="update">
+        <![CDATA[
+            UPDATE INTEGRATION_SETTINGS
+        ]]>
+        <set>
+            <if test="null != value">
+                <![CDATA[
+                   VALUE = #{value},
+                ]]>
+            </if>
+            <if test="null != binaryData">
+                <![CDATA[
+                   BINARY_DATA = #{binaryData, jdbcType=BINARY}
+                ]]>
+            </if>
+            <if test="null != encrypted">
+                <![CDATA[
+                   ENCRYPTED = #{encrypted}
+                ]]>
+            </if>
+        </set>
+        <![CDATA[
+            WHERE ID = #{id}
+        ]]>
+    </update>
+
+    <resultMap type="com.qaprosoft.zafira.models.db.integration.IntegrationSetting" id="IntegrationSettingResultMap" autoMapping="false">
+        <id column="INTEGRATION_SETTING_ID" property="id" />
+        <result column="INTEGRATION_SETTING_VALUE" property="value" />
+        <result column="INTEGRATION_SETTING_BINARY_DATA" property="binaryData" jdbcType="BINARY" />
+        <result column="INTEGRATION_SETTING_ENCRYPTED" property="encrypted" />
+        <result column="INTEGRATION_SETTING_MODIFIED_AT" property="modifiedAt" />
+        <result column="INTEGRATION_SETTING_CREATED_AT" property="createdAt" />
+        <association property="integrationParam" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationParamMapper.IntegrationParamResultMap"/>
+    </resultMap>
+
+</mapper>

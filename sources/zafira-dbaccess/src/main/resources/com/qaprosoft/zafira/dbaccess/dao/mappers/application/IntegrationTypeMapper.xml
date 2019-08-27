@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationTypeMapper">
+
+    <sql id="integrationTypeBody">
+        <![CDATA[
+            IT.ID AS INTEGRATION_TYPE_ID,
+            IT.NAME AS INTEGRATION_TYPE_NAME,
+            IT.DISPLAY_NAME AS INTEGRATION_TYPE_DISPLAY_NAME,
+            IT.ICON_URL AS INTEGRATION_TYPE_ICON_URL,
+            IT.MODIFIED_AT AS INTEGRATION_TYPE_MODIFIED_AT,
+            IT.CREATED_AT AS INTEGRATION_TYPE_CREATED_AT
+        ]]>
+    </sql>
+
+    <sql id="find">
+        <![CDATA[
+            SELECT
+        ]]>
+        <include refid="integrationTypeBody"/>
+        <![CDATA[
+            ,
+        ]]>
+        <include refid="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationParamMapper.integrationParamBody"/>
+        <![CDATA[
+            ,
+        ]]>
+        <include refid="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationMapper.integrationBody"/>
+        <![CDATA[
+            FROM
+                INTEGRATION_TYPES IT
+            LEFT JOIN
+                INTEGRATION_PARAMS IP
+            ON
+                IT.ID = IP.INTEGRATION_TYPE_ID
+            LEFT JOIN
+                INTEGRATIONS I
+            ON
+                IT.ID = I.INTEGRATION_TYPE_ID
+        ]]>
+    </sql>
+
+    <select id="findById" resultMap="IntegrationTypeResultMap">
+        <include refid="find"/>
+        <![CDATA[
+            WHERE
+                IT.ID = #{id}
+        ]]>
+    </select>
+
+    <select id="findByName" resultMap="IntegrationTypeResultMap">
+        <include refid="find"/>
+        <![CDATA[
+            WHERE
+                IT.NAME = #{name}
+        ]]>
+    </select>
+
+    <select id="findByIntegrationId" resultMap="IntegrationTypeResultMap">
+        <include refid="find"/>
+        <![CDATA[
+            WHERE
+                I.ID = #{id}
+        ]]>
+    </select>
+
+    <select id="findAll" resultMap="IntegrationTypeResultMap">
+        <include refid="find"/>
+    </select>
+
+    <resultMap type="com.qaprosoft.zafira.models.db.integration.IntegrationType" id="IntegrationTypeResultMap" autoMapping="false">
+        <id column="INTEGRATION_TYPE_ID" property="id" />
+        <result column="INTEGRATION_TYPE_NAME" property="name" />
+        <result column="INTEGRATION_TYPE_DISPLAY_NAME" property="displayName" />
+        <result column="INTEGRATION_TYPE_ICON_URL" property="iconUrl" />
+        <result column="INTEGRATION_TYPE_MODIFIED_AT" property="modifiedAt" />
+        <result column="INTEGRATION_TYPE_CREATED_AT" property="createdAt" />
+        <collection property="integrations" ofType="com.qaprosoft.zafira.models.db.integration.Integration" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationMapper.IntegrationResultMap"/>
+        <collection property="integrationParams" ofType="com.qaprosoft.zafira.models.db.integration.IntegrationParam" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationParamMapper.IntegrationParamResultMap"/>
+    </resultMap>
+
+</mapper>

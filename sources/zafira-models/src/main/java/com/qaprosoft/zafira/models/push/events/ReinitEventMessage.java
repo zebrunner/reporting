@@ -15,25 +15,22 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.push.events;
 
-import com.qaprosoft.zafira.models.db.Setting;
-
 public class ReinitEventMessage extends EventMessage {
 
     private static final long serialVersionUID = 5300913238106855128L;
 
-    private Setting.Tool tool;
+    private String tool;
 
-    public ReinitEventMessage(String tenancy, Setting.Tool tool) {
+    public ReinitEventMessage(String tenancy, String tool) {
         super(tenancy);
         this.tool = tool;
     }
 
-    public Setting.Tool getTool() {
+    public String getTool() {
         return tool;
     }
 
-    public void setTool(Setting.Tool tool) {
+    public void setTool(String tool) {
         this.tool = tool;
     }
-
 }

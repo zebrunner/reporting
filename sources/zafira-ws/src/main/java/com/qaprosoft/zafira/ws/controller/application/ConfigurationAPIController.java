@@ -20,9 +20,9 @@ import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.services.services.application.ProjectService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
 import com.qaprosoft.zafira.services.services.application.VersionService;
-import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
-import com.qaprosoft.zafira.services.services.application.integration.impl.JiraService;
-import com.qaprosoft.zafira.services.services.application.integration.impl.SlackService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.AutomationServerService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.TestCaseManagementService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.SlackService;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -56,10 +56,10 @@ public class ConfigurationAPIController extends AbstractController {
     private ProjectService projectService;
 
     @Autowired
-    private JenkinsService jenkinsService;
+    private AutomationServerService automationServerService;
 
     @Autowired
-    private JiraService jiraService;
+    private TestCaseManagementService testCaseManagementService;
 
     @Autowired
     private SlackService slackService;
@@ -96,7 +96,7 @@ public class ConfigurationAPIController extends AbstractController {
     @GetMapping("/jenkins")
     public Map<String, Object> getJenkinsConfig() {
         Map<String, Object> config = new HashMap<>();
-        config.put("connected", jenkinsService.isEnabledAndConnected());
+        config.put("connected", automationServerService.isEnabledAndConnected());
         return config;
     }
 
@@ -106,7 +106,7 @@ public class ConfigurationAPIController extends AbstractController {
     @GetMapping("/jira")
     public Map<String, Object> getJiraConfig() {
         Map<String, Object> config = new HashMap<>();
-        config.put("connected", jiraService.isEnabledAndConnected());
+        config.put("connected", testCaseManagementService.isEnabledAndConnected());
         return config;
     }
 

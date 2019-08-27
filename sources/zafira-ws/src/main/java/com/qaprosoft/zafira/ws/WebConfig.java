@@ -112,7 +112,12 @@ public class WebConfig implements WebMvcConfigurer {
             "dozer/Invitation-dozer-mapping.xml",
             "dozer/ScmAccount-dozer-mapping.xml",
             "dozer/Tag-dozer-mapping.xml",
-            "dozer/WidgetTemplate-dozer-mapping.xml"
+            "dozer/WidgetTemplate-dozer-mapping.xml",
+            "dozer/Integration-dozer-mapping.xml",
+            "dozer/IntegrationGroup-dozer-mapping.xml",
+            "dozer/IntegrationType-dozer-mapping.xml",
+            "dozer/IntegrationSetting-dozer-mapping.xml",
+            "dozer/IntegrationParam-dozer-mapping.xml"
     };
 
     @Bean

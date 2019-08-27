@@ -18,6 +18,7 @@ package com.qaprosoft.zafira.models.db.integration;
 import com.qaprosoft.zafira.models.db.AbstractEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 public class Integration extends AbstractEntity {
 
@@ -65,6 +66,26 @@ public class Integration extends AbstractEntity {
 
     public void setIntegrationSettings(List<IntegrationSetting> integrationSettings) {
         this.integrationSettings = integrationSettings;
+    }
+
+    public Optional<IntegrationSetting> getAttribute(String attributeName) {
+        return this.getIntegrationSettings().stream()
+                   .filter(is -> is.getIntegrationParam().getName().equals(attributeName))
+                   .findAny();
+    }
+
+    public Optional<String> getAttributeValue(String attributeName) {
+        IntegrationSetting integrationSetting = getAttribute(attributeName)
+                .orElse(null);
+        String value = integrationSetting == null ? null : integrationSetting.getValue();
+        return Optional.ofNullable(value);
+    }
+
+    public Optional<byte[]> getAttributeBinaryData(String attributeName) {
+        IntegrationSetting integrationSetting = getAttribute(attributeName)
+                .orElse(null);
+        byte[] binaryData = integrationSetting == null ? null : integrationSetting.getBinaryData();
+        return Optional.ofNullable(binaryData);
     }
 
 }

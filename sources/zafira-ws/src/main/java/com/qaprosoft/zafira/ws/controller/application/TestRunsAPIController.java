@@ -46,8 +46,8 @@ import com.qaprosoft.zafira.services.services.application.TestService;
 import com.qaprosoft.zafira.services.services.application.TestSuiteService;
 import com.qaprosoft.zafira.services.services.application.UserService;
 import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
-import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
-import com.qaprosoft.zafira.services.services.application.integration.impl.google.models.TestRunSpreadsheetService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.AutomationServerService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.google.models.TestRunSpreadsheetService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.Api;
@@ -120,7 +120,7 @@ public class TestRunsAPIController extends AbstractController {
     private UserService userService;
 
     @Autowired
-    private JenkinsService jenkinsService;
+    private AutomationServerService automationServerService;
 
     @Autowired
     private SimpMessagingTemplate websocketTemplate;
@@ -395,7 +395,7 @@ public class TestRunsAPIController extends AbstractController {
         testRun.setComments(null);
         testRun.setReviewed(false);
         testRunService.updateTestRun(testRun);
-        if (!jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures)) {
+        if (!automationServerService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures)) {
             throw new UnableToRebuildCIJobException();
         }
     }
@@ -411,7 +411,7 @@ public class TestRunsAPIController extends AbstractController {
             throw new TestRunNotFoundException();
         }
 
-        if (!jenkinsService.debug(testRun.getJob(), testRun.getBuildNumber())) {
+        if (!automationServerService.debug(testRun.getJob(), testRun.getBuildNumber())) {
             throw new UnableToRebuildCIJobException();
         }
     }
@@ -429,7 +429,7 @@ public class TestRunsAPIController extends AbstractController {
             throw new TestRunNotFoundException();
         }
 
-        JobResult jobResult = jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber());
+        JobResult jobResult = automationServerService.abortJob(testRun.getJob(), testRun.getBuildNumber());
         if (!jobResult.isSuccess()) {
             throw new UnableToAbortCIJobException();
         }
@@ -452,10 +452,10 @@ public class TestRunsAPIController extends AbstractController {
 
         boolean success;
         if (buildWithParameters) {
-            JobResult result = jenkinsService.buildJob(testRun.getJob(), jobParameters);
+            JobResult result = automationServerService.buildJob(testRun.getJob(), jobParameters);
             success = result.isSuccess();
         } else {
-            success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), false);
+            success = automationServerService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), false);
         }
 
         if (!success) {
@@ -473,7 +473,7 @@ public class TestRunsAPIController extends AbstractController {
         if (testRun == null) {
             throw new TestRunNotFoundException();
         }
-        return jenkinsService.getBuildParameters(testRun.getJob(), testRun.getBuildNumber());
+        return automationServerService.getBuildParameters(testRun.getJob(), testRun.getBuildNumber());
     }
 
     @ResponseStatusDetails
@@ -505,7 +505,7 @@ public class TestRunsAPIController extends AbstractController {
         if (testRun == null) {
             throw new TestRunNotFoundException();
         }
-        return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
+        return automationServerService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
     }
 
     private String[] getRecipients(String recipients) {

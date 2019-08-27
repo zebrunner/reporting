@@ -119,8 +119,12 @@ DO $$
                 CASE
                     WHEN SETTING_TOOL = 'RABBITMQ' THEN
                         INTEGRATION_GROUP_NAME = 'MESSAGE_BROKER';
-                    WHEN SETTING_TOOL = 'GOOGLE' OR SETTING_TOOL = 'EMAIL' OR SETTING_TOOL = 'SLACK' THEN
-                        INTEGRATION_GROUP_NAME = 'MESSENGERS_REPORTING';
+                    WHEN SETTING_TOOL = 'GOOGLE' THEN
+                        INTEGRATION_GROUP_NAME = 'GOOGLE';
+                    WHEN SETTING_TOOL = 'EMAIL' THEN
+                        INTEGRATION_GROUP_NAME = 'MAIL';
+                    WHEN SETTING_TOOL = 'SLACK' THEN
+                        INTEGRATION_GROUP_NAME = 'SLACK';
                     WHEN SETTING_TOOL = 'AMAZON' THEN
                         INTEGRATION_GROUP_NAME = 'STORAGE_PROVIDER';
                     WHEN SETTING_TOOL = 'LDAP' THEN
