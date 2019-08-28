@@ -17,6 +17,7 @@ dependencies {
     implementation libraries.boot_starter_security
     implementation libraries.boot_starter_websocket
     implementation libraries.boot_starter_reactor_netty
+    implementation libraries.boot_starter_data_redis
 
     compile libraries.swagger
     compile libraries.jasypt
