@@ -31,7 +31,6 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -57,14 +56,15 @@ import java.util.stream.Collectors;
 @RestController
 public class ScmAPIController extends AbstractController {
 
-    @Autowired
-    private ScmAccountService scmAccountService;
+    private final ScmAccountService scmAccountService;
+    private final GitHubService gitHubService;
+    private final Mapper mapper;
 
-    @Autowired
-    private GitHubService gitHubService;
-
-    @Autowired
-    private Mapper mapper;
+    public ScmAPIController(ScmAccountService scmAccountService, GitHubService gitHubService, Mapper mapper) {
+        this.scmAccountService = scmAccountService;
+        this.gitHubService = gitHubService;
+        this.mapper = mapper;
+    }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create SCM account", nickname = "createScmAccount", httpMethod = "POST", response = ScmAccountType.class)
@@ -90,9 +90,10 @@ public class ScmAPIController extends AbstractController {
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping("/accounts")
     public List<ScmAccountType> getAllScmAccounts() {
-        return scmAccountService.getAllScmAccounts().stream()
-                .map(scmAccount -> mapper.map(scmAccount, ScmAccountType.class))
-                .collect(Collectors.toList());
+        List<ScmAccount> scmAccounts = scmAccountService.getAllScmAccounts();
+        return scmAccounts.stream()
+                          .map(scmAccount -> mapper.map(scmAccount, ScmAccountType.class))
+                          .collect(Collectors.toList());
     }
 
     @ResponseStatusDetails
@@ -149,8 +150,8 @@ public class ScmAPIController extends AbstractController {
         if (StringUtils.isBlank(accessToken)) {
             throw new ForbiddenOperationException("Cannot recognize your authority");
         }
-        return mapper.map(scmAccountService.createScmAccount(new ScmAccount(accessToken, ScmAccount.Name.GITHUB, getPrincipalId())),
-                ScmAccountType.class);
+        ScmAccount scmAccount = scmAccountService.createScmAccount(new ScmAccount(accessToken, ScmAccount.Name.GITHUB));
+        return mapper.map(scmAccount, ScmAccountType.class);
     }
 
     @ResponseStatusDetails
@@ -173,7 +174,8 @@ public class ScmAPIController extends AbstractController {
     @GetMapping("/github/repositories/{scmId}")
     public List<Repository> getRepositories(
             @PathVariable("scmId") Long id,
-            @RequestParam(value = "org", required = false) String organizationName) throws IOException, ServiceException {
+            @RequestParam(name = "org", required = false) String organizationName
+    ) throws IOException, ServiceException {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(id);
         if (scmAccount == null) {
             throw new ForbiddenOperationException("Unable to list repositories");

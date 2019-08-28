@@ -13,7 +13,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,11 +34,13 @@ import java.util.stream.Collectors;
 @RestController
 public class FiltersAPIController extends AbstractController {
 
-    @Autowired
-    private FilterService filterService;
+    private final FilterService filterService;
+    private final Mapper mapper;
 
-    @Autowired
-    private Mapper mapper;
+    public FiltersAPIController(FilterService filterService, Mapper mapper) {
+        this.filterService = filterService;
+        this.mapper = mapper;
+    }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create filter", nickname = "createFilter", httpMethod = "POST", response = FilterType.class)
@@ -48,14 +49,15 @@ public class FiltersAPIController extends AbstractController {
     public FilterType createFilter(@RequestBody @Valid FilterType filterType) {
         filterType.setUserId(getPrincipalId());
         filterType.getSubject().sortCriterias();
-        Filter filter = mapper.map(filterType, Filter.class);
 
+        Filter filter = mapper.map(filterType, Filter.class);
         if (filterService.isFilterExists(filter)) {
             throw new EntityAlreadyExistsException("name", Filter.class, false);
         }
         if (filter.isPublicAccess() && !isAdmin()) {
             filter.setPublicAccess(false);
         }
+
         return mapper.map(filterService.createFilter(filter), FilterType.class);
     }
 
@@ -64,9 +66,10 @@ public class FiltersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/all/public")
     public List<FilterType> getAllPublicFilters() {
-        return filterService.getAllPublicFilters(getPrincipalId()).stream()
-                .map(filter -> mapper.map(filter, FilterType.class))
-                .collect(Collectors.toList());
+        List<Filter> publicFilters = filterService.getAllPublicFilters(getPrincipalId());
+        return publicFilters.stream()
+                            .map(filter -> mapper.map(filter, FilterType.class))
+                            .collect(Collectors.toList());
     }
 
     @ResponseStatusDetails

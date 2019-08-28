@@ -17,7 +17,11 @@ package com.qaprosoft.zafira.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.qaprosoft.zafira.models.db.ScmAccount;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ScmAccountType extends AbstractType {
 
@@ -31,69 +35,5 @@ public class ScmAccountType extends AbstractType {
     private Long userId;
     private ScmAccount.Name name;
     private String defaultBranch;
-
-    public String getApiVersion() {
-        return apiVersion;
-    }
-
-    public void setApiVersion(String apiVersion) {
-        this.apiVersion = apiVersion;
-    }
-
-    public String getOrganizationName() {
-        return organizationName;
-    }
-
-    public void setOrganizationName(String organizationName) {
-        this.organizationName = organizationName;
-    }
-
-    public String getRepositoryName() {
-        return repositoryName;
-    }
-
-    public void setRepositoryName(String repositoryName) {
-        this.repositoryName = repositoryName;
-    }
-
-    public String getAvatarURL() {
-        return avatarURL;
-    }
-
-    public void setAvatarURL(String avatarURL) {
-        this.avatarURL = avatarURL;
-    }
-
-    public String getRepositoryURL() {
-        return repositoryURL;
-    }
-
-    public void setRepositoryURL(String repositoryURL) {
-        this.repositoryURL = repositoryURL;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public ScmAccount.Name getName() {
-        return name;
-    }
-
-    public void setName(ScmAccount.Name name) {
-        this.name = name;
-    }
-
-    public String getDefaultBranch() {
-        return defaultBranch;
-    }
-
-    public void setDefaultBranch(String defaultBranch) {
-        this.defaultBranch = defaultBranch;
-    }
 
 }

@@ -15,36 +15,17 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application.search;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 
+@Getter
+@Setter
 public class UserSearchCriteria extends SearchCriteria implements DateSearchCriteria {
 
     private Date date;
     private Date fromDate;
     private Date toDate;
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public Date getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(Date fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public Date getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(Date toDate) {
-        this.toDate = toDate;
-    }
 
 }

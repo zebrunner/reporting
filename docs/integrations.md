@@ -1,15 +1,15 @@
 # Integration
 
-Zafira is integrated with multiple 3rd-party tools like Amazon, Slack, Gmail etc. You are able to add new integration in working Zafira without restart of web application. Navigate to **Username > Integrations** in top navigation menu:
+Zafira is integrated with multiple third-party tools such as Amazon, Slack, Gmail, etc. You can add new integration to a working Zafira without having to restart the web application. Navigate to the ** Integrations ** icon in the sidebar menu:
 
 <p align="center">
-  <img src="../img/menu_profile.png">
+  <img src="img/sidebar_integrations.png">
 </p>
 
-On the integrations page you will find multiple blocks responsible for different integration modules. Pay attention to the fact that security model HTTP/HTTPS may affect your integration URL.
+On the Integrations page, you will find several blocks responsible for different integration modules. Please note that the HTTP / HTTPS security model may affect your integration URL.
 
 <p align="center">
-  <img src="../img/feature_integrations.png">
+  <img src="img/feature_integrations.png">
 </p>
 
 
@@ -31,59 +31,64 @@ Zafira uses integration with Amazon S3 service to store user profile photos and 
 </CORSConfiguration>
 ```
 * Create new IAM user with **Programmatic access**
-* Grant read/write permissions for new user (read [detailed guide](https://aws.amazon.com/blogs/security/writing-iam-policies-how-to-grant-access-to-an-amazon-s3-bucket/))
-* Generate new access/secret keys
-* Turn on Amazon integration and provide access/secret keys and name of the bucket you've created
-* Press save and refresh the page, green light indicates correct integration status
+* Grant read / write permissions for the new user (see [Detailed Guide] (https://aws.amazon.com/blogs/security/writing-iam-policies-how-to-grant-access-to-an-amazon-s3-bucket))
+* Generate new access / secret keys.
+* Enable Amazon integration and provide access / secret keys and the name of the bucket you created.
+* Click save, a green light indicates the correct integration status.
 
 <p>
-  <img style="border: 1px solid grey;" width="280px" height="420px" src="../img/int_amazon.png">
+  <img style="border: 1px solid grey;"  width="280px" height="400px"  src="img/int_amazon.png">
 </p>
 
 
 #### Email
-Zafira provides functionality for sending test results, widgets and dashboards via email. You have to specify correct SMTP credentials to enable this feature. We are mostly using Gmail for that purposes. You can use configuration below replacing email and password with your valid Gmail credentials.
+Zafira provides functionality for sending test results, widgets, and dashboards via email. You must provide correct SMTP credentials to enable this feature. We mainly use Gmail for these purposes. You can use the configuration below by replacing your email address and password with valid Gmail credentials.
 
-* Turn on Email integration
-* Specify correct SMTP host and port
-* Specify valid Gmail credentials 
-* Press save and refresh the page, green light indicates correct integration status
+User invitations and *Forgot password* feature also require SMTP integration.
+
+* Enable email integration.
+* Specify the correct SMTP host and port.
+* Provide valid Gmail credentials.
+* Click save, a green light indicates the correct integration status.
 
 <p>
-  <img style="border: 1px solid grey;"  width="280px" height="420px" src="../img/int_gmail.png">
+  <img style="border: 1px solid grey;"  width="280px" height="420px" src="img/int_gmail.png">
 </p>
+
 
 #### Jenkins
-Jenkins integration is used for triggering new builds and collecting test jobs configuration during the startup. Also Zafira provides remote debug with Jenkins integration enabled. For Jenkins integration follow the next steps:
+Jenkins integration is used for launching new builds and collecting test jobs configurations during the startup. Zafira also provides remote debugging and launcher functionality with Jenkins integration enabled. To integrate Jenkins, follow these steps:
 
-* Create user with READ,RUN access for jobs
-* Generate access token (read [instruction](https://support.cloudbees.com/hc/en-us/articles/115003090592-How-to-re-generate-my-Jenkins-user-token))
-* Paste Jenkins URL, username and token to Zafira
-* Press save and refresh the page, green light indicates correct integration status
+* Create new user with READ, RUN access for jobs.
+* Create an access token (see [instruction] (https://support.cloudbees.com/hc/en-us/articles/115003090592-How-to-re-generate-my-Jenkins-user-token)).
+* Paste Jenkins URL, username and token to Zafira.
+* Click save, a green light indicates the correct integration status.
 
 <p>
-  <img style="border: 1px solid grey;"  width="280px" height="420px" src="../img/int_jenkins.png">
+  <img style="border: 1px solid grey;"  width="280px" height="420px" src="img/int_jenkins.png">
 </p>
+
 
 #### Jira
-Jira integration allows to track known issues status for failed test cases. When you assign known issue to contstantly failing test cases you may specify appropriate Jira ticket. If Jira integration is enabled, Zafira will check current ticket status and track failure as known issue if ticket opened and as unknown if it is closed, so you will never lose regression bugs.
+Jira integration allows you to track known issue status for the failed test cases. When you assign a known issue to constantly failing test cases, you can specify the appropriate Jira ticket. If integration with Jira is enabled, Zafira will check the current ticket status and track the failure as a known issue if the ticket is opened, and as unknown if it is closed, so you will never lose regression bugs.
 
-* Paste Jira URL, username and password to Zafira
-* List set of statuses that indicates that ticket is closed
-* Press save and refresh the page, green light indicates correct integration status
+* Paste Jira URL, username and password to Zafira.
+* List a set of statuses that indicates that the ticket is closed.
+* Click save, a green light indicates the correct integration status.
 
 <p>
-  <img style="border: 1px solid grey;" width="280px" height="420px" src="../img/int_jira.png">
+  <img style="border: 1px solid grey;" width="280px" height="420px" src="img/int_jira.png">
 </p>
 
+
 #### LDAP
-Zafira supports LDAP authentication, in this case on first success login via LDAP Zafira will register user details in own database. Admin will be able to manage user permissions for every new user came via LDAP. 
+Zafira supports LDAP authentication: the first time you successfully log in using LDAP, Zafira will register user data in its own database. The admin will be able to manage user permissions for each new user who comes via LDAP.
 
 * Use configuration below as a reference for your LDAP connection setup
-* Press save and refresh the page, green light indicates correct integration status
+* Click save, a green light indicates the correct integration status
 
 <p>
-  <img style="border: 1px solid grey;" width="280px" height="420px" src="../img/int_ldap.png">
+  <img style="border: 1px solid grey;" width="280px" height="420px" src="img/int_ldap.png">
 </p>
 
 
@@ -93,13 +98,78 @@ If integration is set up correctly after test run is finished notification with 
 After user marks some run as reviewed and Slack integration is configured for executed Jenkins job user will be proposed to send to Slack notification about reviewed run.
 In order to setup Slack integration follow the next steps:
 
-* Generate Slack web hook url and add it as parameter SLACK_WEB_HOOK_URL into SLACK block at Zafira integrations page
-* For each Jenkins job you need integration for add parameters in Zafira using next pattern: **SLACK_NOTIF_CHANNEL_real_channel_name=JENKINS_JOB_1;JENKINS_JOB_2** where
-  * real_channel_name - name of Slack channel to post notifications to
-  * JENKINS_JOB_1 and JENKINS_JOB_2 - names of Jenkins jobs
-* You may add as many integration as you need. For each new Slack channel create new parameter in SLACK section in Zafira
-* Press save and refresh the page, green light indicates correct integration status
+* Generate Slack web hook url and add it as parameter SLACK_WEB_HOOK_URL into SLACK block at Zafira integrations page.
+* Click save, a green light indicates the correct integration status.
 
 <p>
-  <img style="border: 1px solid grey;" width="574px" height="236px" src="../img/int_slack.png">
+  <img style="border: 1px solid grey;" width="280px" height="420px" src="img/int_slack.png">
+</p>
+
+
+#### GOOGLE
+Integration with Google provides the ability to export test run results to spreadsheets.
+It also allows you to use client-side spreadsheet data using temporary credentials provided by Zafira API (GET: /api/settings/google/creds).
+
+To set up integration with Google, follow these steps:
+
+* Generate Google service account key (as a file) and attach it by clicking the UPLOAD CLIENT SECRET ORIGIN button in GOOGLE block on Zafira integrations page.
+* Click *Upload*, a green light indicates the correct integration status
+
+<p>
+  <img style="border: 1px solid grey;" width="280px" height="420px" src="img/int_google.png">
+</p>
+
+
+#### RABBITMQ
+RabbitMQ integration is used to provide Zafira with the ability to display test logs. Integration is the gateway to transferring logs to Zafira.
+Follow these steps to configure RabbitMQ integration:
+
+* Enable RabbitMQ integration.
+* Specify the correct host and port.
+* Provide valid credentials.
+* Click save, a green light indicates the correct integration status.
+
+<p>
+  <img style="border: 1px solid grey;" width="280px" height="420px" src="img/int_rabbitmq.png">
+</p>
+
+
+#### SELENIUM
+Zafira uses Selenium integration in the launcher functionality scope.
+It provides Selenium server URL used by Jenkins to determine which Selenium instance is preferred for tests launch.
+To configure Selenium integration, follow these steps:
+
+* Enable Selenium Integration.
+* Enter a valid URL.
+* Provide valid credentials if necessary.
+* Click save, a green light indicates the correct integration status.
+
+<p>
+  <img style="border: 1px solid grey;" width="280px" height="420px" src="img/int_selenium.png">
+</p>
+
+
+#### TESTRAIL
+TestRail integration is used to build links leading to TestRail test cases from Zafira test tags.
+The provided tag key must be TESTRAIL_TESTCASE_UUID as a key, and the internal Testrail test case identifier as a value (for example, 34-66-45465, where 34 - TestRail project ID, 66 - TestRail test suite, 45465 - TestRail test case ID).
+To configure TestRail integration, follow these steps:
+
+* Add the TestRail service URL as the parameter URL to the TESTRAIL block on Zafira integrations page.
+* Click save, a green light indicates the correct integration status.
+
+<p>
+  <img style="border: 1px solid grey;" width="280px" height="420px" src="img/int_testrail.png">
+</p>
+
+
+#### QTEST
+Zafira supports integration with qTest to build links leading to qTest test cases from Zafira test tags.
+Provided tag key must be QTEST_TESTCASE_UUID, the value is the internal qTest test case identifier (for example, 454-2423, where 454 - qTest project ID, 2423 - qTest test case ID).
+To configure qTest integration follow these steps:
+
+* Add qTest service URL as the parameter URL to the QTEST block on Zafira integrations page.
+* Click save, a green light indicates the correct integration status.
+
+<p>
+  <img style="border: 1px solid grey;" width="280px" height="420px" src="img/int_qtest.png">
 </p>

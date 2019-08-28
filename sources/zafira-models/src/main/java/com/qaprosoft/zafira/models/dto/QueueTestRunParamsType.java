@@ -15,12 +15,17 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
+@Getter
+@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class QueueTestRunParamsType implements Serializable {
+
     private static final long serialVersionUID = 5893913105698710480L;
 
     private String jobUrl;
@@ -32,67 +37,4 @@ public class QueueTestRunParamsType implements Serializable {
     private String buildNumber;
     private String project;
 
-    public String getJobUrl() {
-        return jobUrl;
-    }
-
-    public void setJobUrl(String jobUrl) {
-        this.jobUrl = jobUrl;
-    }
-
-    public String getBranch() {
-        return branch;
-    }
-
-    public void setBranch(String branch) {
-        this.branch = branch;
-    }
-
-    public String getEnv() {
-        return env;
-    }
-
-    public void setEnv(String env) {
-        this.env = env;
-    }
-
-    public String getCiRunId() {
-        return ciRunId;
-    }
-
-    public void setCiRunId(String ciRunId) {
-        this.ciRunId = ciRunId;
-    }
-
-    public String getCiParentUrl() {
-        return ciParentUrl;
-    }
-
-    public void setCiParentUrl(String ciParentUrl) {
-        this.ciParentUrl = ciParentUrl;
-    }
-
-    public String getCiParentBuild() {
-        return ciParentBuild;
-    }
-
-    public void setCiParentBuild(String ciParentBuild) {
-        this.ciParentBuild = ciParentBuild;
-    }
-
-    public String getBuildNumber() {
-        return buildNumber;
-    }
-
-    public void setBuildNumber(String buildNumber) {
-        this.buildNumber = buildNumber;
-    }
-
-    public String getProject() {
-        return project;
-    }
-
-    public void setProject(String project) {
-        this.project = project;
-    }
 }

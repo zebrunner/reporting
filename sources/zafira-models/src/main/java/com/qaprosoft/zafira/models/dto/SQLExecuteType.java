@@ -15,11 +15,16 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Map;
 
+@Getter
+@Setter
 public class SQLExecuteType implements Serializable {
 
     private static final long serialVersionUID = 5765973760872185602L;
@@ -30,19 +35,4 @@ public class SQLExecuteType implements Serializable {
 
     private Map<String, Object> paramsConfig;
 
-    public Long getTemplateId() {
-        return templateId;
-    }
-
-    public void setTemplateId(Long templateId) {
-        this.templateId = templateId;
-    }
-
-    public Map<String, Object> getParamsConfig() {
-        return paramsConfig;
-    }
-
-    public void setParamsConfig(Map<String, Object> paramsConfig) {
-        this.paramsConfig = paramsConfig;
-    }
 }

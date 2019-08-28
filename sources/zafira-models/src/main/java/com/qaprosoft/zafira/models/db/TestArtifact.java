@@ -15,12 +15,16 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
+@Getter
+@Setter
 @JsonInclude(Include.NON_NULL)
 public class TestArtifact extends AbstractEntity implements Comparable<TestArtifact> {
     private static final long serialVersionUID = 2708440751800176584L;
@@ -29,38 +33,6 @@ public class TestArtifact extends AbstractEntity implements Comparable<TestArtif
     private String link;
     private Date expiresAt;
     private Long testId;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-    public Date getExpiresAt() {
-        return expiresAt;
-    }
-
-    public void setExpiresAt(Date expiresAt) {
-        this.expiresAt = expiresAt;
-    }
-
-    public Long getTestId() {
-        return testId;
-    }
-
-    public void setTestId(Long testId) {
-        this.testId = testId;
-    }
 
     public boolean isValid() {
         return name != null && !name.isEmpty() && link != null && !link.isEmpty();
@@ -103,4 +75,5 @@ public class TestArtifact extends AbstractEntity implements Comparable<TestArtif
         }
         return this.name.compareTo(testArtifact.getName());
     }
+
 }

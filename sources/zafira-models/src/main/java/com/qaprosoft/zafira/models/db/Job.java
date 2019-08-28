@@ -17,7 +17,13 @@ package com.qaprosoft.zafira.models.db;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
 public class Job extends AbstractEntity {
     private static final long serialVersionUID = -7136622077881406856L;
@@ -27,9 +33,6 @@ public class Job extends AbstractEntity {
     private String jenkinsHost;
     private Long automationServerId;
     private User user = new User();
-
-    public Job() {
-    }
 
     public Job(String name, String jobURL) {
         this.name = name;
@@ -41,46 +44,6 @@ public class Job extends AbstractEntity {
         this.jobURL = jobURL;
         this.jenkinsHost = jenkinsHost;
         this.user = user;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getJobURL() {
-        return jobURL;
-    }
-
-    public void setJobURL(String jobURL) {
-        this.jobURL = jobURL;
-    }
-
-    public String getJenkinsHost() {
-        return jenkinsHost;
-    }
-
-    public void setJenkinsHost(String jenkinsHost) {
-        this.jenkinsHost = jenkinsHost;
-    }
-
-    public Long getAutomationServerId() {
-        return automationServerId;
-    }
-
-    public void setAutomationServerId(Long automationServerId) {
-        this.automationServerId = automationServerId;
     }
 
     @Override

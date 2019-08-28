@@ -15,12 +15,15 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
-import javax.validation.constraints.NotNull;
-
+import com.qaprosoft.zafira.models.db.Permission;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.qaprosoft.zafira.models.db.Permission;
+import javax.validation.constraints.NotNull;
 
+@Getter
+@Setter
 public class PermissionType extends AbstractType {
 
     private static final long serialVersionUID = 7083932006258442862L;
@@ -31,19 +34,4 @@ public class PermissionType extends AbstractType {
     @NotNull(message = "Block required")
     private Permission.Block block;
 
-    public Permission.Name getName() {
-        return name;
-    }
-
-    public void setName(Permission.Name name) {
-        this.name = name;
-    }
-
-    public Permission.Block getBlock() {
-        return block;
-    }
-
-    public void setBlock(Permission.Block block) {
-        this.block = block;
-    }
 }

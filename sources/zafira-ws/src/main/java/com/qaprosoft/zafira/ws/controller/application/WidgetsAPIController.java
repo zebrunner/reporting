@@ -35,7 +35,6 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
@@ -45,7 +44,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -63,29 +61,28 @@ import java.util.stream.Collectors;
 @RestController
 public class WidgetsAPIController extends AbstractController {
 
-    @Autowired
-    private URLResolver urlResolver;
+    private final URLResolver urlResolver;
+    private final WidgetService widgetService;
+    private final WidgetTemplateService widgetTemplateService;
+    private final SettingsService settingsService;
+    private final Mapper mapper;
 
-    @Autowired
-    private WidgetService widgetService;
-
-    @Autowired
-    private WidgetTemplateService widgetTemplateService;
-
-    @Autowired
-    private SettingsService settingsService;
-
-    @Autowired
-    private Mapper mapper;
+    public WidgetsAPIController(URLResolver urlResolver, WidgetService widgetService,
+                                WidgetTemplateService widgetTemplateService, SettingsService settingsService,
+                                Mapper mapper) {
+        this.urlResolver = urlResolver;
+        this.widgetService = widgetService;
+        this.widgetTemplateService = widgetTemplateService;
+        this.settingsService = settingsService;
+        this.mapper = mapper;
+    }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create widget", nickname = "createWidget", httpMethod = "POST", response = Widget.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_WIDGETS')")
     @PostMapping()
-    public WidgetType createWidget(
-            @RequestBody @Valid WidgetType widget,
-            @RequestHeader(value = "Project", required = false) String project) {
+    public WidgetType createWidget(@RequestBody @Valid WidgetType widget) {
         if (widget.getWidgetTemplate() != null) {
             WidgetTemplate widgetTemplate = widgetTemplateService.getWidgetTemplateById(widget.getWidgetTemplate().getId());
             if (widgetTemplate == null) {
@@ -122,8 +119,7 @@ public class WidgetsAPIController extends AbstractController {
     @PutMapping()
     public Widget updateWidget(@RequestBody WidgetType widget) {
         if (widget.getWidgetTemplate() != null) {
-            WidgetTemplate widgetTemplate = widgetTemplateService
-                    .getWidgetTemplateById(widget.getWidgetTemplate().getId());
+            WidgetTemplate widgetTemplate = widgetTemplateService.getWidgetTemplateById(widget.getWidgetTemplate().getId());
             if (widgetTemplate == null) {
                 throw new ServiceException("Unable to update widget. Widget template does not exist");
             }
@@ -140,16 +136,18 @@ public class WidgetsAPIController extends AbstractController {
     @PostMapping("/sql")
     public List<Map<String, Object>> executeSQL(
             @RequestBody @Valid SQLAdapter sql,
-            @RequestParam(value = "projects", defaultValue = "", required = false) List<String> projects,
-            @RequestParam(value = "currentUserId", required = false) String currentUserId,
-            @RequestParam(value = "dashboardName", required = false) String dashboardName,
-            @RequestParam(value = "stackTraceRequired", required = false) boolean stackTraceRequired) {
+            @RequestParam(name = "projects", defaultValue = "", required = false) List<String> projects,
+            @RequestParam(name = "currentUserId", required = false) String currentUserId,
+            @RequestParam(name = "dashboardName", required = false) String dashboardName,
+            @RequestParam(name = "stackTraceRequired", required = false) boolean stackTraceRequired
+    ) {
         String query = sql.getSql();
         List<Map<String, Object>> resultList = null;
         try {
             if (query != null) {
-                if (sql.getAttributes() != null) {
-                    for (Attribute attribute : sql.getAttributes()) {
+                List<Attribute> attributes = sql.getAttributes();
+                if (attributes != null) {
+                    for (Attribute attribute : attributes) {
                         query = query.replaceAll("#\\{" + attribute.getKey() + "\\}", attribute.getValue());
                     }
                 }
@@ -157,9 +155,7 @@ public class WidgetsAPIController extends AbstractController {
                 query = query
                         .replaceAll("#\\{project}", formatProjects(projects))
                         .replaceAll("#\\{dashboardName}", !StringUtils.isEmpty(dashboardName) ? dashboardName : "")
-                        .replaceAll("#\\{currentUserId}", !StringUtils.isEmpty(currentUserId) ? currentUserId
-                                : String
-                                        .valueOf(getPrincipalId()))
+                        .replaceAll("#\\{currentUserId}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
                         .replaceAll("#\\{currentUserName}", String.valueOf(getPrincipalName()))
                         .replaceAll("#\\{zafiraURL}", urlResolver.buildWebURL())
                         .replaceAll("#\\{jenkinsURL}", settingsService.getSettingByName("JENKINS_URL").getValue())
@@ -212,10 +208,10 @@ public class WidgetsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/templates")
     public List<WidgetTemplateType> getAllWidgetTemplates() {
-        return widgetTemplateService.getWidgetTemplates()
-                .stream()
-                .map(widgetTemplate -> mapper.map(widgetTemplate, WidgetTemplateType.class))
-                .collect(Collectors.toList());
+        List<WidgetTemplate> widgetTemplates = widgetTemplateService.getWidgetTemplates();
+        return widgetTemplates.stream()
+                              .map(widgetTemplate -> mapper.map(widgetTemplate, WidgetTemplateType.class))
+                              .collect(Collectors.toList());
     }
 
     @ResponseStatusDetails
@@ -232,7 +228,8 @@ public class WidgetsAPIController extends AbstractController {
     @PostMapping("/templates/sql")
     public List<Map<String, Object>> executeSQLTemplate(
             @RequestBody @Valid SQLExecuteType sqlExecuteType,
-            @RequestParam(value = "stackTraceRequired", required = false) boolean stackTraceRequired) {
+            @RequestParam(value = "stackTraceRequired", required = false) boolean stackTraceRequired
+    ) {
         WidgetTemplate widgetTemplate = widgetTemplateService.getWidgetTemplateById(sqlExecuteType.getTemplateId());
         if (widgetTemplate == null) {
             throw new ServiceException("Unable to execute SQL query.");
@@ -242,8 +239,7 @@ public class WidgetsAPIController extends AbstractController {
             Map<WidgetService.DefaultParam, Object> additionalParameters = new HashMap<>();
             additionalParameters.put(WidgetService.DefaultParam.CURRENT_USER_NAME, getPrincipalName());
             additionalParameters.put(WidgetService.DefaultParam.CURRENT_USER_ID, getPrincipalId());
-            resultList = widgetService
-                    .executeSQL(widgetTemplate.getSql(), sqlExecuteType.getParamsConfig(), additionalParameters, true);
+            resultList = widgetService.executeSQL(widgetTemplate.getSql(), sqlExecuteType.getParamsConfig(), additionalParameters, true);
         } catch (Exception e) {
             if (stackTraceRequired) {
                 resultList = new ArrayList<>();

@@ -29,7 +29,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -54,14 +53,15 @@ import java.util.stream.Collectors;
 @RestController
 public class DashboardsAPIController extends AbstractController {
 
-    @Autowired
-    private DashboardService dashboardService;
+    private final DashboardService dashboardService;
+    private final WidgetTemplateService widgetTemplateService;
+    private final Mapper mapper;
 
-    @Autowired
-    private WidgetTemplateService widgetTemplateService;
-
-    @Autowired
-    private Mapper mapper;
+    public DashboardsAPIController(DashboardService dashboardService, WidgetTemplateService widgetTemplateService, Mapper mapper) {
+        this.dashboardService = dashboardService;
+        this.widgetTemplateService = widgetTemplateService;
+        this.mapper = mapper;
+    }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create dashboard", nickname = "createDashboard", httpMethod = "POST", response = Dashboard.class)
@@ -79,14 +79,14 @@ public class DashboardsAPIController extends AbstractController {
     public List<DashboardType> getAllDashboards(@RequestParam(value = "hidden", required = false) boolean hidden) {
         List<Dashboard> dashboards;
         if (!hidden && hasPermission(Permission.Name.VIEW_HIDDEN_DASHBOARDS)) {
-            dashboards = (dashboardService.getAllDashboards());
+            dashboards = dashboardService.getAllDashboards();
         } else {
             dashboards = dashboardService.getDashboardsByHidden(false);
         }
 
         return dashboards.stream()
-                .map(dashboard -> mapper.map(dashboard, DashboardType.class))
-                .collect(Collectors.toList());
+                         .map(dashboard -> mapper.map(dashboard, DashboardType.class))
+                         .collect(Collectors.toList());
     }
 
     @ResponseStatusDetails
@@ -148,8 +148,7 @@ public class DashboardsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_WIDGETS')")
     @DeleteMapping("/{dashboardId}/widgets/{widgetId}")
-    public void deleteDashboardWidget(@PathVariable("dashboardId") long dashboardId, @PathVariable("widgetId") long widgetId)
-            {
+    public void deleteDashboardWidget(@PathVariable("dashboardId") long dashboardId, @PathVariable("widgetId") long widgetId) {
         dashboardService.deleteDashboardWidget(dashboardId, widgetId);
     }
 
@@ -167,11 +166,8 @@ public class DashboardsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_WIDGETS')")
     @PutMapping("/{dashboardId}/widgets/all")
-    public List<Widget> updateDashboardWidgets(@PathVariable("dashboardId") long dashboardId, @RequestBody List<Widget> widgets)
-            {
-        for (Widget widget : widgets) {
-            dashboardService.updateDashboardWidget(dashboardId, widget);
-        }
+    public List<Widget> updateDashboardWidgets(@PathVariable("dashboardId") long dashboardId, @RequestBody List<Widget> widgets) {
+        widgets.forEach(widget -> dashboardService.updateDashboardWidget(dashboardId, widget));
         return widgets;
     }
 

@@ -15,10 +15,14 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
-import javax.validation.constraints.Size;
-
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.Size;
+
+@Getter
+@Setter
 public class TagType extends AbstractType {
 
     private static final long serialVersionUID = 5534633175290893478L;
@@ -31,22 +35,6 @@ public class TagType extends AbstractType {
     @Size(max = 255)
     private String value;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
     @Override
     public int hashCode() {
         return (this.name + this.value).hashCode();
@@ -56,4 +44,5 @@ public class TagType extends AbstractType {
     public boolean equals(Object obj) {
         return obj instanceof TagType && this.hashCode() == obj.hashCode();
     }
+
 }

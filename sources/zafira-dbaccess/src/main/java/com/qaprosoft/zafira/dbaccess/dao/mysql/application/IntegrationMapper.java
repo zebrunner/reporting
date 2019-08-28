@@ -28,6 +28,8 @@ public interface IntegrationMapper {
 
     Integration findByBackReferenceId(String backReferenceId);
 
+    Integration findDefaultByIntegrationTypeId(Long integrationTypeId);
+
     List<Integration> findAll();
 
     List<Integration> findByIntegrationTypeId(Long integrationTypeId);
