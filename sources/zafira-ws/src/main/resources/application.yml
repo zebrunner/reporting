@@ -28,6 +28,7 @@ spring:
     redis:
       use-key-prefix: true
       time-to-live: 43200
+    type: redis
   redis:
     host: ${redis.host}
     port: ${redis.port}
