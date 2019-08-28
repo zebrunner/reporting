@@ -9,3 +9,13 @@ databaseChangeLog:
             path: changeset/001_create_integrations_structure.sql
             relativeToChangelogFile: true
             splitStatements: false
+  - changeSet:
+      id: 002_update_jobs_add_integration_server_id
+      labels: stable
+      author: itsvirko
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/002_update_jobs_add_integration_server_id.sql
+            relativeToChangelogFile: true
+            splitStatements: false
