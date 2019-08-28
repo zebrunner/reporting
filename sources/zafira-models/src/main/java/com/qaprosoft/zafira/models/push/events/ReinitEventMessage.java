@@ -19,18 +19,18 @@ public class ReinitEventMessage extends EventMessage {
 
     private static final long serialVersionUID = 5300913238106855128L;
 
-    private String tool;
+    private Long integrationId;
 
-    public ReinitEventMessage(String tenancy, String tool) {
+    public ReinitEventMessage(String tenancy, Long integrationId) {
         super(tenancy);
-        this.tool = tool;
+        this.integrationId = integrationId;
     }
 
-    public String getTool() {
-        return tool;
+    public Long getIntegrationId() {
+        return integrationId;
     }
 
-    public void setTool(String tool) {
-        this.tool = tool;
+    public void setIntegrationId(Long integrationId) {
+        this.integrationId = integrationId;
     }
 }
