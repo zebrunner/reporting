@@ -5,8 +5,8 @@
 
     <insert id="create" useGeneratedKeys="true" keyProperty="integration.id">
         <![CDATA[
-            INSERT INTO INTEGRATIONS(NAME, BACK_REFERENCE_ID, "DEFAULT", ENABLED, INTEGRATION_TYPE_ID) VALUES
-                (#{integration.name}, #{integration.backReferenceId}, #{integration.default}, #{integration.enabled}, #{integrationTypeId});
+            INSERT INTO INTEGRATIONS(NAME, BACK_REFERENCE_ID, IS_DEFAULT, ENABLED, INTEGRATION_TYPE_ID) VALUES
+                (#{integration.name}, #{integration.backReferenceId}, #{integration.isDefault}, #{integration.enabled}, #{integrationTypeId});
         ]]>
     </insert>
 
@@ -15,7 +15,7 @@
             I.ID AS INTEGRATION_ID,
             I.NAME AS INTEGRATION_NAME,
             I.BACK_REFERENCE_ID AS INTEGRATION_BACK_REFERENCE_ID,
-            I."DEFAULT" AS INTEGRATION_DEFAULT,
+            I.IS_DEFAULT AS INTEGRATION_DEFAULT,
             I.ENABLED AS INTEGRATION_ENABLED,
             I.MODIFIED_AT AS INTEGRATION_MODIFIED_AT,
             I.CREATED_AT AS INTEGRATION_CREATED_AT
@@ -97,7 +97,7 @@
         <include refid="find"/>
         <![CDATA[
             WHERE
-                I.INTEGRATION_TYPE_ID = #{integrationTypeId} AND I."DEFAULT" = TRUE
+                I.INTEGRATION_TYPE_ID = #{integrationTypeId} AND I.IS_DEFAULT = TRUE
         ]]>
     </select>
 
@@ -111,9 +111,9 @@
                    NAME = #{name},
                 ]]>
             </if>
-            <if test="null != default">
+            <if test="null != idDefault">
                 <![CDATA[
-                   "DEFAULT" = #{default},
+                   IS_DEFAULT = #{isDefault},
                 ]]>
             </if>
             <if test="null != enabled">
@@ -131,7 +131,7 @@
         <id column="INTEGRATION_ID" property="id" />
         <result column="INTEGRATION_NAME" property="name" />
         <result column="INTEGRATION_BACK_REFERENCE_ID" property="backReferenceId" />
-        <result column="INTEGRATION_DEFAULT" property="default" />
+        <result column="INTEGRATION_DEFAULT" property="isDefault" />
         <result column="INTEGRATION_ENABLED" property="enabled" />
         <result column="INTEGRATION_MODIFIED_AT" property="modifiedAt" />
         <result column="INTEGRATION_CREATED_AT" property="createdAt" />
