@@ -27,7 +27,7 @@ spring:
     cache-names: projects, users, testCases, environments, testRunStatistics, groups
     redis:
       use-key-prefix: true
-      time-to-live: 43200
+      time-to-live: 43200000
     type: redis
   redis:
     host: ${redis.host}
