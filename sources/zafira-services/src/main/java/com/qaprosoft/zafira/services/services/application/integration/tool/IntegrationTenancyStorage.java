@@ -15,16 +15,21 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool;
 
+import com.google.gson.Gson;
 import com.qaprosoft.zafira.models.db.integration.Integration;
+import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
 import com.qaprosoft.zafira.services.services.application.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationSettingService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.IntegrationAdapterProxy;
 import com.qaprosoft.zafira.services.services.management.TenancyService;
+import com.qaprosoft.zafira.services.util.EventPushService;
 import com.qaprosoft.zafira.services.util.TenancyDbInitial;
 import com.qaprosoft.zafira.services.util.TenancyInitial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -41,15 +46,19 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
 
     private final TenancyService tenancyService;
     private final IntegrationService integrationService;
+    private final IntegrationInitializer integrationInitializer;
     private final IntegrationSettingService integrationSettingService;
+    private final EventPushService eventPushService;
     private final Map<String, IntegrationAdapterProxy> integrationProxies;
     private final CryptoService cryptoService;
 
-    public IntegrationTenancyStorage(TenancyService tenancyService, IntegrationService integrationService, IntegrationSettingService integrationSettingService,
-                                     Map<String, IntegrationAdapterProxy> integrationProxies, CryptoService cryptoService) {
+    public IntegrationTenancyStorage(TenancyService tenancyService, IntegrationService integrationService, IntegrationInitializer integrationInitializer, IntegrationSettingService integrationSettingService,
+                                     EventPushService eventPushService, Map<String, IntegrationAdapterProxy> integrationProxies, CryptoService cryptoService) {
         this.tenancyService = tenancyService;
         this.integrationService = integrationService;
+        this.integrationInitializer = integrationInitializer;
         this.integrationSettingService = integrationSettingService;
+        this.eventPushService = eventPushService;
         this.integrationProxies = integrationProxies;
         this.cryptoService = cryptoService;
     }
@@ -90,6 +99,16 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
             LOGGER.error("Unable to encrypt value: " + e.getMessage(), e);
         }
     }
+
+    @RabbitListener(queues = "#{settingsQueue.name}")
+    public void process(Message message) {
+        ReinitEventMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
+        if (!eventPushService.isSettingQueueConsumer(message)) {
+            Integration integration = integrationService.retrieveById(rm.getIntegrationId());
+            integrationInitializer.initIntegration(integration, rm.getTenancy());
+        }
+    }
+
 /*
     @SuppressWarnings("unchecked")
     public synchronized static <T extends AbstractAdapter> void putContext(Setting.Tool tool, T t) {

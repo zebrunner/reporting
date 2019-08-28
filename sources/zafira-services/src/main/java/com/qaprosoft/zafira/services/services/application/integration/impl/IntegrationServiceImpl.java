@@ -16,16 +16,19 @@
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationMapper;
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.integration.Integration;
 import com.qaprosoft.zafira.models.db.integration.IntegrationGroup;
 import com.qaprosoft.zafira.models.db.integration.IntegrationSetting;
 import com.qaprosoft.zafira.models.db.integration.IntegrationType;
+import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationSettingService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationTypeService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.IntegrationInitializer;
 import com.qaprosoft.zafira.services.util.EventPushService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,20 +48,23 @@ public class IntegrationServiceImpl implements IntegrationService {
     private final IntegrationGroupService integrationGroupService;
     private final IntegrationTypeService integrationTypeService;
     private final IntegrationSettingService integrationSettingService;
-    private final EventPushService eventPushService;
+    private final EventPushService<ReinitEventMessage> eventPushService;
+    private final IntegrationInitializer integrationInitializer;
 
     public IntegrationServiceImpl(
             IntegrationMapper integrationMapper,
             IntegrationGroupService integrationGroupService,
             IntegrationTypeService integrationTypeService,
             IntegrationSettingService integrationSettingService,
-            EventPushService eventPushService
+            EventPushService<ReinitEventMessage> eventPushService,
+            IntegrationInitializer integrationInitializer
     ) {
         this.integrationMapper = integrationMapper;
         this.integrationGroupService = integrationGroupService;
         this.integrationTypeService = integrationTypeService;
         this.integrationSettingService = integrationSettingService;
         this.eventPushService = eventPushService;
+        this.integrationInitializer = integrationInitializer;
     }
 
     // TODO: 2019-08-23 add notification and add to context mapping
@@ -118,7 +124,6 @@ public class IntegrationServiceImpl implements IntegrationService {
         return integrationMapper.findByIntegrationGroupName(integrationGroupName);
     }
 
-    // TODO: 2019-08-23 add notification and update in context mapping
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integration update(Integration integration) {
@@ -127,6 +132,7 @@ public class IntegrationServiceImpl implements IntegrationService {
         verifyIntegration(integrationType.getId());
         integrationMapper.update(integration);
         integrationSettingService.update(integration.getIntegrationSettings(), integration.getId());
+        notifyToolReinitiated(integration);
         return integration;
     }
 
@@ -153,23 +159,10 @@ public class IntegrationServiceImpl implements IntegrationService {
         }
     }
 
-    /**
-     * Sends message to broker to notify about changed integration.
-     *
-     * @param tool that was re-initiated
-     * @param tenant whose integration was updated
-     */
-    /*public void notifyToolReinitiated(Tool tool, String tenant) {
-        eventPushService.convertAndSend(EventPushService.Type.SETTINGS, new ReinitEventMessage(tenant, tool));
-        initIntegration(tool, tenant);
+    private void notifyToolReinitiated(Integration integration) {
+        String tenantName = TenancyContext.getTenantName();
+        eventPushService.convertAndSend(EventPushService.Type.SETTINGS, new ReinitEventMessage(tenantName, integration.getId()));
+        integrationInitializer.initIntegration(integration, tenantName);
     }
-
-    @RabbitListener(queues = "#{settingsQueue.name}")
-    public void process(Message message) {
-        ReinitEventMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
-        if (!eventPushService.isSettingQueueConsumer(message)) {
-            initIntegration(rm.getTool(), rm.getTenancy());
-        }
-    }*/
 
 }

@@ -45,7 +45,6 @@ public abstract class IntegrationAdapterProxy {
     private static final String ERR_MSG_MANDATORY_INTEGRATION_PARAMS_MISSING = "Integration settings [%s] are mandatory for integration %s";
     private static final String ERR_MSG_CANNOT_CREATE_ADAPTER = "Cannot create an instance of %s adapter for integration %s";
 
-
     private static final Map<String, Map<Long, IntegrationAdapter>> TENANT_ADAPTERS = new ConcurrentHashMap<>();
 
     private final ApplicationContext applicationContext;
@@ -107,32 +106,29 @@ public abstract class IntegrationAdapterProxy {
     public void init() {
         IntegrationGroup integrationGroup = integrationGroupService.retrieveByName(getGroup());
         List<IntegrationType> integrationTypes = integrationGroup.getIntegrationTypes();
+        integrationTypes.forEach(integrationType -> initializeByType(integrationType.getName(), integrationType.getIntegrations()));
+    }
 
-        integrationTypes.forEach(integrationType -> {
+    public void initializeByType(String integrationTypeName, List<Integration> integrations) {
+        // collect all enabled integrations first
+        List<Integration> enabledIntegrations = integrations.stream()
+                                                            .filter(Integration::isEnabled)
+                                                            .collect(Collectors.toList());
 
-
-            List<Integration> integrations = integrationType.getIntegrations();
-
-            // collect all enabled integrations first
-            List<Integration> enabledIntegrations = integrations.stream()
-                                                                .filter(Integration::isEnabled)
-                                                                .collect(Collectors.toList());
-
-            // make sure all of those have mandatory settings in place
-            long validIntegrationsCount = enabledIntegrations.stream()
-                                                             .filter(this::hasMandatorySettingsSet)
-                                                             .count();
+        // make sure all of those have mandatory settings in place
+        long validIntegrationsCount = enabledIntegrations.stream()
+                                                         .filter(this::hasMandatorySettingsSet)
+                                                         .count();
 
 
-            // if not all enabled integrations are properly configured - fail startup, otherwise initialize adapters
-            if (enabledIntegrations.size() != validIntegrationsCount) {
-                //todo add code and message
-                throw new IntegrationException();
-            } else {
-                Class<? extends IntegrationAdapter> adapterClass = adapterClasses.get(integrationType.getName());
-                initializeAdapters(adapterClass, enabledIntegrations);
-            }
-        });
+        // if not all enabled integrations are properly configured - fail startup, otherwise initialize adapters
+        if (enabledIntegrations.size() != validIntegrationsCount) {
+            //todo add code and message
+            throw new IntegrationException();
+        } else {
+            Class<? extends IntegrationAdapter> adapterClass = adapterClasses.get(integrationTypeName);
+            initializeAdapters(adapterClass, enabledIntegrations);
+        }
     }
 
     private void initializeAdapters(Class<? extends IntegrationAdapter> adapterClass, List<Integration> enabledIntegrations) {

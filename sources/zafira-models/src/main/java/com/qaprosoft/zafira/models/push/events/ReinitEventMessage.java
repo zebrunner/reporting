@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.push.events;
 
-import com.qaprosoft.zafira.models.db.Setting;
 import lombok.Getter;
 import lombok.Setter;
 
