@@ -15,41 +15,46 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool;
 
-import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.AbstractIntegrationAdapter;
+import com.qaprosoft.zafira.models.db.integration.Integration;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.GroupAdapter;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.AbstractProxy;
+import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.IntegrationAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.IntegrationAdapterProxy;
 
-public abstract class AbstractIntegration<T extends GroupAdapter>/* implements Integration<T>*/ {
+import java.util.Optional;
 
-    private static final String ERR_MSG_ADAPTER_NOT_FOUND_BY_ID = "Adapter for tenant '%s' with id '%d' not found";
-    private static final String ERR_MSG_DEFAULT_ADAPTER_NOT_FOUND_BY_TYPE = "Default adapter for tenant '%s' with type '%s' not found";
+public abstract class AbstractIntegrationService<T extends GroupAdapter> {
 
+    private static final String ERR_MSG_ADAPTER_NOT_FOUND = "Requested adapter of type %s can not be found";
+
+    private final IntegrationService integrationService;
     private final String defaultType;
 
-    public AbstractIntegration(String defaultType) {
+    public AbstractIntegrationService(IntegrationService integrationService, String defaultType) {
+        this.integrationService = integrationService;
         this.defaultType = defaultType;
     }
 
-    public boolean isEnabledAndConnected(Long id) {
-        AbstractIntegrationAdapter adapter = id != null ? ((AbstractIntegrationAdapter) getAdapterById(id)) : ((AbstractIntegrationAdapter) getDefaultAdapter());
-        return adapter.getIntegration().isEnabled() && adapter.isConnected();
-    }
+    public boolean isEnabledAndConnected(Long integrationId) {
+        IntegrationAdapter adapter = (IntegrationAdapter) getAdapterForIntegration(integrationId);
 
-    public boolean isEnabledAndConnected() {
-        return isEnabledAndConnected(null);
-    }
+        // we now need proper integration id since it can be null prior to this point, but never for adapter
+        Integration integration = integrationService.retrieveById(adapter.getIntegrationId());
 
-    @SuppressWarnings("unchecked")
-    public T getAdapterById(Long id) {
-        return (T) AbstractProxy.getAdapter(id)
-                                .orElseThrow(() -> new UnsupportedOperationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND_BY_ID, TenancyContext.getTenantName(), id)));
+        return integration.isEnabled() && adapter.isConnected();
     }
 
     @SuppressWarnings("unchecked")
-    public T getDefaultAdapter() {
-        return (T) AbstractProxy.getDefaultAdapter(defaultType)
-                                .orElseThrow(() -> new UnsupportedOperationException(String.format(ERR_MSG_DEFAULT_ADAPTER_NOT_FOUND_BY_TYPE, TenancyContext.getTenantName(), defaultType)));
+    public T getAdapterForIntegration(Long integrationId) {
+        Optional<IntegrationAdapter> maybeAdapter;
+        if (integrationId == null) {
+            // can be null in case of legacy client call - use default adapter
+            maybeAdapter = IntegrationAdapterProxy.getDefaultAdapter(defaultType);
+        } else {
+            maybeAdapter = IntegrationAdapterProxy.getAdapter(integrationId);
+        }
+
+        return (T) maybeAdapter.orElseThrow(() -> new UnsupportedOperationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND, defaultType)));
     }
 
     /*@Override

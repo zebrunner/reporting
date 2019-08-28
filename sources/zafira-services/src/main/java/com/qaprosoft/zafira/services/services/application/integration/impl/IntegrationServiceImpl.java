@@ -20,7 +20,6 @@ import com.qaprosoft.zafira.models.db.integration.Integration;
 import com.qaprosoft.zafira.models.db.integration.IntegrationGroup;
 import com.qaprosoft.zafira.models.db.integration.IntegrationSetting;
 import com.qaprosoft.zafira.models.db.integration.IntegrationType;
-import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
@@ -28,7 +27,6 @@ import com.qaprosoft.zafira.services.services.application.integration.Integratio
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationSettingService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationTypeService;
 import com.qaprosoft.zafira.services.util.EventPushService;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,11 +47,12 @@ public class IntegrationServiceImpl implements IntegrationService {
     private final IntegrationSettingService integrationSettingService;
     private final EventPushService eventPushService;
 
-    public IntegrationServiceImpl(IntegrationMapper integrationMapper,
-                                  IntegrationGroupService integrationGroupService,
-                                  IntegrationTypeService integrationTypeService,
-                                  IntegrationSettingService integrationSettingService,
-                                  EventPushService eventPushService
+    public IntegrationServiceImpl(
+            IntegrationMapper integrationMapper,
+            IntegrationGroupService integrationGroupService,
+            IntegrationTypeService integrationTypeService,
+            IntegrationSettingService integrationSettingService,
+            EventPushService eventPushService
     ) {
         this.integrationMapper = integrationMapper;
         this.integrationGroupService = integrationGroupService;

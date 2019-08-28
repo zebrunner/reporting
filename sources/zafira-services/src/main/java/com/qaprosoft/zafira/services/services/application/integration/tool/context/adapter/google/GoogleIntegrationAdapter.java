@@ -35,7 +35,7 @@ public class GoogleIntegrationAdapter extends AbstractIntegrationAdapter impleme
     private final GoogleSpreadsheetsService spreadsheetsService;
 
     public GoogleIntegrationAdapter(Integration integration) {
-        super("GOOGLE", integration);
+        super(integration);
 
         this.credsFile = getAttributeBinaryData(GoogleParam.GOOGLE_CLIENT_SECRET_ORIGIN);
         this.credsFileOriginName = getAttributeValue(GoogleParam.GOOGLE_CLIENT_SECRET_ORIGIN);

@@ -15,19 +15,20 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.impl;
 
-import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegration;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.testautomationtool.TestAutomationToolAdapter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TestAutomationToolService extends AbstractIntegration<TestAutomationToolAdapter> {
+public class TestAutomationToolService extends AbstractIntegrationService<TestAutomationToolAdapter> {
 
-    public TestAutomationToolService() {
-        super("SELENIUM");
+    public TestAutomationToolService(IntegrationService integrationService) {
+        super(integrationService, "SELENIUM");
     }
 
     public String buildUrl() {
-        TestAutomationToolAdapter testAutomationToolAdapter = getDefaultAdapter();
+        TestAutomationToolAdapter testAutomationToolAdapter = getAdapterForIntegration(null);
         return testAutomationToolAdapter.buildUrl();
     }
 

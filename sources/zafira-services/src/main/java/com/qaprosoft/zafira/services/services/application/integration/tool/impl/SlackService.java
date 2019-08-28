@@ -15,39 +15,38 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.impl;
 
-import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegration;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.slack.SlackServiceAdapter;
-
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
-
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.slack.SlackServiceAdapter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SlackService extends AbstractIntegration<SlackServiceAdapter> {
+public class SlackService extends AbstractIntegrationService<SlackServiceAdapter> {
 
     private final static String ON_FINISH_PATTERN = "Test run #%1$d has been completed after %2$s with status %3$s\n";
     private final static String REVIEWED_PATTERN = "Test run #%1$d has been reviewed. Status: %2$s\n";
 
-    public SlackService() {
-        super("SLACK");
+    public SlackService(IntegrationService integrationService) {
+        super(integrationService, "SLACK");
     }
 
     public void sendStatusOnFinish(TestRun testRun) {
         String onFinishMessage = String.format(ON_FINISH_PATTERN, testRun.getId(), countElapsedInSMH(testRun.getElapsed()),
                 TestRunResultsEmail.buildStatusText(testRun));
-        SlackServiceAdapter slackServiceAdapter = getDefaultAdapter();
+        SlackServiceAdapter slackServiceAdapter = getAdapterForIntegration(null);
         slackServiceAdapter.sendNotification(testRun, onFinishMessage);
     }
 
     public void sendStatusReviewed(TestRun testRun) {
         String reviewedMessage = String.format(REVIEWED_PATTERN, testRun.getId(), TestRunResultsEmail.buildStatusText(testRun));
-        SlackServiceAdapter slackServiceAdapter = getDefaultAdapter();
+        SlackServiceAdapter slackServiceAdapter = getAdapterForIntegration(null);
         slackServiceAdapter.sendNotification(testRun, reviewedMessage);
     }
 
     public String getWebhook() {
-        SlackServiceAdapter slackServiceAdapter = getDefaultAdapter();
+        SlackServiceAdapter slackServiceAdapter = getAdapterForIntegration(null);
         return slackServiceAdapter.getWebhook();
     }
 

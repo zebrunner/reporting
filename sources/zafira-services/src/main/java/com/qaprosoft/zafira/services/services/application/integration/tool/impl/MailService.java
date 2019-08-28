@@ -15,7 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.impl;
 
-import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegration;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.mail.MailServiceAdapter;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -27,19 +28,19 @@ import java.io.UnsupportedEncodingException;
 import java.util.concurrent.CompletableFuture;
 
 @Component
-public class MailService extends AbstractIntegration<MailServiceAdapter> {
+public class MailService extends AbstractIntegrationService<MailServiceAdapter> {
 
-    public MailService() {
-        super("EMAIL");
+    public MailService(IntegrationService integrationService) {
+        super(integrationService, "EMAIL");
     }
 
     public CompletableFuture<Void> send(MimeMessagePreparator preparator) {
-        MailServiceAdapter mailServiceAdapter = getDefaultAdapter();
+        MailServiceAdapter mailServiceAdapter = getAdapterForIntegration(null);
         return mailServiceAdapter.send(preparator);
     }
 
     public void setFromAddress(MimeMessageHelper msg) throws MessagingException, UnsupportedEncodingException {
-        MailServiceAdapter mailServiceAdapter = getDefaultAdapter();
+        MailServiceAdapter mailServiceAdapter = getAdapterForIntegration(null);
         String fromAddress = mailServiceAdapter.getFromAddress();
         String username = mailServiceAdapter.getUsername();
         if (!StringUtils.isBlank(fromAddress)) {

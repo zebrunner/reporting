@@ -35,7 +35,7 @@ public class LdapIntegrationAdapter extends AbstractIntegrationAdapter implement
     private final FilterBasedLdapUserSearch filterBasedLdapUserSearch;
 
     public LdapIntegrationAdapter(Integration integration) {
-        super("LDAP", integration);
+        super(integration);
 
         this.url = getAttributeValue(LdapParam.LDAP_URL);
         this.managerUser = getAttributeValue(LdapParam.LDAP_MANAGER_USER);

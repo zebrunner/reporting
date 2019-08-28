@@ -15,20 +15,6 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.automationserver;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.offbytwo.jenkins.JenkinsServer;
@@ -49,6 +35,20 @@ import com.qaprosoft.zafira.services.services.application.integration.tool.conte
 import com.qaprosoft.zafira.services.util.JenkinsClient;
 import com.qaprosoft.zafira.services.util.JenkinsConfig;
 import org.apache.commons.lang.StringUtils;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterClass.BOOLEAN;
 import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterClass.HIDDEN;
@@ -75,7 +75,7 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
     private JenkinsServer jenkinsServer;
 
     public JenkinsIntegrationAdapter(Integration integration) {
-        super("JENKINS", integration);
+        super(integration);
 
         this.url = getAttributeValue(JenkinsParam.JENKINS_URL);
         this.username = getAttributeValue(JenkinsParam.JENKINS_USERNAME);

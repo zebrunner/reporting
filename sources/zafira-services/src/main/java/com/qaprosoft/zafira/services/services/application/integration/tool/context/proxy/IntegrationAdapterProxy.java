@@ -37,9 +37,10 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public abstract class AbstractProxy {
+//todo remove integration group service from here
+public abstract class IntegrationAdapterProxy {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractProxy.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IntegrationAdapterProxy.class);
 
     private static final String ERR_MSG_MANDATORY_INTEGRATION_PARAMS_MISSING = "Integration settings [%s] are mandatory for integration %s";
     private static final String ERR_MSG_CANNOT_CREATE_ADAPTER = "Cannot create an instance of %s adapter for integration %s";
@@ -53,7 +54,7 @@ public abstract class AbstractProxy {
     private final Map<String, Class<? extends IntegrationAdapter>> adapterClasses;
     private final Map<String, Object> additionalParameters;
 
-    public AbstractProxy(
+    public IntegrationAdapterProxy(
             ApplicationContext applicationContext,
             IntegrationGroupService integrationGroupService,
             String group,
@@ -67,7 +68,7 @@ public abstract class AbstractProxy {
         this.additionalParameters = additionalParameters;
     }
 
-    public AbstractProxy(
+    public IntegrationAdapterProxy(
             ApplicationContext applicationContext,
             IntegrationGroupService integrationGroupService,
             String group,
@@ -82,7 +83,7 @@ public abstract class AbstractProxy {
             TENANT_ADAPTERS.put(tenant, new ConcurrentHashMap<>());
         }
 
-        Long integrationId = integrationAdapter.getIntegration().getId();
+        Long integrationId = integrationAdapter.getIntegrationId();
         TENANT_ADAPTERS.get(tenant).put(integrationId, integrationAdapter);
     }
 
@@ -92,11 +93,14 @@ public abstract class AbstractProxy {
     }
 
     public static synchronized Optional<IntegrationAdapter> getDefaultAdapter(String type) {
+
+        //todo get default integration by type :: integrationService.getDefaultIntegration(type);
+        // return adapter by integration id from above
         Map<Long, IntegrationAdapter> adapters = TENANT_ADAPTERS.get(TenancyContext.getTenantName());
         return adapters.values()
                        .stream()
-                       .filter(adapter -> adapter.getType().equals(type))
-                       .filter(adapter -> adapter.getIntegration().isDefault())
+//                       .filter(adapter -> adapter.getType().equals(type))
+//                       .filter(adapter -> adapter.getIntegration().isDefault())
                        .findFirst();
     }
 
@@ -134,7 +138,7 @@ public abstract class AbstractProxy {
     private void initializeAdapters(Class<? extends IntegrationAdapter> adapterClass, List<Integration> enabledIntegrations) {
         enabledIntegrations.stream()
                            .map(integration -> createAdapter(integration, adapterClass))
-                           .forEach(AbstractProxy::putAdapter);
+                           .forEach(IntegrationAdapterProxy::putAdapter);
     }
 
     private boolean hasMandatorySettingsSet(Integration integration) {

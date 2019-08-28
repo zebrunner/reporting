@@ -20,14 +20,13 @@ import com.qaprosoft.zafira.models.dto.TestCaseManagementIssueType;
 import com.qaprosoft.zafira.services.exceptions.ExternalSystemException;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.AbstractIntegrationAdapter;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.AdapterParam;
+import net.rcarz.jiraclient.BasicCredentials;
 import net.rcarz.jiraclient.Issue;
+import net.rcarz.jiraclient.JiraClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-
-import net.rcarz.jiraclient.BasicCredentials;
-import net.rcarz.jiraclient.JiraClient;
 
 @SuppressWarnings("deprecation")
 public class JiraIntegrationAdapter extends AbstractIntegrationAdapter implements TestCaseManagementAdapter {
@@ -41,7 +40,7 @@ public class JiraIntegrationAdapter extends AbstractIntegrationAdapter implement
     private final JiraClient jiraClient;
 
     public JiraIntegrationAdapter(Integration integration) {
-        super("JIRA", integration);
+        super(integration);
 
         this.url = getAttributeValue(JiraParam.JIRA_URL);
         this.username = getAttributeValue(JiraParam.JIRA_USERNAME);
