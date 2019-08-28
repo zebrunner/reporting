@@ -49,9 +49,9 @@ public class SeleniumIntegrationAdapter extends AbstractIntegrationAdapter imple
     public SeleniumIntegrationAdapter(Integration integration) {
         super(integration);
 
-        this.url = getAttributeValue(SeleniumParam.SELENIUM_URL);
-        this.username = getAttributeValue(SeleniumParam.SELENIUM_USERNAME);
-        this.password = getAttributeValue(SeleniumParam.SELENIUM_PASSWORD);
+        this.url = getAttributeValue(integration, SeleniumParam.SELENIUM_URL);
+        this.username = getAttributeValue(integration, SeleniumParam.SELENIUM_USERNAME);
+        this.password = getAttributeValue(integration, SeleniumParam.SELENIUM_PASSWORD);
     }
 
     private enum SeleniumParam implements AdapterParam {

@@ -33,6 +33,8 @@ public interface IntegrationService {
 
     List<Integration> retrieveByIntegrationTypeId(Long integrationTypeId);
 
+    List<Integration> retrieveByIntegrationGroupName(String integrationGroupName);
+
     Integration update(Integration integration);
 
 }

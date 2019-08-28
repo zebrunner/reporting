@@ -42,10 +42,10 @@ public class JiraIntegrationAdapter extends AbstractIntegrationAdapter implement
     public JiraIntegrationAdapter(Integration integration) {
         super(integration);
 
-        this.url = getAttributeValue(JiraParam.JIRA_URL);
-        this.username = getAttributeValue(JiraParam.JIRA_USERNAME);
-        this.password = getAttributeValue(JiraParam.JIRA_PASSWORD);
-        this.closedStatus = getAttributeValue(JiraParam.JIRA_CLOSED_STATUS);
+        this.url = getAttributeValue(integration, JiraParam.JIRA_URL);
+        this.username = getAttributeValue(integration, JiraParam.JIRA_USERNAME);
+        this.password = getAttributeValue(integration, JiraParam.JIRA_PASSWORD);
+        this.closedStatus = getAttributeValue(integration, JiraParam.JIRA_CLOSED_STATUS);
 
         this.credentials = new BasicCredentials(username, password);
         this.jiraClient = new JiraClient(url, credentials);

@@ -34,6 +34,8 @@ public interface IntegrationMapper {
 
     List<Integration> findByIntegrationTypeId(Long integrationTypeId);
 
+    List<Integration> findByIntegrationGroupName(String integrationGroupName);
+
     void update(Integration integration);
 
 }

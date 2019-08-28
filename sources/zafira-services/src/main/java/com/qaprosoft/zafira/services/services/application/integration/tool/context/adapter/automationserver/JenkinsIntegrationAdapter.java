@@ -77,10 +77,10 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
     public JenkinsIntegrationAdapter(Integration integration) {
         super(integration);
 
-        this.url = getAttributeValue(JenkinsParam.JENKINS_URL);
-        this.username = getAttributeValue(JenkinsParam.JENKINS_USERNAME);
-        this.tokenOrPassword = getAttributeValue(JenkinsParam.JENKINS_API_TOKEN_OR_PASSWORD);
-        this.folder = getAttributeValue(JenkinsParam.JENKINS_FOLDER);
+        this.url = getAttributeValue(integration, JenkinsParam.JENKINS_URL);
+        this.username = getAttributeValue(integration, JenkinsParam.JENKINS_USERNAME);
+        this.tokenOrPassword = getAttributeValue(integration, JenkinsParam.JENKINS_API_TOKEN_OR_PASSWORD);
+        this.folder = getAttributeValue(integration, JenkinsParam.JENKINS_FOLDER);
 
         try {
             JenkinsConfig config = new JenkinsConfig(username, tokenOrPassword, HTTP_TIMEOUT);

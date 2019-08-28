@@ -112,6 +112,12 @@ public class IntegrationServiceImpl implements IntegrationService {
         return integrationMapper.findByIntegrationTypeId(integrationTypeId);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Integration> retrieveByIntegrationGroupName(String integrationGroupName) {
+        return integrationMapper.findByIntegrationGroupName(integrationGroupName);
+    }
+
     // TODO: 2019-08-23 add notification and update in context mapping
     @Override
     @Transactional(rollbackFor = Exception.class)

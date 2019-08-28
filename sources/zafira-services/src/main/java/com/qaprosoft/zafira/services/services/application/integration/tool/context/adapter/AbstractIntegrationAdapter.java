@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter;
 
 import com.qaprosoft.zafira.models.db.integration.Integration;
+import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +24,7 @@ public abstract class AbstractIntegrationAdapter implements IntegrationAdapter {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractIntegrationAdapter.class);
 
-    private static final String ERR_MSG_PARAMETER_NOT_FOUND = "Parameter with name '%s' not found for type '%s'";
+    private static final String ERR_MSG_PARAMETER_NOT_FOUND = "Parameter with name '%s' not found for integration '%s'";
 
     private final Long integrationId;
 
@@ -36,18 +37,14 @@ public abstract class AbstractIntegrationAdapter implements IntegrationAdapter {
         return integrationId;
     }
 
-    // todo move this to Integration.java: Optional<String> getSettingValue(String name)
-    public String getAttributeValue(AdapterParam adapterParam) {
-        return null;
-//        return integration.getAttributeValue(adapterParam.getName())
-//                          .orElseThrow(() -> new IntegrationException(String.format(ERR_MSG_PARAMETER_NOT_FOUND, adapterParam.getName(), type)));
+    protected static String getAttributeValue(Integration integration, AdapterParam adapterParam) {
+        return integration.getAttributeValue(adapterParam.getName())
+                          .orElseThrow(() -> new IntegrationException(String.format(ERR_MSG_PARAMETER_NOT_FOUND, adapterParam.getName(), integration.getName())));
     }
 
-    // todo move this to Integration.java: getSettingValueAsBinaryData(String name)
-    public byte[] getAttributeBinaryData(AdapterParam adapterParam) {
-        return null;
-//        return integration.getAttributeBinaryData(adapterParam.getName())
-//                          .orElseThrow(() -> new IntegrationException(String.format(ERR_MSG_PARAMETER_NOT_FOUND, adapterParam.getName(), type)));
+    protected static byte[] getAttributeBinaryData(Integration integration, AdapterParam adapterParam) {
+        return integration.getAttributeBinaryData(adapterParam.getName())
+                          .orElseThrow(() -> new IntegrationException(String.format(ERR_MSG_PARAMETER_NOT_FOUND, adapterParam.getName(), integration.getName())));
 
     }
 

@@ -58,7 +58,7 @@ public class SlackIntegrationAdapter extends AbstractIntegrationAdapter implemen
         this.image = additionalProperties.get("image");
         this.author = additionalProperties.get("author");
 
-        this.webhookUrl = getAttributeValue(SlackParam.SLACK_WEB_HOOK_URL);
+        this.webhookUrl = getAttributeValue(integration, SlackParam.SLACK_WEB_HOOK_URL);
         this.slackService = new SlackService();
     }
 

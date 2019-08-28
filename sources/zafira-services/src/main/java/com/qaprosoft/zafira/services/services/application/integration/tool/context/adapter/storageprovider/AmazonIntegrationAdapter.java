@@ -74,10 +74,10 @@ public class AmazonIntegrationAdapter extends AbstractIntegrationAdapter impleme
 
         this.urlResolver = urlResolver;
         this.multitenant = (Boolean) additionalProperties.get("multitenant");
-        this.accessKey = getAttributeValue(AmazonParam.AMAZON_ACCESS_KEY);
-        this.secretKey = getAttributeValue(AmazonParam.AMAZON_SECRET_KEY);
-        this.bucket = getAttributeValue(AmazonParam.AMAZON_BUCKET);
-        this.region = getAttributeValue(AmazonParam.AMAZON_REGION);
+        this.accessKey = getAttributeValue(integration, AmazonParam.AMAZON_ACCESS_KEY);
+        this.secretKey = getAttributeValue(integration, AmazonParam.AMAZON_SECRET_KEY);
+        this.bucket = getAttributeValue(integration, AmazonParam.AMAZON_BUCKET);
+        this.region = getAttributeValue(integration, AmazonParam.AMAZON_REGION);
 
         ClientConfiguration clientConfiguration = new ClientConfiguration();
         clientConfiguration.setMaxConnections(100);

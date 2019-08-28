@@ -48,10 +48,10 @@ public class RabbitMQIntegrationAdapter extends AbstractIntegrationAdapter imple
 
         this.queues = (Map<String, Queue>) additionalProperties.get("queues");
 
-        this.host = getAttributeValue(RabbitMQParam.RABBITMQ_HOST);
-        this.port = Integer.parseInt(getAttributeValue(RabbitMQParam.RABBITMQ_PORT));
-        this.username = getAttributeValue(RabbitMQParam.RABBITMQ_USERNAME);
-        this.password = getAttributeValue(RabbitMQParam.RABBITMQ_PASSWORD);
+        this.host = getAttributeValue(integration, RabbitMQParam.RABBITMQ_HOST);
+        this.port = Integer.parseInt(getAttributeValue(integration, RabbitMQParam.RABBITMQ_PORT));
+        this.username = getAttributeValue(integration, RabbitMQParam.RABBITMQ_USERNAME);
+        this.password = getAttributeValue(integration, RabbitMQParam.RABBITMQ_PASSWORD);
 
         this.cachingConnectionFactory = new CachingConnectionFactory(host, port);
         this.cachingConnectionFactory.setUsername(username);

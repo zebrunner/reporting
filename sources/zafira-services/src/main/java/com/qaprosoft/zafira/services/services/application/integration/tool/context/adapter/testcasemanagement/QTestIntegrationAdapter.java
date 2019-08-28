@@ -27,7 +27,7 @@ public class QTestIntegrationAdapter extends AbstractIntegrationAdapter implemen
     public QTestIntegrationAdapter(Integration integration) {
         super(integration);
 
-        this.url = getAttributeValue(QTestParam.QTEST_URL);
+        this.url = getAttributeValue(integration, QTestParam.QTEST_URL);
     }
 
     private enum QTestParam implements AdapterParam {

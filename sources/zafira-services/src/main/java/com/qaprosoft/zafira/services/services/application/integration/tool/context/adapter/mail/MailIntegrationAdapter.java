@@ -41,11 +41,11 @@ public class MailIntegrationAdapter extends AbstractIntegrationAdapter implement
     public MailIntegrationAdapter(Integration integration) {
         super(integration);
 
-        this.host = getAttributeValue(EmailParam.EMAIL_HOST);
-        this.port = Integer.parseInt(getAttributeValue(EmailParam.EMAIL_PORT));
-        this.username = getAttributeValue(EmailParam.EMAIL_USERNAME);
-        this.password = getAttributeValue(EmailParam.EMAIL_PASSWORD);
-        this.fromAddress = getAttributeValue(EmailParam.EMAIL_FROM_ADDRESS);
+        this.host = getAttributeValue(integration, EmailParam.EMAIL_HOST);
+        this.port = Integer.parseInt(getAttributeValue(integration, EmailParam.EMAIL_PORT));
+        this.username = getAttributeValue(integration, EmailParam.EMAIL_USERNAME);
+        this.password = getAttributeValue(integration, EmailParam.EMAIL_PASSWORD);
+        this.fromAddress = getAttributeValue(integration, EmailParam.EMAIL_FROM_ADDRESS);
 
         this.javaMailSender = new JavaMailSenderImpl();
         ((JavaMailSenderImpl) this.javaMailSender).setDefaultEncoding("UTF-8");

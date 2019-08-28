@@ -37,11 +37,11 @@ public class LdapIntegrationAdapter extends AbstractIntegrationAdapter implement
     public LdapIntegrationAdapter(Integration integration) {
         super(integration);
 
-        this.url = getAttributeValue(LdapParam.LDAP_URL);
-        this.managerUser = getAttributeValue(LdapParam.LDAP_MANAGER_USER);
-        this.managerPassword = getAttributeValue(LdapParam.LDAP_MANAGER_PASSWORD);
-        this.dn = getAttributeValue(LdapParam.LDAP_DN);
-        this.searchFilter = getAttributeValue(LdapParam.LDAP_SEARCH_FILTER);
+        this.url = getAttributeValue(integration, LdapParam.LDAP_URL);
+        this.managerUser = getAttributeValue(integration, LdapParam.LDAP_MANAGER_USER);
+        this.managerPassword = getAttributeValue(integration, LdapParam.LDAP_MANAGER_PASSWORD);
+        this.dn = getAttributeValue(integration, LdapParam.LDAP_DN);
+        this.searchFilter = getAttributeValue(integration, LdapParam.LDAP_SEARCH_FILTER);
 
         this.ldapContextSource = new LdapContextSource();
         this.ldapContextSource.setUrl(url);

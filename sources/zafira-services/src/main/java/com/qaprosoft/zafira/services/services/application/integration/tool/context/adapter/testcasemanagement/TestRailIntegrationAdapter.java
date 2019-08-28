@@ -27,7 +27,7 @@ public class TestRailIntegrationAdapter extends AbstractIntegrationAdapter imple
     public TestRailIntegrationAdapter(Integration integration) {
         super(integration);
 
-        this.url = getAttributeValue(TestRailParam.TESTRAIL_URL);
+        this.url = getAttributeValue(integration, TestRailParam.TESTRAIL_URL);
     }
 
     private enum TestRailParam implements AdapterParam {
