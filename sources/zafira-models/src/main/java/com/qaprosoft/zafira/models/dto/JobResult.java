@@ -15,22 +15,14 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class JobResult {
 
     private String queueItemUrl;
     private boolean success;
-
-    public JobResult(String queueItemUrl, boolean success) {
-        this.queueItemUrl = queueItemUrl;
-        this.success = success;
-    }
-
-    public String getQueueItemUrl() {
-        return queueItemUrl;
-    }
-
-    public boolean isSuccess() {
-        return success;
-    }
 
 }

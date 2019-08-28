@@ -4,11 +4,8 @@ zafira:
   version: ${zafira.version}
   client-version: ${zafira.client.version}
   debug-enabled: ${zafira.debug.enabled}
-  app-url: ${zafira.app.url}
-  web-context-path: ${zafira.web.context.path}
-  rest-context-path: ${zafira.rest.context.path}
-  web-url: ${zafira.app-url}/${zafira.web-context-path}
-  rest-url: ${zafira.app-url}/${zafira.rest-context-path}
+  web-url: ${zafira.web-host}/${zafira.web-context-path}
+  api-url: ${zafira.api-host}/${zafira.api-context-path}
   use-artifact-proxy: ${zafira.use.artifact.proxy}
   slack:
     image-url: https://s3-us-west-1.amazonaws.com/zebrunner/common/zfr-email.png
@@ -56,13 +53,14 @@ spring:
     serialization:
       write-dates-as-timestamps: true
   autoconfigure:
-    # since Boot detects liquibase library on classpath it'll try to prodivde a configuration and supply autoconfigured datasource
+    # since Boot detects liquibase library on classpath it'll try to supply autoconfigured datasource
     # however for Zafira we do not use datasource autoconfiguration that's why need to disable this
     exclude: org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
 
 ### Logging configuration. See logback.xml for more
 logging:
   level:
+    org.dozer.DozerBeanMapper: ERROR
     liquibase:
       # reducing number of logs by liquibase to keep only most relevant ones
       executor.jvm.JdbcExecutor: ERROR

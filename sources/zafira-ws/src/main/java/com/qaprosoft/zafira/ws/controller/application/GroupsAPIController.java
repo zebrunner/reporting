@@ -25,7 +25,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -47,8 +46,11 @@ import java.util.List;
 @RestController
 public class GroupsAPIController extends AbstractController {
 
-    @Autowired
-    private GroupService groupService;
+    private final GroupService groupService;
+
+    public GroupsAPIController(GroupService groupService) {
+        this.groupService = groupService;
+    }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create group", nickname = "createGroup", httpMethod = "POST", response = Group.class)

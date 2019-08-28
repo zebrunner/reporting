@@ -15,7 +15,13 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Widget extends AbstractEntity {
+
     private static final long serialVersionUID = -750759195176951157L;
 
     private String title;
@@ -24,7 +30,6 @@ public class Widget extends AbstractEntity {
     private String legendConfig;
     private WidgetTemplate widgetTemplate;
     private boolean refreshable;
-
     private String type;
     private Integer size;
     private Integer position;
@@ -32,99 +37,4 @@ public class Widget extends AbstractEntity {
     private String sql;
     private String model;
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getParamsConfig() {
-        return paramsConfig;
-    }
-
-    public void setParamsConfig(String paramsConfig) {
-        this.paramsConfig = paramsConfig;
-    }
-
-    public String getLegendConfig() {
-        return legendConfig;
-    }
-
-    public void setLegendConfig(String legendConfig) {
-        this.legendConfig = legendConfig;
-    }
-
-    public WidgetTemplate getWidgetTemplate() {
-        return widgetTemplate;
-    }
-
-    public void setWidgetTemplate(WidgetTemplate widgetTemplate) {
-        this.widgetTemplate = widgetTemplate;
-    }
-
-    public boolean isRefreshable() {
-        return refreshable;
-    }
-
-    public void setRefreshable(boolean refreshable) {
-        this.refreshable = refreshable;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Integer getSize() {
-        return size;
-    }
-
-    public void setSize(Integer size) {
-        this.size = size;
-    }
-
-    public Integer getPosition() {
-        return position;
-    }
-
-    public void setPosition(Integer position) {
-        this.position = position;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getSql() {
-        return sql;
-    }
-
-    public void setSql(String sql) {
-        this.sql = sql;
-    }
 }

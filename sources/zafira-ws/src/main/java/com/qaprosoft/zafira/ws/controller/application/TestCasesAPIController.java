@@ -32,8 +32,6 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.ArrayUtils;
 import org.dozer.Mapper;
-import org.dozer.MappingException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,17 +51,17 @@ import java.util.concurrent.ExecutionException;
 @RestController
 public class TestCasesAPIController extends AbstractController {
 
-    @Autowired
-    private Mapper mapper;
+    private final Mapper mapper;
+    private final TestCaseService testCaseService;
+    private final TestMetricService testMetricService;
+    private final ProjectService projectService;
 
-    @Autowired
-    private TestCaseService testCaseService;
-
-    @Autowired
-    private TestMetricService testMetricService;
-
-    @Autowired
-    private ProjectService projectService;
+    public TestCasesAPIController(Mapper mapper, TestCaseService testCaseService, TestMetricService testMetricService, ProjectService projectService) {
+        this.mapper = mapper;
+        this.testCaseService = testCaseService;
+        this.testMetricService = testMetricService;
+        this.projectService = projectService;
+    }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Search test cases", nickname = "searchTestCases", httpMethod = "POST", response = SearchResult.class)
@@ -87,7 +85,8 @@ public class TestCasesAPIController extends AbstractController {
     @PostMapping()
     public TestCaseType createTestCase(
             @RequestBody @Valid TestCaseType testCase,
-            @RequestHeader(value = "Project", required = false) String projectName) throws MappingException, ExecutionException {
+            @RequestHeader(name = "Project", required = false) String projectName
+    ) throws ExecutionException {
         TestCase tc = mapper.map(testCase, TestCase.class);
         tc.setProject(projectService.getProjectByName(projectName));
         return mapper.map(testCaseService.createOrUpdateCase(tc), TestCaseType.class);
@@ -97,8 +96,10 @@ public class TestCasesAPIController extends AbstractController {
     @ApiOperation(value = "Create multiple test cases", nickname = "createTestCases", httpMethod = "POST", response = TestCaseType[].class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/batch")
-    public TestCaseType[] createTestCases(@RequestBody @Valid TestCaseType[] tcs,
-            @RequestHeader(value = "Project", required = false) String projectName) throws ExecutionException {
+    public TestCaseType[] createTestCases(
+            @RequestBody @Valid TestCaseType[] tcs,
+            @RequestHeader(name = "Project", required = false) String projectName
+    ) throws ExecutionException {
         if (!ArrayUtils.isEmpty(tcs)) {
             Project project = projectService.getProjectByName(projectName);
             TestCase[] testCases = new TestCase[tcs.length];

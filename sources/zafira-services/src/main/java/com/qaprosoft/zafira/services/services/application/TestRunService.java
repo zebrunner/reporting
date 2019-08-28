@@ -41,11 +41,10 @@ import com.qaprosoft.zafira.services.services.application.cache.StatisticsServic
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.AutomationServerService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.TestCaseManagementService;
+import com.qaprosoft.zafira.services.util.DateTimeUtil;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.LocalDateTime;
-import org.joda.time.Seconds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +75,6 @@ import static com.qaprosoft.zafira.models.db.Status.IN_PROGRESS;
 import static com.qaprosoft.zafira.models.db.Status.PASSED;
 import static com.qaprosoft.zafira.models.db.Status.QUEUED;
 import static com.qaprosoft.zafira.models.db.Status.SKIPPED;
-import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
 import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.readArguments;
 
 @Service
@@ -172,7 +170,7 @@ public class TestRunService {
 
     @Transactional(readOnly = true)
     public SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc) {
-        actualizeSearchCriteriaDate(sc);
+        DateTimeUtil.actualizeSearchCriteriaDate(sc);
         SearchResult<TestRun> results = new SearchResult<>();
         results.setPage(sc.getPage());
         results.setPageSize(sc.getPageSize());
@@ -478,9 +476,7 @@ public class TestRunService {
             }
         }
         if (finishTestRun && testRun.getStartedAt() != null) {
-            LocalDateTime startedAt = new LocalDateTime(testRun.getStartedAt());
-            LocalDateTime finishedAt = new LocalDateTime(Calendar.getInstance().getTime());
-            Integer elapsed = Seconds.secondsBetween(startedAt, finishedAt).getSeconds();
+            Integer elapsed = ((Long) DateTimeUtil.toSecondsSinceDateToNow(testRun.getStartedAt())).intValue();
             // according to https://github.com/qaprosoft/zafira/issues/748
             if (testRun.getElapsed() != null) {
                 testRun.setElapsed(testRun.getElapsed() + elapsed);

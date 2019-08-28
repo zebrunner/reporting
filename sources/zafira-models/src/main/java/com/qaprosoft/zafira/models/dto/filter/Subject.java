@@ -15,13 +15,18 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.models.dto.filter;
 
-import java.util.Comparator;
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Comparator;
+import java.util.List;
 
+@Getter
+@Setter
 public class Subject {
+
     @NotNull(message = "Subject name required")
     private Name name;
     @Valid
@@ -31,23 +36,8 @@ public class Subject {
         TEST_RUN
     }
 
-    public Name getName() {
-        return name;
-    }
-
-    public void setName(Name name) {
-        this.name = name;
-    }
-
-    public List<Criteria> getCriterias() {
-        return criterias;
-    }
-
-    public void setCriterias(List<Criteria> criterias) {
-        this.criterias = criterias;
-    }
-
     public void sortCriterias() {
         this.criterias.sort(Comparator.comparing(Criteria::getName));
     }
+
 }

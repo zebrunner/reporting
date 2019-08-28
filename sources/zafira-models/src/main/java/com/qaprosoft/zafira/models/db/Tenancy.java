@@ -15,8 +15,13 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
+@Getter
+@Setter
 public class Tenancy implements Serializable {
 
     private static final long serialVersionUID = -4999394495425059506L;
@@ -26,14 +31,6 @@ public class Tenancy implements Serializable {
     private static final String[] DEFAULT_NAMES = { DEFAULT_TENANT, MANAGEMENT_SCHEMA };
 
     private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public static String getDefaultTenant() {
         return DEFAULT_TENANT;
@@ -46,4 +43,5 @@ public class Tenancy implements Serializable {
     public static String[] getDefaultNames() {
         return DEFAULT_NAMES;
     }
+
 }

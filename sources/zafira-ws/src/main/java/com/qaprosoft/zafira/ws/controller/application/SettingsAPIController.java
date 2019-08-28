@@ -36,6 +36,9 @@ import com.qaprosoft.zafira.models.db.Setting.Tool;
 import com.qaprosoft.zafira.models.dto.ConnectedToolType;
 import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.AmazonService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.google.GoogleService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.StorageProviderService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -43,11 +46,25 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @Api("Settings API")
 @CrossOrigin
@@ -61,11 +78,13 @@ public class SettingsAPIController extends AbstractController {
     private final Integer amazonTokenExpiration;
     private final Long googleTokenExpiration;
 
-    public SettingsAPIController(StorageProviderService storageProviderService,
-                                 GoogleService googleService,
-                                 SettingsService settingsService,
-                                 @Value("${amazon-token-expiration}") Integer amazonTokenExpiration,
-                                 @Value("${google-token-expiration}") Long googleTokenExpiration) {
+    public SettingsAPIController(
+            StorageProviderService storageProviderService,
+            GoogleService googleService,
+            SettingsService settingsService,
+            @Value("${amazon-token-expiration}") Integer amazonTokenExpiration,
+            @Value("${google-token-expiration}") Long googleTokenExpiration
+    ) {
         this.storageProviderService = storageProviderService;
         this.googleService = googleService;
         this.settingsService = settingsService;
@@ -110,9 +129,11 @@ public class SettingsAPIController extends AbstractController {
     @ApiOperation(value = "Upload setting file", nickname = "uploadSettingFile", httpMethod = "POST", response = ConnectedToolType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/tools")
-    public ConnectedToolType uploadSettingFile(@RequestParam("tool") Tool tool,
+    public ConnectedToolType uploadSettingFile(
+            @RequestParam("tool") Tool tool,
             @RequestParam("name") String name,
-            @RequestParam("file") MultipartFile file) throws Exception {
+            @RequestParam("file") MultipartFile file
+    ) throws IOException {
         return settingsService.createSettingFile(file.getBytes(), file.getOriginalFilename(), name, tool);
     }
 

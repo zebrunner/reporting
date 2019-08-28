@@ -15,11 +15,15 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
-/**
- * Launcher is used to trigger CI job with arguments.
- * 
- * @author akhursevich
- */
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Launcher extends AbstractEntity {
 
     private static final long serialVersionUID = 7864420961256586573L;
@@ -29,56 +33,5 @@ public class Launcher extends AbstractEntity {
     private ScmAccount scmAccount;
     private Job job;
     private boolean autoScan;
-
-    public Launcher() {
-    }
-
-    public Launcher(String name, String model, ScmAccount scmAccount, Job job, boolean autoScan) {
-        this.name = name;
-        this.model = model;
-        this.scmAccount = scmAccount;
-        this.job = job;
-        this.autoScan = autoScan;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public ScmAccount getScmAccount() {
-        return scmAccount;
-    }
-
-    public void setScmAccount(ScmAccount scmAccount) {
-        this.scmAccount = scmAccount;
-    }
-
-    public Job getJob() {
-        return job;
-    }
-
-    public void setJob(Job job) {
-        this.job = job;
-    }
-
-    public boolean isAutoScan() {
-        return autoScan;
-    }
-
-    public void setAutoScan(boolean autoScan) {
-        this.autoScan = autoScan;
-    }
 
 }

@@ -25,11 +25,9 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,19 +38,19 @@ import javax.validation.Valid;
 @RestController
 public class TestSuitesAPIController extends AbstractController {
 
-    @Autowired
-    private Mapper mapper;
+    private final Mapper mapper;
+    private final TestSuiteService testSuiteService;
 
-    @Autowired
-    private TestSuiteService testSuiteService;
+    public TestSuitesAPIController(Mapper mapper, TestSuiteService testSuiteService) {
+        this.mapper = mapper;
+        this.testSuiteService = testSuiteService;
+    }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create test suite", nickname = "createTestSuite", httpMethod = "POST", notes = "Create a new test suite.", response = TestSuiteType.class, responseContainer = "TestSuiteType")
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping()
-    public TestSuiteType createTestSuite(
-            @RequestBody @Valid TestSuiteType testSuite,
-            @RequestHeader(value = "Project", required = false) String project) {
+    public TestSuiteType createTestSuite(@RequestBody @Valid TestSuiteType testSuite) {
         return mapper.map(testSuiteService.createOrUpdateTestSuite(mapper.map(testSuite, TestSuite.class)), TestSuiteType.class);
     }
 

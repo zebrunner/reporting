@@ -15,23 +15,19 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.push.events;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
+@Getter
+@Setter
+@AllArgsConstructor
 public class EventMessage implements Serializable {
 
     private static final long serialVersionUID = 2241656564064701459L;
 
     private String tenancy;
 
-    public EventMessage(String tenancy) {
-        this.tenancy = tenancy;
-    }
-
-    public String getTenancy() {
-        return tenancy;
-    }
-
-    public void setTenancy(String tenancy) {
-        this.tenancy = tenancy;
-    }
 }
