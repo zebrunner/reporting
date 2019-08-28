@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class SlackProxy extends AbstractProxy {
+public class SlackProxy extends IntegrationAdapterProxy {
 
     private static final Map<String, Class<? extends IntegrationAdapter>> INTEGRATION_TYPE_ADAPTERS = Map.of(
             "SLACK", SlackIntegrationAdapter.class

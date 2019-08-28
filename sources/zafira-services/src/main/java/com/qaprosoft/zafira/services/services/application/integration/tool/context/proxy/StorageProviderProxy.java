@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class StorageProviderProxy extends AbstractProxy {
+public class StorageProviderProxy extends IntegrationAdapterProxy {
 
     private static final Map<String, Class<? extends IntegrationAdapter>> INTEGRATION_TYPE_ADAPTERS = Map.of(
             "AMAZON", AmazonIntegrationAdapter.class

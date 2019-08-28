@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class AccessManagementProxy extends AbstractProxy {
+public class AccessManagementProxy extends IntegrationAdapterProxy {
 
     private static final Map<String, Class<? extends IntegrationAdapter>> INTEGRATION_TYPE_ADAPTERS = Map.of(
             "LDAP", LdapIntegrationAdapter.class

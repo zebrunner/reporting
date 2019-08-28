@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class MailProxy extends AbstractProxy {
+public class MailProxy extends IntegrationAdapterProxy {
 
     private static final Map<String, Class<? extends IntegrationAdapter>> INTEGRATION_TYPE_ADAPTERS = Map.of(
             "EMAIL", MailIntegrationAdapter.class

@@ -193,7 +193,7 @@ public class TestService {
                 WorkItem knownIssue = workItemService.getWorkItemByTestCaseIdAndHashCode(existingTest.getTestCaseId(),
                         getTestMessageHashCode(test.getMessage()));
                 if (knownIssue != null) {
-                    boolean isJiraIdClosed = testCaseManagementService.isEnabledAndConnected() && testCaseManagementService.isIssueClosed(knownIssue.getJiraId());
+                    boolean isJiraIdClosed = testCaseManagementService.isEnabledAndConnected(null) && testCaseManagementService.isIssueClosed(knownIssue.getJiraId());
                     if (!isJiraIdClosed) {
                         existingTest.setKnownIssue(true);
                         existingTest.setBlocker(knownIssue.isBlocker());

@@ -15,13 +15,22 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter;
 
-import com.qaprosoft.zafira.models.db.integration.Integration;
-
+/**
+ * Represents adapter for specific integration instance of certain type.
+ * Adapter is created per integration rather than per integration type or group.
+ */
 public interface IntegrationAdapter {
 
+    /**
+     * Returns id of integration adapter corresponds to.
+     * @return integration id
+     */
+    Long getIntegrationId();
+
+    /**
+     * Returns current adapter connectivity state.
+     * @return {@code true} if adapter is connected
+     */
     boolean isConnected();
 
-    String getType();
-
-    Integration getIntegration();
 }

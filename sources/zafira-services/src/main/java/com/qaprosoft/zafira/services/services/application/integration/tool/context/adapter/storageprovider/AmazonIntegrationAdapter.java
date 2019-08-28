@@ -70,7 +70,7 @@ public class AmazonIntegrationAdapter extends AbstractIntegrationAdapter impleme
     public AmazonIntegrationAdapter(Integration integration,
                                     URLResolver urlResolver,
                                     Map<String, Object> additionalProperties) {
-        super("AMAZON", integration);
+        super(integration);
 
         this.urlResolver = urlResolver;
         this.multitenant = (Boolean) additionalProperties.get("multitenant");

@@ -15,29 +15,29 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.impl;
 
-import java.util.*;
-
-import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegration;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.storageprovider.StorageProviderAdapter;
-
 import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.storageprovider.StorageProviderAdapter;
 import org.springframework.stereotype.Component;
 
-@Component
-public class StorageProviderService extends AbstractIntegration<StorageProviderAdapter> {
+import java.util.Optional;
 
-    public StorageProviderService() {
-        super("AMAZON");
+@Component
+public class StorageProviderService extends AbstractIntegrationService<StorageProviderAdapter> {
+
+    public StorageProviderService(IntegrationService integrationService) {
+        super(integrationService, "AMAZON");
     }
 
     public String saveFile(final FileUploadType file) {
-        StorageProviderAdapter storageProviderAdapter = getDefaultAdapter();
+        StorageProviderAdapter storageProviderAdapter = getAdapterForIntegration(null);
         return storageProviderAdapter.saveFile(file);
     }
 
     public void removeFile(final String linkToFile) {
-        StorageProviderAdapter storageProviderAdapter = getDefaultAdapter();
+        StorageProviderAdapter storageProviderAdapter = getAdapterForIntegration(null);
         storageProviderAdapter.removeFile(linkToFile);
     }
 
@@ -47,7 +47,7 @@ public class StorageProviderService extends AbstractIntegration<StorageProviderA
      * @return {@link SessionCredentials} object
      */
     public Optional<SessionCredentials> getTemporarySessionCredentials(int expiresIn) {
-        StorageProviderAdapter storageProviderAdapter = getDefaultAdapter();
+        StorageProviderAdapter storageProviderAdapter = getAdapterForIntegration(null);
         return storageProviderAdapter.getTemporarySessionCredentials(expiresIn);
     }
 

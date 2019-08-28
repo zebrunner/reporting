@@ -25,7 +25,7 @@ public class QTestIntegrationAdapter extends AbstractIntegrationAdapter implemen
     private final String url;
 
     public QTestIntegrationAdapter(Integration integration) {
-        super("QTEST", integration);
+        super(integration);
 
         this.url = getAttributeValue(QTestParam.QTEST_URL);
     }

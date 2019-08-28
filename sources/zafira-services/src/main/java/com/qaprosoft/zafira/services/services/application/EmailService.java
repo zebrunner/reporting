@@ -15,9 +15,10 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.util.Arrays;
-import java.util.regex.Pattern;
-
+import com.qaprosoft.zafira.models.db.Attachment;
+import com.qaprosoft.zafira.services.services.application.emails.IEmailMessage;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.MailService;
+import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +26,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
 
-import com.qaprosoft.zafira.models.db.Attachment;
-import com.qaprosoft.zafira.services.services.application.integration.tool.impl.MailService;
-import com.qaprosoft.zafira.services.services.application.emails.IEmailMessage;
-import com.qaprosoft.zafira.services.util.FreemarkerUtil;
+import java.util.Arrays;
+import java.util.regex.Pattern;
 
 @Component
 public class EmailService {
@@ -48,7 +47,7 @@ public class EmailService {
 
     public String sendEmail(final IEmailMessage message, final String... emails) {
 
-        if (!mailService.isEnabledAndConnected()) {
+        if (!mailService.isEnabledAndConnected(null)) {
             return null;
         }
 

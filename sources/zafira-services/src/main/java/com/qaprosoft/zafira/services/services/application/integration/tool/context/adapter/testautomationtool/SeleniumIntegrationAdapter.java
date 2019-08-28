@@ -47,7 +47,7 @@ public class SeleniumIntegrationAdapter extends AbstractIntegrationAdapter imple
     private final String password;
 
     public SeleniumIntegrationAdapter(Integration integration) {
-        super("SELENIUM", integration);
+        super(integration);
 
         this.url = getAttributeValue(SeleniumParam.SELENIUM_URL);
         this.username = getAttributeValue(SeleniumParam.SELENIUM_USERNAME);

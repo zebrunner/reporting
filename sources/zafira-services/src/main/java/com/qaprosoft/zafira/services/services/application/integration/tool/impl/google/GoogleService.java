@@ -15,21 +15,22 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.impl.google;
 
-import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegration;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.google.GoogleServiceAdapter;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 @Component
-public class GoogleService extends AbstractIntegration<GoogleServiceAdapter> {
+public class GoogleService extends AbstractIntegrationService<GoogleServiceAdapter> {
 
-    public GoogleService() {
-        super("GOOGLE");
+    public GoogleService(IntegrationService integrationService) {
+        super(integrationService, "GOOGLE");
     }
 
     public String getTemporaryAccessToken(Long expiresIn) throws IOException {
-        GoogleServiceAdapter googleAdapter = getDefaultAdapter();
+        GoogleServiceAdapter googleAdapter = getAdapterForIntegration(null);
         return googleAdapter.getTemporaryAccessToken(expiresIn);
     }
 
@@ -39,7 +40,7 @@ public class GoogleService extends AbstractIntegration<GoogleServiceAdapter> {
      * @return google drive service client
      */
     public GoogleDriveService getDriveService() {
-        GoogleServiceAdapter googleAdapter = getDefaultAdapter();
+        GoogleServiceAdapter googleAdapter = getAdapterForIntegration(null);
         return googleAdapter.getDriveService();
     }
 
@@ -49,7 +50,7 @@ public class GoogleService extends AbstractIntegration<GoogleServiceAdapter> {
      * @return google drive service client
      */
     public GoogleSpreadsheetsService getSpreadsheetsService() {
-        GoogleServiceAdapter googleAdapter = getDefaultAdapter();
+        GoogleServiceAdapter googleAdapter = getAdapterForIntegration(null);
         return googleAdapter.getSpreadsheetsService();
     }
 }

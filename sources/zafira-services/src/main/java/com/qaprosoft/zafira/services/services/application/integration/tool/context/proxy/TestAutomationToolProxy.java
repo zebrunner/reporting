@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class TestAutomationToolProxy extends AbstractProxy {
+public class TestAutomationToolProxy extends IntegrationAdapterProxy {
 
     private static final Map<String, Class<? extends IntegrationAdapter>> INTEGRATION_TYPE_ADAPTERS = Map.of(
             "SELENIUM", SeleniumIntegrationAdapter.class
