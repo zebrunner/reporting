@@ -15,25 +15,23 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-
 import com.qaprosoft.zafira.models.db.integration.Integration;
 import com.qaprosoft.zafira.services.services.application.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationSettingService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.AbstractProxy;
-import com.qaprosoft.zafira.services.util.TenancyDbInitial;
-
+import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.IntegrationAdapterProxy;
 import com.qaprosoft.zafira.services.services.management.TenancyService;
+import com.qaprosoft.zafira.services.util.TenancyDbInitial;
 import com.qaprosoft.zafira.services.util.TenancyInitial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @DependsOn("databaseStateManager")
@@ -44,11 +42,11 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
     private final TenancyService tenancyService;
     private final IntegrationService integrationService;
     private final IntegrationSettingService integrationSettingService;
-    private final Map<String, AbstractProxy> integrationProxies;
+    private final Map<String, IntegrationAdapterProxy> integrationProxies;
     private final CryptoService cryptoService;
 
     public IntegrationTenancyStorage(TenancyService tenancyService, IntegrationService integrationService, IntegrationSettingService integrationSettingService,
-                                     Map<String, AbstractProxy> integrationProxies, CryptoService cryptoService) {
+                                     Map<String, IntegrationAdapterProxy> integrationProxies, CryptoService cryptoService) {
         this.tenancyService = tenancyService;
         this.integrationService = integrationService;
         this.integrationSettingService = integrationSettingService;

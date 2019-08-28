@@ -15,16 +15,17 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.impl;
 
-import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegration;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.accessmanagement.AccessManagementAdapter;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AccessManagementService extends AbstractIntegration<AccessManagementAdapter> {
+public class AccessManagementService extends AbstractIntegrationService<AccessManagementAdapter> {
 
-    public AccessManagementService() {
-        super("LDAP");
+    public AccessManagementService(IntegrationService integrationService) {
+        super(integrationService, "LDAP");
     }
 
     /**
@@ -35,12 +36,12 @@ public class AccessManagementService extends AbstractIntegration<AccessManagemen
      * @return - search result
      */
     public boolean isUserExists(String username) {
-        AccessManagementAdapter accessManagementAdapter = getDefaultAdapter();
+        AccessManagementAdapter accessManagementAdapter = getAdapterForIntegration(null);
         return accessManagementAdapter.isUserExists(username);
     }
 
     public BindAuthenticator getBindAuthenticator() {
-        AccessManagementAdapter accessManagementAdapter = getDefaultAdapter();
+        AccessManagementAdapter accessManagementAdapter = getAdapterForIntegration(null);
         return accessManagementAdapter.getBindAuthenticator();
     }
 }

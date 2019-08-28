@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class AutomationServerProxy extends AbstractProxy {
+public class AutomationServerProxy extends IntegrationAdapterProxy {
 
     private static final Map<String, Class<? extends IntegrationAdapter>> INTEGRATION_TYPE_ADAPTERS = Map.of(
             "JENKINS", JenkinsIntegrationAdapter.class

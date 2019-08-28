@@ -44,7 +44,7 @@ public class RabbitMQIntegrationAdapter extends AbstractIntegrationAdapter imple
     private CompletableFuture<Connection> connectionCompletableFuture;
 
     public RabbitMQIntegrationAdapter(Integration integration, Map<String, Object> additionalProperties) {
-        super("RABBITMQ", integration);
+        super(integration);
 
         this.queues = (Map<String, Queue>) additionalProperties.get("queues");
 

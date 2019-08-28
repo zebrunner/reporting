@@ -251,7 +251,7 @@ public class TestsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/jira/connect")
     public boolean getConnectionToJira() {
-        return testCaseManagementService.isEnabledAndConnected();
+        return testCaseManagementService.isEnabledAndConnected(null);
     }
 
     @ResponseStatusDetails

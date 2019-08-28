@@ -7,6 +7,7 @@ ext {
         boot_starter_security : "org.springframework.boot:spring-boot-starter-security",
 //        boot_starter_data_jdbc : "org.springframework.boot:spring-boot-starter-data-jdbc",
         boot_starter_data_jpa : "org.springframework.boot:spring-boot-starter-data-jpa",
+        boot_starter_data_redis : "org.springframework.boot:spring-boot-starter-data-redis",
         boot_starter_amqp : "org.springframework.boot:spring-boot-starter-amqp",
         boot_starter_freemarker : "org.springframework.boot:spring-boot-starter-freemarker",
         boot_starter_websocket: "org.springframework.boot:spring-boot-starter-websocket",

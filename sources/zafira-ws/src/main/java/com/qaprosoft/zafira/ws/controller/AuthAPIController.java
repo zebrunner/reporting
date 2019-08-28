@@ -176,7 +176,7 @@ public class AuthAPIController extends AbstractController {
             throw new ForbiddenOperationException();
         }
         if (invitation.getSource().equals(User.Source.LDAP)) {
-            if (accessManagementService.isEnabledAndConnected() && accessManagementService.isUserExists(userType.getUsername())) {
+            if (accessManagementService.isEnabledAndConnected(null) && accessManagementService.isUserExists(userType.getUsername())) {
                 throw new ForbiddenOperationException();
             }
         }

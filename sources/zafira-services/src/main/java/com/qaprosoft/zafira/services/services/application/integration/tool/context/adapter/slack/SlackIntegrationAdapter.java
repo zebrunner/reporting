@@ -50,7 +50,7 @@ public class SlackIntegrationAdapter extends AbstractIntegrationAdapter implemen
                                    URLResolver urlResolver,
                                    AutomationServerService automationServerService,
                                    Map<String, String> additionalProperties) {
-        super("SLACK", integration);
+        super(integration);
 
         this.urlResolver = urlResolver;
         this.automationServerService = automationServerService;

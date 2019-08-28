@@ -39,7 +39,7 @@ public class MailIntegrationAdapter extends AbstractIntegrationAdapter implement
     private Boolean isConnected;
 
     public MailIntegrationAdapter(Integration integration) {
-        super("EMAIL", integration);
+        super(integration);
 
         this.host = getAttributeValue(EmailParam.EMAIL_HOST);
         this.port = Integer.parseInt(getAttributeValue(EmailParam.EMAIL_PORT));

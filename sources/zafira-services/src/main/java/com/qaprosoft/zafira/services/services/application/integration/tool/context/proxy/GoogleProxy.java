@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class GoogleProxy extends AbstractProxy {
+public class GoogleProxy extends IntegrationAdapterProxy {
 
     private static final Map<String, Class<? extends IntegrationAdapter>> INTEGRATION_TYPE_ADAPTERS = Map.of(
             "GOOGLE", GoogleIntegrationAdapter.class

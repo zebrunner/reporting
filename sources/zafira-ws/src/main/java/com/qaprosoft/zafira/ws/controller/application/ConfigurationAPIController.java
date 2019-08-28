@@ -21,8 +21,8 @@ import com.qaprosoft.zafira.services.services.application.ProjectService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
 import com.qaprosoft.zafira.services.services.application.VersionService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.AutomationServerService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.impl.TestCaseManagementService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.SlackService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.TestCaseManagementService;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -96,7 +96,7 @@ public class ConfigurationAPIController extends AbstractController {
     @GetMapping("/jenkins")
     public Map<String, Object> getJenkinsConfig() {
         Map<String, Object> config = new HashMap<>();
-        config.put("connected", automationServerService.isEnabledAndConnected());
+        config.put("connected", automationServerService.isEnabledAndConnected(null));
         return config;
     }
 
@@ -106,7 +106,7 @@ public class ConfigurationAPIController extends AbstractController {
     @GetMapping("/jira")
     public Map<String, Object> getJiraConfig() {
         Map<String, Object> config = new HashMap<>();
-        config.put("connected", testCaseManagementService.isEnabledAndConnected());
+        config.put("connected", testCaseManagementService.isEnabledAndConnected(null));
         return config;
     }
 
@@ -118,7 +118,7 @@ public class ConfigurationAPIController extends AbstractController {
         Map<String, Object> config = new HashMap<>();
         TestRun tr = testRunService.getTestRunByIdFull(id);
         boolean available = slackService.getWebhook() != null && StringUtils.isNotEmpty(tr.getSlackChannels())
-                && slackService.isEnabledAndConnected();
+                && slackService.isEnabledAndConnected(null);
         config.put("available", available);
         return config;
     }
@@ -129,7 +129,7 @@ public class ConfigurationAPIController extends AbstractController {
     @GetMapping("/slack")
     public Map<String, Object> isSlackAvailable() {
         Map<String, Object> config = new HashMap<>();
-        boolean available = slackService.getWebhook() != null && slackService.isEnabledAndConnected();
+        boolean available = slackService.getWebhook() != null && slackService.isEnabledAndConnected(null);
         config.put("available", available);
         return config;
     }

@@ -15,21 +15,6 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import com.qaprosoft.zafira.models.dto.JenkinsLauncherType;
-import com.qaprosoft.zafira.services.util.URLResolver;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherMapper;
@@ -38,6 +23,7 @@ import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Launcher;
 import com.qaprosoft.zafira.models.db.ScmAccount;
 import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.dto.JenkinsLauncherType;
 import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
@@ -49,6 +35,19 @@ import com.qaprosoft.zafira.services.services.application.integration.tool.impl.
 import com.qaprosoft.zafira.services.services.application.scm.GitHubService;
 import com.qaprosoft.zafira.services.services.application.scm.ScmAccountService;
 import com.qaprosoft.zafira.services.services.auth.JWTService;
+import com.qaprosoft.zafira.services.util.URLResolver;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class LauncherService {
@@ -82,7 +81,7 @@ public class LauncherService {
 
     @Transactional(rollbackFor = Exception.class)
     public Launcher createLauncher(Launcher launcher, User owner) {
-        if (automationServerService.isEnabledAndConnected()) {
+        if (automationServerService.isEnabledAndConnected(null)) {
             String launcherJobUrl = automationServerService.buildLauncherJobUrl();
             Job job = jobsService.getJobByJobURL(launcherJobUrl);
             if (job == null) {
@@ -169,7 +168,7 @@ public class LauncherService {
         }
         
         // If Selenium integration is enabled pass selenium_host with basic auth as job argument
-        if(testAutomationToolService.isEnabledAndConnected()) {
+        if(testAutomationToolService.isEnabledAndConnected(null)) {
             String seleniumURL = testAutomationToolService.buildUrl();
             jobParameters.put("selenium_host", seleniumURL);
         }

@@ -9,6 +9,7 @@ dependencies {
 
     implementation libraries.boot_starter_amqp
     implementation libraries.boot_starter_freemarker
+    implementation libraries.boot_starter_data_redis
 
     compile libraries.spring_security_ldap
     compile libraries.javax_mail

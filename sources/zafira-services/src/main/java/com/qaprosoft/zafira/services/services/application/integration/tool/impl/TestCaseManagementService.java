@@ -16,29 +16,30 @@
 package com.qaprosoft.zafira.services.services.application.integration.tool.impl;
 
 import com.qaprosoft.zafira.models.dto.TestCaseManagementIssueType;
-import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegration;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.testcasemanagement.TestCaseManagementAdapter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TestCaseManagementService extends AbstractIntegration<TestCaseManagementAdapter> {
+public class TestCaseManagementService extends AbstractIntegrationService<TestCaseManagementAdapter> {
 
-    public TestCaseManagementService() {
-        super("JIRA");
+    public TestCaseManagementService(IntegrationService integrationService) {
+        super(integrationService, "JIRA");
     }
 
     public TestCaseManagementIssueType getIssue(String ticket) {
-        TestCaseManagementAdapter testCaseManagementAdapter = getDefaultAdapter();
+        TestCaseManagementAdapter testCaseManagementAdapter = getAdapterForIntegration(null);
         return testCaseManagementAdapter.getIssue(ticket);
     }
 
     public String getUrl() {
-        TestCaseManagementAdapter testCaseManagementAdapter = getDefaultAdapter();
+        TestCaseManagementAdapter testCaseManagementAdapter = getAdapterForIntegration(null);
         return testCaseManagementAdapter.getUrl();
     }
 
     public boolean isIssueClosed(String ticket) {
-        TestCaseManagementAdapter testCaseManagementAdapter = getDefaultAdapter();
+        TestCaseManagementAdapter testCaseManagementAdapter = getAdapterForIntegration(null);
         return testCaseManagementAdapter.isIssueClosed(ticket);
     }
 
