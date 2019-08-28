@@ -86,7 +86,7 @@
         <include refid="find"/>
         <![CDATA[
             WHERE
-                IT.NAME = #{integrationTypeName} AND IP.NAME = #{paramName} AND I.DEFAULT = TRUE
+                IT.NAME = #{integrationTypeName} AND IP.NAME = #{paramName} AND I.IS_DEFAULT = TRUE
         ]]>
     </select>
 
