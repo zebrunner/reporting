@@ -94,6 +94,13 @@
         <include refid="find"/>
     </select>
 
+    <select id="findAllEncrypted" resultMap="IntegrationSettingResultMap">
+        <include refid="find"/>
+        <![CDATA[
+            WHERE INS.ENCRYPTED = TRUE
+        ]]>
+    </select>
+
     <update id="update">
         <![CDATA[
             UPDATE INTEGRATION_SETTINGS

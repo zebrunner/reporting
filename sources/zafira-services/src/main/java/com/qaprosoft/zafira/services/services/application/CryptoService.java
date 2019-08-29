@@ -17,6 +17,10 @@ package com.qaprosoft.zafira.services.services.application;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.crypto.KeyGenerator;
@@ -40,11 +44,15 @@ public class CryptoService {
 
     private final SettingsService settingsService;
     private final String salt;
+    private final Map<String, CryptoDriven<?>> cryptoDrivenServices;
 
     public CryptoService(SettingsService settingsService,
-            @Value("${crypto-salt}") String salt) {
+                         @Value("${crypto-salt}") String salt,
+                         Map<String, CryptoDriven<?>> cryptoDrivenServices
+    ) {
         this.settingsService = settingsService;
         this.salt = salt;
+        this.cryptoDrivenServices = cryptoDrivenServices;
     }
 
     @PostConstruct
@@ -83,6 +91,43 @@ public class CryptoService {
         Setting keySetting = settingsService.getSettingByName("KEY");
         keySetting.setValue(key);
         settingsService.updateSetting(keySetting);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void reencrypt() {
+        Map<String, Collection<?>> tempMap = new HashMap<>(collectCollectionsToReencrypt());
+        tempMap.forEach(this::decryptCryptoDrivenServiceCollection);
+        regenerateKey();
+        tempMap.forEach((serviceName, collection) -> {
+            encryptCryptoDrivenServiceCollection(serviceName, collection);
+            CryptoDriven cryptoDrivenService = cryptoDrivenServices.get(serviceName);
+            cryptoDrivenService.afterReencryptOperation(collection);
+        });
+    }
+
+    private Map<String, Collection<?>> collectCollectionsToReencrypt() {
+        return cryptoDrivenServices.entrySet().stream()
+                                   .collect(Collectors.toMap(Map.Entry::getKey, cryptoDrivenEntry -> cryptoDrivenEntry.getValue().getEncryptedCollection()));
+    }
+
+    @SuppressWarnings("unchecked")
+    private void decryptCryptoDrivenServiceCollection(String serviceName, Collection<?> collection) {
+        CryptoDriven cryptoDrivenService = cryptoDrivenServices.get(serviceName);
+        collection.forEach(o -> {
+            String encryptedValue = cryptoDrivenService.getEncryptedValue(o);
+            String decryptedValue = decrypt(encryptedValue);
+            cryptoDrivenService.setEncryptedValue(o, decryptedValue);
+        });
+    }
+
+    @SuppressWarnings("unchecked")
+    private void encryptCryptoDrivenServiceCollection(String serviceName, Collection<?> collection) {
+        CryptoDriven cryptoDrivenService = cryptoDrivenServices.get(serviceName);
+        collection.forEach(o -> {
+            String decryptedValue = cryptoDrivenService.getEncryptedValue(o);
+            String encryptedValue = encrypt(decryptedValue);
+            cryptoDrivenService.setEncryptedValue(o, encryptedValue);
+        });
     }
 
     private static SecretKey generateKey(String keyType, int size) throws NoSuchAlgorithmException {

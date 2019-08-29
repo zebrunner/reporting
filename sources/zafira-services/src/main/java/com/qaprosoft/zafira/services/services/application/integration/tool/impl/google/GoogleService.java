@@ -18,6 +18,7 @@ package com.qaprosoft.zafira.services.services.application.integration.tool.impl
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.google.GoogleServiceAdapter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -25,13 +26,18 @@ import java.io.IOException;
 @Component
 public class GoogleService extends AbstractIntegrationService<GoogleServiceAdapter> {
 
-    public GoogleService(IntegrationService integrationService) {
+    private final long googleTokenExpiration;
+
+    public GoogleService(IntegrationService integrationService,
+                         @Value("${google-token-expiration}") long googleTokenExpiration
+    ) {
         super(integrationService, "GOOGLE");
+        this.googleTokenExpiration = googleTokenExpiration;
     }
 
-    public String getTemporaryAccessToken(Long expiresIn) throws IOException {
+    public String getTemporaryAccessToken() throws IOException {
         GoogleServiceAdapter googleAdapter = getAdapterForIntegration(null);
-        return googleAdapter.getTemporaryAccessToken(expiresIn);
+        return googleAdapter.getTemporaryAccessToken(googleTokenExpiration);
     }
 
     /**

@@ -20,6 +20,7 @@ import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.storageprovider.StorageProviderAdapter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -27,8 +28,13 @@ import java.util.Optional;
 @Component
 public class StorageProviderService extends AbstractIntegrationService<StorageProviderAdapter> {
 
-    public StorageProviderService(IntegrationService integrationService) {
+    private final int storageProviderTokenExpiration;
+
+    public StorageProviderService(IntegrationService integrationService,
+                                  @Value("${amazon-token-expiration}") int storageProviderTokenExpiration
+    ) {
         super(integrationService, "AMAZON");
+        this.storageProviderTokenExpiration = storageProviderTokenExpiration;
     }
 
     public String saveFile(final FileUploadType file) {
@@ -46,9 +52,9 @@ public class StorageProviderService extends AbstractIntegrationService<StoragePr
      * 
      * @return {@link SessionCredentials} object
      */
-    public Optional<SessionCredentials> getTemporarySessionCredentials(int expiresIn) {
+    public Optional<SessionCredentials> getTemporarySessionCredentials() {
         StorageProviderAdapter storageProviderAdapter = getAdapterForIntegration(null);
-        return storageProviderAdapter.getTemporarySessionCredentials(expiresIn);
+        return storageProviderAdapter.getTemporarySessionCredentials(storageProviderTokenExpiration);
     }
 
 }

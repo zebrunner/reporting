@@ -67,7 +67,6 @@ public class IntegrationServiceImpl implements IntegrationService {
         this.integrationInitializer = integrationInitializer;
     }
 
-    // TODO: 2019-08-23 add notification and add to context mapping
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integration create(Integration integration, Long integrationTypeId) {
