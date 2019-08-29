@@ -29,7 +29,7 @@ public class TestAutomationToolService extends AbstractIntegrationService<TestAu
     }
 
     public String buildUrl() {
-        TestAutomationToolAdapter testAutomationToolAdapter = getAdapterForIntegration(null);
+        TestAutomationToolAdapter testAutomationToolAdapter = getAdapterByIntegrationId(null);
         return testAutomationToolAdapter.buildUrl();
     }
 

@@ -29,7 +29,7 @@ public class MessageBrokerService extends AbstractIntegrationService<MessageBrok
     }
 
     public String getSettingQueueName() {
-        MessageBrokerAdapter messageBrokerAdapter = getAdapterForIntegration(null);
+        MessageBrokerAdapter messageBrokerAdapter = getAdapterByIntegrationId(null);
         return messageBrokerAdapter.getSettingQueueName();
     }
 

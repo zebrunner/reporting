@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class IntegrationServiceImpl implements IntegrationService {
@@ -73,6 +74,8 @@ public class IntegrationServiceImpl implements IntegrationService {
         unassignCurrentDefaultIntegrationIfNeed(integration, integrationTypeId);
         integration.setEnabled(true);
         verifyIntegration(integrationTypeId);
+        String backReferenceId = generateBackReferenceId(integrationTypeId);
+        integration.setBackReferenceId(backReferenceId);
         integrationMapper.create(integration, integrationTypeId);
         Set<IntegrationSetting> integrationSettingSet = integrationSettingService.create(integration.getIntegrationSettings(), integration.getId());
         integration.setIntegrationSettings(new ArrayList<>(integrationSettingSet));
@@ -139,6 +142,11 @@ public class IntegrationServiceImpl implements IntegrationService {
         integrationSettingService.update(integration.getIntegrationSettings(), integration.getId());
         notifyToolReinitiated(integration);
         return integration;
+    }
+
+    private String generateBackReferenceId(Long integrationTypeId) {
+        IntegrationType integrationType = integrationTypeService.retrieveById(integrationTypeId);
+        return integrationType.getName() + "_" + UUID.randomUUID().toString();
     }
 
     private void unassignCurrentDefaultIntegrationIfNeed(Integration integration, Long integrationTypeId) {

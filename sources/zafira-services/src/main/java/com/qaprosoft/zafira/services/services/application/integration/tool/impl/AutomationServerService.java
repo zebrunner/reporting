@@ -45,7 +45,7 @@ public class AutomationServerService extends AbstractIntegrationService<Automati
 
     public boolean rerunJob(Job ciJob, Integer buildNumber, boolean rerunFailures) {
         JobResult jobResult = null;
-        AutomationServerAdapter automationServerAdapter = getAdapterForIntegration(ciJob.getAutomationServerId());
+        AutomationServerAdapter automationServerAdapter = getAdapterByBackReferenceId(ciJob.getAutomationServerId());
         try {
             Map<String, String> params = automationServerAdapter.getBuildParametersMap(ciJob, buildNumber)
                                                                 .orElseThrow(() -> new ForbiddenOperationException("Unable to rerun CI job"));
@@ -62,7 +62,7 @@ public class AutomationServerService extends AbstractIntegrationService<Automati
 
     public boolean debug(Job ciJob, Integer buildNumber) {
         JobResult jobResult = null;
-        AutomationServerAdapter automationServerAdapter = getAdapterForIntegration(ciJob.getAutomationServerId());
+        AutomationServerAdapter automationServerAdapter = getAdapterByBackReferenceId(ciJob.getAutomationServerId());
         try {
             Map<String, String> params = automationServerAdapter.getBuildParametersMap(ciJob, buildNumber)
                                                                 .orElseThrow(() -> new ForbiddenOperationException("Unable to rerun CI job"));
@@ -77,65 +77,65 @@ public class AutomationServerService extends AbstractIntegrationService<Automati
     }
 
     public JobResult buildJob(Job job, Map<String, String> jobParameters) {
-        AutomationServerAdapter automationServerAdapter = getAdapterForIntegration(job.getAutomationServerId());
+        AutomationServerAdapter automationServerAdapter = getAdapterByBackReferenceId(job.getAutomationServerId());
         return automationServerAdapter.buildJob(job, jobParameters);
     }
 
     public JobResult buildScannerJob(String repositoryName, Map<String, String> jobParameters, boolean rescan) {
-        AutomationServerAdapter automationServerAdapter = getAdapterForIntegration(null);
+        AutomationServerAdapter automationServerAdapter = getAdapterByIntegrationId(null);
         String jobUrl = automationServerAdapter.buildJobUrl(repositoryName, rescan);
 //        LOGGER.error("Job parameters: " + jobParameters);
         return automationServerAdapter.buildJob(jobUrl, jobParameters);
     }
 
     public JobResult abortScannerJob(String repositoryName, Integer buildNumber, boolean rescan) {
-        AutomationServerAdapter automationServerAdapter = getAdapterForIntegration(null);
+        AutomationServerAdapter automationServerAdapter = getAdapterByIntegrationId(null);
         String jobUrl = automationServerAdapter.buildJobUrl(repositoryName, rescan);
         return automationServerAdapter.abortJob(jobUrl, buildNumber);
     }
 
     public JobResult abortJob(Job ciJob, Integer buildNumber) {
-        AutomationServerAdapter automationServerAdapter = getAdapterForIntegration(null);
+        AutomationServerAdapter automationServerAdapter = getAdapterByIntegrationId(null);
         return automationServerAdapter.abortJob(ciJob, buildNumber);
     }
 
     public List<BuildParameterType> getBuildParameters(Job ciJob, Integer buildNumber) {
-        AutomationServerAdapter automationServerAdapter = getAdapterForIntegration(null);
+        AutomationServerAdapter automationServerAdapter = getAdapterByIntegrationId(null);
         return automationServerAdapter.getBuildParameters(ciJob, buildNumber);
     }
 
     public Optional<Map<String, String>> getBuildParametersMap(Job ciJob, Integer buildNumber) {
-        AutomationServerAdapter automationServerAdapter = getAdapterForIntegration(null);
+        AutomationServerAdapter automationServerAdapter = getAdapterByIntegrationId(null);
         return automationServerAdapter.getBuildParametersMap(ciJob, buildNumber);
     }
 
     public Map<Integer, String> getBuildConsoleOutputHtml(Job ciJob, Integer buildNumber, Integer stringsCount, Integer fullCount) {
-        AutomationServerAdapter automationServerAdapter = getAdapterForIntegration(null);
+        AutomationServerAdapter automationServerAdapter = getAdapterByIntegrationId(null);
         return automationServerAdapter.getBuildConsoleOutputHtml(ciJob, buildNumber, stringsCount, fullCount);
     }
 
     public Integer getBuildNumber(String queueItemUrl) {
-        AutomationServerAdapter automationServerAdapter = getAdapterForIntegration(null);
+        AutomationServerAdapter automationServerAdapter = getAdapterByIntegrationId(null);
         return automationServerAdapter.getBuildNumber(queueItemUrl);
     }
 
     public Optional<Job> getJobByUrl(String jobUrl) {
-        AutomationServerAdapter automationServerAdapter = getAdapterForIntegration(null);
+        AutomationServerAdapter automationServerAdapter = getAdapterByIntegrationId(null);
         return Optional.ofNullable(automationServerAdapter.getJobByUrl(jobUrl));
     }
 
     public String buildLauncherJobUrl() {
-        AutomationServerAdapter automationServerAdapter = getAdapterForIntegration(null);
+        AutomationServerAdapter automationServerAdapter = getAdapterByIntegrationId(null);
         return automationServerAdapter.buildLauncherJobUrl();
     }
 
     public String getUrl() {
-        AutomationServerAdapter automationServerAdapter = getAdapterForIntegration(null);
+        AutomationServerAdapter automationServerAdapter = getAdapterByIntegrationId(null);
         return automationServerAdapter.getUrl();
     }
 
     public String getFolder() {
-        AutomationServerAdapter automationServerAdapter = getAdapterForIntegration(null);
+        AutomationServerAdapter automationServerAdapter = getAdapterByIntegrationId(null);
         return automationServerAdapter.getFolder();
     }
 

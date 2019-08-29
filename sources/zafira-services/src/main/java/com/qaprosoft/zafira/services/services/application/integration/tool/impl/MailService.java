@@ -36,12 +36,12 @@ public class MailService extends AbstractIntegrationService<MailServiceAdapter> 
     }
 
     public CompletableFuture<Void> send(MimeMessagePreparator preparator) {
-        MailServiceAdapter mailServiceAdapter = getAdapterForIntegration(null);
+        MailServiceAdapter mailServiceAdapter = getAdapterByIntegrationId(null);
         return mailServiceAdapter.send(preparator);
     }
 
     public void setFromAddress(MimeMessageHelper msg) throws MessagingException, UnsupportedEncodingException {
-        MailServiceAdapter mailServiceAdapter = getAdapterForIntegration(null);
+        MailServiceAdapter mailServiceAdapter = getAdapterByIntegrationId(null);
         String fromAddress = mailServiceAdapter.getFromAddress();
         String username = mailServiceAdapter.getUsername();
         if (!StringUtils.isBlank(fromAddress)) {

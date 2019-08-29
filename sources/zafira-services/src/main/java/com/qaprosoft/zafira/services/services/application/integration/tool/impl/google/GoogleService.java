@@ -38,7 +38,7 @@ public class GoogleService extends AbstractIntegrationService<GoogleServiceAdapt
     }
 
     public String getTemporaryAccessToken() throws IOException {
-        GoogleServiceAdapter googleAdapter = getAdapterForIntegration(null);
+        GoogleServiceAdapter googleAdapter = getAdapterByIntegrationId(null);
         return googleAdapter.getTemporaryAccessToken(googleTokenExpiration);
     }
 
@@ -48,7 +48,7 @@ public class GoogleService extends AbstractIntegrationService<GoogleServiceAdapt
      * @return google drive service client
      */
     public GoogleDriveService getDriveService() {
-        GoogleServiceAdapter googleAdapter = getAdapterForIntegration(null);
+        GoogleServiceAdapter googleAdapter = getAdapterByIntegrationId(null);
         return googleAdapter.getDriveService();
     }
 
@@ -58,7 +58,7 @@ public class GoogleService extends AbstractIntegrationService<GoogleServiceAdapt
      * @return google drive service client
      */
     public GoogleSpreadsheetsService getSpreadsheetsService() {
-        GoogleServiceAdapter googleAdapter = getAdapterForIntegration(null);
+        GoogleServiceAdapter googleAdapter = getAdapterByIntegrationId(null);
         return googleAdapter.getSpreadsheetsService();
     }
 }

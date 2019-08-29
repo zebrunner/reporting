@@ -38,7 +38,7 @@ public abstract class AbstractIntegrationService<T extends GroupAdapter> {
     }
 
     public boolean isEnabledAndConnected(Long integrationId) {
-        IntegrationAdapter adapter = (IntegrationAdapter) getAdapterForIntegration(integrationId);
+        IntegrationAdapter adapter = (IntegrationAdapter) getAdapterByIntegrationId(integrationId);
 
         // we now need proper integration id since it can be null prior to this point, but never for adapter
         Integration integration = integrationService.retrieveById(adapter.getIntegrationId());
@@ -47,7 +47,7 @@ public abstract class AbstractIntegrationService<T extends GroupAdapter> {
     }
 
     @SuppressWarnings("unchecked")
-    public T getAdapterForIntegration(Long integrationId) {
+    public T getAdapterByIntegrationId(Long integrationId) {
         Optional<IntegrationAdapter> maybeAdapter;
         if (integrationId == null) {
             // can be null in case of legacy client call - use default adapter
@@ -57,6 +57,12 @@ public abstract class AbstractIntegrationService<T extends GroupAdapter> {
         }
 
         return (T) maybeAdapter.orElseThrow(() -> new UnsupportedOperationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND, defaultType)));
+    }
+
+    @SuppressWarnings("unchecked")
+    public T getAdapterByBackReferenceId(String backReferenceId) {
+        return (T) integrationAdapterProxy.getAdapter(backReferenceId)
+                                          .orElseThrow(() -> new UnsupportedOperationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND, defaultType)));
     }
 
     /*@Override

@@ -30,17 +30,17 @@ public class TestCaseManagementService extends AbstractIntegrationService<TestCa
     }
 
     public TestCaseManagementIssueType getIssue(String ticket) {
-        TestCaseManagementAdapter testCaseManagementAdapter = getAdapterForIntegration(null);
+        TestCaseManagementAdapter testCaseManagementAdapter = getAdapterByIntegrationId(null);
         return testCaseManagementAdapter.getIssue(ticket);
     }
 
     public String getUrl() {
-        TestCaseManagementAdapter testCaseManagementAdapter = getAdapterForIntegration(null);
+        TestCaseManagementAdapter testCaseManagementAdapter = getAdapterByIntegrationId(null);
         return testCaseManagementAdapter.getUrl();
     }
 
     public boolean isIssueClosed(String ticket) {
-        TestCaseManagementAdapter testCaseManagementAdapter = getAdapterForIntegration(null);
+        TestCaseManagementAdapter testCaseManagementAdapter = getAdapterByIntegrationId(null);
         return testCaseManagementAdapter.isIssueClosed(ticket);
     }
 

@@ -37,12 +37,12 @@ public class AccessManagementService extends AbstractIntegrationService<AccessMa
      * @return - search result
      */
     public boolean isUserExists(String username) {
-        AccessManagementAdapter accessManagementAdapter = getAdapterForIntegration(null);
+        AccessManagementAdapter accessManagementAdapter = getAdapterByIntegrationId(null);
         return accessManagementAdapter.isUserExists(username);
     }
 
     public BindAuthenticator getBindAuthenticator() {
-        AccessManagementAdapter accessManagementAdapter = getAdapterForIntegration(null);
+        AccessManagementAdapter accessManagementAdapter = getAdapterByIntegrationId(null);
         return accessManagementAdapter.getBindAuthenticator();
     }
 }

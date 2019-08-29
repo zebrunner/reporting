@@ -40,12 +40,12 @@ public class StorageProviderService extends AbstractIntegrationService<StoragePr
     }
 
     public String saveFile(final FileUploadType file) {
-        StorageProviderAdapter storageProviderAdapter = getAdapterForIntegration(null);
+        StorageProviderAdapter storageProviderAdapter = getAdapterByIntegrationId(null);
         return storageProviderAdapter.saveFile(file);
     }
 
     public void removeFile(final String linkToFile) {
-        StorageProviderAdapter storageProviderAdapter = getAdapterForIntegration(null);
+        StorageProviderAdapter storageProviderAdapter = getAdapterByIntegrationId(null);
         storageProviderAdapter.removeFile(linkToFile);
     }
 
@@ -55,7 +55,7 @@ public class StorageProviderService extends AbstractIntegrationService<StoragePr
      * @return {@link SessionCredentials} object
      */
     public Optional<SessionCredentials> getTemporarySessionCredentials() {
-        StorageProviderAdapter storageProviderAdapter = getAdapterForIntegration(null);
+        StorageProviderAdapter storageProviderAdapter = getAdapterByIntegrationId(null);
         return storageProviderAdapter.getTemporarySessionCredentials(storageProviderTokenExpiration);
     }
 

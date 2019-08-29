@@ -36,18 +36,18 @@ public class SlackService extends AbstractIntegrationService<SlackServiceAdapter
     public void sendStatusOnFinish(TestRun testRun) {
         String onFinishMessage = String.format(ON_FINISH_PATTERN, testRun.getId(), countElapsedInSMH(testRun.getElapsed()),
                 TestRunResultsEmail.buildStatusText(testRun));
-        SlackServiceAdapter slackServiceAdapter = getAdapterForIntegration(null);
+        SlackServiceAdapter slackServiceAdapter = getAdapterByIntegrationId(null);
         slackServiceAdapter.sendNotification(testRun, onFinishMessage);
     }
 
     public void sendStatusReviewed(TestRun testRun) {
         String reviewedMessage = String.format(REVIEWED_PATTERN, testRun.getId(), TestRunResultsEmail.buildStatusText(testRun));
-        SlackServiceAdapter slackServiceAdapter = getAdapterForIntegration(null);
+        SlackServiceAdapter slackServiceAdapter = getAdapterByIntegrationId(null);
         slackServiceAdapter.sendNotification(testRun, reviewedMessage);
     }
 
     public String getWebhook() {
-        SlackServiceAdapter slackServiceAdapter = getAdapterForIntegration(null);
+        SlackServiceAdapter slackServiceAdapter = getAdapterByIntegrationId(null);
         return slackServiceAdapter.getWebhook();
     }
 

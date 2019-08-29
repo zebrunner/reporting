@@ -91,6 +91,11 @@ public abstract class IntegrationAdapterProxy {
         TENANT_ADAPTERS.get(tenant).put(integrationId, integrationAdapter);
     }
 
+    public synchronized Optional<IntegrationAdapter> getAdapter(String backReferenceId) {
+        Integration integration = integrationService.retrieveByBackReferenceId(backReferenceId);
+        return getAdapter(integration.getId());
+    }
+
     public static synchronized Optional<IntegrationAdapter> getAdapter(Long integrationId) {
         Map<Long, IntegrationAdapter> adapters = TENANT_ADAPTERS.get(TenancyContext.getTenantName());
         return Optional.ofNullable(adapters.get(integrationId));
