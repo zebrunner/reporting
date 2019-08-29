@@ -20,6 +20,7 @@ import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsE
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.slack.SlackServiceAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.SlackProxy;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -28,8 +29,8 @@ public class SlackService extends AbstractIntegrationService<SlackServiceAdapter
     private final static String ON_FINISH_PATTERN = "Test run #%1$d has been completed after %2$s with status %3$s\n";
     private final static String REVIEWED_PATTERN = "Test run #%1$d has been reviewed. Status: %2$s\n";
 
-    public SlackService(IntegrationService integrationService) {
-        super(integrationService, "SLACK");
+    public SlackService(IntegrationService integrationService, SlackProxy slackProxy) {
+        super(integrationService, slackProxy, "SLACK");
     }
 
     public void sendStatusOnFinish(TestRun testRun) {

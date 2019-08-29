@@ -25,6 +25,7 @@ import com.qaprosoft.zafira.services.services.application.integration.Integratio
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.IntegrationAdapterProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -42,7 +43,9 @@ public class IntegrationInitializer {
     private final IntegrationTypeService integrationTypeService;
     private final IntegrationGroupService integrationGroupService;
 
-    public IntegrationInitializer(Map<String, IntegrationAdapterProxy> integrationProxies, IntegrationTypeService integrationTypeService, IntegrationGroupService integrationGroupService) {
+    public IntegrationInitializer(@Lazy Map<String, IntegrationAdapterProxy> integrationProxies,
+                                  IntegrationTypeService integrationTypeService,
+                                  IntegrationGroupService integrationGroupService) {
         this.integrationProxies = integrationProxies;
         this.integrationTypeService = integrationTypeService;
         this.integrationGroupService = integrationGroupService;

@@ -18,6 +18,7 @@ package com.qaprosoft.zafira.services.services.application.integration.tool.impl
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.google.GoogleServiceAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.GoogleProxy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -29,9 +30,10 @@ public class GoogleService extends AbstractIntegrationService<GoogleServiceAdapt
     private final long googleTokenExpiration;
 
     public GoogleService(IntegrationService integrationService,
+                         GoogleProxy googleProxy,
                          @Value("${google-token-expiration}") long googleTokenExpiration
     ) {
-        super(integrationService, "GOOGLE");
+        super(integrationService, googleProxy, "GOOGLE");
         this.googleTokenExpiration = googleTokenExpiration;
     }
 

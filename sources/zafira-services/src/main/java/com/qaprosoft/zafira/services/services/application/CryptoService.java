@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.EncryptorInitializationException;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,7 +49,7 @@ public class CryptoService {
 
     public CryptoService(SettingsService settingsService,
                          @Value("${crypto-salt}") String salt,
-                         Map<String, CryptoDriven<?>> cryptoDrivenServices
+                         @Lazy Map<String, CryptoDriven<?>> cryptoDrivenServices
     ) {
         this.settingsService = settingsService;
         this.salt = salt;

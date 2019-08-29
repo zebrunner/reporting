@@ -29,6 +29,8 @@ public interface IntegrationService {
 
     Integration retrieveDefaultByIntegrationTypeId(Long integrationTypeId);
 
+    Integration retrieveDefaultByIntegrationTypeName(String integrationTypeName);
+
     List<Integration> retrieveAll();
 
     List<Integration> retrieveByIntegrationTypeId(Long integrationTypeId);

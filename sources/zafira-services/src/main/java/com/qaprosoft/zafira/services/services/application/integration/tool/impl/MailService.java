@@ -18,6 +18,7 @@ package com.qaprosoft.zafira.services.services.application.integration.tool.impl
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.mail.MailServiceAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.MailProxy;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
@@ -30,8 +31,8 @@ import java.util.concurrent.CompletableFuture;
 @Component
 public class MailService extends AbstractIntegrationService<MailServiceAdapter> {
 
-    public MailService(IntegrationService integrationService) {
-        super(integrationService, "EMAIL");
+    public MailService(IntegrationService integrationService, MailProxy mailProxy) {
+        super(integrationService, mailProxy, "EMAIL");
     }
 
     public CompletableFuture<Void> send(MimeMessagePreparator preparator) {

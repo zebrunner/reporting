@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy;
 
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.IntegrationAdapter;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.messagebroker.RabbitMQIntegrationAdapter;
 import org.springframework.amqp.core.Queue;
@@ -33,7 +34,8 @@ public class MessageBrokerProxy extends IntegrationAdapterProxy {
 
     public MessageBrokerProxy(ApplicationContext applicationContext,
                               Map<String, Queue> queues,
-                              IntegrationGroupService integrationGroupService) {
-        super(applicationContext, integrationGroupService, "MESSAGE_BROKER", INTEGRATION_TYPE_ADAPTERS, Map.of("queues", queues));
+                              IntegrationGroupService integrationGroupService,
+                              IntegrationService integrationService) {
+        super(applicationContext, integrationGroupService, integrationService, "MESSAGE_BROKER", INTEGRATION_TYPE_ADAPTERS, Map.of("queues", queues));
     }
 }

@@ -20,6 +20,7 @@ import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.storageprovider.StorageProviderAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.StorageProviderProxy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -31,9 +32,10 @@ public class StorageProviderService extends AbstractIntegrationService<StoragePr
     private final int storageProviderTokenExpiration;
 
     public StorageProviderService(IntegrationService integrationService,
+                                  StorageProviderProxy storageProviderProxy,
                                   @Value("${amazon-token-expiration}") int storageProviderTokenExpiration
     ) {
-        super(integrationService, "AMAZON");
+        super(integrationService, storageProviderProxy, "AMAZON");
         this.storageProviderTokenExpiration = storageProviderTokenExpiration;
     }
 

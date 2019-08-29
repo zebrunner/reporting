@@ -101,6 +101,14 @@
         ]]>
     </select>
 
+    <select id="findDefaultByIntegrationTypeName" resultMap="IntegrationResultMap">
+        <include refid="find"/>
+        <![CDATA[
+            WHERE
+                IT.NAME = #{integrationTypeName} AND I.IS_DEFAULT = TRUE
+        ]]>
+    </select>
+
     <update id="update">
         <![CDATA[
             UPDATE INTEGRATIONS

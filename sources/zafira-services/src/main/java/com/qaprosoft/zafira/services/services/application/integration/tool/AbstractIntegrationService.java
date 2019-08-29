@@ -28,10 +28,12 @@ public abstract class AbstractIntegrationService<T extends GroupAdapter> {
     private static final String ERR_MSG_ADAPTER_NOT_FOUND = "Requested adapter of type %s can not be found";
 
     private final IntegrationService integrationService;
+    private final IntegrationAdapterProxy integrationAdapterProxy;
     private final String defaultType;
 
-    public AbstractIntegrationService(IntegrationService integrationService, String defaultType) {
+    public AbstractIntegrationService(IntegrationService integrationService, IntegrationAdapterProxy integrationAdapterProxy, String defaultType) {
         this.integrationService = integrationService;
+        this.integrationAdapterProxy = integrationAdapterProxy;
         this.defaultType = defaultType;
     }
 
@@ -49,7 +51,7 @@ public abstract class AbstractIntegrationService<T extends GroupAdapter> {
         Optional<IntegrationAdapter> maybeAdapter;
         if (integrationId == null) {
             // can be null in case of legacy client call - use default adapter
-            maybeAdapter = IntegrationAdapterProxy.getDefaultAdapter(defaultType);
+            maybeAdapter = integrationAdapterProxy.getDefaultAdapter(defaultType);
         } else {
             maybeAdapter = IntegrationAdapterProxy.getAdapter(integrationId);
         }

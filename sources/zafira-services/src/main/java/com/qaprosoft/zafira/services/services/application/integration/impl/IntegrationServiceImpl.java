@@ -107,6 +107,12 @@ public class IntegrationServiceImpl implements IntegrationService {
 
     @Override
     @Transactional(readOnly = true)
+    public Integration retrieveDefaultByIntegrationTypeName(String integrationTypeName) {
+        return integrationMapper.findDefaultByIntegrationTypeName(integrationTypeName);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Integration> retrieveAll() {
         return integrationMapper.findAll();
     }

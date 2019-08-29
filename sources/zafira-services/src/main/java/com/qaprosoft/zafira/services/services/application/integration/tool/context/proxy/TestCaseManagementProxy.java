@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy;
 
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.IntegrationAdapter;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.testcasemanagement.JiraIntegrationAdapter;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.testcasemanagement.QTestIntegrationAdapter;
@@ -34,7 +35,7 @@ public class TestCaseManagementProxy extends IntegrationAdapterProxy {
             "TESTRAIL", TestRailIntegrationAdapter.class
     );
 
-    public TestCaseManagementProxy(ApplicationContext applicationContext, IntegrationGroupService integrationGroupService) {
-        super(applicationContext, integrationGroupService, "TEST_CASE_MANAGEMENT", INTEGRATION_TYPE_ADAPTERS);
+    public TestCaseManagementProxy(ApplicationContext applicationContext, IntegrationGroupService integrationGroupService, IntegrationService integrationService) {
+        super(applicationContext, integrationGroupService, integrationService, "TEST_CASE_MANAGEMENT", INTEGRATION_TYPE_ADAPTERS);
     }
 }

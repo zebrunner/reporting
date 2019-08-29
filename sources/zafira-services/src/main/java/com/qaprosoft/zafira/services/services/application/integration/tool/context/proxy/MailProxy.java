@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy;
 
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.IntegrationAdapter;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.mail.MailIntegrationAdapter;
 import org.springframework.context.ApplicationContext;
@@ -30,8 +31,8 @@ public class MailProxy extends IntegrationAdapterProxy {
             "EMAIL", MailIntegrationAdapter.class
     );
 
-    public MailProxy(ApplicationContext applicationContext, IntegrationGroupService integrationGroupService) {
-        super(applicationContext, integrationGroupService, "MAIL", INTEGRATION_TYPE_ADAPTERS);
+    public MailProxy(ApplicationContext applicationContext, IntegrationGroupService integrationGroupService, IntegrationService integrationService) {
+        super(applicationContext, integrationGroupService, integrationService, "MAIL", INTEGRATION_TYPE_ADAPTERS);
     }
 
 }

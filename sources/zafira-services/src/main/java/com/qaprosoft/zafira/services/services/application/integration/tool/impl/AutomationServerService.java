@@ -22,6 +22,7 @@ import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.automationserver.AutomationServerAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.AutomationServerProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -38,8 +39,8 @@ public class AutomationServerService extends AbstractIntegrationService<Automati
 
     private static final String[] REQUIRED_ARGS = new String[] { "scmURL", "branch", "zafiraFields" };
 
-    public AutomationServerService(IntegrationService integrationService) {
-        super(integrationService, "JENKINS");
+    public AutomationServerService(IntegrationService integrationService, AutomationServerProxy automationServerProxy) {
+        super(integrationService, automationServerProxy, "JENKINS");
     }
 
     public boolean rerunJob(Job ciJob, Integer buildNumber, boolean rerunFailures) {

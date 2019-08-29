@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy;
 
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.IntegrationAdapter;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.accessmanagement.LdapIntegrationAdapter;
 import org.springframework.context.ApplicationContext;
@@ -30,7 +31,7 @@ public class AccessManagementProxy extends IntegrationAdapterProxy {
             "LDAP", LdapIntegrationAdapter.class
     );
 
-    public AccessManagementProxy(ApplicationContext applicationContext, IntegrationGroupService integrationGroupService) {
-        super(applicationContext, integrationGroupService, "ACCESS_MANAGEMENT", INTEGRATION_TYPE_ADAPTERS);
+    public AccessManagementProxy(ApplicationContext applicationContext, IntegrationGroupService integrationGroupService, IntegrationService integrationService) {
+        super(applicationContext, integrationGroupService, integrationService, "ACCESS_MANAGEMENT", INTEGRATION_TYPE_ADAPTERS);
     }
 }

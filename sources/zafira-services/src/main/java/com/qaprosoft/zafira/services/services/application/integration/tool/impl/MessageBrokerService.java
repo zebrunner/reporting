@@ -18,13 +18,14 @@ package com.qaprosoft.zafira.services.services.application.integration.tool.impl
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.messagebroker.MessageBrokerAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.MessageBrokerProxy;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MessageBrokerService extends AbstractIntegrationService<MessageBrokerAdapter> {
 
-    public MessageBrokerService(IntegrationService integrationService) {
-        super(integrationService, "RABBITMQ");
+    public MessageBrokerService(IntegrationService integrationService, MessageBrokerProxy messageBrokerProxy) {
+        super(integrationService, messageBrokerProxy, "RABBITMQ");
     }
 
     public String getSettingQueueName() {

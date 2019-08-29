@@ -22,6 +22,7 @@ import com.qaprosoft.zafira.models.db.integration.IntegrationSetting;
 import com.qaprosoft.zafira.models.db.integration.IntegrationType;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.IntegrationAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,7 @@ public abstract class IntegrationAdapterProxy {
 
     private final ApplicationContext applicationContext;
     private final IntegrationGroupService integrationGroupService;
+    private final IntegrationService integrationService;
     private final String group;
     private final Map<String, Class<? extends IntegrationAdapter>> adapterClasses;
     private final Map<String, Object> additionalParameters;
@@ -56,12 +58,14 @@ public abstract class IntegrationAdapterProxy {
     public IntegrationAdapterProxy(
             ApplicationContext applicationContext,
             IntegrationGroupService integrationGroupService,
+            IntegrationService integrationService,
             String group,
             Map<String, Class<? extends IntegrationAdapter>> adapterClasses,
             Map<String, Object> additionalParameters
     ) {
         this.applicationContext = applicationContext;
         this.integrationGroupService = integrationGroupService;
+        this.integrationService = integrationService;
         this.group = group;
         this.adapterClasses = adapterClasses;
         this.additionalParameters = additionalParameters;
@@ -70,10 +74,11 @@ public abstract class IntegrationAdapterProxy {
     public IntegrationAdapterProxy(
             ApplicationContext applicationContext,
             IntegrationGroupService integrationGroupService,
+            IntegrationService integrationService,
             String group,
             Map<String, Class<? extends IntegrationAdapter>> adapterClasses
     ) {
-        this(applicationContext, integrationGroupService, group, adapterClasses, null);
+        this(applicationContext, integrationGroupService, integrationService, group, adapterClasses, null);
     }
 
     private static synchronized void putAdapter(IntegrationAdapter integrationAdapter) {
@@ -91,16 +96,9 @@ public abstract class IntegrationAdapterProxy {
         return Optional.ofNullable(adapters.get(integrationId));
     }
 
-    public static synchronized Optional<IntegrationAdapter> getDefaultAdapter(String type) {
-
-        //todo get default integration by type :: integrationService.getDefaultIntegration(type);
-        // return adapter by integration id from above
-        Map<Long, IntegrationAdapter> adapters = TENANT_ADAPTERS.get(TenancyContext.getTenantName());
-        return adapters.values()
-                       .stream()
-//                       .filter(adapter -> adapter.getType().equals(type))
-//                       .filter(adapter -> adapter.getIntegration().isDefault())
-                       .findFirst();
+    public synchronized Optional<IntegrationAdapter> getDefaultAdapter(String type) {
+        Integration defaultIntegration = integrationService.retrieveDefaultByIntegrationTypeName(type);
+        return getAdapter(defaultIntegration.getId());
     }
 
     public void init() {

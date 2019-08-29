@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy;
 
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.IntegrationAdapter;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.storageprovider.AmazonIntegrationAdapter;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +34,8 @@ public class StorageProviderProxy extends IntegrationAdapterProxy {
 
     public StorageProviderProxy(ApplicationContext applicationContext,
                                 @Value("${zafira.multitenant}") Boolean multitenant,
-                                IntegrationGroupService integrationGroupService) {
-        super(applicationContext, integrationGroupService, "STORAGE_PROVIDER", INTEGRATION_TYPE_ADAPTERS, Map.of("multitenant", multitenant));
+                                IntegrationGroupService integrationGroupService,
+                                IntegrationService integrationService) {
+        super(applicationContext, integrationGroupService, integrationService, "STORAGE_PROVIDER", INTEGRATION_TYPE_ADAPTERS, Map.of("multitenant", multitenant));
     }
 }

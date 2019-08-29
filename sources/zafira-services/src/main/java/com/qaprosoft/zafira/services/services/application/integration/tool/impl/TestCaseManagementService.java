@@ -19,13 +19,14 @@ import com.qaprosoft.zafira.models.dto.TestCaseManagementIssueType;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.testcasemanagement.TestCaseManagementAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.TestCaseManagementProxy;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TestCaseManagementService extends AbstractIntegrationService<TestCaseManagementAdapter> {
 
-    public TestCaseManagementService(IntegrationService integrationService) {
-        super(integrationService, "JIRA");
+    public TestCaseManagementService(IntegrationService integrationService, TestCaseManagementProxy testCaseManagementProxy) {
+        super(integrationService, testCaseManagementProxy, "JIRA");
     }
 
     public TestCaseManagementIssueType getIssue(String ticket) {

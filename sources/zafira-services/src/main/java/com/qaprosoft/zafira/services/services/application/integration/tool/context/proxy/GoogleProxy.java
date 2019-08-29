@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy;
 
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.IntegrationAdapter;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.google.GoogleIntegrationAdapter;
 import org.springframework.context.ApplicationContext;
@@ -30,7 +31,7 @@ public class GoogleProxy extends IntegrationAdapterProxy {
             "GOOGLE", GoogleIntegrationAdapter.class
     );
 
-    public GoogleProxy(ApplicationContext applicationContext, IntegrationGroupService integrationGroupService) {
-        super(applicationContext, integrationGroupService, "GOOGLE", INTEGRATION_TYPE_ADAPTERS);
+    public GoogleProxy(ApplicationContext applicationContext, IntegrationGroupService integrationGroupService, IntegrationService integrationService) {
+        super(applicationContext, integrationGroupService, integrationService, "GOOGLE", INTEGRATION_TYPE_ADAPTERS);
     }
 }
