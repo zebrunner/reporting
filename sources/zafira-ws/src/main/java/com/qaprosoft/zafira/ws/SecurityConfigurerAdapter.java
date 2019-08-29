@@ -78,6 +78,7 @@ public class SecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
             "/api/scm/**",
             "/api/launchers/**",
             "/api/integrations/**",
+            "/api/security/**",
     };
 
     private final UserPassAuthService userPassAuthService;
