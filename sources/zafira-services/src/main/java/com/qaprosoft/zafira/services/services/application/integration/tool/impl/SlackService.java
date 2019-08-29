@@ -19,8 +19,8 @@ import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.slack.SlackAdapter;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.SlackProxy;
+import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.slack.SlackAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.proxy.SlackProxy;
 import org.springframework.stereotype.Component;
 
 @Component

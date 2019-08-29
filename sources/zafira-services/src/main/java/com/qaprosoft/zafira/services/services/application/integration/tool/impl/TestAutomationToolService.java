@@ -17,8 +17,8 @@ package com.qaprosoft.zafira.services.services.application.integration.tool.impl
 
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.testautomationtool.TestAutomationToolAdapter;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.TestAutomationToolProxy;
+import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.testautomationtool.TestAutomationToolAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.proxy.TestAutomationToolProxy;
 import org.springframework.stereotype.Component;
 
 @Component

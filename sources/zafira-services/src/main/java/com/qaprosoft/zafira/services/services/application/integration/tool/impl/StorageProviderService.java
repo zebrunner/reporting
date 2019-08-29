@@ -19,8 +19,8 @@ import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.storageprovider.StorageProviderAdapter;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.StorageProviderProxy;
+import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.storageprovider.StorageProviderAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.proxy.StorageProviderProxy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

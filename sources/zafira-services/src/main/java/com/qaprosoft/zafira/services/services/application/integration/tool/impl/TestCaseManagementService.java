@@ -18,8 +18,8 @@ package com.qaprosoft.zafira.services.services.application.integration.tool.impl
 import com.qaprosoft.zafira.models.dto.TestCaseManagementIssueType;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.testcasemanagement.TestCaseManagementAdapter;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.TestCaseManagementProxy;
+import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.testcasemanagement.TestCaseManagementAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.proxy.TestCaseManagementProxy;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -17,8 +17,8 @@ package com.qaprosoft.zafira.services.services.application.integration.tool.impl
 
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.accessmanagement.AccessManagementAdapter;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.AccessManagementProxy;
+import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.accessmanagement.AccessManagementAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.proxy.AccessManagementProxy;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.stereotype.Component;
 

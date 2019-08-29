@@ -28,7 +28,7 @@ import com.qaprosoft.zafira.services.services.application.integration.Integratio
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationSettingService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationTypeService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.IntegrationInitializer;
+import com.qaprosoft.zafira.services.services.application.integration.core.IntegrationInitializer;
 import com.qaprosoft.zafira.services.util.EventPushService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

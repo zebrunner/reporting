@@ -17,8 +17,8 @@ package com.qaprosoft.zafira.services.services.application.integration.tool.impl
 
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.mail.MailServiceAdapter;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.MailProxy;
+import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.mail.MailServiceAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.proxy.MailProxy;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;

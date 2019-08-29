@@ -17,8 +17,8 @@ package com.qaprosoft.zafira.services.services.application.integration.tool.impl
 
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.messagebroker.MessageBrokerAdapter;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.MessageBrokerProxy;
+import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.messagebroker.MessageBrokerAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.proxy.MessageBrokerProxy;
 import org.springframework.stereotype.Component;
 
 @Component

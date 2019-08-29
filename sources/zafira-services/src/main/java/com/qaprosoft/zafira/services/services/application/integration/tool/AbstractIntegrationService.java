@@ -17,13 +17,13 @@ package com.qaprosoft.zafira.services.services.application.integration.tool;
 
 import com.qaprosoft.zafira.models.db.integration.Integration;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.GroupAdapter;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.IntegrationAdapter;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.IntegrationAdapterProxy;
+import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.IntegrationAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.IntegrationGroupAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.proxy.IntegrationAdapterProxy;
 
 import java.util.Optional;
 
-public abstract class AbstractIntegrationService<T extends GroupAdapter> {
+public abstract class AbstractIntegrationService<T extends IntegrationGroupAdapter> {
 
     private static final String ERR_MSG_ADAPTER_NOT_FOUND = "Requested adapter of type %s can not be found";
 

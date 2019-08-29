@@ -17,8 +17,8 @@ package com.qaprosoft.zafira.services.services.application.integration.tool.impl
 
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.google.GoogleServiceAdapter;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.GoogleProxy;
+import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.google.GoogleServiceAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.proxy.GoogleProxy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
