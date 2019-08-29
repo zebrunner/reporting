@@ -58,4 +58,10 @@ public abstract class AbstractIntegrationService<T extends GroupAdapter> {
 
         return (T) maybeAdapter.orElseThrow(() -> new UnsupportedOperationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND, defaultType)));
     }
+
+    @SuppressWarnings("unchecked")
+    public T getAdapterByBackReferenceId(String backReferenceId) {
+        return (T) integrationAdapterProxy.getAdapter(backReferenceId)
+                                          .orElseThrow(() -> new UnsupportedOperationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND, defaultType)));
+    }
 }
