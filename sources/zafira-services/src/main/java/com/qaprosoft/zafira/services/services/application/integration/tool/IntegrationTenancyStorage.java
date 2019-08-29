@@ -109,30 +109,4 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
         }
     }
 
-/*
-    @SuppressWarnings("unchecked")
-    public synchronized static <T extends AbstractAdapter> void putContext(Setting.Tool tool, T t) {
-        if (tenancyEntity.get(tool) == null) {
-            Map<String, T> typeMap = new ConcurrentHashMap<>();
-            typeMap.put(TenancyContext.getTenantName(), t);
-            tenancyEntity.put(tool, typeMap);
-        } else {
-            ((Map<String, T>) tenancyEntity.get(tool)).put(TenancyContext.getTenantName(), t);
-        }
-    }
-
-    public synchronized static void removeContext(Setting.Tool tool) {
-        Map<String, ? extends AbstractAdapter> context = tenancyEntity.get(tool);
-        String tenantName = TenancyContext.getTenantName();
-        if (context != null && context.get(tenantName) != null) {
-            context.remove(tenantName);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T> Optional<T> getContext(Setting.Tool tool) {
-        Map<String, ? extends AbstractAdapter> clientMap = tenancyEntity.get(tool);
-        return clientMap == null ? Optional.empty() : Optional.ofNullable((T) tenancyEntity.get(tool).get(TenancyContext.getTenantName()));
-    }*/
-
 }

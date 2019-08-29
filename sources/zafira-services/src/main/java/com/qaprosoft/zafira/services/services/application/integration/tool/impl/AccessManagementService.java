@@ -29,20 +29,13 @@ public class AccessManagementService extends AbstractIntegrationService<AccessMa
         super(integrationService, accessManagementProxy, "LDAP");
     }
 
-    /**
-     * Search user by username in ldap context
-     * Throws an {@link com.qaprosoft.zafira.services.exceptions.IntegrationException} if integration is not configured
-     * 
-     * @param username - username to search
-     * @return - search result
-     */
     public boolean isUserExists(String username) {
-        AccessManagementAdapter accessManagementAdapter = getAdapterByIntegrationId(null);
-        return accessManagementAdapter.isUserExists(username);
+        AccessManagementAdapter adapter = getAdapterByIntegrationId(null);
+        return adapter.isUserExists(username);
     }
 
     public BindAuthenticator getBindAuthenticator() {
-        AccessManagementAdapter accessManagementAdapter = getAdapterByIntegrationId(null);
-        return accessManagementAdapter.getBindAuthenticator();
+        AccessManagementAdapter adapter = getAdapterByIntegrationId(null);
+        return adapter.getBindAuthenticator();
     }
 }

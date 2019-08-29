@@ -36,36 +36,42 @@ public class IntegrationInitializer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IntegrationInitializer.class);
 
-    private static final String INITIALIZING_INTEGRATION_BY_TYPE_START = "Starting to initialize %s integration by type %s";
-    private static final String ERR_MSG_GROUP_NOT_EXISTS = "Integration group with name '%s' does not exist";
+    private static final String INITIALIZING_INTEGRATION_BY_TYPE_START = "Initializing integration %s of type %s";
+    private static final String ERR_MSG_GROUP_NOT_EXISTS = "Integration group with name %s does not exist";
 
-    private final Map<String, IntegrationAdapterProxy> integrationProxies;
     private final IntegrationTypeService integrationTypeService;
     private final IntegrationGroupService integrationGroupService;
 
-    public IntegrationInitializer(@Lazy Map<String, IntegrationAdapterProxy> integrationProxies,
-                                  IntegrationTypeService integrationTypeService,
-                                  IntegrationGroupService integrationGroupService) {
+    private final Map<String, IntegrationAdapterProxy> integrationProxies;
+
+    public IntegrationInitializer(
+            @Lazy Map<String, IntegrationAdapterProxy> integrationProxies,
+            IntegrationTypeService integrationTypeService,
+            IntegrationGroupService integrationGroupService
+    ) {
         this.integrationProxies = integrationProxies;
         this.integrationTypeService = integrationTypeService;
         this.integrationGroupService = integrationGroupService;
     }
 
-    public void initIntegration(Integration integration, String tenancyName) {
-        IntegrationType integrationType = integrationTypeService.retrieveByIntegrationId(integration.getId());
-        IntegrationGroup integrationGroup = integrationGroupService.retrieveByIntegrationTypeId(integrationType.getId());
-        TenancyContext.setTenantName(tenancyName);
-        initByType(integrationGroup.getName(), integrationType.getName(), integration);
+    public void initIntegration(Integration integration, String tenant) {
+        IntegrationType type = integrationTypeService.retrieveByIntegrationId(integration.getId());
+        IntegrationGroup group = integrationGroupService.retrieveByIntegrationTypeId(type.getId());
+
+        TenancyContext.setTenantName(tenant);
+        initByType(group.getName(), type.getName(), integration);
         TenancyContext.setTenantName(null);
     }
 
-    private void initByType(String integrationGroupName, String integrationTypeName, Integration integration) {
-        LOGGER.info(String.format(INITIALIZING_INTEGRATION_BY_TYPE_START, integration.getName(), integrationTypeName));
+    private void initByType(String group, String type, Integration integration) {
+        LOGGER.info(String.format(INITIALIZING_INTEGRATION_BY_TYPE_START, integration.getName(), type));
+
         IntegrationAdapterProxy adapterProxy = integrationProxies.values().stream()
-                                                                 .filter(integrationAdapterProxy -> integrationAdapterProxy.getGroup().equals(integrationGroupName))
+                                                                 .filter(integrationAdapterProxy -> integrationAdapterProxy.getGroup().equals(group))
                                                                  .findFirst()
-                                                                 .orElseThrow(() -> new IntegrationException(String.format(ERR_MSG_GROUP_NOT_EXISTS, integrationGroupName)));
-        adapterProxy.initializeByType(integrationTypeName, List.of(integration));
+                                                                 .orElseThrow(() -> new IntegrationException(String.format(ERR_MSG_GROUP_NOT_EXISTS, group)));
+
+        adapterProxy.initializeByType(type, List.of(integration));
     }
 
 }
