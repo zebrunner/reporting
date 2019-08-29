@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
-public class SlackIntegrationAdapter extends AbstractIntegrationAdapter implements SlackServiceAdapter {
+public class SlackIntegrationAdapter extends AbstractIntegrationAdapter implements SlackAdapter {
 
     private final static String RESULTS_PATTERN = "Passed: %d, Failed: %d, Known Issues: %d, Skipped: %d";
     private final static String INFO_PATTERN = "%1$s\n<%2$s|Open in Zafira>  |  <%3$s|Open in Jenkins>";

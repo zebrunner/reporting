@@ -31,32 +31,28 @@ public class StorageProviderService extends AbstractIntegrationService<StoragePr
 
     private final int storageProviderTokenExpiration;
 
-    public StorageProviderService(IntegrationService integrationService,
-                                  StorageProviderProxy storageProviderProxy,
-                                  @Value("${amazon-token-expiration}") int storageProviderTokenExpiration
+    public StorageProviderService(
+            IntegrationService integrationService,
+            StorageProviderProxy storageProviderProxy,
+            @Value("${amazon-token-expiration}") int storageProviderTokenExpiration
     ) {
         super(integrationService, storageProviderProxy, "AMAZON");
         this.storageProviderTokenExpiration = storageProviderTokenExpiration;
     }
 
     public String saveFile(final FileUploadType file) {
-        StorageProviderAdapter storageProviderAdapter = getAdapterForIntegration(null);
-        return storageProviderAdapter.saveFile(file);
+        StorageProviderAdapter adapter = getAdapterForIntegration(null);
+        return adapter.saveFile(file);
     }
 
     public void removeFile(final String linkToFile) {
-        StorageProviderAdapter storageProviderAdapter = getAdapterForIntegration(null);
-        storageProviderAdapter.removeFile(linkToFile);
+        StorageProviderAdapter adapter = getAdapterForIntegration(null);
+        adapter.removeFile(linkToFile);
     }
 
-    /**
-     * Generates temporary credentials for external clients
-     * 
-     * @return {@link SessionCredentials} object
-     */
     public Optional<SessionCredentials> getTemporarySessionCredentials() {
-        StorageProviderAdapter storageProviderAdapter = getAdapterForIntegration(null);
-        return storageProviderAdapter.getTemporarySessionCredentials(storageProviderTokenExpiration);
+        StorageProviderAdapter adapter = getAdapterForIntegration(null);
+        return adapter.getTemporarySessionCredentials(storageProviderTokenExpiration);
     }
 
 }

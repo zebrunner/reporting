@@ -18,7 +18,7 @@ package com.qaprosoft.zafira.services.services.application.integration.tool.cont
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.GroupAdapter;
 
-public interface SlackServiceAdapter extends GroupAdapter {
+public interface SlackAdapter extends GroupAdapter {
 
     void sendNotification(TestRun tr, String customizedMessage);
 

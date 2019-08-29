@@ -38,7 +38,6 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-//todo remove integration group service from here
 public abstract class IntegrationAdapterProxy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IntegrationAdapterProxy.class);

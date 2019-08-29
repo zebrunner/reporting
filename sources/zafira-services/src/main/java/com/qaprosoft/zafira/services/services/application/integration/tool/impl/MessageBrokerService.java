@@ -29,8 +29,8 @@ public class MessageBrokerService extends AbstractIntegrationService<MessageBrok
     }
 
     public String getSettingQueueName() {
-        MessageBrokerAdapter messageBrokerAdapter = getAdapterForIntegration(null);
-        return messageBrokerAdapter.getSettingQueueName();
+        MessageBrokerAdapter adapter = getAdapterForIntegration(null);
+        return adapter.getSettingQueueName();
     }
 
 }
