@@ -16,9 +16,9 @@
 package com.qaprosoft.zafira.services.services.application.integration.core;
 
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
-import com.qaprosoft.zafira.models.db.integration.Integration;
-import com.qaprosoft.zafira.models.db.integration.IntegrationGroup;
-import com.qaprosoft.zafira.models.db.integration.IntegrationType;
+import com.qaprosoft.zafira.models.entity.integration.Integration;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationGroup;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationType;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationTypeService;
@@ -55,8 +55,8 @@ public class IntegrationInitializer {
     }
 
     public void initIntegration(Integration integration, String tenant) {
-        IntegrationType type = integrationTypeService.retrieveByIntegrationId(integration.getId());
-        IntegrationGroup group = integrationGroupService.retrieveByIntegrationTypeId(type.getId());
+        IntegrationType type = integrationTypeService.retrieveById(integration.getId());
+        IntegrationGroup group = type.getGroup();
 
         TenancyContext.setTenantName(tenant);
         initByType(group.getName(), type.getName(), integration);

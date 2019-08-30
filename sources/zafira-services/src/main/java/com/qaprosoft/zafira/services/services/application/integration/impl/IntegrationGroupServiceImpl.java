@@ -38,7 +38,7 @@ public class IntegrationGroupServiceImpl implements IntegrationGroupService {
 //    @Override
 //    @Transactional(readOnly = true)
 //    public IntegrationGroup retrieveByIntegrationTypeId(Long integrationTypeId) {
-//        IntegrationGroup integrationGroup = integrationGroupMapper.findByIntegrationTypeId(integrationTypeId);
+//        IntegrationGroup integrationGroup = integrationGroupRepository.findByIntegrationTypeId(integrationTypeId);
 //        if (integrationGroup == null) {
 //            throw new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_GROUP_NOT_FOUND_BY_INTEGRATION_TYPE, integrationTypeId));
 //        }

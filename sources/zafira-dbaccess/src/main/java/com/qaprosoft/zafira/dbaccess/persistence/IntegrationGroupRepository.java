@@ -16,7 +16,7 @@ public interface IntegrationGroupRepository extends Repository<IntegrationGroup,
     @EntityGraph(value = "integrationGroup.expanded")
     Optional<IntegrationGroup> findByName(String name);
 
-//    IntegrationGroup findIntegrationGroupByTypeId(Long integrationTypeId);
+//    IntegrationGroup findIntegrationGroupBy(Long integrationTypeId);
 
     @EntityGraph(value = "integrationGroup.expanded")
     List<IntegrationGroup> findAll();

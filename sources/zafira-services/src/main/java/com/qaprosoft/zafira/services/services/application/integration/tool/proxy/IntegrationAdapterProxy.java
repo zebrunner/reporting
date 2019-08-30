@@ -108,9 +108,6 @@ public abstract class IntegrationAdapterProxy {
     public void init() {
         IntegrationGroup integrationGroup = integrationGroupService.retrieveByName(getGroup());
         List<IntegrationType> integrationTypes = integrationGroup.getTypes();
-
-        integrationTypes.forEach(integrationType -> {
-        List<IntegrationType> integrationTypes = integrationGroup.getIntegrationTypes();
         integrationTypes.forEach(integrationType -> initializeByType(integrationType.getName(), integrationType.getIntegrations()));
     }
 

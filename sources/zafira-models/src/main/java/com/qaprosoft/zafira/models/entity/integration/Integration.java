@@ -28,10 +28,16 @@ import java.util.Optional;
 @NamedEntityGraph(
         name = "integration.expanded",
         attributeNodes = {
-                @NamedAttributeNode("type"),
+                @NamedAttributeNode(value = "type", subgraph ="type-subgraph"),
                 @NamedAttributeNode(value = "settings", subgraph = "settings-subgraph")
         },
         subgraphs = {
+                @NamedSubgraph(
+                        name = "type-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("group")
+                        }
+                ),
                 @NamedSubgraph(
                         name = "settings-subgraph",
                         attributeNodes = {

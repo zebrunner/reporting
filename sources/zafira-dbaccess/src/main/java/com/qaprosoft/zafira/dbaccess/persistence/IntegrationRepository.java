@@ -26,7 +26,13 @@ public interface IntegrationRepository extends Repository<Integration, Long> {
     Optional<Integration> findIntegrationByBackReferenceId(String backReferenceId);
 
     @EntityGraph(value = "integration.expanded")
+    List<Integration> findIntegrationByTypeGroupName(String typeGroupName);
+
+    @EntityGraph(value = "integration.expanded")
     @Query("Select i From Integration i Where i.type.id = :integrationTypeId and i.isDefault = true")
     Optional<Integration> findIntegrationByTypeIdAndDefaultIsTrue(Long integrationTypeId);
 
+    @EntityGraph(value = "integration.expanded")
+    @Query("Select i From Integration i Where i.type.name = :integrationTypeName and i.isDefault = true")
+    Optional<Integration> findIntegrationByTypeNameAndDefaultIsTrue(String integrationTypeName);
 }

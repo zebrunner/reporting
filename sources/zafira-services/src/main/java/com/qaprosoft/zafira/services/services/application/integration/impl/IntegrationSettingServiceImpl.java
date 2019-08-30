@@ -100,7 +100,7 @@ public class IntegrationSettingServiceImpl implements IntegrationSettingService,
     @Override
     @Transactional(readOnly = true)
     public List<IntegrationSetting> retrieveAllEncrypted() {
-        return integrationSettingMapper.findAllEncrypted();
+        return integrationSettingRepository.findAllByEncryptedTrue();
     }
 
     @Override

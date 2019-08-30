@@ -10,9 +10,6 @@ import java.util.Optional;
 
 public interface IntegrationSettingRepository extends Repository<IntegrationSetting, Long> {
 
-
-//    void create(@Param("integrationSettings") Set<IntegrationSetting> integrationSettings, @Param("integrationId") Long integrationId);
-
     @EntityGraph(value = "integrationSetting.expanded")
     Optional<IntegrationSetting> findById(Long id);
 
@@ -24,6 +21,9 @@ public interface IntegrationSettingRepository extends Repository<IntegrationSett
 
     @EntityGraph(value = "integrationSetting.expanded")
     List<IntegrationSetting> findAll();
+
+    @EntityGraph(value = "integrationSetting.expanded")
+    List<IntegrationSetting> findAllByEncryptedTrue();
 
     @EntityGraph(value = "integrationSetting.expanded")
     IntegrationSetting save(IntegrationSetting integrationSetting);
