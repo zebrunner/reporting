@@ -19,8 +19,10 @@ import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import com.qaprosoft.zafira.services.services.application.integration.context.JiraContext;
 import net.rcarz.jiraclient.Issue;
+import net.rcarz.jiraclient.JiraException;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_CLOSED_STATUS;
@@ -28,6 +30,8 @@ import static com.qaprosoft.zafira.models.db.Setting.Tool.JIRA;
 
 @Component
 public class JiraService extends AbstractIntegration<JiraContext> {
+
+    private static final String ERR_MSG_UNABLE_TO_RETRIEVE_ISSUE = "Issue %s not found";
 
     private final SettingsService settingsService;
 
@@ -40,32 +44,28 @@ public class JiraService extends AbstractIntegration<JiraContext> {
     public boolean isConnected() {
         try {
             return context().getJiraClient().getProjects() != null;
-        } catch (Exception e) {
+        } catch (JiraException e) {
             return false;
         }
     }
 
-    public Optional<Issue> getIssue(String ticket) {
+    public Optional<Issue> getIssue(String issueId) {
         return mapContext(context -> {
             Issue issue = null;
             try {
-                issue = context.getJiraClient().getIssue(ticket);
-            } catch (Exception e) {
-                LOGGER.error("Unable to find Jira issue: " + ticket, e);
+                issue = context.getJiraClient().getIssue(issueId);
+            } catch (JiraException e) {
+                LOGGER.debug(String.format(ERR_MSG_UNABLE_TO_RETRIEVE_ISSUE, issueId), e);
             }
             return issue;
         });
     }
 
     public boolean isIssueClosed(Issue issue) {
-        boolean isIssueClosed = false;
-        String[] closeStatuses = settingsService.getSettingValue(JIRA_CLOSED_STATUS).split(";");
-        for (String closeStatus : closeStatuses) {
-            if (issue.getStatus().getName().equalsIgnoreCase(closeStatus)) {
-                isIssueClosed = true;
-            }
-        }
-        return isIssueClosed;
+        String[] closedStatuses = settingsService.getSettingValue(JIRA_CLOSED_STATUS).split(";");
+
+        return Arrays.stream(closedStatuses)
+                     .anyMatch(status -> issue.getStatus().getName().equals(status));
     }
 
 }
