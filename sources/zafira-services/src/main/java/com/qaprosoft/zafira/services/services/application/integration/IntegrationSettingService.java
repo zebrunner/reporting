@@ -22,13 +22,6 @@ import java.util.List;
 
 public interface IntegrationSettingService {
 
-//    /**
-//     * Saves integration settings. All settings must to belong concrete integration type
-//     * @param integrationSettings - integration settings to save
-//     * @param integrationId - integration to reference
-//     * @return created integration settings
-//     */
-
     IntegrationSetting retrieveById(Long id);
 
     IntegrationSetting retrieveByIntegrationIdAndParamName(Long integrationId, String paramName);
@@ -39,10 +32,4 @@ public interface IntegrationSettingService {
 
     IntegrationSetting update(IntegrationSetting integrationSetting);
 
-    /**
-     * Updates integration settings. All settings must to belong concrete integration type
-     * @param integrationSettings - integration settings to update
-     * @param integrationId - integration to reference
-     * @return updated integration settings
-     */
 }
