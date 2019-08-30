@@ -22,6 +22,7 @@ public enum ErrorCode {
 
     VALIDATION_ERROR(0),
     INVALID_VALUE(1),
+    INVALID_MIME_TYPE(2),
 
     UNAUTHORIZED(401),
     FORBIDDENT(403),

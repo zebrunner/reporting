@@ -20,10 +20,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.util.MimeType;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -31,6 +34,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Centralized API exception handler
@@ -41,6 +45,7 @@ public class ApiExceptionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
     private static final String ERR_MSG_METHOD_ARGUMENT_TYPE_MISMATCH = "Request parameter has invalid type.";
+    private static final String ERR_MSG_UNACCEPTABLE_MIME_TYPE = "Requested content type can not be served. Supported types: %s";
     private static final String ERR_MSG_INTERNAL_SERVER_ERROR = "Unexpected error has occurred. Please try again later.";
     private static final String ERR_MSG_DEBUG_INFO = "Error message: [%s]. Caused by: [%s]";
 
@@ -195,6 +200,19 @@ public class ApiExceptionHandler {
     public ErrorResponse handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         ErrorResponse response = new ErrorResponse();
         response.setError(new Error(ErrorCode.INVALID_VALUE, e.getName(), ERR_MSG_METHOD_ARGUMENT_TYPE_MISMATCH));
+        return response;
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleHttpMediaTypeNotAcceptableException(HttpMediaTypeNotAcceptableException e) {
+        List<MediaType> mediaTypes = e.getSupportedMediaTypes();
+        String supportedTypes = mediaTypes.stream()
+                                          .map(MimeType::toString)
+                                          .collect(Collectors.joining(", "));
+
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.INVALID_MIME_TYPE, String.format(ERR_MSG_UNACCEPTABLE_MIME_TYPE, supportedTypes)));
         return response;
     }
 
