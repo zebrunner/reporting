@@ -69,15 +69,15 @@
         <include refid="find"/>
     </select>
 
-    <resultMap type="com.qaprosoft.zafira.models.entity.integration.IntegrationType" id="IntegrationTypeResultMap" autoMapping="false">
+    <resultMap type="com.qaprosoft.zafira.models.db.integration.IntegrationType" id="IntegrationTypeResultMap" autoMapping="false">
         <id column="INTEGRATION_TYPE_ID" property="id" />
         <result column="INTEGRATION_TYPE_NAME" property="name" />
         <result column="INTEGRATION_TYPE_DISPLAY_NAME" property="displayName" />
         <result column="INTEGRATION_TYPE_ICON_URL" property="iconUrl" />
         <result column="INTEGRATION_TYPE_MODIFIED_AT" property="modifiedAt" />
         <result column="INTEGRATION_TYPE_CREATED_AT" property="createdAt" />
-        <collection property="integrations" ofType="com.qaprosoft.zafira.models.entity.integration.Integration" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationMapper.IntegrationResultMap"/>
-        <collection property="integrationParams" ofType="com.qaprosoft.zafira.models.entity.integration.IntegrationParam" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationParamMapper.IntegrationParamResultMap"/>
+        <collection property="integrations" ofType="com.qaprosoft.zafira.models.db.integration.Integration" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationMapper.IntegrationResultMap"/>
+        <collection property="integrationParams" ofType="com.qaprosoft.zafira.models.db.integration.IntegrationParam" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationParamMapper.IntegrationParamResultMap"/>
     </resultMap>
 
 </mapper>

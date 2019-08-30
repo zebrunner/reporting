@@ -142,7 +142,6 @@ public class IntegrationServiceImpl implements IntegrationService {
         IntegrationType integrationType = integrationTypeService.retrieveById(integration.getId());
         verifyIntegration(integrationType);
         integrationRepository.save(integration);
-//        integrationSettingService.update(integration.getSettings(), integration.getId());
         notifyToolReinitiated(integration);
         return integration;
     }

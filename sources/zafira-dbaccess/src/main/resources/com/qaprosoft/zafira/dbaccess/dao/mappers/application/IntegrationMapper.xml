@@ -135,7 +135,7 @@
         ]]>
     </update>
 
-    <resultMap type="com.qaprosoft.zafira.models.entity.integration.Integration" id="IntegrationResultMap" autoMapping="false">
+    <resultMap type="com.qaprosoft.zafira.models.db.integration.Integration" id="IntegrationResultMap" autoMapping="false">
         <id column="INTEGRATION_ID" property="id" />
         <result column="INTEGRATION_NAME" property="name" />
         <result column="INTEGRATION_BACK_REFERENCE_ID" property="backReferenceId" />
@@ -143,7 +143,7 @@
         <result column="INTEGRATION_ENABLED" property="enabled" />
         <result column="INTEGRATION_MODIFIED_AT" property="modifiedAt" />
         <result column="INTEGRATION_CREATED_AT" property="createdAt" />
-        <collection property="integrationSettings" ofType="com.qaprosoft.zafira.models.entity.integration.IntegrationSetting" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationSettingMapper.IntegrationSettingResultMap"/>
+        <collection property="integrationSettings" ofType="com.qaprosoft.zafira.models.db.integration.IntegrationSetting" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationSettingMapper.IntegrationSettingResultMap"/>
     </resultMap>
 
 </mapper>

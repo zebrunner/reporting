@@ -127,7 +127,7 @@
         ]]>
     </update>
 
-    <resultMap type="com.qaprosoft.zafira.models.entity.integration.IntegrationSetting" id="IntegrationSettingResultMap" autoMapping="false">
+    <resultMap type="com.qaprosoft.zafira.models.db.integration.IntegrationSetting" id="IntegrationSettingResultMap" autoMapping="false">
         <id column="INTEGRATION_SETTING_ID" property="id" />
         <result column="INTEGRATION_SETTING_VALUE" property="value" />
         <result column="INTEGRATION_SETTING_BINARY_DATA" property="binaryData" jdbcType="BINARY" />

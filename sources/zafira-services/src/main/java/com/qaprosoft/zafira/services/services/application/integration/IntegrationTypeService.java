@@ -26,7 +26,7 @@ public interface IntegrationTypeService {
 
     IntegrationType retrieveByName(String name);
 
-//    IntegrationType retrieveByIntegrationId(Long integrationId);
+    IntegrationType retrieveByIntegrationId(Long integrationId);
 
     List<IntegrationType> retrieveAll();
     

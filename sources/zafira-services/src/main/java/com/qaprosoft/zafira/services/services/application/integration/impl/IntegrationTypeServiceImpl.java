@@ -51,14 +51,11 @@ public class IntegrationTypeServiceImpl implements IntegrationTypeService {
                                         .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_TYPE_NOT_FOUND_BY_NAME, name)));
     }
 
-//    @Override
-//    public IntegrationType retrieveByIntegrationId(Long integrationId) {
-//        IntegrationType integrationType = integrationTypeMapper.findByIntegrationId(integrationId);
-//        if (integrationType == null) {
-//            throw new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_TYPE_NOT_FOUND_BY_INTEGRATION_ID, integrationId));
-//        }
-//        return integrationType;
-//    }
+    @Override
+    public IntegrationType retrieveByIntegrationId(Long integrationId) {
+        return integrationTypeRepository.findByIntegrationId(integrationId)
+                                        .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_TYPE_NOT_FOUND_BY_INTEGRATION_ID, integrationId)));
+    }
 
     @Override
     @Transactional(readOnly = true)
