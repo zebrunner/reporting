@@ -17,31 +17,25 @@ package com.qaprosoft.zafira.services.services.application.integration.tool.impl
 
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.accessmanagement.AccessManagementAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.accessmanagement.AccessManagementAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.proxy.AccessManagementProxy;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AccessManagementService extends AbstractIntegrationService<AccessManagementAdapter> {
 
-    public AccessManagementService(IntegrationService integrationService) {
-        super(integrationService, "LDAP");
+    public AccessManagementService(IntegrationService integrationService, AccessManagementProxy accessManagementProxy) {
+        super(integrationService, accessManagementProxy, "LDAP");
     }
 
-    /**
-     * Search user by username in ldap context
-     * Throws an {@link com.qaprosoft.zafira.services.exceptions.IntegrationException} if integration is not configured
-     * 
-     * @param username - username to search
-     * @return - search result
-     */
     public boolean isUserExists(String username) {
-        AccessManagementAdapter accessManagementAdapter = getAdapterForIntegration(null);
-        return accessManagementAdapter.isUserExists(username);
+        AccessManagementAdapter adapter = getAdapterByIntegrationId(null);
+        return adapter.isUserExists(username);
     }
 
     public BindAuthenticator getBindAuthenticator() {
-        AccessManagementAdapter accessManagementAdapter = getAdapterForIntegration(null);
-        return accessManagementAdapter.getBindAuthenticator();
+        AccessManagementAdapter adapter = getAdapterByIntegrationId(null);
+        return adapter.getBindAuthenticator();
     }
 }

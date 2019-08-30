@@ -19,7 +19,9 @@ import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.storageprovider.StorageProviderAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.storageprovider.StorageProviderAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.proxy.StorageProviderProxy;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -27,28 +29,30 @@ import java.util.Optional;
 @Component
 public class StorageProviderService extends AbstractIntegrationService<StorageProviderAdapter> {
 
-    public StorageProviderService(IntegrationService integrationService) {
-        super(integrationService, "AMAZON");
+    private final int storageProviderTokenExpiration;
+
+    public StorageProviderService(
+            IntegrationService integrationService,
+            StorageProviderProxy storageProviderProxy,
+            @Value("${amazon-token-expiration}") int storageProviderTokenExpiration
+    ) {
+        super(integrationService, storageProviderProxy, "AMAZON");
+        this.storageProviderTokenExpiration = storageProviderTokenExpiration;
     }
 
     public String saveFile(final FileUploadType file) {
-        StorageProviderAdapter storageProviderAdapter = getAdapterForIntegration(null);
-        return storageProviderAdapter.saveFile(file);
+        StorageProviderAdapter adapter = getAdapterByIntegrationId(null);
+        return adapter.saveFile(file);
     }
 
     public void removeFile(final String linkToFile) {
-        StorageProviderAdapter storageProviderAdapter = getAdapterForIntegration(null);
-        storageProviderAdapter.removeFile(linkToFile);
+        StorageProviderAdapter adapter = getAdapterByIntegrationId(null);
+        adapter.removeFile(linkToFile);
     }
 
-    /**
-     * Generates temporary credentials for external clients
-     * 
-     * @return {@link SessionCredentials} object
-     */
-    public Optional<SessionCredentials> getTemporarySessionCredentials(int expiresIn) {
-        StorageProviderAdapter storageProviderAdapter = getAdapterForIntegration(null);
-        return storageProviderAdapter.getTemporarySessionCredentials(expiresIn);
+    public Optional<SessionCredentials> getTemporarySessionCredentials() {
+        StorageProviderAdapter adapter = getAdapterByIntegrationId(null);
+        return adapter.getTemporarySessionCredentials(storageProviderTokenExpiration);
     }
 
 }

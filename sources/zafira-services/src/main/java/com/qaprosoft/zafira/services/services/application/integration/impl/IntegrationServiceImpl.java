@@ -15,16 +15,20 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
-import com.qaprosoft.zafira.dbaccess.persistence.IntegrationRepository;
-import com.qaprosoft.zafira.models.entity.integration.Integration;
-import com.qaprosoft.zafira.models.entity.integration.IntegrationSetting;
-import com.qaprosoft.zafira.models.entity.integration.IntegrationType;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationMapper;
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
+import com.qaprosoft.zafira.models.db.integration.Integration;
+import com.qaprosoft.zafira.models.db.integration.IntegrationGroup;
+import com.qaprosoft.zafira.models.db.integration.IntegrationSetting;
+import com.qaprosoft.zafira.models.db.integration.IntegrationType;
+import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationSettingService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationTypeService;
+import com.qaprosoft.zafira.services.services.application.integration.core.IntegrationInitializer;
 import com.qaprosoft.zafira.services.util.EventPushService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class IntegrationServiceImpl implements IntegrationService {
@@ -45,34 +50,36 @@ public class IntegrationServiceImpl implements IntegrationService {
     private final IntegrationGroupService integrationGroupService;
     private final IntegrationTypeService integrationTypeService;
     private final IntegrationSettingService integrationSettingService;
-    private final EventPushService eventPushService;
+    private final EventPushService<ReinitEventMessage> eventPushService;
+    private final IntegrationInitializer integrationInitializer;
 
     public IntegrationServiceImpl(
             IntegrationRepository integrationRepository,
             IntegrationGroupService integrationGroupService,
             IntegrationTypeService integrationTypeService,
             IntegrationSettingService integrationSettingService,
-            EventPushService eventPushService
+            EventPushService<ReinitEventMessage> eventPushService,
+            IntegrationInitializer integrationInitializer
     ) {
         this.integrationRepository = integrationRepository;
         this.integrationGroupService = integrationGroupService;
         this.integrationTypeService = integrationTypeService;
         this.integrationSettingService = integrationSettingService;
         this.eventPushService = eventPushService;
+        this.integrationInitializer = integrationInitializer;
     }
 
-    // TODO: 2019-08-23 add notification and add to context mapping
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integration create(Integration integration, Long integrationTypeId) {
         unassignCurrentDefaultIntegrationIfNeed(integration, integrationTypeId);
         integration.setEnabled(true);
-        IntegrationType integrationType = integrationTypeService.retrieveById(integrationTypeId);
-        verifyIntegration(integrationType);
-        integration.setType(integrationType);
-        integrationRepository.save(integration);
-//        Set<IntegrationSetting> integrationSettingSet = integrationSettingService.create(integration.getSettings(), integration.getId());
-//        integration.setSettings(new ArrayList<>(integrationSettingSet));
+        verifyIntegration(integrationTypeId);
+        String backReferenceId = generateBackReferenceId(integrationTypeId);
+        integration.setBackReferenceId(backReferenceId);
+        integrationMapper.create(integration, integrationTypeId);
+        Set<IntegrationSetting> integrationSettingSet = integrationSettingService.create(integration.getIntegrationSettings(), integration.getId());
+        integration.setIntegrationSettings(new ArrayList<>(integrationSettingSet));
         return integration;
     }
 
@@ -105,6 +112,12 @@ public class IntegrationServiceImpl implements IntegrationService {
 
     @Override
     @Transactional(readOnly = true)
+    public Integration retrieveDefaultByIntegrationTypeName(String integrationTypeName) {
+        return integrationMapper.findDefaultByIntegrationTypeName(integrationTypeName);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Integration> retrieveAll() {
         return integrationRepository.findAll();
     }
@@ -115,16 +128,27 @@ public class IntegrationServiceImpl implements IntegrationService {
         return integrationRepository.getIntegrationsByTypeId(integrationTypeId);
     }
 
-    // TODO: 2019-08-23 add notification and update in context mapping
+    @Override
+    @Transactional(readOnly = true)
+    public List<Integration> retrieveByIntegrationGroupName(String integrationGroupName) {
+        return integrationMapper.findByIntegrationGroupName(integrationGroupName);
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integration update(Integration integration) {
         unassignCurrentDefaultIntegrationIfNeed(integration, null);
-        IntegrationType integrationType = integrationTypeService.retrieveById(integration.getId());
-        verifyIntegration(integrationType);
-        integrationRepository.save(integration);
-//        integrationSettingService.update(integration.getSettings(), integration.getId());
+        IntegrationType integrationType = integrationTypeService.retrieveByIntegrationId(integration.getId());
+        verifyIntegration(integrationType.getId());
+        integrationMapper.update(integration);
+        integrationSettingService.update(integration.getIntegrationSettings(), integration.getId());
+        notifyToolReinitiated(integration);
         return integration;
+    }
+
+    private String generateBackReferenceId(Long integrationTypeId) {
+        IntegrationType integrationType = integrationTypeService.retrieveById(integrationTypeId);
+        return integrationType.getName() + "_" + UUID.randomUUID().toString();
     }
 
     private void unassignCurrentDefaultIntegrationIfNeed(Integration integration, Long integrationTypeId) {
@@ -148,23 +172,10 @@ public class IntegrationServiceImpl implements IntegrationService {
         }
     }
 
-    /**
-     * Sends message to broker to notify about changed integration.
-     *
-     * @param tool that was re-initiated
-     * @param tenant whose integration was updated
-     */
-    /*public void notifyToolReinitiated(Tool tool, String tenant) {
-        eventPushService.convertAndSend(EventPushService.Type.SETTINGS, new ReinitEventMessage(tenant, tool));
-        initIntegration(tool, tenant);
+    private void notifyToolReinitiated(Integration integration) {
+        String tenantName = TenancyContext.getTenantName();
+        eventPushService.convertAndSend(EventPushService.Type.SETTINGS, new ReinitEventMessage(tenantName, integration.getId()));
+        integrationInitializer.initIntegration(integration, tenantName);
     }
-
-    @RabbitListener(queues = "#{settingsQueue.name}")
-    public void process(Message message) {
-        ReinitEventMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
-        if (!eventPushService.isSettingQueueConsumer(message)) {
-            initIntegration(rm.getTool(), rm.getTenancy());
-        }
-    }*/
 
 }

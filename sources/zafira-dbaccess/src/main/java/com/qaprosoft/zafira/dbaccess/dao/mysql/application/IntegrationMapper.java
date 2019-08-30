@@ -30,9 +30,13 @@ public interface IntegrationMapper {
 
     Integration findDefaultByIntegrationTypeId(Long integrationTypeId);
 
+    Integration findDefaultByIntegrationTypeName(String integrationTypeName);
+
     List<Integration> findAll();
 
     List<Integration> findByIntegrationTypeId(Long integrationTypeId);
+
+    List<Integration> findByIntegrationGroupName(String integrationGroupName);
 
     void update(Integration integration);
 

@@ -17,7 +17,9 @@ package com.qaprosoft.zafira.services.services.application.integration.tool.impl
 
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.google.GoogleServiceAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.google.GoogleServiceAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.proxy.GoogleProxy;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -25,13 +27,19 @@ import java.io.IOException;
 @Component
 public class GoogleService extends AbstractIntegrationService<GoogleServiceAdapter> {
 
-    public GoogleService(IntegrationService integrationService) {
-        super(integrationService, "GOOGLE");
+    private final long googleTokenExpiration;
+
+    public GoogleService(IntegrationService integrationService,
+                         GoogleProxy googleProxy,
+                         @Value("${google-token-expiration}") long googleTokenExpiration
+    ) {
+        super(integrationService, googleProxy, "GOOGLE");
+        this.googleTokenExpiration = googleTokenExpiration;
     }
 
-    public String getTemporaryAccessToken(Long expiresIn) throws IOException {
-        GoogleServiceAdapter googleAdapter = getAdapterForIntegration(null);
-        return googleAdapter.getTemporaryAccessToken(expiresIn);
+    public String getTemporaryAccessToken() throws IOException {
+        GoogleServiceAdapter googleAdapter = getAdapterByIntegrationId(null);
+        return googleAdapter.getTemporaryAccessToken(googleTokenExpiration);
     }
 
     /**
@@ -40,7 +48,7 @@ public class GoogleService extends AbstractIntegrationService<GoogleServiceAdapt
      * @return google drive service client
      */
     public GoogleDriveService getDriveService() {
-        GoogleServiceAdapter googleAdapter = getAdapterForIntegration(null);
+        GoogleServiceAdapter googleAdapter = getAdapterByIntegrationId(null);
         return googleAdapter.getDriveService();
     }
 
@@ -50,7 +58,7 @@ public class GoogleService extends AbstractIntegrationService<GoogleServiceAdapt
      * @return google drive service client
      */
     public GoogleSpreadsheetsService getSpreadsheetsService() {
-        GoogleServiceAdapter googleAdapter = getAdapterForIntegration(null);
+        GoogleServiceAdapter googleAdapter = getAdapterByIntegrationId(null);
         return googleAdapter.getSpreadsheetsService();
     }
 }

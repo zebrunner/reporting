@@ -16,8 +16,11 @@
 package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.entity.integration.Integration;
+import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.models.dto.integration.IntegrationDTO;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.StorageProviderService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.google.GoogleService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.Api;
@@ -37,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,10 +51,14 @@ import java.util.stream.Collectors;
 public class IntegrationAPIController extends AbstractController {
 
     private final IntegrationService integrationService;
+    private final StorageProviderService storageProviderService;
+    private final GoogleService googleService;
     private final Mapper mapper;
 
-    public IntegrationAPIController(IntegrationService integrationService, Mapper mapper) {
+    public IntegrationAPIController(IntegrationService integrationService, StorageProviderService storageProviderService, GoogleService googleService, Mapper mapper) {
         this.integrationService = integrationService;
+        this.storageProviderService = storageProviderService;
+        this.googleService = googleService;
         this.mapper = mapper;
     }
 
@@ -73,6 +81,25 @@ public class IntegrationAPIController extends AbstractController {
         return integrationService.retrieveAll().stream()
                                  .map(integration -> mapper.map(integration, IntegrationDTO.class))
                                  .collect(Collectors.toList());
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Get amazon temporary credentials", nickname = "getAmazonTemporaryCredentials", httpMethod = "GET", response = SessionCredentials.class)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @PreAuthorize("hasPermission('VIEW_INTEGRATIONS')")
+    @GetMapping("/creds/amazon")
+    public SessionCredentials getAmazonTemporaryCredentials() {
+        return storageProviderService.getTemporarySessionCredentials()
+                                     .orElse(null);
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Get google temporary credentials", nickname = "getGoogleTemporaryCredentials", httpMethod = "GET", response = String.class)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @PreAuthorize("hasPermission('VIEW_INTEGRATIONS')")
+    @GetMapping("/creds/google")
+    public String getGoogleTemporaryCredentials() throws IOException {
+        return googleService.getTemporaryAccessToken();
     }
 
     @ResponseStatusDetails

@@ -29,11 +29,15 @@ public interface IntegrationService {
 
     Integration retrieveDefaultByIntegrationTypeId(Long integrationTypeId);
 
+    Integration retrieveDefaultByIntegrationTypeName(String integrationTypeName);
+
     List<Integration> retrieveAll();
 
     List <Integration> getIntegrationsByTypeId(Long typeId);
 
     List<Integration> retrieveByIntegrationTypeId(Long integrationTypeId);
+
+    List<Integration> retrieveByIntegrationGroupName(String integrationGroupName);
 
     Integration update(Integration integration);
 

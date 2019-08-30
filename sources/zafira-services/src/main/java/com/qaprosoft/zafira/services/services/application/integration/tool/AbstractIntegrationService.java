@@ -17,26 +17,28 @@ package com.qaprosoft.zafira.services.services.application.integration.tool;
 
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.GroupAdapter;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.IntegrationAdapter;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.proxy.IntegrationAdapterProxy;
+import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.IntegrationAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.IntegrationGroupAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.proxy.IntegrationAdapterProxy;
 
 import java.util.Optional;
 
-public abstract class AbstractIntegrationService<T extends GroupAdapter> {
+public abstract class AbstractIntegrationService<T extends IntegrationGroupAdapter> {
 
     private static final String ERR_MSG_ADAPTER_NOT_FOUND = "Requested adapter of type %s can not be found";
 
     private final IntegrationService integrationService;
+    private final IntegrationAdapterProxy integrationAdapterProxy;
     private final String defaultType;
 
-    public AbstractIntegrationService(IntegrationService integrationService, String defaultType) {
+    public AbstractIntegrationService(IntegrationService integrationService, IntegrationAdapterProxy integrationAdapterProxy, String defaultType) {
         this.integrationService = integrationService;
+        this.integrationAdapterProxy = integrationAdapterProxy;
         this.defaultType = defaultType;
     }
 
     public boolean isEnabledAndConnected(Long integrationId) {
-        IntegrationAdapter adapter = (IntegrationAdapter) getAdapterForIntegration(integrationId);
+        IntegrationAdapter adapter = (IntegrationAdapter) getAdapterByIntegrationId(integrationId);
 
         // we now need proper integration id since it can be null prior to this point, but never for adapter
         Integration integration = integrationService.retrieveById(adapter.getIntegrationId());
@@ -45,11 +47,11 @@ public abstract class AbstractIntegrationService<T extends GroupAdapter> {
     }
 
     @SuppressWarnings("unchecked")
-    public T getAdapterForIntegration(Long integrationId) {
+    public T getAdapterByIntegrationId(Long integrationId) {
         Optional<IntegrationAdapter> maybeAdapter;
         if (integrationId == null) {
             // can be null in case of legacy client call - use default adapter
-            maybeAdapter = IntegrationAdapterProxy.getDefaultAdapter(defaultType);
+            maybeAdapter = integrationAdapterProxy.getDefaultAdapter(defaultType);
         } else {
             maybeAdapter = IntegrationAdapterProxy.getAdapter(integrationId);
         }
@@ -57,58 +59,9 @@ public abstract class AbstractIntegrationService<T extends GroupAdapter> {
         return (T) maybeAdapter.orElseThrow(() -> new UnsupportedOperationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND, defaultType)));
     }
 
-    /*@Override
-    public void init() {
-        if (settingsService != null && contextClass != null) {
-            try {
-                List<Setting> settings = settingsService.getSettingsByTool(tool);
-
-                Setting enabledSetting = getEnabledSetting(settings);
-                boolean enabled = Boolean.valueOf(enabledSetting.getValue());
-
-                // skip initialisation if tool is disabled
-                if (enabled) {
-                    boolean hasBinarySetting = hasBinarySetting(settings);
-                    Map<Setting.SettingType, Object> mappedSettings = new HashMap<>();
-                    settings.forEach(setting -> {
-                        Setting.SettingType toolSetting = Setting.SettingType.valueOf(setting.getName());
-                        if (toolSetting.isRequired() && StringUtils.isBlank(setting.getValue())) {
-                            removeContext();
-                            throw new IntegrationException("Integration tool '" + tool + "' data is malformed. Setting '" + setting.getName() + "' is required");
-                        }
-                        if (setting.isEncrypted()) {
-                            setting.setValue(mapEncrypted(setting));
-                        }
-                        if (!ArrayUtils.isEmpty(setting.getFile())) {
-                            mappedSettings.put(toolSetting, setting);
-                        }
-                        Object value = hasBinarySetting ? setting : setting.getValue();
-                        mappedSettings.put(toolSetting, value);
-                    });
-                    T context = createContextInstance(mappedSettings);
-                    putContext(context);
-                }
-            } catch (InstantiationException e) {
-                throw new IntegrationException(e.getMessage(), e);
-            } catch (Exception e) {
-                LOGGER.error("Unable to initialize '" + tool + "' settings", e);
-            }
-        }
+    @SuppressWarnings("unchecked")
+    public T getAdapterByBackReferenceId(String backReferenceId) {
+        return (T) integrationAdapterProxy.getAdapter(backReferenceId)
+                                          .orElseThrow(() -> new UnsupportedOperationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND, defaultType)));
     }
-
-    private Setting getEnabledSetting(List<Setting> settings) {
-        return settings.stream()
-                       .filter(setting -> setting.getName().endsWith("_ENABLED")) // it is assumed that there's exactly one setting indicating if tool is enabled
-                       .findFirst()
-                       .orElseThrow(() -> new IntegrationException("Integration tool '" + tool + "' data is malformed. 'Enabled' property is not set"));
-    }*/
-
-    /*private String mapEncrypted(Setting setting) {
-        return setting.isEncrypted() ? cryptoService.decrypt(setting.getValue()) : setting.getValue();
-    }
-
-    private boolean hasBinarySetting(List<Setting> settings) {
-        return settings.stream().anyMatch(setting -> !ArrayUtils.isEmpty(setting.getFile()));
-    }*/
-
 }

@@ -37,6 +37,8 @@ public interface IntegrationSettingService {
 
     IntegrationSetting retrieveByIntegrationTypeNameAndParamName(String integrationTypeName, String paramName);
 
+    List<IntegrationSetting> retrieveAllEncrypted();
+
     IntegrationSetting update(IntegrationSetting integrationSetting);
 
     /**

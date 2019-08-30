@@ -46,6 +46,14 @@
                 INTEGRATION_PARAMS IP
             ON
                 IP.ID = INS.INTEGRATION_PARAM_ID
+            LEFT JOIN
+                INTEGRATION_TYPES IT
+            ON
+                I.INTEGRATION_TYPE_ID = IT.ID
+            LEFT JOIN
+                INTEGRATION_GROUPS IG
+            ON
+                IT.INTEGRATION_GROUP_ID = IG.ID
         ]]>
     </sql>
 
@@ -77,11 +85,27 @@
         ]]>
     </select>
 
+    <select id="findByIntegrationGroupName" resultMap="IntegrationResultMap">
+        <include refid="find"/>
+        <![CDATA[
+            WHERE
+                IG.NAME = #{integrationGroupName}
+        ]]>
+    </select>
+
     <select id="findDefaultByIntegrationTypeId" resultMap="IntegrationResultMap">
         <include refid="find"/>
         <![CDATA[
             WHERE
                 I.INTEGRATION_TYPE_ID = #{integrationTypeId} AND I.IS_DEFAULT = TRUE
+        ]]>
+    </select>
+
+    <select id="findDefaultByIntegrationTypeName" resultMap="IntegrationResultMap">
+        <include refid="find"/>
+        <![CDATA[
+            WHERE
+                IT.NAME = #{integrationTypeName} AND I.IS_DEFAULT = TRUE
         ]]>
     </select>
 

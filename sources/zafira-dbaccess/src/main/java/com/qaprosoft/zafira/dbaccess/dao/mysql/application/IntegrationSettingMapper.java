@@ -33,6 +33,8 @@ public interface IntegrationSettingMapper {
 
     List<IntegrationSetting> findAll();
 
+    List<IntegrationSetting> findAllEncrypted();
+
     void update(IntegrationSetting integrationSetting);
 
 }

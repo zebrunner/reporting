@@ -39,7 +39,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -75,11 +74,11 @@ public class ConfigurationAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/version")
     public Map<String, Object> getVersion() {
-        Map<String, Object> config = new HashMap<>();
-        config.put("service", versionService.getServiceVersion());
-        config.put("client", versionService.getClientVersion());
-        config.put("service_url", urlResolver.buildWebserviceUrl());
-        return config;
+        return Map.of(
+        "service", versionService.getServiceVersion(),
+        "client", versionService.getClientVersion(),
+        "service_url", urlResolver.buildWebserviceUrl()
+        );
     }
 
     @ResponseStatusDetails
@@ -95,9 +94,8 @@ public class ConfigurationAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/jenkins")
     public Map<String, Object> getJenkinsConfig() {
-        Map<String, Object> config = new HashMap<>();
-        config.put("connected", automationServerService.isEnabledAndConnected(null));
-        return config;
+        boolean enabledAndConnected = automationServerService.isEnabledAndConnected(null);
+        return Map.of("connected", enabledAndConnected);
     }
 
     @ResponseStatusDetails
@@ -105,9 +103,8 @@ public class ConfigurationAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/jira")
     public Map<String, Object> getJiraConfig() {
-        Map<String, Object> config = new HashMap<>();
-        config.put("connected", testCaseManagementService.isEnabledAndConnected(null));
-        return config;
+        boolean enabledAndConnected = testCaseManagementService.isEnabledAndConnected(null);
+        return Map.of("connected", enabledAndConnected);
     }
 
     @ResponseStatusDetails
@@ -115,12 +112,10 @@ public class ConfigurationAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/slack/{id}")
     public Map<String, Object> isSlackAvailable(@PathVariable("id") long id) {
-        Map<String, Object> config = new HashMap<>();
         TestRun tr = testRunService.getTestRunByIdFull(id);
         boolean available = slackService.getWebhook() != null && StringUtils.isNotEmpty(tr.getSlackChannels())
                 && slackService.isEnabledAndConnected(null);
-        config.put("available", available);
-        return config;
+        return Map.of("available", available);
     }
 
     @ResponseStatusDetails
@@ -128,10 +123,8 @@ public class ConfigurationAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/slack")
     public Map<String, Object> isSlackAvailable() {
-        Map<String, Object> config = new HashMap<>();
         boolean available = slackService.getWebhook() != null && slackService.isEnabledAndConnected(null);
-        config.put("available", available);
-        return config;
+        return Map.of("available", available);
     }
 
 }

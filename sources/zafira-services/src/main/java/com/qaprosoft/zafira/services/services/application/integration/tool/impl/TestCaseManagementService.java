@@ -18,29 +18,30 @@ package com.qaprosoft.zafira.services.services.application.integration.tool.impl
 import com.qaprosoft.zafira.models.dto.TestCaseManagementIssueType;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.testcasemanagement.TestCaseManagementAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.testcasemanagement.TestCaseManagementAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.proxy.TestCaseManagementProxy;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TestCaseManagementService extends AbstractIntegrationService<TestCaseManagementAdapter> {
 
-    public TestCaseManagementService(IntegrationService integrationService) {
-        super(integrationService, "JIRA");
+    public TestCaseManagementService(IntegrationService integrationService, TestCaseManagementProxy testCaseManagementProxy) {
+        super(integrationService, testCaseManagementProxy, "JIRA");
     }
 
     public TestCaseManagementIssueType getIssue(String ticket) {
-        TestCaseManagementAdapter testCaseManagementAdapter = getAdapterForIntegration(null);
-        return testCaseManagementAdapter.getIssue(ticket);
+        TestCaseManagementAdapter adapter = getAdapterByIntegrationId(null);
+        return adapter.getIssue(ticket);
     }
 
     public String getUrl() {
-        TestCaseManagementAdapter testCaseManagementAdapter = getAdapterForIntegration(null);
-        return testCaseManagementAdapter.getUrl();
+        TestCaseManagementAdapter adapter = getAdapterByIntegrationId(null);
+        return adapter.getUrl();
     }
 
     public boolean isIssueClosed(String ticket) {
-        TestCaseManagementAdapter testCaseManagementAdapter = getAdapterForIntegration(null);
-        return testCaseManagementAdapter.isIssueClosed(ticket);
+        TestCaseManagementAdapter adapter = getAdapterByIntegrationId(null);
+        return adapter.isIssueClosed(ticket);
     }
 
 }

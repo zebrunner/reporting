@@ -21,6 +21,7 @@ import com.qaprosoft.zafira.models.entity.integration.IntegrationType;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationParam;
+import com.qaprosoft.zafira.services.services.application.CryptoDriven;
 import com.qaprosoft.zafira.services.services.application.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationParamService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationSettingService;
@@ -35,7 +36,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class IntegrationSettingServiceImpl implements IntegrationSettingService {
+public class IntegrationSettingServiceImpl implements IntegrationSettingService, CryptoDriven<IntegrationSetting> {
 
     private static final String ERR_MSG_INTEGRATION_SETTING_NOT_FOUND = "Integration setting with id '%d' not found";
     private static final String ERR_MSG_INTEGRATION_SETTING_NOT_FOUND_BY_INTEGRATION_ID_AND_PARAM_NAME = "Integration setting with integration id '%d' and parameter name '%s' not found";
@@ -83,15 +84,23 @@ public class IntegrationSettingServiceImpl implements IntegrationSettingService 
     }
 
     @Override
+    @Transactional(readOnly = true)
     public IntegrationSetting retrieveByIntegrationIdAndParamName(Long integrationId, String paramName) {
         return integrationSettingRepository.findByIntegrationIdAndParamName(integrationId, paramName)
                                            .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_SETTING_NOT_FOUND_BY_INTEGRATION_ID_AND_PARAM_NAME, integrationId, paramName)));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public IntegrationSetting retrieveByIntegrationTypeNameAndParamName(String integrationTypeName, String paramName) {
         return integrationSettingRepository.findByIntegrationTypeNameAndParamName(integrationTypeName, paramName)
                                            .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_SETTING_NOT_FOUND_BY_INTEGRATION_TYPE_NAME_AND_PARAM_NAME, integrationTypeName, paramName)));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<IntegrationSetting> retrieveAllEncrypted() {
+        return integrationSettingMapper.findAllEncrypted();
     }
 
     @Override
@@ -108,6 +117,27 @@ public class IntegrationSettingServiceImpl implements IntegrationSettingService 
         validateSettings(integrationSettingSet, integrationSettings, integrationId);
         integrationSettingSet.forEach(this::update);
         return integrationSettingSet;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Collection<IntegrationSetting> getEncryptedCollection() {
+        return retrieveAllEncrypted();
+    }
+
+    @Override
+    public void afterReencryptOperation(Collection<IntegrationSetting> reencryptedCollection) {
+        reencryptedCollection.forEach(this::update);
+    }
+
+    @Override
+    public String getEncryptedValue(IntegrationSetting entity) {
+        return entity.getValue();
+    }
+
+    @Override
+    public void setEncryptedValue(IntegrationSetting integrationSetting, String encryptedString) {
+        integrationSetting.setValue(encryptedString);
     }
 
     /**

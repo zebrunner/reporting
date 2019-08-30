@@ -19,38 +19,46 @@ import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.slack.SlackServiceAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.slack.SlackAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.proxy.SlackProxy;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SlackService extends AbstractIntegrationService<SlackServiceAdapter> {
+public class SlackService extends AbstractIntegrationService<SlackAdapter> {
 
     private final static String ON_FINISH_PATTERN = "Test run #%1$d has been completed after %2$s with status %3$s\n";
     private final static String REVIEWED_PATTERN = "Test run #%1$d has been reviewed. Status: %2$s\n";
 
-    public SlackService(IntegrationService integrationService) {
-        super(integrationService, "SLACK");
+    public SlackService(IntegrationService integrationService, SlackProxy slackProxy) {
+        super(integrationService, slackProxy, "SLACK");
     }
 
     public void sendStatusOnFinish(TestRun testRun) {
-        String onFinishMessage = String.format(ON_FINISH_PATTERN, testRun.getId(), countElapsedInSMH(testRun.getElapsed()),
-                TestRunResultsEmail.buildStatusText(testRun));
-        SlackServiceAdapter slackServiceAdapter = getAdapterForIntegration(null);
-        slackServiceAdapter.sendNotification(testRun, onFinishMessage);
+        String readableTime = asReadableTime(testRun.getElapsed());
+        String statusText = TestRunResultsEmail.buildStatusText(testRun);
+        String onFinishMessage = String.format(ON_FINISH_PATTERN, testRun.getId(), readableTime, statusText);
+        SlackAdapter adapter = getAdapterByIntegrationId(null);
+        adapter.sendNotification(testRun, onFinishMessage);
     }
 
     public void sendStatusReviewed(TestRun testRun) {
-        String reviewedMessage = String.format(REVIEWED_PATTERN, testRun.getId(), TestRunResultsEmail.buildStatusText(testRun));
-        SlackServiceAdapter slackServiceAdapter = getAdapterForIntegration(null);
-        slackServiceAdapter.sendNotification(testRun, reviewedMessage);
+        String statusText = TestRunResultsEmail.buildStatusText(testRun);
+        String reviewedMessage = String.format(REVIEWED_PATTERN, testRun.getId(), statusText);
+        SlackAdapter adapter = getAdapterByIntegrationId(null);
+        adapter.sendNotification(testRun, reviewedMessage);
     }
 
     public String getWebhook() {
-        SlackServiceAdapter slackServiceAdapter = getAdapterForIntegration(null);
-        return slackServiceAdapter.getWebhook();
+        SlackAdapter adapter = getAdapterByIntegrationId(null);
+        return adapter.getWebhook();
     }
 
-    private String countElapsedInSMH(Integer elapsed) {
+    /**
+     * Converts to execution time in seconds to user-friendly form such as 10 h 13 min 33 sec
+     * @param elapsed elapsed time in seconds
+     * @return formatted value
+     */
+    private String asReadableTime(Integer elapsed) {
         if (elapsed != null) {
             int s = elapsed % 60;
             int m = (elapsed / 60) % 60;
