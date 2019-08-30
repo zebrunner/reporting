@@ -192,13 +192,15 @@ public class TestService {
 
             // Resolve known issues
             if (Status.FAILED.equals(test.getStatus())) {
-                WorkItem knownIssue = workItemService.getWorkItemByTestCaseIdAndHashCode(existingTest.getTestCaseId(),
-                        getTestMessageHashCode(test.getMessage()));
+                Long testCaseId = existingTest.getTestCaseId();
+                int testMessageHashCode = getTestMessageHashCode(test.getMessage());
+
+                WorkItem knownIssue = workItemService.getWorkItemByTestCaseIdAndHashCode(testCaseId, testMessageHashCode);
                 if (knownIssue != null) {
-                    Optional<Issue> nullableIssueFromJira = jiraService.getIssue(knownIssue.getJiraId());
-                    boolean isJiraIdClosed = jiraService.isEnabledAndConnected() && nullableIssueFromJira.isPresent()
-                            && jiraService.isIssueClosed(nullableIssueFromJira.get());
-                    if (!isJiraIdClosed) {
+                    Optional<Issue> maybeIssue = jiraService.getIssue(knownIssue.getJiraId());
+
+                    boolean closed = maybeIssue.isPresent() && jiraService.isIssueClosed(maybeIssue.get());
+                    if (!closed) {
                         existingTest.setKnownIssue(true);
                         existingTest.setBlocker(knownIssue.isBlocker());
                         testRunService.updateStatistics(test.getTestRunId(), MARK_AS_KNOWN_ISSUE);

@@ -145,7 +145,7 @@ public class ScmAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS')")
     @GetMapping("/github/exchange")
-    public ScmAccountType authorizeCallback(@RequestParam("code") String code) throws IOException, URISyntaxException, ServiceException {
+    public ScmAccountType authorizeCallback(@RequestParam("code") String code) throws IOException, URISyntaxException {
         String accessToken = gitHubService.getAccessToken(code);
         if (StringUtils.isBlank(accessToken)) {
             throw new ForbiddenOperationException("Cannot recognize your authority");
@@ -159,8 +159,8 @@ public class ScmAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS')")
     @GetMapping("/github/organizations/{scmId}")
-    public List<Organization> getOrganizations(@PathVariable("scmId") Long id) throws IOException, ServiceException {
-        ScmAccount scmAccount = this.scmAccountService.getScmAccountById(id);
+    public List<Organization> getOrganizations(@PathVariable("scmId") Long id) throws IOException {
+        ScmAccount scmAccount = scmAccountService.getScmAccountById(id);
         if (scmAccount == null) {
             throw new ForbiddenOperationException("Unable to list organizations");
         }
@@ -175,7 +175,7 @@ public class ScmAPIController extends AbstractController {
     public List<Repository> getRepositories(
             @PathVariable("scmId") Long id,
             @RequestParam(name = "org", required = false) String organizationName
-    ) throws IOException, ServiceException {
+    ) throws IOException {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(id);
         if (scmAccount == null) {
             throw new ForbiddenOperationException("Unable to list repositories");

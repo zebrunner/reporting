@@ -15,21 +15,6 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import com.qaprosoft.zafira.models.dto.JenkinsLauncherType;
-import com.qaprosoft.zafira.services.util.URLResolver;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.offbytwo.jenkins.model.QueueReference;
@@ -39,6 +24,7 @@ import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Launcher;
 import com.qaprosoft.zafira.models.db.ScmAccount;
 import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.dto.JenkinsLauncherType;
 import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
@@ -51,6 +37,19 @@ import com.qaprosoft.zafira.services.services.application.integration.impl.Selen
 import com.qaprosoft.zafira.services.services.application.scm.GitHubService;
 import com.qaprosoft.zafira.services.services.application.scm.ScmAccountService;
 import com.qaprosoft.zafira.services.services.auth.JWTService;
+import com.qaprosoft.zafira.services.util.URLResolver;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class LauncherService {
@@ -165,8 +164,9 @@ public class LauncherService {
     public String buildLauncherJob(Launcher launcher, User user) throws IOException, ServiceException {
 
         ScmAccount scmAccount = scmAccountService.getScmAccountById(launcher.getScmAccount().getId());
-        if (scmAccount == null)
+        if (scmAccount == null) {
             throw new ServiceException("Scm account not found");
+        }
 
         Job job = launcher.getJob();
         if (job == null)
