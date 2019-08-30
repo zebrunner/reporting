@@ -19,7 +19,6 @@ package com.qaprosoft.zafira.services.services.application.integration;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationSetting;
 
 import java.util.List;
-import java.util.Set;
 
 public interface IntegrationSettingService {
 
@@ -29,7 +28,6 @@ public interface IntegrationSettingService {
 //     * @param integrationId - integration to reference
 //     * @return created integration settings
 //     */
-//    Set<IntegrationSetting> create(List<IntegrationSetting> integrationSettings, Long integrationId);
 
     IntegrationSetting retrieveById(Long id);
 
@@ -47,6 +45,4 @@ public interface IntegrationSettingService {
      * @param integrationId - integration to reference
      * @return updated integration settings
      */
-    Set<IntegrationSetting> update(List<IntegrationSetting> integrationSettings, Long integrationId);
-
 }

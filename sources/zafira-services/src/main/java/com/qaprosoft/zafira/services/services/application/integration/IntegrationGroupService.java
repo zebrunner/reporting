@@ -19,7 +19,7 @@ import com.qaprosoft.zafira.models.entity.integration.IntegrationGroup;
 
 public interface IntegrationGroupService {
 
-//    IntegrationGroup retrieveByIntegrationTypeId(Long integrationTypeId);
+    IntegrationGroup retrieveByIntegrationTypeId(Long integrationTypeId);
 
     IntegrationGroup retrieveByName(String name);
 

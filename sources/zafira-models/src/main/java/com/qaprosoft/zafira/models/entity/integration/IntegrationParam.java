@@ -21,12 +21,9 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Getter
@@ -45,10 +42,6 @@ public class IntegrationParam {
     private String defaultValue;
     private boolean mandatory;
     private boolean needEncryption;
-
-    @JoinColumn(name = "integration_type_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private IntegrationType type;
 
     @Override
     public int hashCode() {

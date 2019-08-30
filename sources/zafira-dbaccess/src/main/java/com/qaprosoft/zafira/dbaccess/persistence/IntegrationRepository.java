@@ -26,6 +26,7 @@ public interface IntegrationRepository extends Repository<Integration, Long> {
     Optional<Integration> findIntegrationByBackReferenceId(String backReferenceId);
 
     @EntityGraph(value = "integration.expanded")
+    @Query(value = "Select * From zafira.integrations i left join zafira.integration_types it On i.integration_type_id = it.id left join zafira.integration_groups ig on it.integration_group_id = ig.id Where ig.name = :typeGroupName", nativeQuery = true)
     List<Integration> findIntegrationByTypeGroupName(String typeGroupName);
 
     @EntityGraph(value = "integration.expanded")
@@ -35,4 +36,7 @@ public interface IntegrationRepository extends Repository<Integration, Long> {
     @EntityGraph(value = "integration.expanded")
     @Query("Select i From Integration i Where i.type.name = :integrationTypeName and i.isDefault = true")
     Optional<Integration> findIntegrationByTypeNameAndDefaultIsTrue(String integrationTypeName);
+
+    @EntityGraph(value = "integration.expanded")
+    List<Integration> findIntegrationsByTypeName(String integrationTypeName);
 }

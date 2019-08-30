@@ -33,12 +33,6 @@ import java.util.Optional;
         },
         subgraphs = {
                 @NamedSubgraph(
-                        name = "type-subgraph",
-                        attributeNodes = {
-                                @NamedAttributeNode("group")
-                        }
-                ),
-                @NamedSubgraph(
                         name = "settings-subgraph",
                         attributeNodes = {
                                 @NamedAttributeNode("param")

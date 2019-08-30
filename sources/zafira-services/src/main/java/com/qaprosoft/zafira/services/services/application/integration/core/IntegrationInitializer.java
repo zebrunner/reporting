@@ -39,24 +39,21 @@ public class IntegrationInitializer {
     private static final String INITIALIZING_INTEGRATION_BY_TYPE_START = "Initializing integration %s of type %s";
     private static final String ERR_MSG_GROUP_NOT_EXISTS = "Integration group with name %s does not exist";
 
-    private final IntegrationTypeService integrationTypeService;
     private final IntegrationGroupService integrationGroupService;
 
     private final Map<String, IntegrationAdapterProxy> integrationProxies;
 
     public IntegrationInitializer(
             @Lazy Map<String, IntegrationAdapterProxy> integrationProxies,
-            IntegrationTypeService integrationTypeService,
             IntegrationGroupService integrationGroupService
     ) {
         this.integrationProxies = integrationProxies;
-        this.integrationTypeService = integrationTypeService;
         this.integrationGroupService = integrationGroupService;
     }
 
     public void initIntegration(Integration integration, String tenant) {
-        IntegrationType type = integrationTypeService.retrieveById(integration.getId());
-        IntegrationGroup group = type.getGroup();
+        IntegrationType type = integration.getType();
+        IntegrationGroup group = integrationGroupService.retrieveByIntegrationTypeId(type.getId());
 
         TenancyContext.setTenantName(tenant);
         initByType(group.getName(), type.getName(), integration);

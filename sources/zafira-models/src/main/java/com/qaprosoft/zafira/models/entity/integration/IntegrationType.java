@@ -41,9 +41,7 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 @NamedEntityGraph(name = "integrationType.expanded", attributeNodes = {
-        @NamedAttributeNode("group"),
-        @NamedAttributeNode("params"),
-        @NamedAttributeNode("integrations")
+        @NamedAttributeNode("params")
 })
 @Entity
 @Table(name = "integration_types")
@@ -55,14 +53,8 @@ public class IntegrationType {
     private String name;
     private String iconUrl;
 
-    @JoinColumn(name = "integration_group_id")
-    @OneToOne(fetch = FetchType.EAGER)
-    private IntegrationGroup group;
-
-    @OneToMany(mappedBy = "type")
+    @OneToMany(fetch= FetchType.EAGER)
+    @JoinColumn(name = "integration_type_id")
     private List<IntegrationParam> params;
-
-    @OneToMany(mappedBy = "type")
-    private List<Integration> integrations;
 
 }

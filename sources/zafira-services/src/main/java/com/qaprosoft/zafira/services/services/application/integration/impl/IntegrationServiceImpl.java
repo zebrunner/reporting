@@ -15,27 +15,23 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationMapper;
 import com.qaprosoft.zafira.dbaccess.persistence.IntegrationRepository;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
-import com.qaprosoft.zafira.models.entity.integration.IntegrationSetting;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationGroup;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationType;
 import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
-import com.qaprosoft.zafira.services.services.application.integration.IntegrationSettingService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationTypeService;
 import com.qaprosoft.zafira.services.services.application.integration.core.IntegrationInitializer;
 import com.qaprosoft.zafira.services.util.EventPushService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -50,7 +46,6 @@ public class IntegrationServiceImpl implements IntegrationService {
     private final IntegrationRepository integrationRepository;
     private final IntegrationGroupService integrationGroupService;
     private final IntegrationTypeService integrationTypeService;
-    private final IntegrationSettingService integrationSettingService;
     private final EventPushService<ReinitEventMessage> eventPushService;
     private final IntegrationInitializer integrationInitializer;
 
@@ -58,14 +53,12 @@ public class IntegrationServiceImpl implements IntegrationService {
             IntegrationRepository integrationRepository,
             IntegrationGroupService integrationGroupService,
             IntegrationTypeService integrationTypeService,
-            IntegrationSettingService integrationSettingService,
             EventPushService<ReinitEventMessage> eventPushService,
             IntegrationInitializer integrationInitializer
     ) {
         this.integrationRepository = integrationRepository;
         this.integrationGroupService = integrationGroupService;
         this.integrationTypeService = integrationTypeService;
-        this.integrationSettingService = integrationSettingService;
         this.eventPushService = eventPushService;
         this.integrationInitializer = integrationInitializer;
     }
@@ -81,8 +74,6 @@ public class IntegrationServiceImpl implements IntegrationService {
         String backReferenceId = generateBackReferenceId(integrationTypeId);
         integration.setBackReferenceId(backReferenceId);
         integrationRepository.save(integration);
-//        Set<IntegrationSetting> integrationSettingSet = integrationSettingService.create(integration.getIntegrationSettings(), integration.getId());
-//        integration.setIntegrationSettings(new ArrayList<>(integrationSettingSet));
         return integration;
     }
 
@@ -139,6 +130,12 @@ public class IntegrationServiceImpl implements IntegrationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<Integration> retrieveByIntegrationsTypeName(String integrationTypeName) {
+        return integrationRepository.findIntegrationsByTypeName(integrationTypeName);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public Integration update(Integration integration) {
         unassignCurrentDefaultIntegrationIfNeed(integration, null);
@@ -168,8 +165,9 @@ public class IntegrationServiceImpl implements IntegrationService {
     }
 
     private void verifyIntegration(IntegrationType integrationType) {
-        if (!integrationType.getGroup().isMultipleAllowed()) {
-            List<Integration> integrations = integrationType.getIntegrations();
+        IntegrationGroup integrationGroup = integrationGroupService.retrieveByIntegrationTypeId(integrationType.getId());
+        if (!integrationGroup.isMultipleAllowed()) {
+            List<Integration> integrations = getIntegrationsByTypeId(integrationType.getId());
             if (integrations.size() != 0) {
                 throw new IllegalOperationException(String.format(ERR_MSG_NOT_MULTIPLE_ALLOWED_INTEGRATION, integrationType.getName()));
             }

@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationGroupMapper;
 import com.qaprosoft.zafira.dbaccess.persistence.IntegrationGroupRepository;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationGroup;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
@@ -35,15 +34,12 @@ public class IntegrationGroupServiceImpl implements IntegrationGroupService {
         this.integrationGroupRepository = integrationGroupRepository;
     }
 
-//    @Override
-//    @Transactional(readOnly = true)
-//    public IntegrationGroup retrieveByIntegrationTypeId(Long integrationTypeId) {
-//        IntegrationGroup integrationGroup = integrationGroupRepository.findByIntegrationTypeId(integrationTypeId);
-//        if (integrationGroup == null) {
-//            throw new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_GROUP_NOT_FOUND_BY_INTEGRATION_TYPE, integrationTypeId));
-//        }
-//        return integrationGroup;
-//    }
+    @Override
+    @Transactional(readOnly = true)
+    public IntegrationGroup retrieveByIntegrationTypeId(Long integrationTypeId) {
+        return integrationGroupRepository.findByTypeId(integrationTypeId)
+                                         .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_GROUP_NOT_FOUND_BY_INTEGRATION_TYPE, integrationTypeId)));
+    }
 
     @Override
     @Transactional(readOnly = true)

@@ -16,11 +16,11 @@
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
 import com.qaprosoft.zafira.dbaccess.persistence.IntegrationSettingRepository;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationParam;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationSetting;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationType;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
-import com.qaprosoft.zafira.models.entity.integration.IntegrationParam;
 import com.qaprosoft.zafira.services.services.application.CryptoDriven;
 import com.qaprosoft.zafira.services.services.application.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationParamService;
@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -61,20 +60,6 @@ public class IntegrationSettingServiceImpl implements IntegrationSettingService,
         this.integrationParamService = integrationParamService;
         this.cryptoService = cryptoService;
     }
-
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public Set<IntegrationSetting> create(List<IntegrationSetting> integrationSettings, Long integrationId) {
-//        Set<IntegrationSetting> integrationSettingSet = new HashSet<>(integrationSettings);
-//        validateSettings(integrationSettingSet, integrationSettings, integrationId);
-//        integrationSettings.forEach(integrationSetting -> {
-//            IntegrationParam integrationParam = integrationParamService.retrieveById(integrationSetting.getIntegrationParam().getId());
-//            integrationSetting.setIntegrationParam(integrationParam);
-//            encryptIfNeed(integrationSetting);
-//        });
-//        integrationSettingMapper.create(integrationSettingSet, integrationId);
-//        return integrationSettingSet;
-//    }
 
     @Override
     @Transactional(readOnly = true)
@@ -108,15 +93,6 @@ public class IntegrationSettingServiceImpl implements IntegrationSettingService,
     public IntegrationSetting update(IntegrationSetting integrationSetting) {
         integrationSettingRepository.save(integrationSetting);
         return integrationSetting;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Set<IntegrationSetting> update(List<IntegrationSetting> integrationSettings, Long integrationId) {
-        Set<IntegrationSetting> integrationSettingSet = new HashSet<>(integrationSettings);
-        validateSettings(integrationSettingSet, integrationSettings, integrationId);
-        integrationSettingSet.forEach(this::update);
-        return integrationSettingSet;
     }
 
     @Override
