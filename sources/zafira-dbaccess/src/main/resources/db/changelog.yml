@@ -9,4 +9,3 @@ databaseChangeLog:
             path: changeset/001_create_integrations_structure.sql
             relativeToChangelogFile: true
             splitStatements: false
-  - changeSet:

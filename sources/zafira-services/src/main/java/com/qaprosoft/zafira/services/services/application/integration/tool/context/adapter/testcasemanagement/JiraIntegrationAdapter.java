@@ -15,7 +15,7 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.testcasemanagement;
 
-import com.qaprosoft.zafira.models.db.integration.Integration;
+import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.dto.TestCaseManagementIssueType;
 import com.qaprosoft.zafira.services.exceptions.ExternalSystemException;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.AbstractIntegrationAdapter;

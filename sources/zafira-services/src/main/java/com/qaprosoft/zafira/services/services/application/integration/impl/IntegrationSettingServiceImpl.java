@@ -15,12 +15,12 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationSettingMapper;
-import com.qaprosoft.zafira.models.db.integration.IntegrationParam;
-import com.qaprosoft.zafira.models.db.integration.IntegrationSetting;
-import com.qaprosoft.zafira.models.db.integration.IntegrationType;
+import com.qaprosoft.zafira.dbaccess.persistence.IntegrationSettingRepository;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationSetting;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationType;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationParam;
 import com.qaprosoft.zafira.services.services.application.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationParamService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationSettingService;
@@ -45,68 +45,59 @@ public class IntegrationSettingServiceImpl implements IntegrationSettingService 
     private static final String ERR_MSG_INTEGRATION_SETTINGS_PARAMS_OWNS = "All settings should to belong to one integration";
     private static final String ERR_MSG_EMPTY_MANDATORY_INTEGRATION_SETTINGS = "Empty mandatory settings for integration with id %d were found: %s";
 
-    private final IntegrationSettingMapper integrationSettingMapper;
+    private final IntegrationSettingRepository integrationSettingRepository;
     private final IntegrationTypeService integrationTypeService;
     private final IntegrationParamService integrationParamService;
     private final CryptoService cryptoService;
 
-    public IntegrationSettingServiceImpl(IntegrationSettingMapper integrationSettingMapper,
+    public IntegrationSettingServiceImpl(IntegrationSettingRepository integrationSettingRepository,
                                          IntegrationTypeService integrationTypeService,
                                          IntegrationParamService integrationParamService,
                                          CryptoService cryptoService
     ) {
-        this.integrationSettingMapper = integrationSettingMapper;
+        this.integrationSettingRepository = integrationSettingRepository;
         this.integrationTypeService = integrationTypeService;
         this.integrationParamService = integrationParamService;
         this.cryptoService = cryptoService;
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Set<IntegrationSetting> create(List<IntegrationSetting> integrationSettings, Long integrationId) {
-        Set<IntegrationSetting> integrationSettingSet = new HashSet<>(integrationSettings);
-        validateSettings(integrationSettingSet, integrationSettings, integrationId);
-        integrationSettings.forEach(integrationSetting -> {
-            IntegrationParam integrationParam = integrationParamService.retrieveById(integrationSetting.getIntegrationParam().getId());
-            integrationSetting.setIntegrationParam(integrationParam);
-            encryptIfNeed(integrationSetting);
-        });
-        integrationSettingMapper.create(integrationSettingSet, integrationId);
-        return integrationSettingSet;
-    }
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public Set<IntegrationSetting> create(List<IntegrationSetting> integrationSettings, Long integrationId) {
+//        Set<IntegrationSetting> integrationSettingSet = new HashSet<>(integrationSettings);
+//        validateSettings(integrationSettingSet, integrationSettings, integrationId);
+//        integrationSettings.forEach(integrationSetting -> {
+//            IntegrationParam integrationParam = integrationParamService.retrieveById(integrationSetting.getIntegrationParam().getId());
+//            integrationSetting.setIntegrationParam(integrationParam);
+//            encryptIfNeed(integrationSetting);
+//        });
+//        integrationSettingMapper.create(integrationSettingSet, integrationId);
+//        return integrationSettingSet;
+//    }
 
     @Override
     @Transactional(readOnly = true)
     public IntegrationSetting retrieveById(Long id) {
-        IntegrationSetting integrationSetting = integrationSettingMapper.findById(id);
-        if (integrationSetting == null) {
-            throw new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_SETTING_NOT_FOUND, id));
-        }
-        return integrationSetting;
+        return integrationSettingRepository.findById(id)
+                                           .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_SETTING_NOT_FOUND, id)));
     }
 
     @Override
     public IntegrationSetting retrieveByIntegrationIdAndParamName(Long integrationId, String paramName) {
-        IntegrationSetting integrationSetting = integrationSettingMapper.findByIntegrationIdAndParamName(integrationId, paramName);
-        if (integrationSetting == null) {
-            throw new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_SETTING_NOT_FOUND_BY_INTEGRATION_ID_AND_PARAM_NAME, integrationId, paramName));
-        }
-        return integrationSetting;
+        return integrationSettingRepository.findByIntegrationIdAndParamName(integrationId, paramName)
+                                           .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_SETTING_NOT_FOUND_BY_INTEGRATION_ID_AND_PARAM_NAME, integrationId, paramName)));
     }
 
     @Override
     public IntegrationSetting retrieveByIntegrationTypeNameAndParamName(String integrationTypeName, String paramName) {
-        IntegrationSetting integrationSetting = integrationSettingMapper.findByIntegrationTypeNameAndParamName(integrationTypeName, paramName);
-        if (integrationSetting == null) {
-            throw new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_SETTING_NOT_FOUND_BY_INTEGRATION_TYPE_NAME_AND_PARAM_NAME, integrationTypeName, paramName));
-        }
-        return integrationSetting;
+        return integrationSettingRepository.findByIntegrationTypeNameAndParamName(integrationTypeName, paramName)
+                                           .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_SETTING_NOT_FOUND_BY_INTEGRATION_TYPE_NAME_AND_PARAM_NAME, integrationTypeName, paramName)));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public IntegrationSetting update(IntegrationSetting integrationSetting) {
-        integrationSettingMapper.update(integrationSetting);
+        integrationSettingRepository.save(integrationSetting);
         return integrationSetting;
     }
 
@@ -129,14 +120,14 @@ public class IntegrationSettingServiceImpl implements IntegrationSettingService 
             integrationSetting.setEncrypted(dbIntegrationSetting.isEncrypted());
             if (integrationSetting.getValue() == null || integrationSetting.getValue().isBlank()) {
                 integrationSetting.setEncrypted(false);
-            } else if (dbIntegrationSetting.getIntegrationParam().isNeedEncryption() && !dbIntegrationSetting.getValue().equals(integrationSetting.getValue())) {
+            } else if (dbIntegrationSetting.getParam().isNeedEncryption() && !dbIntegrationSetting.getValue().equals(integrationSetting.getValue())) {
                 integrationSetting.setEncrypted(true);
                 String encryptedValue = cryptoService.encrypt(integrationSetting.getValue());
                 integrationSetting.setValue(encryptedValue);
             }
         } catch (EntityNotExistsException e) {
             integrationSetting.setEncrypted(false);
-            IntegrationParam integrationParam = integrationParamService.retrieveById(integrationSetting.getIntegrationParam().getId());
+            IntegrationParam integrationParam = integrationParamService.retrieveById(integrationSetting.getParam().getId());
             if (integrationSetting.getValue() == null || integrationSetting.getValue().isBlank()) {
                 integrationSetting.setEncrypted(false);
             } else if (integrationParam.isNeedEncryption()) {
@@ -156,16 +147,18 @@ public class IntegrationSettingServiceImpl implements IntegrationSettingService 
         }
         // check owns - all parameters for one type and all exist
         List<IntegrationParam> integrationParams = integrationSettingSet.stream()
-                                                                        .map(IntegrationSetting::getIntegrationParam)
+                                                                        .map(IntegrationSetting::getParam)
                                                                         .collect(Collectors.toList());
-        IntegrationType integrationType = integrationTypeService.retrieveByIntegrationId(integrationId);
-        if (integrationType.getIntegrationParams().size() != integrationParams.size()) {
-            String requiredParameters = integrationType.getIntegrationParams().stream()
+
+
+        IntegrationType integrationType = integrationTypeService.retrieveById(integrationId);
+        if (integrationType.getParams().size() != integrationParams.size()) {
+            String requiredParameters = integrationType.getParams().stream()
                                                        .map(IntegrationParam::getName)
                                                        .collect(Collectors.joining(", "));
             throw new IntegrationException(String.format(ERR_MSG_INTEGRATION_SETTINGS_PARAMS_LENGTH, requiredParameters));
         }
-        if (!integrationType.getIntegrationParams().containsAll(integrationParams)) {
+        if (!integrationType.getParams().containsAll(integrationParams)) {
             throw new IntegrationException(ERR_MSG_INTEGRATION_SETTINGS_PARAMS_OWNS);
         }
         // check mandatories
@@ -178,7 +171,7 @@ public class IntegrationSettingServiceImpl implements IntegrationSettingService 
 
     private String buildSettingsNameString(Collection<IntegrationSetting> integrationSettings) {
         return integrationSettings.stream()
-                                  .map(integrationSetting -> integrationSetting.getIntegrationParam().getName())
+                                  .map(integrationSetting -> integrationSetting.getParam().getName())
                                   .collect(Collectors.joining(", "));
     }
 
@@ -192,7 +185,7 @@ public class IntegrationSettingServiceImpl implements IntegrationSettingService 
         return integrationSettingSet.stream()
                                     .filter(integrationSetting -> {
                                         boolean isValueEmpty = integrationSetting.getValue() == null && integrationSetting.getBinaryData().length == 0;
-                                        return integrationSetting.getIntegrationParam().isMandatory() && isValueEmpty;
+                                        return integrationSetting.getParam().isMandatory() && isValueEmpty;
                                     })
                                     .collect(Collectors.toSet());
     }

@@ -15,11 +15,10 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationMapper;
-import com.qaprosoft.zafira.models.db.integration.Integration;
-import com.qaprosoft.zafira.models.db.integration.IntegrationGroup;
-import com.qaprosoft.zafira.models.db.integration.IntegrationSetting;
-import com.qaprosoft.zafira.models.db.integration.IntegrationType;
+import com.qaprosoft.zafira.dbaccess.persistence.IntegrationRepository;
+import com.qaprosoft.zafira.models.entity.integration.Integration;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationSetting;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationType;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
@@ -40,21 +39,22 @@ public class IntegrationServiceImpl implements IntegrationService {
     private static final String ERR_MSG_NOT_MULTIPLE_ALLOWED_INTEGRATION = "Integration with type '%s' is not multiple allowed";
     private static final String ERR_MSG_INTEGRATION_NOT_FOUND_BY_ID = "Integration with id '%d' not found";
     private static final String ERR_MSG_INTEGRATION_NOT_FOUND_BY_BACK_REFERENCE_ID = "Integration with back reference id '%s' not found";
+    private static final String ERR_MSG_DEFAULT_VALUE_IS_NOT_PROViDED_BY_TYPE_ID = "Default value for integration with id '%s' is nod provided";
 
-    private final IntegrationMapper integrationMapper;
+    private final IntegrationRepository integrationRepository;
     private final IntegrationGroupService integrationGroupService;
     private final IntegrationTypeService integrationTypeService;
     private final IntegrationSettingService integrationSettingService;
     private final EventPushService eventPushService;
 
     public IntegrationServiceImpl(
-            IntegrationMapper integrationMapper,
+            IntegrationRepository integrationRepository,
             IntegrationGroupService integrationGroupService,
             IntegrationTypeService integrationTypeService,
             IntegrationSettingService integrationSettingService,
             EventPushService eventPushService
     ) {
-        this.integrationMapper = integrationMapper;
+        this.integrationRepository = integrationRepository;
         this.integrationGroupService = integrationGroupService;
         this.integrationTypeService = integrationTypeService;
         this.integrationSettingService = integrationSettingService;
@@ -67,49 +67,52 @@ public class IntegrationServiceImpl implements IntegrationService {
     public Integration create(Integration integration, Long integrationTypeId) {
         unassignCurrentDefaultIntegrationIfNeed(integration, integrationTypeId);
         integration.setEnabled(true);
-        verifyIntegration(integrationTypeId);
-        integrationMapper.create(integration, integrationTypeId);
-        Set<IntegrationSetting> integrationSettingSet = integrationSettingService.create(integration.getIntegrationSettings(), integration.getId());
-        integration.setIntegrationSettings(new ArrayList<>(integrationSettingSet));
+        IntegrationType integrationType = integrationTypeService.retrieveById(integrationTypeId);
+        verifyIntegration(integrationType);
+        integration.setType(integrationType);
+        integrationRepository.save(integration);
+//        Set<IntegrationSetting> integrationSettingSet = integrationSettingService.create(integration.getSettings(), integration.getId());
+//        integration.setSettings(new ArrayList<>(integrationSettingSet));
         return integration;
     }
 
     @Override
     @Transactional(readOnly = true)
     public Integration retrieveById(Long id) {
-        Integration integration = integrationMapper.findById(id);
-        if (integration == null) {
-            throw new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_NOT_FOUND_BY_ID, id));
-        }
-        return integration;
+        return integrationRepository.findById(id)
+                                    .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_NOT_FOUND_BY_ID, id)));
     }
 
     @Override
     @Transactional(readOnly = true)
     public Integration retrieveByBackReferenceId(String backReferenceId) {
-        Integration integration = integrationMapper.findByBackReferenceId(backReferenceId);
-        if (integration == null) {
-            throw new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_NOT_FOUND_BY_BACK_REFERENCE_ID, backReferenceId));
-        }
-        return integration;
+        return integrationRepository.findIntegrationByBackReferenceId(backReferenceId)
+                                    .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_NOT_FOUND_BY_BACK_REFERENCE_ID, backReferenceId)));
     }
 
     @Override
     @Transactional(readOnly = true)
     public Integration retrieveDefaultByIntegrationTypeId(Long integrationTypeId) {
-        return integrationMapper.findDefaultByIntegrationTypeId(integrationTypeId);
+        return integrationRepository.findIntegrationByTypeIdAndDefaultIsTrue(integrationTypeId)
+                                    .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_DEFAULT_VALUE_IS_NOT_PROViDED_BY_TYPE_ID, integrationTypeId)));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List <Integration> getIntegrationsByTypeId(Long typeId) {
+        return integrationRepository.getIntegrationsByTypeId(typeId);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Integration> retrieveAll() {
-        return integrationMapper.findAll();
+        return integrationRepository.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Integration> retrieveByIntegrationTypeId(Long integrationTypeId) {
-        return integrationMapper.findByIntegrationTypeId(integrationTypeId);
+        return integrationRepository.getIntegrationsByTypeId(integrationTypeId);
     }
 
     // TODO: 2019-08-23 add notification and update in context mapping
@@ -117,17 +120,17 @@ public class IntegrationServiceImpl implements IntegrationService {
     @Transactional(rollbackFor = Exception.class)
     public Integration update(Integration integration) {
         unassignCurrentDefaultIntegrationIfNeed(integration, null);
-        IntegrationType integrationType = integrationTypeService.retrieveByIntegrationId(integration.getId());
-        verifyIntegration(integrationType.getId());
-        integrationMapper.update(integration);
-        integrationSettingService.update(integration.getIntegrationSettings(), integration.getId());
+        IntegrationType integrationType = integrationTypeService.retrieveById(integration.getId());
+        verifyIntegration(integrationType);
+        integrationRepository.save(integration);
+//        integrationSettingService.update(integration.getSettings(), integration.getId());
         return integration;
     }
 
     private void unassignCurrentDefaultIntegrationIfNeed(Integration integration, Long integrationTypeId) {
         if (integration.isDefault()) {
             if (integrationTypeId == null) {
-                IntegrationType integrationType = integrationTypeService.retrieveByIntegrationId(integration.getId());
+                IntegrationType integrationType = integrationTypeService.retrieveById(integration.getId());
                 integrationTypeId = integrationType.getId();
             }
             Integration defaultIntegration = retrieveDefaultByIntegrationTypeId(integrationTypeId);
@@ -136,11 +139,9 @@ public class IntegrationServiceImpl implements IntegrationService {
         }
     }
 
-    private void verifyIntegration(Long integrationTypeId) {
-        IntegrationType integrationType = integrationTypeService.retrieveById(integrationTypeId);
-        IntegrationGroup integrationGroup = integrationGroupService.retrieveByIntegrationTypeId(integrationType.getId());
-        if (!integrationGroup.isMultipleAllowed()) {
-            List<Integration> integrations = retrieveByIntegrationTypeId(integrationType.getId());
+    private void verifyIntegration(IntegrationType integrationType) {
+        if (!integrationType.getGroup().isMultipleAllowed()) {
+            List<Integration> integrations = integrationType.getIntegrations();
             if (integrations.size() != 0) {
                 throw new IllegalOperationException(String.format(ERR_MSG_NOT_MULTIPLE_ALLOWED_INTEGRATION, integrationType.getName()));
             }

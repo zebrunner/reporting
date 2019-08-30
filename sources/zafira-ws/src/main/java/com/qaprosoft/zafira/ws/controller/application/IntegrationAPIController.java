@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import com.qaprosoft.zafira.models.db.integration.Integration;
+import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.dto.integration.IntegrationDTO;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;

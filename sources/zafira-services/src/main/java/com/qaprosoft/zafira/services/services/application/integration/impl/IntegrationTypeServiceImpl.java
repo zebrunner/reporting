@@ -15,8 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationTypeMapper;
-import com.qaprosoft.zafira.models.db.integration.IntegrationType;
+import com.qaprosoft.zafira.dbaccess.persistence.IntegrationTypeRepository;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationType;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationTypeService;
 import org.springframework.stereotype.Service;
@@ -31,45 +31,39 @@ public class IntegrationTypeServiceImpl implements IntegrationTypeService {
     private static final String ERR_MSG_INTEGRATION_TYPE_NOT_FOUND_BY_NAME = "No integration types found by name: %s";
     private static final String ERR_MSG_INTEGRATION_TYPE_NOT_FOUND_BY_INTEGRATION_ID = "No integration types found by integration id: %d";
 
-    private final IntegrationTypeMapper integrationTypeMapper;
+    private final IntegrationTypeRepository integrationTypeRepository;
 
-    public IntegrationTypeServiceImpl(IntegrationTypeMapper integrationTypeMapper) {
-        this.integrationTypeMapper = integrationTypeMapper;
+    public IntegrationTypeServiceImpl(IntegrationTypeRepository integrationTypeRepository) {
+        this.integrationTypeRepository = integrationTypeRepository;
     }
 
     @Override
     @Transactional(readOnly = true)
     public IntegrationType retrieveById(Long id) {
-        IntegrationType integrationType = integrationTypeMapper.findById(id);
-        if (integrationType == null) {
-            throw new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_TYPE_NOT_FOUND, id));
-        }
-        return integrationType;
+        return integrationTypeRepository.findById(id)
+                                        .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_TYPE_NOT_FOUND, id)));
     }
 
     @Override
     @Transactional(readOnly = true)
     public IntegrationType retrieveByName(String name) {
-        IntegrationType integrationType = integrationTypeMapper.findByName(name);
-        if (integrationType == null) {
-            throw new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_TYPE_NOT_FOUND_BY_NAME, name));
-        }
-        return integrationType;
+        return integrationTypeRepository.findByName(name)
+                                        .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_TYPE_NOT_FOUND_BY_NAME, name)));
     }
 
-    @Override
-    public IntegrationType retrieveByIntegrationId(Long integrationId) {
-        IntegrationType integrationType = integrationTypeMapper.findByIntegrationId(integrationId);
-        if (integrationType == null) {
-            throw new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_TYPE_NOT_FOUND_BY_INTEGRATION_ID, integrationId));
-        }
-        return integrationType;
-    }
+//    @Override
+//    public IntegrationType retrieveByIntegrationId(Long integrationId) {
+//        IntegrationType integrationType = integrationTypeMapper.findByIntegrationId(integrationId);
+//        if (integrationType == null) {
+//            throw new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_TYPE_NOT_FOUND_BY_INTEGRATION_ID, integrationId));
+//        }
+//        return integrationType;
+//    }
 
     @Override
     @Transactional(readOnly = true)
     public List<IntegrationType> retrieveAll() {
-        return integrationTypeMapper.findAll();
+        return integrationTypeRepository.findAll();
     }
 
 }

@@ -15,7 +15,7 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool;
 
-import com.qaprosoft.zafira.models.db.integration.Integration;
+import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.services.services.application.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationSettingService;
@@ -77,9 +77,9 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
             List<Integration> integrations = integrationService.retrieveAll();
             integrations.forEach(integration -> {
                 LOGGER.info(String.format("Starting to initialize %s integration", integration.getName()));
-                integration.getIntegrationSettings().forEach(integrationSetting -> {
-                    LOGGER.info(String.format("Starting to initialize %s setting", integrationSetting.getIntegrationParam().getName()));
-                    if (!StringUtils.isEmpty(integrationSetting.getValue()) && integrationSetting.getIntegrationParam().isNeedEncryption() && !integrationSetting.isEncrypted()) {
+                integration.getSettings().forEach(integrationSetting -> {
+                    LOGGER.info(String.format("Starting to initialize %s setting", integrationSetting.getParam().getName()));
+                    if (!StringUtils.isEmpty(integrationSetting.getValue()) && integrationSetting.getParam().isNeedEncryption() && !integrationSetting.isEncrypted()) {
                         integrationSetting.setValue(cryptoService.encrypt(integrationSetting.getValue()));
                         integrationSetting.setEncrypted(true);
                         integrationSettingService.update(integrationSetting);

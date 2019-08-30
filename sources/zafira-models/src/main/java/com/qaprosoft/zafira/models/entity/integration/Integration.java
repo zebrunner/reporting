@@ -16,26 +16,29 @@ import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString(exclude = "backReferenceId")
 @NamedEntityGraph(
-    name = "integration.expanded",
-    attributeNodes = {
-        @NamedAttributeNode("type"),
-        @NamedAttributeNode(value = "settings", subgraph = "settings-subgraph")
-    },
-    subgraphs = {
-        @NamedSubgraph(
-            name = "settings-subgraph",
-            attributeNodes = {
-                @NamedAttributeNode("param")
-            }
-        )
-    }
+        name = "integration.expanded",
+        attributeNodes = {
+                @NamedAttributeNode("type"),
+                @NamedAttributeNode(value = "settings", subgraph = "settings-subgraph")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "settings-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("param")
+                        }
+                )
+        }
 )
 @Entity
 @Table(name = "integrations")
@@ -56,4 +59,23 @@ public class Integration {
     @OneToMany(mappedBy = "integration")
     List<IntegrationSetting> settings;
 
+    public Optional<IntegrationSetting> getAttribute(String attributeName) {
+        return this.getSettings().stream()
+                   .filter(is -> is.getParam().getName().equals(attributeName))
+                   .findAny();
+    }
+
+    public Optional<String> getAttributeValue(String attributeName) {
+        IntegrationSetting integrationSetting = getAttribute(attributeName)
+                .orElse(null);
+        String value = integrationSetting == null ? null : integrationSetting.getValue();
+        return Optional.ofNullable(value);
+    }
+
+    public Optional<byte[]> getAttributeBinaryData(String attributeName) {
+        IntegrationSetting integrationSetting = getAttribute(attributeName)
+                .orElse(null);
+        byte[] binaryData = integrationSetting == null ? null : integrationSetting.getBinaryData();
+        return Optional.ofNullable(binaryData);
+    }
 }

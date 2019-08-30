@@ -16,7 +16,8 @@
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationGroupMapper;
-import com.qaprosoft.zafira.models.db.integration.IntegrationGroup;
+import com.qaprosoft.zafira.dbaccess.persistence.IntegrationGroupRepository;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationGroup;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
 import org.springframework.stereotype.Service;
@@ -28,29 +29,26 @@ public class IntegrationGroupServiceImpl implements IntegrationGroupService {
     private static final String ERR_MSG_INTEGRATION_GROUP_NOT_FOUND_BY_NAME = "Integration group not found by name: %s";
     private static final String ERR_MSG_INTEGRATION_GROUP_NOT_FOUND_BY_INTEGRATION_TYPE = "Integration group not found by type id: %d";
 
-    private final IntegrationGroupMapper integrationGroupMapper;
+    private final IntegrationGroupRepository integrationGroupRepository;
 
-    public IntegrationGroupServiceImpl(IntegrationGroupMapper integrationGroupMapper) {
-        this.integrationGroupMapper = integrationGroupMapper;
+    public IntegrationGroupServiceImpl(IntegrationGroupRepository integrationGroupRepository) {
+        this.integrationGroupRepository = integrationGroupRepository;
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public IntegrationGroup retrieveByIntegrationTypeId(Long integrationTypeId) {
-        IntegrationGroup integrationGroup = integrationGroupMapper.findByIntegrationTypeId(integrationTypeId);
-        if (integrationGroup == null) {
-            throw new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_GROUP_NOT_FOUND_BY_INTEGRATION_TYPE, integrationTypeId));
-        }
-        return integrationGroup;
-    }
+//    @Override
+//    @Transactional(readOnly = true)
+//    public IntegrationGroup retrieveByIntegrationTypeId(Long integrationTypeId) {
+//        IntegrationGroup integrationGroup = integrationGroupMapper.findByIntegrationTypeId(integrationTypeId);
+//        if (integrationGroup == null) {
+//            throw new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_GROUP_NOT_FOUND_BY_INTEGRATION_TYPE, integrationTypeId));
+//        }
+//        return integrationGroup;
+//    }
 
     @Override
     @Transactional(readOnly = true)
     public IntegrationGroup retrieveByName(String name) {
-        IntegrationGroup integrationGroup = integrationGroupMapper.findByName(name);
-        if (integrationGroup == null) {
-            throw new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_GROUP_NOT_FOUND_BY_NAME, name));
-        }
-        return integrationGroup;
+        return integrationGroupRepository.findByName(name)
+                                         .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_GROUP_NOT_FOUND_BY_NAME, name)));
     }
 }

@@ -39,7 +39,7 @@
         <include refid="find"/>
     </select>
 
-    <resultMap type="com.qaprosoft.zafira.models.db.integration.IntegrationParam" id="IntegrationParamResultMap" autoMapping="false">
+    <resultMap type="com.qaprosoft.zafira.models.entity.integration.IntegrationParam" id="IntegrationParamResultMap" autoMapping="false">
         <id column="INTEGRATION_PARAM_ID" property="id" />
         <result column="INTEGRATION_PARAM_NAME" property="name" />
         <result column="INTEGRATION_PARAM_METADATA" property="metadata" />

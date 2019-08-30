@@ -15,7 +15,7 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.google;
 
-import com.qaprosoft.zafira.models.db.integration.Integration;
+import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.AbstractIntegrationAdapter;
 import com.qaprosoft.zafira.services.services.application.integration.tool.context.adapter.AdapterParam;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.google.AbstractGoogleService;
