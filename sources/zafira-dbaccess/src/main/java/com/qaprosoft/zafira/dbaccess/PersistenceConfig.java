@@ -36,6 +36,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import static org.hibernate.cfg.AvailableSettings.NON_CONTEXTUAL_LOB_CREATION;
+
 @Configuration
 @EnableJpaRepositories
 public class PersistenceConfig {
@@ -151,6 +153,7 @@ public class PersistenceConfig {
         entityManagerFactoryBean.setDataSource(tenancyAppDSWrapper.getDataSource());
         entityManagerFactoryBean.setPackagesToScan("com.qaprosoft.zafira.models.entity");
         entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        entityManagerFactoryBean.getJpaPropertyMap().put(NON_CONTEXTUAL_LOB_CREATION, true);
         entityManagerFactoryBean.setJpaProperties(jpaProperties());
 
         return entityManagerFactoryBean;
