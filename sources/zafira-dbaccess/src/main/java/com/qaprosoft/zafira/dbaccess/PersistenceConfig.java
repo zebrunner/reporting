@@ -20,15 +20,24 @@ import com.qaprosoft.zafira.dbaccess.utils.TenancyDataSourceWrapper;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy;
+import org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import java.beans.PropertyVetoException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 @Configuration
+@EnableJpaRepositories
 public class PersistenceConfig {
 
     private static final String APP_SQL_SESSION_FACTORY_BEAN_NAME = "applicationSqlSessionFactory";
@@ -133,6 +142,30 @@ public class PersistenceConfig {
         dataSource.setMaxPoolSize(maxPoolSize);
         dataSource.setIdleConnectionTestPeriod(idleConnectionTestPeriod);
         return dataSource;
+    }
+
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(TenancyDataSourceWrapper tenancyAppDSWrapper) {
+        LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+
+        entityManagerFactoryBean.setDataSource(tenancyAppDSWrapper.getDataSource());
+        entityManagerFactoryBean.setPackagesToScan("com.qaprosoft.zafira.models.entity");
+        entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        entityManagerFactoryBean.setJpaProperties(jpaProperties());
+
+        return entityManagerFactoryBean;
+    }
+
+    private Properties jpaProperties() {
+        Map<String, Object> props = new HashMap<>();
+
+        props.put("hibernate.physical_naming_strategy", SpringPhysicalNamingStrategy.class.getName());
+        props.put("hibernate.implicit_naming_strategy", SpringImplicitNamingStrategy.class.getName());
+
+        Properties properties = new Properties();
+        properties.putAll(props);
+
+        return properties;
     }
 
 }

@@ -15,20 +15,12 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration;
 
-import com.qaprosoft.zafira.models.db.integration.IntegrationSetting;
+
+import com.qaprosoft.zafira.models.entity.integration.IntegrationSetting;
 
 import java.util.List;
-import java.util.Set;
 
 public interface IntegrationSettingService {
-
-    /**
-     * Saves integration settings. All settings must to belong concrete integration type
-     * @param integrationSettings - integration settings to save
-     * @param integrationId - integration to reference
-     * @return created integration settings
-     */
-    Set<IntegrationSetting> create(List<IntegrationSetting> integrationSettings, Long integrationId);
 
     IntegrationSetting retrieveById(Long id);
 
@@ -39,13 +31,5 @@ public interface IntegrationSettingService {
     List<IntegrationSetting> retrieveAllEncrypted();
 
     IntegrationSetting update(IntegrationSetting integrationSetting);
-
-    /**
-     * Updates integration settings. All settings must to belong concrete integration type
-     * @param integrationSettings - integration settings to update
-     * @param integrationId - integration to reference
-     * @return updated integration settings
-     */
-    Set<IntegrationSetting> update(List<IntegrationSetting> integrationSettings, Long integrationId);
 
 }

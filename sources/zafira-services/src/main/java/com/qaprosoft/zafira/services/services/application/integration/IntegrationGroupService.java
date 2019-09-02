@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration;
 
-import com.qaprosoft.zafira.models.db.integration.IntegrationGroup;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationGroup;
 
 public interface IntegrationGroupService {
 

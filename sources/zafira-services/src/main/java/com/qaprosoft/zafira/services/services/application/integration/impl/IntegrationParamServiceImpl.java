@@ -15,8 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationParamMapper;
-import com.qaprosoft.zafira.models.db.integration.IntegrationParam;
+import com.qaprosoft.zafira.dbaccess.persistence.IntegrationParamRepository;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationParam;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationParamService;
 import org.springframework.stereotype.Service;
@@ -27,20 +27,17 @@ public class IntegrationParamServiceImpl implements IntegrationParamService {
 
     private static final String ERR_MSG_INTEGRATION_PARAM_NOT_FOUND = "Integration param with id '%d' not found";
 
-    private final IntegrationParamMapper integrationParamMapper;
+    private final IntegrationParamRepository integrationParamRepository;
 
-    public IntegrationParamServiceImpl(IntegrationParamMapper integrationParamMapper) {
-        this.integrationParamMapper = integrationParamMapper;
+    public IntegrationParamServiceImpl(IntegrationParamRepository integrationParamRepository) {
+        this.integrationParamRepository = integrationParamRepository;
     }
 
     @Override
     @Transactional(readOnly = true)
     public IntegrationParam retrieveById(Long id) {
-        IntegrationParam integrationParam = integrationParamMapper.findById(id);
-        if (integrationParam == null) {
-            throw new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_PARAM_NOT_FOUND, id));
-        }
-        return integrationParam;
+        return integrationParamRepository.findById(id)
+                                         .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_PARAM_NOT_FOUND, id)));
     }
 
 }

@@ -5,7 +5,7 @@
 
     <mapping type="bi-directional" wildcard="false">
         <class-a>com.qaprosoft.zafira.models.dto.integration.IntegrationParamDTO</class-a>
-        <class-b>com.qaprosoft.zafira.models.db.integration.IntegrationParam</class-b>
+        <class-b>com.qaprosoft.zafira.models.entity.integration.IntegrationParam</class-b>
 
         <field>
             <a>id</a>

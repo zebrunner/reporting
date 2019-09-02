@@ -16,10 +16,10 @@
 package com.qaprosoft.zafira.services.services.application.integration.tool.proxy;
 
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
-import com.qaprosoft.zafira.models.db.integration.Integration;
-import com.qaprosoft.zafira.models.db.integration.IntegrationGroup;
-import com.qaprosoft.zafira.models.db.integration.IntegrationSetting;
-import com.qaprosoft.zafira.models.db.integration.IntegrationType;
+import com.qaprosoft.zafira.models.entity.integration.Integration;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationGroup;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationSetting;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationType;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
@@ -107,8 +107,8 @@ public abstract class IntegrationAdapterProxy {
 
     public void init() {
         IntegrationGroup integrationGroup = integrationGroupService.retrieveByName(getGroup());
-        List<IntegrationType> integrationTypes = integrationGroup.getIntegrationTypes();
-        integrationTypes.forEach(integrationType -> initializeByType(integrationType.getName(), integrationType.getIntegrations()));
+        List<IntegrationType> integrationTypes = integrationGroup.getTypes();
+        integrationTypes.forEach(integrationType -> initializeByType(integrationType.getName(), integrationService.getIntegrationsByTypeId(integrationType.getId())));
     }
 
     public void initializeByType(String integrationTypeName, List<Integration> integrations) {
@@ -140,13 +140,13 @@ public abstract class IntegrationAdapterProxy {
     }
 
     private boolean hasMandatorySettingsSet(Integration integration) {
-        List<IntegrationSetting> integrationSettings = integration.getIntegrationSettings();
+        List<IntegrationSetting> integrationSettings = integration.getSettings();
 
         // go over all mandatory integration settings and check if those have values set
         String missingSettings = integrationSettings.stream()
-                                                    .filter(integrationSetting -> integrationSetting.getIntegrationParam().isMandatory())
+                                                    .filter(integrationSetting -> integrationSetting.getParam().isMandatory())
                                                     .filter(integrationSetting -> integrationSetting.getValue() != null && !integrationSetting.getValue().isBlank())
-                                                    .map(integrationSetting -> integrationSetting.getIntegrationParam().getName())
+                                                    .map(integrationSetting -> integrationSetting.getParam().getName())
                                                     .collect(Collectors.joining(", "));
 
         if (!missingSettings.isEmpty()) {

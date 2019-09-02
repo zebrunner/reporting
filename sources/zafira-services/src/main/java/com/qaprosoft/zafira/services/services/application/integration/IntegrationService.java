@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration;
 
-import com.qaprosoft.zafira.models.db.integration.Integration;
+import com.qaprosoft.zafira.models.entity.integration.Integration;
 
 import java.util.List;
 
@@ -33,9 +33,13 @@ public interface IntegrationService {
 
     List<Integration> retrieveAll();
 
+    List <Integration> getIntegrationsByTypeId(Long typeId);
+
     List<Integration> retrieveByIntegrationTypeId(Long integrationTypeId);
 
     List<Integration> retrieveByIntegrationGroupName(String integrationGroupName);
+
+    List<Integration> retrieveByIntegrationsTypeName(String integrationTypeName);
 
     Integration update(Integration integration);
 
