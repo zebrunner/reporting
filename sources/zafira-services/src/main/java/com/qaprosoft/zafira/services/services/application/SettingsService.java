@@ -21,7 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.qaprosoft.zafira.models.db.ScmAccount;
 import com.qaprosoft.zafira.services.services.application.integration.Integration;
+import com.qaprosoft.zafira.services.services.application.scm.ScmAccountService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -52,13 +54,16 @@ public class SettingsService {
 
     private final SettingsMapper settingsMapper;
     private final IntegrationService integrationService;
+    private final ScmAccountService scmAccountService;
     private final EventPushService<ReinitEventMessage> eventPushService;
 
     public SettingsService(SettingsMapper settingsMapper,
             @Lazy IntegrationService integrationService,
+            ScmAccountService scmAccountService,
             EventPushService<ReinitEventMessage> eventPushService) {
         this.settingsMapper = settingsMapper;
         this.integrationService = integrationService;
+        this.scmAccountService = scmAccountService;
         this.eventPushService = eventPushService;
     }
 
@@ -161,16 +166,29 @@ public class SettingsService {
     @Transactional(rollbackFor = Exception.class)
     public void reEncrypt() {
         List<Setting> settings = getSettingsByEncrypted(true);
+        List<ScmAccount> scmAccounts = scmAccountService.getAllScmAccounts().stream()
+                                                        .filter(scmAccount -> scmAccount.getAccessToken() != null)
+                                                        .collect(Collectors.toList());
         CryptoService cryptoService = getCryptoMQService();
+
         settings.forEach(setting -> {
             String decValue = cryptoService.decrypt(setting.getValue());
             setting.setValue(decValue);
+        });
+        scmAccounts.forEach(scmAccount -> {
+            String decValue = cryptoService.decrypt(scmAccount.getAccessToken());
+            scmAccount.setAccessToken(decValue);
         });
         cryptoService.regenerateKey();
         settings.forEach(setting -> {
             String encValue = cryptoService.encrypt(setting.getValue());
             setting.setValue(encValue);
             updateSetting(setting);
+        });
+        scmAccounts.forEach(scmAccount -> {
+            String encValue = cryptoService.encrypt(scmAccount.getAccessToken());
+            scmAccount.setAccessToken(encValue);
+            scmAccountService.updateScmAccount(scmAccount);
         });
         notifyToolReinitiated(Tool.CRYPTO, TenancyContext.getTenantName());
     }
