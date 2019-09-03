@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public class InvalidCredentialsException extends ServiceException {
+public class InvalidCredentialsException extends ApplicationException {
     private static final long serialVersionUID = -7280348651406679381L;
 
     public InvalidCredentialsException() {

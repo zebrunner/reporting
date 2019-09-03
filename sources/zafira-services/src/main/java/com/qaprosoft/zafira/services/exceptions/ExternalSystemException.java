@@ -15,7 +15,7 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public class ExternalSystemException extends ServiceException {
+public class ExternalSystemException extends ApplicationException {
 
     public ExternalSystemException(String message) {
         super(message);

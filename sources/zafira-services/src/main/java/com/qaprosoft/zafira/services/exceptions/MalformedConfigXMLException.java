@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public class MalformedConfigXMLException extends ServiceException {
+public class MalformedConfigXMLException extends ApplicationException {
 
     private static final long serialVersionUID = -3103208478340435949L;
 

@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public class JobNotFoundException extends ServiceException {
+public class JobNotFoundException extends ApplicationException {
     private static final long serialVersionUID = -8012121652412303537L;
 
     public JobNotFoundException() {

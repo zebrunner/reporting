@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public class IllegalOperationException extends ServiceException {
+public class IllegalOperationException extends ApplicationException {
 
     public IllegalOperationException() {
     }

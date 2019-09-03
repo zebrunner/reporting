@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public class TestRunNotFoundException extends ServiceException {
+public class TestRunNotFoundException extends ApplicationException {
     private static final long serialVersionUID = 4538834387227891889L;
 
     public TestRunNotFoundException() {

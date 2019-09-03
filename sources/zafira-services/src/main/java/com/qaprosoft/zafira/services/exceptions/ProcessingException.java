@@ -1,6 +1,6 @@
 package com.qaprosoft.zafira.services.exceptions;
 
-public class ProcessingException extends ServiceException {
+public class ProcessingException extends ApplicationException {
 
     public ProcessingException(String message) {
         super(message);

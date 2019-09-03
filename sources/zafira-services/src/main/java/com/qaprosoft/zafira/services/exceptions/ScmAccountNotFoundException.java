@@ -1,6 +1,6 @@
 package com.qaprosoft.zafira.services.exceptions;
 
-public class ScmAccountNotFoundException extends ServiceException {
+public class ScmAccountNotFoundException extends ApplicationException {
 
     public ScmAccountNotFoundException() {
         super();

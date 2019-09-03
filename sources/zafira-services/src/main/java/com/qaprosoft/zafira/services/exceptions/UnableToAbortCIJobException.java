@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public class UnableToAbortCIJobException extends ServiceException {
+public class UnableToAbortCIJobException extends ApplicationException {
     private static final long serialVersionUID = 5737574538940644018L;
 
     public UnableToAbortCIJobException() {

@@ -15,25 +15,25 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public abstract class ServiceException extends RuntimeException {
+public abstract class ApplicationException extends RuntimeException {
 
-    public ServiceException() {
+    public ApplicationException() {
         super();
     }
 
-    public ServiceException(String message) {
+    public ApplicationException(String message) {
         super(message);
     }
 
-    public ServiceException(Throwable cause) {
+    public ApplicationException(Throwable cause) {
         super(cause);
     }
 
-    public ServiceException(String message, Throwable cause) {
+    public ApplicationException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ServiceException(String message, Throwable cause, boolean writableStackTrace) {
+    public ApplicationException(String message, Throwable cause, boolean writableStackTrace) {
         super(message, cause, false, writableStackTrace);
     }
 
