@@ -15,21 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
-import static com.qaprosoft.zafira.models.db.Setting.Tool.AMAZON;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.*;
-
-import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
-import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
-import com.qaprosoft.zafira.services.util.URLResolver;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Value;
-
 import com.amazonaws.internal.SdkBufferedInputStream;
 import com.amazonaws.services.s3.internal.Mimetypes;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -39,13 +24,27 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.securitytoken.model.Credentials;
 import com.amazonaws.services.securitytoken.model.GetSessionTokenRequest;
 import com.amazonaws.services.securitytoken.model.GetSessionTokenResult;
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.services.exceptions.AWSException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
+import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
 import com.qaprosoft.zafira.services.services.application.integration.context.AmazonContext;
+import com.qaprosoft.zafira.services.util.URLResolver;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Optional;
+
+import static com.qaprosoft.zafira.models.db.Setting.Tool.AMAZON;
 
 @Component
 public class AmazonService extends AbstractIntegration<AmazonContext> {
@@ -101,12 +100,17 @@ public class AmazonService extends AbstractIntegration<AmazonContext> {
         return result;
     }
 
-    public void removeFile(final String linkToFile) {
+    public void removeFile(String linkToFile) {
+        String key = obtainKey(linkToFile);
+        context().getAmazonS3().deleteObject(new DeleteObjectRequest(context().getS3Bucket(), key));
+    }
+
+    private String obtainKey(String linkToFile) {
         try {
-            context().getAmazonS3().deleteObject(
-                    new DeleteObjectRequest(context().getS3Bucket(), new URL(linkToFile).getPath().substring(1)));
+            return new URL(linkToFile).getPath().substring(1);
         } catch (MalformedURLException e) {
-            throw new ServiceException(e);
+            // TODO by nsidorevich on 2019-09-03: review error message and error code
+            throw new IntegrationException("File path is malformed");
         }
     }
 

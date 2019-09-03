@@ -15,8 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public class ServiceException extends RuntimeException {
-    private static final long serialVersionUID = -8438824073605204525L;
+public abstract class ServiceException extends RuntimeException {
 
     public ServiceException() {
         super();
@@ -37,4 +36,5 @@ public class ServiceException extends RuntimeException {
     public ServiceException(String message, Throwable cause, boolean writableStackTrace) {
         super(message, cause, false, writableStackTrace);
     }
+
 }

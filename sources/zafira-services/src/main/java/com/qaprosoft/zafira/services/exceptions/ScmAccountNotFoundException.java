@@ -1,7 +1,6 @@
 package com.qaprosoft.zafira.services.exceptions;
 
 public class ScmAccountNotFoundException extends ServiceException {
-    private static final long serialVersionUID = -3765712524095629480L;
 
     public ScmAccountNotFoundException() {
         super();

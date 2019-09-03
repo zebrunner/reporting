@@ -20,7 +20,8 @@ import com.qaprosoft.zafira.models.db.Filter;
 import com.qaprosoft.zafira.models.dto.filter.FilterType;
 import com.qaprosoft.zafira.models.dto.filter.StoredSubject;
 import com.qaprosoft.zafira.models.dto.filter.Subject;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,10 +85,12 @@ public class FilterService {
     public Filter updateFilter(Filter filter, boolean isAdmin) {
         Filter dbFilter = getFilterById(filter.getId());
         if (dbFilter == null) {
-            throw new ServiceException("No filters found by id: " + filter.getId());
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new ResourceNotFoundException("No filters found by id: " + filter.getId());
         }
         if (!filter.getName().equals(dbFilter.getName()) && isFilterExists(filter)) {
-            throw new ServiceException("Filter with name '" + filter.getName() + "' already exists");
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new IllegalOperationException("Filter with name '" + filter.getName() + "' already exists");
         }
         dbFilter.setName(filter.getName());
         dbFilter.setDescription(filter.getDescription());

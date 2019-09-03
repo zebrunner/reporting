@@ -20,7 +20,7 @@ import com.qaprosoft.zafira.models.dto.ScmAccountType;
 import com.qaprosoft.zafira.models.dto.scm.Organization;
 import com.qaprosoft.zafira.models.dto.scm.Repository;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.services.application.scm.GitHubService;
 import com.qaprosoft.zafira.services.services.application.scm.ScmAccountService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
@@ -113,7 +113,8 @@ public class ScmAPIController extends AbstractController {
     public ScmAccountType updateScmAccount(@RequestBody @Valid ScmAccountType scmAccountType) {
         ScmAccount account = scmAccountService.getScmAccountById(scmAccountType.getId());
         if (account == null) {
-            throw new ServiceException("Scm account with id " + scmAccountType.getId() + " does not exist.");
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new ResourceNotFoundException("Scm account with id " + scmAccountType.getId() + " does not exist.");
         }
         ScmAccount currentAccount = mapper.map(scmAccountType, ScmAccount.class);
         if (account.getUserId() == null || account.getUserId() <= 0) {

@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.UnhealthyStateException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
@@ -46,7 +45,7 @@ public class StatusAPIController extends AbstractController {
         try {
             final String version = settingsService.getPostgresVersion();
             if (StringUtils.isEmpty(version)) {
-                throw new ServiceException("Unable to retrieve Postgres version");
+                throw new RuntimeException("Unable to retrieve Postgres version");
             }
         } catch (Exception e) {
             throw new UnhealthyStateException("Service has no DB connection");

@@ -35,7 +35,7 @@ import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
@@ -398,7 +398,8 @@ public class TestRunService {
     public TestRun markAsReviewed(Long id, String comment) {
         TestRun testRun = getTestRunById(id);
         if (testRun == null) {
-            throw new ServiceException("No test run found by ID: " + id);
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new ResourceNotFoundException("No test run found by ID: " + id);
         }
         testRun.setComments(comment);
         if (!"undefined failure".equalsIgnoreCase(comment)) {

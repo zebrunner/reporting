@@ -20,9 +20,7 @@ import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestConfig;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +31,6 @@ import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.readArgume
 
 @Service
 public class TestConfigService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestConfigService.class);
 
     @Autowired
     private TestConfigMapper testConfigMapper;
@@ -51,7 +47,8 @@ public class TestConfigService {
     public TestConfig createTestConfigForTest(Test test, String testConfigXML) {
         TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
         if (testRun == null) {
-            throw new ServiceException("Test run not found!");
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new ResourceNotFoundException("Test run not found!");
         }
 
         List<Argument> testRunConfig = readArguments(testRun.getConfigXML()).getArg();
