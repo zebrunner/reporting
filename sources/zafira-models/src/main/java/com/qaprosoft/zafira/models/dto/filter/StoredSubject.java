@@ -23,7 +23,7 @@ public class StoredSubject {
     private final Subject testRunSubject = new Subject() {
         {
             setName(Name.TEST_RUN);
-            setCriterias(new ArrayList<Criteria>() {
+            setCriterias(new ArrayList<>() {
                 private static final long serialVersionUID = -3470218714244856071L;
 
                 {
@@ -36,13 +36,15 @@ public class StoredSubject {
                     add(new Criteria() {
                         {
                             setName(Name.TEST_SUITE);
-                            setOperators(Arrays.asList(Operator.EQUALS, Operator.NOT_EQUALS, Operator.CONTAINS, Operator.NOT_CONTAINS));
+                            setOperators(Arrays
+                                    .asList(Operator.EQUALS, Operator.NOT_EQUALS, Operator.CONTAINS, Operator.NOT_CONTAINS));
                         }
                     });
                     add(new Criteria() {
                         {
                             setName(Name.JOB_URL);
-                            setOperators(Arrays.asList(Operator.EQUALS, Operator.NOT_EQUALS, Operator.CONTAINS, Operator.NOT_CONTAINS));
+                            setOperators(Arrays
+                                    .asList(Operator.EQUALS, Operator.NOT_EQUALS, Operator.CONTAINS, Operator.NOT_CONTAINS));
                         }
                     });
                     add(new Criteria() {
@@ -76,7 +78,7 @@ public class StoredSubject {
         }
     };
 
-    private final List<Subject> subjects = new ArrayList<Subject>() {
+    private final List<Subject> subjects = new ArrayList<>() {
         private static final long serialVersionUID = 3499422182444939573L;
 
         {

@@ -15,16 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -33,8 +23,16 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestCaseSearchCriteria;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestCase;
+import com.qaprosoft.zafira.services.util.DateTimeUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import static com.qaprosoft.zafira.services.util.DateFormatter.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 public class TestCaseService {
@@ -45,7 +43,7 @@ public class TestCaseService {
             .maximumSize(100000)
             .expireAfterWrite(15, TimeUnit.SECONDS)
             .build(
-                    new CacheLoader<String, Lock>() {
+                    new CacheLoader<>() {
                         public Lock load(String key) {
                             return new ReentrantLock();
                         }
@@ -109,7 +107,7 @@ public class TestCaseService {
 
     @Transactional(readOnly = true)
     public SearchResult<TestCase> searchTestCases(TestCaseSearchCriteria sc) {
-        actualizeSearchCriteriaDate(sc);
+        DateTimeUtil.actualizeSearchCriteriaDate(sc);
         SearchResult<TestCase> results = new SearchResult<>();
         results.setPage(sc.getPage());
         results.setPageSize(sc.getPageSize());

@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.dbaccess.utils;
 
 import com.qaprosoft.zafira.models.db.Tenancy;
+import org.slf4j.MDC;
 
 /**
  * TenancyContext - stores client tenant ID.
@@ -27,7 +28,9 @@ public class TenancyContext {
     private static final ThreadLocal<String> tenant = new InheritableThreadLocal<>();
 
     public static void setTenantName(String tenantName) {
-        tenant.set(tenantName != null ? tenantName.toLowerCase() : null);
+        tenantName = tenantName != null ? tenantName.toLowerCase() : null;
+        tenant.set(tenantName);
+        MDC.put("tenant", tenantName);
     }
 
     public static String getTenantName() {

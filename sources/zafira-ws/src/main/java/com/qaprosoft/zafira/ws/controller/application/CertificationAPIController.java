@@ -18,7 +18,6 @@ package com.qaprosoft.zafira.ws.controller.application;
 import com.qaprosoft.zafira.models.dto.CertificationType;
 import com.qaprosoft.zafira.services.services.application.CertificationService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,13 +30,17 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 public class CertificationAPIController extends AbstractController {
 
-    @Autowired
-    private CertificationService certificationService;
+    private final CertificationService certificationService;
+
+    public CertificationAPIController(CertificationService certificationService) {
+        this.certificationService = certificationService;
+    }
 
     @GetMapping("/details")
     public CertificationType getCertificationDetails(
             @RequestParam("upstreamJobId") Long upstreamJobId,
-            @RequestParam("upstreamJobBuildNumber") Integer upstreamJobBuildNumber) {
+            @RequestParam("upstreamJobBuildNumber") Integer upstreamJobBuildNumber
+    ) {
         return certificationService.getCertificationDetails(upstreamJobId, upstreamJobBuildNumber);
     }
 

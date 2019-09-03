@@ -95,9 +95,10 @@ public class LaunchersAPIController extends AbstractController {
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping()
     public List<LauncherType> getAllLaunchers() {
-        return launcherService.getAllLaunchers().stream()
-                .map(launcher -> mapper.map(launcher, LauncherType.class))
-                .collect(Collectors.toList());
+        List<Launcher> launchers = launcherService.getAllLaunchers();
+        return launchers.stream()
+                        .map(launcher -> mapper.map(launcher, LauncherType.class))
+                        .collect(Collectors.toList());
     }
 
     @ResponseStatusDetails
@@ -145,7 +146,13 @@ public class LaunchersAPIController extends AbstractController {
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PostMapping("/scanner")
     public JobResult runScanner(@RequestBody @Valid LauncherScannerType launcherScannerType) {
-        return launcherService.buildScannerJob(userService.getNotNullUserById(getPrincipalId()), launcherScannerType.getBranch(), launcherScannerType.getScmAccountId(), launcherScannerType.isRescan());
+        User user = userService.getNotNullUserById(getPrincipalId());
+        return launcherService.buildScannerJob(
+                user,
+                launcherScannerType.getBranch(),
+                launcherScannerType.getScmAccountId(),
+                launcherScannerType.isRescan()
+        );
     }
 
     @ResponseStatusDetails

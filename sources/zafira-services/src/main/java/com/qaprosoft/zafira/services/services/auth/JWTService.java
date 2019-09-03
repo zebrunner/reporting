@@ -54,9 +54,11 @@ public class JWTService {
     @Autowired
     private GroupService groupService;
 
-    public JWTService(@Value("${zafira.jwt.secret}") String secret,
-                      @Value("${zafira.jwt.authTokenExp}") Integer authTokenExp,
-                      @Value("${zafira.jwt.refreshTokenExp}") Integer refreshTokenExp) {
+    public JWTService(
+            @Value("${auth.token.secret}") String secret,
+            @Value("${auth.token.expiration}") Integer authTokenExp,
+            @Value("${auth.token.refresh-expiration}") Integer refreshTokenExp
+    ) {
         this.secret = secret;
         this.authTokenExp = authTokenExp;
         this.refreshTokenExp = refreshTokenExp;

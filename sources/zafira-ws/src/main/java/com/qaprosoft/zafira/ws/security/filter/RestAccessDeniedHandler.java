@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.security.filter;
 
-import static org.apache.commons.httpclient.HttpStatus.SC_FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.io.IOException;
@@ -24,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
@@ -48,7 +48,7 @@ public class RestAccessDeniedHandler implements AccessDeniedHandler {
         ObjectMapper objMapper = new ObjectMapper();
 
         final HttpServletResponseWrapper wrapper = new HttpServletResponseWrapper(response);
-        wrapper.setStatus(SC_FORBIDDEN);
+        wrapper.setStatus(HttpStatus.FORBIDDEN.value());
         wrapper.setContentType(APPLICATION_JSON_VALUE);
         wrapper.getWriter().println(objMapper.writeValueAsString(result));
         wrapper.getWriter().flush();

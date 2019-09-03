@@ -16,22 +16,37 @@
 package com.qaprosoft.zafira.models.dto.filter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.qaprosoft.zafira.models.dto.filter.Operator.*;
+import static com.qaprosoft.zafira.models.dto.filter.Operator.LAST_14_DAYS;
+import static com.qaprosoft.zafira.models.dto.filter.Operator.LAST_24_HOURS;
+import static com.qaprosoft.zafira.models.dto.filter.Operator.LAST_30_DAYS;
+import static com.qaprosoft.zafira.models.dto.filter.Operator.LAST_7_DAYS;
 
+@Getter
+@Setter
 public class Criteria {
 
     @NotNull(message = "Criteria name required")
     private Name name;
-    private List<Operator> operators;
+
     @NotNull(message = "Operator required")
     private Operator operator;
+
+    private List<Operator> operators;
     private String value;
+
+    @JsonIgnore
+    @AssertTrue(message = "Incorrect value")
+    public boolean isValueNull() {
+        return Arrays.asList(LAST_24_HOURS, LAST_7_DAYS, LAST_14_DAYS, LAST_30_DAYS).contains(this.operator) == (value == null);
+    }
 
     public enum Name {
         STATUS,
@@ -41,43 +56,5 @@ public class Criteria {
         PLATFORM,
         DATE,
         PROJECT
-    }
-
-    public Name getName() {
-        return name;
-    }
-
-    public void setName(Name name) {
-        this.name = name;
-    }
-
-    public List<Operator> getOperators() {
-        return operators;
-    }
-
-    public void setOperators(List<Operator> operators) {
-        this.operators = operators;
-    }
-
-    public Operator getOperator() {
-        return operator;
-    }
-
-    public void setOperator(Operator operator) {
-        this.operator = operator;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    @JsonIgnore
-    @AssertTrue(message = "Incorrect value")
-    public boolean isValueNull() {
-        return Arrays.asList(LAST_24_HOURS, LAST_7_DAYS, LAST_14_DAYS, LAST_30_DAYS).contains(this.operator) == (value == null);
     }
 }

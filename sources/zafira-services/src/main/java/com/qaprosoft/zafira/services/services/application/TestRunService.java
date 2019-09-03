@@ -37,15 +37,13 @@ import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
 import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
+import com.qaprosoft.zafira.services.util.DateTimeUtil;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.LocalDateTime;
-import org.joda.time.Seconds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +75,6 @@ import static com.qaprosoft.zafira.models.db.Status.IN_PROGRESS;
 import static com.qaprosoft.zafira.models.db.Status.PASSED;
 import static com.qaprosoft.zafira.models.db.Status.QUEUED;
 import static com.qaprosoft.zafira.models.db.Status.SKIPPED;
-import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
 import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.readArguments;
 
 @Service
@@ -146,7 +143,7 @@ public class TestRunService {
             .maximumSize(100000)
             .expireAfterWrite(150, TimeUnit.MILLISECONDS)
             .build(
-                    new CacheLoader<Long, Lock>() {
+                    new CacheLoader<>() {
                         public Lock load(Long key) {
                             return new ReentrantLock();
                         }
@@ -173,7 +170,7 @@ public class TestRunService {
 
     @Transactional(readOnly = true)
     public SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc) {
-        actualizeSearchCriteriaDate(sc);
+        DateTimeUtil.actualizeSearchCriteriaDate(sc);
         SearchResult<TestRun> results = new SearchResult<>();
         results.setPage(sc.getPage());
         results.setPageSize(sc.getPageSize());
@@ -389,7 +386,7 @@ public class TestRunService {
                     }
                 }
             }
-            testRun = addComment(testRun.getId(), abortCause);
+            testRun.setComments(abortCause);
             testRun.setStatus(Status.ABORTED);
             updateTestRun(testRun);
             calculateTestRunResult(testRun.getId(), true);
@@ -399,14 +396,18 @@ public class TestRunService {
 
     @Transactional(rollbackFor = Exception.class)
     public TestRun markAsReviewed(Long id, String comment) {
-        TestRun tr = addComment(id, comment);
-        if (!"undefined failure".equalsIgnoreCase(comment)) {
-            tr.setReviewed(true);
+        TestRun testRun = getTestRunById(id);
+        if (testRun == null) {
+            throw new ServiceException("No test run found by ID: " + id);
         }
-        tr = updateTestRun(tr);
-        TestRunStatistics.Action action = tr.isReviewed() ? TestRunStatistics.Action.MARK_AS_REVIEWED : TestRunStatistics.Action.MARK_AS_NOT_REVIEWED;
-        updateStatistics(tr.getId(), action);
-        return tr;
+        testRun.setComments(comment);
+        if (!"undefined failure".equalsIgnoreCase(comment)) {
+            testRun.setReviewed(true);
+        }
+        testRun = updateTestRun(testRun);
+        TestRunStatistics.Action action = testRun.isReviewed() ? TestRunStatistics.Action.MARK_AS_REVIEWED : TestRunStatistics.Action.MARK_AS_NOT_REVIEWED;
+        updateStatistics(testRun.getId(), action);
+        return testRun;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -475,9 +476,7 @@ public class TestRunService {
             }
         }
         if (finishTestRun && testRun.getStartedAt() != null) {
-            LocalDateTime startedAt = new LocalDateTime(testRun.getStartedAt());
-            LocalDateTime finishedAt = new LocalDateTime(Calendar.getInstance().getTime());
-            Integer elapsed = Seconds.secondsBetween(startedAt, finishedAt).getSeconds();
+            Integer elapsed = ((Long) DateTimeUtil.toSecondsSinceDateToNow(testRun.getStartedAt())).intValue();
             // according to https://github.com/qaprosoft/zafira/issues/748
             if (testRun.getElapsed() != null) {
                 testRun.setElapsed(testRun.getElapsed() + elapsed);
@@ -590,17 +589,6 @@ public class TestRunService {
             }
         }
         return failure;
-    }
-
-    @Transactional
-    public TestRun addComment(long id, String comment) {
-        TestRun testRun = getTestRunById(id);
-        if (testRun == null) {
-            throw new ServiceException("No test run found by ID: " + id);
-        }
-        testRun.setComments(comment);
-        updateTestRun(testRun);
-        return testRunMapper.getTestRunByIdFull(id);
     }
 
     @Transactional(readOnly = true)

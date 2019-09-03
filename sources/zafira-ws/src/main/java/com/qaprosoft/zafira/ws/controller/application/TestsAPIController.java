@@ -56,7 +56,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
@@ -101,12 +100,10 @@ public class TestsAPIController extends AbstractController {
     @ApiOperation(value = "Start test", nickname = "startTest", httpMethod = "POST", response = TestType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping()
-    public TestType startTest(@Valid @RequestBody TestType t)
-            {
+    public TestType startTest(@Valid @RequestBody TestType t) {
         Test test = testService.startTest(mapper.map(t, Test.class), t.getWorkItems(), t.getConfigXML());
-        websocketTemplate.convertAndSend(
-                getStatisticsWebsocketPath(),
-                new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
+        TestRunStatistics testRunStatistic = statisticsService.getTestRunStatistic(test.getTestRunId());
+        websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(testRunStatistic));
         websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
         return mapper.map(test, TestType.class);
     }
@@ -115,15 +112,13 @@ public class TestsAPIController extends AbstractController {
     @ApiOperation(value = "Finish test", nickname = "finishTest", httpMethod = "POST", response = TestType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/{id}/finish")
-    public TestType finishTest(@ApiParam(value = "Test ID", required = true) @PathVariable("id") long id, @RequestBody TestType t)
-            {
+    public TestType finishTest(@ApiParam(value = "Test ID", required = true) @PathVariable("id") long id, @RequestBody TestType t) {
         t.setId(id);
         Test test = testService.finishTest(mapper.map(t, Test.class), t.getConfigXML());
         testService.deleteQueuedTest(test);
         testMetricService.createTestMetrics(t.getId(), t.getTestMetrics());
-        websocketTemplate.convertAndSend(
-                getStatisticsWebsocketPath(),
-                new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
+        TestRunStatistics testRunStatistic = statisticsService.getTestRunStatistic(test.getTestRunId());
+        websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(testRunStatistic));
         websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
         return mapper.map(test, TestType.class);
     }
@@ -135,9 +130,8 @@ public class TestsAPIController extends AbstractController {
     @PutMapping()
     public Test updateTest(@RequestBody Test test) {
         Test updatedTest = testService.changeTestStatus(test.getId(), test.getStatus());
-
-        websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService
-                .getTestRunStatistic(updatedTest.getTestRunId())));
+        TestRunStatistics testRunStatistic = statisticsService.getTestRunStatistic(updatedTest.getTestRunId());
+        websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(testRunStatistic));
         websocketTemplate.convertAndSend(getTestsWebsocketPath(updatedTest.getTestRunId()), new TestPush(updatedTest));
         TestRun testRun = testRunService.getTestRunById(updatedTest.getTestRunId());
         websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRun));
@@ -150,7 +144,8 @@ public class TestsAPIController extends AbstractController {
     @PostMapping("/{id}/workitems")
     public TestType createTestWorkItems(
             @ApiParam(value = "Work item ID", required = true) @PathVariable("id") long id,
-            @RequestBody List<String> workItems) {
+            @RequestBody List<String> workItems
+    ) {
         return mapper.map(testService.createTestWorkItems(id, workItems), TestType.class);
     }
 
@@ -176,7 +171,8 @@ public class TestsAPIController extends AbstractController {
     @GetMapping("/{id}/workitem/{type}")
     public List<WorkItem> getTestCaseWorkItemsByType(
             @ApiParam(value = "Test ID", required = true) @PathVariable("id") long id,
-            @PathVariable("type") String type) {
+            @PathVariable("type") String type
+    ) {
         List<WorkItem> workItems = new ArrayList<>();
         Test test = testService.getTestById(id);
         if (test != null) {
@@ -191,7 +187,8 @@ public class TestsAPIController extends AbstractController {
     @PostMapping("/{id}/workitem")
     public WorkItem createOrUpdateTestWorkItem(
             @ApiParam(value = "Test ID", required = true) @PathVariable("id") long id,
-            @RequestBody WorkItem workItem) {
+            @RequestBody WorkItem workItem
+    ) {
         if (getPrincipalId() > 0) {
             workItem.setUser(new User(getPrincipalId()));
         }
@@ -201,11 +198,9 @@ public class TestsAPIController extends AbstractController {
             workItem = testService.createWorkItem(id, workItem);
         }
         Test test = testService.getTestById(id);
-
-        websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService
-                .getTestRunStatistic(test.getTestRunId())));
+        TestRunStatistics testRunStatistic = statisticsService.getTestRunStatistic(test.getTestRunId());
+        websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(testRunStatistic));
         websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
-
         TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
         websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRun));
 
@@ -218,7 +213,8 @@ public class TestsAPIController extends AbstractController {
     @PutMapping("/{id}/issues")
     public WorkItem updateTestKnownIssue(
             @ApiParam(value = "Test ID", required = true) @PathVariable("id") long id,
-            @RequestBody WorkItem workItem) {
+            @RequestBody WorkItem workItem
+    ) {
         Test test = testService.getTestById(id);
         workItem.setHashCode(testService.getTestMessageHashCode(test.getMessage()));
         return workItemService.updateWorkItem(workItem);
@@ -228,9 +224,7 @@ public class TestsAPIController extends AbstractController {
     @ApiOperation(value = "Delete test work item", nickname = "deleteTestWorkItem", httpMethod = "DELETE")
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @DeleteMapping("/{testId}/workitem/{workItemId}")
-    public void deleteTestWorkItem(
-            @PathVariable("workItemId") long workItemId,
-            @PathVariable("testId") long testId) {
+    public void deleteTestWorkItem(@PathVariable("workItemId") long workItemId, @PathVariable("testId") long testId) {
         Test test = testService.getTestById(testId);
         WorkItem workItem = workItemService.getWorkItemById(workItemId);
         if (workItem.getType() == Type.BUG) {
@@ -238,8 +232,8 @@ public class TestsAPIController extends AbstractController {
             if (test.isBlocker()) {
                 testRunService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_BLOCKER);
             }
-            websocketTemplate.convertAndSend(getStatisticsWebsocketPath(),
-                    new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
+            TestRunStatistics testRunStatistic = statisticsService.getTestRunStatistic(test.getTestRunId());
+            websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(testRunStatistic));
             websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
             TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
             websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRun));
@@ -252,7 +246,7 @@ public class TestsAPIController extends AbstractController {
     @GetMapping("/jira/{issue}")
     public Issue getJiraIssue(@PathVariable("issue") String issue) {
         return jiraService.getIssue(issue)
-                .orElseThrow(() -> new ForbiddenOperationException("Unable to retrieve jira issue"));
+                          .orElseThrow(() -> new ForbiddenOperationException("Unable to retrieve jira issue"));
     }
 
     @ApiIgnore
@@ -268,7 +262,8 @@ public class TestsAPIController extends AbstractController {
     @PostMapping("/{id}/artifacts")
     public void addTestArtifact(
             @ApiParam(value = "Test ID", required = true) @PathVariable("id") long id,
-            @RequestBody TestArtifactType artifact) {
+            @RequestBody TestArtifactType artifact
+    ) {
         artifact.setTestId(id);
         testArtifactService.createOrUpdateTestArtifact(mapper.map(artifact, TestArtifact.class));
         // Updating web client with latest artifacts

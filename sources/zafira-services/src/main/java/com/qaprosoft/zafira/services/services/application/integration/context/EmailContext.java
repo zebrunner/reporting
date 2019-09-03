@@ -32,7 +32,7 @@ public class EmailContext extends AbstractContext {
         super(settings, settings.get(Setting.SettingType.EMAIL_ENABLED));
 
         String host = settings.get(Setting.SettingType.EMAIL_HOST);
-        int port = Integer.valueOf(settings.get(Setting.SettingType.EMAIL_PORT));
+        int port = Integer.parseInt(settings.get(Setting.SettingType.EMAIL_PORT));
         String user = settings.get(Setting.SettingType.EMAIL_USER);
         String password = settings.get(Setting.SettingType.EMAIL_PASSWORD);
         String fromAddress = settings.get(Setting.SettingType.EMAIL_FROM_ADDRESS);

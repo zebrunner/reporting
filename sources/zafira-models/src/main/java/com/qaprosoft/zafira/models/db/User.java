@@ -15,6 +15,12 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.qaprosoft.zafira.models.db.Group.Role;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -22,12 +28,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.qaprosoft.zafira.models.db.Group.Role;
-
+@Getter
+@Setter
 @JsonInclude(Include.NON_NULL)
 public class User extends AbstractEntity implements Comparable<User> {
+
     private static final long serialVersionUID = 2720141152633805371L;
 
     private String username;
@@ -65,62 +70,6 @@ public class User extends AbstractEntity implements Comparable<User> {
         this.username = username;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getPhotoURL() {
-        return photoURL;
-    }
-
-    public void setPhotoURL(String photoURL) {
-        this.photoURL = photoURL;
-    }
-
-    public List<Group> getGroups() {
-        return groups;
-    }
-
-    public void setGroups(List<Group> groups) {
-        this.groups = groups;
-    }
-
     public void setRoles(List<Role> roles) {
         // Do nothing just treak for dozer mapper
     }
@@ -149,56 +98,9 @@ public class User extends AbstractEntity implements Comparable<User> {
         return this.groups;
     }
 
-    public List<UserPreference> getPreferences() {
-        return preferences;
-    }
-
-    public void setPreferences(List<UserPreference> preferences) {
-        this.preferences = preferences;
-    }
-
-    public Date getLastLogin() {
-        return lastLogin;
-    }
-
-    public void setLastLogin(Date lastLogin) {
-        this.lastLogin = lastLogin;
-    }
-
-    public String getTenant() {
-        return tenant;
-    }
-
-    public void setTenant(String tenant) {
-        this.tenant = tenant;
-    }
-
-    public Source getSource() {
-        return source;
-    }
-
-    public void setSource(Source source) {
-        this.source = source;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public String getResetToken() {
-        return resetToken;
-    }
-
-    public void setResetToken(String resetToken) {
-        this.resetToken = resetToken;
-    }
-
     @Override
     public int compareTo(User user) {
         return username.compareTo(user.getUsername());
     }
+
 }

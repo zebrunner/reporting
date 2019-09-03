@@ -18,7 +18,6 @@ package com.qaprosoft.zafira.services.services.application.scm;
 import com.qaprosoft.zafira.models.db.ScmAccount;
 import com.qaprosoft.zafira.models.dto.scm.Organization;
 import com.qaprosoft.zafira.models.dto.scm.Repository;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.util.GitHubHttpUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.github.GHPerson;
@@ -43,10 +42,10 @@ public class GitHubService implements IScmService {
     @Autowired
     private GitHubHttpUtils gitHubHttpUtils;
 
-    @Value("${zafira.scm.github.client.id}")
+    @Value("${github.client-id}")
     private String gitHubClientId;
 
-    @Value("${zafira.scm.github.client.secret}")
+    @Value("${github.client-secret}")
     private String gitHubSecret;
 
     public String getAccessToken(String code) throws IOException, URISyntaxException {
@@ -54,7 +53,7 @@ public class GitHubService implements IScmService {
     }
 
     @Override
-    public List<Repository> getRepositories(ScmAccount scmAccount, String organizationName) throws IOException, ServiceException {
+    public List<Repository> getRepositories(ScmAccount scmAccount, String organizationName) throws IOException {
         GitHub gitHub = connectToGitHub(scmAccount);
         GHPerson person = StringUtils.isBlank(organizationName) ? gitHub.getMyself() : gitHub.getOrganization(organizationName);
         return person.listRepositories().asList().stream().map(this::mapRepository).collect(Collectors.toList());
@@ -78,7 +77,7 @@ public class GitHubService implements IScmService {
     }
 
     @Override
-    public List<Organization> getOrganizations(ScmAccount scmAccount) throws IOException, ServiceException {
+    public List<Organization> getOrganizations(ScmAccount scmAccount) throws IOException {
         GitHub gitHub = connectToGitHub(scmAccount);
         List<Organization> organizations = gitHub.getMyself().getAllOrganizations().stream().map(organization -> {
             Organization result = new Organization(organization.getLogin());

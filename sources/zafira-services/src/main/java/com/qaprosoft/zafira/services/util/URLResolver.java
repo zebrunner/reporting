@@ -30,10 +30,10 @@ public class URLResolver {
     @Value("${zafira.multitenant}")
     private boolean isMultitenant;
 
-    @Value("${zafira.web.url}")
+    @Value("${zafira.web-url}")
     private String webURL;
 
-    @Value("${zafira.webservice.url}")
+    @Value("${zafira.api-url}")
     private String webserviceURL;
 
     /**

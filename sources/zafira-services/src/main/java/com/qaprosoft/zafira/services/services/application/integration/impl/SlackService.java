@@ -61,7 +61,7 @@ public class SlackService extends AbstractIntegration<SlackContext> {
             JenkinsService jenkinsService,
             SettingsService settingsService,
             CryptoService cryptoService,
-            @Value("${zafira.slack.image}") String image,
+            @Value("${zafira.slack.image-url}") String image,
             @Value("${zafira.slack.author}") String author) {
         super(settingsService, cryptoService, SLACK, SlackContext.class);
         this.urlResolver = urlResolver;

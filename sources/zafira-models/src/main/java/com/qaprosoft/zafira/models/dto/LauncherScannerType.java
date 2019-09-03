@@ -15,11 +15,15 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Min;
 import java.io.Serializable;
 
+@Getter
+@Setter
 public class LauncherScannerType implements Serializable {
 
     private static final long serialVersionUID = 8868128477356200279L;
@@ -30,29 +34,5 @@ public class LauncherScannerType implements Serializable {
     @Min(1)
     private long scmAccountId;
     private boolean rescan;
-
-    public String getBranch() {
-        return branch;
-    }
-
-    public void setBranch(String branch) {
-        this.branch = branch;
-    }
-
-    public long getScmAccountId() {
-        return scmAccountId;
-    }
-
-    public void setScmAccountId(long scmAccountId) {
-        this.scmAccountId = scmAccountId;
-    }
-
-    public boolean isRescan() {
-        return rescan;
-    }
-
-    public void setRescan(boolean rescan) {
-        this.rescan = rescan;
-    }
 
 }

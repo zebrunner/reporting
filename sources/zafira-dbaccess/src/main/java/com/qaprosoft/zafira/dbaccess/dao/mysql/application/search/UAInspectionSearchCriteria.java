@@ -15,14 +15,13 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application.search;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class UAInspectionSearchCriteria extends SearchCriteria {
+
     private String systemId;
 
-    public String getSystemId() {
-        return systemId;
-    }
-
-    public void setSystemId(String systemId) {
-        this.systemId = systemId;
-    }
 }

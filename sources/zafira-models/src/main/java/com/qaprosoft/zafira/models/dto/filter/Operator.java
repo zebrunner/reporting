@@ -29,4 +29,5 @@ public enum Operator {
     LAST_7_DAYS,
     LAST_14_DAYS,
     LAST_30_DAYS
+
 }

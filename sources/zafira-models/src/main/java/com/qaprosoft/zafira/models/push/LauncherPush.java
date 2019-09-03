@@ -16,11 +16,13 @@
 package com.qaprosoft.zafira.models.push;
 
 import com.qaprosoft.zafira.models.dto.LauncherType;
+import lombok.Getter;
 
 import java.util.List;
 
 import static com.qaprosoft.zafira.models.push.AbstractPush.Type.LAUNCHER;
 
+@Getter
 public class LauncherPush extends AbstractPush {
 
     private final List<LauncherType> launchers;
@@ -32,18 +34,6 @@ public class LauncherPush extends AbstractPush {
         this.launchers = launchers;
         this.userId = userId;
         this.success = success;
-    }
-
-    public List<LauncherType> getLaunchers() {
-        return launchers;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public boolean isSuccess() {
-        return success;
     }
 
 }

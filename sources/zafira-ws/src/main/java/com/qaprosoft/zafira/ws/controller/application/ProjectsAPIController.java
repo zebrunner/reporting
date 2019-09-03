@@ -26,7 +26,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -40,8 +39,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Api("Projects API")
 @CrossOrigin
@@ -49,11 +48,14 @@ import java.util.List;
 @RestController
 public class ProjectsAPIController extends AbstractController {
 
-    @Autowired
-    private Mapper mapper;
+    private final Mapper mapper;
 
-    @Autowired
-    private ProjectService projectService;
+    private final ProjectService projectService;
+
+    public ProjectsAPIController(Mapper mapper, ProjectService projectService) {
+        this.mapper = mapper;
+        this.projectService = projectService;
+    }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create project", nickname = "createProject", httpMethod = "POST", response = ProjectType.class)
@@ -89,11 +91,10 @@ public class ProjectsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping()
     public List<ProjectType> getAllProjects() {
-        List<ProjectType> projects = new ArrayList<>();
-        for (Project project : projectService.getAllProjects()) {
-            projects.add(mapper.map(project, ProjectType.class));
-        }
-        return projects;
+        List<Project> projects = projectService.getAllProjects();
+        return projects.stream()
+                       .map(project -> mapper.map(project, ProjectType.class))
+                       .collect(Collectors.toList());
     }
 
     @ResponseStatusDetails

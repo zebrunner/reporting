@@ -15,13 +15,10 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.util.dozer;
 
-import java.util.Date;
-
-import org.apache.commons.lang3.time.DateUtils;
+import com.qaprosoft.zafira.services.util.DateTimeUtil;
 import org.dozer.DozerConverter;
-import org.joda.time.DateTime;
-import org.joda.time.Seconds;
 
+import java.util.Date;
 /**
  * ExpirationDateConverter - converts expiresIn seconds to expidationDate.
  * 
@@ -35,11 +32,11 @@ public class ExpirationDateConverter extends DozerConverter<Integer, Date> {
 
     @Override
     public Integer convertFrom(Date source, Integer destination) {
-        return source != null ? Seconds.secondsBetween(new DateTime(), new DateTime(source.getTime())).getSeconds() : null;
+        return source != null ? ((Long) DateTimeUtil.toSecondsSinceDateToNow(source)).intValue() : null;
     }
 
     @Override
     public Date convertTo(Integer source, Date destination) {
-        return source != null ? DateUtils.addSeconds(new Date(), source) : null;
+        return source != null ? DateTimeUtil.toDateSinceNowPlusSeconds(source) : null;
     }
 }

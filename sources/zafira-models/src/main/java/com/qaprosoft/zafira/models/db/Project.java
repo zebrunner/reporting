@@ -17,35 +17,22 @@ package com.qaprosoft.zafira.models.db;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.qaprosoft.zafira.models.db.AbstractEntity;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
 public class Project extends AbstractEntity {
     private static final long serialVersionUID = 1489890001065170767L;
 
-    public Project() {
-    }
+    private String name;
+    private String description;
 
     public Project(String name) {
         this.name = name;
     }
 
-    private String name;
-    private String description;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }

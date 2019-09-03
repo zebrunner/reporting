@@ -29,7 +29,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -51,11 +50,13 @@ import java.util.List;
 @RestController
 public class InvitationAPIController extends AbstractController {
 
-    @Autowired
-    private InvitationService invitationService;
+    private final InvitationService invitationService;
+    private final Mapper mapper;
 
-    @Autowired
-    private Mapper mapper;
+    public InvitationAPIController(InvitationService invitationService, Mapper mapper) {
+        this.invitationService = invitationService;
+        this.mapper = mapper;
+    }
 
     @ResponseStatusDetails
     @ApiOperation(value = "Invite users", nickname = "inviteUsers", httpMethod = "POST", response = List.class)
@@ -63,9 +64,10 @@ public class InvitationAPIController extends AbstractController {
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('INVITE_USERS')")
     @PostMapping()
     public List<Invitation> inviteUsers(@Valid @RequestBody InvitationListType invitationList) {
-        Invitation[] invitations = invitationList.getInvitationTypes().stream()
-                .map(invitationType -> mapper.map(invitationType, Invitation.class))
-                .toArray(Invitation[]::new);
+        List<InvitationType> invitationTypes = invitationList.getInvitationTypes();
+        Invitation[] invitations = invitationTypes.stream()
+                                                  .map(invitationType -> mapper.map(invitationType, Invitation.class))
+                                                  .toArray(Invitation[]::new);
         return invitationService.createInvitations(getPrincipalId(), invitations);
     }
 
@@ -103,12 +105,14 @@ public class InvitationAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasAnyPermission('INVITE_USERS', 'MODIFY_INVITATIONS')")
     @GetMapping(value = "/search")
-    public SearchResult<Invitation> search(@RequestParam(value = "query", required = false) String query,
+    public SearchResult<Invitation> search(
+            @RequestParam(value = "query", required = false) String query,
             @RequestParam(value = "page", required = false) String page,
             @RequestParam(value = "pageSize", required = false) String pageSize,
             @RequestParam(value = "orderBy", required = false) String orderBy,
             @RequestParam(value = "sortOrder", required = false) String sortOrder,
-            SearchCriteria sc) {
+            SearchCriteria sc
+    ) {
         return invitationService.search(sc);
     }
 

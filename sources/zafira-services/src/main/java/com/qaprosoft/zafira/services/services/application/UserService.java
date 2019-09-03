@@ -15,11 +15,19 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import static com.qaprosoft.zafira.models.db.User.Source.INTERNAL;
-import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
-
-import javax.annotation.PostConstruct;
-
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.UserSearchCriteria;
+import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.db.Group.Role;
+import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.db.User.Status;
+import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
+import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
+import com.qaprosoft.zafira.services.services.management.TenancyService;
+import com.qaprosoft.zafira.services.util.DateTimeUtil;
+import com.qaprosoft.zafira.services.util.TenancyDbInitial;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.jasypt.util.password.PasswordEncryptor;
@@ -33,18 +41,9 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserMapper;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.UserSearchCriteria;
-import com.qaprosoft.zafira.models.db.Group;
-import com.qaprosoft.zafira.models.db.Group.Role;
-import com.qaprosoft.zafira.models.db.User;
-import com.qaprosoft.zafira.models.db.User.Status;
-import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
-import com.qaprosoft.zafira.services.services.management.TenancyService;
-import com.qaprosoft.zafira.services.util.TenancyDbInitial;
+import javax.annotation.PostConstruct;
+
+import static com.qaprosoft.zafira.models.db.User.Source.INTERNAL;
 
 @Service
 public class UserService implements TenancyDbInitial {
@@ -84,6 +83,7 @@ public class UserService implements TenancyDbInitial {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void initDb() {
         if (!StringUtils.isBlank(adminUsername) && !StringUtils.isBlank(adminPassword)) {
             try {
@@ -243,7 +243,7 @@ public class UserService implements TenancyDbInitial {
 
     @Transactional(readOnly = true)
     public SearchResult<User> searchUsers(UserSearchCriteria sc, Boolean publicDetails) {
-        actualizeSearchCriteriaDate(sc);
+        DateTimeUtil.actualizeSearchCriteriaDate(sc);
         SearchResult<User> results = new SearchResult<>();
         results.setPage(sc.getPage());
         results.setPageSize(sc.getPageSize());

@@ -11,18 +11,22 @@ import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.JobNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ProjectNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.services.exceptions.UnhealthyStateException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.util.MimeType;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -30,6 +34,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Centralized API exception handler
@@ -37,55 +42,58 @@ import java.util.List;
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
-    private static final String MSG_METHOD_ARGUMENT_TYPE_MISMATCH = "Request parameter has invalid type.";
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
-    private static final String INTERNAL_SERVER_ERROR_MSG = "Unexpected error has occurred. Please try again later.";
+    private static final String ERR_MSG_METHOD_ARGUMENT_TYPE_MISMATCH = "Request parameter has invalid type.";
+    private static final String ERR_MSG_UNACCEPTABLE_MIME_TYPE = "Requested content type can not be served. Supported types: %s";
+    private static final String ERR_MSG_INTERNAL_SERVER_ERROR = "Unexpected error has occurred. Please try again later.";
+    private static final String ERR_MSG_DEBUG_INFO = "Error message: [%s]. Caused by: [%s]";
 
-    private final boolean debugMode;
+    private boolean debugEnabled;
 
-    public ApiExceptionHandler(@Value("${zafira.debugMode:false}") boolean debugMode) {
-        this.debugMode = debugMode;
+    public void setDebugEnabled(@Value("${zafira.debug-enabled:false}") boolean debugEnabled) {
+        this.debugEnabled = debugEnabled;
     }
 
     @ExceptionHandler(JobNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleJobNotFoundException(JobNotFoundException e) {
-        ErrorResponse result = new ErrorResponse();
-        result.setError(new Error(ErrorCode.JOB_NOT_FOUND));
-        return result;
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.JOB_NOT_FOUND));
+        return response;
     }
 
     @ExceptionHandler(TestRunNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleTestRunNotFoundException(TestRunNotFoundException e) {
-        ErrorResponse result = new ErrorResponse();
-        result.setError(new Error(ErrorCode.TEST_RUN_NOT_FOUND));
-        return result;
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.TEST_RUN_NOT_FOUND));
+        return response;
     }
 
     @ExceptionHandler(TestNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleTestNotFoundException(TestNotFoundException e) {
-        ErrorResponse result = new ErrorResponse();
-        result.setError(new Error(ErrorCode.TEST_RUN_NOT_FOUND));
-        return result;
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.TEST_RUN_NOT_FOUND));
+        return response;
     }
 
     @ExceptionHandler(InvalidTestRunException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidTestRunException(InvalidTestRunException e) {
-        ErrorResponse result = new ErrorResponse();
-        result.setError(new Error(ErrorCode.INVALID_TEST_RUN));
-        return result;
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.INVALID_TEST_RUN));
+        return response;
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValidException(Exception e) {
-        ErrorResponse result = new ErrorResponse();
+        ErrorResponse response = new ErrorResponse();
         BindingResult bindingResult = null;
 
-        result.setError(new Error(ErrorCode.VALIDATION_ERROR));
+        response.setError(new Error(ErrorCode.VALIDATION_ERROR));
 
         if (e instanceof MethodArgumentNotValidException) {
             bindingResult = ((MethodArgumentNotValidException) e).getBindingResult();
@@ -108,102 +116,121 @@ public class ApiExceptionHandler {
                     error.setAdditional(additionalErrorData);
                 }
 
-                result.getValidationErrors().add(error);
+                response.getValidationErrors().add(error);
             }
         }
 
-        return result;
+        return response;
     }
 
     @ExceptionHandler(UnableToRebuildCIJobException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleUnableToRebuildCIJobException(UnableToRebuildCIJobException e) {
-        ErrorResponse result = new ErrorResponse();
-        result.setError(new Error(ErrorCode.TEST_RUN_NOT_REBUILT));
-        return result;
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.TEST_RUN_NOT_REBUILT));
+        return response;
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse handleBadCredentialsException(BadCredentialsException e) {
-        ErrorResponse result = new ErrorResponse();
-        result.setError(new Error(ErrorCode.UNAUTHORIZED));
-        return result;
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.UNAUTHORIZED));
+        return response;
     }
 
     @ExceptionHandler(ForbiddenOperationException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleForbiddenOperationException(ForbiddenOperationException e) {
-        ErrorResponse result = new ErrorResponse();
-        result.setError(new Error(ErrorCode.FORBIDDENT, null, e.isShowMessage() ? e.getMessage() : null));
-        return result;
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.FORBIDDENT, null, e.isShowMessage() ? e.getMessage() : null));
+        return response;
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleUserNotFoundException(UserNotFoundException e) {
-        ErrorResponse result = new ErrorResponse();
-        result.setError(new Error(ErrorCode.USER_NOT_FOUND));
-        return result;
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.USER_NOT_FOUND));
+        return response;
     }
 
     @ExceptionHandler(IntegrationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIntegrationException(IntegrationException e) {
-        ErrorResponse result = new ErrorResponse();
-        result.setError(new Error(ErrorCode.INTEGRATION_UNAVAILABLE));
-        return result;
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.INTEGRATION_UNAVAILABLE));
+        return response;
     }
 
     @ExceptionHandler(EntityAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleEntityIsAlreadyExistsException(EntityAlreadyExistsException e) {
-        ErrorResponse result = new ErrorResponse();
-        result.setError(new Error(ErrorCode.ENTITY_ALREADY_EXISTS, e.getFieldName(), e.getMessage()));
-        return result;
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.ENTITY_ALREADY_EXISTS, e.getFieldName(), e.getMessage()));
+        return response;
     }
 
     @ExceptionHandler(EntityNotExistsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleEntityIsNotExistsException(EntityNotExistsException e) {
-        ErrorResponse result = new ErrorResponse();
-        result.setError(new Error(ErrorCode.ENTITY_NOT_EXISTS, e.getMessage()));
-        return result;
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.ENTITY_NOT_EXISTS, e.getMessage()));
+        return response;
     }
 
     @ExceptionHandler(ProjectNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleProjectNotFoundException(ProjectNotFoundException e) {
-        ErrorResponse result = new ErrorResponse();
-        result.setError(new Error(ErrorCode.PROJECT_NOT_EXISTS, e.getMessage()));
-        return result;
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.PROJECT_NOT_EXISTS, e.getMessage()));
+        return response;
     }
 
     @ExceptionHandler(UnhealthyStateException.class)
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     public ErrorResponse handleUnhealthyStateException(UnhealthyStateException e) {
-        ErrorResponse result = new ErrorResponse();
-        result.setError(new Error(ErrorCode.UNHEALTHY_STATUS, "reason", e.getMessage()));
-        return result;
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.UNHEALTHY_STATUS, "reason", e.getMessage()));
+        return response;
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         ErrorResponse response = new ErrorResponse();
-        response.setError(new Error(ErrorCode.INVALID_VALUE, e.getName(), MSG_METHOD_ARGUMENT_TYPE_MISMATCH));
+        response.setError(new Error(ErrorCode.INVALID_VALUE, e.getName(), ERR_MSG_METHOD_ARGUMENT_TYPE_MISMATCH));
+        return response;
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleHttpMediaTypeNotAcceptableException(HttpMediaTypeNotAcceptableException e) {
+        List<MediaType> mediaTypes = e.getSupportedMediaTypes();
+        String supportedTypes = mediaTypes.stream()
+                                          .map(MimeType::toString)
+                                          .collect(Collectors.joining(", "));
+
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.INVALID_MIME_TYPE, String.format(ERR_MSG_UNACCEPTABLE_MIME_TYPE, supportedTypes)));
         return response;
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Object handleOtherException(Exception e) {
-        if (debugMode) {
-            throw new ServiceException(e);
+        LOGGER.error("Unexpected internal server error", e);
+
+        ErrorResponse response = new ErrorResponse();
+        if (debugEnabled) {
+            String errorMessage = e.getMessage();
+            Throwable cause = e.getCause();
+            String causedByMessage = cause != null ? cause.getMessage() : "message not available";
+            response.setError(new Error(ErrorCode.INTERNAL_SERVER_ERROR, String.format(ERR_MSG_DEBUG_INFO, errorMessage, causedByMessage)));
+        } else {
+            response.setError(new Error(ErrorCode.INTERNAL_SERVER_ERROR, ERR_MSG_INTERNAL_SERVER_ERROR));
         }
-        ErrorResponse result = new ErrorResponse();
-        result.setError(new Error(ErrorCode.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG));
-        return result;
+        return response;
     }
 
 }
