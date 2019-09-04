@@ -22,7 +22,8 @@ import com.qaprosoft.zafira.models.db.WidgetTemplate;
 import com.qaprosoft.zafira.models.dto.SQLExecuteType;
 import com.qaprosoft.zafira.models.dto.widget.WidgetTemplateType;
 import com.qaprosoft.zafira.models.dto.widget.WidgetType;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.ProcessingException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.WidgetService;
 import com.qaprosoft.zafira.services.services.application.WidgetTemplateService;
@@ -86,7 +87,8 @@ public class WidgetsAPIController extends AbstractController {
         if (widget.getWidgetTemplate() != null) {
             WidgetTemplate widgetTemplate = widgetTemplateService.getWidgetTemplateById(widget.getWidgetTemplate().getId());
             if (widgetTemplate == null) {
-                throw new ServiceException("Unable to create chart. Template with id " + widget.getWidgetTemplate().getId() + " does not exist.");
+                // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+                throw new ResourceNotFoundException("Unable to create chart. Template with id " + widget.getWidgetTemplate().getId() + " does not exist.");
             }
             widgetTemplateService.clearRedundantParamsValues(widgetTemplate);
             widget.setWidgetTemplate(mapper.map(widgetTemplate, WidgetTemplateType.class));
@@ -121,7 +123,8 @@ public class WidgetsAPIController extends AbstractController {
         if (widget.getWidgetTemplate() != null) {
             WidgetTemplate widgetTemplate = widgetTemplateService.getWidgetTemplateById(widget.getWidgetTemplate().getId());
             if (widgetTemplate == null) {
-                throw new ServiceException("Unable to update widget. Widget template does not exist");
+                // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+                throw new ResourceNotFoundException("Unable to update widget. Widget template does not exist");
             }
             widgetTemplateService.clearRedundantParamsValues(widgetTemplate);
             // widgetTemplateService.executeWidgetTemplateParamsSQLQueries(widgetTemplate);
@@ -232,7 +235,8 @@ public class WidgetsAPIController extends AbstractController {
     ) {
         WidgetTemplate widgetTemplate = widgetTemplateService.getWidgetTemplateById(sqlExecuteType.getTemplateId());
         if (widgetTemplate == null) {
-            throw new ServiceException("Unable to execute SQL query.");
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new ResourceNotFoundException("Widget template does not exist");
         }
         List<Map<String, Object>> resultList;
         try {
@@ -243,16 +247,12 @@ public class WidgetsAPIController extends AbstractController {
         } catch (Exception e) {
             if (stackTraceRequired) {
                 resultList = new ArrayList<>();
-                resultList.add(new HashMap<>() {
-                    private static final long serialVersionUID = -6210274356733655725L;
-
-                    {
-                        put("Check your query", ExceptionUtils.getFullStackTrace(e));
-                    }
-                });
+                resultList.add(Map.of("Check your query", ExceptionUtils.getFullStackTrace(e)));
                 return resultList;
             } else {
-                throw new ServiceException(e.getMessage(), e);
+                // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+                // wrap whatever error is thrown
+                throw new ProcessingException(e.getMessage(), e);
             }
         }
         return resultList;

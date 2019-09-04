@@ -15,11 +15,10 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.WidgetMapper;
+import com.qaprosoft.zafira.dbaccess.utils.SQLAdapter;
 import com.qaprosoft.zafira.dbaccess.utils.SQLTemplateAdapter;
+import com.qaprosoft.zafira.models.db.Widget;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.slf4j.Logger;
@@ -27,10 +26,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.WidgetMapper;
-import com.qaprosoft.zafira.models.db.Widget;
-import com.qaprosoft.zafira.dbaccess.utils.SQLAdapter;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class WidgetService {
@@ -138,7 +136,7 @@ public class WidgetService {
                 result = 0;
                 break;
             }
-        } catch (ServiceException e) {
+        } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
         }
         return result;

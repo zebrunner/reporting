@@ -1,6 +1,6 @@
 package com.qaprosoft.zafira.services.exceptions;
 
-public class JenkinsJobNotFoundException extends ServiceException {
+public class JenkinsJobNotFoundException extends ApplicationException {
 
     private static final long serialVersionUID = -4849845839266518820L;
 

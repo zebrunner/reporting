@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public class AWSException extends ServiceException {
+public class AWSException extends ApplicationException {
     private static final long serialVersionUID = 201855553642859489L;
 
     public AWSException() {

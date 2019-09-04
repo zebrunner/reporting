@@ -24,7 +24,7 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.EntityAlreadyExistsException;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.services.application.emails.IEmailMessage;
 import com.qaprosoft.zafira.services.services.application.emails.UserInviteEmail;
 import com.qaprosoft.zafira.services.services.application.emails.UserInviteLdapEmail;
@@ -37,7 +37,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -99,7 +101,8 @@ public class InvitationService {
             try {
                 inv = createInvitation(principalId, invitation, false, false);
                 sendEmail(inv);
-            } catch (ServiceException e) {
+                // TODO by nsidorevich on 2019-09-03: ???
+            } catch (RuntimeException e) {
                 LOGGER.error(e.getMessage(), e);
             }
             results.add(inv);
@@ -146,7 +149,8 @@ public class InvitationService {
             throw new EntityNotExistsException(Invitation.class, false);
         }
         if (invitation.getStatus().equals(Invitation.Status.ACCEPTED)) {
-            throw new ServiceException("Cannot retry invitation due invitation is accepted yet.");
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new IllegalOperationException("Cannot retry invitation due invitation is accepted yet.");
         }
         String token = generateToken();
         invitation.setToken(token);

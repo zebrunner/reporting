@@ -15,9 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public class IllegalOperationException extends ServiceException {
-
-    private static final long serialVersionUID = 7149088385814921268L;
+public class IllegalOperationException extends ApplicationException {
 
     public IllegalOperationException() {
     }

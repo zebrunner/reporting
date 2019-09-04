@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public class ForbiddenOperationException extends ServiceException {
+public class ForbiddenOperationException extends ApplicationException {
     private static final long serialVersionUID = -1840720518398070678L;
 
     private boolean showMessage;

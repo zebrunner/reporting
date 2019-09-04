@@ -1,7 +1,7 @@
 package com.qaprosoft.zafira.services.services.application;
 
 import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.ProcessingException;
 import com.qaprosoft.zafira.services.services.application.integration.impl.AmazonService;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,7 +63,8 @@ public class UploadService {
             Files.write(path, bytes);
             return filename;
         } catch (IOException e) {
-            throw new ServiceException("Unable to upload document");
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new ProcessingException("Unable to upload document");
         }
     }
 

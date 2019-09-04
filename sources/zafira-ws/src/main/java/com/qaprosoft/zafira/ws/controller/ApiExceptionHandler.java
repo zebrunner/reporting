@@ -4,6 +4,7 @@ import com.qaprosoft.zafira.models.dto.errors.AdditionalErrorData;
 import com.qaprosoft.zafira.models.dto.errors.Error;
 import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
 import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
+import com.qaprosoft.zafira.services.exceptions.ApplicationException;
 import com.qaprosoft.zafira.services.exceptions.EntityAlreadyExistsException;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
@@ -216,9 +217,23 @@ public class ApiExceptionHandler {
         return response;
     }
 
+    /**
+     * This handler will only be invoked if certain application exception occures. It provides generic handling
+     * to compensate lack of error context. Once such exception occurs it should be properly addressed ASAP.
+     */
+    @ExceptionHandler(ApplicationException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleApplicationException(ApplicationException e) {
+        LOGGER.error("Unhandled application exception occured", e);
+
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage()));
+        return response;
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Object handleOtherException(Exception e) {
+    public ErrorResponse handleOtherException(Exception e) {
         LOGGER.error("Unexpected internal server error", e);
 
         ErrorResponse response = new ErrorResponse();

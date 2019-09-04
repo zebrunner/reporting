@@ -21,7 +21,6 @@ import com.qaprosoft.zafira.models.db.Invitation;
 import com.qaprosoft.zafira.models.push.events.EmailEventMessage;
 import com.qaprosoft.zafira.models.push.events.EventMessage;
 import com.qaprosoft.zafira.models.push.events.TenancyResponseEventMessage;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.InvitationService;
 import com.qaprosoft.zafira.services.services.management.TenancyService;
 import org.apache.commons.lang3.StringUtils;
@@ -101,7 +100,7 @@ public class TenancyInitializer {
                         Invitation invitation = invitationService.createInitialInvitation(eventMessage.getEmail(), DEFAULT_USER_GROUP);
                         result.setToken(invitation.getToken());
                         result.setZafiraURL(urlResolver.buildWebURL());
-                    } catch (ServiceException e) {
+                    } catch (RuntimeException e) {
                         LOGGER.error(e.getMessage(), e);
                     }
                 });
