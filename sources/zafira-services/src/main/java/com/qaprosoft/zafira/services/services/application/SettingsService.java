@@ -15,15 +15,22 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.google.gson.Gson;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.SettingsMapper;
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.ScmAccount;
+import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.models.db.Setting.SettingType;
+import com.qaprosoft.zafira.models.db.Setting.Tool;
+import com.qaprosoft.zafira.models.dto.ConnectedToolType;
+import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.integration.Integration;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
+import com.qaprosoft.zafira.services.services.application.integration.impl.ElasticsearchService;
 import com.qaprosoft.zafira.services.services.application.scm.ScmAccountService;
+import com.qaprosoft.zafira.services.util.EventPushService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -31,19 +38,11 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.gson.Gson;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.SettingsMapper;
-import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
-import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.models.db.Setting.SettingType;
-import com.qaprosoft.zafira.models.db.Setting.Tool;
-import com.qaprosoft.zafira.models.dto.ConnectedToolType;
-import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
-import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
-import com.qaprosoft.zafira.services.services.application.integration.impl.ElasticsearchService;
-import com.qaprosoft.zafira.services.util.EventPushService;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class SettingsService {
@@ -59,7 +58,7 @@ public class SettingsService {
 
     public SettingsService(SettingsMapper settingsMapper,
             @Lazy IntegrationService integrationService,
-            ScmAccountService scmAccountService,
+            @Lazy ScmAccountService scmAccountService,
             EventPushService<ReinitEventMessage> eventPushService) {
         this.settingsMapper = settingsMapper;
         this.integrationService = integrationService;
