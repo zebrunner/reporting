@@ -32,6 +32,7 @@ import com.qaprosoft.zafira.services.exceptions.JenkinsJobNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ScmAccountNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.integration.context.JenkinsContext;
+import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.SeleniumService;
 import com.qaprosoft.zafira.services.services.application.scm.GitHubService;
@@ -64,6 +65,7 @@ public class LauncherService {
     private final JWTService jwtService;
     private final GitHubService gitHubService;
     private final SeleniumService seleniumService;
+    private final CryptoService cryptoService;
     private final URLResolver urlResolver;
 
     public LauncherService(LauncherMapper launcherMapper,
@@ -73,6 +75,7 @@ public class LauncherService {
                            JWTService jwtService,
                            GitHubService gitHubService,
                            SeleniumService seleniumService,
+                           CryptoService cryptoService,
                            URLResolver urlResolver) {
         this.launcherMapper = launcherMapper;
         this.jenkinsService = jenkinsService;
@@ -81,6 +84,7 @@ public class LauncherService {
         this.jwtService = jwtService;
         this.gitHubService = gitHubService;
         this.seleniumService = seleniumService;
+        this.cryptoService = cryptoService;
         this.urlResolver = urlResolver;
     }
 
@@ -173,7 +177,9 @@ public class LauncherService {
             throw new ServiceException("Launcher job not specified");
         
         Map<String, String> jobParameters = new ObjectMapper().readValue(launcher.getModel(), new TypeReference<Map<String, String>>() {});
-        jobParameters.put("scmURL", scmAccount.buildAuthorizedURL());
+
+        String decryptedAccessToken = cryptoService.decrypt(scmAccount.getAccessToken());
+        jobParameters.put("scmURL", scmAccount.buildAuthorizedURL(decryptedAccessToken));
         if (!jobParameters.containsKey("branch")) {
             jobParameters.put("branch", "*/master");
         }
@@ -222,7 +228,8 @@ public class LauncherService {
         String tenantName = TenancyContext.getTenantName();
         String repositoryName = scmAccount.getRepositoryName();
         String organizationName = scmAccount.getOrganizationName();
-        String accessToken = scmAccount.getAccessToken();
+
+        String accessToken = cryptoService.decrypt(scmAccount.getAccessToken());
         String loginName = gitHubService.getLoginName(scmAccount);
 
         Map<String, String> jobParameters = new HashMap<>();

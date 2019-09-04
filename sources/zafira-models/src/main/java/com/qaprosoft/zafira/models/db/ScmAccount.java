@@ -60,9 +60,9 @@ public class ScmAccount extends AbstractEntity {
         return obj instanceof ScmAccount && this.hashCode() == obj.hashCode();
     }
 
-    public String buildAuthorizedURL() {
+    public String buildAuthorizedURL(String decryptedAccessToken) {
         String[] urlSlices = repositoryURL.split("//");
-        return urlSlices[0] + "//" + accessToken + "@" + urlSlices[1];
+        return urlSlices[0] + "//" + decryptedAccessToken + "@" + urlSlices[1];
     }
 
 }
