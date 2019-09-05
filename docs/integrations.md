@@ -37,7 +37,7 @@ Zafira uses integration with Amazon S3 service to store user profile photos and 
 * Click save, a green light indicates the correct integration status.
 
 <p>
-  <img style="border: 1px solid grey;"  width="280px" height="400px"  src="../img/int_amazon.png">
+  <img style="border: 1px solid grey;" height="400px"  src="../img/int_amazon.png">
 </p>
 
 
@@ -52,7 +52,7 @@ User invitations and *Forgot password* feature also require SMTP integration.
 * Click save, a green light indicates the correct integration status.
 
 <p>
-  <img style="border: 1px solid grey;"  width="280px" height="420px" src="../img/int_gmail.png">
+  <img style="border: 1px solid grey;" height="420px" src="../img/int_gmail.png">
 </p>
 
 
@@ -65,7 +65,7 @@ Jenkins integration is used for launching new builds and collecting test jobs co
 * Click save, a green light indicates the correct integration status.
 
 <p>
-  <img style="border: 1px solid grey;"  width="280px" height="420px" src="../img/int_jenkins.png">
+  <img style="border: 1px solid grey;" height="420px" src="../img/int_jenkins.png">
 </p>
 
 
@@ -77,7 +77,7 @@ Jira integration allows you to track known issue status for the failed test case
 * Click save, a green light indicates the correct integration status.
 
 <p>
-  <img style="border: 1px solid grey;" width="280px" height="420px" src="../img/int_jira.png">
+  <img style="border: 1px solid grey;" height="420px" src="../img/int_jira.png">
 </p>
 
 
@@ -88,7 +88,7 @@ Zafira supports LDAP authentication: the first time you successfully log in usin
 * Click save, a green light indicates the correct integration status
 
 <p>
-  <img style="border: 1px solid grey;" width="280px" height="420px" src="../img/int_ldap.png">
+  <img style="border: 1px solid grey;" height="420px" src="../img/int_ldap.png">
 </p>
 
 
@@ -102,7 +102,7 @@ In order to setup Slack integration follow the next steps:
 * Click save, a green light indicates the correct integration status.
 
 <p>
-  <img style="border: 1px solid grey;" width="280px" height="420px" src="../img/int_slack.png">
+  <img style="border: 1px solid grey;" height="420px" src="../img/int_slack.png">
 </p>
 
 
@@ -116,7 +116,7 @@ To set up integration with Google, follow these steps:
 * Click *Upload*, a green light indicates the correct integration status
 
 <p>
-  <img style="border: 1px solid grey;" width="280px" height="420px" src="../img/int_google.png">
+  <img style="border: 1px solid grey;" height="420px" src="../img/int_google.png">
 </p>
 
 
@@ -130,7 +130,7 @@ Follow these steps to configure RabbitMQ integration:
 * Click save, a green light indicates the correct integration status.
 
 <p>
-  <img style="border: 1px solid grey;" width="280px" height="420px" src="../img/int_rabbitmq.png">
+  <img style="border: 1px solid grey;" height="420px" src="../img/int_rabbitmq.png">
 </p>
 
 
@@ -145,7 +145,7 @@ To configure Selenium integration, follow these steps:
 * Click save, a green light indicates the correct integration status.
 
 <p>
-  <img style="border: 1px solid grey;" width="280px" height="420px" src="../img/int_selenium.png">
+  <img style="border: 1px solid grey;" height="420px" src="../img/int_selenium.png">
 </p>
 
 
@@ -158,7 +158,7 @@ To configure TestRail integration, follow these steps:
 * Click save, a green light indicates the correct integration status.
 
 <p>
-  <img style="border: 1px solid grey;" width="280px" height="420px" src="../img/int_testrail.png">
+  <img style="border: 1px solid grey;" height="420px" src="../img/int_testrail.png">
 </p>
 
 
@@ -171,5 +171,5 @@ To configure qTest integration follow these steps:
 * Click save, a green light indicates the correct integration status.
 
 <p>
-  <img style="border: 1px solid grey;" width="280px" height="420px" src="../img/int_qtest.png">
+  <img style="border: 1px solid grey;" height="420px" src="../img/int_qtest.png">
 </p>
