@@ -9,7 +9,7 @@ Zafira is integrated with multiple third-party tools such as Amazon, Slack, Gmai
 On the Integrations page, you will find several blocks responsible for different integration modules. Please note that the HTTP / HTTPS security model may affect your integration URL.
 
 <p align="center">
-  <img src="img/feature_integrations.png">
+  <img src="../img/feature_integrations.png">
 </p>
 
 
