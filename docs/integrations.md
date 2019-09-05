@@ -2,13 +2,13 @@
 
 Zafira is integrated with multiple third-party tools such as Amazon, Slack, Gmail, etc. You can add new integration to a working Zafira without having to restart the web application. Navigate to the ** Integrations ** icon in the sidebar menu:
 
-<p align="center">
-  <img src="../img/sidebar_integrations.png">
+<p>
+  <img height="400px" src="../img/sidebar_integrations.png">
 </p>
 
 On the Integrations page, you will find several blocks responsible for different integration modules. Please note that the HTTP / HTTPS security model may affect your integration URL.
 
-<p align="center">
+<p align="left">
   <img src="../img/feature_integrations.png">
 </p>
 
