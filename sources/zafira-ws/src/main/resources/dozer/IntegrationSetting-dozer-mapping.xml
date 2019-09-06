@@ -20,8 +20,8 @@
             <b>binaryData</b>
         </field>
         <field>
-            <a>integrationParamDTO</a>
-            <b>integrationParam</b>
+            <a>param</a>
+            <b>param</b>
         </field>
     </mapping>
 </mappings>

@@ -34,7 +34,7 @@ public class IntegrationDTO extends AbstractType {
 
     @Valid
     @NotEmpty(message = "Integration settings required")
-    private List<IntegrationSettingDTO> integrationSettingDTOS;
+    private List<IntegrationSettingDTO> settings;
 
     public String getName() {
         return name;
@@ -68,11 +68,11 @@ public class IntegrationDTO extends AbstractType {
         this.enabled = enabled;
     }
 
-    public List<IntegrationSettingDTO> getIntegrationSettingDTOS() {
-        return integrationSettingDTOS;
+    public List<IntegrationSettingDTO> getSettings() {
+        return settings;
     }
 
-    public void setIntegrationSettingDTOS(List<IntegrationSettingDTO> integrationSettingDTOS) {
-        this.integrationSettingDTOS = integrationSettingDTOS;
+    public void setSettings(List<IntegrationSettingDTO> settings) {
+        this.settings = settings;
     }
 }

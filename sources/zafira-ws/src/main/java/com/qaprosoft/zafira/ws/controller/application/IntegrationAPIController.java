@@ -77,10 +77,16 @@ public class IntegrationAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('VIEW_INTEGRATIONS')")
     @GetMapping()
-    public List<IntegrationDTO> getAll() {
-        return integrationService.retrieveAll().stream()
-                                 .map(integration -> mapper.map(integration, IntegrationDTO.class))
-                                 .collect(Collectors.toList());
+    public List<IntegrationDTO> getAll(@RequestParam(name = "typeId", required = false) Long typeId) {
+        List<Integration> integrations;
+        if (typeId != null) {
+            integrations = integrationService.getIntegrationsByTypeId(typeId);
+        } else {
+            integrations = integrationService.retrieveAll();
+        }
+        return integrations.stream()
+                           .map(integration -> mapper.map(integration, IntegrationDTO.class))
+                           .collect(Collectors.toList());
     }
 
     @ResponseStatusDetails

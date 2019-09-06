@@ -17,7 +17,11 @@ package com.qaprosoft.zafira.services.services.application.integration;
 
 import com.qaprosoft.zafira.models.entity.integration.IntegrationGroup;
 
+import java.util.List;
+
 public interface IntegrationGroupService {
+
+    List<IntegrationGroup> retrieveAll();
 
     IntegrationGroup retrieveByIntegrationTypeId(Long integrationTypeId);
 

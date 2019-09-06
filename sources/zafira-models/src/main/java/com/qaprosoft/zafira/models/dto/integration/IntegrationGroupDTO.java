@@ -24,7 +24,7 @@ public class IntegrationGroupDTO extends AbstractType {
     private String name;
     private String iconUrl;
     private boolean multipleAllowed;
-    private List<IntegrationTypeDTO> integrationTypeDTOS;
+    private List<IntegrationTypeDTO> types;
 
     public String getName() {
         return name;
@@ -50,11 +50,11 @@ public class IntegrationGroupDTO extends AbstractType {
         this.multipleAllowed = multipleAllowed;
     }
 
-    public List<IntegrationTypeDTO> getIntegrationTypeDTOS() {
-        return integrationTypeDTOS;
+    public List<IntegrationTypeDTO> getTypes() {
+        return types;
     }
 
-    public void setIntegrationTypeDTOS(List<IntegrationTypeDTO> integrationTypeDTOS) {
-        this.integrationTypeDTOS = integrationTypeDTOS;
+    public void setTypes(List<IntegrationTypeDTO> types) {
+        this.types = types;
     }
 }

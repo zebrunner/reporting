@@ -22,6 +22,8 @@ import com.qaprosoft.zafira.services.services.application.integration.Integratio
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class IntegrationGroupServiceImpl implements IntegrationGroupService {
 
@@ -32,6 +34,11 @@ public class IntegrationGroupServiceImpl implements IntegrationGroupService {
 
     public IntegrationGroupServiceImpl(IntegrationGroupRepository integrationGroupRepository) {
         this.integrationGroupRepository = integrationGroupRepository;
+    }
+
+    @Override
+    public List<IntegrationGroup> retrieveAll() {
+        return integrationGroupRepository.findAll();
     }
 
     @Override

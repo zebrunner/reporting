@@ -24,8 +24,8 @@
             <b>multipleAllowed</b>
         </field>
         <field>
-            <a>integrationTypeDTOS</a>
-            <b>integrationTypes</b>
+            <a>types</a>
+            <b>types</b>
         </field>
     </mapping>
 </mappings>

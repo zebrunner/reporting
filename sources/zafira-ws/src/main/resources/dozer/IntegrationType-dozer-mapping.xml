@@ -16,20 +16,12 @@
             <b>name</b>
         </field>
         <field>
-            <a>displayName</a>
-            <b>displayName</b>
-        </field>
-        <field>
             <a>iconUrl</a>
             <b>iconUrl</b>
         </field>
         <field>
-            <a>integrationDTOS</a>
-            <b>integrations</b>
-        </field>
-        <field>
-            <a>integrationParamDTOS</a>
-            <b>integrationParams</b>
+            <a>params</a>
+            <b>params</b>
         </field>
     </mapping>
 </mappings>

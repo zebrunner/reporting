@@ -28,8 +28,8 @@
             <b>enabled</b>
         </field>
         <field>
-            <a>integrationSettingDTOS</a>
-            <b>integrationSettings</b>
+            <a>settings</a>
+            <b>settings</b>
         </field>
     </mapping>
 </mappings>

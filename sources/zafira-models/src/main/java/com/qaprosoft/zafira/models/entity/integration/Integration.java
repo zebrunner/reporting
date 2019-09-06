@@ -54,16 +54,10 @@ public class Integration {
 
     @OneToOne
     @JoinColumn(name = "integration_type_id")
-    IntegrationType type;
+    private IntegrationType type;
 
     @OneToMany(mappedBy = "integration")
-    List<IntegrationSetting> settings;
-
-    public Optional<IntegrationSetting> getAttribute(String attributeName) {
-        return this.getSettings().stream()
-                   .filter(is -> is.getParam().getName().equals(attributeName))
-                   .findAny();
-    }
+    private List<IntegrationSetting> settings;
 
     public Optional<String> getAttributeValue(String attributeName) {
         IntegrationSetting integrationSetting = getAttribute(attributeName)
@@ -77,5 +71,11 @@ public class Integration {
                 .orElse(null);
         byte[] binaryData = integrationSetting == null ? null : integrationSetting.getBinaryData();
         return Optional.ofNullable(binaryData);
+    }
+
+    private Optional<IntegrationSetting> getAttribute(String attributeName) {
+        return this.getSettings().stream()
+                   .filter(is -> is.getParam().getName().equals(attributeName))
+                   .findAny();
     }
 }

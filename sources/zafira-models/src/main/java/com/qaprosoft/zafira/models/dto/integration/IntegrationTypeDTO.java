@@ -22,10 +22,8 @@ import java.util.List;
 public class IntegrationTypeDTO extends AbstractType {
 
     private String name;
-    private String displayName;
     private String iconUrl;
-    private List<IntegrationDTO> integrationDTOS;
-    private List<IntegrationParamDTO> integrationParamDTOS;
+    private List<IntegrationParamDTO> params;
 
     public String getName() {
         return name;
@@ -33,14 +31,6 @@ public class IntegrationTypeDTO extends AbstractType {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
     }
 
     public String getIconUrl() {
@@ -51,19 +41,11 @@ public class IntegrationTypeDTO extends AbstractType {
         this.iconUrl = iconUrl;
     }
 
-    public List<IntegrationDTO> getIntegrationDTOS() {
-        return integrationDTOS;
+    public List<IntegrationParamDTO> getParams() {
+        return params;
     }
 
-    public void setIntegrationDTOS(List<IntegrationDTO> integrationDTOS) {
-        this.integrationDTOS = integrationDTOS;
-    }
-
-    public List<IntegrationParamDTO> getIntegrationParamDTOS() {
-        return integrationParamDTOS;
-    }
-
-    public void setIntegrationParamDTOS(List<IntegrationParamDTO> integrationParamDTOS) {
-        this.integrationParamDTOS = integrationParamDTOS;
+    public void setParams(List<IntegrationParamDTO> params) {
+        this.params = params;
     }
 }

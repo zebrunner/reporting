@@ -30,7 +30,7 @@ public class IntegrationSettingDTO extends AbstractType {
 
     @Valid
     @NotEmpty(message = "Integration params required")
-    private IntegrationParamDTO integrationParamDTO;
+    private IntegrationParamDTO param;
 
     public String getValue() {
         return value;
@@ -56,11 +56,11 @@ public class IntegrationSettingDTO extends AbstractType {
         this.encrypted = encrypted;
     }
 
-    public IntegrationParamDTO getIntegrationParamDTO() {
-        return integrationParamDTO;
+    public IntegrationParamDTO getParam() {
+        return param;
     }
 
-    public void setIntegrationParamDTO(IntegrationParamDTO integrationParamDTO) {
-        this.integrationParamDTO = integrationParamDTO;
+    public void setParam(IntegrationParamDTO param) {
+        this.param = param;
     }
 }
