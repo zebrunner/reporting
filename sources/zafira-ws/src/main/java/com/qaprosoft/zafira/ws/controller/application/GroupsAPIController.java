@@ -16,8 +16,8 @@
 package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.Group;
-import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.services.application.GroupService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -123,7 +123,7 @@ public class GroupsAPIController extends AbstractController {
     public void deleteGroup(@PathVariable("id") long id) {
         Group group = groupService.getGroupById(id);
         if (group == null) {
-            throw new EntityNotExistsException(Group.class, false);
+            throw new ResourceNotFoundException(String.format("Group with id %s does not exists", id));
         }
         if (group.getUsers().size() > 0) {
             throw new ForbiddenOperationException("It's necessary to clear the group initially.", true);

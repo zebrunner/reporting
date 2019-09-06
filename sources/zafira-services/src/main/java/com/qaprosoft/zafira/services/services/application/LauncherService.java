@@ -29,7 +29,6 @@ import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
-import com.qaprosoft.zafira.services.exceptions.JenkinsJobNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ScmAccountNotFoundException;
 import com.qaprosoft.zafira.services.services.application.integration.context.JenkinsContext;
@@ -69,15 +68,17 @@ public class LauncherService {
     private final CryptoService cryptoService;
     private final URLResolver urlResolver;
 
-    public LauncherService(LauncherMapper launcherMapper,
-                           JenkinsService jenkinsService,
-                           ScmAccountService scmAccountService,
-                           JobsService jobsService,
-                           JWTService jwtService,
-                           GitHubService gitHubService,
-                           SeleniumService seleniumService,
-                           CryptoService cryptoService,
-                           URLResolver urlResolver) {
+    public LauncherService(
+            LauncherMapper launcherMapper,
+            JenkinsService jenkinsService,
+            ScmAccountService scmAccountService,
+            JobsService jobsService,
+            JWTService jwtService,
+            GitHubService gitHubService,
+            SeleniumService seleniumService,
+            CryptoService cryptoService,
+            URLResolver urlResolver
+    ) {
         this.launcherMapper = launcherMapper;
         this.jenkinsService = jenkinsService;
         this.scmAccountService = scmAccountService;
@@ -100,8 +101,8 @@ public class LauncherService {
                     String.format(LAUNCHER_JOB_URL_PATTERN, jenkinsHost, folder);
             Job job = jobsService.getJobByJobURL(launcherJobUrl);
             if (job == null) {
-                job = jenkinsService.getJobByUrl(launcherJobUrl).orElseThrow(
-                        () -> new JenkinsJobNotFoundException("Job\n" + launcherJobUrl + "\nis not found on Jenkins"));
+                job = jenkinsService.getJobByUrl(launcherJobUrl)
+                                    .orElseThrow(() -> new ResourceNotFoundException(String.format("Jenkins Job can not be found for launcher url %s", launcherJobUrl)));
                 job.setJenkinsHost(jenkinsHost);
                 job.setUser(owner);
                 jobsService.createJob(job);

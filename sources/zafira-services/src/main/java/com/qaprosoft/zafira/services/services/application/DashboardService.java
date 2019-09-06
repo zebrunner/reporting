@@ -20,7 +20,6 @@ import com.qaprosoft.zafira.models.db.Attribute;
 import com.qaprosoft.zafira.models.db.Dashboard;
 import com.qaprosoft.zafira.models.db.Widget;
 import com.qaprosoft.zafira.models.dto.user.UserType;
-import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
@@ -56,7 +55,7 @@ public class DashboardService {
     public Dashboard getDashboardById(long id) {
         Dashboard dashboard = dashboardMapper.getDashboardById(id);
         if (dashboard == null) {
-            throw new EntityNotExistsException(Dashboard.class, false);
+            throw new ResourceNotFoundException(String.format("Dashboard with id %s does not exists", id));
         }
         return dashboard;
     }
