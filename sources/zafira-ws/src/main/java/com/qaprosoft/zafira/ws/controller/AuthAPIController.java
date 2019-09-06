@@ -31,7 +31,6 @@ import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.services.exceptions.EntityAlreadyExistsException;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidCredentialsException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 import com.qaprosoft.zafira.services.services.application.GroupService;
 import com.qaprosoft.zafira.services.services.application.InvitationService;
@@ -166,8 +165,7 @@ public class AuthAPIController extends AbstractController {
     @ResponseStatusDetails
     @ApiOperation(value = "Sign up", nickname = "signup", httpMethod = "POST")
     @PostMapping("/signup")
-    public void signup(@RequestHeader("Access-Token") String token, @Valid @RequestBody UserType userType)
-            throws BadCredentialsException, ServiceException {
+    public void signup(@RequestHeader("Access-Token") String token, @Valid @RequestBody UserType userType) {
         if (userService.getUserByUsername(userType.getUsername()) != null) {
             throw new EntityAlreadyExistsException("username", User.class, false);
         }

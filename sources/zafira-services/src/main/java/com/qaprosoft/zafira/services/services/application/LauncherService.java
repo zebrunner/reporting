@@ -27,9 +27,10 @@ import com.qaprosoft.zafira.models.dto.JenkinsLauncherType;
 import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
+import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.exceptions.JenkinsJobNotFoundException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ScmAccountNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.AutomationServerService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.TestAutomationToolService;
 import com.qaprosoft.zafira.services.services.application.scm.GitHubService;
@@ -59,6 +60,7 @@ public class LauncherService {
     private final JWTService jwtService;
     private final GitHubService gitHubService;
     private final TestAutomationToolService testAutomationToolService;
+    private final CryptoService cryptoService;
     private final URLResolver urlResolver;
 
     public LauncherService(LauncherMapper launcherMapper,
@@ -68,6 +70,7 @@ public class LauncherService {
                            JWTService jwtService,
                            GitHubService gitHubService,
                            TestAutomationToolService testAutomationToolService,
+                           CryptoService cryptoService,
                            URLResolver urlResolver) {
         this.launcherMapper = launcherMapper;
         this.automationServerService = automationServerService;
@@ -76,6 +79,7 @@ public class LauncherService {
         this.jwtService = jwtService;
         this.gitHubService = gitHubService;
         this.testAutomationToolService = testAutomationToolService;
+        this.cryptoService = cryptoService;
         this.urlResolver = urlResolver;
     }
 
@@ -151,18 +155,24 @@ public class LauncherService {
     }
 
     @Transactional(readOnly = true)
-    public String buildLauncherJob(Launcher launcher, User user) throws IOException, ServiceException {
+    public String buildLauncherJob(Launcher launcher, User user) throws IOException {
 
         ScmAccount scmAccount = scmAccountService.getScmAccountById(launcher.getScmAccount().getId());
-        if (scmAccount == null)
-            throw new ServiceException("Scm account not found");
+        if (scmAccount == null) {
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new ResourceNotFoundException("Scm account not found");
+        }
 
         Job job = launcher.getJob();
-        if (job == null)
-            throw new ServiceException("Launcher job not specified");
+        if (job == null) {
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new IllegalOperationException("Launcher job not specified");
+        }
         
         Map<String, String> jobParameters = new ObjectMapper().readValue(launcher.getModel(), new TypeReference<Map<String, String>>() {});
-        jobParameters.put("scmURL", scmAccount.buildAuthorizedURL());
+
+        String decryptedAccessToken = cryptoService.decrypt(scmAccount.getAccessToken());
+        jobParameters.put("scmURL", scmAccount.buildAuthorizedURL(decryptedAccessToken));
         if (!jobParameters.containsKey("branch")) {
             jobParameters.put("branch", "*/master");
         }
@@ -189,8 +199,10 @@ public class LauncherService {
         String ciRunId = UUID.randomUUID().toString();
         jobParameters.put("ci_run_id", ciRunId);
 
-        if (!AutomationServerService.checkArguments(jobParameters))
-            throw new ServiceException("Required arguments not found");
+        if (!AutomationServerService.checkArguments(jobParameters)) {
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new IllegalOperationException("Required arguments not found");
+        }
 
         automationServerService.buildJob(job, jobParameters);
 
@@ -201,12 +213,14 @@ public class LauncherService {
     public JobResult buildScannerJob(User user, String branch, long scmAccountId, boolean rescan) {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
         if(scmAccount == null) {
-            throw new ServiceException("Scm account not found");
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new ResourceNotFoundException("Scm account not found");
         }
         String tenantName = TenancyContext.getTenantName();
         String repositoryName = scmAccount.getRepositoryName();
         String organizationName = scmAccount.getOrganizationName();
-        String accessToken = scmAccount.getAccessToken();
+
+        String accessToken = cryptoService.decrypt(scmAccount.getAccessToken());
         String loginName = gitHubService.getLoginName(scmAccount);
 
         Map<String, String> jobParameters = new HashMap<>();
@@ -238,7 +252,8 @@ public class LauncherService {
     public void abortScannerJob(long scmAccountId, Integer buildNumber, boolean rescan) {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
         if(scmAccount == null) {
-            throw new ServiceException("Scm account not found");
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new ResourceNotFoundException("Scm account not found");
         }
         String repositoryName = scmAccount.getRepositoryName();
         JobResult result = automationServerService.abortScannerJob(repositoryName, buildNumber, rescan);

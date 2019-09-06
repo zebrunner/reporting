@@ -15,7 +15,7 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.util;
 
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.ProcessingException;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ public class FreemarkerUtil {
      * @param obj - object to process
      * @param isPath - to recognize is template path to .ftl or is a prepared string
      * @return processed template through freemarker engine
-     * @throws ServiceException - on freemarker template compilation
+     * @throws ProcessingException - on freemarker template compilation
      */
     public String getFreeMarkerTemplateContent(String template, Object obj, boolean isPath) {
         StringBuilder content = new StringBuilder();
@@ -60,7 +60,8 @@ public class FreemarkerUtil {
                     .processTemplateIntoString(fTemplate, obj));
         } catch (Exception e) {
             LOGGER.error("Problem with free marker template compilation: " + e.getMessage());
-            throw new ServiceException(e.getMessage());
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new ProcessingException(e.getMessage());
         }
         return content.toString();
     }

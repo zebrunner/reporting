@@ -18,7 +18,7 @@ package com.qaprosoft.zafira.services.services.application.scm;
 import com.qaprosoft.zafira.models.db.ScmAccount;
 import com.qaprosoft.zafira.models.dto.scm.Organization;
 import com.qaprosoft.zafira.models.dto.scm.Repository;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.application.CryptoService;
 import com.qaprosoft.zafira.services.util.GitHubHttpUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.github.GHPerson;
@@ -26,7 +26,6 @@ import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -40,21 +39,29 @@ public class GitHubService implements IScmService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GitHubService.class);
 
-    @Autowired
-    private GitHubHttpUtils gitHubHttpUtils;
+    private final GitHubHttpUtils gitHubHttpUtils;
+    private final CryptoService cryptoService;
+    private final String gitHubClientId;
+    private final String gitHubSecret;
 
-    @Value("${github.client-id}")
-    private String gitHubClientId;
-
-    @Value("${github.client-secret}")
-    private String gitHubSecret;
+    public GitHubService(
+            GitHubHttpUtils gitHubHttpUtils,
+            CryptoService cryptoService,
+            @Value("${github.client-id}") String gitHubClientId,
+            @Value("${github.client-secret}") String gitHubSecret
+    ) {
+        this.gitHubHttpUtils = gitHubHttpUtils;
+        this.cryptoService = cryptoService;
+        this.gitHubClientId = gitHubClientId;
+        this.gitHubSecret = gitHubSecret;
+    }
 
     public String getAccessToken(String code) throws IOException, URISyntaxException {
         return this.gitHubHttpUtils.getAccessToken(code, this.gitHubClientId, this.gitHubSecret);
     }
 
     @Override
-    public List<Repository> getRepositories(ScmAccount scmAccount, String organizationName) throws IOException, ServiceException {
+    public List<Repository> getRepositories(ScmAccount scmAccount, String organizationName) throws IOException {
         GitHub gitHub = connectToGitHub(scmAccount);
         GHPerson person = StringUtils.isBlank(organizationName) ? gitHub.getMyself() : gitHub.getOrganization(organizationName);
         return person.listRepositories().asList().stream().map(this::mapRepository).collect(Collectors.toList());
@@ -78,7 +85,7 @@ public class GitHubService implements IScmService {
     }
 
     @Override
-    public List<Organization> getOrganizations(ScmAccount scmAccount) throws IOException, ServiceException {
+    public List<Organization> getOrganizations(ScmAccount scmAccount) throws IOException {
         GitHub gitHub = connectToGitHub(scmAccount);
         List<Organization> organizations = gitHub.getMyself().getAllOrganizations().stream().map(organization -> {
             Organization result = new Organization(organization.getLogin());
@@ -118,14 +125,15 @@ public class GitHubService implements IScmService {
     }
 
     private GitHub connectToGitHub(ScmAccount scmAccount) throws IOException {
+        String decryptedAccessToken = cryptoService.decrypt(scmAccount.getAccessToken());
         GitHub gitHub;
         switch (scmAccount.getName()) {
             case GITHUB:
-                gitHub = GitHub.connectUsingOAuth(scmAccount.getAccessToken());
+                gitHub = GitHub.connectUsingOAuth(decryptedAccessToken);
                 break;
             case GITHUB_ENTERPRISE:
                 String apiUrl = scmAccount.getApiVersion();
-                gitHub = GitHub.connectToEnterpriseWithOAuth(apiUrl, scmAccount.getLogin(), scmAccount.getAccessToken());
+                gitHub = GitHub.connectToEnterpriseWithOAuth(apiUrl, scmAccount.getLogin(), decryptedAccessToken);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + scmAccount.getName());

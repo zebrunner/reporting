@@ -20,7 +20,7 @@ import com.qaprosoft.zafira.models.dto.ScmAccountType;
 import com.qaprosoft.zafira.models.dto.scm.Organization;
 import com.qaprosoft.zafira.models.dto.scm.Repository;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.services.application.scm.GitHubService;
 import com.qaprosoft.zafira.services.services.application.scm.ScmAccountService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
@@ -113,7 +113,8 @@ public class ScmAPIController extends AbstractController {
     public ScmAccountType updateScmAccount(@RequestBody @Valid ScmAccountType scmAccountType) {
         ScmAccount account = scmAccountService.getScmAccountById(scmAccountType.getId());
         if (account == null) {
-            throw new ServiceException("Scm account with id " + scmAccountType.getId() + " does not exist.");
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new ResourceNotFoundException("Scm account with id " + scmAccountType.getId() + " does not exist.");
         }
         ScmAccount currentAccount = mapper.map(scmAccountType, ScmAccount.class);
         if (account.getUserId() == null || account.getUserId() <= 0) {
@@ -145,7 +146,7 @@ public class ScmAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS')")
     @GetMapping("/github/exchange")
-    public ScmAccountType authorizeCallback(@RequestParam("code") String code) throws IOException, URISyntaxException, ServiceException {
+    public ScmAccountType authorizeCallback(@RequestParam("code") String code) throws IOException, URISyntaxException {
         String accessToken = gitHubService.getAccessToken(code);
         if (StringUtils.isBlank(accessToken)) {
             throw new ForbiddenOperationException("Cannot recognize your authority");
@@ -159,8 +160,8 @@ public class ScmAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS')")
     @GetMapping("/github/organizations/{scmId}")
-    public List<Organization> getOrganizations(@PathVariable("scmId") Long id) throws IOException, ServiceException {
-        ScmAccount scmAccount = this.scmAccountService.getScmAccountById(id);
+    public List<Organization> getOrganizations(@PathVariable("scmId") Long id) throws IOException {
+        ScmAccount scmAccount = scmAccountService.getScmAccountById(id);
         if (scmAccount == null) {
             throw new ForbiddenOperationException("Unable to list organizations");
         }
@@ -175,7 +176,7 @@ public class ScmAPIController extends AbstractController {
     public List<Repository> getRepositories(
             @PathVariable("scmId") Long id,
             @RequestParam(name = "org", required = false) String organizationName
-    ) throws IOException, ServiceException {
+    ) throws IOException {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(id);
         if (scmAccount == null) {
             throw new ForbiddenOperationException("Unable to list repositories");

@@ -108,7 +108,7 @@ public class PersistenceConfig {
     }
 
     @Bean
-    public MapperScannerConfigurer appMapperScannerConfigurer() {
+    public static MapperScannerConfigurer appMapperScannerConfigurer() {
         MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
         mapperScannerConfigurer.setBasePackage(APP_MAPPERS_BASE_PACKAGE);
         mapperScannerConfigurer.setSqlSessionFactoryBeanName(APP_SQL_SESSION_FACTORY_BEAN_NAME);
@@ -116,7 +116,7 @@ public class PersistenceConfig {
     }
 
     @Bean
-    public MapperScannerConfigurer managementMapperScannerConfigurer() {
+    public static MapperScannerConfigurer managementMapperScannerConfigurer() {
         MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
         mapperScannerConfigurer.setBasePackage(MNG_MAPPERS_BASE_PACKAGE);
         mapperScannerConfigurer.setSqlSessionFactoryBeanName(MNG_SQL_SESSION_FACTORY_BEAN_NAME);

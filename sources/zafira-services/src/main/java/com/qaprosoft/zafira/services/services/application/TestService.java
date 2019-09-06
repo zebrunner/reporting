@@ -29,7 +29,7 @@ import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.TestCaseManagementService;
 import org.apache.commons.lang.StringUtils;
@@ -190,11 +190,13 @@ public class TestService {
 
             // Resolve known issues
             if (Status.FAILED.equals(test.getStatus())) {
-                WorkItem knownIssue = workItemService.getWorkItemByTestCaseIdAndHashCode(existingTest.getTestCaseId(),
-                        getTestMessageHashCode(test.getMessage()));
+                Long testCaseId = existingTest.getTestCaseId();
+                int testMessageHashCode = getTestMessageHashCode(test.getMessage());
+
+                WorkItem knownIssue = workItemService.getWorkItemByTestCaseIdAndHashCode(testCaseId, testMessageHashCode);
                 if (knownIssue != null) {
-                    boolean isJiraIdClosed = testCaseManagementService.isEnabledAndConnected(null) && testCaseManagementService.isIssueClosed(knownIssue.getJiraId());
-                    if (!isJiraIdClosed) {
+                    boolean closed = testCaseManagementService.isEnabledAndConnected(null) && testCaseManagementService.isIssueClosed(knownIssue.getJiraId());
+                    if (!closed) {
                         existingTest.setKnownIssue(true);
                         existingTest.setBlocker(knownIssue.isBlocker());
                         testRunService.updateStatistics(test.getTestRunId(), MARK_AS_KNOWN_ISSUE);
@@ -275,7 +277,8 @@ public class TestService {
     public Test createTestWorkItems(long id, List<String> jiraIds) {
         Test test = getTestById(id);
         if (test == null) {
-            throw new ServiceException("Test not found by id: " + id);
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new ResourceNotFoundException("Test not found by id: " + id);
         }
         for (String jiraId : jiraIds) {
             if (!StringUtils.isEmpty(jiraId)) {

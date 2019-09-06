@@ -22,7 +22,8 @@ import com.qaprosoft.zafira.models.db.Widget;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +44,8 @@ public class DashboardService {
     @Transactional(rollbackFor = Exception.class)
     public Dashboard createDashboard(Dashboard dashboard) {
         if (getDashboardByTitle(dashboard.getTitle()) != null) {
-            throw new ServiceException("Dashboard title '" + dashboard.getTitle() + "' is currently in use");
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new IllegalOperationException("Dashboard title '" + dashboard.getTitle() + "' is currently in use");
         }
         dashboard.setEditable(true);
         dashboardMapper.createDashboard(dashboard);
@@ -83,7 +85,8 @@ public class DashboardService {
     public Dashboard updateDashboard(Dashboard dashboard) {
         Dashboard dbDashboard = getDashboardById(dashboard.getId());
         if (dbDashboard == null) {
-            throw new ServiceException("Dashboard with id '" + dashboard.getId() + "' does not exist");
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new ResourceNotFoundException("Dashboard with id '" + dashboard.getId() + "' does not exist");
         }
         if (!dbDashboard.isEditable()) {
             throw new ForbiddenOperationException("Cannot update not editable dashboard");

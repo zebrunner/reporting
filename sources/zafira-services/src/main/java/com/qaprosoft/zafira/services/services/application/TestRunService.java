@@ -35,7 +35,7 @@ import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
@@ -68,6 +68,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.qaprosoft.zafira.models.db.Status.ABORTED;
 import static com.qaprosoft.zafira.models.db.Status.FAILED;
@@ -81,7 +82,8 @@ import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.readArgume
 public class TestRunService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestRunService.class);
-    public static final String DEFAULT_PROJECT = "UNKNOWN";
+
+    private static final String DEFAULT_PROJECT = "UNKNOWN";
 
     private static final String ERR_MSG_TEST_RUN_NOT_FOUND = "No test runs found by ID: %s";
 
@@ -139,15 +141,19 @@ public class TestRunService {
     @Autowired
     private StatisticsService statisticsService;
 
-    private static final LoadingCache<Long, Lock> updateLocks = CacheBuilder.newBuilder()
-            .maximumSize(100000)
-            .expireAfterWrite(150, TimeUnit.MILLISECONDS)
-            .build(
-                    new CacheLoader<>() {
-                        public Lock load(Long key) {
-                            return new ReentrantLock();
-                        }
-                    });
+    private static final LoadingCache<Long, Lock> updateLocks;
+
+    static {
+        CacheLoader<Long, Lock> loader = new CacheLoader<>() {
+            public Lock load(Long key) {
+                return new ReentrantLock();
+            }
+        };
+        updateLocks = CacheBuilder.newBuilder()
+                                  .maximumSize(100000)
+                                  .expireAfterWrite(150, TimeUnit.MILLISECONDS)
+                                  .build(loader);
+    }
 
     @Transactional(rollbackFor = Exception.class)
     public void createTestRun(TestRun testRun) {
@@ -171,14 +177,13 @@ public class TestRunService {
     @Transactional(readOnly = true)
     public SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc) {
         DateTimeUtil.actualizeSearchCriteriaDate(sc);
-        SearchResult<TestRun> results = new SearchResult<>();
-        results.setPage(sc.getPage());
-        results.setPageSize(sc.getPageSize());
-        results.setSortOrder(sc.getSortOrder());
-        List<TestRun> testRuns = testRunMapper.searchTestRuns(sc);
-        results.setResults(testRuns);
-        results.setTotalResults(testRunMapper.getTestRunsSearchCount(sc));
-        return results;
+        SearchResult<TestRun> result = new SearchResult<>();
+        result.setPage(sc.getPage());
+        result.setPageSize(sc.getPageSize());
+        result.setSortOrder(sc.getSortOrder());
+        result.setResults(testRunMapper.searchTestRuns(sc));
+        result.setTotalResults(testRunMapper.getTestRunsSearchCount(sc));
+        return result;
     }
 
     @Transactional(readOnly = true)
@@ -208,44 +213,43 @@ public class TestRunService {
 
     @Transactional(readOnly = true)
     public Map<Long, TestRun> getLatestJobTestRuns(String env, List<Long> jobIds) {
-        Map<Long, TestRun> jobTestRuns = new HashMap<>();
-        for (TestRun tr : testRunMapper.getLatestJobTestRuns(env, jobIds)) {
-            jobTestRuns.put(tr.getJob().getId(), tr);
-        }
-        return jobTestRuns;
+        List<TestRun> testRuns = testRunMapper.getLatestJobTestRuns(env, jobIds);
+        return testRuns.stream()
+                       .collect(Collectors.toMap(run -> run.getJob().getId(), run -> run));
     }
 
     @Transactional(readOnly = true)
     public TestRun getLatestJobTestRunByBranchAndJobURL(String branch, String jobURL) {
-        return testRunMapper.getLatestJobTestRunByBranch(branch, jobsService.getJobByJobURL(jobURL).getId());
+        Job job = jobsService.getJobByJobURL(jobURL);
+        return testRunMapper.getLatestJobTestRunByBranch(branch, job.getId());
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TestRun queueTestRun(QueueTestRunParamsType queueTestRunParams, User user) {
+    public TestRun queueTestRun(QueueTestRunParamsType testRunParams, User user) {
         TestRun testRun;
         // Check if testRun with provided ci_run_id exists in DB (mostly for queued and aborted without execution)
-        TestRun existingRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
+        String ciRunId = testRunParams.getCiRunId();
+        TestRun existingRun = getTestRunByCiRunId(ciRunId);
         if (existingRun == null || Status.QUEUED.equals(existingRun.getStatus())) {
-            testRun = getLatestJobTestRunByBranchAndJobURL(queueTestRunParams.getBranch(),
-                    queueTestRunParams.getJobUrl());
+            testRun = getLatestJobTestRunByBranchAndJobURL(testRunParams.getBranch(), testRunParams.getJobUrl());
             if (testRun != null) {
                 Long latestTestRunId = testRun.getId();
-                if (!StringUtils.isEmpty(queueTestRunParams.getCiParentUrl())) {
-                    Job job = jobsService.createOrUpdateJobByURL(queueTestRunParams.getCiParentUrl(), user);
+                if (!StringUtils.isEmpty(testRunParams.getCiParentUrl())) {
+                    Job job = jobsService.createOrUpdateJobByURL(testRunParams.getCiParentUrl(), user);
                     testRun.setUpstreamJob(job);
                 }
-                if (!StringUtils.isEmpty(queueTestRunParams.getCiParentBuild())) {
-                    testRun.setUpstreamJobBuildNumber(Integer.valueOf(queueTestRunParams.getCiParentBuild()));
+                if (!StringUtils.isEmpty(testRunParams.getCiParentBuild())) {
+                    testRun.setUpstreamJobBuildNumber(Integer.valueOf(testRunParams.getCiParentBuild()));
                 }
-                if (!StringUtils.isEmpty(queueTestRunParams.getProject())) {
-                    Project project = projectService.getProjectByName(queueTestRunParams.getProject());
+                if (!StringUtils.isEmpty(testRunParams.getProject())) {
+                    Project project = projectService.getProjectByName(testRunParams.getProject());
                     if (project == null) {
                         project = projectService.getProjectByName(DEFAULT_PROJECT);
                     }
                     testRun.setProject(project);
                 }
-                testRun.setEnv(queueTestRunParams.getEnv());
-                testRun.setCiRunId(queueTestRunParams.getCiRunId());
+                testRun.setEnv(testRunParams.getEnv());
+                testRun.setCiRunId(ciRunId);
                 testRun.setElapsed(null);
                 testRun.setPlatform(null);
                 testRun.setConfigXML(null);
@@ -259,10 +263,10 @@ public class TestRunService {
                 // make sure to reset below3 fields for existing run as well
                 testRun.setStatus(Status.QUEUED);
                 testRun.setStartedAt(Calendar.getInstance().getTime());
-                testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
+                testRun.setBuildNumber(Integer.valueOf(testRunParams.getBuildNumber()));
                 createTestRun(testRun);
                 List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
-                TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
+                TestRun queuedTestRun = getTestRunByCiRunId(ciRunId);
                 for (Test test : tests) {
                     if (test.getStatus() != Status.QUEUED) {
                         test.setId(null);
@@ -284,7 +288,7 @@ public class TestRunService {
             testRun = existingRun;
             testRun.setStatus(Status.QUEUED);
             testRun.setStartedAt(Calendar.getInstance().getTime());
-            testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
+            testRun.setBuildNumber(Integer.valueOf(testRunParams.getBuildNumber()));
             updateTestRun(testRun);
         }
         return testRun;
@@ -304,8 +308,9 @@ public class TestRunService {
 
     @Transactional(rollbackFor = Exception.class)
     public TestRun startTestRun(TestRun testRun) {
-        if (!StringUtils.isEmpty(testRun.getCiRunId())) {
-            TestRun existingTestRun = testRunMapper.getTestRunByCiRunId(testRun.getCiRunId());
+        String ciRunId = testRun.getCiRunId();
+        if (!StringUtils.isEmpty(ciRunId)) {
+            TestRun existingTestRun = testRunMapper.getTestRunByCiRunId(ciRunId);
             if (existingTestRun != null) {
                 existingTestRun.setBuildNumber(testRun.getBuildNumber());
                 existingTestRun.setConfigXML(testRun.getConfigXML());
@@ -313,11 +318,12 @@ public class TestRunService {
                 testRun = existingTestRun;
                 // TODO: investigate if startedBy should be also copied
             }
-            LOGGER.info("Looking for test run with CI ID: " + testRun.getCiRunId());
-            LOGGER.info("Test run found: " + (existingTestRun != null));
+            LOGGER.debug("Looking for test run with CI ID: " + ciRunId);
+            LOGGER.debug("Test run found: " + (existingTestRun != null));
         } else {
-            testRun.setCiRunId(UUID.randomUUID().toString());
-            LOGGER.info("Generating new test run CI ID: " + testRun.getCiRunId());
+            String generatedCiRunId = UUID.randomUUID().toString();
+            testRun.setCiRunId(generatedCiRunId);
+            LOGGER.debug("Generating new test run CI ID: " + generatedCiRunId);
         }
 
         initTestRunWithXml(testRun);
@@ -352,9 +358,8 @@ public class TestRunService {
             }
             testRun.setStatus(IN_PROGRESS);
             createTestRun(testRun);
-        }
-        // Existing test run
-        else {
+
+        } else {
             testRun.setStatus(IN_PROGRESS);
             updateTestRun(testRun);
         }
@@ -378,14 +383,16 @@ public class TestRunService {
     @Transactional(rollbackFor = Exception.class)
     public TestRun abortTestRun(TestRun testRun, String abortCause) {
         if (testRun != null) {
-            List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
-            if (IN_PROGRESS.equals(testRun.getStatus()) || QUEUED.equals(testRun.getStatus()) && isBuildFailure(abortCause)) {
-                for (Test test : tests) {
+            Status testRunStatus = testRun.getStatus();
+            if (IN_PROGRESS.equals(testRunStatus) || QUEUED.equals(testRunStatus) && isBuildFailure(abortCause)) {
+                List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
+                tests.forEach(test -> {
                     if (IN_PROGRESS.equals(test.getStatus()) || QUEUED.equals(test.getStatus())) {
                         testService.abortTest(test, abortCause);
                     }
-                }
+                });
             }
+
             testRun.setComments(abortCause);
             testRun.setStatus(Status.ABORTED);
             updateTestRun(testRun);
@@ -398,7 +405,8 @@ public class TestRunService {
     public TestRun markAsReviewed(Long id, String comment) {
         TestRun testRun = getTestRunById(id);
         if (testRun == null) {
-            throw new ServiceException("No test run found by ID: " + id);
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new ResourceNotFoundException("No test run found by ID: " + id);
         }
         testRun.setComments(comment);
         if (!"undefined failure".equalsIgnoreCase(comment)) {
@@ -421,16 +429,18 @@ public class TestRunService {
             sc.setFailurePercent(0);
         }
         List<TestRun> testRuns = getTestRunsForSmartRerun(sc);
-        testRuns.forEach(testRun -> {
-            resetTestRunComments(testRun);
-            if (rerunRequired) {
-                boolean success = automationServerService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
-                if (!success) {
-                    LOGGER.error("Problems with job building occurred. Job url: " + testRun.getJob().getJobURL());
-                }
-            }
-        });
+        testRuns.forEach(testRun -> rerun(testRun, rerunRequired, rerunFailures));
         return testRuns;
+    }
+
+    private void rerun(TestRun testRun, boolean rerunRequired, boolean rerunFailures) {
+        resetTestRunComments(testRun);
+        if (rerunRequired) {
+            boolean success = automationServerService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
+            if (!success) {
+                LOGGER.error("Problems with job building occurred. Job url: " + testRun.getJob().getJobURL());
+            }
+        }
     }
 
     private void resetTestRunComments(TestRun testRun){
@@ -467,8 +477,7 @@ public class TestRunService {
                     if (test.isBlocker()) {
                         testRun.setBlocker(true);
                     }
-                    if (Arrays.asList(FAILED, SKIPPED).contains(test.getStatus())
-                            && (!test.isKnownIssue() || (test.isKnownIssue() && test.isBlocker()))) {
+                    if (Arrays.asList(FAILED, SKIPPED).contains(test.getStatus()) && (!test.isKnownIssue() || test.isBlocker())) {
                         testRun.setStatus(FAILED);
                         break;
                     }
@@ -523,11 +532,11 @@ public class TestRunService {
         return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
     }
 
-    public String sendTestRunResultsNotification(final TestRun testRun,
-                                                 final List<Test> tests,
-                                                 boolean showOnlyFailures,
-                                                 boolean showStacktrace,
-                                                 final String... recipients) {
+    private String sendTestRunResultsNotification(final TestRun testRun,
+                                                  final List<Test> tests,
+                                                  boolean showOnlyFailures,
+                                                  boolean showStacktrace,
+                                                  final String... recipients) {
         Configuration configuration = readArguments(testRun.getConfigXML());
         // Forward from API to Web
         configuration.getArg().add(new Argument("zafira_service_url", urlResolver.buildWebURL()));
@@ -702,10 +711,14 @@ public class TestRunService {
      */
     public TestRunStatistics updateStatistics(Long testRunId, Status status, boolean isRerun) {
         int increment = isRerun ? -1 : 1;
-        TestRunStatistics trs = updateStatisticsSafe(testRunId,
-                testRunStatistics -> !status.equals(IN_PROGRESS) && (isRerun || testRunStatistics.getInProgress() > 0)
-                        ? updateStatistics(testRunStatistics, IN_PROGRESS, -increment)
-                        : testRunStatistics);
+
+        Function<TestRunStatistics, TestRunStatistics> updateFunction = testRunStatistics -> {
+            boolean inProgressOrRerun = !status.equals(IN_PROGRESS) && (isRerun || testRunStatistics.getInProgress() > 0);
+            return inProgressOrRerun ? updateStatistics(testRunStatistics, IN_PROGRESS, -increment) : testRunStatistics;
+        };
+
+        TestRunStatistics trs = updateStatisticsSafe(testRunId, updateFunction);
+
         if (trs != null && trs.getQueued() > 0 && (status.equals(IN_PROGRESS) || status.equals(ABORTED))) {
             updateStatisticsSafe(testRunId, testRunStatistics -> {
                 testRunStatistics.setQueued(testRunStatistics.getQueued() - 1);

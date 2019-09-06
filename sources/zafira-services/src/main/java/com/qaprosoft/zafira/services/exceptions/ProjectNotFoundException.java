@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public class ProjectNotFoundException extends ServiceException {
+public class ProjectNotFoundException extends ApplicationException {
     private static final long serialVersionUID = 3096397473250298650L;
 
     public ProjectNotFoundException() {

@@ -17,6 +17,7 @@ package com.qaprosoft.zafira.services.services.application.scm;
 
 import java.util.List;
 
+import com.qaprosoft.zafira.services.services.application.CryptoService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,14 +31,20 @@ public class ScmAccountService {
 
     private final ScmAccountMapper scmAccountMapper;
     private final GitHubService gitHubService;
+    private final CryptoService cryptoService;
 
-    public ScmAccountService(ScmAccountMapper scmAccountMapper, GitHubService gitHubService) {
+    public ScmAccountService(ScmAccountMapper scmAccountMapper, GitHubService gitHubService, CryptoService cryptoService) {
         this.scmAccountMapper = scmAccountMapper;
         this.gitHubService = gitHubService;
+        this.cryptoService = cryptoService;
     }
 
     @Transactional(rollbackFor = Exception.class)
     public ScmAccount createScmAccount(ScmAccount scmAccount) {
+        if (scmAccount.getAccessToken() != null && !scmAccount.getAccessToken().isBlank()) {
+            String encryptedToken = cryptoService.encrypt(scmAccount.getAccessToken());
+            scmAccount.setAccessToken(encryptedToken);
+        }
         scmAccountMapper.createScmAccount(scmAccount);
         return scmAccount;
     }

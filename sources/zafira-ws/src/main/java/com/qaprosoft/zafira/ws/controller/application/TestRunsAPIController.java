@@ -34,7 +34,7 @@ import com.qaprosoft.zafira.models.dto.filter.FilterType;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToAbortCIJobException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
@@ -148,7 +148,8 @@ public class TestRunsAPIController extends AbstractController {
     public TestRunType updateTestRun(@RequestBody TestRunType tr) {
         TestRun testRun = testRunService.getTestRunById(tr.getId());
         if (testRun == null && !StringUtils.isEmpty(tr.getConfigXML())) {
-            throw new ServiceException("Test run not found by id: " + tr.getId());
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new ResourceNotFoundException("Test run not found by id: " + tr.getId());
         }
         testRun.setConfigXML(tr.getConfigXML());
         testRunService.initTestRunWithXml(testRun);

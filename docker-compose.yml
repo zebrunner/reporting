@@ -30,7 +30,10 @@ services:
     restart: always
   redis:
     container_name: zfr_redis
-    image: redis:4.0.11
+    image: redis:5.0.5
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./config/redis.conf:/usr/local/etc/redis/redis.conf:ro
     ports:
       - 6379:6379
     restart: always
@@ -60,7 +63,7 @@ services:
       - elasticsearch
   zafira:
     container_name: zfr_zafira_back_end
-    # image: qaprosoft/zafira:4.0.65
+    # image: qaprosoft/zafira:4.1.69
     build: .
     volumes:
       - ./assets:/opt/assets
@@ -75,7 +78,7 @@ services:
     restart: always
   zafira-ui:
     container_name: zfr_zafira_ui
-    image: qaprosoft/zafira-ui:1.16
+    image: qaprosoft/zafira-ui:1.19
     ports:
       - 80:80
     environment:
