@@ -25,13 +25,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 
@@ -41,7 +38,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @NamedEntityGraph(name = "integrationGroup.expanded", attributeNodes = {
-        @NamedAttributeNode("types")
+    @NamedAttributeNode("types")
 })
 @Table(name = "integration_groups")
 public class IntegrationGroup {
@@ -53,7 +50,7 @@ public class IntegrationGroup {
     private String iconUrl;
     private boolean multipleAllowed;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "integration_group_id")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "group")
     private List<IntegrationType> types;
+
 }

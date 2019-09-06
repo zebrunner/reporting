@@ -100,8 +100,14 @@ public class IntegrationServiceImpl implements IntegrationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List <Integration> getIntegrationsByTypeId(Long typeId) {
+    public List<Integration> retrieveIntegrationsByTypeId(Long typeId) {
         return integrationRepository.getIntegrationsByTypeId(typeId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Integration> retrieveIntegrationsByGroupId(Long groupId) {
+        return integrationRepository.findByGroupId(groupId);
     }
 
     @Override
@@ -115,12 +121,6 @@ public class IntegrationServiceImpl implements IntegrationService {
     @Transactional(readOnly = true)
     public List<Integration> retrieveAll() {
         return integrationRepository.findAll();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Integration> retrieveByIntegrationTypeId(Long integrationTypeId) {
-        return integrationRepository.getIntegrationsByTypeId(integrationTypeId);
     }
 
     @Override
@@ -166,7 +166,7 @@ public class IntegrationServiceImpl implements IntegrationService {
     private void verifyIntegration(IntegrationType integrationType) {
         IntegrationGroup integrationGroup = integrationGroupService.retrieveByIntegrationTypeId(integrationType.getId());
         if (!integrationGroup.isMultipleAllowed()) {
-            List<Integration> integrations = getIntegrationsByTypeId(integrationType.getId());
+            List<Integration> integrations = retrieveIntegrationsByTypeId(integrationType.getId());
             if (integrations.size() != 0) {
                 throw new IllegalOperationException(String.format(ERR_MSG_NOT_MULTIPLE_ALLOWED_INTEGRATION, integrationType.getName()));
             }

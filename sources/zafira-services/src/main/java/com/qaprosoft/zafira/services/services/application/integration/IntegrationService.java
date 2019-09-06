@@ -33,9 +33,9 @@ public interface IntegrationService {
 
     List<Integration> retrieveAll();
 
-    List <Integration> getIntegrationsByTypeId(Long typeId);
+    List <Integration> retrieveIntegrationsByTypeId(Long typeId);
 
-    List<Integration> retrieveByIntegrationTypeId(Long integrationTypeId);
+    List <Integration> retrieveIntegrationsByGroupId(Long groupId);
 
     List<Integration> retrieveByIntegrationGroupName(String integrationGroupName);
 

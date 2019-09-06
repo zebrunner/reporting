@@ -16,8 +16,6 @@ import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +26,7 @@ import java.util.Optional;
 @NamedEntityGraph(
         name = "integration.expanded",
         attributeNodes = {
-                @NamedAttributeNode(value = "type", subgraph ="type-subgraph"),
+                @NamedAttributeNode("type"),
                 @NamedAttributeNode(value = "settings", subgraph = "settings-subgraph")
         },
         subgraphs = {
