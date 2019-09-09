@@ -5,8 +5,8 @@ import com.qaprosoft.zafira.models.dto.errors.Error;
 import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
 import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
 import com.qaprosoft.zafira.services.exceptions.ApplicationException;
-import com.qaprosoft.zafira.services.exceptions.EntityAlreadyExistsException;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
+import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
@@ -53,6 +53,14 @@ public class ApiExceptionHandler {
     public ErrorResponse handleResourceNotFoundException(ResourceNotFoundException e) {
         ErrorResponse response = new ErrorResponse();
         response.setError(new Error(ErrorCode.RESOURCE_NOT_FOUND, e.getMessage()));
+        return response;
+    }
+
+    @ExceptionHandler(IllegalOperationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIllegalOperationException(IllegalOperationException e) {
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.VALIDATION_ERROR, e.getMessage()));
         return response;
     }
 
@@ -137,14 +145,6 @@ public class ApiExceptionHandler {
     public ErrorResponse handleIntegrationException(IntegrationException e) {
         ErrorResponse response = new ErrorResponse();
         response.setError(new Error(ErrorCode.INTEGRATION_UNAVAILABLE));
-        return response;
-    }
-
-    @ExceptionHandler(EntityAlreadyExistsException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleEntityIsAlreadyExistsException(EntityAlreadyExistsException e) {
-        ErrorResponse response = new ErrorResponse();
-        response.setError(new Error(ErrorCode.ENTITY_ALREADY_EXISTS, e.getFieldName(), e.getMessage()));
         return response;
     }
 

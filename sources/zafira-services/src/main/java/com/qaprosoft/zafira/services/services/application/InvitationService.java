@@ -21,7 +21,6 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.Invitation;
 import com.qaprosoft.zafira.models.db.User;
-import com.qaprosoft.zafira.services.exceptions.EntityAlreadyExistsException;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
@@ -224,9 +223,9 @@ public class InvitationService {
 
     private void checkExisting(String email) {
         if (userService.getUserByEmail(email) != null) {
-            throw new EntityAlreadyExistsException("email", email, User.class, false);
+            throw new IllegalOperationException("User with such email already exists");
         } else if (getInvitationByEmail(email) != null) {
-            throw new EntityAlreadyExistsException("email", email, Invitation.class, false);
+            throw new IllegalOperationException("User with such email was invited already");
         }
     }
 
