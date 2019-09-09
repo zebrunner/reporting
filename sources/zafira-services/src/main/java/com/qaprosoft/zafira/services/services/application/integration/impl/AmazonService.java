@@ -15,7 +15,9 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.impl;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.internal.SdkBufferedInputStream;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.internal.Mimetypes;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
@@ -27,7 +29,7 @@ import com.amazonaws.services.securitytoken.model.GetSessionTokenResult;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
-import com.qaprosoft.zafira.services.exceptions.AWSException;
+import com.qaprosoft.zafira.services.exceptions.ExternalSystemException;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
@@ -38,8 +40,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
@@ -70,30 +74,37 @@ public class AmazonService extends AbstractIntegration<AmazonContext> {
         }
     }
 
-    public String saveFile(final FileUploadType file) {
+    public String saveFile(final FileUploadType fileType) {
         String result;
         SdkBufferedInputStream stream = null;
         try {
-            stream = new SdkBufferedInputStream(file.getFile().getInputStream(),
-                    (int) (file.getFile().getSize() + 100));
-            String type = Mimetypes.getInstance().getMimetype(file.getFile().getOriginalFilename());
-            String relativePath = getFileKey(file);
+            MultipartFile file = fileType.getFile();
+            InputStream inputStream = file.getInputStream();
+            long originalSize = file.getSize();
+            int size = (int) (originalSize + 100);
+
+            stream = new SdkBufferedInputStream(inputStream, size);
+            String type = Mimetypes.getInstance().getMimetype(file.getOriginalFilename());
+            String relativePath = getFileKey(fileType);
             String key = TenancyContext.getTenantName() + relativePath;
 
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(type);
-            metadata.setContentLength(file.getFile().getSize());
+            metadata.setContentLength(originalSize);
 
-            PutObjectRequest putRequest = new PutObjectRequest(context().getS3Bucket(), key, stream, metadata);
-            context().getAmazonS3().putObject(putRequest);
-            CannedAccessControlList controlList = multitenant ? CannedAccessControlList.Private : CannedAccessControlList.PublicRead;
-            context().getAmazonS3().setObjectAcl(context().getS3Bucket(), key, controlList);
+            AmazonS3 amazonS3 = context().getAmazonS3();
+            String bucket = context().getS3Bucket();
 
-            result = multitenant ? urlResolver.getServiceURL() + relativePath
-                    : context().getAmazonS3().getUrl(context().getS3Bucket(), key).toString();
+            PutObjectRequest putRequest = new PutObjectRequest(bucket, key, stream, metadata);
+            amazonS3.putObject(putRequest);
 
-        } catch (IOException e) {
-            throw new AWSException("Can't save file to Amazone", e);
+            CannedAccessControlList acl = multitenant ? CannedAccessControlList.Private : CannedAccessControlList.PublicRead;
+            amazonS3.setObjectAcl(bucket, key, acl);
+
+            result = multitenant ? urlResolver.getServiceURL() + relativePath : amazonS3.getUrl(bucket, key).toString();
+
+        } catch (IOException | AmazonClientException e) {
+            throw new ExternalSystemException("Can't save file to AWS S3", e);
         } finally {
             IOUtils.closeQuietly(stream);
         }
