@@ -30,7 +30,6 @@ import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.ScmAccountNotFoundException;
 import com.qaprosoft.zafira.services.services.application.integration.context.JenkinsContext;
 import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.impl.JenkinsService;
@@ -119,8 +118,9 @@ public class LauncherService {
             return new ArrayList<>();
         }
         ScmAccount scmAccount = scmAccountService.getScmAccountByRepo(scannedRepoLaunchersType.getRepo());
-        if (scmAccount == null)
-            throw new ScmAccountNotFoundException("Unable to find scm account for repo");
+        if (scmAccount == null) {
+            throw new ResourceNotFoundException("Unable to find scm account for repo");
+        }
 
         deleteAutoScannedLaunchersByScmAccountId(scmAccount.getId());
 
