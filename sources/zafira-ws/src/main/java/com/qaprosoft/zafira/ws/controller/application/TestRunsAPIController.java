@@ -35,7 +35,6 @@ import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
 import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.UnableToAbortCIJobException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.services.services.application.FilterService;
 import com.qaprosoft.zafira.services.services.application.JobsService;
@@ -430,10 +429,7 @@ public class TestRunsAPIController extends AbstractController {
             throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
         }
 
-        JobResult jobResult = jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber());
-        if (!jobResult.isSuccess()) {
-            throw new UnableToAbortCIJobException();
-        }
+        jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber());
     }
 
     @ResponseStatusDetails
