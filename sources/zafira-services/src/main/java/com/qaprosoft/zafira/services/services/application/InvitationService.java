@@ -22,9 +22,9 @@ import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.Invitation;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.EntityAlreadyExistsException;
-import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.services.application.emails.IEmailMessage;
 import com.qaprosoft.zafira.services.services.application.emails.UserInviteEmail;
 import com.qaprosoft.zafira.services.services.application.emails.UserInviteLdapEmail;
@@ -77,9 +77,10 @@ public class InvitationService {
         if (checkExisting) {
             checkExisting(invitation.getEmail());
         }
-        Group group = groupService.getGroupById(invitation.getGroupId());
+        Long groupId = invitation.getGroupId();
+        Group group = groupService.getGroupById(groupId);
         if (group == null) {
-            throw new EntityNotExistsException(Group.class, false);
+            throw new ResourceNotFoundException(String.format("Group with id %s does not exists", groupId));
         }
         if (!group.getInvitable() && !force) {
             throw new ForbiddenOperationException("Cannot invite users to not invitable group '" + group.getName() + "'");
@@ -146,7 +147,7 @@ public class InvitationService {
     public Invitation retryInvitation(Long principalId, String email) {
         Invitation invitation = getInvitationByEmail(email);
         if (invitation == null) {
-            throw new EntityNotExistsException(Invitation.class, false);
+            throw new ResourceNotFoundException(String.format("Invitation for email %s can not be found", email));
         }
         if (invitation.getStatus().equals(Invitation.Status.ACCEPTED)) {
             // TODO by nsidorevich on 2019-09-03: review error code, message and exception type

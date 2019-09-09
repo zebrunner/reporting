@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.dto.ProjectType;
-import com.qaprosoft.zafira.services.exceptions.ProjectNotFoundException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.services.application.ProjectService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -104,7 +104,7 @@ public class ProjectsAPIController extends AbstractController {
     public ProjectType getProjectByName(@PathVariable("name") String name) {
         Project project = projectService.getProjectByName(name);
         if (project == null) {
-            throw new ProjectNotFoundException();
+            throw new ResourceNotFoundException(String.format("Project with name %s can not be found", name));
         }
         return mapper.map(project, ProjectType.class);
     }
