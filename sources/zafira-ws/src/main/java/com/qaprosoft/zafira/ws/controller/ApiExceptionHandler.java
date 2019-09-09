@@ -11,7 +11,6 @@ import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
-import com.qaprosoft.zafira.services.exceptions.UnhealthyStateException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,14 +145,6 @@ public class ApiExceptionHandler {
     public ErrorResponse handleEntityIsAlreadyExistsException(EntityAlreadyExistsException e) {
         ErrorResponse response = new ErrorResponse();
         response.setError(new Error(ErrorCode.ENTITY_ALREADY_EXISTS, e.getFieldName(), e.getMessage()));
-        return response;
-    }
-
-    @ExceptionHandler(UnhealthyStateException.class)
-    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
-    public ErrorResponse handleUnhealthyStateException(UnhealthyStateException e) {
-        ErrorResponse response = new ErrorResponse();
-        response.setError(new Error(ErrorCode.UNHEALTHY_STATUS, "reason", e.getMessage()));
         return response;
     }
 
