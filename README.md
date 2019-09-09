@@ -52,22 +52,40 @@ Zafira was initially designed to track automation progress of the tests written 
 </table>
 
 ## Installation steps
-
-#### Simple set with Docker
-
-1. Install [Docker](https://docs.docker.com/engine/installation/) ([Engine](https://docs.docker.com/engine/installation/), [Compose](https://docs.docker.com/compose/install/))
-2. Clone current repo and navigate to the repo root on your local machine
-3. To start Zafira execute:
-
-  ```
-  $ ./start.sh
-  ```
-4. Open in your browser IP address of deployed enviroment at port `80`
-
-  ```
-  http://localhost:80/app
-  ```
-5. Use next login/pass for access: `qpsdemo/qpsdemo`.
+The only dependency Zafira requires in order to spin it up (deploy to localhost) is Docker Compose installed. More information on Docker Compose installation can be found [here](https://docs.docker.com/compose/install/). Once you'll have Docker Compose installed you'll have two options, so let's take a closer look at both of them.
+#### 1. Spinning Zafira using Qaprosoft images
+In order to install Zafira (deploy to localhost) you'll need to complete following steps:
+1. Clone current repo and navigate to the repo root on your local machine
+2. To start Zafira execute:
+    ```
+    $ ./start.sh
+    ```
+    That's about it! Docker Compose will automatically pull all Zafira images from Docker Registry and spin those up. You can check list of running images by executing `docker ps` command.
+    Images and their versions are declared in deplyment descriptor called `docker-compose.yml` residing in git repository root directory. Please, note that descriptor does not necessarily contains all latest versions of images (however we usually update it in no time after newer versions are released), but you can be sure that the ones declared there are cross-compatible.
+#### 2. Building Zafira image(s) from sources
+Alternatively, if you'd like to play around with Zafira codebase and/or contribute to our project you might need to spin up images built from source code vs ones pulled from Docker Registry. In order to do so:
+1. Once you'll update the code make sure to re-package the `.jar` file by exectuing following command from `sources` directory:
+    ```
+    ./gradlew clean build
+    ```
+    Bundled archive can be found inside `/sources/zafira-ws/build/libs` directory.
+2. Go to `docker-compose.yml` and make sure that instead of image reference target service you want to build from sources contains a `build` instruction:
+    ```yml
+    zafira:
+      container_name: zfr_zafira_back_end
+      # image: qaprosoft/zafira:4.1.69
+      build: .
+    ```
+    It will tell Docker Compose to look for Dokerfile in current directory and delegate image contruction process to Docker vs pulling the image from Registry.
+3. Run the following command to start Zafira:
+    ```
+    docker-compose up -d --build
+    ```
+    `--build` instruction will tell Docker Compose to force rebuild container rather than use the one residing on your filesystem (if this is not your first Zafira run).
+    That's it, go ahead and give applicaion a try!
+#### Signing in to the application
+1. Open in your browser IP address of deployed enviroment and navigate to http://localhost/app to sign in to application (Zafira app is binded to default port 80)
+2. Use folowing credentials to log in: username: `qpsdemo`, password: `qpsdemo`.
 
 ## Integration
 
