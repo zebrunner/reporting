@@ -12,10 +12,10 @@ Zafira was initially designed to track automation progress of the tests written 
 #### Primary features
 * Real-time test results tracking via websockets
 * VNC streaming and video recording of test sessions
-* Flexibly configured widgets and dashboards based on [D3JS](https://d3js.org/)
+* Flexibly configured widgets and dashboards based on [ECharts](https://www.echartsjs.com/en/index.html)
 * User management with authorization policies
 * Integration with TestRail and JIRA
-* Integration with Hipchat and Slack
+* Integration with Slack
 * Ability to compose automation reports and send via email
 
 <table>
@@ -61,10 +61,10 @@ In order to install Zafira (deploy to localhost) you'll need to complete followi
     $ ./start.sh
     ```
     That's about it! Docker Compose will automatically pull all Zafira images from Docker Registry and spin those up. You can check list of running images by executing `docker ps` command.
-    Images and their versions are declared in deplyment descriptor called `docker-compose.yml` residing in git repository root directory. Please, note that descriptor does not necessarily contains all latest versions of images (however we usually update it in no time after newer versions are released), but you can be sure that the ones declared there are cross-compatible.
+    Images and their versions are declared in deployment descriptor called `docker-compose.yml` residing in git repository root directory. Please, note that descriptor does not necessarily contains all latest versions of images (however we usually update it in no time after newer versions are released), but you can be sure that the ones declared there are cross-compatible.
 ### 2. Building Zafira image(s) from sources
 Alternatively, if you'd like to play around with Zafira codebase and/or contribute to our project you might need to spin up images built from source code vs ones pulled from Docker Registry. In order to do so:
-1. Once you'll update the code make sure to re-package the `.jar` file by exectuing following command from `sources` directory:
+1. Once you'll update the code make sure to re-package the `.jar` file by executing following command from `sources` directory:
     ```
     ./gradlew clean build
     ```
