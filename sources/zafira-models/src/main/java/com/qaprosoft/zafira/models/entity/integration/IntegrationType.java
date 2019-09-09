@@ -55,7 +55,7 @@ public class IntegrationType {
     private String name;
     private String iconUrl;
 
-    @OneToMany()
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "integration_type_id")
     private Set<IntegrationParam> params;
 
