@@ -53,7 +53,7 @@ Zafira was initially designed to track automation progress of the tests written 
 
 ## Installation steps
 The only dependency Zafira requires in order to spin it up (deploy to localhost) is Docker Compose installed. More information on Docker Compose installation can be found [here](https://docs.docker.com/compose/install/). Once you'll have Docker Compose installed you'll have two options, so let's take a closer look at both of them.
-#### 1. Spinning Zafira using Qaprosoft images
+### 1. Spinning Zafira using Qaprosoft images
 In order to install Zafira (deploy to localhost) you'll need to complete following steps:
 1. Clone current repo and navigate to the repo root on your local machine
 2. To start Zafira execute:
@@ -62,7 +62,7 @@ In order to install Zafira (deploy to localhost) you'll need to complete followi
     ```
     That's about it! Docker Compose will automatically pull all Zafira images from Docker Registry and spin those up. You can check list of running images by executing `docker ps` command.
     Images and their versions are declared in deplyment descriptor called `docker-compose.yml` residing in git repository root directory. Please, note that descriptor does not necessarily contains all latest versions of images (however we usually update it in no time after newer versions are released), but you can be sure that the ones declared there are cross-compatible.
-#### 2. Building Zafira image(s) from sources
+### 2. Building Zafira image(s) from sources
 Alternatively, if you'd like to play around with Zafira codebase and/or contribute to our project you might need to spin up images built from source code vs ones pulled from Docker Registry. In order to do so:
 1. Once you'll update the code make sure to re-package the `.jar` file by exectuing following command from `sources` directory:
     ```
@@ -83,9 +83,23 @@ Alternatively, if you'd like to play around with Zafira codebase and/or contribu
     ```
     `--build` instruction will tell Docker Compose to force rebuild container rather than use the one residing on your filesystem (if this is not your first Zafira run).
     That's it, go ahead and give applicaion a try!
-#### Signing in to the application
+### Signing in to the application
 1. Open in your browser IP address of deployed enviroment and navigate to http://localhost/app to sign in to application (Zafira app is binded to default port 80)
 2. Use folowing credentials to log in: username: `qpsdemo`, password: `qpsdemo`.
+
+### Application configuration and sensitive parameters
+As you might have notice already, Zafira comes with a pre-defined configuration so you have all the features enabled out-of-the-box. However, if you'd like to use Zafira in production you'll definetely need to tweak a few things.
+Complete list of Zafira runtime configuration parameters can be seen in `zafira-properties.env` file. Parameter names are self-explanatory, so it shouldn't be a problem to figure out what's what: file contains both application-specific, and settings that are common for many applications out there (such as datasource, message broker, cache configuration, etc).
+However there are a few things to pay attention to:
+1. **Application URL and REST API url**
+    `ZAFIRA_WEB_HOST=` should point to host machine, where front-end application is deployed
+    `ZAFIRA_API_HOST=` should point to host machine, where back-end (or ELB sitting in front of it) application is deployed
+2. **Secrets: crypto salt and auth token**
+    `AUTH_TOKEN_SECRET=` value is a signature verification key that is used to validate any discovered JWS digital signatures and thus should not be set to default one
+    `CRYPTO_SALT=` value is by application for encryption of sensitive settings (such as passwords, integration settings, etc) and thus should not be set to default one
+
+Please note, that we do not provide on-premise production deployment guide for Zafira. However, if that is something you might be interested in, go ahead and check out our own [QPS-Infra](https://www.qps-infra.io) at https://www.qps-infra.io.
+Wanna jump straight to testing with Zafira skipping all of the deployment hassle? Check out [Zebrunner](https://zebrunner.com), Cloud-native version of Zafira at https://zebrunner.com.
 
 ## Integration
 
@@ -99,13 +113,12 @@ Regardless of Zafira client language you have to generate **zafira_access_token*
 * [Ruby - RSpec](https://github.com/qaprosoft/zafira-ruby#rspec-usage)
 * [C# - NUnit](https://github.com/qaprosoft/zafira-nunit)
 
-## Documentation and free support
+## Documentation support
 * [User manual](http://qaprosoft.github.io/zafira)
 * [Demo project](https://github.com/qaprosoft/carina-demo)
 * [Telegram channel](https://t.me/qps_zafira)
-
-## Code formatter
-We propose to use our configured [**Java code formatter for Eclipse**](https://github.com/qaprosoft/zafira/blob/develop/tools/ide/formatter.xml). To use same formatter in IntelliJ IDEA you should install and configure [**Eclipse Code Formatter**](https://plugins.jetbrains.com/plugin/6546-eclipse-code-formatter).
+* [On-premise Zafira deployment with QPS-Infra](https://www.qps-infra.io)
+* [Zebrunner: Cloud-native Zafira](https://zebrunner.com)
 
 ## License
 Code - [Apache Software License v2.0](http://www.apache.org/licenses/LICENSE-2.0)
