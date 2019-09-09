@@ -99,7 +99,7 @@ However there are a few things to pay attention to:
     `CRYPTO_SALT=` value is by application for encryption of sensitive settings (such as passwords, integration settings, etc) and thus should not be set to default one
 
 Please note, that we do not provide on-premise production deployment guide for Zafira. However, if that is something you might be interested in, go ahead and check out our own [QPS-Infra](https://www.qps-infra.io) at https://www.qps-infra.io.
-Wanna jump straight to testing with Zafira skipping all of the deployment hassle? Check out [Zebrunner](https://zebrunner.com), Cloud-native version of Zafira at https://zebrunner.com.
+Wanna jump straight to testing with Zafira skipping all of the deployment and maintenance hassle? Check out [Zebrunner](https://zebrunner.com), Cloud-native version of Zafira at https://zebrunner.com.
 
 ## Integration
 
