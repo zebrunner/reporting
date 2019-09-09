@@ -28,9 +28,7 @@ import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
-import com.qaprosoft.zafira.services.exceptions.JenkinsJobNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.ScmAccountNotFoundException;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.AutomationServerService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.TestAutomationToolService;
 import com.qaprosoft.zafira.services.services.application.scm.GitHubService;
@@ -90,7 +88,7 @@ public class LauncherService {
             Job job = jobsService.getJobByJobURL(launcherJobUrl);
             if (job == null) {
                 job = automationServerService.getJobByUrl(launcherJobUrl).orElseThrow(
-                        () -> new JenkinsJobNotFoundException("Job\n" + launcherJobUrl + "\nis not found on Jenkins"));
+                        () -> new ResourceNotFoundException("Job\n" + launcherJobUrl + "\nis not found on Jenkins"));
                 job.setJenkinsHost(automationServerService.getUrl());
                 job.setUser(owner);
                 jobsService.createJob(job);
@@ -107,8 +105,9 @@ public class LauncherService {
             return new ArrayList<>();
         }
         ScmAccount scmAccount = scmAccountService.getScmAccountByRepo(scannedRepoLaunchersType.getRepo());
-        if (scmAccount == null)
-            throw new ScmAccountNotFoundException("Unable to find scm account for repo");
+        if (scmAccount == null) {
+            throw new ResourceNotFoundException("Unable to find scm account for repo");
+        }
 
         deleteAutoScannedLaunchersByScmAccountId(scmAccount.getId());
 

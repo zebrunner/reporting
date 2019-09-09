@@ -36,7 +36,6 @@ import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.AutomationServerService;
@@ -85,7 +84,8 @@ public class TestRunService {
 
     private static final String DEFAULT_PROJECT = "UNKNOWN";
 
-    private static final String ERR_MSG_TEST_RUN_NOT_FOUND = "No test runs found by ID: %s";
+    private static final String ERR_MSG_TEST_NOT_FOUND = "No test found by id %s";
+    private static final String ERR_MSG_TEST_RUN_NOT_FOUND = "No test run found by id %s";
 
     public enum FailureCause {
         UNRECOGNIZED_FAILURE("UNRECOGNIZED FAILURE"),
@@ -169,7 +169,7 @@ public class TestRunService {
     public TestRun getNotNullTestRunById(long id) {
         TestRun testRun = getTestRunById(id);
         if (testRun == null) {
-            throw new TestRunNotFoundException();
+            throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_NOT_FOUND, id));
         }
         return testRun;
     }
@@ -526,7 +526,7 @@ public class TestRunService {
                                           final String... recipients) {
         TestRun testRun = getTestRunByIdFull(testRunId);
         if (testRun == null) {
-            throw new TestRunNotFoundException("No test runs found by ID: " + testRunId);
+            throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, testRunId));
         }
         List<Test> tests = testService.getTestsByTestRunId(testRunId);
         return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
@@ -577,7 +577,7 @@ public class TestRunService {
             email.setSuccessRate(calculateSuccessRate(testRun));
             result = freemarkerUtil.getFreeMarkerTemplateContent(email.getType().getTemplateName(), email);
         } else {
-            LOGGER.error(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
+            LOGGER.error(String.format(ERR_MSG_TEST_NOT_FOUND, id));
         }
         return result;
     }

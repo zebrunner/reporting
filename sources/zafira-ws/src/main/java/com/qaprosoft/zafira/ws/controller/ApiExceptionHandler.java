@@ -6,14 +6,10 @@ import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
 import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
 import com.qaprosoft.zafira.services.exceptions.ApplicationException;
 import com.qaprosoft.zafira.services.exceptions.EntityAlreadyExistsException;
-import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
-import com.qaprosoft.zafira.services.exceptions.JobNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.ProjectNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.services.exceptions.UnhealthyStateException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
@@ -37,9 +33,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Centralized API exception handler
- */
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
@@ -56,27 +49,11 @@ public class ApiExceptionHandler {
         this.debugEnabled = debugEnabled;
     }
 
-    @ExceptionHandler(JobNotFoundException.class)
+    @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleJobNotFoundException(JobNotFoundException e) {
+    public ErrorResponse handleResourceNotFoundException(ResourceNotFoundException e) {
         ErrorResponse response = new ErrorResponse();
-        response.setError(new Error(ErrorCode.JOB_NOT_FOUND));
-        return response;
-    }
-
-    @ExceptionHandler(TestRunNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleTestRunNotFoundException(TestRunNotFoundException e) {
-        ErrorResponse response = new ErrorResponse();
-        response.setError(new Error(ErrorCode.TEST_RUN_NOT_FOUND));
-        return response;
-    }
-
-    @ExceptionHandler(TestNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleTestNotFoundException(TestNotFoundException e) {
-        ErrorResponse response = new ErrorResponse();
-        response.setError(new Error(ErrorCode.TEST_RUN_NOT_FOUND));
+        response.setError(new Error(ErrorCode.RESOURCE_NOT_FOUND, e.getMessage()));
         return response;
     }
 
@@ -169,22 +146,6 @@ public class ApiExceptionHandler {
     public ErrorResponse handleEntityIsAlreadyExistsException(EntityAlreadyExistsException e) {
         ErrorResponse response = new ErrorResponse();
         response.setError(new Error(ErrorCode.ENTITY_ALREADY_EXISTS, e.getFieldName(), e.getMessage()));
-        return response;
-    }
-
-    @ExceptionHandler(EntityNotExistsException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleEntityIsNotExistsException(EntityNotExistsException e) {
-        ErrorResponse response = new ErrorResponse();
-        response.setError(new Error(ErrorCode.ENTITY_NOT_EXISTS, e.getMessage()));
-        return response;
-    }
-
-    @ExceptionHandler(ProjectNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleProjectNotFoundException(ProjectNotFoundException e) {
-        ErrorResponse response = new ErrorResponse();
-        response.setError(new Error(ErrorCode.PROJECT_NOT_EXISTS, e.getMessage()));
         return response;
     }
 

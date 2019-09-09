@@ -30,7 +30,6 @@ import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.TestCaseManagementService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
@@ -58,6 +57,8 @@ import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.REMOVE_BL
 @Service
 public class TestService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestService.class);
+
+    private static final String ERR_MSG_TEST_RUN_NOT_FOUND = "Test run with id %s can not be found";
 
     private static final String INV_COUNT = "InvCount";
 
@@ -259,7 +260,7 @@ public class TestService {
     public Test changeTestStatus(long id, Status newStatus) {
         Test test = getTestById(id);
         if (test == null) {
-            throw new TestNotFoundException();
+            throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
         }
         testRunService.updateStatistics(test.getTestRunId(), newStatus, test.getStatus());
         test.setStatus(newStatus);
@@ -299,7 +300,7 @@ public class TestService {
     public Test getNotNullTestById(long id) {
         Test test = getTestById(id);
         if (test == null) {
-            throw new TestNotFoundException("Test ID: " + id);
+            throw new ResourceNotFoundException(String.format("No test found by id %s", id));
         }
         return test;
     }

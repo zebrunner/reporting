@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.services.services.application.integration.impl;
 
 import com.qaprosoft.zafira.dbaccess.persistence.IntegrationTypeRepository;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationType;
-import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationTypeService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,20 +41,20 @@ public class IntegrationTypeServiceImpl implements IntegrationTypeService {
     @Transactional(readOnly = true)
     public IntegrationType retrieveById(Long id) {
         return integrationTypeRepository.findById(id)
-                                        .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_TYPE_NOT_FOUND, id)));
+                                        .orElseThrow(() -> new ResourceNotFoundException(String.format(ERR_MSG_INTEGRATION_TYPE_NOT_FOUND, id)));
     }
 
     @Override
     @Transactional(readOnly = true)
     public IntegrationType retrieveByName(String name) {
         return integrationTypeRepository.findByName(name)
-                                        .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_TYPE_NOT_FOUND_BY_NAME, name)));
+                                        .orElseThrow(() -> new ResourceNotFoundException(String.format(ERR_MSG_INTEGRATION_TYPE_NOT_FOUND_BY_NAME, name)));
     }
 
     @Override
     public IntegrationType retrieveByIntegrationId(Long integrationId) {
         return integrationTypeRepository.findByIntegrationId(integrationId)
-                                        .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_TYPE_NOT_FOUND_BY_INTEGRATION_ID, integrationId)));
+                                        .orElseThrow(() -> new ResourceNotFoundException(String.format(ERR_MSG_INTEGRATION_TYPE_NOT_FOUND_BY_INTEGRATION_ID, integrationId)));
     }
 
     @Override

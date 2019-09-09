@@ -19,7 +19,7 @@ import com.qaprosoft.zafira.dbaccess.persistence.IntegrationSettingRepository;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationParam;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationSetting;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationType;
-import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.services.application.CryptoDriven;
 import com.qaprosoft.zafira.services.services.application.CryptoService;
@@ -65,21 +65,21 @@ public class IntegrationSettingServiceImpl implements IntegrationSettingService,
     @Transactional(readOnly = true)
     public IntegrationSetting retrieveById(Long id) {
         return integrationSettingRepository.findById(id)
-                                           .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_SETTING_NOT_FOUND, id)));
+                                           .orElseThrow(() -> new ResourceNotFoundException(String.format(ERR_MSG_INTEGRATION_SETTING_NOT_FOUND, id)));
     }
 
     @Override
     @Transactional(readOnly = true)
     public IntegrationSetting retrieveByIntegrationIdAndParamName(Long integrationId, String paramName) {
         return integrationSettingRepository.findByIntegrationIdAndParamName(integrationId, paramName)
-                                           .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_SETTING_NOT_FOUND_BY_INTEGRATION_ID_AND_PARAM_NAME, integrationId, paramName)));
+                                           .orElseThrow(() -> new ResourceNotFoundException(String.format(ERR_MSG_INTEGRATION_SETTING_NOT_FOUND_BY_INTEGRATION_ID_AND_PARAM_NAME, integrationId, paramName)));
     }
 
     @Override
     @Transactional(readOnly = true)
     public IntegrationSetting retrieveByIntegrationTypeNameAndParamName(String integrationTypeName, String paramName) {
         return integrationSettingRepository.findByIntegrationTypeNameAndParamName(integrationTypeName, paramName)
-                                           .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_SETTING_NOT_FOUND_BY_INTEGRATION_TYPE_NAME_AND_PARAM_NAME, integrationTypeName, paramName)));
+                                           .orElseThrow(() -> new ResourceNotFoundException(String.format(ERR_MSG_INTEGRATION_SETTING_NOT_FOUND_BY_INTEGRATION_TYPE_NAME_AND_PARAM_NAME, integrationTypeName, paramName)));
     }
 
     @Override
@@ -131,7 +131,7 @@ public class IntegrationSettingServiceImpl implements IntegrationSettingService,
                 String encryptedValue = cryptoService.encrypt(integrationSetting.getValue());
                 integrationSetting.setValue(encryptedValue);
             }
-        } catch (EntityNotExistsException e) {
+        } catch (ResourceNotFoundException e) {
             integrationSetting.setEncrypted(false);
             IntegrationParam integrationParam = integrationParamService.retrieveById(integrationSetting.getParam().getId());
             if (integrationSetting.getValue() == null || integrationSetting.getValue().isBlank()) {

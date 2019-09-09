@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.services.services.application.integration.impl;
 
 import com.qaprosoft.zafira.dbaccess.persistence.IntegrationGroupRepository;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationGroup;
-import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,13 +45,13 @@ public class IntegrationGroupServiceImpl implements IntegrationGroupService {
     @Transactional(readOnly = true)
     public IntegrationGroup retrieveByIntegrationTypeId(Long integrationTypeId) {
         return integrationGroupRepository.findByTypeId(integrationTypeId)
-                                         .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_GROUP_NOT_FOUND_BY_INTEGRATION_TYPE, integrationTypeId)));
+                                         .orElseThrow(() -> new ResourceNotFoundException(String.format(ERR_MSG_INTEGRATION_GROUP_NOT_FOUND_BY_INTEGRATION_TYPE, integrationTypeId)));
     }
 
     @Override
     @Transactional(readOnly = true)
     public IntegrationGroup retrieveByName(String name) {
         return integrationGroupRepository.findByName(name)
-                                         .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_GROUP_NOT_FOUND_BY_NAME, name)));
+                                         .orElseThrow(() -> new ResourceNotFoundException(String.format(ERR_MSG_INTEGRATION_GROUP_NOT_FOUND_BY_NAME, name)));
     }
 }

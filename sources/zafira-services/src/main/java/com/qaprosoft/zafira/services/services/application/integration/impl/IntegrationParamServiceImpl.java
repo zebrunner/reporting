@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.services.services.application.integration.impl;
 
 import com.qaprosoft.zafira.dbaccess.persistence.IntegrationParamRepository;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationParam;
-import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationParamService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +37,7 @@ public class IntegrationParamServiceImpl implements IntegrationParamService {
     @Transactional(readOnly = true)
     public IntegrationParam retrieveById(Long id) {
         return integrationParamRepository.findById(id)
-                                         .orElseThrow(() -> new EntityNotExistsException(String.format(ERR_MSG_INTEGRATION_PARAM_NOT_FOUND, id)));
+                                         .orElseThrow(() -> new ResourceNotFoundException(String.format(ERR_MSG_INTEGRATION_PARAM_NOT_FOUND, id)));
     }
 
 }
