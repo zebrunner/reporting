@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import com.qaprosoft.zafira.services.exceptions.UnhealthyStateException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -42,13 +41,9 @@ public class StatusAPIController extends AbstractController {
     @ApiOperation(value = "Get service status", nickname = "status", httpMethod = "GET", response = String.class)
     @GetMapping()
     public String getStatus() {
-        try {
-            final String version = settingsService.getPostgresVersion();
-            if (StringUtils.isEmpty(version)) {
-                throw new RuntimeException("Unable to retrieve Postgres version");
-            }
-        } catch (Exception e) {
-            throw new UnhealthyStateException("Service has no DB connection");
+        String version = settingsService.getPostgresVersion();
+        if (StringUtils.isEmpty(version)) {
+            throw new RuntimeException("Unable to retrieve Postgres version");
         }
         return "Service is up and running";
     }
