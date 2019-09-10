@@ -155,7 +155,7 @@ public class IntegrationServiceImpl implements IntegrationService {
         return integrations.stream()
                            .map(integration -> {
                                boolean enabledAndConnected = integration.isEnabled() && integrationService.isEnabledAndConnected(integration.getId());
-                               return new IntegrationInfo(integration.getId(), integration.getBackReferenceId(), enabledAndConnected, integration.isEnabled());
+                               return new IntegrationInfo(integration.getId(), integration.getBackReferenceId(), integration.isDefault(), enabledAndConnected, integration.isEnabled());
                            })
                            .collect(Collectors.toList());
     }

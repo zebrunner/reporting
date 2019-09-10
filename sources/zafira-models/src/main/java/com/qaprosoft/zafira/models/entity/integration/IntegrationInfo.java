@@ -24,6 +24,7 @@ public class IntegrationInfo {
 
     private final Long integrationId;
     private final String integrationBackReferenceId;
+    private final boolean isDefault;
     private final boolean connected;
     private final boolean enabled;
 }
