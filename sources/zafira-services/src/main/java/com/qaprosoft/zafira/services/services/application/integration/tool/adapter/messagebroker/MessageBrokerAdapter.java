@@ -19,5 +19,4 @@ import com.qaprosoft.zafira.services.services.application.integration.tool.adapt
 
 public interface MessageBrokerAdapter extends IntegrationGroupAdapter {
 
-    String getSettingQueueName();
 }

@@ -25,11 +25,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.List;
 import java.util.Optional;
@@ -65,7 +65,7 @@ public class Integration {
     private boolean isDefault;
     private boolean enabled;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "integration_type_id")
     private IntegrationType type;
 

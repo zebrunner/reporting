@@ -72,13 +72,15 @@ public class IntegrationServiceImpl implements IntegrationService {
     @Transactional(rollbackFor = Exception.class)
     public Integration create(Integration integration, Long integrationTypeId) {
         unassignCurrentDefaultIntegrationIfNeed(integration, integrationTypeId);
-        integration.setEnabled(true);
         IntegrationType integrationType = integrationTypeService.retrieveById(integrationTypeId);
-        verifyIntegration(integrationType);
-        integration.setType(integrationType);
         String backReferenceId = generateBackReferenceId(integrationTypeId);
+        verifyIntegration(integrationType);
+        integration.setId(null);
+        integration.setEnabled(true);
+        integration.setType(integrationType);
         integration.setBackReferenceId(backReferenceId);
-        integrationRepository.save(integration);
+        integration = integrationRepository.save(integration);
+        // TODO: 9/10/19 notify new tool
         return integration;
     }
 

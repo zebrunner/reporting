@@ -19,18 +19,22 @@ import com.qaprosoft.zafira.services.services.application.integration.Integratio
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.messagebroker.MessageBrokerAdapter;
 import com.qaprosoft.zafira.services.services.application.integration.tool.proxy.MessageBrokerProxy;
+import org.springframework.amqp.core.Queue;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 @Component
 public class MessageBrokerService extends AbstractIntegrationService<MessageBrokerAdapter> {
 
-    public MessageBrokerService(IntegrationService integrationService, MessageBrokerProxy messageBrokerProxy) {
+    private final Map<String, Queue> queues;
+
+    public MessageBrokerService(IntegrationService integrationService, MessageBrokerProxy messageBrokerProxy, Map<String, Queue> queues) {
         super(integrationService, messageBrokerProxy, "RABBITMQ");
+        this.queues = queues;
     }
 
     public String getSettingQueueName() {
-        MessageBrokerAdapter adapter = getAdapterByIntegrationId(null);
-        return adapter.getSettingQueueName();
+        return queues.get("settingsQueue").getName();
     }
-
 }

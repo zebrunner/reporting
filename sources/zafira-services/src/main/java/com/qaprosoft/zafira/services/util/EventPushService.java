@@ -76,7 +76,6 @@ public class EventPushService<T extends EventMessage> {
         }
     }
 
-
     private MessagePostProcessor setSupplierQueueNameHeader() {
         return message -> {
             message.getMessageProperties().getHeaders().putIfAbsent(SUPPLIER_QUEUE_NAME_HEADER, messageBrokerService.getSettingQueueName());

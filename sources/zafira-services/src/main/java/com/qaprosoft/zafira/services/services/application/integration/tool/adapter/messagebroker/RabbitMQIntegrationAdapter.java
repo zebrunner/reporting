@@ -18,21 +18,16 @@ package com.qaprosoft.zafira.services.services.application.integration.tool.adap
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.AbstractIntegrationAdapter;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.AdapterParam;
-import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.amqp.rabbit.connection.ConnectionListener;
 
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class RabbitMQIntegrationAdapter extends AbstractIntegrationAdapter implements MessageBrokerAdapter {
-
-    private static final String SETTINGS_QUEUE_NAME = "settingsQueue";
-    private final Map<String, Queue> queues;
 
     private final String host;
     private final int port;
@@ -43,10 +38,8 @@ public class RabbitMQIntegrationAdapter extends AbstractIntegrationAdapter imple
     private Connection connection;
     private CompletableFuture<Connection> connectionCompletableFuture;
 
-    public RabbitMQIntegrationAdapter(Integration integration, Map<String, Object> additionalProperties) {
+    public RabbitMQIntegrationAdapter(Integration integration) {
         super(integration);
-
-        this.queues = (Map<String, Queue>) additionalProperties.get("queues");
 
         this.host = getAttributeValue(integration, RabbitMQParam.RABBITMQ_HOST);
         this.port = Integer.parseInt(getAttributeValue(integration, RabbitMQParam.RABBITMQ_PORT));
@@ -122,15 +115,6 @@ public class RabbitMQIntegrationAdapter extends AbstractIntegrationAdapter imple
         } catch (Exception e) {
             return false;
         }
-    }
-
-    @Override
-    public String getSettingQueueName() {
-        return getQueueById(SETTINGS_QUEUE_NAME).getName();
-    }
-
-    private Queue getQueueById(String id) {
-        return queues.get(id);
     }
 
     public String getHost() {
