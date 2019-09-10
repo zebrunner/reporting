@@ -97,7 +97,8 @@ public abstract class IntegrationAdapterProxy {
 
     public static synchronized Optional<IntegrationAdapter> getAdapter(Long integrationId) {
         Map<Long, IntegrationAdapter> adapters = TENANT_ADAPTERS.get(TenancyContext.getTenantName());
-        return Optional.ofNullable(adapters.get(integrationId));
+        IntegrationAdapter adapter = adapters != null ? adapters.get(integrationId) : null;
+        return Optional.ofNullable(adapter);
     }
 
     public synchronized Optional<IntegrationAdapter> getDefaultAdapter(String type) {

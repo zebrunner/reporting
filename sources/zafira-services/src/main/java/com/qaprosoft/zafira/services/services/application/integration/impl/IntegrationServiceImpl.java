@@ -17,6 +17,7 @@ package com.qaprosoft.zafira.services.services.application.integration.impl;
 
 import com.qaprosoft.zafira.dbaccess.persistence.IntegrationRepository;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationInfo;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationGroup;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationType;
@@ -27,12 +28,16 @@ import com.qaprosoft.zafira.services.services.application.integration.Integratio
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationTypeService;
 import com.qaprosoft.zafira.services.services.application.integration.core.IntegrationInitializer;
+import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.services.util.EventPushService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.AbstractMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class IntegrationServiceImpl implements IntegrationService {
@@ -133,6 +138,26 @@ public class IntegrationServiceImpl implements IntegrationService {
     @Transactional(readOnly = true)
     public List<Integration> retrieveByIntegrationsTypeName(String integrationTypeName) {
         return integrationRepository.findIntegrationsByTypeName(integrationTypeName);
+    }
+
+    @Override
+    public Map<String, List<IntegrationInfo>> retrieveInfo() {
+        List<IntegrationGroup> integrationGroups = integrationGroupService.retrieveAll();
+        return integrationGroups.stream().map(integrationGroup -> {
+            List<Integration> integrations = retrieveIntegrationsByGroupId(integrationGroup.getId());
+            List<IntegrationInfo> integrationConnections = buildInfo(integrationGroup.getName(), integrations);
+            return new AbstractMap.SimpleEntry<>(integrationGroup.getName(), integrationConnections);
+        }).collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+    }
+
+    private List<IntegrationInfo> buildInfo(String groupName, List<Integration> integrations) {
+        AbstractIntegrationService integrationService = integrationInitializer.getIntegrationServices().get(groupName);
+        return integrations.stream()
+                           .map(integration -> {
+                               boolean enabledAndConnected = integration.isEnabled() && integrationService.isEnabledAndConnected(integration.getId());
+                               return new IntegrationInfo(integration.getId(), integration.getBackReferenceId(), enabledAndConnected, integration.isEnabled());
+                           })
+                           .collect(Collectors.toList());
     }
 
     @Override

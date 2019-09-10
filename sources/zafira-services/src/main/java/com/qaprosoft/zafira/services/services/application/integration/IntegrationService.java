@@ -15,9 +15,11 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration;
 
+import com.qaprosoft.zafira.models.entity.integration.IntegrationInfo;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IntegrationService {
 
@@ -40,6 +42,8 @@ public interface IntegrationService {
     List<Integration> retrieveByIntegrationGroupName(String integrationGroupName);
 
     List<Integration> retrieveByIntegrationsTypeName(String integrationTypeName);
+
+    Map<String, List<IntegrationInfo>> retrieveInfo();
 
     Integration update(Integration integration);
 

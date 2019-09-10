@@ -41,7 +41,7 @@ public abstract class AbstractIntegrationService<T extends IntegrationGroupAdapt
         IntegrationAdapter adapter = (IntegrationAdapter) getAdapterByIntegrationId(integrationId);
 
         // we now need proper integration id since it can be null prior to this point, but never for adapter
-        Integration integration = integrationService.retrieveById(adapter.getIntegrationId());
+        Integration integration = integrationService.retrieveById(integrationId);
 
         return integration.isEnabled() && adapter.isConnected();
     }
@@ -63,5 +63,9 @@ public abstract class AbstractIntegrationService<T extends IntegrationGroupAdapt
     public T getAdapterByBackReferenceId(String backReferenceId) {
         return (T) integrationAdapterProxy.getAdapter(backReferenceId)
                                           .orElseThrow(() -> new UnsupportedOperationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND, defaultType)));
+    }
+
+    public IntegrationAdapterProxy getIntegrationAdapterProxy() {
+        return integrationAdapterProxy;
     }
 }
