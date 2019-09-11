@@ -35,7 +35,7 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString(exclude = {"integration"})
+//@ToString(exclude = {"integration"})
 @Entity
 @NamedEntityGraph(name = "integrationSetting.expanded", attributeNodes = {
         @NamedAttributeNode("param")

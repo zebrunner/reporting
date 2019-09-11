@@ -41,7 +41,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
+//@ToString
 @NamedEntityGraph(name = "integrationType.expanded", attributeNodes = {
     @NamedAttributeNode("params")
 })

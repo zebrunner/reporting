@@ -28,9 +28,12 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.persistence.EntityManagerFactory;
 import java.beans.PropertyVetoException;
 import java.util.HashMap;
 import java.util.Map;
@@ -74,11 +77,11 @@ public class PersistenceConfig {
         return dataSource;
     }
 
-    @Bean
+    /*@Bean
     @Primary
     public DataSourceTransactionManager transactionManager(TenancyDataSourceWrapper tenancyAppDSWrapper) {
         return new DataSourceTransactionManager(tenancyAppDSWrapper.getDataSource());
-    }
+    }*/
 
     @Bean
     public DataSourceTransactionManager managementTransactionManager(TenancyDataSourceWrapper tenancyMngDSWrapper) {
@@ -157,6 +160,15 @@ public class PersistenceConfig {
         entityManagerFactoryBean.setJpaProperties(jpaProperties());
 
         return entityManagerFactoryBean;
+    }
+
+    @Bean
+    @Primary
+    public PlatformTransactionManager transactionManager(LocalContainerEntityManagerFactoryBean entityManagerFactory, TenancyDataSourceWrapper tenancyAppDSWrapper) {
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setDataSource(tenancyAppDSWrapper.getDataSource());
+        transactionManager.setEntityManagerFactory(entityManagerFactory.getObject());
+        return transactionManager;
     }
 
     private Properties jpaProperties() {

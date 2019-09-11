@@ -143,23 +143,24 @@ public class IntegrationServiceImpl implements IntegrationService {
     }
 
     @Override
-    public Map<String, List<IntegrationInfo>> retrieveInfo() {
+    public Map<String, Map<String, List<IntegrationInfo>>> retrieveInfo() {
         List<IntegrationGroup> integrationGroups = integrationGroupService.retrieveAll();
         return integrationGroups.stream().map(integrationGroup -> {
-            List<Integration> integrations = retrieveIntegrationsByGroupId(integrationGroup.getId());
-            List<IntegrationInfo> integrationConnections = buildInfo(integrationGroup.getName(), integrations);
-            return new AbstractMap.SimpleEntry<>(integrationGroup.getName(), integrationConnections);
+            Map<String, List<IntegrationInfo>> integrationInfos = integrationGroup.getTypes().stream().map(integrationType -> {
+                List<Integration> integrations = retrieveIntegrationsByTypeId(integrationType.getId());
+                List<IntegrationInfo> integrationConnections = buildInfo(integrationGroup.getName(), integrations);
+                return new AbstractMap.SimpleEntry<>(integrationType.getName(), integrationConnections);
+            }).collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            return new AbstractMap.SimpleEntry<>(integrationGroup.getName(), integrationInfos);
         }).collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
     }
 
     private List<IntegrationInfo> buildInfo(String groupName, List<Integration> integrations) {
         AbstractIntegrationService integrationService = integrationInitializer.getIntegrationServices().get(groupName);
-        return integrations.stream()
-                           .map(integration -> {
-                               boolean enabledAndConnected = integration.isEnabled() && integrationService.isEnabledAndConnected(integration.getId());
-                               return new IntegrationInfo(integration.getId(), integration.getBackReferenceId(), integration.isDefault(), enabledAndConnected, integration.isEnabled());
-                           })
-                           .collect(Collectors.toList());
+        return integrations.stream().map(integration -> {
+            boolean enabledAndConnected = integration.isEnabled() && integrationService.isEnabledAndConnected(integration.getId());
+            return new IntegrationInfo(integration.getId(), integration.getBackReferenceId(), integration.isDefault(), enabledAndConnected, integration.isEnabled());
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -168,7 +169,7 @@ public class IntegrationServiceImpl implements IntegrationService {
         unassignCurrentDefaultIntegrationIfNeed(integration, null);
         IntegrationType integrationType = integrationTypeService.retrieveById(integration.getId());
         verifyIntegration(integrationType);
-        integrationRepository.save(integration);
+        integration = integrationRepository.save(integration);
         notifyToolReinitiated(integration);
         return integration;
     }

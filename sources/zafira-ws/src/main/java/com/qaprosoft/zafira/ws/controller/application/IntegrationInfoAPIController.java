@@ -48,7 +48,7 @@ public class IntegrationInfoAPIController extends AbstractController {
     @ApiOperation(value = "Get integration connections info", nickname = "getIntegrationsInfo", httpMethod = "GET", response = Map.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping()
-    public Map<String, List<IntegrationInfo>> getIntegrationsInfo() {
+    public Map<String, Map<String, List<IntegrationInfo>>> getIntegrationsInfo() {
         return integrationService.retrieveInfo();
     }
 }

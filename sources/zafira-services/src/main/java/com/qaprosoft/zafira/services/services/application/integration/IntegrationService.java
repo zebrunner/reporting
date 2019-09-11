@@ -43,7 +43,7 @@ public interface IntegrationService {
 
     List<Integration> retrieveByIntegrationsTypeName(String integrationTypeName);
 
-    Map<String, List<IntegrationInfo>> retrieveInfo();
+    Map<String, Map<String, List<IntegrationInfo>>> retrieveInfo();
 
     Integration update(Integration integration);
 
