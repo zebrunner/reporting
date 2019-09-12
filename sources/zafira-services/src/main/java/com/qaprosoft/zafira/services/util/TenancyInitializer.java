@@ -22,6 +22,7 @@ import com.qaprosoft.zafira.models.push.events.EmailEventMessage;
 import com.qaprosoft.zafira.models.push.events.EventMessage;
 import com.qaprosoft.zafira.models.push.events.TenancyResponseEventMessage;
 import com.qaprosoft.zafira.services.services.application.InvitationService;
+import com.qaprosoft.zafira.services.services.application.scm.ScmAccountService;
 import com.qaprosoft.zafira.services.services.management.TenancyService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -53,6 +54,9 @@ public class TenancyInitializer {
 
     @Autowired
     private InvitationService invitationService;
+
+    @Autowired
+    private ScmAccountService scmAccountService;
 
     @Autowired
     private EventPushService<EventMessage> eventPushService;
@@ -93,6 +97,9 @@ public class TenancyInitializer {
             try {
                 LOGGER.info("Tenancy with name '" + tenancy + "' DB initialization is starting....");
                 tenancyDbInitials.forEach(tenancyInitial -> initTenancyDb(tenancy, tenancyInitial));
+
+                processMessage(tenancy, () -> scmAccountService.reencryptTokens());
+
                 success = eventPushService.convertAndSend(TENANCIES, new EventMessage(tenancy));
                 result.setSuccess(success);
                 processMessage(tenancy, () -> {

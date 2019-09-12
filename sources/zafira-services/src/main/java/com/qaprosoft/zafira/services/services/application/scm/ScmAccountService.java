@@ -15,16 +15,15 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.scm;
 
-import java.util.List;
-
-import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.ScmAccountMapper;
 import com.qaprosoft.zafira.models.db.ScmAccount;
 import com.qaprosoft.zafira.models.dto.scm.Repository;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
+import com.qaprosoft.zafira.services.services.application.integration.impl.CryptoService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class ScmAccountService {
@@ -86,6 +85,16 @@ public class ScmAccountService {
             throw new ForbiddenOperationException("Unable to retrieve scm account default branch name");
         }
         return repository.getDefaultBranch();
+    }
+
+    public void reencryptTokens() {
+        List<ScmAccount> scmAccounts = getAllScmAccounts();
+        scmAccounts.forEach(scmAccount -> {
+            String token = scmAccount.getAccessToken();
+            String encryptedToken = cryptoService.encrypt(token);
+            scmAccount.setAccessToken(encryptedToken);
+            updateScmAccount(scmAccount);
+        });
     }
 
 }
