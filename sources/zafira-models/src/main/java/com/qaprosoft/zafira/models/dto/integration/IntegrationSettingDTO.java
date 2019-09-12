@@ -16,7 +16,6 @@
 package com.qaprosoft.zafira.models.dto.integration;
 
 import com.qaprosoft.zafira.models.dto.AbstractType;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -29,7 +28,7 @@ public class IntegrationSettingDTO extends AbstractType {
     private boolean encrypted;
 
     @Valid
-    @NotEmpty(message = "Integration params required")
+    @NotNull(message = "Integration params required")
     private IntegrationParamDTO param;
 
     public String getValue() {

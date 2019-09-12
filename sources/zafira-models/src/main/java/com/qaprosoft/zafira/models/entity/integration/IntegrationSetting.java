@@ -57,7 +57,7 @@ public class IntegrationSetting {
 
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name="integration_id")
-    Integration integration;
+    private Integration integration;
 
     @Override
     public int hashCode() {
@@ -69,7 +69,7 @@ public class IntegrationSetting {
         boolean equals = false;
         if (obj instanceof IntegrationSetting) {
             IntegrationSetting integrationSetting = (IntegrationSetting) obj;
-            if (integrationSetting.getId() != null && getId() != null) {
+            if (integrationSetting.getId() != null && getId() != null && integrationSetting.getId() != 0 && getId() != 0) {
                 equals = hashCode() == integrationSetting.hashCode();
             } else if (param != null && integrationSetting.getParam() != null) {
                 equals = param.equals(integrationSetting.getParam());

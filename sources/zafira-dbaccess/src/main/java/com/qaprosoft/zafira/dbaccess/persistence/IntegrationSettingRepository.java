@@ -17,13 +17,15 @@ package com.qaprosoft.zafira.dbaccess.persistence;
 
 import com.qaprosoft.zafira.models.entity.integration.IntegrationSetting;
 import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.repository.Repository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 
 
-public interface IntegrationSettingRepository extends Repository<IntegrationSetting, Long> {
+public interface IntegrationSettingRepository extends CrudRepository<IntegrationSetting, Long> {
 
     @EntityGraph(value = "integrationSetting.expanded")
     Optional<IntegrationSetting> findById(Long id);
@@ -36,6 +38,10 @@ public interface IntegrationSettingRepository extends Repository<IntegrationSett
 
     @EntityGraph(value = "integrationSetting.expanded")
     List<IntegrationSetting> findAll();
+
+    @EntityGraph(value = "integrationSetting.expanded")
+    @Query("select ist from IntegrationSetting ist join ist.integration i join i.type it where it.id = :integrationTypeId")
+    List<IntegrationSetting> findAllByIntegrationTypeId(@Param("integrationTypeId") Long integrationTypeId);
 
     @EntityGraph(value = "integrationSetting.expanded")
     List<IntegrationSetting> findAllByEncryptedTrue();

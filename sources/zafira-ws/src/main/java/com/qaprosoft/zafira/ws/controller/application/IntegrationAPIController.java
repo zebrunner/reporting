@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,9 +68,10 @@ public class IntegrationAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_INTEGRATIONS')")
     @PostMapping()
-    public IntegrationDTO create(@RequestBody IntegrationDTO integrationDTO, @RequestParam("integrationTypeId") Long integrationTypeId) {
+    public IntegrationDTO create(@RequestBody @Valid IntegrationDTO integrationDTO, @RequestParam("integrationTypeId") Long integrationTypeId) {
         Integration integration = mapper.map(integrationDTO, Integration.class);
-        return mapper.map(integrationService.create(integration, integrationTypeId), IntegrationDTO.class);
+        integration = integrationService.create(integration, integrationTypeId);
+        return mapper.map(integration, IntegrationDTO.class);
     }
 
     @ResponseStatusDetails

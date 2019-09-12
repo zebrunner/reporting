@@ -20,12 +20,14 @@ import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationInfo;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationGroup;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationSetting;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationType;
 import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
 import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationSettingService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationTypeService;
 import com.qaprosoft.zafira.services.services.application.integration.core.IntegrationInitializer;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
@@ -51,6 +53,7 @@ public class IntegrationServiceImpl implements IntegrationService {
     private final IntegrationRepository integrationRepository;
     private final IntegrationGroupService integrationGroupService;
     private final IntegrationTypeService integrationTypeService;
+    private final IntegrationSettingService integrationSettingService;
     private final EventPushService<ReinitEventMessage> eventPushService;
     private final IntegrationInitializer integrationInitializer;
 
@@ -58,29 +61,39 @@ public class IntegrationServiceImpl implements IntegrationService {
             IntegrationRepository integrationRepository,
             IntegrationGroupService integrationGroupService,
             IntegrationTypeService integrationTypeService,
+            IntegrationSettingService integrationSettingService,
             EventPushService<ReinitEventMessage> eventPushService,
             IntegrationInitializer integrationInitializer
     ) {
         this.integrationRepository = integrationRepository;
         this.integrationGroupService = integrationGroupService;
         this.integrationTypeService = integrationTypeService;
+        this.integrationSettingService = integrationSettingService;
         this.eventPushService = eventPushService;
         this.integrationInitializer = integrationInitializer;
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Integration create(Integration integration, Long integrationTypeId) {
-        unassignCurrentDefaultIntegrationIfNeed(integration, integrationTypeId);
-        IntegrationType integrationType = integrationTypeService.retrieveById(integrationTypeId);
-        String backReferenceId = generateBackReferenceId(integrationTypeId);
-        verifyIntegration(integrationType);
+    @Transactional()
+    public Integration create(Integration integration, Long typeId) {
+        IntegrationType type = integrationTypeService.retrieveById(typeId);
+        verifyMultipleAllowedForType(type);
+        unassignIfDefault(integration, typeId);
+        String backReferenceId = generateBackReferenceId(typeId);
         integration.setId(null);
+        // TODO: 9/11/19 check with PO if we can persist integration without enabling it / connecting to it
         integration.setEnabled(true);
-        integration.setType(integrationType);
+        integration.setType(type);
         integration.setBackReferenceId(backReferenceId);
         integration = integrationRepository.save(integration);
-        // TODO: 9/10/19 notify new tool
+
+        for (IntegrationSetting setting : integration.getSettings()) {
+            setting.setIntegration(integration);
+        }
+        List<IntegrationSetting> integrationSettings = integrationSettingService.batchCreate(integration.getSettings(), typeId);
+        integration.setSettings(integrationSettings);
+
+        notifyToolReinitiated(integration);
         return integration;
     }
 
@@ -156,19 +169,28 @@ public class IntegrationServiceImpl implements IntegrationService {
     }
 
     private List<IntegrationInfo> buildInfo(String groupName, List<Integration> integrations) {
+        return integrations.stream()
+                           .map(integration -> collectRuntimeIntegrationInfo(groupName, integration))
+                           .collect(Collectors.toList());
+    }
+
+    private IntegrationInfo collectRuntimeIntegrationInfo(String groupName, Integration integration) {
         AbstractIntegrationService integrationService = integrationInitializer.getIntegrationServices().get(groupName);
-        return integrations.stream().map(integration -> {
-            boolean enabledAndConnected = integration.isEnabled() && integrationService.isEnabledAndConnected(integration.getId());
-            return new IntegrationInfo(integration.getId(), integration.getBackReferenceId(), integration.isDefault(), enabledAndConnected, integration.isEnabled());
-        }).collect(Collectors.toList());
+        boolean enabled = integration.isEnabled();
+        boolean connected = false;
+        if (enabled) {
+            connected = integrationService.isEnabledAndConnected(integration.getId());
+        }
+        // TODO: 9/11/19 switch connected and enabled places to avoid confusion
+        return new IntegrationInfo(integration.getId(), integration.getBackReferenceId(), integration.isDefault(), connected, enabled);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integration update(Integration integration) {
-        unassignCurrentDefaultIntegrationIfNeed(integration, null);
         IntegrationType integrationType = integrationTypeService.retrieveById(integration.getId());
-        verifyIntegration(integrationType);
+        verifyMultipleAllowedForType(integrationType);
+        unassignIfDefault(integration, null);
         integration = integrationRepository.save(integration);
         notifyToolReinitiated(integration);
         return integration;
@@ -179,23 +201,24 @@ public class IntegrationServiceImpl implements IntegrationService {
         return integrationType.getName() + "_" + UUID.randomUUID().toString();
     }
 
-    private void unassignCurrentDefaultIntegrationIfNeed(Integration integration, Long integrationTypeId) {
+    private void unassignIfDefault(Integration integration, Long integrationTypeId) {
         if (integration.isDefault()) {
-            if (integrationTypeId == null) {
+            if (integrationTypeId == null) { // can be null on update
                 IntegrationType integrationType = integrationTypeService.retrieveById(integration.getId());
                 integrationTypeId = integrationType.getId();
             }
             Integration defaultIntegration = retrieveDefaultByIntegrationTypeId(integrationTypeId);
             defaultIntegration.setDefault(false);
-            update(defaultIntegration);
+            integrationRepository.saveAndFlush(defaultIntegration);
         }
     }
 
-    private void verifyIntegration(IntegrationType integrationType) {
+    private void verifyMultipleAllowedForType(IntegrationType integrationType) {
         IntegrationGroup integrationGroup = integrationGroupService.retrieveByIntegrationTypeId(integrationType.getId());
         if (!integrationGroup.isMultipleAllowed()) {
+            // TODO: 9/11/19 switch to count by type
             List<Integration> integrations = retrieveIntegrationsByTypeId(integrationType.getId());
-            if (integrations.size() != 0) {
+            if (!integrations.isEmpty()) {
                 throw new IllegalOperationException(String.format(ERR_MSG_NOT_MULTIPLE_ALLOWED_INTEGRATION, integrationType.getName()));
             }
         }

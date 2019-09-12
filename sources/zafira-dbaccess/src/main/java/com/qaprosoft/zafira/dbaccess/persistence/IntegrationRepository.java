@@ -17,6 +17,7 @@ package com.qaprosoft.zafira.dbaccess.persistence;
 
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.Repository;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface IntegrationRepository extends CrudRepository<Integration, Long> {
+public interface IntegrationRepository extends JpaRepository<Integration, Long> {
 
 //    Integration save(Integration integration);
 

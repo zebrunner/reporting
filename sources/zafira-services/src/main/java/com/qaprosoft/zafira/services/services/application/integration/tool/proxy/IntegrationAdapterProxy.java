@@ -112,6 +112,7 @@ public abstract class IntegrationAdapterProxy {
         integrationTypes.forEach(integrationType -> initializeByType(integrationType.getName(), integrationService.retrieveIntegrationsByTypeId(integrationType.getId())));
     }
 
+    // TODO: 9/12/19 discuss about possibility to create empty integrations
     public void initializeByType(String integrationTypeName, List<Integration> integrations) {
         // collect all enabled integrations first
         List<Integration> enabledIntegrations = integrations.stream()
@@ -125,13 +126,13 @@ public abstract class IntegrationAdapterProxy {
 
 
         // if not all enabled integrations are properly configured - fail startup, otherwise initialize adapters
-        if (enabledIntegrations.size() != validIntegrationsCount) {
+        /*if (enabledIntegrations.size() != validIntegrationsCount) {
             //todo add code and message
             throw new IntegrationException();
-        } else {
+        } else {*/
             Class<? extends IntegrationAdapter> adapterClass = adapterClasses.get(integrationTypeName);
             initializeAdapters(adapterClass, enabledIntegrations);
-        }
+        //}
     }
 
     private void initializeAdapters(Class<? extends IntegrationAdapter> adapterClass, List<Integration> enabledIntegrations) {

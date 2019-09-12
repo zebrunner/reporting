@@ -22,6 +22,8 @@ import java.util.List;
 
 public interface IntegrationSettingService {
 
+    List<IntegrationSetting> batchCreate(List<IntegrationSetting> integrationSettings, Long typeId);
+
     IntegrationSetting retrieveById(Long id);
 
     IntegrationSetting retrieveByIntegrationIdAndParamName(Long integrationId, String paramName);
@@ -29,6 +31,8 @@ public interface IntegrationSettingService {
     IntegrationSetting retrieveByIntegrationTypeNameAndParamName(String integrationTypeName, String paramName);
 
     List<IntegrationSetting> retrieveAllEncrypted();
+
+    List<IntegrationSetting> retrieveByIntegrationTypeId(Long integrationTypeId);
 
     IntegrationSetting update(IntegrationSetting integrationSetting);
 
