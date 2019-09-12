@@ -75,6 +75,17 @@ public class IntegrationSettingServiceImpl implements IntegrationSettingService,
     }
 
     @Override
+    @Transactional()
+    public List<IntegrationSetting> batchUpdate(List<IntegrationSetting> integrationSettings, Long typeId) {
+        validateSettings(integrationSettings, typeId);
+        batchEncrypt(integrationSettings);
+        Iterable<IntegrationSetting> settingIterable = integrationSettingRepository.saveAll(integrationSettings);
+        integrationSettings = new ArrayList<>();
+        settingIterable.forEach(integrationSettings::add);
+        return integrationSettings;
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public IntegrationSetting retrieveById(Long id) {
         return integrationSettingRepository.findById(id)

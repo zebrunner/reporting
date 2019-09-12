@@ -188,11 +188,23 @@ public class IntegrationServiceImpl implements IntegrationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integration update(Integration integration) {
-        IntegrationType integrationType = integrationTypeService.retrieveById(integration.getId());
-        verifyMultipleAllowedForType(integrationType);
+        IntegrationType integrationType = integrationTypeService.retrieveByIntegrationId(integration.getId());
         unassignIfDefault(integration, null);
+
+        Integration dbIntegration = retrieveById(integration.getId());
+        integration.setBackReferenceId(dbIntegration.getBackReferenceId());
+        integration.setType(dbIntegration.getType());
+
+        for (IntegrationSetting setting : integration.getSettings()) {
+            setting.setIntegration(integration);
+        }
+        List<IntegrationSetting> integrationSettings = integrationSettingService.batchUpdate(integration.getSettings(), integrationType.getId());
+        integration.setSettings(integrationSettings);
+
         integration = integrationRepository.save(integration);
+
         notifyToolReinitiated(integration);
+
         return integration;
     }
 

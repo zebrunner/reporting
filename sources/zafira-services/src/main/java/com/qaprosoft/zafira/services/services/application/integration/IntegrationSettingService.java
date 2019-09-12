@@ -24,6 +24,8 @@ public interface IntegrationSettingService {
 
     List<IntegrationSetting> batchCreate(List<IntegrationSetting> integrationSettings, Long typeId);
 
+    List<IntegrationSetting> batchUpdate(List<IntegrationSetting> integrationSettings, Long typeId);
+
     IntegrationSetting retrieveById(Long id);
 
     IntegrationSetting retrieveByIntegrationIdAndParamName(Long integrationId, String paramName);
