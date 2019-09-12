@@ -216,7 +216,7 @@ public class IntegrationServiceImpl implements IntegrationService {
     private void unassignIfDefault(Integration integration, Long integrationTypeId) {
         if (integration.isDefault()) {
             if (integrationTypeId == null) { // can be null on update
-                IntegrationType integrationType = integrationTypeService.retrieveById(integration.getId());
+                IntegrationType integrationType = integrationTypeService.retrieveByIntegrationId(integration.getId());
                 integrationTypeId = integrationType.getId();
             }
             Integration defaultIntegration = retrieveDefaultByIntegrationTypeId(integrationTypeId);
