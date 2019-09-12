@@ -4,7 +4,7 @@ metadata:
   labels:
     app: zafira
   name: zafira
-  namespace: zafira
+  namespace: zebrunner
 spec:
   replicas: 2
   selector:
@@ -16,7 +16,7 @@ spec:
         app: zafira
     spec:
       nodeSelector:
-        app: zafira
+        app: zebrunner
       containers:
       - env:
         envFrom:
