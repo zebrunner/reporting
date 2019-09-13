@@ -26,7 +26,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -50,5 +52,13 @@ public class IntegrationInfoAPIController extends AbstractController {
     @GetMapping()
     public Map<String, Map<String, List<IntegrationInfo>>> getIntegrationsInfo() {
         return integrationService.retrieveInfo();
+    }
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Get integration connections info by id", nickname = "getIntegrationsInfoById", httpMethod = "GET", response = Map.class)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @GetMapping("/{id}")
+    public IntegrationInfo getIntegrationsInfoById(@PathVariable("id") Long integrationId, @RequestParam("groupName") String groupName) {
+        return integrationService.retrieveInfoById(groupName, integrationId);
     }
 }

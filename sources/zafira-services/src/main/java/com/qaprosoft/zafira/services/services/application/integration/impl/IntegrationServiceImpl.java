@@ -156,6 +156,7 @@ public class IntegrationServiceImpl implements IntegrationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Map<String, Map<String, List<IntegrationInfo>>> retrieveInfo() {
         List<IntegrationGroup> integrationGroups = integrationGroupService.retrieveAll();
         return integrationGroups.stream().map(integrationGroup -> {
@@ -166,6 +167,13 @@ public class IntegrationServiceImpl implements IntegrationService {
             }).collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
             return new AbstractMap.SimpleEntry<>(integrationGroup.getName(), integrationInfos);
         }).collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public IntegrationInfo retrieveInfoById(String groupName, Long id) {
+        Integration integration = retrieveById(id);
+        return collectRuntimeIntegrationInfo(groupName, integration);
     }
 
     private List<IntegrationInfo> buildInfo(String groupName, List<Integration> integrations) {

@@ -45,6 +45,8 @@ public interface IntegrationService {
 
     Map<String, Map<String, List<IntegrationInfo>>> retrieveInfo();
 
+    IntegrationInfo retrieveInfoById(String groupName, Long id);
+
     Integration update(Integration integration);
 
 }
