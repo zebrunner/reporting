@@ -16,6 +16,8 @@
 package com.qaprosoft.zafira.models.dto.integration;
 
 import com.qaprosoft.zafira.models.dto.AbstractType;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
@@ -23,6 +25,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
+@Getter
+@Setter
 public class IntegrationDTO extends AbstractType {
 
     @NotNull(message = "Name required")
@@ -36,43 +40,5 @@ public class IntegrationDTO extends AbstractType {
     @NotEmpty(message = "Integration settings required")
     private List<IntegrationSettingDTO> settings;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getBackReferenceId() {
-        return backReferenceId;
-    }
-
-    public void setBackReferenceId(String backReferenceId) {
-        this.backReferenceId = backReferenceId;
-    }
-
-    public boolean isDefault() {
-        return isDefault;
-    }
-
-    public void setDefault(boolean aDefault) {
-        isDefault = aDefault;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public List<IntegrationSettingDTO> getSettings() {
-        return settings;
-    }
-
-    public void setSettings(List<IntegrationSettingDTO> settings) {
-        this.settings = settings;
-    }
+    private IntegrationTypeDTO type;
 }

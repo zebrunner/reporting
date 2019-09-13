@@ -41,7 +41,7 @@ public interface IntegrationRepository extends JpaRepository<Integration, Long> 
     List<Integration> getIntegrationsByTypeId(Long typeId);
 
     @EntityGraph(value = "integration.expanded")
-    @Query("select i from Integration i join fetch i.settings s join fetch s.param join i.type t join t.group g where g.id = :groupId")
+    @Query("select i from Integration i join fetch i.settings s join fetch s.param join fetch i.type t join t.group g where g.id = :groupId")
     List<Integration> findByGroupId(@Param("groupId") Long groupId);
 
     @EntityGraph(value = "integration.expanded")

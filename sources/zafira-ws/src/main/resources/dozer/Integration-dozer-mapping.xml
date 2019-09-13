@@ -31,5 +31,9 @@
             <a>settings</a>
             <b>settings</b>
         </field>
+        <field>
+            <a>type</a>
+            <b>type</b>
+        </field>
     </mapping>
 </mappings>
