@@ -13,37 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.qaprosoft.zafira.models.dto;
+package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.validator.constraints.NotEmpty;
+import com.qaprosoft.zafira.models.db.LauncherPreset;
+import org.apache.ibatis.annotations.Param;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.List;
+public interface LauncherPresetMapper {
 
-@Getter
-@Setter
-public class LauncherType extends AbstractType {
+    void create(@Param("preset") LauncherPreset launcherPreset, @Param("launcherId") Long launcherId);
 
-    private static final long serialVersionUID = 7778329756348322538L;
+    LauncherPreset findById(Long id);
 
-    @NotEmpty(message = "{error.name.required}")
-    private String name;
+    LauncherPreset findByRef(String ref);
 
-    @NotEmpty(message = "{error.model.required}")
-    private String model;
+    boolean existsByNameAndLauncherId(@Param("name") String name, @Param("launcherId") Long launcherId);
 
-    @NotNull
-    @Valid
-    private ScmAccountType scmAccountType;
+    void update(LauncherPreset launcherPreset);
 
-    @Valid
-    private List<LauncherPresetDTO> presets;
-
-    private JobType job;
-    private boolean autoScan;
-
+    void deleteById(Long id);
 
 }

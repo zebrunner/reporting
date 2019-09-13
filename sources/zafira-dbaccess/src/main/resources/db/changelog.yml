@@ -1,12 +1,12 @@
-databaseChangeLog: []
-#  - changeSet:
-#      id: 001_first_changeset
-#      labels: sprint1
-#      author: nsidorevich
-#      changes:
-#        - sqlFile:
-#            encoding: utf8
-#            path: changeset/001_first_changeset.sql
-#            relativeToChangelogFile: true
-#            splitStatements: false
+databaseChangeLog:
+  - changeSet:
+      id: 001_create_launcher_snapshot_table
+      labels: sprint1
+      author: brutskov
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/001_create_launcher_snapshot_table.sql
+            relativeToChangelogFile: true
+            splitStatements: false
 

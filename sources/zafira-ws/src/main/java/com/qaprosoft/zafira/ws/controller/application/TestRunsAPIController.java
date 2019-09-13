@@ -38,6 +38,7 @@ import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.services.services.application.FilterService;
 import com.qaprosoft.zafira.services.services.application.JobsService;
+import com.qaprosoft.zafira.services.services.application.LauncherCallbackService;
 import com.qaprosoft.zafira.services.services.application.ProjectService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
 import com.qaprosoft.zafira.services.services.application.TestService;
@@ -125,6 +126,9 @@ public class TestRunsAPIController extends AbstractController {
     @Autowired
     private StatisticsService statisticsService;
 
+    @Autowired
+    private LauncherCallbackService launcherCallbackService;
+
     @ResponseStatusDetails
     @ApiOperation(value = "Start test run", nickname = "startTestRun", httpMethod = "POST", response = TestRunType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -168,6 +172,9 @@ public class TestRunsAPIController extends AbstractController {
     public TestRunType finishTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable("id") long id) {
         TestRun testRun = testRunService.calculateTestRunResult(id, true);
         TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
+
+        launcherCallbackService.notifyOnTestRunFinish(testRun.getCiRunId());
+
         websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(id)));
         websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunFull));
         return mapper.map(testRun, TestRunType.class);

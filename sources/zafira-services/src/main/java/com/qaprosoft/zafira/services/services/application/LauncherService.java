@@ -22,6 +22,9 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherMapper;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Launcher;
+import com.qaprosoft.zafira.models.db.LauncherCallback;
+import com.qaprosoft.zafira.models.db.LauncherPreset;
+import com.qaprosoft.zafira.models.db.LauncherWebHookPayload;
 import com.qaprosoft.zafira.models.db.ScmAccount;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.JenkinsLauncherType;
@@ -58,6 +61,8 @@ public class LauncherService {
     private static final String LAUNCHER_JOB_ROOT_URL_PATTERN = "%s/job/launcher";
 
     private final LauncherMapper launcherMapper;
+    private final LauncherPresetService launcherPresetService;
+    private final LauncherCallbackService launcherCallbackService;
     private final JenkinsService jenkinsService;
     private final ScmAccountService scmAccountService;
     private final JobsService jobsService;
@@ -69,6 +74,8 @@ public class LauncherService {
 
     public LauncherService(
             LauncherMapper launcherMapper,
+            LauncherPresetService launcherPresetService,
+            LauncherCallbackService launcherCallbackService,
             JenkinsService jenkinsService,
             ScmAccountService scmAccountService,
             JobsService jobsService,
@@ -80,6 +87,8 @@ public class LauncherService {
     ) {
         this.launcherMapper = launcherMapper;
         this.jenkinsService = jenkinsService;
+        this.launcherPresetService = launcherPresetService;
+        this.launcherCallbackService = launcherCallbackService;
         this.scmAccountService = scmAccountService;
         this.jobsService = jobsService;
         this.jwtService = jwtService;
@@ -224,6 +233,23 @@ public class LauncherService {
         jenkinsService.buildJob(job, jobParameters);
 
         return ciRunId;
+    }
+
+    @Transactional()
+    public String buildLauncherJobByPresetRef(Long id, String ref, LauncherWebHookPayload payload, User user) throws IOException {
+        Launcher launcher = getLauncherById(id);
+        if (launcher == null) {
+            throw new ResourceNotFoundException(String.format("Unable to locate launcher with id '%d'", id));
+        }
+
+        LauncherPreset preset = launcherPresetService.retrieveByRef(ref);
+        launcher.setModel(preset.getParams());
+        String ciRunId = buildLauncherJob(launcher, user);
+
+        LauncherCallback callback = new LauncherCallback(ciRunId, payload.getCallbackUrl(), preset);
+        launcherCallbackService.create(callback);
+
+        return callback.getRef();
     }
 
     @Transactional(readOnly = true)

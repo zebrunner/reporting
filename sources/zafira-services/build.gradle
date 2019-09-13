@@ -23,5 +23,6 @@ dependencies {
     compile libraries.jackson_databind
     compile libraries.jwt
     compile libraries.integration_clients
+    compile libraries.jackson_databind
 
 }
