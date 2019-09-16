@@ -186,7 +186,8 @@ public class LauncherService {
             if(StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
                 seleniumURL = String.format("%s//%s:%s@%s", seleniumURL.split("//")[0], username, password, seleniumURL.split("//")[1]);
             }
-            jobParameters.put("selenium_host", seleniumURL);
+//            jobParameters.put("selenium_host", seleniumURL);
+            jobParameters.put("selenium_url", seleniumURL);
         }
 
         jobParameters.put("zafira_enabled", "true");
