@@ -18,6 +18,7 @@ package com.qaprosoft.zafira.ws.controller.application;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.models.dto.integration.IntegrationDTO;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationInfo;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.StorageProviderService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.google.GoogleService;
@@ -71,7 +72,13 @@ public class IntegrationAPIController extends AbstractController {
     public IntegrationDTO create(@RequestBody @Valid IntegrationDTO integrationDTO, @RequestParam("integrationTypeId") Long integrationTypeId) {
         Integration integration = mapper.map(integrationDTO, Integration.class);
         integration = integrationService.create(integration, integrationTypeId);
-        return mapper.map(integration, IntegrationDTO.class);
+
+        IntegrationDTO integrationUpdateResultDTO =  mapper.map(integration, IntegrationDTO.class);
+
+        IntegrationInfo integrationInfo = integrationService.retrieveInfoByIntegration(integration);
+        integrationUpdateResultDTO.setConnected(integrationInfo.isConnected());
+
+        return integrationUpdateResultDTO;
     }
 
     @ResponseStatusDetails
@@ -118,7 +125,13 @@ public class IntegrationAPIController extends AbstractController {
     public IntegrationDTO update(@RequestBody IntegrationDTO integrationDTO, @PathVariable("id") Long id) {
         Integration integration = mapper.map(integrationDTO, Integration.class);
         integration.setId(id);
-        return mapper.map(integrationService.update(integration), IntegrationDTO.class);
+
+        IntegrationDTO integrationUpdateResultDTO =  mapper.map(integrationService.update(integration), IntegrationDTO.class);
+
+        IntegrationInfo integrationInfo = integrationService.retrieveInfoByIntegration(integration);
+        integrationUpdateResultDTO.setConnected(integrationInfo.isConnected());
+
+        return integrationUpdateResultDTO;
     }
 
 }

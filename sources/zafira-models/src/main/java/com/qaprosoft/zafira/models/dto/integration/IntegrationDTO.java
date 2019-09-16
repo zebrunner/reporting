@@ -35,6 +35,7 @@ public class IntegrationDTO extends AbstractType {
     private String backReferenceId;
     private boolean isDefault;
     private boolean enabled;
+    private boolean connected;
 
     @Valid
     @NotEmpty(message = "Integration settings required")

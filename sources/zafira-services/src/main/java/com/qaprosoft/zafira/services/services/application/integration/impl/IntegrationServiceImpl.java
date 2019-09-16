@@ -171,9 +171,16 @@ public class IntegrationServiceImpl implements IntegrationService {
 
     @Override
     @Transactional(readOnly = true)
-    public IntegrationInfo retrieveInfoById(String groupName, Long id) {
+    public IntegrationInfo retrieveInfoByIntegrationId(String groupName, Long id) {
         Integration integration = retrieveById(id);
         return collectRuntimeIntegrationInfo(groupName, integration);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public IntegrationInfo retrieveInfoByIntegration(Integration integration) {
+        IntegrationGroup integrationGroup = integrationGroupService.retrieveByIntegrationTypeId(integration.getType().getId());
+        return collectRuntimeIntegrationInfo(integrationGroup.getName(), integration);
     }
 
     private List<IntegrationInfo> buildInfo(String groupName, List<Integration> integrations) {
