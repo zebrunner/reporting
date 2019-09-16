@@ -18,10 +18,7 @@ package com.qaprosoft.zafira.ws.security.ldap;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
@@ -35,21 +32,14 @@ import java.util.Collection;
 @Component
 public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LDAPUserDetailsContextMapper.class);
-
     @Autowired
     private UserService userService;
 
     @Override
     public UserDetails mapUserFromContext(DirContextOperations operations, String username, Collection<? extends GrantedAuthority> authorities) {
-        User user = null;
-        try {
-            user = userService.getUserByUsername(username);
-            if (user == null) {
-                throw new ForbiddenOperationException();
-            }
-        } catch (ServiceException e) {
-            LOGGER.error(e.getMessage(), e);
+        User user = userService.getUserByUsername(username);
+        if (user == null) {
+            throw new ForbiddenOperationException();
         }
         return new JwtUserType(user.getId(), username, user.getPassword(), user.getGroups());
     }

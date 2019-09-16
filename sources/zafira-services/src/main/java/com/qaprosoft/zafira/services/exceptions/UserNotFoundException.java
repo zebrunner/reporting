@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public class UserNotFoundException extends ServiceException {
+public class UserNotFoundException extends ApplicationException {
     private static final long serialVersionUID = 201855553642859489L;
 
     public UserNotFoundException() {

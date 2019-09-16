@@ -34,9 +34,7 @@ import com.qaprosoft.zafira.models.dto.filter.FilterType;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.UnableToAbortCIJobException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.services.services.application.FilterService;
 import com.qaprosoft.zafira.services.services.application.JobsService;
@@ -87,6 +85,9 @@ import static com.qaprosoft.zafira.services.services.application.FilterService.T
 @RequestMapping(path = "api/tests/runs", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class TestRunsAPIController extends AbstractController {
+
+    private static final String ERR_MSG_TEST_RUN_NOT_FOUND = "No test run found by id %s";
+    private static final String ERR_MSG_TEST_RUN_NOT_FOUND_BY_CI_RUN_ID = "No test run found by CI run id %s";
 
     @Autowired
     private Mapper mapper;
@@ -148,7 +149,8 @@ public class TestRunsAPIController extends AbstractController {
     public TestRunType updateTestRun(@RequestBody TestRunType tr) {
         TestRun testRun = testRunService.getTestRunById(tr.getId());
         if (testRun == null && !StringUtils.isEmpty(tr.getConfigXML())) {
-            throw new ServiceException("Test run not found by id: " + tr.getId());
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new ResourceNotFoundException("Test run not found by id: " + tr.getId());
         }
         testRun.setConfigXML(tr.getConfigXML());
         testRunService.initTestRunWithXml(testRun);
@@ -183,7 +185,7 @@ public class TestRunsAPIController extends AbstractController {
     ) throws UnsupportedEncodingException {
         TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
         if (testRun == null) {
-            throw new TestRunNotFoundException("Test run not found for abort!");
+            throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
         }
         String abortCauseDecoded = null;
         if (abortCause != null && abortCause.getComment() != null) {
@@ -222,7 +224,7 @@ public class TestRunsAPIController extends AbstractController {
     public TestRunType getTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable("id") long id) {
         TestRun testRun = testRunService.getTestRunById(id);
         if (testRun == null) {
-            throw new TestRunNotFoundException();
+            throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
         }
         return mapper.map(testRun, TestRunType.class);
     }
@@ -274,7 +276,7 @@ public class TestRunsAPIController extends AbstractController {
     public TestRunType getTestRunByCiRunId(@RequestParam("ciRunId") String ciRunId) {
         TestRun testRun = testRunService.getTestRunByCiRunId(ciRunId);
         if (testRun == null) {
-            throw new TestRunNotFoundException();
+            throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_RUN_NOT_FOUND_BY_CI_RUN_ID, ciRunId));
         }
         return mapper.map(testRun, TestRunType.class);
     }
@@ -387,7 +389,7 @@ public class TestRunsAPIController extends AbstractController {
     ) {
         TestRun testRun = testRunService.getTestRunByIdFull(id);
         if (testRun == null) {
-            throw new TestRunNotFoundException();
+            throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
         }
         testRun.setComments(null);
         testRun.setReviewed(false);
@@ -405,7 +407,7 @@ public class TestRunsAPIController extends AbstractController {
     public void debugTestRun(@PathVariable("id") long id) {
         TestRun testRun = testRunService.getTestRunByIdFull(id);
         if (testRun == null) {
-            throw new TestRunNotFoundException();
+            throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
         }
 
         if (!jenkinsService.debug(testRun.getJob(), testRun.getBuildNumber())) {
@@ -424,13 +426,10 @@ public class TestRunsAPIController extends AbstractController {
     ) {
         TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id) : testRunService.getTestRunByCiRunIdFull(ciRunId);
         if (testRun == null) {
-            throw new TestRunNotFoundException();
+            throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
         }
 
-        JobResult jobResult = jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber());
-        if (!jobResult.isSuccess()) {
-            throw new UnableToAbortCIJobException();
-        }
+        jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber());
     }
 
     @ResponseStatusDetails
@@ -445,7 +444,7 @@ public class TestRunsAPIController extends AbstractController {
     ) {
         TestRun testRun = testRunService.getTestRunByIdFull(id);
         if (testRun == null) {
-            throw new TestRunNotFoundException("Unable to find test run by id");
+            throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
         }
 
         boolean success;
@@ -469,7 +468,7 @@ public class TestRunsAPIController extends AbstractController {
     public List<BuildParameterType> getjobParameters(@PathVariable("id") long id) {
         TestRun testRun = testRunService.getTestRunByIdFull(id);
         if (testRun == null) {
-            throw new TestRunNotFoundException();
+            throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
         }
         return jenkinsService.getBuildParameters(testRun.getJob(), testRun.getBuildNumber());
     }
@@ -502,7 +501,7 @@ public class TestRunsAPIController extends AbstractController {
     ) {
         TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id) : testRunService.getTestRunByCiRunIdFull(ciRunId);
         if (testRun == null) {
-            throw new TestRunNotFoundException();
+            throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
         }
         return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
     }

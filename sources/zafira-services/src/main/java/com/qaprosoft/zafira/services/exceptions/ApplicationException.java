@@ -15,26 +15,26 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-import com.qaprosoft.zafira.services.util.LocaleContext;
+public abstract class ApplicationException extends RuntimeException {
 
-@SuppressWarnings("rawtypes")
-public class EntityNotExistsException extends ServiceException {
-
-    private static final long serialVersionUID = 419121635807145174L;
-
-    public EntityNotExistsException(Class entityClass, boolean showStacktrace) {
-        super(buildMessage(entityClass), null, showStacktrace);
+    public ApplicationException() {
+        super();
     }
 
-    public EntityNotExistsException(Throwable cause, boolean showStacktrace) {
-        super(null, cause, showStacktrace);
+    public ApplicationException(String message) {
+        super(message);
     }
 
-    public EntityNotExistsException(Class entityClass, Throwable cause, boolean showStacktrace) {
-        super(buildMessage(entityClass), cause, showStacktrace);
+    public ApplicationException(Throwable cause) {
+        super(cause);
     }
 
-    private static String buildMessage(Class entityClass) {
-        return String.format(LocaleContext.getMessage("error.message.entityNotExistsTemplate"), LocaleContext.getMessage(entityClass));
+    public ApplicationException(String message, Throwable cause) {
+        super(message, cause);
     }
+
+    public ApplicationException(String message, Throwable cause, boolean writableStackTrace) {
+        super(message, cause, false, writableStackTrace);
+    }
+
 }

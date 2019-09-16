@@ -2,7 +2,7 @@ package com.qaprosoft.zafira.services.util;
 
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
-import com.qaprosoft.zafira.services.exceptions.MalformedConfigXMLException;
+import com.qaprosoft.zafira.services.exceptions.ProcessingException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -29,7 +29,7 @@ public class XmlConfigurationUtil {
                 IOUtils.closeQuietly(xmlBA);
             }
         } catch (JAXBException e) {
-            throw new MalformedConfigXMLException(e.getMessage());
+            throw new ProcessingException("Error parsing XML document", e);
         }
         return configuration;
     }

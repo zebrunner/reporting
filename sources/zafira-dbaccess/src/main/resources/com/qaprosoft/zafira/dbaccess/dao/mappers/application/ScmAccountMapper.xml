@@ -70,7 +70,7 @@
             </if>
             <if test="null != accessToken">
                 <![CDATA[
-                    STATUS = #{status},
+                    ACCESS_TOKEN = #{accessToken},
 		        ]]>
             </if>
             <if test="null != apiVersion">

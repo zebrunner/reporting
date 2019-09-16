@@ -15,7 +15,7 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public class IntegrationException extends ServiceException {
+public class IntegrationException extends ApplicationException {
 
     private static final long serialVersionUID = -8438824073605204526L;
 

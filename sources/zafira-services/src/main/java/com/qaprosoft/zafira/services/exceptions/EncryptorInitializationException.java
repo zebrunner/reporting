@@ -18,7 +18,7 @@ package com.qaprosoft.zafira.services.exceptions;
 /**
  * Created by irina on 18.8.17.
  */
-public class EncryptorInitializationException extends ServiceException {
+public class EncryptorInitializationException extends ApplicationException {
     private static final long serialVersionUID = 1272617468905992114L;
 
     public EncryptorInitializationException() {

@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
-public class UnableToRebuildCIJobException extends ServiceException {
+public class UnableToRebuildCIJobException extends ApplicationException {
     private static final long serialVersionUID = 739932392670306969L;
 
     public UnableToRebuildCIJobException() {

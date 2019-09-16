@@ -15,12 +15,10 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.GroupMapper;
+import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.db.Group.Role;
+import com.qaprosoft.zafira.models.db.Permission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -29,11 +27,11 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.GroupMapper;
-import com.qaprosoft.zafira.models.db.Group;
-import com.qaprosoft.zafira.models.db.Group.Role;
-import com.qaprosoft.zafira.models.db.Permission;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class GroupService {
@@ -67,7 +65,8 @@ public class GroupService {
         dbGroup.getPermissions().forEach(permission -> {
             try {
                 deletePermissionFromGroup(group.getId(), permission.getId());
-            } catch (ServiceException e) {
+                // TODO by nsidorevich on 2019-09-03: ???
+            } catch (RuntimeException e) {
                 LOGGER.error(e.getMessage());
             }
         });

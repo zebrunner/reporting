@@ -18,7 +18,7 @@ package com.qaprosoft.zafira.services.services.application;
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.dto.CertificationType;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.services.application.integration.impl.ElasticsearchService;
 import com.qaprosoft.zafira.services.util.DateTimeUtil;
 import org.springframework.stereotype.Component;
@@ -69,7 +69,8 @@ public class CertificationService {
     private void insertIntoCertification(CertificationType certification, Long testRunId, String platform) {
         TestRun testRun = testRunService.getTestRunById(testRunId);
         if (testRun == null) {
-            throw new ServiceException("Test run with id " + testRunId + " not found");
+            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
+            throw new ResourceNotFoundException("Test run with id " + testRunId + " not found");
         }
         List<Test> tests = testService.getTestsByTestRunId(testRunId);
         tests.forEach(test -> {

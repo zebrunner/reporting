@@ -3,7 +3,6 @@ package com.qaprosoft.zafira.ws.controller.application;
 import com.qaprosoft.zafira.models.db.Filter;
 import com.qaprosoft.zafira.models.dto.filter.FilterType;
 import com.qaprosoft.zafira.models.dto.filter.Subject;
-import com.qaprosoft.zafira.services.exceptions.EntityAlreadyExistsException;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.services.application.FilterService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
@@ -52,7 +51,7 @@ public class FiltersAPIController extends AbstractController {
 
         Filter filter = mapper.map(filterType, Filter.class);
         if (filterService.isFilterExists(filter)) {
-            throw new EntityAlreadyExistsException("name", Filter.class, false);
+            throw new IllegalOperationException("Filter with such name already exists");
         }
         if (filter.isPublicAccess() && !isAdmin()) {
             filter.setPublicAccess(false);
