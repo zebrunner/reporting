@@ -15,17 +15,19 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.util;
 
-import com.qaprosoft.zafira.services.exceptions.ExternalSystemException;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.DefaultUriBuilderFactory;
 
+import javax.annotation.PreDestroy;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.net.URISyntaxException;
 
 @Component
 public class GitHubHttpUtils {
@@ -34,37 +36,37 @@ public class GitHubHttpUtils {
 
     private static final String GITHUB_ACCESS_TOKEN_PATH = "https://github.com/login/oauth/access_token";
 
-    private HttpClient httpClient;
+    private CloseableHttpClient httpClient;
 
     public GitHubHttpUtils() {
-        this.httpClient = HttpClient.newHttpClient();
+        this.httpClient = HttpClientBuilder.create().build();
     }
 
-    public String getAccessToken(String code, String clientId, String secret) throws IOException {
-        HttpResponse httpResponse;
-        try {
-            httpResponse = this.httpClient.send(buildGetAccessTokenRequest(code, clientId, secret), HttpResponse.BodyHandlers.ofString());
-        } catch (InterruptedException e) {
-            throw new ExternalSystemException(e.getMessage(), e);
-        }
-        return getAccessToken(httpResponse.body().toString());
+    public String getAccessToken(String code, String clientId, String secret) throws URISyntaxException, IOException {
+        HttpResponse httpResponse = this.httpClient.execute(buildGetAccessTokenRequest(code, clientId, secret));
+        return getAccessToken(EntityUtils.toString(httpResponse.getEntity()));
     }
 
-    private static HttpRequest buildGetAccessTokenRequest(String code, String clientId, String secret) {
-        URI uri = new DefaultUriBuilderFactory(GITHUB_ACCESS_TOKEN_PATH).builder()
-                                                                        .queryParam("client_id", clientId)
-                                                                        .queryParam("client_secret", secret)
-                                                                        .queryParam("code", code)
-                                                                        .queryParam("accept", "json")
-                                                                        .build();
-        return HttpRequest.newBuilder()
-                          .uri(uri)
-                          .POST(HttpRequest.BodyPublishers.noBody())
-                          .build();
+    private static HttpPost buildGetAccessTokenRequest(String code, String clientId, String secret) throws URISyntaxException {
+        URIBuilder uriBuilder = new URIBuilder(GITHUB_ACCESS_TOKEN_PATH);
+        uriBuilder.addParameter("client_id", clientId)
+                .addParameter("client_secret", secret)
+                .addParameter("code", code)
+                .addParameter("accept", "json");
+        return new HttpPost(uriBuilder.build());
     }
 
     private String getAccessToken(String response) {
         return response.split("access_token=")[1].split("&")[0];
     }
 
+    @PreDestroy
+    public void close() {
+        try {
+            if (httpClient != null)
+                this.httpClient.close();
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
 }
