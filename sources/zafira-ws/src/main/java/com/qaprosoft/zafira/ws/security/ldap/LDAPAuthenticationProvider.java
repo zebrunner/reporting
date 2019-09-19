@@ -18,7 +18,8 @@ package com.qaprosoft.zafira.ws.security.ldap;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationTenancyStorage;
 import com.qaprosoft.zafira.services.services.application.integration.context.LDAPContext;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ldap.NamingException;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -36,7 +37,6 @@ import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.ServletContext;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -49,8 +49,9 @@ import java.util.Optional;
 @Component
 public class LDAPAuthenticationProvider extends AbstractLdapAuthenticationProvider {
 
-    @Autowired
-    private ServletContext servletContext;
+    private static final String MSG_LDAP_DISABLED_OR_MISCONFIGURED = "Attemp to authenticate via LDAP while integration is disabled or misconfigured";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LDAPAuthenticationProvider.class);
 
     private final LDAPUserDetailsContextMapper ldapUserDetailsContextMapper;
     private final LdapAuthoritiesPopulator authoritiesPopulator;
@@ -75,21 +76,22 @@ public class LDAPAuthenticationProvider extends AbstractLdapAuthenticationProvid
     protected DirContextOperations doAuthentication(UsernamePasswordAuthenticationToken authentication) {
         LdapAuthenticator ldapAuthenticator = getAuthenticator();
         if (ldapAuthenticator == null) {
-            servletContext.log("Provide LDAP integration before");
-            throw new InternalAuthenticationServiceException("Provide LDAP integration before");
+            LOGGER.warn(MSG_LDAP_DISABLED_OR_MISCONFIGURED);
+            throw new InternalAuthenticationServiceException(MSG_LDAP_DISABLED_OR_MISCONFIGURED);
         }
         try {
             return ldapAuthenticator.authenticate(authentication);
-        } catch (PasswordPolicyException ppe) {
-            servletContext.log(ppe.getMessage(), ppe);
-            throw new LockedException(this.messages.getMessage(ppe.getStatus().getErrorCode(), ppe.getStatus().getDefaultMessage()));
-        } catch (UsernameNotFoundException notFound) {
-            servletContext.log(notFound.getMessage(), notFound);
+        } catch (PasswordPolicyException e) {
+            LOGGER.debug(e.getMessage(), e);
+            throw new LockedException(this.messages.getMessage(e.getStatus().getErrorCode(), e.getStatus().getDefaultMessage()));
+        } catch (UsernameNotFoundException e) {
+            LOGGER.debug(e.getMessage(), e);
             throw new BadCredentialsException(this.messages.getMessage("LdapAuthenticationProvider.badCredentials", "Bad credentials"));
-        } catch (NamingException ldapAccessFailure) {
-            servletContext.log(ldapAccessFailure.getMessage(), ldapAccessFailure);
-            throw new InternalAuthenticationServiceException(ldapAccessFailure.getMessage(), ldapAccessFailure);
+        } catch (NamingException e) {
+            LOGGER.debug(e.getMessage(), e);
+            throw new InternalAuthenticationServiceException(e.getMessage(), e);
         }
+        // TODO by nsidorevich on 2019-09-19: add more generic catch?
     }
 
     private static LdapAuthenticator getAuthenticator() {
