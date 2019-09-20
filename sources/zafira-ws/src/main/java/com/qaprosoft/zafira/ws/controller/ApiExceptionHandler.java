@@ -10,7 +10,6 @@ import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,14 +104,6 @@ public class ApiExceptionHandler {
             }
         }
 
-        return response;
-    }
-
-    @ExceptionHandler(UnableToRebuildCIJobException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleUnableToRebuildCIJobException(UnableToRebuildCIJobException e) {
-        ErrorResponse response = new ErrorResponse();
-        response.setError(new Error(ErrorCode.TEST_RUN_NOT_REBUILT));
         return response;
     }
 

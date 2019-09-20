@@ -153,7 +153,7 @@ public class SlackService extends AbstractIntegration<SlackContext> {
     private String buildRunInfo(TestRun tr) {
         StringBuilder sbInfo = new StringBuilder();
         sbInfo.append(tr.getProject().getName());
-        Map<String, String> jenkinsParams = jenkinsService.getBuildParametersMap(tr.getJob(), tr.getBuildNumber()).orElse(null);
+        Map<String, String> jenkinsParams = jenkinsService.getJobBuildParametersMap(tr.getJob().getJobURL(), tr.getBuildNumber());
         if (jenkinsParams != null && jenkinsParams.get("groups") != null) {
             sbInfo.append("(");
             sbInfo.append(jenkinsParams.get("groups"));

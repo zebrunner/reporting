@@ -436,10 +436,7 @@ public class TestRunService {
     private void rerun(TestRun testRun, boolean rerunRequired, boolean rerunFailures) {
         resetTestRunComments(testRun);
         if (rerunRequired) {
-            boolean success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
-            if (!success) {
-                LOGGER.error("Problems with job building occurred. Job url: " + testRun.getJob().getJobURL());
-            }
+            jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
         }
     }
 
