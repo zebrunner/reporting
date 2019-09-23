@@ -179,7 +179,8 @@ public class LauncherService {
         // If Selenium integration is enabled pass selenium_host with basic auth as job argument
         if(testAutomationToolService.isEnabledAndConnected(null)) {
             String seleniumURL = testAutomationToolService.buildUrl();
-            jobParameters.put("selenium_host", seleniumURL);
+            //            jobParameters.put("selenium_host", seleniumURL);
+            jobParameters.put("selenium_url", seleniumURL);
         }
 
         jobParameters.put("zafira_enabled", "true");

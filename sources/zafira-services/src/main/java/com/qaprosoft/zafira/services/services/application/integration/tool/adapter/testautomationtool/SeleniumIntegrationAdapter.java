@@ -15,26 +15,35 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.adapter.testautomationtool;
 
+import com.qaprosoft.zafira.services.services.application.SettingsService;
+import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
+import com.qaprosoft.zafira.services.services.application.integration.context.SeleniumContext;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.stereotype.Component;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.AbstractIntegrationAdapter;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.AdapterParam;
 import org.apache.commons.lang3.StringUtils;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
+import javax.annotation.PreDestroy;
+import java.io.IOException;
 
 public class SeleniumIntegrationAdapter extends AbstractIntegrationAdapter implements TestAutomationToolAdapter {
 
     private static final int TIMEOUT = 5000;
-    private static final HttpClient HTTP_CLIENT;
+    private static final CloseableHttpClient HTTP_CLIENT;
+    private static final RequestConfig REQUEST_CONFIG;
 
     static {
-        HTTP_CLIENT = HttpClient.newBuilder()
-                                .connectTimeout(Duration.ofMillis(TIMEOUT))
-                                .build();
+        REQUEST_CONFIG = RequestConfig.custom()
+                                      .setConnectTimeout(TIMEOUT)
+                                      .setConnectionRequestTimeout(TIMEOUT)
+                                      .build();
+        HTTP_CLIENT = HttpClientBuilder.create().build();
     }
 
     private final String url;
@@ -68,18 +77,27 @@ public class SeleniumIntegrationAdapter extends AbstractIntegrationAdapter imple
     @Override
     public boolean isConnected() {
         boolean result;
-        HttpRequest request;
-        HttpResponse response;
+        HttpGet request = null;
+        CloseableHttpResponse response = null;
         try {
-            request = HttpRequest.newBuilder()
-                                 .uri(URI.create(url))
-                                 .timeout(Duration.ofMillis(TIMEOUT))
-                                 .GET()
-                                 .build();
-            response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-            result = response.statusCode() == 200;
+            request = new HttpGet(url);
+            request.setConfig(REQUEST_CONFIG);
+            response = HTTP_CLIENT.execute(request);
+
+            result = response.getStatusLine().getStatusCode() == 200;
         } catch (Exception e) {
             result = false;
+        } finally {
+            if (request != null) {
+                request.releaseConnection();
+            }
+            if(response != null) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+            }
         }
         return result;
     }
@@ -103,5 +121,16 @@ public class SeleniumIntegrationAdapter extends AbstractIntegrationAdapter imple
 
     public String getPassword() {
         return password;
+    }
+
+    @PreDestroy
+    public void close() {
+        try {
+            if (HTTP_CLIENT != null) {
+                HTTP_CLIENT.close();
+            }
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 }

@@ -50,13 +50,9 @@ public class StatusAPIController extends AbstractController {
     @ApiOperation(value = "Get service status", nickname = "status", httpMethod = "GET", response = String.class)
     @GetMapping()
     public String getStatus() {
-        try {
-            final String version = settingsService.getPostgresVersion();
-            if (StringUtils.isEmpty(version)) {
-                throw new RuntimeException("Unable to retrieve Postgres version");
-            }
-        } catch (Exception e) {
-            throw new UnhealthyStateException("Service has no DB connection");
+        String version = settingsService.getPostgresVersion();
+        if (StringUtils.isEmpty(version)) {
+            throw new RuntimeException("Unable to retrieve Postgres version");
         }
         return "Service is up and running. Integration: " + integrationRepository.findById(1L).orElse(null);
     }

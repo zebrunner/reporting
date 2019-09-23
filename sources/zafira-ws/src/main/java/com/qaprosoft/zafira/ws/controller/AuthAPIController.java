@@ -28,8 +28,8 @@ import com.qaprosoft.zafira.models.dto.auth.TenantType;
 import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
 import com.qaprosoft.zafira.models.dto.user.PasswordType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
-import com.qaprosoft.zafira.services.exceptions.EntityAlreadyExistsException;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
+import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidCredentialsException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 import com.qaprosoft.zafira.services.services.application.GroupService;
@@ -167,7 +167,7 @@ public class AuthAPIController extends AbstractController {
     @PostMapping("/signup")
     public void signup(@RequestHeader("Access-Token") String token, @Valid @RequestBody UserType userType) {
         if (userService.getUserByUsername(userType.getUsername()) != null) {
-            throw new EntityAlreadyExistsException("username", User.class, false);
+            throw new IllegalOperationException("User with such username already exists");
         }
         Invitation invitation = invitationService.getInvitationByToken(token);
         if (invitation == null) {

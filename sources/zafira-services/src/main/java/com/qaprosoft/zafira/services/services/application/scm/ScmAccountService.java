@@ -88,4 +88,14 @@ public class ScmAccountService {
         return repository.getDefaultBranch();
     }
 
+    public void reencryptTokens() {
+        List<ScmAccount> scmAccounts = getAllScmAccounts();
+        scmAccounts.forEach(scmAccount -> {
+            String token = scmAccount.getAccessToken();
+            String encryptedToken = cryptoService.encrypt(token);
+            scmAccount.setAccessToken(encryptedToken);
+            updateScmAccount(scmAccount);
+        });
+    }
+
 }
