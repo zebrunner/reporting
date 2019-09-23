@@ -100,7 +100,7 @@ public class LauncherService {
                     String.format(LAUNCHER_JOB_URL_PATTERN, jenkinsHost, folder);
             Job job = jobsService.getJobByJobURL(launcherJobUrl);
             if (job == null) {
-                job = jenkinsService.getJobInfoFromJenkins(launcherJobUrl);
+                job = jenkinsService.getJobDetailsFromJenkins(launcherJobUrl);
                 job.setJenkinsHost(jenkinsHost);
                 job.setUser(owner);
                 jobsService.createJob(job);

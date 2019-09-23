@@ -155,7 +155,7 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
         return build.getNumber();
     }
 
-    public Job getJobInfoFromJenkins(String jobUrl) {
+    public Job getJobDetailsFromJenkins(String jobUrl) {
         JobWithDetails jobWithDetails = getJobWithDetails(jobUrl);
         return new Job(jobWithDetails.getDisplayName(), jobWithDetails.getUrl().replaceAll("/$", ""));
     }
