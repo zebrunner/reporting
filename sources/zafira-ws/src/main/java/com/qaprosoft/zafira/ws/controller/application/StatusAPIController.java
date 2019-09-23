@@ -17,7 +17,6 @@ package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.dbaccess.persistence.IntegrationRepository;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
-import com.qaprosoft.zafira.services.exceptions.UnhealthyStateException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;

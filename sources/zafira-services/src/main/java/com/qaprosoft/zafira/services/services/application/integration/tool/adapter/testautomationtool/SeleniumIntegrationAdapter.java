@@ -15,19 +15,15 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.adapter.testautomationtool;
 
-import com.qaprosoft.zafira.services.services.application.SettingsService;
-import com.qaprosoft.zafira.services.services.application.integration.AbstractIntegration;
-import com.qaprosoft.zafira.services.services.application.integration.context.SeleniumContext;
+import com.qaprosoft.zafira.models.entity.integration.Integration;
+import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.AbstractIntegrationAdapter;
+import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.AdapterParam;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.springframework.stereotype.Component;
-import com.qaprosoft.zafira.models.entity.integration.Integration;
-import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.AbstractIntegrationAdapter;
-import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.AdapterParam;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.PreDestroy;
 import java.io.IOException;

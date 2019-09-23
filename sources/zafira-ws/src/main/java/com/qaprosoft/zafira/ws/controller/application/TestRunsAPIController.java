@@ -429,10 +429,7 @@ public class TestRunsAPIController extends AbstractController {
             throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
         }
 
-        JobResult jobResult = automationServerService.abortJob(testRun.getJob(), testRun.getBuildNumber());
-        if (!jobResult.isSuccess()) {
-            throw new UnableToAbortCIJobException();
-        }
+        automationServerService.abortJob(testRun.getJob(), testRun.getBuildNumber());
     }
 
     @ResponseStatusDetails
