@@ -299,7 +299,7 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
 
         JobWithDetails jobWithDetails = getJobByFolderAndName(folderJob, jobName);
         if (jobWithDetails == null) {
-            throw new ExternalSystemException(String.format(ERR_MSG_UNABLE_TO_GET_JOB_BY_FOLDER_AND_NAME, folderJob.getDisplayName(), jobName));
+            throw new ExternalSystemException(String.format(ERR_MSG_UNABLE_TO_GET_JOB_BY_FOLDER_AND_NAME, folderJob.getName(), jobName));
         }
         return jobWithDetails;
     }
@@ -322,7 +322,7 @@ public class JenkinsService extends AbstractIntegration<JenkinsContext> {
         try {
             return context().getJenkinsServer().getJob(folderJob, jobName);
         } catch (IOException e) {
-            throw new ExternalSystemException(String.format(ERR_MSG_UNABLE_TO_GET_JOB_BY_FOLDER_AND_NAME, folderJob.getDisplayName(), jobName), e);
+            throw new ExternalSystemException(String.format(ERR_MSG_UNABLE_TO_GET_JOB_BY_FOLDER_AND_NAME, folderJob.getName(), jobName), e);
         }
     }
 
