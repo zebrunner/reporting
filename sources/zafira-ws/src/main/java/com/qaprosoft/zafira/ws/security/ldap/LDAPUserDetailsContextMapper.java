@@ -19,7 +19,8 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,16 +33,30 @@ import java.util.Collection;
 @Component
 public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper {
 
-    @Autowired
-    private UserService userService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(LDAPUserDetailsContextMapper.class);
 
+    private static final String MSG_ILLEGAL_USER_LOGIN = "User %s is not an invited Zafira user";
+    private static final String WRN_MSG_NON_EXISTING_ZAFIRA_USER = "Existing LDAP user %s can't be logged in because he does not exists in Zafira";
+
+    private final UserService userService;
+
+    public LDAPUserDetailsContextMapper(UserService userService) {
+        this.userService = userService;
+    }
+
+    /**
+     * Mapping LDAP user to Zafira user. If LDAP user is not a Zafira user (meaning that he was found in LDAP
+     * but was not invited to Zafira)
+     */
     @Override
     public UserDetails mapUserFromContext(DirContextOperations operations, String username, Collection<? extends GrantedAuthority> authorities) {
         User user = userService.getUserByUsername(username);
         if (user == null) {
-            throw new ForbiddenOperationException();
+            LOGGER.warn(String.format(WRN_MSG_NON_EXISTING_ZAFIRA_USER, username));
+            throw new ForbiddenOperationException(String.format(MSG_ILLEGAL_USER_LOGIN, username));
+        } else {
+            return new JwtUserType(user.getId(), username, user.getPassword(), user.getGroups());
         }
-        return new JwtUserType(user.getId(), username, user.getPassword(), user.getGroups());
     }
 
     @Override

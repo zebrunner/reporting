@@ -26,7 +26,6 @@ import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.models.dto.CommentType;
 import com.qaprosoft.zafira.models.dto.EmailType;
-import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
 import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.TestType;
@@ -35,7 +34,6 @@ import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
 import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.services.services.application.FilterService;
 import com.qaprosoft.zafira.services.services.application.JobsService;
 import com.qaprosoft.zafira.services.services.application.ProjectService;
@@ -394,9 +392,7 @@ public class TestRunsAPIController extends AbstractController {
         testRun.setComments(null);
         testRun.setReviewed(false);
         testRunService.updateTestRun(testRun);
-        if (!automationServerService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures)) {
-            throw new UnableToRebuildCIJobException();
-        }
+        automationServerService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
     }
 
     @ResponseStatusDetails
@@ -410,9 +406,7 @@ public class TestRunsAPIController extends AbstractController {
             throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
         }
 
-        if (!automationServerService.debug(testRun.getJob(), testRun.getBuildNumber())) {
-            throw new UnableToRebuildCIJobException();
-        }
+        automationServerService.debugJob(testRun.getJob(), testRun.getBuildNumber());
     }
 
     @ResponseStatusDetails
@@ -428,7 +422,6 @@ public class TestRunsAPIController extends AbstractController {
         if (testRun == null) {
             throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
         }
-
         automationServerService.abortJob(testRun.getJob(), testRun.getBuildNumber());
     }
 
@@ -446,17 +439,10 @@ public class TestRunsAPIController extends AbstractController {
         if (testRun == null) {
             throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
         }
-
-        boolean success;
         if (buildWithParameters) {
-            JobResult result = automationServerService.buildJob(testRun.getJob(), jobParameters);
-            success = result.isSuccess();
+            automationServerService.buildJob(testRun.getJob(), jobParameters);
         } else {
-            success = automationServerService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), false);
-        }
-
-        if (!success) {
-            throw new UnableToRebuildCIJobException();
+            automationServerService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), false);
         }
     }
 
@@ -503,7 +489,7 @@ public class TestRunsAPIController extends AbstractController {
         if (testRun == null) {
             throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
         }
-        return automationServerService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
+        return automationServerService.getBuildConsoleOutput(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
     }
 
     private String[] getRecipients(String recipients) {

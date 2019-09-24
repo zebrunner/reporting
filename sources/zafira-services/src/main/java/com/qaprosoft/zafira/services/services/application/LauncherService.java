@@ -26,7 +26,6 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.JenkinsLauncherType;
 import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.AutomationServerService;
@@ -41,15 +40,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class LauncherService {
+
+    private static final Set<String> MANDATORY_ARGUMENTS = Set.of("scmURL", "branch", "zafiraFields");
 
     private final LauncherMapper launcherMapper;
     private final AutomationServerService automationServerService;
@@ -189,6 +190,7 @@ public class LauncherService {
 
         String args = jobParameters.entrySet().stream()
                                    .filter(param -> !Arrays.asList(AutomationServerService.getRequiredArgs()).contains(param.getKey()))
+                                   .filter(param -> !MANDATORY_ARGUMENTS.contains(param.getKey()))
                                    .map(param -> param.getKey() + "=" + param.getValue())
                                    .collect(Collectors.joining(","));
 
@@ -200,6 +202,7 @@ public class LauncherService {
         jobParameters.put("ci_run_id", ciRunId);
 
         if (!AutomationServerService.checkArguments(jobParameters)) {
+        if (!jobParameters.entrySet().containsAll(MANDATORY_ARGUMENTS)) {
             // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
             throw new IllegalOperationException("Required arguments not found");
         }
@@ -241,11 +244,7 @@ public class LauncherService {
 
         jobParameters.put("zafiraFields", args);
 
-        JobResult result = automationServerService.buildScannerJob(repositoryName, jobParameters, rescan);
-        if (result == null || !result.isSuccess()) {
-            throw new ForbiddenOperationException("Repository scanner job is not started");
-        }
-        return result;
+        return automationServerService.buildScannerJob(repositoryName, jobParameters, rescan);
     }
 
     @Transactional(readOnly = true)
@@ -256,10 +255,7 @@ public class LauncherService {
             throw new ResourceNotFoundException("Scm account not found");
         }
         String repositoryName = scmAccount.getRepositoryName();
-        JobResult result = automationServerService.abortScannerJob(repositoryName, buildNumber, rescan);
-        if (result == null || !result.isSuccess()) {
-            throw new ForbiddenOperationException("Repository scanner job is not aborted");
-        }
+        automationServerService.abortScannerJob(repositoryName, buildNumber, rescan);
     }
 
     public Integer getBuildNumber(String queueItemUrl) {
