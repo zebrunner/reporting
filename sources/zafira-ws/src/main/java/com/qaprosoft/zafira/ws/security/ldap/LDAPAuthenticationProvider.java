@@ -16,6 +16,8 @@
 package com.qaprosoft.zafira.ws.security.ldap;
 
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.AccessManagementService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NamingException;
 import org.springframework.ldap.core.DirContextOperations;

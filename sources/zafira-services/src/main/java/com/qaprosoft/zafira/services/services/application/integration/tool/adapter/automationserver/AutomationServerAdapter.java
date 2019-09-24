@@ -22,40 +22,29 @@ import com.qaprosoft.zafira.services.services.application.integration.tool.adapt
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public interface AutomationServerAdapter extends IntegrationGroupAdapter {
 
-    JobResult buildJob(Job job, Map<String, String> jobParameters);
+    JobResult buildJob(String jobURL, Map<String, String> jobParameters);
 
-    JobResult buildJob(String jobUrl, Map<String, String> jobParameters);
-
-    JobResult abortJob(Job ciJob, Integer buildNumber);
-
-    JobResult abortJob(String jobUrl, Integer buildNumber);
-
-    JobResult buildScannerJob(String repositoryName, Map<String, String> jobParameters, boolean rescan);
-
-    JobResult abortScannerJob(String repositoryName, Integer buildNumber, boolean rescan);
+    void abortJob(String jobURL, Integer buildNumber);
 
     String buildLauncherJobUrl();
 
     List<BuildParameterType> getBuildParameters(Job ciJob, Integer buildNumber);
 
-    Optional<Map<String, String>> getBuildParametersMap(Job ciJob, Integer buildNumber);
+    Map<String, String> getBuildParametersMap(String ciJobURL, Integer buildNumber);
 
-    Map<Integer, String> getBuildConsoleOutputHtml(Job ciJob, Integer buildNumber, Integer stringsCount, Integer fullCount);
+    Map<Integer, String> getBuildConsoleOutput(Job ciJob, Integer buildNumber, Integer stringsCount, Integer fullCount);
 
     Integer getBuildNumber(String queueItemUrl);
 
-    Job getJobByUrl(String jobUrl);
+    Job getJobDetailsFromJenkins(String jobUrl);
 
     String getUrl();
 
     String getFolder();
 
-    boolean checkArguments(Map<String, String> args);
-
-    String buildJobUrl(String repositoryName, boolean rescan);
+    String buildScannerJobUrl(String repositoryName, boolean rescan);
 
 }

@@ -18,7 +18,6 @@ package com.qaprosoft.zafira.services.services.application.integration.tool.impl
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.models.dto.JobResult;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.automationserver.AutomationServerAdapter;
@@ -27,91 +26,76 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Component
 public class AutomationServerService extends AbstractIntegrationService<AutomationServerAdapter> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AutomationServerService.class);
 
-    private static final String[] REQUIRED_ARGS = new String[] { "scmURL", "branch", "zafiraFields" };
-
     public AutomationServerService(IntegrationService integrationService, AutomationServerProxy automationServerProxy) {
         super(integrationService, automationServerProxy, "JENKINS");
     }
 
-    public boolean rerunJob(Job ciJob, Integer buildNumber, boolean rerunFailures) {
-        JobResult jobResult = null;
-        AutomationServerAdapter adapter = getAdapterByBackReferenceId(ciJob.getAutomationServerId());
-        try {
-            Map<String, String> params = adapter.getBuildParametersMap(ciJob, buildNumber)
-                                                .orElseThrow(() -> new ForbiddenOperationException("Unable to rerun CI job"));
-
-            params.put("rerun_failures", Boolean.toString(rerunFailures));
-            params.replace("debug", "false");
-
-            jobResult = adapter.buildJob(ciJob, params);
-        } catch (Exception e) {
-            LOGGER.error("Unable to rerun Jenkins job:  " + e.getMessage());
-        }
-        return jobResult != null && jobResult.isSuccess();
-    }
-
-    public boolean debug(Job ciJob, Integer buildNumber) {
-        JobResult jobResult = null;
-        AutomationServerAdapter adapter = getAdapterByBackReferenceId(ciJob.getAutomationServerId());
-        try {
-            Map<String, String> params = adapter.getBuildParametersMap(ciJob, buildNumber)
-                                                .orElseThrow(() -> new ForbiddenOperationException("Unable to rerun CI job"));
-            params.replace("debug", "true");
-            params.replace("rerun_failures", "true");
-            params.replace("thread_count", "1");
-
-            jobResult = adapter.buildJob(ciJob, params);
-        } catch (Exception e) {
-            LOGGER.error("Unable to rerun Jenkins job:  " + e.getMessage());
-        }
-        return jobResult != null && jobResult.isSuccess();
-    }
-
-    public JobResult buildJob(Job job, Map<String, String> jobParameters) {
+    public void rerunJob(Job job, Integer buildNumber, boolean rerunFailures) {
+        String jobURL = job.getJobURL();
         AutomationServerAdapter adapter = getAdapterByBackReferenceId(job.getAutomationServerId());
-        return adapter.buildJob(job, jobParameters);
+        Map<String, String> params = adapter.getBuildParametersMap(jobURL, buildNumber);
+
+        params.put("rerun_failures", Boolean.toString(rerunFailures));
+        params.replace("debug", "false");
+
+        adapter.buildJob(jobURL, params);
+    }
+
+    public void debugJob(Job job, Integer buildNumber) {
+        String jobURL = job.getJobURL();
+        AutomationServerAdapter adapter = getAdapterByBackReferenceId(job.getAutomationServerId());
+        Map<String, String> params = adapter.getBuildParametersMap(job.getJobURL(), buildNumber);
+
+        params.replace("debug", "true");
+        params.replace("rerun_failures", "true");
+        params.replace("thread_count", "1");
+
+        adapter.buildJob(jobURL, params);
+    }
+
+    public void buildJob(Job job, Map<String, String> jobParameters) {
+        AutomationServerAdapter adapter = getAdapterByBackReferenceId(job.getAutomationServerId());
+        adapter.buildJob(job.getJobURL(), jobParameters);
     }
 
     public JobResult buildScannerJob(String repositoryName, Map<String, String> jobParameters, boolean rescan) {
         AutomationServerAdapter adapter = getAdapterByIntegrationId(null);
-        String jobUrl = adapter.buildJobUrl(repositoryName, rescan);
+        String jobUrl = adapter.buildScannerJobUrl(repositoryName, rescan);
         return adapter.buildJob(jobUrl, jobParameters);
     }
 
-    public JobResult abortScannerJob(String repositoryName, Integer buildNumber, boolean rescan) {
+    public void abortScannerJob(String repositoryName, Integer buildNumber, boolean rescan) {
         AutomationServerAdapter adapter = getAdapterByIntegrationId(null);
-        String jobUrl = adapter.buildJobUrl(repositoryName, rescan);
-        return adapter.abortJob(jobUrl, buildNumber);
+        String jobUrl = adapter.buildScannerJobUrl(repositoryName, rescan);
+        adapter.abortJob(jobUrl, buildNumber);
     }
 
-    public JobResult abortJob(Job ciJob, Integer buildNumber) {
+    public void abortJob(Job ciJob, Integer buildNumber) {
         AutomationServerAdapter adapter = getAdapterByIntegrationId(null);
-        return adapter.abortJob(ciJob, buildNumber);
+        adapter.abortJob(ciJob.getJobURL(), buildNumber);
     }
 
-    public List<BuildParameterType> getBuildParameters(Job ciJob, Integer buildNumber) {
+    public List<BuildParameterType> getBuildParameters(Job job, Integer buildNumber) {
         AutomationServerAdapter adapter = getAdapterByIntegrationId(null);
-        return adapter.getBuildParameters(ciJob, buildNumber);
+        return adapter.getBuildParameters(job, buildNumber);
     }
 
-    public Optional<Map<String, String>> getBuildParametersMap(Job ciJob, Integer buildNumber) {
+    public Map<String, String> getBuildParametersMap(Job job, Integer buildNumber) {
         AutomationServerAdapter adapter = getAdapterByIntegrationId(null);
-        return adapter.getBuildParametersMap(ciJob, buildNumber);
+        return adapter.getBuildParametersMap(job.getJobURL(), buildNumber);
     }
 
-    public Map<Integer, String> getBuildConsoleOutputHtml(Job ciJob, Integer buildNumber, Integer stringsCount, Integer fullCount) {
+    public Map<Integer, String> getBuildConsoleOutput(Job job, Integer buildNumber, Integer stringsCount, Integer fullCount) {
         AutomationServerAdapter adapter = getAdapterByIntegrationId(null);
-        return adapter.getBuildConsoleOutputHtml(ciJob, buildNumber, stringsCount, fullCount);
+        return adapter.getBuildConsoleOutput(job, buildNumber, stringsCount, fullCount);
     }
 
     public Integer getBuildNumber(String queueItemUrl) {
@@ -119,9 +103,9 @@ public class AutomationServerService extends AbstractIntegrationService<Automati
         return adapter.getBuildNumber(queueItemUrl);
     }
 
-    public Optional<Job> getJobByUrl(String jobUrl) {
+    public Job getJobByUrl(String jobUrl) {
         AutomationServerAdapter adapter = getAdapterByIntegrationId(null);
-        return Optional.ofNullable(adapter.getJobByUrl(jobUrl));
+        return adapter.getJobDetailsFromJenkins(jobUrl);
     }
 
     public String buildLauncherJobUrl() {
@@ -137,14 +121,6 @@ public class AutomationServerService extends AbstractIntegrationService<Automati
     public String getFolder() {
         AutomationServerAdapter adapter = getAdapterByIntegrationId(null);
         return adapter.getFolder();
-    }
-
-    public static boolean checkArguments(Map<String, String> args) {
-        return Arrays.stream(REQUIRED_ARGS).noneMatch(arg -> args.get(arg) == null);
-    }
-
-    public static String[] getRequiredArgs() {
-        return REQUIRED_ARGS;
     }
 
 }

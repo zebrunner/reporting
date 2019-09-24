@@ -47,7 +47,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterClass.BOOLEAN;
@@ -116,46 +115,36 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
         }
     }
 
-    public void buildJob(Job job, Map<String, String> jobParameters) {
-        buildJobByURL(job.getJobURL(), jobParameters);
+    @Override
+    public JobResult buildJob(String jobURL, Map<String, String> jobParameters) {
+        return buildJobByURL(jobURL, jobParameters);
     }
 
-    public void abortJob(Job job, Integer buildNumber) {
-        abortJobByURL(job.getJobURL(), buildNumber);
+    @Override
+    public void abortJob(String jobURL, Integer buildNumber) {
+        abortJobByURL(jobURL, buildNumber);
     }
 
-    public JobResult buildScannerJob(String repositoryName, Map<String, String> jobParameters, boolean rescan) {
-        String jobUrl = buildScannerJobUrl(repositoryName, rescan);
-        return buildJobByURL(jobUrl, jobParameters);
+    @Override
+    public String buildLauncherJobUrl() {
+        return folder == null || folder.isBlank() ?
+                String.format(LAUNCHER_JOB_ROOT_URL_PATTERN, url) :
+                String.format(LAUNCHER_JOB_URL_PATTERN, url, folder);
     }
 
-    public void abortScannerJob(String repositoryName, Integer buildNumber, boolean rescan) {
-        String jobUrl = buildScannerJobUrl(repositoryName, rescan);
-        abortJobByURL(jobUrl, buildNumber);
+    @Override
+    public String buildScannerJobUrl(String repositoryName, boolean rescan) {
+        String jobUrl;
+        if(rescan) {
+            jobUrl = formatReScannerJobUrl(folder, url, repositoryName);
+        } else {
+            jobUrl = formatScannerJobUrl(folder, url);
+        }
+        return jobUrl;
     }
 
-    public void rerunJob(Job job, Integer buildNumber, boolean rerunFailures) {
-        String jobURL = job.getJobURL();
-        Map<String, String> params = getJobBuildParametersMap(jobURL, buildNumber);
-
-        params.put("rerun_failures", Boolean.toString(rerunFailures));
-        params.replace("debug", "false");
-
-        buildJobWithParameters(jobURL, params, true);
-    }
-
-    public void debugJob(Job job, Integer buildNumber) {
-        String jobURL = job.getJobURL();
-        Map<String, String> params = getJobBuildParametersMap(jobURL, buildNumber);
-
-        params.replace("debug", "true");
-        params.replace("rerun_failures", "true");
-        params.replace("thread_count", "1");
-
-        buildJobWithParameters(jobURL, params, true);
-    }
-
-    public Map<String, String> getJobBuildParametersMap(String jobURL, Integer buildNumber) {
+    @Override
+    public Map<String, String> getBuildParametersMap(String jobURL, Integer buildNumber) {
         BuildWithDetails buildWithDetails = getBuildWithDetails(jobURL, buildNumber);
         return buildWithDetails.getParameters();
     }
@@ -184,17 +173,16 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
         QueueReference queueReference = new QueueReference(queueItemUrl);
         int attempts = 5;
         long millisToSleep = 2000;
-        JenkinsServer server = context().getJenkinsServer();
         QueueItem queueItem = null;
         while (attempts > 0) {
-            queueItem = getQueueItem(queueReference, server);
+            queueItem = getQueueItem(queueReference);
             if (queueItem.getExecutable() != null) {
                 break;
             }
             sleep(millisToSleep);
             attempts--;
         }
-        Build build = getBuild(server, queueItem);
+        Build build = getBuild(queueItem);
         return build.getNumber();
     }
 
@@ -318,19 +306,19 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
         return consoleOutput;
     }
 
-    private QueueItem getQueueItem(QueueReference queueReference, JenkinsServer server) {
+    private QueueItem getQueueItem(QueueReference queueReference) {
         QueueItem queueItem;
         try {
-            queueItem = server.getQueueItem(queueReference);
+            queueItem = jenkinsServer.getQueueItem(queueReference);
         } catch (IOException e) {
             throw new ExternalSystemException(String.format(ERR_MSG_UNABLE_TO_GET_QUEUE_ITEM_BY_REFERENCE, queueReference), e);
         }
         return queueItem;
     }
 
-    private Build getBuild(JenkinsServer server, QueueItem queueItem) {
+    private Build getBuild(QueueItem queueItem) {
         try {
-            return server.getBuild(queueItem);
+            return jenkinsServer.getBuild(queueItem);
         } catch (IOException e) {
             throw new ExternalSystemException(String.format(ERR_MSG_UNABLE_TO_GET_BUILD_OBJECT_BY_QUEUE_ITEM, queueItem), e);
         }
@@ -363,7 +351,7 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
 
     private JobWithDetails getJobByFolderAndName(FolderJob folderJob, String jobName) {
         try {
-            return context().getJenkinsServer().getJob(folderJob, jobName);
+            return jenkinsServer.getJob(folderJob, jobName);
         } catch (IOException e) {
             throw new ExternalSystemException(String.format(ERR_MSG_UNABLE_TO_GET_JOB_BY_FOLDER_AND_NAME, folderJob.getName(), jobName), e);
         }
@@ -380,18 +368,6 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
         logMap.put(strings.length,
                 String.join("\n", Arrays.copyOfRange(strings, strings.length - count, strings.length)));
         return logMap;
-    }
-
-    private String buildScannerJobUrl(String repositoryName, boolean rescan) {
-        String jenkinsFolder = context().getFolder();
-        String jenkinsHost = context().getJenkinsHost();
-        String jobUrl;
-        if (rescan) {
-            jobUrl = formatReScannerJobUrl(jenkinsFolder, jenkinsHost, repositoryName);
-        } else {
-            jobUrl = formatScannerJobUrl(jenkinsFolder, jenkinsHost);
-        }
-        return jobUrl;
     }
 
     private String formatReScannerJobUrl(String jenkinsFolder, String jenkinsHost, String repositoryName) {

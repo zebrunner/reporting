@@ -88,8 +88,7 @@ public class LauncherService {
             String launcherJobUrl = automationServerService.buildLauncherJobUrl();
             Job job = jobsService.getJobByJobURL(launcherJobUrl);
             if (job == null) {
-                job = automationServerService.getJobByUrl(launcherJobUrl).orElseThrow(
-                        () -> new ResourceNotFoundException("Job\n" + launcherJobUrl + "\nis not found on Jenkins"));
+                job = automationServerService.getJobByUrl(launcherJobUrl);
                 job.setJenkinsHost(automationServerService.getUrl());
                 job.setUser(owner);
                 jobsService.createJob(job);
@@ -168,7 +167,7 @@ public class LauncherService {
             // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
             throw new IllegalOperationException("Launcher job not specified");
         }
-        
+
         Map<String, String> jobParameters = new ObjectMapper().readValue(launcher.getModel(), new TypeReference<Map<String, String>>() {});
 
         String decryptedAccessToken = cryptoService.decrypt(scmAccount.getAccessToken());
@@ -176,7 +175,7 @@ public class LauncherService {
         if (!jobParameters.containsKey("branch")) {
             jobParameters.put("branch", "*/master");
         }
-        
+
         // If Selenium integration is enabled pass selenium_host with basic auth as job argument
         if(testAutomationToolService.isEnabledAndConnected(null)) {
             String seleniumURL = testAutomationToolService.buildUrl();
@@ -189,7 +188,6 @@ public class LauncherService {
         jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, TenancyContext.getTenantName()));
 
         String args = jobParameters.entrySet().stream()
-                                   .filter(param -> !Arrays.asList(AutomationServerService.getRequiredArgs()).contains(param.getKey()))
                                    .filter(param -> !MANDATORY_ARGUMENTS.contains(param.getKey()))
                                    .map(param -> param.getKey() + "=" + param.getValue())
                                    .collect(Collectors.joining(","));
@@ -201,7 +199,6 @@ public class LauncherService {
         String ciRunId = UUID.randomUUID().toString();
         jobParameters.put("ci_run_id", ciRunId);
 
-        if (!AutomationServerService.checkArguments(jobParameters)) {
         if (!jobParameters.entrySet().containsAll(MANDATORY_ARGUMENTS)) {
             // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
             throw new IllegalOperationException("Required arguments not found");
