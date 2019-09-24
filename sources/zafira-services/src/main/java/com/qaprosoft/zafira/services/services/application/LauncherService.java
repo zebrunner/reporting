@@ -42,17 +42,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class LauncherService {
 
-    private static final String[] REQUIRED_ARGS = new String[]{"scmURL", "branch", "zafiraFields"};
+    private static final Set<String> MANDATORY_ARGUMENTS = Set.of("scmURL", "branch", "zafiraFields");
 
     private static final String LAUNCHER_JOB_URL_PATTERN = "%s/job/%s/job/launcher";
     private static final String LAUNCHER_JOB_ROOT_URL_PATTERN = "%s/job/launcher";
@@ -205,7 +205,7 @@ public class LauncherService {
         jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, TenancyContext.getTenantName()));
 
         String args = jobParameters.entrySet().stream()
-                                   .filter(param -> !Arrays.asList(REQUIRED_ARGS).contains(param.getKey()))
+                                   .filter(param -> !MANDATORY_ARGUMENTS.contains(param.getKey()))
                                    .map(param -> param.getKey() + "=" + param.getValue())
                                    .collect(Collectors.joining(","));
 
@@ -216,7 +216,7 @@ public class LauncherService {
         String ciRunId = UUID.randomUUID().toString();
         jobParameters.put("ci_run_id", ciRunId);
 
-        if (!checkArguments(jobParameters)) {
+        if (!jobParameters.entrySet().containsAll(MANDATORY_ARGUMENTS)) {
             // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
             throw new IllegalOperationException("Required arguments not found");
         }
@@ -274,10 +274,6 @@ public class LauncherService {
 
     public Integer getBuildNumber(String queueItemUrl) {
         return jenkinsService.getBuildNumber(queueItemUrl);
-    }
-
-    private boolean checkArguments(Map<String, String> args) {
-        return Arrays.stream(REQUIRED_ARGS).noneMatch(arg -> args.get(arg) == null);
     }
 
 }
