@@ -17,7 +17,6 @@ package com.qaprosoft.zafira.services.services.application;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.offbytwo.jenkins.model.QueueReference;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherMapper;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Job;
@@ -27,7 +26,6 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.JenkinsLauncherType;
 import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.services.application.integration.context.JenkinsContext;
@@ -44,15 +42,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class LauncherService {
+
+    private static final Set<String> MANDATORY_ARGUMENTS = Set.of("scmURL", "branch", "zafiraFields");
 
     private static final String LAUNCHER_JOB_URL_PATTERN = "%s/job/%s/job/launcher";
     private static final String LAUNCHER_JOB_ROOT_URL_PATTERN = "%s/job/launcher";
@@ -100,8 +100,7 @@ public class LauncherService {
                     String.format(LAUNCHER_JOB_URL_PATTERN, jenkinsHost, folder);
             Job job = jobsService.getJobByJobURL(launcherJobUrl);
             if (job == null) {
-                job = jenkinsService.getJobByUrl(launcherJobUrl)
-                                    .orElseThrow(() -> new ResourceNotFoundException(String.format("Jenkins Job can not be found for launcher url %s", launcherJobUrl)));
+                job = jenkinsService.getJobDetailsFromJenkins(launcherJobUrl);
                 job.setJenkinsHost(jenkinsHost);
                 job.setUser(owner);
                 jobsService.createJob(job);
@@ -206,7 +205,7 @@ public class LauncherService {
         jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, TenancyContext.getTenantName()));
 
         String args = jobParameters.entrySet().stream()
-                                   .filter(param -> !Arrays.asList(JenkinsService.getRequiredArgs()).contains(param.getKey()))
+                                   .filter(param -> !MANDATORY_ARGUMENTS.contains(param.getKey()))
                                    .map(param -> param.getKey() + "=" + param.getValue())
                                    .collect(Collectors.joining(","));
 
@@ -217,7 +216,7 @@ public class LauncherService {
         String ciRunId = UUID.randomUUID().toString();
         jobParameters.put("ci_run_id", ciRunId);
 
-        if (!JenkinsService.checkArguments(jobParameters)) {
+        if (!jobParameters.entrySet().containsAll(MANDATORY_ARGUMENTS)) {
             // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
             throw new IllegalOperationException("Required arguments not found");
         }
@@ -259,11 +258,7 @@ public class LauncherService {
 
         jobParameters.put("zafiraFields", args);
 
-        JobResult result = jenkinsService.buildScannerJob(repositoryName, jobParameters, rescan);
-        if (result == null || !result.isSuccess()) {
-            throw new ForbiddenOperationException("Repository scanner job is not started");
-        }
-        return result;
+        return jenkinsService.buildScannerJob(repositoryName, jobParameters, rescan);
     }
 
     @Transactional(readOnly = true)
@@ -274,14 +269,11 @@ public class LauncherService {
             throw new ResourceNotFoundException("Scm account not found");
         }
         String repositoryName = scmAccount.getRepositoryName();
-        JobResult result = jenkinsService.abortScannerJob(repositoryName, buildNumber, rescan);
-        if (result == null || !result.isSuccess()) {
-            throw new ForbiddenOperationException("Repository scanner job is not aborted");
-        }
+        jenkinsService.abortScannerJob(repositoryName, buildNumber, rescan);
     }
 
     public Integer getBuildNumber(String queueItemUrl) {
-        return jenkinsService.getBuildNumber(new QueueReference(queueItemUrl));
+        return jenkinsService.getBuildNumber(queueItemUrl);
     }
 
 }
