@@ -118,6 +118,7 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
 
     @Override
     public JobResult buildJob(String jobURL, Map<String, String> jobParameters) {
+
         return buildJobByURL(jobURL, jobParameters);
     }
 
