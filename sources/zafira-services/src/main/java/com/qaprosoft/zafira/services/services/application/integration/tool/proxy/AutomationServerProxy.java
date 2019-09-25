@@ -15,6 +15,7 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.proxy;
 
+import com.qaprosoft.zafira.services.services.application.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.IntegrationAdapter;
@@ -31,7 +32,10 @@ public class AutomationServerProxy extends IntegrationAdapterProxy {
             "JENKINS", JenkinsIntegrationAdapter.class
     );
 
-    public AutomationServerProxy(ApplicationContext applicationContext, IntegrationGroupService integrationGroupService, IntegrationService integrationService) {
-        super(applicationContext, integrationGroupService, integrationService, "AUTOMATION_SERVER", INTEGRATION_TYPE_ADAPTERS);
+    public AutomationServerProxy(ApplicationContext applicationContext,
+                                 IntegrationGroupService integrationGroupService,
+                                 CryptoService cryptoService,
+                                 IntegrationService integrationService) {
+        super(applicationContext, integrationGroupService, integrationService, cryptoService, "AUTOMATION_SERVER", INTEGRATION_TYPE_ADAPTERS);
     }
 }

@@ -21,9 +21,11 @@ import com.qaprosoft.zafira.models.entity.integration.IntegrationGroup;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationSetting;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationType;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
+import com.qaprosoft.zafira.services.services.application.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.IntegrationAdapter;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -50,6 +52,7 @@ public abstract class IntegrationAdapterProxy {
     private final ApplicationContext applicationContext;
     private final IntegrationGroupService integrationGroupService;
     private final IntegrationService integrationService;
+    private final CryptoService cryptoService;
     private final String group;
     private final Map<String, Class<? extends IntegrationAdapter>> adapterClasses;
     private final Map<String, Object> additionalParameters;
@@ -58,6 +61,7 @@ public abstract class IntegrationAdapterProxy {
             ApplicationContext applicationContext,
             IntegrationGroupService integrationGroupService,
             IntegrationService integrationService,
+            CryptoService cryptoService,
             String group,
             Map<String, Class<? extends IntegrationAdapter>> adapterClasses,
             Map<String, Object> additionalParameters
@@ -65,6 +69,7 @@ public abstract class IntegrationAdapterProxy {
         this.applicationContext = applicationContext;
         this.integrationGroupService = integrationGroupService;
         this.integrationService = integrationService;
+        this.cryptoService = cryptoService;
         this.group = group;
         this.adapterClasses = adapterClasses;
         this.additionalParameters = additionalParameters;
@@ -74,10 +79,11 @@ public abstract class IntegrationAdapterProxy {
             ApplicationContext applicationContext,
             IntegrationGroupService integrationGroupService,
             IntegrationService integrationService,
+            CryptoService cryptoService,
             String group,
             Map<String, Class<? extends IntegrationAdapter>> adapterClasses
     ) {
-        this(applicationContext, integrationGroupService, integrationService, group, adapterClasses, null);
+        this(applicationContext, integrationGroupService, integrationService, cryptoService, group, adapterClasses, null);
     }
 
     private static synchronized void putAdapter(IntegrationAdapter integrationAdapter) {
@@ -160,6 +166,16 @@ public abstract class IntegrationAdapterProxy {
     }
 
     private IntegrationAdapter createAdapter(Integration integration, Class<? extends IntegrationAdapter> adapterClass) {
+        integration.getSettings().forEach(setting -> {
+            if (setting.isEncrypted()) {
+                if (StringUtils.isNotEmpty(setting.getValue())) {
+                    String decryptedValue = cryptoService.decrypt(setting.getValue());
+                    setting.setValue(decryptedValue);
+                    setting.setEncrypted(false);
+                }
+            }
+        });
+
         IntegrationAdapter adapter = null;
         Constructor constructor = getCorrectConstructor(adapterClass);
         Object[] params = buildParameterObjects(constructor, integration);

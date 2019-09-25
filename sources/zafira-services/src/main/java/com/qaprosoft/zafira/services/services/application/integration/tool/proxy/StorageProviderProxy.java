@@ -15,6 +15,7 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.proxy;
 
+import com.qaprosoft.zafira.services.services.application.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.IntegrationAdapter;
@@ -35,7 +36,8 @@ public class StorageProviderProxy extends IntegrationAdapterProxy {
     public StorageProviderProxy(ApplicationContext applicationContext,
                                 @Value("${zafira.multitenant}") Boolean multitenant,
                                 IntegrationGroupService integrationGroupService,
-                                IntegrationService integrationService) {
-        super(applicationContext, integrationGroupService, integrationService, "STORAGE_PROVIDER", INTEGRATION_TYPE_ADAPTERS, Map.of("multitenant", multitenant));
+                                IntegrationService integrationService,
+                                CryptoService cryptoService) {
+        super(applicationContext, integrationGroupService, integrationService, cryptoService, "STORAGE_PROVIDER", INTEGRATION_TYPE_ADAPTERS, Map.of("multitenant", multitenant));
     }
 }

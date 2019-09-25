@@ -15,6 +15,7 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.proxy;
 
+import com.qaprosoft.zafira.services.services.application.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.IntegrationAdapter;
@@ -35,9 +36,10 @@ public class SlackProxy extends IntegrationAdapterProxy {
     public SlackProxy(ApplicationContext applicationContext,
                       IntegrationGroupService integrationGroupService,
                       IntegrationService integrationService,
+                      CryptoService cryptoService,
                       @Value("${zafira.slack.image-url}") String image,
                       @Value("${zafira.slack.author}") String author
     ) {
-        super(applicationContext, integrationGroupService, integrationService, "SLACK", INTEGRATION_TYPE_ADAPTERS, Map.of("image", image, "author", author));
+        super(applicationContext, integrationGroupService, integrationService, cryptoService, "SLACK", INTEGRATION_TYPE_ADAPTERS, Map.of("image", image, "author", author));
     }
 }

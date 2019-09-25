@@ -15,6 +15,7 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.proxy;
 
+import com.qaprosoft.zafira.services.services.application.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.IntegrationAdapter;
@@ -31,7 +32,10 @@ public class TestAutomationToolProxy extends IntegrationAdapterProxy {
             "SELENIUM", SeleniumIntegrationAdapter.class
     );
 
-    public TestAutomationToolProxy(ApplicationContext applicationContext, IntegrationGroupService integrationGroupService, IntegrationService integrationService) {
-        super(applicationContext, integrationGroupService, integrationService, "TEST_AUTOMATION_TOOL", INTEGRATION_TYPE_ADAPTERS);
+    public TestAutomationToolProxy(ApplicationContext applicationContext,
+                                   IntegrationGroupService integrationGroupService,
+                                   IntegrationService integrationService,
+                                   CryptoService cryptoService) {
+        super(applicationContext, integrationGroupService, integrationService, cryptoService, "TEST_AUTOMATION_TOOL", INTEGRATION_TYPE_ADAPTERS);
     }
 }

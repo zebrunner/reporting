@@ -15,6 +15,7 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.proxy;
 
+import com.qaprosoft.zafira.services.services.application.CryptoService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.IntegrationAdapter;
@@ -33,7 +34,8 @@ public class MessageBrokerProxy extends IntegrationAdapterProxy {
 
     public MessageBrokerProxy(ApplicationContext applicationContext,
                               IntegrationGroupService integrationGroupService,
-                              IntegrationService integrationService) {
-        super(applicationContext, integrationGroupService, integrationService, "MESSAGE_BROKER", INTEGRATION_TYPE_ADAPTERS);
+                              IntegrationService integrationService,
+                              CryptoService cryptoService){
+        super(applicationContext, integrationGroupService, integrationService, cryptoService, "MESSAGE_BROKER", INTEGRATION_TYPE_ADAPTERS);
     }
 }
