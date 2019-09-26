@@ -17,14 +17,14 @@ package com.qaprosoft.zafira.services.services.application.integration.impl;
 
 import com.qaprosoft.zafira.dbaccess.persistence.IntegrationRepository;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
-import com.qaprosoft.zafira.models.entity.integration.IntegrationInfo;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationGroup;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationInfo;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationSetting;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationType;
 import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
-import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationGroupService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationSettingService;
@@ -41,14 +41,17 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.INTEGRATION_NOT_FOUND;
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.INVITATION_NOT_FOUND;
+
 @Service
 public class IntegrationServiceImpl implements IntegrationService {
 
     private static final String ERR_MSG_NOT_MULTIPLE_ALLOWED_INTEGRATION = "Integration with type '%s' is not multiple allowed";
     private static final String ERR_MSG_INTEGRATION_NOT_FOUND_BY_ID = "Integration with id '%d' not found";
     private static final String ERR_MSG_INTEGRATION_NOT_FOUND_BY_BACK_REFERENCE_ID = "Integration with back reference id '%s' not found";
-    private static final String ERR_MSG_DEFAULT_VALUE_IS_NOT_PROViDED_BY_TYPE_ID = "Default value for integration with id '%d' is nod provided";
-    private static final String ERR_MSG_DEFAULT_VALUE_IS_NOT_PROViDED_BY_NAME = "Default value for integration with name '%s' is nod provided";
+    private static final String ERR_MSG_DEFAULT_VALUE_IS_NOT_PROVIDED_BY_TYPE_ID = "Default value for integration with id '%d' is not provided";
+    private static final String ERR_MSG_DEFAULT_VALUE_IS_NOT_PROVIDED_BY_NAME = "Default value for integration with name '%s' is not provided";
 
     private final IntegrationRepository integrationRepository;
     private final IntegrationGroupService integrationGroupService;
@@ -101,21 +104,21 @@ public class IntegrationServiceImpl implements IntegrationService {
     @Transactional(readOnly = true)
     public Integration retrieveById(Long id) {
         return integrationRepository.findById(id)
-                                    .orElseThrow(() -> new ResourceNotFoundException(String.format(ERR_MSG_INTEGRATION_NOT_FOUND_BY_ID, id)));
+                                    .orElseThrow(() -> new ResourceNotFoundException(INTEGRATION_NOT_FOUND, ERR_MSG_INTEGRATION_NOT_FOUND_BY_ID, id));
     }
 
     @Override
     @Transactional(readOnly = true)
     public Integration retrieveByBackReferenceId(String backReferenceId) {
         return integrationRepository.findIntegrationByBackReferenceId(backReferenceId)
-                                    .orElseThrow(() -> new ResourceNotFoundException(String.format(ERR_MSG_INTEGRATION_NOT_FOUND_BY_BACK_REFERENCE_ID, backReferenceId)));
+                                    .orElseThrow(() -> new ResourceNotFoundException(INVITATION_NOT_FOUND, ERR_MSG_INTEGRATION_NOT_FOUND_BY_BACK_REFERENCE_ID, backReferenceId));
     }
 
     @Override
     @Transactional(readOnly = true)
     public Integration retrieveDefaultByIntegrationTypeId(Long integrationTypeId) {
         return integrationRepository.findIntegrationByTypeIdAndDefaultIsTrue(integrationTypeId)
-                                    .orElseThrow(() -> new ResourceNotFoundException(String.format(ERR_MSG_DEFAULT_VALUE_IS_NOT_PROViDED_BY_TYPE_ID, integrationTypeId)));
+                                    .orElseThrow(() -> new ResourceNotFoundException(INTEGRATION_NOT_FOUND, ERR_MSG_DEFAULT_VALUE_IS_NOT_PROVIDED_BY_TYPE_ID, integrationTypeId));
     }
 
     @Override
@@ -134,7 +137,7 @@ public class IntegrationServiceImpl implements IntegrationService {
     @Transactional(readOnly = true)
     public Integration retrieveDefaultByIntegrationTypeName(String integrationTypeName) {
         return integrationRepository.findIntegrationByTypeNameAndDefaultIsTrue(integrationTypeName)
-                                    .orElseThrow(() -> new ResourceNotFoundException(String.format(ERR_MSG_DEFAULT_VALUE_IS_NOT_PROViDED_BY_NAME, integrationTypeName)));
+                                    .orElseThrow(() -> new ResourceNotFoundException(INTEGRATION_NOT_FOUND, ERR_MSG_DEFAULT_VALUE_IS_NOT_PROVIDED_BY_NAME, integrationTypeName));
     }
 
     @Override

@@ -22,6 +22,8 @@ import com.qaprosoft.zafira.services.services.application.integration.Integratio
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.INTEGRATION_PARAM_NOT_FOUND;
+
 @Service
 public class IntegrationParamServiceImpl implements IntegrationParamService {
 
@@ -37,7 +39,7 @@ public class IntegrationParamServiceImpl implements IntegrationParamService {
     @Transactional(readOnly = true)
     public IntegrationParam retrieveById(Long id) {
         return integrationParamRepository.findById(id)
-                                         .orElseThrow(() -> new ResourceNotFoundException(String.format(ERR_MSG_INTEGRATION_PARAM_NOT_FOUND, id)));
+                                         .orElseThrow(() -> new ResourceNotFoundException(INTEGRATION_PARAM_NOT_FOUND, ERR_MSG_INTEGRATION_PARAM_NOT_FOUND, id));
     }
 
 }

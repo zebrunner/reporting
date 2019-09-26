@@ -28,8 +28,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.FILTER_NOT_FOUND;
+
 @Service
 public class FilterService {
+
+    private static final String ERR_MSG_FILTER_CAN_NOT_BE_FOUND = "Filter with id %s can not be found";
 
     private final FilterMapper filterMapper;
     private final FreemarkerUtil freemarkerUtil;
@@ -85,8 +89,7 @@ public class FilterService {
     public Filter updateFilter(Filter filter, boolean isAdmin) {
         Filter dbFilter = getFilterById(filter.getId());
         if (dbFilter == null) {
-            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
-            throw new ResourceNotFoundException("No filters found by id: " + filter.getId());
+            throw new ResourceNotFoundException(FILTER_NOT_FOUND, ERR_MSG_FILTER_CAN_NOT_BE_FOUND, filter.getId());
         }
         if (!filter.getName().equals(dbFilter.getName()) && isFilterExists(filter)) {
             // TODO by nsidorevich on 2019-09-03: review error code, message and exception type

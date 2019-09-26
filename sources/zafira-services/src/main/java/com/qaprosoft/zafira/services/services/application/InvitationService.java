@@ -44,11 +44,15 @@ import java.util.stream.Collectors;
 
 import static com.qaprosoft.zafira.models.db.Group.Role.ROLE_ADMIN;
 import static com.qaprosoft.zafira.models.db.User.Source.LDAP;
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.GROUP_NOT_FOUND;
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.INVITATION_NOT_FOUND;
 
 @Service
 public class InvitationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InvitationService.class);
+
+    private static final String ERR_MSG_INVITATION_FOR_EMAIL_NOT_FOUND = "Invitation for email %s can not be found";
 
     private final String zafiraLogoURL;
     private final URLResolver urlResolver;
@@ -79,7 +83,7 @@ public class InvitationService {
         Long groupId = invitation.getGroupId();
         Group group = groupService.getGroupById(groupId);
         if (group == null) {
-            throw new ResourceNotFoundException(String.format("Group with id %s does not exists", groupId));
+            throw new ResourceNotFoundException(GROUP_NOT_FOUND, "Group with id %s does not exists", groupId);
         }
         if (!group.getInvitable() && !force) {
             throw new ForbiddenOperationException("Cannot invite users to not invitable group '" + group.getName() + "'");
@@ -146,7 +150,7 @@ public class InvitationService {
     public Invitation retryInvitation(Long principalId, String email) {
         Invitation invitation = getInvitationByEmail(email);
         if (invitation == null) {
-            throw new ResourceNotFoundException(String.format("Invitation for email %s can not be found", email));
+            throw new ResourceNotFoundException(INVITATION_NOT_FOUND, ERR_MSG_INVITATION_FOR_EMAIL_NOT_FOUND, email);
         }
         if (invitation.getStatus().equals(Invitation.Status.ACCEPTED)) {
             // TODO by nsidorevich on 2019-09-03: review error code, message and exception type

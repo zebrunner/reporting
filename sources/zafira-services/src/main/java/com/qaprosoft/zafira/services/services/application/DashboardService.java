@@ -29,8 +29,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.DASHBOARD_NOT_FOUND;
+
 @Service
 public class DashboardService {
+
+    private static final String ERR_MSG_DASHBOARD_CAN_NOT_BE_FOUND = "Dashboard with id %s can not be found";
 
     private final DashboardMapper dashboardMapper;
     private final UserPreferenceService userPreferenceService;
@@ -55,7 +59,7 @@ public class DashboardService {
     public Dashboard getDashboardById(long id) {
         Dashboard dashboard = dashboardMapper.getDashboardById(id);
         if (dashboard == null) {
-            throw new ResourceNotFoundException(String.format("Dashboard with id %s does not exists", id));
+            throw new ResourceNotFoundException(DASHBOARD_NOT_FOUND, ERR_MSG_DASHBOARD_CAN_NOT_BE_FOUND, id);
         }
         return dashboard;
     }
@@ -84,8 +88,7 @@ public class DashboardService {
     public Dashboard updateDashboard(Dashboard dashboard) {
         Dashboard dbDashboard = getDashboardById(dashboard.getId());
         if (dbDashboard == null) {
-            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
-            throw new ResourceNotFoundException("Dashboard with id '" + dashboard.getId() + "' does not exist");
+            throw new ResourceNotFoundException(DASHBOARD_NOT_FOUND, ERR_MSG_DASHBOARD_CAN_NOT_BE_FOUND, dashboard.getId());
         }
         if (!dbDashboard.isEditable()) {
             throw new ForbiddenOperationException("Cannot update not editable dashboard");
