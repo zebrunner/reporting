@@ -127,8 +127,7 @@ public class LauncherService {
         if (job == null) {
             job = jobsService.createOrUpdateJobByURL(jobUrl, owner);
         }
-        String group = automationServerService.getIntegrationAdapterProxy().getGroup();
-        List<Integration> integrations = integrationService.retrieveByIntegrationGroupName(group);
+        List<Integration> integrations = integrationService.retrieveByIntegrationsTypeName("JENKINS");
         String jenkinsHost = job.getJenkinsHost();
         Integration launcherIntegration = getIntegrationByJenkinsHost(integrations, jenkinsHost);
         job.setAutomationServerId(launcherIntegration.getId());
