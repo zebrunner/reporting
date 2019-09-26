@@ -26,8 +26,10 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.JenkinsLauncherType;
 import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
+import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.AutomationServerService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.TestAutomationToolService;
 import com.qaprosoft.zafira.services.services.application.scm.GitHubService;
@@ -53,6 +55,7 @@ public class LauncherService {
     private static final Set<String> MANDATORY_ARGUMENTS = Set.of("scmURL", "branch", "zafiraFields");
 
     private final LauncherMapper launcherMapper;
+    private final IntegrationService integrationService;
     private final AutomationServerService automationServerService;
     private final ScmAccountService scmAccountService;
     private final JobsService jobsService;
@@ -63,6 +66,7 @@ public class LauncherService {
     private final URLResolver urlResolver;
 
     public LauncherService(LauncherMapper launcherMapper,
+                           IntegrationService integrationService,
                            AutomationServerService automationServerService,
                            ScmAccountService scmAccountService,
                            JobsService jobsService,
@@ -72,6 +76,7 @@ public class LauncherService {
                            CryptoService cryptoService,
                            URLResolver urlResolver) {
         this.launcherMapper = launcherMapper;
+        this.integrationService = integrationService;
         this.automationServerService = automationServerService;
         this.scmAccountService = scmAccountService;
         this.jobsService = jobsService;
@@ -122,9 +127,26 @@ public class LauncherService {
         if (job == null) {
             job = jobsService.createOrUpdateJobByURL(jobUrl, owner);
         }
+        String group = automationServerService.getIntegrationAdapterProxy().getGroup();
+        List<Integration> integrations = integrationService.retrieveByIntegrationGroupName(group);
+        String jenkinsHost = job.getJenkinsHost();
+        Integration launcherIntegration = getIntegrationByJenkinsHost(integrations, jenkinsHost);
+        job.setAutomationServerId(launcherIntegration.getId());
         Launcher launcher = new Launcher(job.getName(), jenkinsLauncherType.getJobParameters(), scmAccount, job, true);
         launcherMapper.createLauncher(launcher);
         return launcher;
+    }
+
+    private Integration getIntegrationByJenkinsHost(List<Integration> integrations, String jenkinsHost) {
+        return integrations.stream()
+                           .filter(integration -> findIntegrationSettingWithJenkinsHost(jenkinsHost, integration))
+                           .findAny().orElse(new Integration());
+    }
+
+    private boolean findIntegrationSettingWithJenkinsHost(String jenkinsHost, Integration integration) {
+        return integration.getSettings()
+                          .stream()
+                          .anyMatch(setting -> setting.getValue().equals(jenkinsHost));
     }
 
     @Transactional(readOnly = true)

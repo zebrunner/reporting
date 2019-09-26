@@ -31,7 +31,7 @@ public class Job extends AbstractEntity {
     private String name;
     private String jobURL;
     private String jenkinsHost;
-    private String automationServerId;
+    private Long automationServerId;
     private User user = new User();
 
     public Job(String name, String jobURL) {

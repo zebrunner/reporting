@@ -40,7 +40,7 @@ public class AutomationServerService extends AbstractIntegrationService<Automati
 
     public void rerunJob(Job job, Integer buildNumber, boolean rerunFailures) {
         String jobURL = job.getJobURL();
-        AutomationServerAdapter adapter = getAdapterByBackReferenceId(job.getAutomationServerId());
+        AutomationServerAdapter adapter = getAdapterByIntegrationId(job.getAutomationServerId());
         Map<String, String> params = adapter.getBuildParametersMap(jobURL, buildNumber);
 
         params.put("rerun_failures", Boolean.toString(rerunFailures));
@@ -51,7 +51,7 @@ public class AutomationServerService extends AbstractIntegrationService<Automati
 
     public void debugJob(Job job, Integer buildNumber) {
         String jobURL = job.getJobURL();
-        AutomationServerAdapter adapter = getAdapterByBackReferenceId(job.getAutomationServerId());
+        AutomationServerAdapter adapter = getAdapterByIntegrationId(job.getAutomationServerId());
         Map<String, String> params = adapter.getBuildParametersMap(job.getJobURL(), buildNumber);
 
         params.replace("debug", "true");
@@ -62,7 +62,7 @@ public class AutomationServerService extends AbstractIntegrationService<Automati
     }
 
     public void buildJob(Job job, Map<String, String> jobParameters) {
-        AutomationServerAdapter adapter = getAdapterByBackReferenceId(job.getAutomationServerId());
+        AutomationServerAdapter adapter = getAdapterByIntegrationId(job.getAutomationServerId());
         adapter.buildJob(job.getJobURL(), jobParameters);
     }
 
