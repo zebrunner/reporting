@@ -29,12 +29,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 
+import static com.qaprosoft.zafira.services.exceptions.IllegalOperationException.IllegalOperationErrorDetail.DASHBOARD_CAN_NOT_BE_CREATED;
 import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.DASHBOARD_NOT_FOUND;
 
 @Service
 public class DashboardService {
 
     private static final String ERR_MSG_DASHBOARD_CAN_NOT_BE_FOUND = "Dashboard with id %s can not be found";
+    private static final String ERR_MSG_DASHBOARD_ALREADY_EXISTS = "Dashboard with such title already exists";
 
     private final DashboardMapper dashboardMapper;
     private final UserPreferenceService userPreferenceService;
@@ -47,8 +49,7 @@ public class DashboardService {
     @Transactional(rollbackFor = Exception.class)
     public Dashboard createDashboard(Dashboard dashboard) {
         if (getDashboardByTitle(dashboard.getTitle()) != null) {
-            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
-            throw new IllegalOperationException("Dashboard title '" + dashboard.getTitle() + "' is currently in use");
+            throw new IllegalOperationException(DASHBOARD_CAN_NOT_BE_CREATED, ERR_MSG_DASHBOARD_ALREADY_EXISTS);
         }
         dashboard.setEditable(true);
         dashboardMapper.createDashboard(dashboard);

@@ -15,25 +15,42 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+/**
+ * Exception that is thrown to indicate that certain operation is not valid according to business logic of application
+ * (e.g. when someone attempts to update recourse with a certain status that indicates immutable state at given moment -
+ * simply put can not be updated).
+ * Reserved range 2060 - 2079
+ */
 public class IllegalOperationException extends ApplicationException {
 
-    public IllegalOperationException() {
+    @Getter
+    @RequiredArgsConstructor
+    @AllArgsConstructor
+    public enum IllegalOperationErrorDetail implements ErrorDetail {
+
+        USER_CAN_NOT_BE_CREATED(2060),
+        DASHBOARD_CAN_NOT_BE_CREATED(2061),
+        FILTER_CAN_NOT_BE_CREATED(2062),
+        INTEGRATION_CAN_NOT_BE_CREATED(2063),
+        JOB_CAN_NOT_BE_STARTED(2064),
+        INVITATION_CAN_NOT_BE_CREATED(2065),
+        ILLEGAL_FILTER_ACCESS(2066);
+
+        private final Integer code;
+        private String messageKey;
+
     }
 
-    public IllegalOperationException(String message) {
-        super(message);
+    public IllegalOperationException(IllegalOperationErrorDetail errorDetail, String message) {
+        super(errorDetail, message);
     }
 
-    public IllegalOperationException(Throwable cause) {
-        super(cause);
-    }
-
-    public IllegalOperationException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public IllegalOperationException(String message, Throwable cause, boolean writableStackTrace) {
-        super(message, cause, writableStackTrace);
+    public IllegalOperationException(IllegalOperationErrorDetail errorDetail, String message, Object... args) {
+        super(errorDetail, message, args);
     }
 
 }

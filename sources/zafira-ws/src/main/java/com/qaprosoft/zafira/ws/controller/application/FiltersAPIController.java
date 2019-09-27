@@ -27,11 +27,17 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.qaprosoft.zafira.services.exceptions.IllegalOperationException.IllegalOperationErrorDetail.FILTER_CAN_NOT_BE_CREATED;
+import static com.qaprosoft.zafira.services.exceptions.IllegalOperationException.IllegalOperationErrorDetail.ILLEGAL_FILTER_ACCESS;
+
 @Api("Filters API")
 @CrossOrigin
 @RequestMapping(path = "api/filters", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class FiltersAPIController extends AbstractController {
+
+    private static final String ERR_MSG_FILTER_WITH_SUCH_NAME_ALREADY_EXISTS = "Filter with such name already exists";
+    private static final String ERR_MSG_ILLEGAL_FILTER_MODIFICATION = "Only creator can modify or delete filter";
 
     private final FilterService filterService;
     private final Mapper mapper;
@@ -51,7 +57,7 @@ public class FiltersAPIController extends AbstractController {
 
         Filter filter = mapper.map(filterType, Filter.class);
         if (filterService.isFilterExists(filter)) {
-            throw new IllegalOperationException("Filter with such name already exists");
+            throw new IllegalOperationException(FILTER_CAN_NOT_BE_CREATED, ERR_MSG_FILTER_WITH_SUCH_NAME_ALREADY_EXISTS);
         }
         if (filter.isPublicAccess() && !isAdmin()) {
             filter.setPublicAccess(false);
@@ -78,7 +84,7 @@ public class FiltersAPIController extends AbstractController {
     public FilterType updateFilter(@RequestBody @Valid FilterType filterType) {
         Filter filter = filterService.getFilterById(filterType.getId());
         if (filter != null && !filter.getUserId().equals(getPrincipalId())) {
-            throw new IllegalOperationException("Cannot access to update filter");
+            throw new IllegalOperationException(ILLEGAL_FILTER_ACCESS, ERR_MSG_ILLEGAL_FILTER_MODIFICATION);
         }
         filterType.getSubject().sortCriterias();
         return mapper.map(filterService.updateFilter(mapper.map(filterType, Filter.class), isAdmin()), FilterType.class);
@@ -91,7 +97,7 @@ public class FiltersAPIController extends AbstractController {
     public void deleteFilter(@PathVariable("id") Long id) {
         Filter filter = filterService.getFilterById(id);
         if (filter != null && !filter.getUserId().equals(getPrincipalId())) {
-            throw new IllegalOperationException("Cannot access to delete filter");
+            throw new IllegalOperationException(ILLEGAL_FILTER_ACCESS, ERR_MSG_ILLEGAL_FILTER_MODIFICATION);
         }
         filterService.deleteFilterById(id);
     }

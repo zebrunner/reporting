@@ -68,11 +68,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+import static com.qaprosoft.zafira.services.exceptions.IllegalOperationException.IllegalOperationErrorDetail.USER_CAN_NOT_BE_CREATED;
+
 @Api("Auth API")
 @CrossOrigin
 @RequestMapping(path = "api/auth", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 @RestController
 public class AuthAPIController extends AbstractController {
+
+    private static final String ERR_MSG_USER_ALREADY_EXISTS = "User with such username already exists";
 
     @Autowired
     private JWTService jwtService;
@@ -167,7 +171,7 @@ public class AuthAPIController extends AbstractController {
     @PostMapping("/signup")
     public void signup(@RequestHeader("Access-Token") String token, @Valid @RequestBody UserType userType) {
         if (userService.getUserByUsername(userType.getUsername()) != null) {
-            throw new IllegalOperationException("User with such username already exists");
+            throw new IllegalOperationException(USER_CAN_NOT_BE_CREATED, ERR_MSG_USER_ALREADY_EXISTS);
         }
         Invitation invitation = invitationService.getInvitationByToken(token);
         if (invitation == null) {
