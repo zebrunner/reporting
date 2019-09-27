@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.services.services.application.integration.tool;
 
 import com.qaprosoft.zafira.models.entity.integration.Integration;
+import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.IntegrationAdapter;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.IntegrationGroupAdapter;
@@ -39,9 +40,10 @@ public abstract class AbstractIntegrationService<T extends IntegrationGroupAdapt
 
     public boolean isEnabledAndConnected(Long integrationId) {
         IntegrationAdapter adapter = (IntegrationAdapter) getAdapterByIntegrationId(integrationId);
-
-        // we now need proper integration id since it can be null prior to this point, but never for adapter
-        Integration integration = integrationService.retrieveById(integrationId);
+        // adapter presence is already verified
+        Long adapterIntegrationId = adapter.getIntegrationId();
+        // we now use proper integration id since it can be null prior to this point, but never for adapter
+        Integration integration = integrationService.retrieveById(adapterIntegrationId);
 
         return integration.isEnabled() && adapter.isConnected();
     }
@@ -56,13 +58,13 @@ public abstract class AbstractIntegrationService<T extends IntegrationGroupAdapt
             maybeAdapter = IntegrationAdapterProxy.getAdapter(integrationId);
         }
 
-        return (T) maybeAdapter.orElseThrow(() -> new UnsupportedOperationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND, defaultType)));
+        return (T) maybeAdapter.orElseThrow(() -> new IntegrationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND, defaultType)));
     }
 
     @SuppressWarnings("unchecked")
     public T getAdapterByBackReferenceId(String backReferenceId) {
         return (T) integrationAdapterProxy.getAdapter(backReferenceId)
-                                          .orElseThrow(() -> new UnsupportedOperationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND, defaultType)));
+                                          .orElseThrow(() -> new IntegrationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND, defaultType)));
     }
 
     public IntegrationAdapterProxy getIntegrationAdapterProxy() {
