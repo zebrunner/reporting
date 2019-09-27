@@ -50,11 +50,15 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.SCM_ACCOUNT_NOT_FOUND;
+
 @Api("SCM accounts API")
 @CrossOrigin
 @RequestMapping(path = "api/scm", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class ScmAPIController extends AbstractController {
+
+    private static final String ERR_MSG_SCM_ACCOUNT_NOT_FOUND = "SCM account with id %s can not be found";
 
     private final ScmAccountService scmAccountService;
     private final GitHubService gitHubService;
@@ -111,10 +115,10 @@ public class ScmAPIController extends AbstractController {
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS')")
     @PutMapping("/accounts")
     public ScmAccountType updateScmAccount(@RequestBody @Valid ScmAccountType scmAccountType) {
-        ScmAccount account = scmAccountService.getScmAccountById(scmAccountType.getId());
+        long scmAccountId = scmAccountType.getId();
+        ScmAccount account = scmAccountService.getScmAccountById(scmAccountId);
         if (account == null) {
-            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
-            throw new ResourceNotFoundException("Scm account with id " + scmAccountType.getId() + " does not exist.");
+            throw new ResourceNotFoundException(SCM_ACCOUNT_NOT_FOUND, ERR_MSG_SCM_ACCOUNT_NOT_FOUND, scmAccountId);
         }
         ScmAccount currentAccount = mapper.map(scmAccountType, ScmAccount.class);
         if (account.getUserId() == null || account.getUserId() <= 0) {

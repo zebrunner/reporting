@@ -42,11 +42,15 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.PROJECT_NOT_FOUND;
+
 @Api("Projects API")
 @CrossOrigin
 @RequestMapping(path = "api/projects", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class ProjectsAPIController extends AbstractController {
+
+    private static final String ERR_MSG_PROJECT_CAN_NOT_BE_FOUND_BY_NAME = "Project with name %s can not be found";
 
     private final Mapper mapper;
 
@@ -104,7 +108,7 @@ public class ProjectsAPIController extends AbstractController {
     public ProjectType getProjectByName(@PathVariable("name") String name) {
         Project project = projectService.getProjectByName(name);
         if (project == null) {
-            throw new ResourceNotFoundException(String.format("Project with name %s can not be found", name));
+            throw new ResourceNotFoundException(PROJECT_NOT_FOUND, ERR_MSG_PROJECT_CAN_NOT_BE_FOUND_BY_NAME, name);
         }
         return mapper.map(project, ProjectType.class);
     }

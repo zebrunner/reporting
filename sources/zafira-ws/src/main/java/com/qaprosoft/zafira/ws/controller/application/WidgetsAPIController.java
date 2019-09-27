@@ -57,10 +57,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.WIDGET_TEMPLATE_NOT_FOUND;
+
 @ApiIgnore
 @RequestMapping(path = "api/widgets", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class WidgetsAPIController extends AbstractController {
+
+    private static final String ERR_MSG_WIDGET_TEMPLATE_NOT_FOUND = "Widget template with id %s can not be found";
 
     private final URLResolver urlResolver;
     private final WidgetService widgetService;
@@ -85,16 +89,21 @@ public class WidgetsAPIController extends AbstractController {
     @PostMapping()
     public WidgetType createWidget(@RequestBody @Valid WidgetType widget) {
         if (widget.getWidgetTemplate() != null) {
-            WidgetTemplate widgetTemplate = widgetTemplateService.getWidgetTemplateById(widget.getWidgetTemplate().getId());
-            if (widgetTemplate == null) {
-                // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
-                throw new ResourceNotFoundException("Unable to create chart. Template with id " + widget.getWidgetTemplate().getId() + " does not exist.");
-            }
-            widgetTemplateService.clearRedundantParamsValues(widgetTemplate);
-            widget.setWidgetTemplate(mapper.map(widgetTemplate, WidgetTemplateType.class));
+            WidgetTemplate widgetTemplate = prepareWidgetTemplate(widget);
             widget.setType(widgetTemplate.getType().name());
         }
         return mapper.map(widgetService.createWidget(mapper.map(widget, Widget.class)), WidgetType.class);
+    }
+
+    private WidgetTemplate prepareWidgetTemplate(@Valid @RequestBody WidgetType widget) {
+        long templateId = widget.getWidgetTemplate().getId();
+        WidgetTemplate widgetTemplate = widgetTemplateService.getWidgetTemplateById(templateId);
+        if (widgetTemplate == null) {
+            throw new ResourceNotFoundException(WIDGET_TEMPLATE_NOT_FOUND, ERR_MSG_WIDGET_TEMPLATE_NOT_FOUND, templateId);
+        }
+        widgetTemplateService.clearRedundantParamsValues(widgetTemplate);
+        widget.setWidgetTemplate(mapper.map(widgetTemplate, WidgetTemplateType.class));
+        return widgetTemplate;
     }
 
     @ResponseStatusDetails
@@ -121,14 +130,7 @@ public class WidgetsAPIController extends AbstractController {
     @PutMapping()
     public Widget updateWidget(@RequestBody WidgetType widget) {
         if (widget.getWidgetTemplate() != null) {
-            WidgetTemplate widgetTemplate = widgetTemplateService.getWidgetTemplateById(widget.getWidgetTemplate().getId());
-            if (widgetTemplate == null) {
-                // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
-                throw new ResourceNotFoundException("Unable to update widget. Widget template does not exist");
-            }
-            widgetTemplateService.clearRedundantParamsValues(widgetTemplate);
-            // widgetTemplateService.executeWidgetTemplateParamsSQLQueries(widgetTemplate);
-            widget.setWidgetTemplate(mapper.map(widgetTemplate, WidgetTemplateType.class));
+            prepareWidgetTemplate(widget);
         }
         return widgetService.updateWidget(mapper.map(widget, Widget.class));
     }
@@ -233,10 +235,10 @@ public class WidgetsAPIController extends AbstractController {
             @RequestBody @Valid SQLExecuteType sqlExecuteType,
             @RequestParam(value = "stackTraceRequired", required = false) boolean stackTraceRequired
     ) {
-        WidgetTemplate widgetTemplate = widgetTemplateService.getWidgetTemplateById(sqlExecuteType.getTemplateId());
+        Long templateId = sqlExecuteType.getTemplateId();
+        WidgetTemplate widgetTemplate = widgetTemplateService.getWidgetTemplateById(templateId);
         if (widgetTemplate == null) {
-            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
-            throw new ResourceNotFoundException("Widget template does not exist");
+            throw new ResourceNotFoundException(WIDGET_TEMPLATE_NOT_FOUND, ERR_MSG_WIDGET_TEMPLATE_NOT_FOUND, templateId);
         }
         List<Map<String, Object>> resultList;
         try {

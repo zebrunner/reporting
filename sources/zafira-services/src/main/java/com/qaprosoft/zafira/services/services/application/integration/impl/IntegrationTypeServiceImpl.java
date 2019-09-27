@@ -24,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.INTEGRATION_TYPE_NOT_FOUND;
+
 @Service
 public class IntegrationTypeServiceImpl implements IntegrationTypeService {
 
@@ -41,20 +43,20 @@ public class IntegrationTypeServiceImpl implements IntegrationTypeService {
     @Transactional(readOnly = true)
     public IntegrationType retrieveById(Long id) {
         return integrationTypeRepository.findById(id)
-                                        .orElseThrow(() -> new ResourceNotFoundException(String.format(ERR_MSG_INTEGRATION_TYPE_NOT_FOUND, id)));
+                                        .orElseThrow(() -> new ResourceNotFoundException(INTEGRATION_TYPE_NOT_FOUND, ERR_MSG_INTEGRATION_TYPE_NOT_FOUND, id));
     }
 
     @Override
     @Transactional(readOnly = true)
     public IntegrationType retrieveByName(String name) {
         return integrationTypeRepository.findByName(name)
-                                        .orElseThrow(() -> new ResourceNotFoundException(String.format(ERR_MSG_INTEGRATION_TYPE_NOT_FOUND_BY_NAME, name)));
+                                        .orElseThrow(() -> new ResourceNotFoundException(INTEGRATION_TYPE_NOT_FOUND, ERR_MSG_INTEGRATION_TYPE_NOT_FOUND_BY_NAME, name));
     }
 
     @Override
     public IntegrationType retrieveByIntegrationId(Long integrationId) {
         return integrationTypeRepository.findByIntegrationId(integrationId)
-                                        .orElseThrow(() -> new ResourceNotFoundException(String.format(ERR_MSG_INTEGRATION_TYPE_NOT_FOUND_BY_INTEGRATION_ID, integrationId)));
+                                        .orElseThrow(() -> new ResourceNotFoundException(INTEGRATION_TYPE_NOT_FOUND, ERR_MSG_INTEGRATION_TYPE_NOT_FOUND_BY_INTEGRATION_ID, integrationId));
     }
 
     @Override

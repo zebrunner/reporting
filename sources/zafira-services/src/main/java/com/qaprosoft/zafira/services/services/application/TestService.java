@@ -53,12 +53,13 @@ import java.util.stream.Collectors;
 import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_BLOCKER;
 import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_KNOWN_ISSUE;
 import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.REMOVE_BLOCKER;
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_NOT_FOUND;
 
 @Service
 public class TestService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestService.class);
 
-    private static final String ERR_MSG_TEST_RUN_NOT_FOUND = "Test run with id %s can not be found";
+    private static final String ERR_MSG_TEST_NOT_FOUND = "Test with id %s can not be found";
 
     private static final String INV_COUNT = "InvCount";
 
@@ -260,7 +261,7 @@ public class TestService {
     public Test changeTestStatus(long id, Status newStatus) {
         Test test = getTestById(id);
         if (test == null) {
-            throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
+            throw new ResourceNotFoundException(TEST_NOT_FOUND, String.format(ERR_MSG_TEST_NOT_FOUND, id));
         }
         testRunService.updateStatistics(test.getTestRunId(), newStatus, test.getStatus());
         test.setStatus(newStatus);
@@ -278,8 +279,7 @@ public class TestService {
     public Test createTestWorkItems(long id, List<String> jiraIds) {
         Test test = getTestById(id);
         if (test == null) {
-            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
-            throw new ResourceNotFoundException("Test not found by id: " + id);
+            throw new ResourceNotFoundException(TEST_NOT_FOUND, ERR_MSG_TEST_NOT_FOUND, id);
         }
         for (String jiraId : jiraIds) {
             if (!StringUtils.isEmpty(jiraId)) {
@@ -300,7 +300,7 @@ public class TestService {
     public Test getNotNullTestById(long id) {
         Test test = getTestById(id);
         if (test == null) {
-            throw new ResourceNotFoundException(String.format("No test found by id %s", id));
+            throw new ResourceNotFoundException(TEST_NOT_FOUND, ERR_MSG_TEST_NOT_FOUND, id);
         }
         return test;
     }

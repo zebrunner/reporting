@@ -24,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.INTEGRATION_GROUP_NOT_FUND;
+
 @Service
 public class IntegrationGroupServiceImpl implements IntegrationGroupService {
 
@@ -45,13 +47,14 @@ public class IntegrationGroupServiceImpl implements IntegrationGroupService {
     @Transactional(readOnly = true)
     public IntegrationGroup retrieveByIntegrationTypeId(Long integrationTypeId) {
         return integrationGroupRepository.findByTypeId(integrationTypeId)
-                                         .orElseThrow(() -> new ResourceNotFoundException(String.format(ERR_MSG_INTEGRATION_GROUP_NOT_FOUND_BY_INTEGRATION_TYPE, integrationTypeId)));
+                                         .orElseThrow(() -> new ResourceNotFoundException(INTEGRATION_GROUP_NOT_FUND, ERR_MSG_INTEGRATION_GROUP_NOT_FOUND_BY_INTEGRATION_TYPE, integrationTypeId));
     }
 
     @Override
     @Transactional(readOnly = true)
     public IntegrationGroup retrieveByName(String name) {
         return integrationGroupRepository.findByName(name)
-                                         .orElseThrow(() -> new ResourceNotFoundException(String.format(ERR_MSG_INTEGRATION_GROUP_NOT_FOUND_BY_NAME, name)));
+                                         .orElseThrow(() -> new ResourceNotFoundException(INTEGRATION_GROUP_NOT_FUND, ERR_MSG_INTEGRATION_GROUP_NOT_FOUND_BY_NAME, name));
     }
+
 }

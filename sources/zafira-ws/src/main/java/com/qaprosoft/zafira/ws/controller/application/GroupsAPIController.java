@@ -40,11 +40,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.GROUP_NOT_FOUND;
+
 @Api("Groups API")
 @CrossOrigin
 @RequestMapping(path = "api/groups", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class GroupsAPIController extends AbstractController {
+
+    private static final String ERR_MSG_GROUP_CAN_NOT_BE_FOUND = "Group with id %s can not be found";
 
     private final GroupService groupService;
 
@@ -123,7 +127,7 @@ public class GroupsAPIController extends AbstractController {
     public void deleteGroup(@PathVariable("id") long id) {
         Group group = groupService.getGroupById(id);
         if (group == null) {
-            throw new ResourceNotFoundException(String.format("Group with id %s does not exists", id));
+            throw new ResourceNotFoundException(GROUP_NOT_FOUND, ERR_MSG_GROUP_CAN_NOT_BE_FOUND, id);
         }
         if (group.getUsers().size() > 0) {
             throw new ForbiddenOperationException("It's necessary to clear the group initially.", true);
