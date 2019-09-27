@@ -44,11 +44,19 @@ import java.util.stream.Collectors;
 
 import static com.qaprosoft.zafira.models.db.Group.Role.ROLE_ADMIN;
 import static com.qaprosoft.zafira.models.db.User.Source.LDAP;
+import static com.qaprosoft.zafira.services.exceptions.IllegalOperationException.IllegalOperationErrorDetail.INVITATION_CAN_NOT_BE_CREATED;
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.GROUP_NOT_FOUND;
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.INVITATION_NOT_FOUND;
 
 @Service
 public class InvitationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InvitationService.class);
+
+    private static final String ERR_MSG_INVITATION_FOR_EMAIL_NOT_FOUND = "Invitation for email %s can not be found";
+    private static final String ERR_MSG_USER_ALREADY_EXISTS = "User with such email already exists";
+    private static final String ERR_MSG_INVITATION_ALREADY_EXISTS = "User with such email was invited already";
+    private static final String ERR_MSG_INVITATION_CAN_NOT_BE_RETRIED = "Invitation was already accepted, can not retry";
 
     private final String zafiraLogoURL;
     private final URLResolver urlResolver;
@@ -79,7 +87,7 @@ public class InvitationService {
         Long groupId = invitation.getGroupId();
         Group group = groupService.getGroupById(groupId);
         if (group == null) {
-            throw new ResourceNotFoundException(String.format("Group with id %s does not exists", groupId));
+            throw new ResourceNotFoundException(GROUP_NOT_FOUND, "Group with id %s does not exists", groupId);
         }
         if (!group.getInvitable() && !force) {
             throw new ForbiddenOperationException("Cannot invite users to not invitable group '" + group.getName() + "'");
@@ -143,19 +151,20 @@ public class InvitationService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Invitation retryInvitation(Long principalId, String email) {
+    public Invitation retryInvitation(Long inviterId, String email) {
         Invitation invitation = getInvitationByEmail(email);
+
         if (invitation == null) {
-            throw new ResourceNotFoundException(String.format("Invitation for email %s can not be found", email));
+            throw new ResourceNotFoundException(INVITATION_NOT_FOUND, ERR_MSG_INVITATION_FOR_EMAIL_NOT_FOUND, email);
         }
         if (invitation.getStatus().equals(Invitation.Status.ACCEPTED)) {
-            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
-            throw new IllegalOperationException("Cannot retry invitation due invitation is accepted yet.");
+            throw new IllegalOperationException(INVITATION_CAN_NOT_BE_CREATED, ERR_MSG_INVITATION_CAN_NOT_BE_RETRIED);
         }
-        String token = generateToken();
-        invitation.setToken(token);
-        invitation.setCreatedBy(userService.getUserById(principalId));
+
+        invitation.setToken(generateToken());
+        invitation.setCreatedBy(userService.getUserById(inviterId));
         invitation = updateInvitation(invitation);
+
         sendEmail(invitation);
 
         insertInvitationUrl(invitation);
@@ -223,9 +232,9 @@ public class InvitationService {
 
     private void checkExisting(String email) {
         if (userService.getUserByEmail(email) != null) {
-            throw new IllegalOperationException("User with such email already exists");
+            throw new IllegalOperationException(INVITATION_CAN_NOT_BE_CREATED, ERR_MSG_USER_ALREADY_EXISTS);
         } else if (getInvitationByEmail(email) != null) {
-            throw new IllegalOperationException("User with such email was invited already");
+            throw new IllegalOperationException(INVITATION_CAN_NOT_BE_CREATED, ERR_MSG_INVITATION_ALREADY_EXISTS);
         }
     }
 

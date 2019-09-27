@@ -28,8 +28,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_RUN_NOT_FOUND;
+
 @Component
 public class CertificationService {
+
+    private static final String ERR_MSG_TEST_RUN_NOT_FOUND = "Test run with id %s can not be found";
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd");
 
@@ -68,8 +72,7 @@ public class CertificationService {
     private void insertIntoCertification(CertificationType certification, Long testRunId, String platform) {
         TestRun testRun = testRunService.getTestRunById(testRunId);
         if (testRun == null) {
-            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
-            throw new ResourceNotFoundException("Test run with id " + testRunId + " not found");
+            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, testRunId);
         }
         List<Test> tests = testService.getTestsByTestRunId(testRunId);
         tests.forEach(test -> {

@@ -75,6 +75,7 @@ import static com.qaprosoft.zafira.models.db.Status.IN_PROGRESS;
 import static com.qaprosoft.zafira.models.db.Status.PASSED;
 import static com.qaprosoft.zafira.models.db.Status.QUEUED;
 import static com.qaprosoft.zafira.models.db.Status.SKIPPED;
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_RUN_NOT_FOUND;
 import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.readArguments;
 
 @Service
@@ -84,8 +85,7 @@ public class TestRunService {
 
     private static final String DEFAULT_PROJECT = "UNKNOWN";
 
-    private static final String ERR_MSG_TEST_NOT_FOUND = "No test found by id %s";
-    private static final String ERR_MSG_TEST_RUN_NOT_FOUND = "No test run found by id %s";
+    private static final String ERR_MSG_TEST_RUN_NOT_FOUND = "Test run with id %s can not be found";
 
     public enum FailureCause {
         UNRECOGNIZED_FAILURE("UNRECOGNIZED FAILURE"),
@@ -169,7 +169,7 @@ public class TestRunService {
     public TestRun getNotNullTestRunById(long id) {
         TestRun testRun = getTestRunById(id);
         if (testRun == null) {
-            throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_NOT_FOUND, id));
+            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
         }
         return testRun;
     }
@@ -405,8 +405,7 @@ public class TestRunService {
     public TestRun markAsReviewed(Long id, String comment) {
         TestRun testRun = getTestRunById(id);
         if (testRun == null) {
-            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
-            throw new ResourceNotFoundException("No test run found by ID: " + id);
+            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
         }
         testRun.setComments(comment);
         if (!"undefined failure".equalsIgnoreCase(comment)) {
@@ -523,7 +522,7 @@ public class TestRunService {
                                           final String... recipients) {
         TestRun testRun = getTestRunByIdFull(testRunId);
         if (testRun == null) {
-            throw new ResourceNotFoundException(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, testRunId));
+            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, testRunId);
         }
         List<Test> tests = testService.getTestsByTestRunId(testRunId);
         return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
@@ -574,7 +573,7 @@ public class TestRunService {
             email.setSuccessRate(calculateSuccessRate(testRun));
             result = freemarkerUtil.getFreeMarkerTemplateContent(email.getType().getTemplateName(), email);
         } else {
-            LOGGER.error(String.format(ERR_MSG_TEST_NOT_FOUND, id));
+            LOGGER.error(String.format(ERR_MSG_TEST_RUN_NOT_FOUND, id));
         }
         return result;
     }

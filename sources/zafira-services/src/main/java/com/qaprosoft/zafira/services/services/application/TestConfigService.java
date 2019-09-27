@@ -27,10 +27,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_RUN_NOT_FOUND;
 import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.readArguments;
 
 @Service
 public class TestConfigService {
+
+    private static final String ERR_MSG_TEST_RUN_NOT_FOUND = "Test run with id %s can not be found";
 
     @Autowired
     private TestConfigMapper testConfigMapper;
@@ -45,10 +48,10 @@ public class TestConfigService {
 
     @Transactional(rollbackFor = Exception.class)
     public TestConfig createTestConfigForTest(Test test, String testConfigXML) {
-        TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
+        Long testRunId = test.getTestRunId();
+        TestRun testRun = testRunService.getTestRunById(testRunId);
         if (testRun == null) {
-            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
-            throw new ResourceNotFoundException("Test run not found!");
+            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, testRunId);
         }
 
         List<Argument> testRunConfig = readArguments(testRun.getConfigXML()).getArg();

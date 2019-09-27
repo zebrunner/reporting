@@ -49,8 +49,16 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.qaprosoft.zafira.services.exceptions.IllegalOperationException.IllegalOperationErrorDetail.JOB_CAN_NOT_BE_STARTED;
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.SCM_ACCOUNT_NOT_FOUND;
+
 @Service
 public class LauncherService {
+
+    private static final String ERR_MSG_SCM_ACCOUNT_NOT_FOUND = "SCM account with id %s can not be found";
+    private static final String ERR_MSG_SCM_ACCOUNT_NOT_FOUND_FOR_REPO = "SCM account for repo %s can not be found";
+    private static final String ERR_MSG_NO_BUILD_LAUNCHER_JOB_SPECIFIED = "No launcher job specified";
+    private static final String ERR_MSG_REQUIRED_JOB_ARGUMENTS_NOT_FOUND = "Required job arguments not found";
 
     private static final Set<String> MANDATORY_ARGUMENTS = Set.of("scmURL", "branch", "zafiraFields");
 
@@ -109,9 +117,10 @@ public class LauncherService {
         if (!scannedRepoLaunchersType.isSuccess()) {
             return new ArrayList<>();
         }
-        ScmAccount scmAccount = scmAccountService.getScmAccountByRepo(scannedRepoLaunchersType.getRepo());
+        String repoName = scannedRepoLaunchersType.getRepo();
+        ScmAccount scmAccount = scmAccountService.getScmAccountByRepo(repoName);
         if (scmAccount == null) {
-            throw new ResourceNotFoundException("Unable to find scm account for repo");
+            throw new ResourceNotFoundException(SCM_ACCOUNT_NOT_FOUND, ERR_MSG_SCM_ACCOUNT_NOT_FOUND_FOR_REPO, repoName);
         }
 
         deleteAutoScannedLaunchersByScmAccountId(scmAccount.getId());
@@ -176,17 +185,15 @@ public class LauncherService {
 
     @Transactional(readOnly = true)
     public String buildLauncherJob(Launcher launcher, User user) throws IOException {
-
-        ScmAccount scmAccount = scmAccountService.getScmAccountById(launcher.getScmAccount().getId());
+        Long scmAccountId = launcher.getScmAccount().getId();
+        ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
         if (scmAccount == null) {
-            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
-            throw new ResourceNotFoundException("Scm account not found");
+            throw new ResourceNotFoundException(SCM_ACCOUNT_NOT_FOUND, ERR_MSG_SCM_ACCOUNT_NOT_FOUND, scmAccountId);
         }
 
         Job job = launcher.getJob();
         if (job == null) {
-            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
-            throw new IllegalOperationException("Launcher job not specified");
+            throw new IllegalOperationException(JOB_CAN_NOT_BE_STARTED, ERR_MSG_NO_BUILD_LAUNCHER_JOB_SPECIFIED);
         }
 
         Map<String, String> jobParameters = new ObjectMapper().readValue(launcher.getModel(), new TypeReference<Map<String, String>>() {});
@@ -200,7 +207,6 @@ public class LauncherService {
         // If Selenium integration is enabled pass selenium_host with basic auth as job argument
         if(testAutomationToolService.isEnabledAndConnected(null)) {
             String seleniumURL = testAutomationToolService.buildUrl();
-            //            jobParameters.put("selenium_host", seleniumURL);
             jobParameters.put("selenium_url", seleniumURL);
         }
 
@@ -221,8 +227,7 @@ public class LauncherService {
         jobParameters.put("ci_run_id", ciRunId);
 
         if (!jobParameters.entrySet().containsAll(MANDATORY_ARGUMENTS)) {
-            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
-            throw new IllegalOperationException("Required arguments not found");
+            throw new IllegalOperationException(JOB_CAN_NOT_BE_STARTED, ERR_MSG_REQUIRED_JOB_ARGUMENTS_NOT_FOUND);
         }
 
         automationServerService.buildJob(job, jobParameters);
@@ -234,8 +239,7 @@ public class LauncherService {
     public JobResult buildScannerJob(User user, String branch, long scmAccountId, boolean rescan) {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
         if(scmAccount == null) {
-            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
-            throw new ResourceNotFoundException("Scm account not found");
+            throw new ResourceNotFoundException(SCM_ACCOUNT_NOT_FOUND, ERR_MSG_SCM_ACCOUNT_NOT_FOUND, scmAccountId);
         }
         String tenantName = TenancyContext.getTenantName();
         String repositoryName = scmAccount.getRepositoryName();
@@ -269,8 +273,7 @@ public class LauncherService {
     public void abortScannerJob(long scmAccountId, Integer buildNumber, boolean rescan) {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
         if(scmAccount == null) {
-            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
-            throw new ResourceNotFoundException("Scm account not found");
+            throw new ResourceNotFoundException(SCM_ACCOUNT_NOT_FOUND, ERR_MSG_SCM_ACCOUNT_NOT_FOUND, scmAccountId);
         }
         String repositoryName = scmAccount.getRepositoryName();
         automationServerService.abortScannerJob(repositoryName, buildNumber, rescan);
