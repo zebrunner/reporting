@@ -104,7 +104,7 @@ public class LauncherService {
                 job = automationServerService.getJobByUrl(launcherJobUrl);
                 job.setJenkinsHost(automationServerService.getUrl());
                 job.setUser(owner);
-                jobsService.createJob(job);
+                jobsService.createOrUpdateJob(job);
             }
             launcher.setJob(job);
         }
@@ -226,7 +226,7 @@ public class LauncherService {
         String ciRunId = UUID.randomUUID().toString();
         jobParameters.put("ci_run_id", ciRunId);
 
-        if (!jobParameters.entrySet().containsAll(MANDATORY_ARGUMENTS)) {
+        if (!jobParameters.keySet().containsAll(MANDATORY_ARGUMENTS)) {
             throw new IllegalOperationException(JOB_CAN_NOT_BE_STARTED, ERR_MSG_REQUIRED_JOB_ARGUMENTS_NOT_FOUND);
         }
 
