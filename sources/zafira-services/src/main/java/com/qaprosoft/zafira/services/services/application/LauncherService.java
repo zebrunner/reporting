@@ -129,10 +129,7 @@ public class LauncherService {
 
     private Launcher launcherTypeToLauncher(User owner, ScmAccount scmAccount, JenkinsLauncherType jenkinsLauncherType) {
         String jobUrl = jenkinsLauncherType.getJobUrl();
-        Job job = jobsService.getJobByJobURL(jobUrl);
-        if (job == null) {
-            job = jobsService.createOrUpdateJobByURL(jobUrl, owner);
-        }
+        Job job = jobsService.createOrUpdateJobByURL(jobUrl, owner);
         Launcher launcher = new Launcher(job.getName(), jenkinsLauncherType.getJobParameters(), scmAccount, job, true);
         launcherMapper.createLauncher(launcher);
         return launcher;

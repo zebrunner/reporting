@@ -48,7 +48,7 @@ public class JobsService {
         jobMapper.createJob(job);
     }
 
-    // Check the same logics in ZafiraClient method registerJob
+    // Check the same logic in ZafiraClient method registerJob
     @Transactional(rollbackFor = Exception.class)
     public Job createOrUpdateJobByURL(String jobUrl, User user) {
         Job job = createJobFromURL(jobUrl, user);
