@@ -51,12 +51,15 @@ public class JobsService {
     // Check the same logics in ZafiraClient method registerJob
     @Transactional(rollbackFor = Exception.class)
     public Job createOrUpdateJobByURL(String jobUrl, User user) {
+        Job job = createJobFromURL(jobUrl, user);
+        return createOrUpdateJob(job);
+    }
+
+    private Job createJobFromURL(String jobUrl, User user) {
         jobUrl = jobUrl.replaceAll("/$", "");
         String jobName = StringUtils.substringAfterLast(jobUrl, "/");
         String jenkinsHost = parseJenkinsHost(jobUrl);
-        Job job = new Job(jobName, jobUrl, jenkinsHost, user);
-        job = createOrUpdateJob(job);
-        return job;
+        return new Job(jobName, jobUrl, jenkinsHost, user);
     }
 
     private String parseJenkinsHost(String jobUrl) {

@@ -100,11 +100,9 @@ public class LauncherService {
     public Launcher createLauncher(Launcher launcher, User owner) {
         if (automationServerService.isEnabledAndConnected(null)) {
             String launcherJobUrl = automationServerService.buildLauncherJobUrl();
-            Job job = jobsService.getJobByJobURL(launcherJobUrl);
-            if (job == null) {
-                job = automationServerService.getJobByUrl(launcherJobUrl);
-                jobsService.createOrUpdateJobByURL(launcherJobUrl, owner);
-            }
+            // Checks whether job is present om Jenkins. If it is not, exception will be thrown.
+            automationServerService.getJobByUrl(launcherJobUrl);
+            Job job = jobsService.createOrUpdateJobByURL(launcherJobUrl, owner);
             launcher.setJob(job);
         }
         launcherMapper.createLauncher(launcher);
