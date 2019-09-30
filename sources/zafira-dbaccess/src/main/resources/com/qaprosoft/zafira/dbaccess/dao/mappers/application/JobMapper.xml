@@ -17,14 +17,14 @@
 
     <sql id="getJob">
 		<![CDATA[
-        SELECT J.ID           AS JOB_ID,
-               J.USER_ID      AS JOB_USER_ID,
-               J.NAME         AS JOB_NAME,
-               J.JOB_URL      AS JOB_JOB_URL,
-               J.JENKINS_HOST AS JOB_JENKINS_HOST,
+        SELECT J.ID                   AS JOB_ID,
+               J.USER_ID              AS JOB_USER_ID,
+               J.NAME                 AS JOB_NAME,
+               J.JOB_URL              AS JOB_JOB_URL,
+               J.JENKINS_HOST         AS JOB_JENKINS_HOST,
                J.AUTOMATION_SERVER_ID AS JOB_AUTOMATION_SERVER_ID,
-               J.MODIFIED_AT  AS JOB_MODIFIED_AT,
-               J.CREATED_AT   AS JOB_CREATED_AT
+               J.MODIFIED_AT          AS JOB_MODIFIED_AT,
+               J.CREATED_AT           AS JOB_CREATED_AT
         FROM JOBS J
         ]]>
 	</sql>
@@ -77,7 +77,7 @@
             </if>
             <if test="null != jenkinsHost">
                 <![CDATA[
-		               JENKINS_HOST = #{jenkinsHost}
+		               JENKINS_HOST = #{jenkinsHost},
 		            ]]>
             </if>
             <if test="null != automationServerId">
