@@ -27,6 +27,10 @@
 			<a>userId</a>
 			<b>user.id</b>
 		</field>
+        <field>
+            <a>automationServerId</a>
+            <b>automationServerId</b>
+        </field>
 	</mapping>
 
 	<mapping type="bi-directional" wildcard="false">

@@ -103,9 +103,7 @@ public class LauncherService {
             Job job = jobsService.getJobByJobURL(launcherJobUrl);
             if (job == null) {
                 job = automationServerService.getJobByUrl(launcherJobUrl);
-                job.setJenkinsHost(automationServerService.getUrl());
-                job.setUser(owner);
-                jobsService.createOrUpdateJob(job);
+                jobsService.createOrUpdateJobByURL(launcherJobUrl, owner);
             }
             launcher.setJob(job);
         }
@@ -137,8 +135,6 @@ public class LauncherService {
         if (job == null) {
             job = jobsService.createOrUpdateJobByURL(jobUrl, owner);
         }
-        Integration integration = integrationService.retrieveByJobAndIntegrationTypeName(job, INTEGRATION_TYPE_NAME);
-        job.setAutomationServerId(integration.getId());
         Launcher launcher = new Launcher(job.getName(), jenkinsLauncherType.getJobParameters(), scmAccount, job, true);
         launcherMapper.createLauncher(launcher);
         return launcher;

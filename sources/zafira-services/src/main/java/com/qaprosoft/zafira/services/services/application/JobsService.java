@@ -53,15 +53,20 @@ public class JobsService {
     public Job createOrUpdateJobByURL(String jobUrl, User user) {
         jobUrl = jobUrl.replaceAll("/$", "");
         String jobName = StringUtils.substringAfterLast(jobUrl, "/");
+        String jenkinsHost = parseJenkinsHost(jobUrl);
+        Job job = new Job(jobName, jobUrl, jenkinsHost, user);
+        job = createOrUpdateJob(job);
+        return job;
+    }
+
+    private String parseJenkinsHost(String jobUrl) {
         String jenkinsHost = StringUtils.EMPTY;
         if (jobUrl.contains("/view/")) {
             jenkinsHost = jobUrl.split("/view/")[0];
         } else if (jobUrl.contains("/job/")) {
             jenkinsHost = jobUrl.split("/job/")[0];
         }
-        Job job = new Job(jobName, jobUrl, jenkinsHost, user);
-        job = createOrUpdateJob(job);
-        return job;
+        return jenkinsHost;
     }
 
     @Transactional(readOnly = true)
