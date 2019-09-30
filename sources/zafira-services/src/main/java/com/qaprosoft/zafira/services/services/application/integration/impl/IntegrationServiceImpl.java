@@ -17,6 +17,7 @@ package com.qaprosoft.zafira.services.services.application.integration.impl;
 
 import com.qaprosoft.zafira.dbaccess.persistence.IntegrationRepository;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
+import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationGroup;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationInfo;
@@ -113,6 +114,26 @@ public class IntegrationServiceImpl implements IntegrationService {
     public Integration retrieveByBackReferenceId(String backReferenceId) {
         return integrationRepository.findIntegrationByBackReferenceId(backReferenceId)
                                     .orElseThrow(() -> new ResourceNotFoundException(INVITATION_NOT_FOUND, ERR_MSG_INTEGRATION_NOT_FOUND_BY_BACK_REFERENCE_ID, backReferenceId));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Integration retrieveByJobAndIntegrationTypeName(Job job, String integrationTypeName) {
+        List<Integration> integrations = retrieveByIntegrationsTypeName(integrationTypeName);
+        String jenkinsHost = job.getJenkinsHost();
+        return getIntegrationByJenkinsHost(integrations, jenkinsHost);
+    }
+
+    private Integration getIntegrationByJenkinsHost(List<Integration> integrations, String jenkinsHost) {
+        return integrations.stream()
+                           .filter(integration -> findIntegrationSettingWithJenkinsHost(jenkinsHost, integration))
+                           .findAny().orElse(new Integration());
+    }
+
+    private boolean findIntegrationSettingWithJenkinsHost(String jenkinsHost, Integration integration) {
+        return integration.getSettings()
+                          .stream()
+                          .anyMatch(setting -> setting.getValue().equals(jenkinsHost));
     }
 
     @Override

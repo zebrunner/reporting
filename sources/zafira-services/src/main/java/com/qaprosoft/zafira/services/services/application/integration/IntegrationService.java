@@ -15,8 +15,9 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration;
 
-import com.qaprosoft.zafira.models.entity.integration.IntegrationInfo;
+import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationInfo;
 
 import java.util.List;
 import java.util.Map;
@@ -29,15 +30,17 @@ public interface IntegrationService {
 
     Integration retrieveByBackReferenceId(String backReferenceId);
 
+    Integration retrieveByJobAndIntegrationTypeName(Job job, String integrationTypeName);
+
     Integration retrieveDefaultByIntegrationTypeId(Long integrationTypeId);
 
     Integration retrieveDefaultByIntegrationTypeName(String integrationTypeName);
 
     List<Integration> retrieveAll();
 
-    List <Integration> retrieveIntegrationsByTypeId(Long typeId);
+    List<Integration> retrieveIntegrationsByTypeId(Long typeId);
 
-    List <Integration> retrieveIntegrationsByGroupId(Long groupId);
+    List<Integration> retrieveIntegrationsByGroupId(Long groupId);
 
     List<Integration> retrieveByIntegrationGroupName(String integrationGroupName);
 

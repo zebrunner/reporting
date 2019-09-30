@@ -55,6 +55,7 @@ import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException
 @Service
 public class LauncherService {
 
+    private static final String  INTEGRATION_TYPE_NAME = "JENKINS";
     private static final String ERR_MSG_SCM_ACCOUNT_NOT_FOUND = "SCM account with id %s can not be found";
     private static final String ERR_MSG_SCM_ACCOUNT_NOT_FOUND_FOR_REPO = "SCM account for repo %s can not be found";
     private static final String ERR_MSG_NO_BUILD_LAUNCHER_JOB_SPECIFIED = "No launcher job specified";
@@ -136,25 +137,11 @@ public class LauncherService {
         if (job == null) {
             job = jobsService.createOrUpdateJobByURL(jobUrl, owner);
         }
-        List<Integration> integrations = integrationService.retrieveByIntegrationsTypeName("JENKINS");
-        String jenkinsHost = job.getJenkinsHost();
-        Integration launcherIntegration = getIntegrationByJenkinsHost(integrations, jenkinsHost);
-        job.setAutomationServerId(launcherIntegration.getId());
+        Integration integration = integrationService.retrieveByJobAndIntegrationTypeName(job, INTEGRATION_TYPE_NAME);
+        job.setAutomationServerId(integration.getId());
         Launcher launcher = new Launcher(job.getName(), jenkinsLauncherType.getJobParameters(), scmAccount, job, true);
         launcherMapper.createLauncher(launcher);
         return launcher;
-    }
-
-    private Integration getIntegrationByJenkinsHost(List<Integration> integrations, String jenkinsHost) {
-        return integrations.stream()
-                           .filter(integration -> findIntegrationSettingWithJenkinsHost(jenkinsHost, integration))
-                           .findAny().orElse(new Integration());
-    }
-
-    private boolean findIntegrationSettingWithJenkinsHost(String jenkinsHost, Integration integration) {
-        return integration.getSettings()
-                          .stream()
-                          .anyMatch(setting -> setting.getValue().equals(jenkinsHost));
     }
 
     @Transactional(readOnly = true)

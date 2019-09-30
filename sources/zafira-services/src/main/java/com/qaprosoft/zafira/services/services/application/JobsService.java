@@ -15,27 +15,33 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.util.List;
-
-import com.qaprosoft.zafira.models.db.User;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.JobMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.JobViewMapper;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.JobView;
+import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.entity.integration.Integration;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class JobsService {
 
-    @Autowired
-    private JobMapper jobMapper;
+    private static final String  INTEGRATION_TYPE_NAME = "JENKINS";
 
-    @Autowired
-    private JobViewMapper jobViewMapper;
+    private final JobMapper jobMapper;
+    private final JobViewMapper jobViewMapper;
+    private final IntegrationService integrationService;
+
+    public JobsService(JobMapper jobMapper, JobViewMapper jobViewMapper, IntegrationService integrationService) {
+        this.jobMapper = jobMapper;
+        this.jobViewMapper = jobViewMapper;
+        this.integrationService = integrationService;
+    }
 
     @Transactional(rollbackFor = Exception.class)
     public void createJob(Job job) {
@@ -76,6 +82,8 @@ public class JobsService {
 
     @Transactional(rollbackFor = Exception.class)
     public Job createOrUpdateJob(Job newJob) {
+        Integration integration = integrationService.retrieveByJobAndIntegrationTypeName(newJob, INTEGRATION_TYPE_NAME);
+        newJob.setAutomationServerId(integration.getId());
         Job job = getJobByJobURL(newJob.getJobURL());
         if (job == null) {
             createJob(newJob);
