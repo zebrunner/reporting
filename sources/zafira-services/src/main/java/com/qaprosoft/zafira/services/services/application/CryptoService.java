@@ -15,28 +15,25 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
+import com.qaprosoft.zafira.models.db.Setting;
+import org.apache.commons.lang.StringUtils;
+import org.jasypt.util.text.BasicTextEncryptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.PostConstruct;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-
-import org.apache.commons.lang.StringUtils;
-import org.jasypt.util.text.BasicTextEncryptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-
-import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.services.exceptions.EncryptorInitializationException;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CryptoService {
@@ -140,17 +137,9 @@ public class CryptoService {
 
     private BasicTextEncryptor getBasicTextEncryptor() {
         String key = getCryptoKey();
-        BasicTextEncryptor basicTextEncryptor = new BasicTextEncryptor();
-        try {
-            if (!StringUtils.isEmpty(key)) {
-                basicTextEncryptor.setPassword(key + salt);
-            } else {
-                throw new EncryptorInitializationException();
-            }
-        } catch (Exception e) {
-            LOGGER.error("Unable to initialize Crypto Tool, salt or key might be null: " + e.getMessage(), e);
-        }
-        return basicTextEncryptor;
+        BasicTextEncryptor encryptor = new BasicTextEncryptor();
+        encryptor.setPassword(key + salt);
+        return encryptor;
     }
 
     private String getCryptoKey() {

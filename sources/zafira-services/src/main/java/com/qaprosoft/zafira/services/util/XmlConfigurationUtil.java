@@ -12,6 +12,8 @@ import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.qaprosoft.zafira.services.exceptions.ProcessingException.ProcessingErrorDetail.UNPROCESSABLE_XML_ENTITY;
+
 public class XmlConfigurationUtil {
 
     /**
@@ -29,7 +31,7 @@ public class XmlConfigurationUtil {
                 IOUtils.closeQuietly(xmlBA);
             }
         } catch (JAXBException e) {
-            throw new ProcessingException("Error parsing XML document", e);
+            throw new ProcessingException(UNPROCESSABLE_XML_ENTITY, "Error parsing XML document", e);
         }
         return configuration;
     }
