@@ -17,7 +17,9 @@ public class ProcessingException extends ApplicationException {
     public enum ProcessingErrorDetail implements ErrorDetail {
 
         WIDGET_QUERY_EXECUTION_ERROR(2100),
-        UNPROCESSABLE_XML_ENTITY(2101);
+        UNPROCESSABLE_XML_ENTITY(2101),
+        UNPROCESSABLE_DOCUMENT(2102),
+        MALFORMED_FREEMARKER_TEMPLATE(2103);
 
         private final Integer code;
         private String messageKey;

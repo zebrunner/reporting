@@ -91,6 +91,7 @@ public class CryptoService {
         settingsService.updateSetting(keySetting);
     }
 
+    @SuppressWarnings("unchecked")
     @Transactional(rollbackFor = Exception.class)
     public void reencrypt() {
         Map<String, Collection<?>> tempMap = new HashMap<>(collectCollectionsToReencrypt());
