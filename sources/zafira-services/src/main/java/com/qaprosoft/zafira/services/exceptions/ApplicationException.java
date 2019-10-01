@@ -19,6 +19,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * {@code ApplicationException} is the superclass of those exceptions that can be thrown during the normal operation
+ * of the application. It should not be explicitly thrown - appropriate instance of one of its
+ * subclasses should be thrown instead.
+ */
 public abstract class ApplicationException extends RuntimeException {
 
     public interface ErrorDetail {

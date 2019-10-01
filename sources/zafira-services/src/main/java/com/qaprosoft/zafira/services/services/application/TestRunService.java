@@ -33,8 +33,8 @@ import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
-import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
@@ -75,6 +75,7 @@ import static com.qaprosoft.zafira.models.db.Status.IN_PROGRESS;
 import static com.qaprosoft.zafira.models.db.Status.PASSED;
 import static com.qaprosoft.zafira.models.db.Status.QUEUED;
 import static com.qaprosoft.zafira.models.db.Status.SKIPPED;
+import static com.qaprosoft.zafira.services.exceptions.IllegalOperationException.IllegalOperationErrorDetail.TEST_RUN_CAN_NOT_BE_STARTED;
 import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_RUN_NOT_FOUND;
 import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.readArguments;
 
@@ -86,6 +87,8 @@ public class TestRunService {
     private static final String DEFAULT_PROJECT = "UNKNOWN";
 
     private static final String ERR_MSG_TEST_RUN_NOT_FOUND = "Test run with id %s can not be found";
+    private static final String ERR_MSG_INVALID_TEST_RUN_INITIATED_BY_HUMAN = "Username is not specified for test run initiated by HUMAN";
+    private static final String ERR_MSG_INVALID_TEST_RUN_INITIATED_BY_UPSTREAM_JOB = "Upstream job id and upstream build number are not specified for test run initiated by UPSTREAM_JOB";
 
     public enum FailureCause {
         UNRECOGNIZED_FAILURE("UNRECOGNIZED FAILURE"),
@@ -338,7 +341,7 @@ public class TestRunService {
             switch (testRun.getStartedBy()) {
             case HUMAN:
                 if (testRun.getUser() == null) {
-                    throw new InvalidTestRunException("Specify userName if started by HUMAN!");
+                    throw new IllegalOperationException(TEST_RUN_CAN_NOT_BE_STARTED, ERR_MSG_INVALID_TEST_RUN_INITIATED_BY_HUMAN);
                 }
                 break;
             case SCHEDULER:
@@ -348,7 +351,7 @@ public class TestRunService {
                 break;
             case UPSTREAM_JOB:
                 if (testRun.getUpstreamJob() == null || testRun.getUpstreamJobBuildNumber() == null) {
-                    throw new InvalidTestRunException("Specify upstreamJobId and upstreaBuildNumber if started by UPSTREAM_JOB!");
+                    throw new IllegalOperationException(TEST_RUN_CAN_NOT_BE_STARTED, ERR_MSG_INVALID_TEST_RUN_INITIATED_BY_UPSTREAM_JOB);
                 }
                 break;
             }

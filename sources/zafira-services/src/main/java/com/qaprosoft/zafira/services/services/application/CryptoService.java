@@ -15,6 +15,20 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
+import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.services.exceptions.ProcessingException;
+import org.apache.commons.lang.StringUtils;
+import org.jasypt.util.text.BasicTextEncryptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.PostConstruct;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Collection;
@@ -22,26 +36,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-
-import org.apache.commons.lang.StringUtils;
-import org.jasypt.util.text.BasicTextEncryptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-
-import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.services.exceptions.EncryptorInitializationException;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import static com.qaprosoft.zafira.services.exceptions.ProcessingException.ProcessingErrorDetail.EMPTY_OR_MISSING_CRYPTO_KEY;
 
 @Service
 public class CryptoService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CryptoService.class);
+    private static final String ERR_MSG_CRYPTO_KEY_IS_EMPTY_OR_MISSING = "Encryption password can not be set: crypto key is empty or missing";
 
     private final SettingsService settingsService;
     private final String salt;
@@ -145,7 +146,7 @@ public class CryptoService {
             if (!StringUtils.isEmpty(key)) {
                 basicTextEncryptor.setPassword(key + salt);
             } else {
-                throw new EncryptorInitializationException();
+                throw new ProcessingException(EMPTY_OR_MISSING_CRYPTO_KEY, ERR_MSG_CRYPTO_KEY_IS_EMPTY_OR_MISSING);
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize Crypto Tool, salt or key might be null: " + e.getMessage(), e);

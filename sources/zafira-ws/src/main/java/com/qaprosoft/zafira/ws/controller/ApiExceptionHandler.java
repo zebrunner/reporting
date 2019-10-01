@@ -8,7 +8,6 @@ import com.qaprosoft.zafira.services.exceptions.ApplicationException;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
-import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 import org.slf4j.Logger;
@@ -60,14 +59,6 @@ public class ApiExceptionHandler {
     public ErrorResponse handleIllegalOperationException(IllegalOperationException e) {
         ErrorResponse response = new ErrorResponse();
         response.setError(new Error(ErrorCode.VALIDATION_ERROR, e.getMessage()));
-        return response;
-    }
-
-    @ExceptionHandler(InvalidTestRunException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleInvalidTestRunException(InvalidTestRunException e) {
-        ErrorResponse response = new ErrorResponse();
-        response.setError(new Error(ErrorCode.INVALID_TEST_RUN));
         return response;
     }
 
