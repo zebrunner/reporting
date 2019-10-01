@@ -16,9 +16,8 @@ public class ProcessingException extends ApplicationException {
     @AllArgsConstructor
     public enum ProcessingErrorDetail implements ErrorDetail {
 
-        EMPTY_OR_MISSING_CRYPTO_KEY(2100),
-        WIDGET_QUERY_EXECUTION_ERROR(2101),
-        UNPROCESSABLE_XML_ENTITY(2102);
+        WIDGET_QUERY_EXECUTION_ERROR(2100),
+        UNPROCESSABLE_XML_ENTITY(2101);
 
         private final Integer code;
         private String messageKey;
