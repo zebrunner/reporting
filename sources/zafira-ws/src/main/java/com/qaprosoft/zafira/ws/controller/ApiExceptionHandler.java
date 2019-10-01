@@ -125,6 +125,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler(IntegrationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIntegrationException(IntegrationException e) {
+        LOGGER.error("Unable to complete operation against integration", e);
         ErrorResponse response = new ErrorResponse();
         response.setError(new Error(ErrorCode.INTEGRATION_UNAVAILABLE));
         return response;
