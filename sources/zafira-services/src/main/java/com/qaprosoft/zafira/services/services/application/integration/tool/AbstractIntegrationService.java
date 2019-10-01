@@ -26,7 +26,8 @@ import java.util.Optional;
 
 public abstract class AbstractIntegrationService<T extends IntegrationGroupAdapter> {
 
-    private static final String ERR_MSG_ADAPTER_NOT_FOUND = "Requested adapter of type %s can not be found";
+    private static final String ERR_MSG_ADAPTER_NOT_FOUND = "Requested adapter with id %s can not be found";
+    private static final String ERR_MSG_ADAPTER_NOT_FOUND_BY_TYPE = "Requested adapter of type %s can not be found";
 
     private final IntegrationService integrationService;
     private final IntegrationAdapterProxy integrationAdapterProxy;
@@ -54,11 +55,11 @@ public abstract class AbstractIntegrationService<T extends IntegrationGroupAdapt
         if (integrationId == null) {
             // can be null in case of legacy client call - use default adapter
             maybeAdapter = integrationAdapterProxy.getDefaultAdapter(defaultType);
+            return (T) maybeAdapter.orElseThrow(() -> new IntegrationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND_BY_TYPE, defaultType)));
         } else {
             maybeAdapter = IntegrationAdapterProxy.getAdapter(integrationId);
+            return (T) maybeAdapter.orElseThrow(() -> new IntegrationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND, integrationId)));
         }
-
-        return (T) maybeAdapter.orElseThrow(() -> new IntegrationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND, defaultType)));
     }
 
     @SuppressWarnings("unchecked")
