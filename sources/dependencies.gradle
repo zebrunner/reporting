@@ -37,6 +37,8 @@ ext {
 
         apache_http_client : "org.apache.httpcomponents:httpclient:4.5.3",
 
+        unirest_http_client : "com.konghq:unirest-java:3.1.00",
+
         dozer: dependencies.create("net.sf.dozer:dozer:5.4.0") {
             exclude module: "slf4j-log4j12"
             force = true

@@ -15,29 +15,26 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.adapter.testcasemanagement;
 
-import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.dto.TestCaseManagementIssueType;
+import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.services.exceptions.ExternalSystemException;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.AbstractIntegrationAdapter;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.AdapterParam;
-import net.rcarz.jiraclient.BasicCredentials;
-import net.rcarz.jiraclient.Issue;
-import net.rcarz.jiraclient.JiraClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
+import kong.unirest.Config;
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.UnirestInstance;
+import kong.unirest.json.JSONObject;
 
-@SuppressWarnings("deprecation")
 public class JiraIntegrationAdapter extends AbstractIntegrationAdapter implements TestCaseManagementAdapter {
+
+    private static final String REST_URL = "%s/rest/api/latest/%s";
 
     private final String url;
     private final String username;
     private final String password;
     private final String closedStatus;
-
-    private final BasicCredentials credentials;
-    private final JiraClient jiraClient;
+    private final UnirestInstance httpClient;
 
     public JiraIntegrationAdapter(Integration integration) {
         super(integration);
@@ -46,12 +43,14 @@ public class JiraIntegrationAdapter extends AbstractIntegrationAdapter implement
         this.username = getAttributeValue(integration, JiraParam.JIRA_USERNAME);
         this.password = getAttributeValue(integration, JiraParam.JIRA_PASSWORD);
         this.closedStatus = getAttributeValue(integration, JiraParam.JIRA_CLOSED_STATUS);
+        this.httpClient = initClient(username, password);
+    }
 
-        this.credentials = new BasicCredentials(username, password);
-        this.jiraClient = new JiraClient(url, credentials);
-        final HttpParams httpParams = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
-        ((DefaultHttpClient) getJiraClient().getRestClient().getHttpClient()).setParams(httpParams);
+    private UnirestInstance initClient(String username, String password) {
+        Config config = new Config();
+        config.setDefaultBasicAuth(username, password);
+        config.addDefaultHeader("Accept", "application/json");
+        return new UnirestInstance(config);
     }
 
     private enum JiraParam implements AdapterParam {
@@ -74,22 +73,31 @@ public class JiraIntegrationAdapter extends AbstractIntegrationAdapter implement
 
     @Override
     public boolean isConnected() {
-        try {
-            return jiraClient.getProjects() != null;
-        } catch (Exception e) {
-            return false;
-        }
+        String requestUrl = String.format(REST_URL, url, "serverInfo");
+        HttpResponse response = httpClient.get(requestUrl)
+                                          .queryString("doHealthCheck", "true")
+                                          .asEmpty();
+        return response.getStatus() == 200;
     }
 
     @Override
     public TestCaseManagementIssueType getIssue(String ticket) {
-        Issue issue;
         try {
-            issue = jiraClient.getIssue(ticket);
+            String requestUrl = String.format(REST_URL, url, "issue/" + ticket);
+            HttpResponse<JsonNode> response = httpClient.get(requestUrl).asJson();
+            JSONObject issue = response.getBody().getObject();
+            return getTestCaseManagementIssueType(issue);
         } catch (Exception e) {
             throw new ExternalSystemException("Unable to find Jira issue: " + ticket, e);
         }
-        return new TestCaseManagementIssueType(issue.getAssignee().getName(), issue.getReporter().getName(), issue.getSummary(), issue.getStatus().getName());
+    }
+
+    private TestCaseManagementIssueType getTestCaseManagementIssueType(JSONObject issue) {
+        String assigneeName = issue.getJSONObject("assignee").getString("name");
+        String reporterName = issue.getJSONObject("reporter").getString("name");
+        String summary = issue.getString("summary");
+        String status = issue.getJSONObject("status").getString("name");
+        return new TestCaseManagementIssueType(assigneeName, reporterName, summary, status);
     }
 
     @Override
@@ -115,14 +123,6 @@ public class JiraIntegrationAdapter extends AbstractIntegrationAdapter implement
 
     public String getPassword() {
         return password;
-    }
-
-    public BasicCredentials getCredentials() {
-        return credentials;
-    }
-
-    public JiraClient getJiraClient() {
-        return jiraClient;
     }
 
     public String getClosedStatus() {
