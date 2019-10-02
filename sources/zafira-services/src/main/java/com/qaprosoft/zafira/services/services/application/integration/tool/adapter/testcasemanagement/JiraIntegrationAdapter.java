@@ -15,7 +15,7 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.adapter.testcasemanagement;
 
-import com.qaprosoft.zafira.models.dto.TestCaseManagementIssueType;
+import com.qaprosoft.zafira.models.dto.IssueDTO;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.services.exceptions.ExternalSystemException;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.AbstractIntegrationAdapter;
@@ -25,24 +25,28 @@ import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.UnirestInstance;
 import kong.unirest.json.JSONObject;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+import java.util.Set;
+
+import static com.qaprosoft.zafira.services.exceptions.ExternalSystemException.IllegalOperationErrorDetail.JIRA_ISSUE_CAN_NOT_BE_FOUND;
 
 public class JiraIntegrationAdapter extends AbstractIntegrationAdapter implements TestCaseManagementAdapter {
 
-    private static final String REST_URL = "%s/rest/api/latest/%s";
+    private static final String ERR_MSG_ISSUE_NOT_FOUND = "Requested JIRA issue can not be found";
 
     private final String url;
-    private final String username;
-    private final String password;
-    private final String closedStatus;
+    private final Set<String> closedStatuses;
     private final UnirestInstance httpClient;
 
     public JiraIntegrationAdapter(Integration integration) {
         super(integration);
 
-        this.url = getAttributeValue(integration, JiraParam.JIRA_URL);
-        this.username = getAttributeValue(integration, JiraParam.JIRA_USERNAME);
-        this.password = getAttributeValue(integration, JiraParam.JIRA_PASSWORD);
-        this.closedStatus = getAttributeValue(integration, JiraParam.JIRA_CLOSED_STATUS);
+        this.url = getAttributeValue(integration, JiraParam.URL);
+        String username = getAttributeValue(integration, JiraParam.USERNAME);
+        String password = getAttributeValue(integration, JiraParam.PASSWORD);
+        this.closedStatuses = Set.of(getAttributeValue(integration, JiraParam.CLOSED_STATUSES).split(";"));
         this.httpClient = initClient(username, password);
     }
 
@@ -53,64 +57,50 @@ public class JiraIntegrationAdapter extends AbstractIntegrationAdapter implement
         return new UnirestInstance(config);
     }
 
+    @Getter
+    @AllArgsConstructor
     private enum JiraParam implements AdapterParam {
-        JIRA_URL("JIRA_URL"),
-        JIRA_USERNAME("JIRA_USER"),
-        JIRA_PASSWORD("JIRA_PASSWORD"),
-        JIRA_CLOSED_STATUS("JIRA_CLOSED_STATUS");
+        URL("JIRA_URL"),
+        USERNAME("JIRA_USER"),
+        PASSWORD("JIRA_PASSWORD"),
+        CLOSED_STATUSES("JIRA_CLOSED_STATUS");
 
         private final String name;
-
-        JiraParam(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
     }
 
     @Override
     public boolean isConnected() {
-        String requestUrl = String.format(REST_URL, url, "serverInfo");
-        HttpResponse response = httpClient.get(requestUrl)
+        HttpResponse response = httpClient.get(url + "/rest/api/latest/serverInfo")
                                           .queryString("doHealthCheck", "true")
                                           .asEmpty();
         return response.getStatus() == 200;
     }
 
     @Override
-    public TestCaseManagementIssueType getIssue(String ticket) {
-        try {
-            String requestUrl = String.format(REST_URL, url, "issue/" + ticket);
-            HttpResponse<JsonNode> response = httpClient.get(requestUrl).asJson();
-            JSONObject issue = response.getBody().getObject();
-            return getTestCaseManagementIssueType(issue);
-        } catch (Exception e) {
-            throw new ExternalSystemException("Unable to find Jira issue: " + ticket, e);
+    public IssueDTO getIssue(String issueId) {
+        HttpResponse<JsonNode> response = httpClient.get(url + "/rest/api/latest/issue/" + issueId).asJson();
+        if (response.getStatus() == 200) {
+            JSONObject responseBody = response.getBody().getObject();
+            return buildIssue(responseBody);
+        } else {
+            throw new ExternalSystemException(JIRA_ISSUE_CAN_NOT_BE_FOUND, ERR_MSG_ISSUE_NOT_FOUND);
         }
     }
 
-    private TestCaseManagementIssueType getTestCaseManagementIssueType(JSONObject issue) {
+    private IssueDTO buildIssue(JSONObject issue) {
         JSONObject fields = issue.getJSONObject("fields");
         String assigneeName = fields.getJSONObject("assignee").getString("name");
         String reporterName = fields.getJSONObject("reporter").getString("name");
         String summary = fields.getString("summary");
         String status = fields.getJSONObject("status").getString("name");
-        return new TestCaseManagementIssueType(assigneeName, reporterName, summary, status);
+        return new IssueDTO(assigneeName, reporterName, summary, status);
     }
 
     @Override
-    public boolean isIssueClosed(String ticket) {
-        boolean isIssueClosed = false;
-        String[] closeStatuses = closedStatus.split(";");
-        for (String closeStatus : closeStatuses) {
-            if (getIssue(ticket).getStatus().equalsIgnoreCase(closeStatus)) {
-                isIssueClosed = true;
-            }
-        }
-        return isIssueClosed;
+    public boolean isIssueClosed(String issueId) {
+        IssueDTO issueDTO = getIssue(issueId);
+        return closedStatuses.stream()
+                             .anyMatch(closedStatus -> issueDTO.getStatus().equalsIgnoreCase(closedStatus));
     }
 
     @Override
@@ -118,15 +108,4 @@ public class JiraIntegrationAdapter extends AbstractIntegrationAdapter implement
         return url;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getClosedStatus() {
-        return closedStatus;
-    }
 }

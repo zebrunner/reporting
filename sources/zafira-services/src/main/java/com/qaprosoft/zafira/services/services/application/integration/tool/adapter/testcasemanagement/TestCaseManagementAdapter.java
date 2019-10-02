@@ -15,12 +15,12 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.adapter.testcasemanagement;
 
-import com.qaprosoft.zafira.models.dto.TestCaseManagementIssueType;
+import com.qaprosoft.zafira.models.dto.IssueDTO;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.IntegrationGroupAdapter;
 
 public interface TestCaseManagementAdapter extends IntegrationGroupAdapter {
 
-    TestCaseManagementIssueType getIssue(String ticket);
+    IssueDTO getIssue(String ticket);
 
     String getUrl();
 

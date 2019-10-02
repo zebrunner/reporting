@@ -16,7 +16,7 @@
 package com.qaprosoft.zafira.services.services.application.integration.tool.adapter.testcasemanagement;
 
 import com.qaprosoft.zafira.models.entity.integration.Integration;
-import com.qaprosoft.zafira.models.dto.TestCaseManagementIssueType;
+import com.qaprosoft.zafira.models.dto.IssueDTO;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.AbstractIntegrationAdapter;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.AdapterParam;
 
@@ -50,7 +50,7 @@ public class QTestIntegrationAdapter extends AbstractIntegrationAdapter implemen
     }
 
     @Override
-    public TestCaseManagementIssueType getIssue(String ticket) {
+    public IssueDTO getIssue(String ticket) {
         return null;
     }
 

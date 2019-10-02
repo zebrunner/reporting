@@ -15,33 +15,18 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
-public class TestCaseManagementIssueType {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+public class IssueDTO {
 
     private final String assigneeName;
     private final String reporterName;
     private final String summary;
     private final String status;
 
-    public TestCaseManagementIssueType(String assigneeName, String reporterName, String summary, String status) {
-        this.assigneeName = assigneeName;
-        this.reporterName = reporterName;
-        this.summary = summary;
-        this.status = status;
-    }
-
-    public String getAssigneeName() {
-        return assigneeName;
-    }
-
-    public String getReporterName() {
-        return reporterName;
-    }
-
-    public String getSummary() {
-        return summary;
-    }
-
-    public String getStatus() {
-        return status;
-    }
 }

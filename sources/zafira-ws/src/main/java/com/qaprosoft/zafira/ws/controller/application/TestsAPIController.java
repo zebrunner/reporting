@@ -24,7 +24,7 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.models.dto.TestArtifactType;
-import com.qaprosoft.zafira.models.dto.TestCaseManagementIssueType;
+import com.qaprosoft.zafira.models.dto.IssueDTO;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.push.TestPush;
@@ -243,7 +243,7 @@ public class TestsAPIController extends AbstractController {
     @ApiIgnore
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/jira/{issue}")
-    public TestCaseManagementIssueType getJiraIssue(@PathVariable("issue") String issue) {
+    public IssueDTO getJiraIssue(@PathVariable("issue") String issue) {
         return testCaseManagementService.getIssue(issue);
     }
 

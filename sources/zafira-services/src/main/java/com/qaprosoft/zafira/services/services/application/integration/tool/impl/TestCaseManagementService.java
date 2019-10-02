@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.integration.tool.impl;
 
-import com.qaprosoft.zafira.models.dto.TestCaseManagementIssueType;
+import com.qaprosoft.zafira.models.dto.IssueDTO;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.testcasemanagement.TestCaseManagementAdapter;
@@ -29,11 +29,12 @@ public class TestCaseManagementService extends AbstractIntegrationService<TestCa
         super(integrationService, testCaseManagementProxy, "JIRA");
     }
 
-    public TestCaseManagementIssueType getIssue(String ticket) {
+    public IssueDTO getIssue(String ticket) {
         TestCaseManagementAdapter adapter = getAdapterByIntegrationId(null);
         return adapter.getIssue(ticket);
     }
 
+    // TODO: 10/2/19 url should not be obrained from adapter; use integration settings instead
     public String getUrl() {
         TestCaseManagementAdapter adapter = getAdapterByIntegrationId(null);
         return adapter.getUrl();
