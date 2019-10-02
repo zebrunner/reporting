@@ -60,7 +60,8 @@ public class IntegrationInitializer {
 
         TenancyContext.setTenantName(tenant);
         initByType(group.getName(), type.getName(), integration);
-        TenancyContext.setTenantName(null);
+        // TODO by nsidorevich on 2019-10-01: we need to better understand why we set it to null
+//        TenancyContext.setTenantName(null);
     }
 
     private void initByType(String group, String type, Integration integration) {

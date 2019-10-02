@@ -1,8 +1,8 @@
 package com.qaprosoft.zafira.services.services.application;
 
 import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
-import com.qaprosoft.zafira.services.services.application.integration.tool.impl.StorageProviderService;
 import com.qaprosoft.zafira.services.exceptions.ProcessingException;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.StorageProviderService;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import static com.qaprosoft.zafira.services.exceptions.ProcessingException.ProcessingErrorDetail.UNPROCESSABLE_DOCUMENT;
 
 @Service
 public class UploadService {
@@ -64,7 +66,7 @@ public class UploadService {
             return filename;
         } catch (IOException e) {
             // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
-            throw new ProcessingException("Unable to upload document");
+            throw new ProcessingException(UNPROCESSABLE_DOCUMENT, "Unable to upload document");
         }
     }
 

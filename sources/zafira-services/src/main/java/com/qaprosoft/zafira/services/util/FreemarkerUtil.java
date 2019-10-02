@@ -26,6 +26,8 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import java.io.StringReader;
 import java.util.UUID;
 
+import static com.qaprosoft.zafira.services.exceptions.ProcessingException.ProcessingErrorDetail.MALFORMED_FREEMARKER_TEMPLATE;
+
 @Component
 public class FreemarkerUtil {
 
@@ -60,8 +62,7 @@ public class FreemarkerUtil {
                     .processTemplateIntoString(fTemplate, obj));
         } catch (Exception e) {
             LOGGER.error("Problem with free marker template compilation: " + e.getMessage());
-            // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
-            throw new ProcessingException(e.getMessage());
+            throw new ProcessingException(MALFORMED_FREEMARKER_TEMPLATE, e.getMessage());
         }
         return content.toString();
     }

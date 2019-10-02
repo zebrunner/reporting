@@ -57,6 +57,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.qaprosoft.zafira.services.exceptions.ProcessingException.ProcessingErrorDetail.WIDGET_QUERY_EXECUTION_ERROR;
 import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.WIDGET_TEMPLATE_NOT_FOUND;
 
 @ApiIgnore
@@ -252,9 +253,8 @@ public class WidgetsAPIController extends AbstractController {
                 resultList.add(Map.of("Check your query", ExceptionUtils.getFullStackTrace(e)));
                 return resultList;
             } else {
-                // TODO by nsidorevich on 2019-09-03: review error code, message and exception type
                 // wrap whatever error is thrown
-                throw new ProcessingException(e.getMessage(), e);
+                throw new ProcessingException(WIDGET_QUERY_EXECUTION_ERROR, e.getMessage(), e);
             }
         }
         return resultList;
