@@ -93,10 +93,11 @@ public class JiraIntegrationAdapter extends AbstractIntegrationAdapter implement
     }
 
     private TestCaseManagementIssueType getTestCaseManagementIssueType(JSONObject issue) {
-        String assigneeName = issue.getJSONObject("assignee").getString("name");
-        String reporterName = issue.getJSONObject("reporter").getString("name");
-        String summary = issue.getString("summary");
-        String status = issue.getJSONObject("status").getString("name");
+        JSONObject fields = issue.getJSONObject("fields");
+        String assigneeName = fields.getJSONObject("assignee").getString("name");
+        String reporterName = fields.getJSONObject("reporter").getString("name");
+        String summary = fields.getString("summary");
+        String status = fields.getJSONObject("status").getString("name");
         return new TestCaseManagementIssueType(assigneeName, reporterName, summary, status);
     }
 
