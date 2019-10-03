@@ -38,16 +38,19 @@ public class JiraIntegrationAdapter extends AbstractIntegrationAdapter implement
 
     private final String url;
     private final Set<String> closedStatuses;
-    private final UnirestInstance httpClient;
+    private final UnirestInstance restClient;
 
     public JiraIntegrationAdapter(Integration integration) {
         super(integration);
 
-        this.url = getAttributeValue(integration, JiraParam.URL);
+        String url = getAttributeValue(integration, JiraParam.URL);
+        this.url = !url.endsWith("/") ? url : url.substring(0, url.length() - 1); // trim tailing / if it's there
+
         String username = getAttributeValue(integration, JiraParam.USERNAME);
         String password = getAttributeValue(integration, JiraParam.PASSWORD);
+
         this.closedStatuses = Set.of(getAttributeValue(integration, JiraParam.CLOSED_STATUSES).split(";"));
-        this.httpClient = initClient(username, password);
+        this.restClient = initClient(username, password);
     }
 
     private UnirestInstance initClient(String username, String password) {
@@ -70,7 +73,7 @@ public class JiraIntegrationAdapter extends AbstractIntegrationAdapter implement
 
     @Override
     public boolean isConnected() {
-        HttpResponse response = httpClient.get(url + "/rest/api/latest/serverInfo")
+        HttpResponse response = restClient.get(url + "/rest/api/latest/serverInfo")
                                           .queryString("doHealthCheck", "true")
                                           .asEmpty();
         return response.getStatus() == 200;
@@ -78,7 +81,7 @@ public class JiraIntegrationAdapter extends AbstractIntegrationAdapter implement
 
     @Override
     public IssueDTO getIssue(String issueId) {
-        HttpResponse<JsonNode> response = httpClient.get(url + "/rest/api/latest/issue/" + issueId).asJson();
+        HttpResponse<JsonNode> response = restClient.get(url + "/rest/api/latest/issue/" + issueId).asJson();
         if (response.getStatus() == 200) {
             JSONObject responseBody = response.getBody().getObject();
             return buildIssue(responseBody);
