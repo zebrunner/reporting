@@ -66,60 +66,55 @@ public class AutomationServerService extends AbstractIntegrationService<Automati
         adapter.buildJob(job.getJobURL(), jobParameters);
     }
 
-    public JobResult buildScannerJob(String repositoryName, Map<String, String> jobParameters, boolean rescan) {
-        AutomationServerAdapter adapter = getAdapterByIntegrationId(null);
+    public JobResult buildScannerJob(String repositoryName, Map<String, String> jobParameters, boolean rescan, Long automationServerId) {
+        AutomationServerAdapter adapter = getAdapterByIntegrationId(automationServerId);
         String jobUrl = adapter.buildScannerJobUrl(repositoryName, rescan);
         return adapter.buildJob(jobUrl, jobParameters);
     }
 
-    public void abortScannerJob(String repositoryName, Integer buildNumber, boolean rescan) {
-        AutomationServerAdapter adapter = getAdapterByIntegrationId(null);
+    public void abortScannerJob(String repositoryName, Integer buildNumber, boolean rescan, Long automationServerId) {
+        AutomationServerAdapter adapter = getAdapterByIntegrationId(automationServerId);
         String jobUrl = adapter.buildScannerJobUrl(repositoryName, rescan);
         adapter.abortJob(jobUrl, buildNumber);
     }
 
-    public void abortJob(Job ciJob, Integer buildNumber) {
-        AutomationServerAdapter adapter = getAdapterByIntegrationId(null);
+    public void abortJob(Job ciJob, Integer buildNumber, Long automationServerId) {
+        AutomationServerAdapter adapter = getAdapterByIntegrationId(automationServerId);
         adapter.abortJob(ciJob.getJobURL(), buildNumber);
     }
 
-    public List<BuildParameterType> getBuildParameters(Job job, Integer buildNumber) {
-        AutomationServerAdapter adapter = getAdapterByIntegrationId(null);
+    public List<BuildParameterType> getBuildParameters(Job job, Integer buildNumber, Long automationServerId) {
+        AutomationServerAdapter adapter = getAdapterByIntegrationId(automationServerId);
         return adapter.getBuildParameters(job, buildNumber);
     }
 
-    public Map<String, String> getBuildParametersMap(Job job, Integer buildNumber) {
-        AutomationServerAdapter adapter = getAdapterByIntegrationId(null);
-        return adapter.getBuildParametersMap(job.getJobURL(), buildNumber);
-    }
-
-    public Map<Integer, String> getBuildConsoleOutput(Job job, Integer buildNumber, Integer stringsCount, Integer fullCount) {
-        AutomationServerAdapter adapter = getAdapterByIntegrationId(null);
+    public Map<Integer, String> getBuildConsoleOutput(Job job, Integer buildNumber, Integer stringsCount, Integer fullCount, Long automationServerId) {
+        AutomationServerAdapter adapter = getAdapterByIntegrationId(automationServerId);
         return adapter.getBuildConsoleOutput(job, buildNumber, stringsCount, fullCount);
     }
 
-    public Integer getBuildNumber(String queueItemUrl) {
-        AutomationServerAdapter adapter = getAdapterByIntegrationId(null);
+    public Integer getBuildNumber(String queueItemUrl, Long automationServerId) {
+        AutomationServerAdapter adapter = getAdapterByIntegrationId(automationServerId);
         return adapter.getBuildNumber(queueItemUrl);
     }
 
-    public Job getJobByUrl(String jobUrl) {
-        AutomationServerAdapter adapter = getAdapterByIntegrationId(null);
+    public Job getJobByUrl(String jobUrl, Long automationServerId) {
+        AutomationServerAdapter adapter = getAdapterByIntegrationId(automationServerId);
         return adapter.getJobDetailsFromJenkins(jobUrl);
     }
 
-    public String buildLauncherJobUrl() {
-        AutomationServerAdapter adapter = getAdapterByIntegrationId(null);
+    public String buildLauncherJobUrl(Long automationServerId) {
+        AutomationServerAdapter adapter = getAdapterByIntegrationId(automationServerId);
         return adapter.buildLauncherJobUrl();
     }
 
-    public String getUrl() {
-        AutomationServerAdapter adapter = getAdapterByIntegrationId(null);
+    public String getUrl(Long automationServerId) {
+        AutomationServerAdapter adapter = getAdapterByIntegrationId(automationServerId);
         return adapter.getUrl();
     }
 
-    public String getFolder() {
-        AutomationServerAdapter adapter = getAdapterByIntegrationId(null);
+    public String getFolder(Long automationServerId) {
+        AutomationServerAdapter adapter = getAdapterByIntegrationId(automationServerId);
         return adapter.getFolder();
     }
 

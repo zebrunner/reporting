@@ -416,13 +416,14 @@ public class TestRunsAPIController extends AbstractController {
     @GetMapping({ "/abort/ci", "/abort/debug" })
     public void abortCIJob(
             @ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
-            @ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId
+            @ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId,
+            @RequestParam(name = "automationServerId", required = false) Long automationServerId
     ) {
         TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id) : testRunService.getTestRunByCiRunIdFull(ciRunId);
         if (testRun == null) {
             throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
         }
-        automationServerService.abortJob(testRun.getJob(), testRun.getBuildNumber());
+        automationServerService.abortJob(testRun.getJob(), testRun.getBuildNumber(), automationServerId);
     }
 
     @ResponseStatusDetails
@@ -451,12 +452,13 @@ public class TestRunsAPIController extends AbstractController {
     @ApiOperation(value = "Get job parameters", nickname = "getjobParameters", httpMethod = "GET", response = Map.class)
     @PreAuthorize("hasPermission('TEST_RUNS_CI')")
     @GetMapping("/{id}/jobParameters")
-    public List<BuildParameterType> getjobParameters(@PathVariable("id") long id) {
+    public List<BuildParameterType> getJobParameters(@PathVariable("id") long id,
+                                                     @RequestParam(name = "automationServerId", required = false) Long automationServerId) {
         TestRun testRun = testRunService.getTestRunByIdFull(id);
         if (testRun == null) {
             throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
         }
-        return automationServerService.getBuildParameters(testRun.getJob(), testRun.getBuildNumber());
+        return automationServerService.getBuildParameters(testRun.getJob(), testRun.getBuildNumber(), automationServerId);
     }
 
     @ResponseStatusDetails
@@ -483,13 +485,14 @@ public class TestRunsAPIController extends AbstractController {
             @PathVariable("count") int count,
             @PathVariable("fullCount") int fullCount,
             @RequestParam(value = "id", required = false) Long id,
-            @RequestParam(value = "ciRunId", required = false) String ciRunId
+            @RequestParam(value = "ciRunId", required = false) String ciRunId,
+            @RequestParam(name = "automationServerId", required = false) Long automationServerId
     ) {
         TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id) : testRunService.getTestRunByCiRunIdFull(ciRunId);
         if (testRun == null) {
             throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
         }
-        return automationServerService.getBuildConsoleOutput(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
+        return automationServerService.getBuildConsoleOutput(testRun.getJob(), testRun.getBuildNumber(), count, fullCount, automationServerId);
     }
 
     private String[] getRecipients(String recipients) {

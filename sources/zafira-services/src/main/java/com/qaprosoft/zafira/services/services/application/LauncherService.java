@@ -26,10 +26,7 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.JenkinsLauncherType;
 import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
-import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
-import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
-import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.AutomationServerService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.TestAutomationToolService;
 import com.qaprosoft.zafira.services.services.application.scm.GitHubService;
@@ -50,21 +47,16 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.qaprosoft.zafira.services.exceptions.IllegalOperationException.IllegalOperationErrorDetail.JOB_CAN_NOT_BE_STARTED;
-import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.SCM_ACCOUNT_NOT_FOUND;
 
 @Service
 public class LauncherService {
 
-    private static final String  INTEGRATION_TYPE_NAME = "JENKINS";
-    private static final String ERR_MSG_SCM_ACCOUNT_NOT_FOUND = "SCM account with id %s can not be found";
-    private static final String ERR_MSG_SCM_ACCOUNT_NOT_FOUND_FOR_REPO = "SCM account for repo %s can not be found";
     private static final String ERR_MSG_NO_BUILD_LAUNCHER_JOB_SPECIFIED = "No launcher job specified";
     private static final String ERR_MSG_REQUIRED_JOB_ARGUMENTS_NOT_FOUND = "Required job arguments not found";
 
     private static final Set<String> MANDATORY_ARGUMENTS = Set.of("scmURL", "branch", "zafiraFields");
 
     private final LauncherMapper launcherMapper;
-    private final IntegrationService integrationService;
     private final AutomationServerService automationServerService;
     private final ScmAccountService scmAccountService;
     private final JobsService jobsService;
@@ -75,7 +67,6 @@ public class LauncherService {
     private final URLResolver urlResolver;
 
     public LauncherService(LauncherMapper launcherMapper,
-                           IntegrationService integrationService,
                            AutomationServerService automationServerService,
                            ScmAccountService scmAccountService,
                            JobsService jobsService,
@@ -85,7 +76,6 @@ public class LauncherService {
                            CryptoService cryptoService,
                            URLResolver urlResolver) {
         this.launcherMapper = launcherMapper;
-        this.integrationService = integrationService;
         this.automationServerService = automationServerService;
         this.scmAccountService = scmAccountService;
         this.jobsService = jobsService;
@@ -97,11 +87,11 @@ public class LauncherService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Launcher createLauncher(Launcher launcher, User owner) {
-        if (automationServerService.isEnabledAndConnected(null)) {
-            String launcherJobUrl = automationServerService.buildLauncherJobUrl();
+    public Launcher createLauncher(Launcher launcher, User owner, Long automationServerId) {
+        if (automationServerService.isEnabledAndConnected(automationServerId)) {
+            String launcherJobUrl = automationServerService.buildLauncherJobUrl(automationServerId);
             // Checks whether job is present om Jenkins. If it is not, exception will be thrown.
-            automationServerService.getJobByUrl(launcherJobUrl);
+            automationServerService.getJobByUrl(launcherJobUrl, automationServerId);
             Job job = jobsService.createOrUpdateJobByURL(launcherJobUrl, owner);
             launcher.setJob(job);
         }
@@ -116,10 +106,6 @@ public class LauncherService {
         }
         String repoName = scannedRepoLaunchersType.getRepo();
         ScmAccount scmAccount = scmAccountService.getScmAccountByRepo(repoName);
-        if (scmAccount == null) {
-            throw new ResourceNotFoundException(SCM_ACCOUNT_NOT_FOUND, ERR_MSG_SCM_ACCOUNT_NOT_FOUND_FOR_REPO, repoName);
-        }
-
         deleteAutoScannedLaunchersByScmAccountId(scmAccount.getId());
 
         return scannedRepoLaunchersType.getJenkinsLaunchers().stream()
@@ -165,25 +151,33 @@ public class LauncherService {
     public String buildLauncherJob(Launcher launcher, User user) throws IOException {
         Long scmAccountId = launcher.getScmAccount().getId();
         ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
-        if (scmAccount == null) {
-            throw new ResourceNotFoundException(SCM_ACCOUNT_NOT_FOUND, ERR_MSG_SCM_ACCOUNT_NOT_FOUND, scmAccountId);
-        }
-
         Job job = launcher.getJob();
         if (job == null) {
             throw new IllegalOperationException(JOB_CAN_NOT_BE_STARTED, ERR_MSG_NO_BUILD_LAUNCHER_JOB_SPECIFIED);
         }
+        // CiRunId is a random string, needs to define unique correlation between started launcher and real test run starting
+        // It must be returned with test run on start in testRun.ciRunId field
+        String ciRunId = UUID.randomUUID().toString();
 
+        Map<String, String> jobParameters = buildLauncherJobParametersMap(job.getAutomationServerId(), launcher, user, scmAccount, ciRunId);
+        automationServerService.buildJob(job, jobParameters);
+
+        return ciRunId;
+    }
+
+    private Map<String, String> buildLauncherJobParametersMap(Long automationServerId, Launcher launcher, User user, ScmAccount scmAccount, String ciRunId) throws IOException {
         Map<String, String> jobParameters = new ObjectMapper().readValue(launcher.getModel(), new TypeReference<Map<String, String>>() {});
 
         String decryptedAccessToken = cryptoService.decrypt(scmAccount.getAccessToken());
-        jobParameters.put("scmURL", scmAccount.buildAuthorizedURL(decryptedAccessToken));
+        String authorizedURL = scmAccount.buildAuthorizedURL(decryptedAccessToken);
+        jobParameters.put("scmURL", authorizedURL);
+
         if (!jobParameters.containsKey("branch")) {
             jobParameters.put("branch", "*/master");
         }
 
         // If Selenium integration is enabled pass selenium_host with basic auth as job argument
-        if(testAutomationToolService.isEnabledAndConnected(null)) {
+        if(testAutomationToolService.isEnabledAndConnected(automationServerId)) {
             String seleniumURL = testAutomationToolService.buildUrl();
             jobParameters.put("selenium_url", seleniumURL);
         }
@@ -198,67 +192,61 @@ public class LauncherService {
                                    .collect(Collectors.joining(","));
 
         jobParameters.put("zafiraFields", args);
-
-        // CiRunId is a random string, needs to define unique correlation between started launcher and real test run starting
-        // It must be returned with test run on start in testRun.ciRunId field
-        String ciRunId = UUID.randomUUID().toString();
         jobParameters.put("ci_run_id", ciRunId);
 
         if (!jobParameters.keySet().containsAll(MANDATORY_ARGUMENTS)) {
             throw new IllegalOperationException(JOB_CAN_NOT_BE_STARTED, ERR_MSG_REQUIRED_JOB_ARGUMENTS_NOT_FOUND);
         }
 
-        automationServerService.buildJob(job, jobParameters);
-
-        return ciRunId;
+        return jobParameters;
     }
 
     @Transactional(readOnly = true)
-    public JobResult buildScannerJob(User user, String branch, long scmAccountId, boolean rescan) {
+    public JobResult buildScannerJob(User user, String branch, long scmAccountId, boolean rescan, Long automationServerId) {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
-        if(scmAccount == null) {
-            throw new ResourceNotFoundException(SCM_ACCOUNT_NOT_FOUND, ERR_MSG_SCM_ACCOUNT_NOT_FOUND, scmAccountId);
-        }
-        String tenantName = TenancyContext.getTenantName();
-        String repositoryName = scmAccount.getRepositoryName();
-        String organizationName = scmAccount.getOrganizationName();
+        Map<String, String> jobParameters = buildScannerJobParametersMap(automationServerId, user, branch, scmAccount);
+        return automationServerService.buildScannerJob(scmAccount.getRepositoryName(), jobParameters, rescan, automationServerId);
+    }
 
-        String accessToken = cryptoService.decrypt(scmAccount.getAccessToken());
-        String loginName = gitHubService.getLoginName(scmAccount);
-
+    private Map<String, String> buildScannerJobParametersMap(Long automationServerId, User user, String branch, ScmAccount scmAccount) {
         Map<String, String> jobParameters = new HashMap<>();
+
+        String organizationName = scmAccount.getOrganizationName();
+        String repositoryName = scmAccount.getRepositoryName();
+        String githubUser = gitHubService.getLoginName(scmAccount);
+        String githubToken = cryptoService.decrypt(scmAccount.getAccessToken());
+        String zafiraServiceUrl = urlResolver.buildWebserviceUrl();
+        String zafiraAccessToken = jwtService.generateAccessToken(user, TenancyContext.getTenantName());
+
         jobParameters.put("userId", String.valueOf(user.getId()));
-        if (StringUtils.isNotEmpty(automationServerService.getFolder())) {
+        if (StringUtils.isNotEmpty(automationServerService.getFolder(automationServerId))) {
             jobParameters.put("organization", organizationName);
         }
         jobParameters.put("repo", repositoryName);
         jobParameters.put("branch", branch);
-        jobParameters.put("githubUser", loginName);
-        jobParameters.put("githubToken", accessToken);
+        jobParameters.put("githubUser", githubUser);
+        jobParameters.put("githubToken", githubToken);
+        jobParameters.put("zafira_service_url", zafiraServiceUrl);
+        jobParameters.put("zafira_access_token", zafiraAccessToken);
         jobParameters.put("onlyUpdated", String.valueOf(false));
-        jobParameters.put("zafira_service_url", urlResolver.buildWebserviceUrl());
-        jobParameters.put("zafira_access_token", jwtService.generateAccessToken(user, tenantName));
 
         String args = jobParameters.entrySet().stream()
                                    .map(param -> param.getKey() + "=" + param.getValue()).collect(Collectors.joining(","));
 
         jobParameters.put("zafiraFields", args);
 
-        return automationServerService.buildScannerJob(repositoryName, jobParameters, rescan);
+        return jobParameters;
     }
 
     @Transactional(readOnly = true)
-    public void abortScannerJob(long scmAccountId, Integer buildNumber, boolean rescan) {
+    public void abortScannerJob(long scmAccountId, Integer buildNumber, boolean rescan, Long automationServerId) {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
-        if(scmAccount == null) {
-            throw new ResourceNotFoundException(SCM_ACCOUNT_NOT_FOUND, ERR_MSG_SCM_ACCOUNT_NOT_FOUND, scmAccountId);
-        }
         String repositoryName = scmAccount.getRepositoryName();
-        automationServerService.abortScannerJob(repositoryName, buildNumber, rescan);
+        automationServerService.abortScannerJob(repositoryName, buildNumber, rescan, automationServerId);
     }
 
-    public Integer getBuildNumber(String queueItemUrl) {
-        return automationServerService.getBuildNumber(queueItemUrl);
+    public Integer getBuildNumber(String queueItemUrl, Long automationServerId) {
+        return automationServerService.getBuildNumber(queueItemUrl, automationServerId);
     }
 
 }

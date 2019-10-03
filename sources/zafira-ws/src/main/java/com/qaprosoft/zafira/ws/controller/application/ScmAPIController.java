@@ -117,9 +117,6 @@ public class ScmAPIController extends AbstractController {
     public ScmAccountType updateScmAccount(@RequestBody @Valid ScmAccountType scmAccountType) {
         long scmAccountId = scmAccountType.getId();
         ScmAccount account = scmAccountService.getScmAccountById(scmAccountId);
-        if (account == null) {
-            throw new ResourceNotFoundException(SCM_ACCOUNT_NOT_FOUND, ERR_MSG_SCM_ACCOUNT_NOT_FOUND, scmAccountId);
-        }
         ScmAccount currentAccount = mapper.map(scmAccountType, ScmAccount.class);
         if (account.getUserId() == null || account.getUserId() <= 0) {
             currentAccount.setUserId(getPrincipalId());
@@ -166,9 +163,6 @@ public class ScmAPIController extends AbstractController {
     @GetMapping("/github/organizations/{scmId}")
     public List<Organization> getOrganizations(@PathVariable("scmId") Long id) throws IOException {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(id);
-        if (scmAccount == null) {
-            throw new ForbiddenOperationException("Unable to list organizations");
-        }
         return gitHubService.getOrganizations(scmAccount);
     }
 
@@ -182,10 +176,6 @@ public class ScmAPIController extends AbstractController {
             @RequestParam(name = "org", required = false) String organizationName
     ) throws IOException {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(id);
-        if (scmAccount == null) {
-            throw new ForbiddenOperationException("Unable to list repositories");
-        }
-
         List<ScmAccount> allAccounts = scmAccountService.getAllScmAccounts();
         List<String> repositoryUrls = allAccounts.stream()
                                                  .map(ScmAccount::getRepositoryURL)

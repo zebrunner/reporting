@@ -44,16 +44,13 @@ public class SlackIntegrationAdapter extends AbstractIntegrationAdapter implemen
     private final String webhookUrl;
     private final SlackService slackService;
     private final URLResolver urlResolver;
-    private final AutomationServerService automationServerService;
 
     public SlackIntegrationAdapter(Integration integration,
                                    URLResolver urlResolver,
-                                   AutomationServerService automationServerService,
                                    Map<String, String> additionalProperties) {
         super(integration);
 
         this.urlResolver = urlResolver;
-        this.automationServerService = automationServerService;
 
         this.image = additionalProperties.get("image");
         this.author = additionalProperties.get("author");
@@ -129,7 +126,7 @@ public class SlackIntegrationAdapter extends AbstractIntegrationAdapter implemen
     private String buildRunInfo(TestRun tr) {
         StringBuilder sbInfo = new StringBuilder();
         sbInfo.append(tr.getProject().getName());
-        Map<String, String> jenkinsParams = automationServerService.getBuildParametersMap(tr.getJob(), tr.getBuildNumber());
+        Map<String, String> jenkinsParams = tr.getConfiguration();
         if (jenkinsParams != null && jenkinsParams.get("groups") != null) {
             sbInfo.append("(");
             sbInfo.append(jenkinsParams.get("groups"));

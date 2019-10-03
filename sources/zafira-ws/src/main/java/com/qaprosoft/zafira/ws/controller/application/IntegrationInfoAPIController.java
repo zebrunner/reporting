@@ -58,7 +58,7 @@ public class IntegrationInfoAPIController extends AbstractController {
     @ApiOperation(value = "Get integration connections info by id", nickname = "getIntegrationsInfoById", httpMethod = "GET", response = Map.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/{id}")
-    public IntegrationInfo getIntegrationsInfoById(@PathVariable("id") Long integrationId, @RequestParam("groupName") String groupName) {
-        return integrationService.retrieveInfoByIntegrationId(groupName, integrationId);
+    public IntegrationInfo getIntegrationsInfoById(@PathVariable("id") Long automationServerId, @RequestParam("groupName") String groupName) {
+        return integrationService.retrieveInfoByIntegrationId(groupName, automationServerId);
     }
 }

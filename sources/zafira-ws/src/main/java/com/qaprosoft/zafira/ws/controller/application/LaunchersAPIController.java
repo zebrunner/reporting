@@ -74,10 +74,11 @@ public class LaunchersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PostMapping()
-    public LauncherType createLauncher(@RequestBody @Valid LauncherType launcherType) {
+    public LauncherType createLauncher(@RequestBody @Valid LauncherType launcherType,
+                                       @RequestParam(name = "automationServerId", required = false) Long automationServerId) {
         User owner = new User(getPrincipalId());
         launcherType.setAutoScan(false);
-        return mapper.map(launcherService.createLauncher(mapper.map(launcherType, Launcher.class), owner), LauncherType.class);
+        return mapper.map(launcherService.createLauncher(mapper.map(launcherType, Launcher.class), owner, automationServerId), LauncherType.class);
     }
 
     @ResponseStatusDetails
@@ -136,8 +137,9 @@ public class LaunchersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping("/build/number")
-    public Integer getBuildNumber(@RequestParam("queueItemUrl") String queueItemUrl) {
-        return launcherService.getBuildNumber(queueItemUrl);
+    public Integer getBuildNumber(@RequestParam("queueItemUrl") String queueItemUrl,
+                                  @RequestParam(name = "automationServerId", required = false) Long automationServerId) {
+        return launcherService.getBuildNumber(queueItemUrl, automationServerId);
     }
 
     @ResponseStatusDetails
@@ -145,13 +147,15 @@ public class LaunchersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PostMapping("/scanner")
-    public JobResult runScanner(@RequestBody @Valid LauncherScannerType launcherScannerType) {
+    public JobResult runScanner(@RequestBody @Valid LauncherScannerType launcherScannerType,
+                                @RequestParam(name = "automationServerId", required = false) Long automationServerId) {
         User user = userService.getNotNullUserById(getPrincipalId());
         return launcherService.buildScannerJob(
                 user,
                 launcherScannerType.getBranch(),
                 launcherScannerType.getScmAccountId(),
-                launcherScannerType.isRescan()
+                launcherScannerType.isRescan(),
+                automationServerId
         );
     }
 
@@ -160,8 +164,11 @@ public class LaunchersAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @DeleteMapping("/scanner/{buildNumber}")
-    public void cancelScanner(@PathVariable("buildNumber") int buildNumber, @RequestParam("scmAccountId") Long scmAccountId, @RequestParam("rescan") boolean rescan) {
-        launcherService.abortScannerJob(scmAccountId, buildNumber, rescan);
+    public void cancelScanner(@PathVariable("buildNumber") int buildNumber,
+                              @RequestParam("scmAccountId") Long scmAccountId,
+                              @RequestParam("rescan") boolean rescan,
+                              @RequestParam(name = "automationServerId", required = false) Long automationServerId) {
+        launcherService.abortScannerJob(scmAccountId, buildNumber, rescan, automationServerId);
     }
 
     @ResponseStatusDetails

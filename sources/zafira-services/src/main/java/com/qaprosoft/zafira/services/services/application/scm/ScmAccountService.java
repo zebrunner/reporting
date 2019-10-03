@@ -17,6 +17,7 @@ package com.qaprosoft.zafira.services.services.application.scm;
 
 import java.util.List;
 
+import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
 import com.qaprosoft.zafira.services.services.application.CryptoService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +27,13 @@ import com.qaprosoft.zafira.models.db.ScmAccount;
 import com.qaprosoft.zafira.models.dto.scm.Repository;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 
+import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.SCM_ACCOUNT_NOT_FOUND;
+
 @Service
 public class ScmAccountService {
+
+    private static final String ERR_MSG_SCM_ACCOUNT_NOT_FOUND = "SCM account with id %s can not be found";
+    private static final String ERR_MSG_SCM_ACCOUNT_NOT_FOUND_FOR_REPO = "SCM account for repo %s can not be found";
 
     private final ScmAccountMapper scmAccountMapper;
     private final GitHubService gitHubService;
@@ -51,12 +57,20 @@ public class ScmAccountService {
 
     @Transactional(readOnly = true)
     public ScmAccount getScmAccountById(Long id) {
-        return scmAccountMapper.getScmAccountById(id);
+        ScmAccount scmAccount = scmAccountMapper.getScmAccountById(id);
+        if (scmAccount == null) {
+            throw new ResourceNotFoundException(SCM_ACCOUNT_NOT_FOUND, ERR_MSG_SCM_ACCOUNT_NOT_FOUND, id);
+        }
+        return scmAccount;
     }
 
     @Transactional(readOnly = true)
     public ScmAccount getScmAccountByRepo(String repo) {
-        return scmAccountMapper.getScmAccountByRepo(repo);
+        ScmAccount scmAccount = scmAccountMapper.getScmAccountByRepo(repo);
+        if (scmAccount == null) {
+            throw new ResourceNotFoundException(SCM_ACCOUNT_NOT_FOUND, ERR_MSG_SCM_ACCOUNT_NOT_FOUND_FOR_REPO, repo);
+        }
+        return scmAccount;
     }
 
     @Transactional(readOnly = true)
