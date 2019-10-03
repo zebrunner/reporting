@@ -74,7 +74,6 @@ ext {
         integration_clients: [
             "com.amazonaws:aws-java-sdk:1.11.386",
             "com.offbytwo.jenkins:jenkins-client:0.3.7",
-            "net.rcarz:jira-client:0.5",
             "org.kohsuke:github-api:1.95",
             "in.ashwanthkumar:slack-java-webhook:0.0.7",
             "org.elasticsearch.client:elasticsearch-rest-high-level-client:6.6.0"
