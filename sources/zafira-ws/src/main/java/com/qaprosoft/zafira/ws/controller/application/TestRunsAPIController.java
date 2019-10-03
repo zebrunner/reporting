@@ -433,18 +433,13 @@ public class TestRunsAPIController extends AbstractController {
     @PostMapping("/{id}/build")
     public void buildTestRun(
             @PathVariable("id") long id,
-            @RequestParam(name = "buildWithParameters", required = false, defaultValue = "true") boolean buildWithParameters,
             @RequestBody Map<String, String> jobParameters
     ) {
         TestRun testRun = testRunService.getTestRunByIdFull(id);
         if (testRun == null) {
             throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
         }
-        if (buildWithParameters) {
-            automationServerService.buildJob(testRun.getJob(), jobParameters);
-        } else {
-            automationServerService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), false);
-        }
+        automationServerService.buildJob(testRun.getJob(), jobParameters);
     }
 
     @ResponseStatusDetails
