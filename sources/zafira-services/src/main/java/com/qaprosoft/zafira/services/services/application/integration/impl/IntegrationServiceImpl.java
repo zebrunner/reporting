@@ -170,8 +170,8 @@ public class IntegrationServiceImpl implements IntegrationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Integration> retrieveByIntegrationGroupName(String integrationGroupName) {
-        return integrationRepository.findIntegrationByTypeGroupName(integrationGroupName);
+    public List<Integration> retrieveIntegrationsByGroupName(String integrationGroupName) {
+        return integrationRepository.findIntegrationsByGroupName(integrationGroupName);
     }
 
     @Override

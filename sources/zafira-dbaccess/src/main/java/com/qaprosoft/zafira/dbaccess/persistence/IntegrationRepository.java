@@ -48,8 +48,8 @@ public interface IntegrationRepository extends JpaRepository<Integration, Long> 
     Optional<Integration> findIntegrationByBackReferenceId(String backReferenceId);
 
     @EntityGraph(value = "integration.expanded")
-    @Query(value = "Select * From integrations i left join integration_types it On i.integration_type_id = it.id left join integration_groups ig on it.integration_group_id = ig.id Where ig.name = :typeGroupName", nativeQuery = true)
-    List<Integration> findIntegrationByTypeGroupName(String typeGroupName);
+    @Query("select i from Integration i join fetch i.settings s join fetch s.param join fetch i.type t join t.group g where g.name = :groupName")
+    List<Integration> findIntegrationsByGroupName(String groupName);
 
     @EntityGraph(value = "integration.expanded")
     @Query("Select i From Integration i Where i.type.id = :integrationTypeId and i.isDefault = true")

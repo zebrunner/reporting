@@ -42,7 +42,7 @@ public interface IntegrationService {
 
     List<Integration> retrieveIntegrationsByGroupId(Long groupId);
 
-    List<Integration> retrieveByIntegrationGroupName(String integrationGroupName);
+    List<Integration> retrieveIntegrationsByGroupName(String integrationGroupName);
 
     List<Integration> retrieveByIntegrationsTypeName(String integrationTypeName);
 
