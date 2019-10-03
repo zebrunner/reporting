@@ -49,7 +49,7 @@ public interface IntegrationRepository extends JpaRepository<Integration, Long> 
 
     @EntityGraph(value = "integration.expanded")
     @Query("select i from Integration i join fetch i.settings s join fetch s.param join fetch i.type t join t.group g where g.name = :groupName")
-    List<Integration> findIntegrationsByGroupName(String groupName);
+    List<Integration> findIntegrationsByGroupName(@Param("groupName") String groupName);
 
     @EntityGraph(value = "integration.expanded")
     @Query("Select i From Integration i Where i.type.id = :integrationTypeId and i.isDefault = true")
