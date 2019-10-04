@@ -19,8 +19,6 @@ import com.qaprosoft.zafira.models.entity.integration.Integration;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
@@ -28,8 +26,6 @@ import java.util.Optional;
 
 
 public interface IntegrationRepository extends JpaRepository<Integration, Long> {
-
-//    Integration save(Integration integration);
 
     @EntityGraph(value = "integration.expanded")
     Optional<Integration> findById(Long name);
@@ -61,4 +57,5 @@ public interface IntegrationRepository extends JpaRepository<Integration, Long> 
 
     @EntityGraph(value = "integration.expanded")
     List<Integration> findIntegrationsByTypeName(String integrationTypeName);
+
 }

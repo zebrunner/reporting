@@ -15,11 +15,10 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.models.dto.integration.IntegrationDTO;
+import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationInfo;
-import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.StorageProviderService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.google.GoogleService;
@@ -30,6 +29,8 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.dozer.Mapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -52,6 +53,8 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "api/integrations", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class IntegrationAPIController extends AbstractController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(IntegrationAPIController.class);
 
     private final IntegrationService integrationService;
     private final StorageProviderService storageProviderService;
@@ -87,17 +90,20 @@ public class IntegrationAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('VIEW_INTEGRATIONS')")
     @GetMapping()
-    public List<IntegrationDTO> getAll(@RequestParam(name = "groupId", required = false) Long groupId,
-                                       @RequestParam(name = "groupName", required = false) String groupName) {
-//        if (groupId != null && groupName != null) {
-//            throw new IllegalOperationException();
-//        }
+    public List<IntegrationDTO> getAll(
+            @RequestParam(name = "groupId", required = false) Long groupId,
+            @RequestParam(name = "groupName", required = false) String groupName
+    ) {
+        LOGGER.info("Loading integrations with params groupId=" + groupId + ", groupName=" + groupName);
         List<Integration> integrations;
         if (groupId != null) {
+            LOGGER.info("Loading by id");
             integrations = integrationService.retrieveIntegrationsByGroupId(groupId);
         } else if (groupName != null) {
+            LOGGER.info("Loading by name");
             integrations = integrationService.retrieveIntegrationsByGroupName(groupName);
         } else {
+            LOGGER.info("Loading all");
             integrations = integrationService.retrieveAll();
         }
         return integrations.stream()
