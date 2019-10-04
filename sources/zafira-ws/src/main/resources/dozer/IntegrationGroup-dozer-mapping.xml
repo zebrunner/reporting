@@ -16,6 +16,10 @@
             <b>name</b>
         </field>
         <field>
+            <a>displayName</a>
+            <b>displayName</b>
+        </field>
+        <field>
             <a>iconUrl</a>
             <b>iconUrl</b>
         </field>

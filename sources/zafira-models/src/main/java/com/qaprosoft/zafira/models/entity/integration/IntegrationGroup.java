@@ -48,6 +48,7 @@ public class IntegrationGroup {
     private Long id;
     private String name;
     private String iconUrl;
+    private String displayName;
     private boolean multipleAllowed;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "group")

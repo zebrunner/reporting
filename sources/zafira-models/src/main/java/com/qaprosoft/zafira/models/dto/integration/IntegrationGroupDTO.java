@@ -23,6 +23,7 @@ public class IntegrationGroupDTO extends AbstractType {
 
     private String name;
     private String iconUrl;
+    private String displayName;
     private boolean multipleAllowed;
     private List<IntegrationTypeDTO> types;
 
@@ -48,6 +49,14 @@ public class IntegrationGroupDTO extends AbstractType {
 
     public void setMultipleAllowed(boolean multipleAllowed) {
         this.multipleAllowed = multipleAllowed;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public List<IntegrationTypeDTO> getTypes() {
