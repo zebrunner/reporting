@@ -66,7 +66,7 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
     private static final String ERR_MSG_UNABLE_TO_GET_BUILD_OBJECT_BY_QUEUE_ITEM = "Unable to get build by queueItem %s";
     private static final String ERR_MSG_UNABLE_TO_GET_BUILD_FROM_JOB = "Unable to get build %s from job '%s'";
     private static final String ERR_MSG_UNABLE_TO_GET_JOB_BY_URL = "Unable to get job by url '%s'";
-    private static final String ERR_MSG_UNABLE_TO_GET_JOB_BY_FOLDER_AND_NAME = "Unable to get job by folder '%s' and name '%s'";
+    private static final String ERR_MSG_UNABLE_TO_GET_JOB_FROM_FOLDER = "Unable to get job '%s' from folder '%s";
     private static final String ERR_MSG_UNABLE_TO_GET_JOB_BUILD_DETAILS = "Unable to get job '%s' build %s details";
 
     private static final String SCANNER_JOB_URL_PATTERN = "%s/job/%s/job/RegisterRepository";
@@ -355,7 +355,7 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
         try {
             return jenkinsServer.getJob(folderJob, jobName);
         } catch (IOException e) {
-            throw new ExternalSystemException(String.format(ERR_MSG_UNABLE_TO_GET_JOB_BY_FOLDER_AND_NAME, folderJob.getName(), jobName), e);
+            throw new ExternalSystemException(String.format(ERR_MSG_UNABLE_TO_GET_JOB_FROM_FOLDER, jobName, folderJob.getUrl()), e);
         }
     }
 
