@@ -15,11 +15,10 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.models.dto.integration.IntegrationDTO;
+import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationInfo;
-import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.StorageProviderService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.google.GoogleService;
@@ -87,11 +86,10 @@ public class IntegrationAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('VIEW_INTEGRATIONS')")
     @GetMapping()
-    public List<IntegrationDTO> getAll(@RequestParam(name = "groupId", required = false) Long groupId,
-                                       @RequestParam(name = "groupName", required = false) String groupName) {
-//        if (groupId != null && groupName != null) {
-//            throw new IllegalOperationException();
-//        }
+    public List<IntegrationDTO> getAll(
+            @RequestParam(name = "groupId", required = false) Long groupId,
+            @RequestParam(name = "groupName", required = false) String groupName
+    ) {
         List<Integration> integrations;
         if (groupId != null) {
             integrations = integrationService.retrieveIntegrationsByGroupId(groupId);
