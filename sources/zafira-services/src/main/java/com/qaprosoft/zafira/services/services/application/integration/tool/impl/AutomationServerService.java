@@ -78,18 +78,18 @@ public class AutomationServerService extends AbstractIntegrationService<Automati
         adapter.abortJob(jobUrl, buildNumber);
     }
 
-    public void abortJob(Job ciJob, Integer buildNumber, Long automationServerId) {
-        AutomationServerAdapter adapter = getAdapterByIntegrationId(automationServerId);
-        adapter.abortJob(ciJob.getJobURL(), buildNumber);
+    public void abortJob(Job job, Integer buildNumber) {
+        AutomationServerAdapter adapter = getAdapterByIntegrationId(job.getAutomationServerId());
+        adapter.abortJob(job.getJobURL(), buildNumber);
     }
 
-    public List<BuildParameterType> getBuildParameters(Job job, Integer buildNumber, Long automationServerId) {
-        AutomationServerAdapter adapter = getAdapterByIntegrationId(automationServerId);
+    public List<BuildParameterType> getBuildParameters(Job job, Integer buildNumber) {
+        AutomationServerAdapter adapter = getAdapterByIntegrationId(job.getAutomationServerId());
         return adapter.getBuildParameters(job, buildNumber);
     }
 
-    public Map<Integer, String> getBuildConsoleOutput(Job job, Integer buildNumber, Integer stringsCount, Integer fullCount, Long automationServerId) {
-        AutomationServerAdapter adapter = getAdapterByIntegrationId(automationServerId);
+    public Map<Integer, String> getBuildConsoleOutput(Job job, Integer buildNumber, Integer stringsCount, Integer fullCount) {
+        AutomationServerAdapter adapter = getAdapterByIntegrationId(job.getAutomationServerId());
         return adapter.getBuildConsoleOutput(job, buildNumber, stringsCount, fullCount);
     }
 

@@ -83,7 +83,6 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
     private final String tokenOrPassword;
     private final String folder;
 
-    private JenkinsServer jenkinsServer;
 
     public JenkinsIntegrationAdapter(Integration integration) {
         super(integration);
@@ -92,7 +91,6 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
         this.username = getAttributeValue(integration, JenkinsParam.JENKINS_USERNAME);
         this.tokenOrPassword = getAttributeValue(integration, JenkinsParam.JENKINS_API_TOKEN_OR_PASSWORD);
         this.folder = getAttributeValue(integration, JenkinsParam.JENKINS_FOLDER);
-        this.jenkinsServer = getJenkinsServer();
     }
 
     private enum JenkinsParam implements AdapterParam {
