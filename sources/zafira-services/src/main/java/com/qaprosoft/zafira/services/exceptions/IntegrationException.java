@@ -15,7 +15,23 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.exceptions;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 public class IntegrationException extends ApplicationException {
+
+    @Getter
+    @RequiredArgsConstructor
+    @AllArgsConstructor
+    public enum IntegrationExceptionDetail implements ErrorDetail {
+
+        JENKINS_SERVER_INITIALIZATION_FAILED(2200);
+
+        private final Integer code;
+        private String messageKey;
+
+    }
 
     public IntegrationException() {
         super();
@@ -27,6 +43,10 @@ public class IntegrationException extends ApplicationException {
 
     public IntegrationException(Throwable cause) {
         super(cause);
+    }
+
+    public IntegrationException(ErrorDetail errorDetail, String message, Throwable cause) {
+        super(errorDetail, message, cause);
     }
 
     public IntegrationException(String message, Throwable cause) {

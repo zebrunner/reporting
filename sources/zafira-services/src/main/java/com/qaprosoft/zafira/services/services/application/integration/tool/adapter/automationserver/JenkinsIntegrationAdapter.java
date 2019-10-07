@@ -30,6 +30,7 @@ import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.services.exceptions.ExternalSystemException;
+import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.AbstractIntegrationAdapter;
 import com.qaprosoft.zafira.services.services.application.integration.tool.adapter.AdapterParam;
 import com.qaprosoft.zafira.services.util.JenkinsClient;
@@ -52,6 +53,7 @@ import java.util.UUID;
 import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterClass.BOOLEAN;
 import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterClass.HIDDEN;
 import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterClass.STRING;
+import static com.qaprosoft.zafira.services.exceptions.IntegrationException.IntegrationExceptionDetail.JENKINS_SERVER_INITIALIZATION_FAILED;
 
 public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implements AutomationServerAdapter {
 
@@ -90,13 +92,7 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
         this.username = getAttributeValue(integration, JenkinsParam.JENKINS_USERNAME);
         this.tokenOrPassword = getAttributeValue(integration, JenkinsParam.JENKINS_API_TOKEN_OR_PASSWORD);
         this.folder = getAttributeValue(integration, JenkinsParam.JENKINS_FOLDER);
-
-        try {
-            JenkinsConfig config = new JenkinsConfig(username, tokenOrPassword, HTTP_TIMEOUT);
-            this.jenkinsServer = new JenkinsServer(new JenkinsClient(new URI(url), config));
-        } catch (URISyntaxException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        this.jenkinsServer = getJenkinsServer();
     }
 
     private enum JenkinsParam implements AdapterParam {
@@ -428,6 +424,14 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
     }
 
     public JenkinsServer getJenkinsServer() {
+        JenkinsServer jenkinsServer;
+        try {
+            JenkinsConfig config = new JenkinsConfig(username, tokenOrPassword, HTTP_TIMEOUT);
+            jenkinsServer = new JenkinsServer(new JenkinsClient(new URI(url), config));
+        } catch (URISyntaxException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new IntegrationException(JENKINS_SERVER_INITIALIZATION_FAILED, e.getMessage(), e);
+        }
         return jenkinsServer;
     }
 }
