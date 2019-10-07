@@ -311,7 +311,7 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
     private QueueItem getQueueItem(QueueReference queueReference) {
         QueueItem queueItem;
         try {
-            queueItem = jenkinsServer.getQueueItem(queueReference);
+            queueItem = getJenkinsServer().getQueueItem(queueReference);
         } catch (IOException e) {
             throw new ExternalSystemException(String.format(ERR_MSG_UNABLE_TO_GET_QUEUE_ITEM_BY_REFERENCE, queueReference), e);
         }
@@ -320,7 +320,7 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
 
     private Build getBuild(QueueItem queueItem) {
         try {
-            return jenkinsServer.getBuild(queueItem);
+            return getJenkinsServer().getBuild(queueItem);
         } catch (IOException e) {
             throw new ExternalSystemException(String.format(ERR_MSG_UNABLE_TO_GET_BUILD_OBJECT_BY_QUEUE_ITEM, queueItem), e);
         }
@@ -353,7 +353,7 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
 
     private JobWithDetails getJobByFolderAndName(FolderJob folderJob, String jobName) {
         try {
-            return jenkinsServer.getJob(folderJob, jobName);
+            return getJenkinsServer().getJob(folderJob, jobName);
         } catch (IOException e) {
             throw new ExternalSystemException(String.format(ERR_MSG_UNABLE_TO_GET_JOB_FROM_FOLDER, jobName, folderJob.getUrl()), e);
         }
@@ -403,7 +403,7 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
     @Override
     public boolean isConnected() {
         try {
-            return jenkinsServer.isRunning();
+            return getJenkinsServer().isRunning();
         } catch (Exception e) {
             return false;
         }
