@@ -85,7 +85,7 @@ public class SettingsAPIController extends AbstractController {
             return rabbit.getSettings()
                          .stream()
                          .map(setting -> {
-                             if (StringUtils.isNotEmpty(setting.getValue())) {
+                             if (setting.isEncrypted()) {
                                  String decryptedValue = cryptoService.decrypt(setting.getValue());
                                  setting.setValue(decryptedValue);
                                  setting.setEncrypted(false);
