@@ -76,7 +76,7 @@ public class SettingsAPIController extends AbstractController {
         if (tool.equalsIgnoreCase("ELASTICSEARCH")) {
             return elasticsearchService.getSettings();
         } else if (tool.equalsIgnoreCase("RABBITMQ")) {
-            Integration rabbit = integrationService.retrieveDefaultByIntegrationTypeName("MESSAGE_BROKER");
+            Integration rabbit = integrationService.retrieveDefaultByIntegrationTypeName("RABBITMQ");
             return rabbit.getSettings()
                          .stream()
                          .map(setting -> new Setting(setting.getParam().getName(), setting.getValue()))
