@@ -16,21 +16,8 @@
 
 package com.qaprosoft.zafira.ws.controller.application;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.models.dto.ConnectedToolType;
+import com.qaprosoft.zafira.services.services.application.ElasticsearchService;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -38,11 +25,17 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Api("Settings API")
 @CrossOrigin
@@ -51,9 +44,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class SettingsAPIController extends AbstractController {
 
     private final SettingsService settingsService;
+    private final ElasticsearchService elasticsearchService;
 
-    public SettingsAPIController(SettingsService settingsService) {
+    public SettingsAPIController(SettingsService settingsService, ElasticsearchService elasticsearchService) {
         this.settingsService = settingsService;
+        this.elasticsearchService = elasticsearchService;
     }
 
     /*@ResponseStatusDetails
@@ -62,8 +57,21 @@ public class SettingsAPIController extends AbstractController {
     @GetMapping("tool/{tool}")
     public List<Setting> getSettingsByTool(@PathVariable("tool") String tool, @RequestParam(value = "decrypt", required = false) boolean decrypt) {
         return settingsService.getSettingsByTool(tool, decrypt);
+    }*/
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", httpMethod = "GET", response = List.class)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @GetMapping("tool/{tool}")
+    public List<Setting> getSettingsByTool(@PathVariable("tool") String tool) {
+        if (tool.equalsIgnoreCase("ELASTICSEARCH")) {
+            return elasticsearchService.getSettings();
+        } else {
+            throw new RuntimeException("Unsupported tool, this API should not be used for anything but ElasticSearch");
+        }
     }
 
+    /*
     @ResponseStatusDetails
     @ApiOperation(value = "Get tools", nickname = "getTools", httpMethod = "GET", response = Map.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
