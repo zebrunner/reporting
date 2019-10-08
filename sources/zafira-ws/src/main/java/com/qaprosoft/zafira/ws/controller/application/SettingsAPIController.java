@@ -17,8 +17,10 @@
 package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.services.services.application.ElasticsearchService;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.Api;
@@ -36,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Api("Settings API")
 @CrossOrigin
@@ -45,10 +48,16 @@ public class SettingsAPIController extends AbstractController {
 
     private final SettingsService settingsService;
     private final ElasticsearchService elasticsearchService;
+    private final IntegrationService integrationService;
 
-    public SettingsAPIController(SettingsService settingsService, ElasticsearchService elasticsearchService) {
+    public SettingsAPIController(
+            SettingsService settingsService,
+            ElasticsearchService elasticsearchService,
+            IntegrationService integrationService
+    ) {
         this.settingsService = settingsService;
         this.elasticsearchService = elasticsearchService;
+        this.integrationService = integrationService;
     }
 
     /*@ResponseStatusDetails
@@ -66,6 +75,12 @@ public class SettingsAPIController extends AbstractController {
     public List<Setting> getSettingsByTool(@PathVariable("tool") String tool) {
         if (tool.equalsIgnoreCase("ELASTICSEARCH")) {
             return elasticsearchService.getSettings();
+        } else if (tool.equalsIgnoreCase("RABBITMQ")) {
+            Integration rabbit = integrationService.retrieveDefaultByIntegrationTypeName("MESSAGE_BROKER");
+            return rabbit.getSettings()
+                         .stream()
+                         .map(setting -> new Setting(setting.getParam().getName(), setting.getValue()))
+                         .collect(Collectors.toList());
         } else {
             throw new RuntimeException("Unsupported tool, this API should not be used for anything but ElasticSearch");
         }
