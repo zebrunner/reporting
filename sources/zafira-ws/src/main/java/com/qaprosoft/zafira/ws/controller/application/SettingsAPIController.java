@@ -18,6 +18,7 @@ package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
+import com.qaprosoft.zafira.services.services.application.CryptoService;
 import com.qaprosoft.zafira.services.services.application.ElasticsearchService;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
@@ -27,6 +28,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -47,15 +49,18 @@ import java.util.stream.Collectors;
 public class SettingsAPIController extends AbstractController {
 
     private final SettingsService settingsService;
+    private final CryptoService cryptoService;
     private final ElasticsearchService elasticsearchService;
     private final IntegrationService integrationService;
 
     public SettingsAPIController(
             SettingsService settingsService,
+            CryptoService cryptoService,
             ElasticsearchService elasticsearchService,
             IntegrationService integrationService
     ) {
         this.settingsService = settingsService;
+        this.cryptoService = cryptoService;
         this.elasticsearchService = elasticsearchService;
         this.integrationService = integrationService;
     }
@@ -79,7 +84,14 @@ public class SettingsAPIController extends AbstractController {
             Integration rabbit = integrationService.retrieveDefaultByIntegrationTypeName("RABBITMQ");
             return rabbit.getSettings()
                          .stream()
-                         .map(setting -> new Setting(setting.getParam().getName(), setting.getValue()))
+                         .map(setting -> {
+                             if (StringUtils.isNotEmpty(setting.getValue())) {
+                                 String decryptedValue = cryptoService.decrypt(setting.getValue());
+                                 setting.setValue(decryptedValue);
+                                 setting.setEncrypted(false);
+                             }
+                             return new Setting(setting.getParam().getName(), setting.getValue());
+                         })
                          .collect(Collectors.toList());
         } else {
             throw new RuntimeException("Unsupported tool, this API should not be used for anything but ElasticSearch");
