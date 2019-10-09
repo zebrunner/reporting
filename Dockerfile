@@ -9,7 +9,7 @@ ENV ZAFIRA_VERSION=${SERVICE_VER} \
 
 RUN mkdir /opt/assets
 
-COPY ./sources/zafira-ws/build/libs/zafira-ws-${version}.jar /app/zafira-service.jar
+COPY ./sources/zafira-web/build/libs/zafira-web-${version}.jar /app/zafira-service.jar
 
 CMD ["java", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8002", "-jar", "/app/zafira-service.jar"]
 
