@@ -64,7 +64,8 @@ public class SettingsAPIController extends AbstractController {
             CryptoService cryptoService,
             ElasticsearchService elasticsearchService,
             IntegrationService integrationService,
-            StorageProviderService storageProviderService, GoogleService googleService) {
+            StorageProviderService storageProviderService, GoogleService googleService
+    ) {
         this.settingsService = settingsService;
         this.cryptoService = cryptoService;
         this.elasticsearchService = elasticsearchService;
@@ -72,14 +73,6 @@ public class SettingsAPIController extends AbstractController {
         this.storageProviderService = storageProviderService;
         this.googleService = googleService;
     }
-
-    /*@ResponseStatusDetails
-    @ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @GetMapping("tool/{tool}")
-    public List<Setting> getSettingsByTool(@PathVariable("tool") String tool, @RequestParam(value = "decrypt", required = false) boolean decrypt) {
-        return settingsService.getSettingsByTool(tool, decrypt);
-    }*/
 
     @ResponseStatusDetails
     @ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", httpMethod = "GET", response = List.class)
@@ -110,15 +103,6 @@ public class SettingsAPIController extends AbstractController {
         }
     }
 
-    /*
-    @ResponseStatusDetails
-    @ApiOperation(value = "Get tools", nickname = "getTools", httpMethod = "GET", response = Map.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @GetMapping("tools")
-    public Map<Tool, Boolean> getTools() {
-        return settingsService.getToolsStatuses();
-    }*/
-
     @ResponseStatusDetails
     @ApiOperation(value = "Update setting", nickname = "setting", httpMethod = "PUT", response = Setting.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -128,50 +112,12 @@ public class SettingsAPIController extends AbstractController {
         return settingsService.updateSetting(setting);
     }
 
-    /*@ResponseStatusDetails
-    @ApiOperation(value = "Update settings", nickname = "settings", httpMethod = "PUT", response = ConnectedToolType.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @PreAuthorize("hasPermission('MODIFY_INTEGRATIONS')")
-    @PutMapping("/tools")
-    public ConnectedToolType updateSettings(@RequestBody List<Setting> settings) {
-        return settingsService.updateSettings(settings);
-    }
-
-    @ApiOperation(value = "Upload setting file", nickname = "uploadSettingFile", httpMethod = "POST", response = ConnectedToolType.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @PostMapping("/tools")
-    public ConnectedToolType uploadSettingFile(
-            @RequestParam("tool") Tool tool,
-            @RequestParam("name") String name,
-            @RequestParam("file") MultipartFile file
-    ) throws IOException {
-        return settingsService.createSettingFile(file.getBytes(), file.getOriginalFilename(), name, tool);
-    }
-
-    @ResponseStatusDetails
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Is tool connected", nickname = "isToolConnected", httpMethod = "GET", response = Boolean.class)
-    @GetMapping("tools/{name}")
-    public Boolean isToolConnected(@PathVariable("name") Tool tool) {
-        return settingsService.isConnected(tool);
-    }*/
-
     @ResponseStatusDetails
     @ApiOperation(value = "Get company logo URL", nickname = "getSettingValue", httpMethod = "GET", response = Setting.class)
     @GetMapping("companyLogo")
     public Setting getCompanyLogoURL() {
         return settingsService.getSettingByName(Setting.SettingType.COMPANY_LOGO_URL.name());
     }
-
-    /*@ResponseStatusDetails
-    @ApiOperation(value = "Generate key", nickname = "generateKey", code = 201, httpMethod = "POST")
-    @ResponseStatus(HttpStatus.CREATED)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_INTEGRATIONS')")
-    @PostMapping("key/regenerate")
-    public void reEncrypt() {
-        settingsService.reEncrypt();
-    }*/
 
     // TODO by nsidorevich on 2019-10-09: remove this crap
 
