@@ -98,7 +98,7 @@ public class TenancyInitializer {
                 LOGGER.info("Tenancy with name '" + tenancy + "' DB initialization is starting....");
                 tenancyDbInitials.forEach(tenancyInitial -> initTenancyDb(tenancy, tenancyInitial));
 
-                processMessage(tenancy, () -> scmAccountService.reencryptTokens());
+                processMessage(tenancy, () -> scmAccountService.reEncryptTokens());
 
                 success = eventPushService.convertAndSend(TENANCIES, new EventMessage(tenancy));
                 result.setSuccess(success);

@@ -102,7 +102,7 @@ public class ScmAccountService {
         return repository.getDefaultBranch();
     }
 
-    public void reencryptTokens() {
+    public void reEncryptTokens() {
         List<ScmAccount> scmAccounts = getAllScmAccounts();
         scmAccounts.forEach(scmAccount -> {
             String token = scmAccount.getAccessToken();
