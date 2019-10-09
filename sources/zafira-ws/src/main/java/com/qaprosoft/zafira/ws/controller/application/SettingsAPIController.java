@@ -28,7 +28,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -78,11 +77,12 @@ public class SettingsAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("tool/{tool}")
     public List<Setting> getSettingsByTool(@PathVariable("tool") String tool) {
+        // TODO by nsidorevich on 2019-10-09: refactor and remove
         if (tool.equalsIgnoreCase("ELASTICSEARCH")) {
             return elasticsearchService.getSettings();
         } else if (tool.equalsIgnoreCase("RABBITMQ")) {
             Integration rabbit = integrationService.retrieveDefaultByIntegrationTypeName("RABBITMQ");
-            return rabbit.getSettings()
+            List<Setting> rabbitSettings =  rabbit.getSettings()
                          .stream()
                          .map(setting -> {
                              if (setting.isEncrypted()) {
@@ -93,6 +93,9 @@ public class SettingsAPIController extends AbstractController {
                              return new Setting(setting.getParam().getName(), setting.getValue());
                          })
                          .collect(Collectors.toList());
+            rabbitSettings.add(new Setting("RABBITMQ_ENABLED", Boolean.toString(rabbit.isEnabled())));
+
+            return rabbitSettings;
         } else {
             throw new RuntimeException("Unsupported tool, this API should not be used for anything but ElasticSearch");
         }
