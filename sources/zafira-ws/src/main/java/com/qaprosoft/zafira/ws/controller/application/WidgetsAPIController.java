@@ -24,7 +24,6 @@ import com.qaprosoft.zafira.models.dto.widget.WidgetTemplateType;
 import com.qaprosoft.zafira.models.dto.widget.WidgetType;
 import com.qaprosoft.zafira.services.exceptions.ProcessingException;
 import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
-import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.WidgetService;
 import com.qaprosoft.zafira.services.services.application.WidgetTemplateService;
 import com.qaprosoft.zafira.services.util.URLResolver;
@@ -70,16 +69,14 @@ public class WidgetsAPIController extends AbstractController {
     private final URLResolver urlResolver;
     private final WidgetService widgetService;
     private final WidgetTemplateService widgetTemplateService;
-    private final SettingsService settingsService;
     private final Mapper mapper;
 
     public WidgetsAPIController(URLResolver urlResolver, WidgetService widgetService,
-                                WidgetTemplateService widgetTemplateService, SettingsService settingsService,
+                                WidgetTemplateService widgetTemplateService,
                                 Mapper mapper) {
         this.urlResolver = urlResolver;
         this.widgetService = widgetService;
         this.widgetTemplateService = widgetTemplateService;
-        this.settingsService = settingsService;
         this.mapper = mapper;
     }
 
@@ -164,7 +161,6 @@ public class WidgetsAPIController extends AbstractController {
                         .replaceAll("#\\{currentUserId}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
                         .replaceAll("#\\{currentUserName}", String.valueOf(getPrincipalName()))
                         .replaceAll("#\\{zafiraURL}", urlResolver.buildWebURL())
-                        .replaceAll("#\\{jenkinsURL}", settingsService.getSettingByName("JENKINS_URL").getValue())
                         .replaceAll("#\\{hashcode}", "0")
                         .replaceAll("#\\{testCaseId}", "0");
 

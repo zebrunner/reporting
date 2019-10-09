@@ -38,13 +38,11 @@ public class WidgetService {
     private final WidgetMapper widgetMapper;
     private final FreemarkerUtil freemarkerUtil;
     private final URLResolver urlResolver;
-    private final SettingsService settingsService;
 
-    public WidgetService(WidgetMapper widgetMapper, FreemarkerUtil freemarkerUtil, URLResolver urlResolver, SettingsService settingsService) {
+    public WidgetService(WidgetMapper widgetMapper, FreemarkerUtil freemarkerUtil, URLResolver urlResolver) {
         this.widgetMapper = widgetMapper;
         this.freemarkerUtil = freemarkerUtil;
         this.urlResolver = urlResolver;
-        this.settingsService = settingsService;
     }
 
     public enum DefaultParam {
@@ -119,9 +117,6 @@ public class WidgetService {
             switch (param) {
             case SERVICE_URL:
                 result = urlResolver.getServiceURL();
-                break;
-            case JENKINS_URL:
-                result = settingsService.getSettingByName("JENKINS_URL").getValue();
                 break;
             case CURRENT_USER_ID:
                 result = additionalParams.get(DefaultParam.CURRENT_USER_ID);
