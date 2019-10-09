@@ -79,7 +79,6 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
     @Override
     public void init() {
         integrationProxies.forEach((name, proxy) -> {
-            LOGGER.info(String.format("Starting to initialize %s integration proxy", name));
             proxy.init();
         });
     }
@@ -90,9 +89,7 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
             cryptoService.init();
             List<Integration> integrations = integrationService.retrieveAll();
             integrations.forEach(integration -> {
-                LOGGER.info(String.format("Starting to initialize %s integration", integration.getName()));
                 integration.getSettings().forEach(integrationSetting -> {
-                    LOGGER.info(String.format("Starting to initialize %s setting", integrationSetting.getParam().getName()));
                     if (!StringUtils.isEmpty(integrationSetting.getValue()) && integrationSetting.getParam().isNeedEncryption() && !integrationSetting.isEncrypted()) {
                         integrationSetting.setValue(cryptoService.encrypt(integrationSetting.getValue()));
                         integrationSetting.setEncrypted(true);

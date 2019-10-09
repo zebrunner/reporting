@@ -93,16 +93,12 @@ public class IntegrationController extends AbstractController {
             @RequestParam(name = "groupId", required = false) Long groupId,
             @RequestParam(name = "groupName", required = false) String groupName
     ) {
-        LOGGER.info("Loading integrations with params groupId=" + groupId + ", groupName=" + groupName);
         List<Integration> integrations;
         if (groupId != null) {
-            LOGGER.info("Loading by id");
             integrations = integrationService.retrieveIntegrationsByGroupId(groupId);
         } else if (groupName != null) {
-            LOGGER.info("Loading by name");
             integrations = integrationService.retrieveIntegrationsByGroupName(groupName);
         } else {
-            LOGGER.info("Loading all");
             integrations = integrationService.retrieveAll();
         }
         return integrations.stream()
