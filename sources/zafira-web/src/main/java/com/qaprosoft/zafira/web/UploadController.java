@@ -17,9 +17,9 @@ package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.db.Attachment;
 import com.qaprosoft.zafira.models.dto.EmailType;
-import com.qaprosoft.zafira.services.services.application.EmailService;
-import com.qaprosoft.zafira.services.services.application.UploadService;
-import com.qaprosoft.zafira.services.services.application.emails.CommonEmail;
+import com.qaprosoft.zafira.service.EmailService;
+import com.qaprosoft.zafira.service.UploadService;
+import com.qaprosoft.zafira.service.email.CommonEmail;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

@@ -16,7 +16,7 @@
 package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.dto.CertificationType;
-import com.qaprosoft.zafira.services.services.application.CertificationService;
+import com.qaprosoft.zafira.service.CertificationService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

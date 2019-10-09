@@ -16,7 +16,7 @@
 package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.entity.integration.IntegrationInfo;
-import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
+import com.qaprosoft.zafira.service.integration.IntegrationService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

@@ -16,9 +16,9 @@
 package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.db.Group;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
-import com.qaprosoft.zafira.services.services.application.GroupService;
+import com.qaprosoft.zafira.service.GroupService;
+import com.qaprosoft.zafira.service.exception.ForbiddenOperationException;
+import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.GROUP_NOT_FOUND;
+import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.GROUP_NOT_FOUND;
 
 @Api("Groups API")
 @CrossOrigin

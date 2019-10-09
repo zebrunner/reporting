@@ -17,8 +17,8 @@ package com.qaprosoft.zafira.web.security;
 
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.services.application.UserService;
+import com.qaprosoft.zafira.service.UserService;
+import com.qaprosoft.zafira.service.exception.ForbiddenOperationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

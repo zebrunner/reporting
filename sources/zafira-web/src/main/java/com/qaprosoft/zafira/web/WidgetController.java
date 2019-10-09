@@ -22,11 +22,11 @@ import com.qaprosoft.zafira.models.db.WidgetTemplate;
 import com.qaprosoft.zafira.models.dto.SQLExecuteType;
 import com.qaprosoft.zafira.models.dto.widget.WidgetTemplateType;
 import com.qaprosoft.zafira.models.dto.widget.WidgetType;
-import com.qaprosoft.zafira.services.exceptions.ProcessingException;
-import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
-import com.qaprosoft.zafira.services.services.application.WidgetService;
-import com.qaprosoft.zafira.services.services.application.WidgetTemplateService;
-import com.qaprosoft.zafira.services.util.URLResolver;
+import com.qaprosoft.zafira.service.WidgetService;
+import com.qaprosoft.zafira.service.WidgetTemplateService;
+import com.qaprosoft.zafira.service.exception.ProcessingException;
+import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
+import com.qaprosoft.zafira.service.util.URLResolver;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -55,8 +55,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.qaprosoft.zafira.services.exceptions.ProcessingException.ProcessingErrorDetail.WIDGET_QUERY_EXECUTION_ERROR;
-import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.WIDGET_TEMPLATE_NOT_FOUND;
+import static com.qaprosoft.zafira.service.exception.ProcessingException.ProcessingErrorDetail.WIDGET_QUERY_EXECUTION_ERROR;
+import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.WIDGET_TEMPLATE_NOT_FOUND;
 
 @ApiIgnore
 @RequestMapping(path = "api/widgets", produces = MediaType.APPLICATION_JSON_VALUE)

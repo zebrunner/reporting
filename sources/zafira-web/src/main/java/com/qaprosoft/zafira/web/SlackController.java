@@ -16,8 +16,8 @@
 package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.services.services.application.TestRunService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.impl.SlackService;
+import com.qaprosoft.zafira.service.TestRunService;
+import com.qaprosoft.zafira.service.integration.tool.impl.SlackService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

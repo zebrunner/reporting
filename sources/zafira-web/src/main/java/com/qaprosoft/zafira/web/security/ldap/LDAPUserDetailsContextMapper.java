@@ -17,8 +17,8 @@ package com.qaprosoft.zafira.web.security.ldap;
 
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.services.application.UserService;
+import com.qaprosoft.zafira.service.UserService;
+import com.qaprosoft.zafira.service.exception.ForbiddenOperationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.DirContextAdapter;

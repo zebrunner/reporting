@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.web.security.filter;
 
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
-import com.qaprosoft.zafira.services.services.auth.JWTService;
+import com.qaprosoft.zafira.service.JWTService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;

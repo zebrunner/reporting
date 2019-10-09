@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.dbaccess.persistence.IntegrationRepository;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
-import com.qaprosoft.zafira.services.services.application.SettingsService;
+import com.qaprosoft.zafira.service.SettingsService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;

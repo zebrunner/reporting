@@ -3,8 +3,8 @@ package com.qaprosoft.zafira.web;
 import com.qaprosoft.zafira.models.db.Filter;
 import com.qaprosoft.zafira.models.dto.filter.FilterType;
 import com.qaprosoft.zafira.models.dto.filter.Subject;
-import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
-import com.qaprosoft.zafira.services.services.application.FilterService;
+import com.qaprosoft.zafira.service.FilterService;
+import com.qaprosoft.zafira.service.exception.IllegalOperationException;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -26,8 +26,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.qaprosoft.zafira.services.exceptions.IllegalOperationException.IllegalOperationErrorDetail.FILTER_CAN_NOT_BE_CREATED;
-import static com.qaprosoft.zafira.services.exceptions.IllegalOperationException.IllegalOperationErrorDetail.ILLEGAL_FILTER_ACCESS;
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.FILTER_CAN_NOT_BE_CREATED;
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.ILLEGAL_FILTER_ACCESS;
 
 @Api("Filters API")
 @CrossOrigin

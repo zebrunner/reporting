@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.web.util.dozer;
 
-import com.qaprosoft.zafira.services.util.DateTimeUtil;
+import com.qaprosoft.zafira.service.util.DateTimeUtil;
 import org.dozer.DozerConverter;
 
 import java.util.Date;

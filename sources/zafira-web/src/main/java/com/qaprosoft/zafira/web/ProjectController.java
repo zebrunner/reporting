@@ -17,8 +17,8 @@ package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.dto.ProjectType;
-import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
-import com.qaprosoft.zafira.services.services.application.ProjectService;
+import com.qaprosoft.zafira.service.ProjectService;
+import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -41,7 +41,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.PROJECT_NOT_FOUND;
+import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.PROJECT_NOT_FOUND;
 
 @Api("Projects API")
 @CrossOrigin

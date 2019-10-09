@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.web;
 
-import com.qaprosoft.zafira.services.services.application.CryptoService;
+import com.qaprosoft.zafira.service.CryptoService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

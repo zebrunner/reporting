@@ -33,17 +33,17 @@ import com.qaprosoft.zafira.models.dto.filter.FilterType;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
-import com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException;
-import com.qaprosoft.zafira.services.services.application.FilterService;
-import com.qaprosoft.zafira.services.services.application.JobsService;
-import com.qaprosoft.zafira.services.services.application.ProjectService;
-import com.qaprosoft.zafira.services.services.application.TestRunService;
-import com.qaprosoft.zafira.services.services.application.TestService;
-import com.qaprosoft.zafira.services.services.application.TestSuiteService;
-import com.qaprosoft.zafira.services.services.application.UserService;
-import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.impl.AutomationServerService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.impl.google.models.TestRunSpreadsheetService;
+import com.qaprosoft.zafira.service.FilterService;
+import com.qaprosoft.zafira.service.JobsService;
+import com.qaprosoft.zafira.service.ProjectService;
+import com.qaprosoft.zafira.service.TestRunService;
+import com.qaprosoft.zafira.service.TestService;
+import com.qaprosoft.zafira.service.TestSuiteService;
+import com.qaprosoft.zafira.service.UserService;
+import com.qaprosoft.zafira.service.cache.StatisticsService;
+import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
+import com.qaprosoft.zafira.service.integration.tool.impl.AutomationServerService;
+import com.qaprosoft.zafira.service.integration.tool.impl.google.models.TestRunSpreadsheetService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -76,8 +76,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.qaprosoft.zafira.services.exceptions.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_RUN_NOT_FOUND;
-import static com.qaprosoft.zafira.services.services.application.FilterService.Template.TEST_RUN_TEMPLATE;
+import static com.qaprosoft.zafira.service.FilterService.Template.TEST_RUN_TEMPLATE;
+import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_RUN_NOT_FOUND;
 
 @Api("Test runs API")
 @RequestMapping(path = "api/tests/runs", produces = MediaType.APPLICATION_JSON_VALUE)

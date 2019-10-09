@@ -19,9 +19,9 @@ import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationDataType;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationTag;
-import com.qaprosoft.zafira.services.services.application.TagService;
-import com.qaprosoft.zafira.services.services.application.TestRunService;
-import com.qaprosoft.zafira.services.util.URLResolver;
+import com.qaprosoft.zafira.service.TagService;
+import com.qaprosoft.zafira.service.TestRunService;
+import com.qaprosoft.zafira.service.util.URLResolver;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -38,8 +38,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Calendar;
 import java.util.Map;
 
-import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.parseConfigToMap;
-import static com.qaprosoft.zafira.services.util.XmlConfigurationUtil.readArguments;
+import static com.qaprosoft.zafira.service.util.XmlConfigurationUtil.parseConfigToMap;
+import static com.qaprosoft.zafira.service.util.XmlConfigurationUtil.readArguments;
 
 @Api("Tags operations")
 @RequestMapping(path = "api/tags", produces = MediaType.APPLICATION_JSON_VALUE)

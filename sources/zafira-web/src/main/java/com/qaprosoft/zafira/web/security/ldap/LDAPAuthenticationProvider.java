@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.web.security.ldap;
 
-import com.qaprosoft.zafira.services.services.application.integration.tool.impl.AccessManagementService;
+import com.qaprosoft.zafira.service.integration.tool.impl.AccessManagementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

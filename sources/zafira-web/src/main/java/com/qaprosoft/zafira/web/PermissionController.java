@@ -16,7 +16,7 @@
 package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.db.Permission;
-import com.qaprosoft.zafira.services.services.application.PermissionService;
+import com.qaprosoft.zafira.service.PermissionService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

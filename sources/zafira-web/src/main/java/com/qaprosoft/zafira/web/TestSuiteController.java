@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.db.TestSuite;
 import com.qaprosoft.zafira.models.dto.TestSuiteType;
-import com.qaprosoft.zafira.services.services.application.TestSuiteService;
+import com.qaprosoft.zafira.service.TestSuiteService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

@@ -28,17 +28,17 @@ import com.qaprosoft.zafira.models.dto.auth.TenantType;
 import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
 import com.qaprosoft.zafira.models.dto.user.PasswordType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
-import com.qaprosoft.zafira.services.exceptions.InvalidCredentialsException;
-import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
-import com.qaprosoft.zafira.services.services.application.GroupService;
-import com.qaprosoft.zafira.services.services.application.InvitationService;
-import com.qaprosoft.zafira.services.services.application.UserService;
-import com.qaprosoft.zafira.services.services.application.integration.tool.impl.AccessManagementService;
-import com.qaprosoft.zafira.services.services.auth.ForgotPasswordService;
-import com.qaprosoft.zafira.services.services.auth.JWTService;
-import com.qaprosoft.zafira.services.util.URLResolver;
+import com.qaprosoft.zafira.service.ForgotPasswordService;
+import com.qaprosoft.zafira.service.GroupService;
+import com.qaprosoft.zafira.service.InvitationService;
+import com.qaprosoft.zafira.service.JWTService;
+import com.qaprosoft.zafira.service.UserService;
+import com.qaprosoft.zafira.service.exception.ForbiddenOperationException;
+import com.qaprosoft.zafira.service.exception.IllegalOperationException;
+import com.qaprosoft.zafira.service.exception.InvalidCredentialsException;
+import com.qaprosoft.zafira.service.exception.UserNotFoundException;
+import com.qaprosoft.zafira.service.integration.tool.impl.AccessManagementService;
+import com.qaprosoft.zafira.service.util.URLResolver;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -68,7 +68,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-import static com.qaprosoft.zafira.services.exceptions.IllegalOperationException.IllegalOperationErrorDetail.USER_CAN_NOT_BE_CREATED;
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.USER_CAN_NOT_BE_CREATED;
 
 @Api("Auth API")
 @CrossOrigin

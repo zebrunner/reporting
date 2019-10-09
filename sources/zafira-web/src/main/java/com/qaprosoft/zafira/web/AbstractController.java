@@ -20,7 +20,7 @@ import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 import com.qaprosoft.zafira.models.dto.auth.UserGrantedAuthority;
 import com.qaprosoft.zafira.models.push.AbstractPush;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
+import com.qaprosoft.zafira.service.exception.ForbiddenOperationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
