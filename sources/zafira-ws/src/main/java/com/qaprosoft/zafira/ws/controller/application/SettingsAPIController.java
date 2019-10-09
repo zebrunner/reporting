@@ -17,11 +17,14 @@
 package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.services.services.application.CryptoService;
 import com.qaprosoft.zafira.services.services.application.ElasticsearchService;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.StorageProviderService;
+import com.qaprosoft.zafira.services.services.application.integration.tool.impl.google.GoogleService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.Api;
@@ -38,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,16 +56,21 @@ public class SettingsAPIController extends AbstractController {
     private final ElasticsearchService elasticsearchService;
     private final IntegrationService integrationService;
 
+    private final StorageProviderService storageProviderService;
+    private final GoogleService googleService;
+
     public SettingsAPIController(
             SettingsService settingsService,
             CryptoService cryptoService,
             ElasticsearchService elasticsearchService,
-            IntegrationService integrationService
-    ) {
+            IntegrationService integrationService,
+            StorageProviderService storageProviderService, GoogleService googleService) {
         this.settingsService = settingsService;
         this.cryptoService = cryptoService;
         this.elasticsearchService = elasticsearchService;
         this.integrationService = integrationService;
+        this.storageProviderService = storageProviderService;
+        this.googleService = googleService;
     }
 
     /*@ResponseStatusDetails
@@ -163,5 +172,21 @@ public class SettingsAPIController extends AbstractController {
     public void reEncrypt() {
         settingsService.reEncrypt();
     }*/
+
+    // TODO by nsidorevich on 2019-10-09: remove this crap
+
+    @ApiOperation(value = "Get amazon session credentials", nickname = "getSessionCredentials", httpMethod = "GET", response = SessionCredentials.class)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @GetMapping("amazon/creds")
+    public SessionCredentials getSessionCredentials() {
+        return storageProviderService.getTemporarySessionCredentials().orElse(null);
+    }
+
+    @ApiOperation(value = "Get google session credentials", nickname = "getGoogleSessionCredentials", httpMethod = "GET", response = String.class)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @GetMapping(path = "google/creds", produces = MediaType.TEXT_PLAIN_VALUE)
+    public String getGoogleSessionCredentials() throws IOException {
+        return googleService.getTemporaryAccessToken();
+    }
 
 }
