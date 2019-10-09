@@ -26,7 +26,9 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.JenkinsLauncherType;
 import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
+import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.services.exceptions.IllegalOperationException;
+import com.qaprosoft.zafira.services.services.application.integration.IntegrationService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.AutomationServerService;
 import com.qaprosoft.zafira.services.services.application.integration.tool.impl.TestAutomationToolService;
 import com.qaprosoft.zafira.services.services.application.scm.GitHubService;
@@ -65,16 +67,19 @@ public class LauncherService {
     private final TestAutomationToolService testAutomationToolService;
     private final CryptoService cryptoService;
     private final URLResolver urlResolver;
+    private final IntegrationService integrationService;
 
-    public LauncherService(LauncherMapper launcherMapper,
-                           AutomationServerService automationServerService,
-                           ScmAccountService scmAccountService,
-                           JobsService jobsService,
-                           JWTService jwtService,
-                           GitHubService gitHubService,
-                           TestAutomationToolService testAutomationToolService,
-                           CryptoService cryptoService,
-                           URLResolver urlResolver) {
+    public LauncherService(
+            LauncherMapper launcherMapper,
+            AutomationServerService automationServerService,
+            ScmAccountService scmAccountService,
+            JobsService jobsService,
+            JWTService jwtService,
+            GitHubService gitHubService,
+            TestAutomationToolService testAutomationToolService,
+            CryptoService cryptoService,
+            URLResolver urlResolver, IntegrationService integrationService
+    ) {
         this.launcherMapper = launcherMapper;
         this.automationServerService = automationServerService;
         this.scmAccountService = scmAccountService;
@@ -84,6 +89,7 @@ public class LauncherService {
         this.testAutomationToolService = testAutomationToolService;
         this.cryptoService = cryptoService;
         this.urlResolver = urlResolver;
+        this.integrationService = integrationService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -177,7 +183,8 @@ public class LauncherService {
         }
 
         // If Selenium integration is enabled pass selenium_host with basic auth as job argument
-        if(testAutomationToolService.isEnabledAndConnected(automationServerId)) {
+        Integration selenium = integrationService.retrieveDefaultByIntegrationTypeName("SELENIUM");
+        if (testAutomationToolService.isEnabledAndConnected(selenium.getId())) {
             String seleniumURL = testAutomationToolService.buildUrl();
             jobParameters.put("selenium_url", seleniumURL);
         }
