@@ -82,8 +82,11 @@ public class IntegrationServiceImpl implements IntegrationService {
     @Transactional()
     public Integration create(Integration integration, Long typeId) {
         IntegrationType type = integrationTypeService.retrieveById(typeId);
+
         verifyMultipleAllowedForType(type);
-        unassignIfDefault(integration, typeId);
+
+        unAssignIfDefault(integration, typeId);
+
         String backReferenceId = generateBackReferenceId(typeId);
         integration.setId(null);
         // TODO: 9/11/19 check with PO if we can persist integration without enabling it / connecting to it
@@ -92,14 +95,23 @@ public class IntegrationServiceImpl implements IntegrationService {
         integration.setBackReferenceId(backReferenceId);
         integration = integrationRepository.save(integration);
 
+        // Reinitialization is called before all settings are ecncrypted,
+        // otherwise they are decrypted during reinitialization and in this state are saved to the database
+        reInitializeIntegration(integration);
+
+        List<IntegrationSetting> integrationSettings = updateIntegrationSettings(integration, typeId);
+        integration.setSettings(integrationSettings);
+
+        notifyToolReInitialized(integration);
+
+        return integration;
+    }
+
+    private List<IntegrationSetting> updateIntegrationSettings(Integration integration, Long typeId) {
         for (IntegrationSetting setting : integration.getSettings()) {
             setting.setIntegration(integration);
         }
-        List<IntegrationSetting> integrationSettings = integrationSettingService.batchCreate(integration.getSettings(), typeId);
-        integration.setSettings(integrationSettings);
-
-        notifyToolReinitiated(integration);
-        return integration;
+        return integrationSettingService.batchUpdate(integration.getSettings(), typeId);
     }
 
     @Override
@@ -229,22 +241,22 @@ public class IntegrationServiceImpl implements IntegrationService {
     @Transactional(rollbackFor = Exception.class)
     public Integration update(Integration integration) {
         IntegrationType integrationType = integrationTypeService.retrieveByIntegrationId(integration.getId());
-        unassignIfDefault(integration, null);
+        unAssignIfDefault(integration, null);
 
         Integration dbIntegration = retrieveById(integration.getId());
         integration.setBackReferenceId(dbIntegration.getBackReferenceId());
         integration.setType(dbIntegration.getType());
 
-        for (IntegrationSetting setting : integration.getSettings()) {
-            setting.setIntegration(integration);
-        }
-        List<IntegrationSetting> integrationSettings = integrationSettingService.batchUpdate(integration.getSettings(), integrationType.getId());
+        // Reinitialization is called before all settings are ecncrypted,
+        // otherwise they are decrypted during reinitialization and in this state are saved to the database
+        reInitializeIntegration(integration);
+
+        List<IntegrationSetting> integrationSettings = updateIntegrationSettings(integration, integrationType.getId());
         integration.setSettings(integrationSettings);
 
         integration = integrationRepository.save(integration);
 
-        notifyToolReinitiated(integration);
-
+        notifyToolReInitialized(integration);
         return integration;
     }
 
@@ -253,7 +265,7 @@ public class IntegrationServiceImpl implements IntegrationService {
         return integrationType.getName() + "_" + UUID.randomUUID().toString();
     }
 
-    private void unassignIfDefault(Integration integration, Long integrationTypeId) {
+    private void unAssignIfDefault(Integration integration, Long integrationTypeId) {
         if (integration.isDefault()) {
             if (integrationTypeId == null) { // can be null on update
                 IntegrationType integrationType = integrationTypeService.retrieveByIntegrationId(integration.getId());
@@ -276,10 +288,13 @@ public class IntegrationServiceImpl implements IntegrationService {
         }
     }
 
-    private void notifyToolReinitiated(Integration integration) {
+    private void notifyToolReInitialized(Integration integration) {
         String tenantName = TenancyContext.getTenantName();
         eventPushService.convertAndSend(EventPushService.Type.SETTINGS, new ReinitEventMessage(tenantName, integration.getId()));
-        integrationInitializer.initIntegration(integration, tenantName);
     }
 
+    private void reInitializeIntegration(Integration integration) {
+        String tenantName = TenancyContext.getTenantName();
+        integrationInitializer.initIntegration(integration, tenantName);
+    }
 }
