@@ -76,7 +76,6 @@ public class IntegrationController extends AbstractController {
         Integration integration = mapper.map(integrationDTO, Integration.class);
         integration = integrationService.create(integration, integrationTypeId);
 
-        integrationService.reInitializeIntegration(integration);
         IntegrationDTO integrationUpdateResultDTO =  mapper.map(integration, IntegrationDTO.class);
 
         IntegrationInfo integrationInfo = integrationService.retrieveInfoByIntegration(integration);
@@ -135,9 +134,7 @@ public class IntegrationController extends AbstractController {
         Integration integration = mapper.map(integrationDTO, Integration.class);
         integration.setId(id);
 
-        Integration updatedIntegration = integrationService.update(integration);
-        integrationService.reInitializeIntegration(updatedIntegration);
-        IntegrationDTO integrationUpdateResultDTO =  mapper.map(updatedIntegration, IntegrationDTO.class);
+        IntegrationDTO integrationUpdateResultDTO =  mapper.map(integrationService.update(integration), IntegrationDTO.class);
 
         IntegrationInfo integrationInfo = integrationService.retrieveInfoByIntegration(integration);
         integrationUpdateResultDTO.setConnected(integrationInfo.isConnected());

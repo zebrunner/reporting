@@ -54,6 +54,4 @@ public interface IntegrationService {
 
     Integration update(Integration integration);
 
-    void reInitializeIntegration(Integration integration);
-
 }

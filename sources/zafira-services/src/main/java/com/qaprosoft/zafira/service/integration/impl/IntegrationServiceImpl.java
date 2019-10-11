@@ -33,8 +33,10 @@ import com.qaprosoft.zafira.service.integration.IntegrationTypeService;
 import com.qaprosoft.zafira.service.integration.core.IntegrationInitializer;
 import com.qaprosoft.zafira.service.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.service.util.EventPushService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.AbstractMap;
 import java.util.List;
@@ -62,6 +64,9 @@ public class IntegrationServiceImpl implements IntegrationService {
     private final EventPushService<ReinitEventMessage> eventPushService;
     private final IntegrationInitializer integrationInitializer;
 
+    @Autowired
+    private TransactionTemplate transactionTemplate;
+
     public IntegrationServiceImpl(
             IntegrationRepository integrationRepository,
             IntegrationGroupService integrationGroupService,
@@ -79,28 +84,31 @@ public class IntegrationServiceImpl implements IntegrationService {
     }
 
     @Override
-    @Transactional()
-    public Integration create(Integration integration, Long typeId) {
-        IntegrationType type = integrationTypeService.retrieveById(typeId);
+    public Integration create(final Integration integration, Long typeId) {
 
-        verifyMultipleAllowedForType(type);
+        Integration createdIntegration = transactionTemplate.execute(paramTransactionStatus -> {
+            IntegrationType type = integrationTypeService.retrieveById(typeId);
+            verifyMultipleAllowedForType(type);
+            unAssignIfDefault(integration, typeId);
 
-        unAssignIfDefault(integration, typeId);
+            String backReferenceId = generateBackReferenceId(typeId);
+            integration.setId(null);
+            // TODO: 9/11/19 check with PO if we can persist integration without enabling it / connecting to it
+            integration.setEnabled(true);
+            integration.setType(type);
+            integration.setBackReferenceId(backReferenceId);
 
-        String backReferenceId = generateBackReferenceId(typeId);
-        integration.setId(null);
-        // TODO: 9/11/19 check with PO if we can persist integration without enabling it / connecting to it
-        integration.setEnabled(true);
-        integration.setType(type);
-        integration.setBackReferenceId(backReferenceId);
-        integration = integrationRepository.save(integration);
+            Integration persistedIntegration = integrationRepository.save(integration);
 
-        List<IntegrationSetting> integrationSettings = updateIntegrationSettings(integration, typeId);
-        integration.setSettings(integrationSettings);
+            List<IntegrationSetting> integrationSettings = updateIntegrationSettings(persistedIntegration, typeId);
+            persistedIntegration.setSettings(integrationSettings);
 
-        notifyToolReInitialized(integration);
+            return persistedIntegration;
+        });
 
-        return integration;
+        notifyToolReInitialized(createdIntegration);
+
+        return createdIntegration;
     }
 
     private List<IntegrationSetting> updateIntegrationSettings(Integration integration, Long typeId) {
@@ -234,22 +242,25 @@ public class IntegrationServiceImpl implements IntegrationService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public Integration update(Integration integration) {
-        IntegrationType integrationType = integrationTypeService.retrieveByIntegrationId(integration.getId());
-        unAssignIfDefault(integration, null);
 
-        Integration dbIntegration = retrieveById(integration.getId());
-        integration.setBackReferenceId(dbIntegration.getBackReferenceId());
-        integration.setType(dbIntegration.getType());
+        Integration updatedIntegration = transactionTemplate.execute(paramTransactionStatus -> {
+            IntegrationType integrationType = integrationTypeService.retrieveByIntegrationId(integration.getId());
+            unAssignIfDefault(integration, null);
 
-        List<IntegrationSetting> integrationSettings = updateIntegrationSettings(integration, integrationType.getId());
-        integration.setSettings(integrationSettings);
+            Integration dbIntegration = retrieveById(integration.getId());
+            integration.setBackReferenceId(dbIntegration.getBackReferenceId());
+            integration.setType(dbIntegration.getType());
 
-        integration = integrationRepository.save(integration);
+            List<IntegrationSetting> integrationSettings = updateIntegrationSettings(integration, integrationType.getId());
+            integration.setSettings(integrationSettings);
 
-        notifyToolReInitialized(integration);
-        return integration;
+            return integrationRepository.save(integration);
+        });
+
+        notifyToolReInitialized(updatedIntegration);
+
+        return updatedIntegration;
     }
 
     private String generateBackReferenceId(Long integrationTypeId) {
@@ -283,10 +294,7 @@ public class IntegrationServiceImpl implements IntegrationService {
     private void notifyToolReInitialized(Integration integration) {
         String tenantName = TenancyContext.getTenantName();
         eventPushService.convertAndSend(EventPushService.Type.SETTINGS, new ReinitEventMessage(tenantName, integration.getId()));
-    }
-
-    public void reInitializeIntegration(Integration integration) {
-        String tenantName = TenancyContext.getTenantName();
         integrationInitializer.initIntegration(integration, tenantName);
     }
+
 }
