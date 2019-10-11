@@ -95,10 +95,6 @@ public class IntegrationServiceImpl implements IntegrationService {
         integration.setBackReferenceId(backReferenceId);
         integration = integrationRepository.save(integration);
 
-        // Reinitialization is called before all settings are ecncrypted,
-        // otherwise they are decrypted during reinitialization and in this state are saved to the database
-        reInitializeIntegration(integration);
-
         List<IntegrationSetting> integrationSettings = updateIntegrationSettings(integration, typeId);
         integration.setSettings(integrationSettings);
 
@@ -247,10 +243,6 @@ public class IntegrationServiceImpl implements IntegrationService {
         integration.setBackReferenceId(dbIntegration.getBackReferenceId());
         integration.setType(dbIntegration.getType());
 
-        // Reinitialization is called before all settings are ecncrypted,
-        // otherwise they are decrypted during reinitialization and in this state are saved to the database
-        reInitializeIntegration(integration);
-
         List<IntegrationSetting> integrationSettings = updateIntegrationSettings(integration, integrationType.getId());
         integration.setSettings(integrationSettings);
 
@@ -293,7 +285,7 @@ public class IntegrationServiceImpl implements IntegrationService {
         eventPushService.convertAndSend(EventPushService.Type.SETTINGS, new ReinitEventMessage(tenantName, integration.getId()));
     }
 
-    private void reInitializeIntegration(Integration integration) {
+    public void reInitializeIntegration(Integration integration) {
         String tenantName = TenancyContext.getTenantName();
         integrationInitializer.initIntegration(integration, tenantName);
     }
