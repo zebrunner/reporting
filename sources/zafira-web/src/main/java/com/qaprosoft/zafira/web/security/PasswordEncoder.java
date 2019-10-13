@@ -1,13 +1,15 @@
 package com.qaprosoft.zafira.web.security;
 
-import org.jasypt.util.password.BasicPasswordEncryptor;
+import org.jasypt.util.password.PasswordEncryptor;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PasswordEncoder implements org.springframework.security.crypto.password.PasswordEncoder {
 
-    private final BasicPasswordEncryptor passwordEncryptor;
+    private final PasswordEncryptor passwordEncryptor;
 
-    public PasswordEncoder() {
-        this.passwordEncryptor = new BasicPasswordEncryptor();
+    public PasswordEncoder(PasswordEncryptor passwordEncryptor) {
+        this.passwordEncryptor = passwordEncryptor;
     }
 
     @Override
