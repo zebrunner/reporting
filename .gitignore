@@ -23,6 +23,8 @@
 /sources/zafira-ws/phantomjs*
 /sources/client_secret.json
 
+/sources/**/logs/*
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
