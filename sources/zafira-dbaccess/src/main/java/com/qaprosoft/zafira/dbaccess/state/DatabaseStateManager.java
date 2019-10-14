@@ -22,10 +22,7 @@ import com.qaprosoft.zafira.models.db.Tenancy;
 import liquibase.integration.spring.MultiTenantSpringLiquibase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -38,15 +35,13 @@ import java.util.stream.Collectors;
  * Executes liquibase on all managed schemas. Runs on application startup if enabled. In case of failure throws
  * {@link DatabaseStateManagementException} and aborts startup.
  */
-@Component
-@ConditionalOnProperty(name = "db-state-management.enabled", havingValue = "true")
 public class DatabaseStateManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseStateManager.class);
 
     private static final String ERR_MSG_MANAGED_SCHEMAS_EMPTY = "Database state management error: managed schemas set is empty, aborting";
     private static final String ERR_MSG_UNRECOGNIZED_MANAGED_SCHEMAS = "Database state management error: not all managed schemas were recognized, aborting";
-    private static final String ERR_MSG_GENERIC_STATE_MANAGEMET_ERROR = "Database state management error: patchset execution failed";
+    private static final String ERR_MSG_GENERIC_STATE_MANAGEMENT_ERROR = "Database state management error: patchset execution failed";
 
     private static final String CHANGE_LOG_PATH = "classpath:db/changelog.yml";
 
@@ -61,10 +56,10 @@ public class DatabaseStateManager {
     public DatabaseStateManager(
             TenancyMapper tenancyMapper,
             TenancyDataSourceWrapper tenancyAppDSWrapper,
-            @Value("${db-state-management.manage-specific-tenants:false}") boolean manageSpecificTenantsOnly,
-            @Value("${db-state-management.managed-tenants:#{T(java.util.Collections).emptyList()}}") TenancyList<String> managedTenants,
-            @Value("${db-state-management.labels.enabled:false}") boolean manageSpecificLabelsOnly,
-            @Value("${db-state-management.labels.managed-expression:@null}") String manageLabelsExpression,
+            boolean manageSpecificTenantsOnly,
+            TenancyList<String> managedTenants,
+            boolean manageSpecificLabelsOnly,
+            String manageLabelsExpression,
             ResourceLoader resourceLoader
     ) {
         this.tenancyMapper = tenancyMapper;
@@ -121,7 +116,7 @@ public class DatabaseStateManager {
             liquibase.afterPropertiesSet();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw new DatabaseStateManagementException(ERR_MSG_GENERIC_STATE_MANAGEMET_ERROR, e);
+            throw new DatabaseStateManagementException(ERR_MSG_GENERIC_STATE_MANAGEMENT_ERROR, e);
         }
     }
 
@@ -129,7 +124,7 @@ public class DatabaseStateManager {
      * Required to override ArrayList iteration mechanism in order to properly populate TenancyContext content
      * @param <E>
      */
-    private static class TenancyList<E> extends ArrayList<E> {
+    static class TenancyList<E> extends ArrayList<E> {
 
         @Override
         public Iterator<E> iterator() {
