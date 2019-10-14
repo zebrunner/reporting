@@ -90,7 +90,7 @@ public class TenancyInitializer {
     public void initTenancyDb(Message message) {
         TenancyResponseEventMessage result;
         try {
-            boolean success;
+            boolean success = false;
             EmailEventMessage eventMessage = new Gson().fromJson(new String(message.getBody()), EmailEventMessage.class);
             String tenancy = eventMessage.getTenancy();
             result = new TenancyResponseEventMessage(tenancy);
@@ -101,19 +101,25 @@ public class TenancyInitializer {
                 processMessage(tenancy, () -> scmAccountService.reEncryptTokens());
 
                 success = eventPushService.convertAndSend(TENANCIES, new EventMessage(tenancy));
-                result.setSuccess(success);
                 processMessage(tenancy, () -> {
                     try {
                         Invitation invitation = invitationService.createInitialInvitation(eventMessage.getEmail(), DEFAULT_USER_GROUP);
                         result.setToken(invitation.getToken());
                         result.setZafiraURL(urlResolver.buildWebURL());
                     } catch (RuntimeException e) {
-                        LOGGER.error(e.getMessage(), e);
+                        String errorMessage = e.getMessage();
+                        result.setMessage(errorMessage);
+
+                        LOGGER.error(errorMessage, e);
                     }
                 });
             } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                String errorMessage = e.getMessage();
+                result.setMessage(errorMessage);
+
+                LOGGER.error(errorMessage, e);
             } finally {
+                result.setSuccess(success);
                 eventPushService.convertAndSend(ZFR_CALLBACKS, result, "Event-Type", "ZFR_INIT_TENANCY");
             }
         } catch (Exception e) {
