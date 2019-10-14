@@ -132,13 +132,15 @@ public abstract class IntegrationAdapterProxy {
 
 
         // if not all enabled integrations are properly configured - fail startup, otherwise initialize adapters
-        /*if (enabledIntegrations.size() != validIntegrationsCount) {
+        if (enabledIntegrations.size() != validIntegrationsCount) {
             //todo add code and message
-            throw new IntegrationException();
-        } else {*/
+            // TODO: 10/11/19 uncomment and remove logger when customer integrations will be correct (build proccess is down if current integrations are not valid)
+            LOGGER.error("Integrations " + integrations.stream().map(Integration::getName).collect(Collectors.joining(", ")) + " was not initialized");
+            //throw new IntegrationException();
+        } else {
             Class<? extends IntegrationAdapter> adapterClass = adapterClasses.get(integrationTypeName);
             initializeAdapters(adapterClass, enabledIntegrations);
-        //}
+        }
     }
 
     private void initializeAdapters(Class<? extends IntegrationAdapter> adapterClass, List<Integration> enabledIntegrations) {
@@ -153,7 +155,7 @@ public abstract class IntegrationAdapterProxy {
         // go over all mandatory integration settings and check if those have values set
         String missingSettings = integrationSettings.stream()
                                                     .filter(integrationSetting -> integrationSetting.getParam().isMandatory())
-                                                    .filter(integrationSetting -> integrationSetting.getValue() != null && !integrationSetting.getValue().isBlank())
+                                                    .filter(integrationSetting -> integrationSetting.getValue() == null || integrationSetting.getValue().isBlank())
                                                     .map(integrationSetting -> integrationSetting.getParam().getName())
                                                     .collect(Collectors.joining(", "));
 

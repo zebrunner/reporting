@@ -126,10 +126,9 @@ public class SecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
     @Bean
     @DependsOn("authenticationLdapManager")
-    public AuthenticationManager authenticationInternalManager() {
+    public AuthenticationManager authenticationInternalManager(PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userPassAuthService);
-        PasswordEncoder passwordEncoder = new PasswordEncoder();
         authenticationProvider.setPasswordEncoder(passwordEncoder);
         return new ProviderManager(Collections.singletonList(authenticationProvider));
     }
