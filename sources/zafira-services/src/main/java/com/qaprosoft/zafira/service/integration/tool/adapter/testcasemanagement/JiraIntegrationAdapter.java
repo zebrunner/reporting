@@ -23,6 +23,7 @@ import com.qaprosoft.zafira.service.integration.tool.adapter.AdapterParam;
 import kong.unirest.Config;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
+import kong.unirest.UnirestException;
 import kong.unirest.UnirestInstance;
 import kong.unirest.json.JSONObject;
 import lombok.AllArgsConstructor;
@@ -73,10 +74,14 @@ public class JiraIntegrationAdapter extends AbstractIntegrationAdapter implement
 
     @Override
     public boolean isConnected() {
-        HttpResponse response = restClient.get(url + "/rest/api/latest/serverInfo")
-                                          .queryString("doHealthCheck", "true")
-                                          .asEmpty();
-        return response.getStatus() == 200;
+        try {
+            HttpResponse response = restClient.get(url + "/rest/api/latest/serverInfo")
+                                              .queryString("doHealthCheck", "true")
+                                              .asEmpty();
+            return response.getStatus() == 200;
+        } catch (UnirestException e) {
+            return false;
+        }
     }
 
     @Override
