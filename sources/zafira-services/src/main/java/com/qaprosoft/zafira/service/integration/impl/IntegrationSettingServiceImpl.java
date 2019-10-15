@@ -28,6 +28,7 @@ import com.qaprosoft.zafira.service.integration.IntegrationSettingService;
 import com.qaprosoft.zafira.service.integration.IntegrationTypeService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -226,7 +227,7 @@ public class IntegrationSettingServiceImpl implements IntegrationSettingService,
     private Set<IntegrationSetting> recognizeEmptyMandatoryIntegrationSettings(Set<IntegrationSetting> integrationSettingSet) {
         return integrationSettingSet.stream()
                                     .filter(integrationSetting -> {
-                                        boolean isValueEmpty = integrationSetting.getValue() == null && integrationSetting.getBinaryData().length == 0;
+                                        boolean isValueEmpty = StringUtils.isEmpty(integrationSetting.getValue()) && (integrationSetting.getBinaryData() == null || integrationSetting.getBinaryData().length == 0);
                                         return integrationSetting.getParam().isMandatory() && isValueEmpty;
                                     })
                                     .collect(Collectors.toSet());
