@@ -44,13 +44,13 @@ public class StatisticsService {
      * @param testRunId - to get statistic for
      * @return test run statistics
      */
-    @Cacheable(value = TEST_RUN_STATISTICS_CACHE_NAME, key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #testRunId")
+    @Cacheable(value = TEST_RUN_STATISTICS_CACHE_NAME, key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #testRunId")
     @Transactional(readOnly = true)
     public TestRunStatistics getTestRunStatistic(Long testRunId) {
         return cacheableService.getValue().apply(testRunId);
     }
 
-    @CachePut(value = TEST_RUN_STATISTICS_CACHE_NAME, key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #statistic.testRunId")
+    @CachePut(value = TEST_RUN_STATISTICS_CACHE_NAME, key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #statistic.testRunId")
     public TestRunStatistics setTestRunStatistic(TestRunStatistics statistic) {
         return statistic;
     }
