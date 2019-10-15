@@ -20,6 +20,7 @@ import com.qaprosoft.zafira.service.integration.tool.adapter.AbstractIntegration
 import com.qaprosoft.zafira.service.integration.tool.adapter.AdapterParam;
 import kong.unirest.Config;
 import kong.unirest.HttpResponse;
+import kong.unirest.UnirestException;
 import kong.unirest.UnirestInstance;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -60,8 +61,12 @@ public class SeleniumIntegrationAdapter extends AbstractIntegrationAdapter imple
 
     @Override
     public boolean isConnected() {
-        HttpResponse response = restClient.get(url).asEmpty();
-        return response.getStatus() == 200;
+        try {
+            HttpResponse response = restClient.get(url).asEmpty();
+            return response.getStatus() == 200;
+        } catch (UnirestException e) {
+            return false;
+        }
     }
 
     @Override
