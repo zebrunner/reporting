@@ -27,6 +27,7 @@ public class TenancyResponseEventMessage extends EventMessage {
     private String token;
     private String zafiraURL;
     private Boolean success;
+    private String message;
 
     public TenancyResponseEventMessage(String tenancy) {
         super(tenancy);
