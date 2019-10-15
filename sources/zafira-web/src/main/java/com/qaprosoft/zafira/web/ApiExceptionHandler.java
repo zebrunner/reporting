@@ -30,6 +30,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.qaprosoft.zafira.models.dto.errors.ErrorCode.INTEGRATION_UNAVAILABLE;
+
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
@@ -127,7 +129,13 @@ public class ApiExceptionHandler {
     public ErrorResponse handleIntegrationException(IntegrationException e) {
         LOGGER.error("Unable to complete operation against integration", e);
         ErrorResponse response = new ErrorResponse();
-        response.setError(new Error(ErrorCode.INTEGRATION_UNAVAILABLE));
+        response.setError(new Error(INTEGRATION_UNAVAILABLE));
+        if (e.getAdditionalInfo() != null && !e.getAdditionalInfo().isEmpty()) {
+            List<Error> errors = e.getAdditionalInfo().entrySet().stream()
+                                  .map(stringStringEntry -> new Error(INTEGRATION_UNAVAILABLE, stringStringEntry.getKey(), stringStringEntry.getValue()))
+                                  .collect(Collectors.toList());
+            response.setValidationErrors(errors);
+        }
         return response;
     }
 

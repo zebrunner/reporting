@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -186,7 +187,12 @@ public class IntegrationSettingServiceImpl implements IntegrationSettingService,
         if (integrationSettings.size() != uniqueIntegrationSettings.size()) {
             Set<IntegrationSetting> duplicateSettings = recognizeDuplicateIntegrationSettings(uniqueIntegrationSettings, integrationSettings);
             String duplicates = buildSettingsNameString(duplicateSettings);
-            throw new IntegrationException(String.format(ERR_MSG_DUPLICATE_INTEGRATION_SETTINGS, integrationTypeId, duplicates));
+            String errorMessage = String.format(ERR_MSG_DUPLICATE_INTEGRATION_SETTINGS, integrationTypeId, duplicates);
+            // TODO: 10/15/19 move message to i18n after error message codes logix will be improved
+            Map<String, String> additionalErrorInfo = duplicateSettings.stream()
+                                                                       .map(integrationSetting -> integrationSetting.getParam().getName())
+                                                                       .collect(Collectors.toMap(s -> s, s -> "Duplicate parameter"));
+            throw new IntegrationException(errorMessage, additionalErrorInfo);
         }
         // check owns - all parameters for one type and all exist
         List<IntegrationParam> integrationParams = uniqueIntegrationSettings.stream()
@@ -199,7 +205,8 @@ public class IntegrationSettingServiceImpl implements IntegrationSettingService,
             String requiredParameters = integrationType.getParams().stream()
                                                        .map(IntegrationParam::getName)
                                                        .collect(Collectors.joining(", "));
-            throw new IntegrationException(String.format(ERR_MSG_INTEGRATION_SETTINGS_PARAMS_LENGTH, requiredParameters));
+            String errorMessage = String.format(ERR_MSG_INTEGRATION_SETTINGS_PARAMS_LENGTH, requiredParameters);
+            throw new IntegrationException(errorMessage);
         }
         if (!integrationType.getParams().containsAll(integrationParams)) {
             throw new IntegrationException(ERR_MSG_INTEGRATION_SETTINGS_PARAMS_OWNS);
@@ -208,7 +215,11 @@ public class IntegrationSettingServiceImpl implements IntegrationSettingService,
         Set<IntegrationSetting> emptyMandatorySettings = recognizeEmptyMandatoryIntegrationSettings(uniqueIntegrationSettings);
         if (!emptyMandatorySettings.isEmpty()) {
             String emptyMandatories = buildSettingsNameString(emptyMandatorySettings);
-            throw new IntegrationException(String.format(ERR_MSG_EMPTY_MANDATORY_INTEGRATION_SETTINGS, integrationTypeId, emptyMandatories));
+            String errorMessage = String.format(ERR_MSG_EMPTY_MANDATORY_INTEGRATION_SETTINGS, integrationTypeId, emptyMandatories);
+            Map<String, String> additionalErrorInfo = emptyMandatorySettings.stream()
+                                                                            .map(integrationSetting -> integrationSetting.getParam().getName())
+                                                                            .collect(Collectors.toMap(s -> s, s -> "Required"));
+            throw new IntegrationException(errorMessage, additionalErrorInfo);
         }
     }
 
