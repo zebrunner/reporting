@@ -87,7 +87,7 @@ public class IntegrationController extends AbstractController {
     @ApiResponseStatuses
     @ApiOperation(value = "Get integrations", nickname = "getAll", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @PreAuthorize("hasPermission('VIEW_INTEGRATIONS')")
+    @PreAuthorize("hasPermission('VIEW_INTEGRATIONS') or hasPermission('FETCH_INTEGRATIONS')")
     @GetMapping()
     public List<IntegrationDTO> getAll(
             @RequestParam(name = "groupId", required = false) Long groupId,

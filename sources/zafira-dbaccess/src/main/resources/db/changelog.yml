@@ -10,3 +10,13 @@ databaseChangeLog:
             path: changeset/001_create_integrations_structure.sql
             relativeToChangelogFile: true
             splitStatements: false
+  - changeSet:
+      id: 002_add_fetch_permissions
+      labels: stable
+      author: tsvrko
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/002_add_fetch_permissions.sql
+            relativeToChangelogFile: true
+            splitStatements: false

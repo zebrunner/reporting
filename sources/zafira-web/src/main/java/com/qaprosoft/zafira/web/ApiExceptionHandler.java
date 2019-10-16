@@ -113,7 +113,7 @@ public class ApiExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleForbiddenOperationException(ForbiddenOperationException e) {
         ErrorResponse response = new ErrorResponse();
-        response.setError(new Error(ErrorCode.FORBIDDENT, null, e.isShowMessage() ? e.getMessage() : null));
+        response.setError(new Error(ErrorCode.FORBIDDEN, null, e.isShowMessage() ? e.getMessage() : null));
         return response;
     }
 

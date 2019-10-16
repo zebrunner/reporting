@@ -63,6 +63,7 @@ public class Permission extends AbstractEntity implements Comparable<Permission>
         MODIFY_PROJECTS,
         MODIFY_INTEGRATIONS,
         VIEW_INTEGRATIONS,
+        FETCH_INTEGRATIONS,
         MODIFY_LAUNCHERS,
         VIEW_LAUNCHERS,
         PAYMENT_METHODS,
