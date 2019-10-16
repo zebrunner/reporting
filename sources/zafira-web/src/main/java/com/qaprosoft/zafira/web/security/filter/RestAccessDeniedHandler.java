@@ -42,7 +42,7 @@ public class RestAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException)
             throws IOException {
         ErrorResponse result = new ErrorResponse();
-        result.setError(new Error(ErrorCode.FORBIDDENT));
+        result.setError(new Error(ErrorCode.FORBIDDEN));
         ObjectMapper objMapper = new ObjectMapper();
 
         final HttpServletResponseWrapper wrapper = new HttpServletResponseWrapper(response);
