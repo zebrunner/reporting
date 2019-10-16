@@ -600,7 +600,7 @@ public class TestRunService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "environments", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #result", condition = "#result != null && #result.size() != 0")
+    @Cacheable(value = "environments", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #result", condition = "#result != null && #result.size() != 0")
     public List<String> getEnvironments() {
         return testRunMapper.getEnvironments();
     }
