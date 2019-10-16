@@ -3,7 +3,6 @@ databaseChangeLog:
       id: 001_create_integrations_structure
       labels: stable
       author: brutskov
-      validCheckSum: ANY
       changes:
         - sqlFile:
             encoding: utf8
