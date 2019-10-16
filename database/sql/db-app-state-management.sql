@@ -2,7 +2,7 @@ SET SCHEMA 'zafira';
 
 DROP TABLE IF EXISTS databasechangelog;
 CREATE TABLE databasechangelog (
-  id VARHCHAR(255) NOT NULL,
+  id VARCHAR(255) NOT NULL,
   author VARCHAR(255) NOT NULL,
   filename VARCHAR(255) NOT NULL,
   dateexecuted TIMESTAMP NOT NULL,
