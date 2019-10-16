@@ -11,7 +11,7 @@ databaseChangeLog:
             relativeToChangelogFile: true
             splitStatements: false
   - changeSet:
-      id: 02_add_fetch_permissions
+      id: 002_add_fetch_permissions
       labels: stable
       author: tsvrko
       changes:
