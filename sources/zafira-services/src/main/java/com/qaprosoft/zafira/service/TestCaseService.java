@@ -63,7 +63,7 @@ public class TestCaseService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "testCases", key = "{ T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #userId, T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #testClass,  T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #testMethod }")
+    @Cacheable(value = "testCases", key = "{ new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #userId, new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #testClass,  new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #testMethod }")
     public TestCase getOwnedTestCase(Long userId, String testClass, String testMethod) {
         return testCaseMapper.getOwnedTestCase(userId, testClass, testMethod);
     }

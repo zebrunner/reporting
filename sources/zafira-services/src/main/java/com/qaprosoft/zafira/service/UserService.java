@@ -112,7 +112,7 @@ public class UserService implements TenancyDbInitial {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "users", condition = "#id != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #id")
+    @Cacheable(value = "users", condition = "#id != null", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #id")
     public User getUserByIdTrusted(long id) {
         return userMapper.getUserById(id);
     }
@@ -152,7 +152,7 @@ public class UserService implements TenancyDbInitial {
         userMapper.createUser(user);
     }
 
-    @CacheEvict(value = "users", condition = "#user.id != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #user.id")
+    @CacheEvict(value = "users", condition = "#user.id != null", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #user.id")
     @Transactional(rollbackFor = Exception.class)
     public User updateUser(User user) {
         userMapper.updateUser(user);
@@ -168,7 +168,7 @@ public class UserService implements TenancyDbInitial {
         updateUserPassword(user, password);
     }
 
-    @CacheEvict(value = "users", condition = "#password.userId != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #password.userId")
+    @CacheEvict(value = "users", condition = "#password.userId != null", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #password.userId")
     @Transactional(rollbackFor = Exception.class)
     public void updateUserPassword(User user, PasswordChangingType password) {
         user = user != null ? user : getNotNullUserById(password.getUserId());
@@ -211,7 +211,7 @@ public class UserService implements TenancyDbInitial {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(value = "users", condition = "#user.id != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #user.id")
+    @CacheEvict(value = "users", condition = "#user.id != null", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #user.id")
     public User updateStatus(User user) {
         userMapper.updateStatus(user.getStatus(), user.getId());
         return user;
@@ -222,8 +222,8 @@ public class UserService implements TenancyDbInitial {
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "users", condition = "#user.id != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #user.id"),
-            @CacheEvict(value = "groups", condition = "#groupId != 0", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #groupId")
+            @CacheEvict(value = "users", condition = "#user.id != null", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #user.id"),
+            @CacheEvict(value = "groups", condition = "#groupId != 0", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #groupId")
     })
     @Transactional(rollbackFor = Exception.class)
     public User addUserToGroup(User user, long groupId) {
@@ -232,8 +232,8 @@ public class UserService implements TenancyDbInitial {
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "users", condition = "#userId != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #userId"),
-            @CacheEvict(value = "groups", condition = "#groupId != 0", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #groupId")
+            @CacheEvict(value = "users", condition = "#userId != null", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #userId"),
+            @CacheEvict(value = "groups", condition = "#groupId != 0", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #groupId")
     })
     @Transactional(rollbackFor = Exception.class)
     public User deleteUserFromGroup(long groupId, long userId) {
