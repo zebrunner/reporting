@@ -1,5 +1,6 @@
 SET SCHEMA 'zafira';
 
+DROP TABLE IF EXISTS databasechangelog;
 CREATE TABLE databasechangelog (
   id VARHCHAR(255) NOT NULL,
   author VARCHAR(255) NOT NULL,
@@ -17,12 +18,13 @@ CREATE TABLE databasechangelog (
   deployment_id VARCHAR(10)
 );
 
+DROP TABLE IF EXISTS databasechangeloglock;
 CREATE TABLE databasechangeloglock (
     id INT NOT NULL,
     locked BOOLEAN NOT NULL,
     lockgranted TIMESTAMP,
     lockedby VARCHAR(255),
-    CONSTRAINT databasechangeloglock_pkey PRIMARY KEY (id)
+    PRIMARY KEY (id)
 );
 
 INSERT INTO databasechangelog(
@@ -33,7 +35,7 @@ INSERT INTO databasechangelog(
   orderexecuted,
   exectype
 ) VALUES (
-  '01_create_integrations_structure',
+  '001_create_integrations_structure',
   'brutskov',
   'classpath:db/changelog.yml',
   current_timestamp,
