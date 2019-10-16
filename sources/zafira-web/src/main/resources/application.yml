@@ -64,11 +64,11 @@ logging:
   level:
 #    org.hibernate.SQL: DEBUG
     org.dozer.DozerBeanMapper: ERROR
-    liquibase:
-      # reducing number of logs by liquibase to keep only most relevant ones
-      executor.jvm.JdbcExecutor: ERROR
-      changelog: ERROR
-      lockservice: ERROR
+#    liquibase:
+#      # reducing number of logs by liquibase to keep only most relevant ones
+#      executor.jvm.JdbcExecutor: ERROR
+#      changelog: ERROR
+#      lockservice: ERROR
 
 ### Datasource settings
 datasource:
