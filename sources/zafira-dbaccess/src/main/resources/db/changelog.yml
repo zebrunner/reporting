@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 001_create_integrations_structure
+      id: 01_create_integrations_structure
       labels: stable
       author: brutskov
       changes:
