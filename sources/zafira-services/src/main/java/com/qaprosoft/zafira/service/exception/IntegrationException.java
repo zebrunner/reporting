@@ -19,7 +19,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Map;
+
+@Getter
 public class IntegrationException extends ApplicationException {
+
+    private Map<String, String> additionalInfo;
 
     @Getter
     @RequiredArgsConstructor
@@ -39,6 +44,11 @@ public class IntegrationException extends ApplicationException {
 
     public IntegrationException(String message) {
         super(message);
+    }
+
+    public IntegrationException(String message, Map<String, String> additionalInfo) {
+        this(message);
+        this.additionalInfo = additionalInfo;
     }
 
     public IntegrationException(Throwable cause) {
