@@ -33,11 +33,13 @@ import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.service.cache.StatisticsService;
 import com.qaprosoft.zafira.service.email.TestRunResultsEmail;
 import com.qaprosoft.zafira.service.exception.IllegalOperationException;
 import com.qaprosoft.zafira.service.exception.IntegrationException;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
+import com.qaprosoft.zafira.service.integration.IntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.impl.AutomationServerService;
 import com.qaprosoft.zafira.service.integration.tool.impl.TestCaseManagementService;
 import com.qaprosoft.zafira.service.util.DateTimeUtil;
@@ -89,6 +91,9 @@ public class TestRunService {
     private static final String ERR_MSG_TEST_RUN_NOT_FOUND = "Test run with id %s can not be found";
     private static final String ERR_MSG_INVALID_TEST_RUN_INITIATED_BY_HUMAN = "Username is not specified for test run initiated by HUMAN";
     private static final String ERR_MSG_INVALID_TEST_RUN_INITIATED_BY_UPSTREAM_JOB = "Upstream job id and upstream build number are not specified for test run initiated by UPSTREAM_JOB";
+
+    @Autowired
+    private IntegrationService integrationService;
 
     public enum FailureCause {
         UNRECOGNIZED_FAILURE("UNRECOGNIZED FAILURE"),
@@ -543,7 +548,13 @@ public class TestRunService {
             test.setArtifacts(new TreeSet<>(test.getArtifacts()));
         }
         TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
-        email.setJiraURL(testCaseManagementService.getUrl());
+
+        // THIS IS VERY BAD AND NEEDS TO BE FIXED IN FUTURE
+        // this approach ignores if JIRA enabled at all
+        Integration jira = integrationService.retrieveDefaultByIntegrationTypeName("JIRA");
+        String jiraUrl = jira.getAttributeValue("JIRA_URL").orElse(null);
+        email.setJiraURL(jiraUrl);
+
         email.setShowOnlyFailures(showOnlyFailures);
         email.setShowStacktrace(showStacktrace);
         email.setSuccessRate(calculateSuccessRate(testRun));

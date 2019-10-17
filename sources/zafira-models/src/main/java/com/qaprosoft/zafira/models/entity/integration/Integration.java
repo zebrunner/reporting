@@ -18,7 +18,6 @@ package com.qaprosoft.zafira.models.entity.integration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -88,7 +87,7 @@ public class Integration {
 
     private Optional<IntegrationSetting> getAttribute(String attributeName) {
         return this.getSettings().stream()
-                   .filter(is -> is.getParam().getName().equals(attributeName))
+                   .filter(is -> is.getParam().getName().equalsIgnoreCase(attributeName))
                    .findAny();
     }
 }
