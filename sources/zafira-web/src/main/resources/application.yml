@@ -1,0 +1,108 @@
+### Zafira settings
+zafira:
+  multitenant: ${zafira.multitenant}
+  version: ${zafira.version}
+  client-version: ${zafira.client.version}
+  debug-enabled: ${zafira.debug.enabled}
+  web-url: ${zafira.web-host}/${zafira.web-context-path}
+  api-url: ${zafira.api-host}/${zafira.api-context-path}
+  use-artifact-proxy: ${zafira.use.artifact.proxy}
+  slack:
+    image-url: https://s3-us-west-1.amazonaws.com/zebrunner/common/zfr-email.png
+    author: zafira notifications
+  admin:
+    username: ${zafira.admin.username}
+    password: ${zafora.admin.password}
+    group: ${zafira.admin.group}
+
+### Embedded Web server configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /zafira-ws
+
+### Spring Boot managed beans configuration
+spring:
+  cache:
+    cache-names: projects, users, testCases, environments, testRunStatistics, groups
+    redis:
+      use-key-prefix: true
+      time-to-live: 43200000
+    type: redis
+  redis:
+    host: ${redis.host}
+    port: ${redis.port}
+    password: ${redis.password}
+  rabbitmq:
+    host: ${rabbitmq.host}
+    port: ${rabbitmq.port}
+    username: ${rabbitmq.username}
+    password: ${rabbitmq.password}
+    virtual-host: /
+    stomp:
+      host: ${rabbitmq.stomp.host}
+      port: ${rabbitmq.stomp.port}
+    listener:
+      simple:
+        concurrency: 1
+        max-concurrency: 25
+    template:
+      exchange: events
+  freemarker:
+    template-loader-path: classpath:/templates/
+    suffix: ftl
+  jackson:
+    serialization:
+      write-dates-as-timestamps: true
+  autoconfigure:
+    # since Boot detects liquibase library on classpath it'll try to supply autoconfigured datasource
+    # however for Zafira we do not use datasource autoconfiguration that's why need to disable this
+    exclude: org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
+
+### Logging configuration. See logback.xml for more
+logging:
+  level:
+#    org.hibernate.SQL: DEBUG
+    org.dozer.DozerBeanMapper: ERROR
+#    liquibase:
+#      # reducing number of logs by liquibase to keep only most relevant ones
+#      executor.jvm.JdbcExecutor: ERROR
+#      changelog: ERROR
+#      lockservice: ERROR
+
+### Datasource settings
+datasource:
+  driver-class: org.postgresql.Driver
+  url: ${database.url}
+  username: ${database.username}
+  password: ${database.password}
+  pool-size: ${database.pool.size}
+  idle-connection-test-period: 30000
+
+### ElasticSearch settings
+elasticsearch:
+  url: ${elasticsearch.url}
+  username: ${elasticsearch.username}
+  password: ${elasticsearch.password}
+
+### GitHub settings
+github:
+  client-id: ${github.client.id}
+  client-secret: ${github.client.secret}
+
+### Auth settings
+auth:
+  token:
+    expiration: 300
+    refresh-expiration: 10080
+    secret: ${auth.token.secret}
+
+### Db management
+db-state-management:
+  # disabled by default
+  enabled: ${database.state.management.enabled}
+
+### Other application settings
+crypto-salt: ${crypto.salt}
+amazon-token-expiration: 43200
+google-token-expiration: 43200

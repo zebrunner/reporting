@@ -20,15 +20,29 @@ import com.qaprosoft.zafira.dbaccess.utils.TenancyDataSourceWrapper;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy;
+import org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.persistence.EntityManagerFactory;
 import java.beans.PropertyVetoException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import static org.hibernate.cfg.AvailableSettings.NON_CONTEXTUAL_LOB_CREATION;
 
 @Configuration
+@EnableJpaRepositories
 public class PersistenceConfig {
 
     private static final String APP_SQL_SESSION_FACTORY_BEAN_NAME = "applicationSqlSessionFactory";
@@ -63,11 +77,11 @@ public class PersistenceConfig {
         return dataSource;
     }
 
-    @Bean
+    /*@Bean
     @Primary
     public DataSourceTransactionManager transactionManager(TenancyDataSourceWrapper tenancyAppDSWrapper) {
         return new DataSourceTransactionManager(tenancyAppDSWrapper.getDataSource());
-    }
+    }*/
 
     @Bean
     public DataSourceTransactionManager managementTransactionManager(TenancyDataSourceWrapper tenancyMngDSWrapper) {
@@ -133,6 +147,40 @@ public class PersistenceConfig {
         dataSource.setMaxPoolSize(maxPoolSize);
         dataSource.setIdleConnectionTestPeriod(idleConnectionTestPeriod);
         return dataSource;
+    }
+
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(TenancyDataSourceWrapper tenancyAppDSWrapper) {
+        LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+
+        entityManagerFactoryBean.setDataSource(tenancyAppDSWrapper.getDataSource());
+        entityManagerFactoryBean.setPackagesToScan("com.qaprosoft.zafira.models.entity");
+        entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        entityManagerFactoryBean.getJpaPropertyMap().put(NON_CONTEXTUAL_LOB_CREATION, true);
+        entityManagerFactoryBean.setJpaProperties(jpaProperties());
+
+        return entityManagerFactoryBean;
+    }
+
+    @Bean
+    @Primary
+    public PlatformTransactionManager transactionManager(LocalContainerEntityManagerFactoryBean entityManagerFactory, TenancyDataSourceWrapper tenancyAppDSWrapper) {
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setDataSource(tenancyAppDSWrapper.getDataSource());
+        transactionManager.setEntityManagerFactory(entityManagerFactory.getObject());
+        return transactionManager;
+    }
+
+    private Properties jpaProperties() {
+        Map<String, Object> props = new HashMap<>();
+
+        props.put("hibernate.physical_naming_strategy", SpringPhysicalNamingStrategy.class.getName());
+        props.put("hibernate.implicit_naming_strategy", SpringImplicitNamingStrategy.class.getName());
+
+        Properties properties = new Properties();
+        properties.putAll(props);
+
+        return properties;
     }
 
 }

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationMapper">
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="integration.id">
+        <![CDATA[
+            INSERT INTO INTEGRATIONS(NAME, BACK_REFERENCE_ID, IS_DEFAULT, ENABLED, INTEGRATION_TYPE_ID) VALUES
+                (#{integration.name}, #{integration.backReferenceId}, #{integration.isDefault}, #{integration.enabled}, #{integrationTypeId});
+        ]]>
+    </insert>
+
+    <sql id="integrationBody">
+        <![CDATA[
+            I.ID AS INTEGRATION_ID,
+            I.NAME AS INTEGRATION_NAME,
+            I.BACK_REFERENCE_ID AS INTEGRATION_BACK_REFERENCE_ID,
+            I.IS_DEFAULT AS INTEGRATION_DEFAULT,
+            I.ENABLED AS INTEGRATION_ENABLED,
+            I.MODIFIED_AT AS INTEGRATION_MODIFIED_AT,
+            I.CREATED_AT AS INTEGRATION_CREATED_AT
+        ]]>
+    </sql>
+
+    <sql id="find">
+        <![CDATA[
+            SELECT
+        ]]>
+        <include refid="integrationBody"/>
+        <![CDATA[
+            ,
+        ]]>
+        <include refid="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationSettingMapper.integrationSettingBody"/>
+        <![CDATA[
+            ,
+        ]]>
+        <include refid="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationParamMapper.integrationParamBody"/>
+        <![CDATA[
+            FROM
+                INTEGRATIONS I
+            LEFT JOIN
+                INTEGRATION_SETTINGS INS
+            ON
+                I.ID = INS.INTEGRATION_ID
+            LEFT JOIN
+                INTEGRATION_PARAMS IP
+            ON
+                IP.ID = INS.INTEGRATION_PARAM_ID
+            LEFT JOIN
+                INTEGRATION_TYPES IT
+            ON
+                I.INTEGRATION_TYPE_ID = IT.ID
+            LEFT JOIN
+                INTEGRATION_GROUPS IG
+            ON
+                IT.INTEGRATION_GROUP_ID = IG.ID
+        ]]>
+    </sql>
+
+    <select id="findById" resultMap="IntegrationResultMap">
+        <include refid="find"/>
+        <![CDATA[
+            WHERE
+                I.ID = #{id}
+        ]]>
+    </select>
+
+    <select id="findByBackReferenceId" resultMap="IntegrationResultMap">
+        <include refid="find"/>
+        <![CDATA[
+            WHERE
+                I.ID = #{backReferenceId}
+        ]]>
+    </select>
+
+    <select id="findAll" resultMap="IntegrationResultMap">
+        <include refid="find"/>
+    </select>
+
+    <select id="findByIntegrationTypeId" resultMap="IntegrationResultMap">
+        <include refid="find"/>
+        <![CDATA[
+            WHERE
+                I.INTEGRATION_TYPE_ID = #{integrationTypeId}
+        ]]>
+    </select>
+
+    <select id="findByIntegrationGroupName" resultMap="IntegrationResultMap">
+        <include refid="find"/>
+        <![CDATA[
+            WHERE
+                IG.NAME = #{integrationGroupName}
+        ]]>
+    </select>
+
+    <select id="findDefaultByIntegrationTypeId" resultMap="IntegrationResultMap">
+        <include refid="find"/>
+        <![CDATA[
+            WHERE
+                I.INTEGRATION_TYPE_ID = #{integrationTypeId} AND I.IS_DEFAULT = TRUE
+        ]]>
+    </select>
+
+    <select id="findDefaultByIntegrationTypeName" resultMap="IntegrationResultMap">
+        <include refid="find"/>
+        <![CDATA[
+            WHERE
+                IT.NAME = #{integrationTypeName} AND I.IS_DEFAULT = TRUE
+        ]]>
+    </select>
+
+    <update id="update">
+        <![CDATA[
+            UPDATE INTEGRATIONS
+        ]]>
+        <set>
+            <if test="null != name">
+                <![CDATA[
+                   NAME = #{name},
+                ]]>
+            </if>
+            <if test="null != idDefault">
+                <![CDATA[
+                   IS_DEFAULT = #{isDefault},
+                ]]>
+            </if>
+            <if test="null != enabled">
+                <![CDATA[
+                   ENABLED = #{enabled}
+                ]]>
+            </if>
+        </set>
+        <![CDATA[
+            WHERE ID = #{id}
+        ]]>
+    </update>
+
+    <resultMap type="com.qaprosoft.zafira.models.db.integration.Integration" id="IntegrationResultMap" autoMapping="false">
+        <id column="INTEGRATION_ID" property="id" />
+        <result column="INTEGRATION_NAME" property="name" />
+        <result column="INTEGRATION_BACK_REFERENCE_ID" property="backReferenceId" />
+        <result column="INTEGRATION_DEFAULT" property="isDefault" />
+        <result column="INTEGRATION_ENABLED" property="enabled" />
+        <result column="INTEGRATION_MODIFIED_AT" property="modifiedAt" />
+        <result column="INTEGRATION_CREATED_AT" property="createdAt" />
+        <collection property="integrationSettings" ofType="com.qaprosoft.zafira.models.db.integration.IntegrationSetting" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.IntegrationSettingMapper.IntegrationSettingResultMap"/>
+    </resultMap>
+
+</mapper>

@@ -163,6 +163,7 @@
 				J.NAME AS TEST_RUN_JOB_NAME,
 				J.JOB_URL AS TEST_RUN_JOB_JOB_URL,
 				J.JENKINS_HOST AS TEST_RUN_JOB_JENKINS_HOST,
+			    J.AUTOMATION_SERVER_ID AS TEST_RUN_JOB_AUTOMATION_SERVER_ID,
 
 				P.ID AS TEST_RUN_PROJECT_ID,
 				P.NAME AS TEST_RUN_PROJECT_NAME,
@@ -732,6 +733,8 @@
 		<result column="TEST_RUN_JOB_JOB_URL" property="job.jobURL" />
 		<result column="TEST_RUN_JOB_JENKINS_HOST"
 			property="job.jenkinsHost" />
+        <result column="TEST_RUN_JOB_AUTOMATION_SERVER_ID"
+                property="job.automationServerId" />
 
 		<result column="TEST_RUN_PROJECT_ID" property="project.id" />
 		<result column="TEST_RUN_PROJECT_NAME" property="project.name" />
