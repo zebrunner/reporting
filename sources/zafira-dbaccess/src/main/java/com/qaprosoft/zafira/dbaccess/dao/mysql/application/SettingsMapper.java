@@ -28,15 +28,15 @@ public interface SettingsMapper {
 
     Setting getSettingByName(String name);
 
-    List<Setting> getSettingsByTool(Tool tool);
+    //List<Setting> getSettingsByTool(Tool tool);
 
-    List<Setting> getSettingsByEncrypted(boolean isEncrypted);
+    //List<Setting> getSettingsByEncrypted(boolean isEncrypted);
 
     List<Setting> getAllSettings();
 
-    List<Setting> getSettingsByIntegration(@Param("isIntegrationTool") boolean isIntegrationTool);
+    //List<Setting> getSettingsByIntegration(@Param("isIntegrationTool") boolean isIntegrationTool);
 
-    List<Tool> getTools();
+    //List<Tool> getTools();
 
     void updateSetting(Setting setting);
 

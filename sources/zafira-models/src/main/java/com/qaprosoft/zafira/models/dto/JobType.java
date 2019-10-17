@@ -42,4 +42,6 @@ public class JobType extends AbstractType {
     @NotNull
     private Long userId;
 
+    private Long automationServerId;
+
 }

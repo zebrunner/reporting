@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.push.events;
 
-import com.qaprosoft.zafira.models.db.Setting;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,11 +24,11 @@ public class ReinitEventMessage extends EventMessage {
 
     private static final long serialVersionUID = 5300913238106855128L;
 
-    private Setting.Tool tool;
+    private Long integrationId;
 
-    public ReinitEventMessage(String tenancy, Setting.Tool tool) {
+    public ReinitEventMessage(String tenancy, Long integrationId) {
         super(tenancy);
-        this.tool = tool;
+        this.integrationId = integrationId;
     }
 
 }

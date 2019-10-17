@@ -31,6 +31,7 @@ public class Job extends AbstractEntity {
     private String name;
     private String jobURL;
     private String jenkinsHost;
+    private Long automationServerId;
     private User user = new User();
 
     public Job(String name, String jobURL) {
@@ -52,6 +53,6 @@ public class Job extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        return (jobURL + user.getUsername()).hashCode();
+        return (jobURL + user.getUsername() + automationServerId).hashCode();
     }
 }
