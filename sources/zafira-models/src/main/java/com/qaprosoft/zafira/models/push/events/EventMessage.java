@@ -28,6 +28,6 @@ public class EventMessage implements Serializable {
 
     private static final long serialVersionUID = 2241656564064701459L;
 
-    private String tenancy;
+    private String tenantName;
 
 }

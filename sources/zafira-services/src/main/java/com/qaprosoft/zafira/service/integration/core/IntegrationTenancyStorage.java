@@ -107,7 +107,7 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
         ReinitEventMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
         if (!eventPushService.isSettingQueueConsumer(message)) {
             Integration integration = integrationService.retrieveById(rm.getIntegrationId());
-            integrationInitializer.initIntegration(integration, rm.getTenancy());
+            integrationInitializer.initIntegration(integration, rm.getTenantName());
         }
     }
 
