@@ -552,7 +552,7 @@ public class TestRunService {
         // THIS IS VERY BAD AND NEEDS TO BE FIXED IN FUTURE
         // this approach ignores if JIRA enabled at all
         Integration jira = integrationService.retrieveDefaultByIntegrationTypeName("JIRA");
-        String jiraUrl = jira.getAttributeValue("JIRA_URL").orElse(null);
+        String jiraUrl = jira.getAttributeValue("JIRA_URL").orElse("");
         email.setJiraURL(jiraUrl);
 
         email.setShowOnlyFailures(showOnlyFailures);
