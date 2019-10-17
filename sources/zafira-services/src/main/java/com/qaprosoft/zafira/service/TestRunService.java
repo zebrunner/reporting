@@ -41,7 +41,6 @@ import com.qaprosoft.zafira.service.exception.IntegrationException;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import com.qaprosoft.zafira.service.integration.IntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.impl.AutomationServerService;
-import com.qaprosoft.zafira.service.integration.tool.impl.TestCaseManagementService;
 import com.qaprosoft.zafira.service.util.DateTimeUtil;
 import com.qaprosoft.zafira.service.util.FreemarkerUtil;
 import com.qaprosoft.zafira.service.util.URLResolver;
@@ -136,9 +135,6 @@ public class TestRunService {
 
     @Autowired
     private EmailService emailService;
-
-    @Autowired
-    private TestCaseManagementService testCaseManagementService;
 
     @Autowired
     private JobsService jobsService;
@@ -583,7 +579,13 @@ public class TestRunService {
             List<Test> tests = testService.getTestsByTestRunId(id);
 
             TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
-            email.setJiraURL(testCaseManagementService.getUrl());
+
+            // THIS IS VERY BAD AND NEEDS TO BE FIXED IN FUTURE
+            // this approach ignores if JIRA enabled at all
+            Integration jira = integrationService.retrieveDefaultByIntegrationTypeName("JIRA");
+            String jiraUrl = jira.getAttributeValue("JIRA_URL").orElse("");
+            email.setJiraURL(jiraUrl);
+
             email.setSuccessRate(calculateSuccessRate(testRun));
             result = freemarkerUtil.getFreeMarkerTemplateContent(email.getType().getTemplateName(), email);
         } else {
