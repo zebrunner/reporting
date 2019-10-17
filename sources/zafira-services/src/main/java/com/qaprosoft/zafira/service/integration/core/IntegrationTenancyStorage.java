@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.service.integration.core;
 
 import com.google.gson.Gson;
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
 import com.qaprosoft.zafira.service.CryptoService;
@@ -107,8 +108,12 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
         try {
             ReinitEventMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
             if (!eventPushService.isSettingQueueConsumer(message)) {
+                TenancyContext.setTenantName(rm.getTenancy());
+
                 Integration integration = integrationService.retrieveById(rm.getIntegrationId());
                 integrationInitializer.initIntegration(integration, rm.getTenancy());
+
+                TenancyContext.setTenantName(null);
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize adapter. " + e.getMessage(), e);
