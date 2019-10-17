@@ -104,10 +104,14 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
 
     @RabbitListener(queues = "#{settingsQueue.name}")
     public void process(Message message) {
-        ReinitEventMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
-        if (!eventPushService.isSettingQueueConsumer(message)) {
-            Integration integration = integrationService.retrieveById(rm.getIntegrationId());
-            integrationInitializer.initIntegration(integration, rm.getTenancy());
+        try {
+            ReinitEventMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
+            if (!eventPushService.isSettingQueueConsumer(message)) {
+                Integration integration = integrationService.retrieveById(rm.getIntegrationId());
+                integrationInitializer.initIntegration(integration, rm.getTenancy());
+            }
+        } catch (Exception e) {
+            LOGGER.error("Unable to initialize adapter. " + e.getMessage(), e);
         }
     }
 
