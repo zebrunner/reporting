@@ -277,6 +277,8 @@ CREATE TABLE IF NOT EXISTS views (
   created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
   PRIMARY KEY (id),
   FOREIGN KEY (project_id) REFERENCES projects (id)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION
 );
 CREATE INDEX fk_views_projects1_idx ON views (project_id);
 CREATE UNIQUE INDEX view_name_unique ON views (name);
@@ -298,8 +300,12 @@ CREATE TABLE IF NOT EXISTS job_views (
   modified_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
   created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
   PRIMARY KEY (id),
-  FOREIGN KEY (job_id) REFERENCES jobs (id),
+  FOREIGN KEY (job_id) REFERENCES jobs (id)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
   FOREIGN KEY (view_id) REFERENCES views (id)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION
 );
 CREATE INDEX fk_job_views_jobs1_idx ON job_views (job_id);
 CREATE INDEX fk_job_views_views1_idx ON job_views (view_id);
@@ -415,7 +421,9 @@ CREATE TABLE IF NOT EXISTS tests (
   created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
   PRIMARY KEY (id),
   FOREIGN KEY (test_config_id) REFERENCES test_configs (id),
-  FOREIGN KEY (test_run_id) REFERENCES test_runs (id),
+  FOREIGN KEY (test_run_id) REFERENCES test_runs (id)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
   FOREIGN KEY (test_case_id) REFERENCES test_cases (id)
 );
 CREATE INDEX fk_tests_test_runs1_idx ON tests (test_run_id);
@@ -454,7 +462,9 @@ CREATE TABLE IF NOT EXISTS test_tags (
   modified_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
   created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
   PRIMARY KEY (id),
-  FOREIGN KEY (test_id) REFERENCES tests (id),
+  FOREIGN KEY (test_id) REFERENCES tests (id)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
   FOREIGN KEY (tag_id) REFERENCES tags (id)
 );
 CREATE INDEX fk_tests_test_tags1_idx ON test_tags (test_id);
@@ -477,6 +487,8 @@ CREATE TABLE IF NOT EXISTS user_preferences (
   created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
   PRIMARY KEY (id),
   FOREIGN KEY (user_id) REFERENCES users (id)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION
 );
 CREATE UNIQUE INDEX name_user_id_unique ON user_preferences (name, user_id);
 CREATE TRIGGER update_timestamp_user_preferences
@@ -497,6 +509,8 @@ CREATE TABLE IF NOT EXISTS test_artifacts (
   created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
   PRIMARY KEY (id),
   FOREIGN KEY (test_id) REFERENCES tests (id)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION
 );
 CREATE INDEX fk_test_artifacts_tests1_idx ON test_artifacts (test_id);
 CREATE UNIQUE INDEX name_test_id_unique ON test_artifacts (name, test_id);
@@ -516,7 +530,9 @@ CREATE TABLE IF NOT EXISTS test_work_items (
   modified_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
   created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
   PRIMARY KEY (id),
-  FOREIGN KEY (test_id) REFERENCES tests (id),
+  FOREIGN KEY (test_id) REFERENCES tests (id)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
   FOREIGN KEY (work_item_id) REFERENCES work_items (id)
 );
 CREATE UNIQUE INDEX test_work_item_test_id_work_item_id_unique ON test_work_items (test_id, work_item_id);
@@ -539,6 +555,8 @@ CREATE TABLE IF NOT EXISTS test_metrics (
   created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
   PRIMARY KEY (id),
   FOREIGN KEY (test_id) REFERENCES tests (id)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION
 );
 CREATE INDEX fk_test_metrics_tests1_idx ON test_metrics (test_id);
 CREATE INDEX test_operation ON test_metrics (operation);
