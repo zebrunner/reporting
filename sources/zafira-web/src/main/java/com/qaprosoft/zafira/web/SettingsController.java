@@ -98,7 +98,7 @@ public class SettingsController extends AbstractController {
 
             return rabbitSettings;
         } else {
-            throw new RuntimeException("Unsupported tool, this API should not be used for anything but ElasticSearch");
+            throw new RuntimeException(String.format("Unsupported tool %s, this API should not be used for anything but ElasticSearch or Rabbit", tool));
         }
     }
 
