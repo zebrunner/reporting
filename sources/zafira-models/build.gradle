@@ -4,12 +4,10 @@ def libraries = rootProject.ext.dependencyManagement
 
 dependencies {
 
-//    compile libraries.boot_starter_data_jdbc
     compile libraries.boot_starter_security
     compile libraries.jackson_databind
     compile libraries.hibernate_validator
     compile libraries.javax_validation
-//    compile libraries.javax_persistence
     compile libraries.boot_starter_data_jpa
     compile libraries.jaxb
 

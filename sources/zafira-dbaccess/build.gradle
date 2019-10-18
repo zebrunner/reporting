@@ -7,7 +7,6 @@ dependencies {
     compile project(':zafira-models')
 
     compile libraries.persistence_core
-//    compile libraries.boot_starter_data_jdbc
     compile libraries.boot_starter_data_jpa
     compile libraries.jaxb
 

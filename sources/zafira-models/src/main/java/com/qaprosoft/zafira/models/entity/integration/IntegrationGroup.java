@@ -18,7 +18,6 @@ package com.qaprosoft.zafira.models.entity.integration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,7 +33,6 @@ import java.util.List;
 
 @Getter
 @Setter
-//@ToString
 @NoArgsConstructor
 @Entity
 @NamedEntityGraph(name = "integrationGroup.expanded", attributeNodes = {
