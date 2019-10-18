@@ -16,6 +16,8 @@
 package com.qaprosoft.zafira.service.integration.core;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
@@ -105,21 +107,25 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
 
     @RabbitListener(queues = "#{settingsQueue.name}")
     public void process(Message message) {
-        ReinitEventMessage event = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
-
-        long integrationId = event.getIntegrationId();
-        String tenantName = event.getTenancy();
         try {
-            if (!eventPushService.isSettingQueueConsumer(message)) {
-                TenancyContext.setTenantName(tenantName);
+            ReinitEventMessage event = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
 
-                Integration integration = integrationService.retrieveById(integrationId);
-                integrationInitializer.initIntegration(integration, tenantName);
+            long integrationId = event.getIntegrationId();
+            String tenantName = event.getTenancy();
+            try {
+                if (!eventPushService.isSettingQueueConsumer(message)) {
+                    TenancyContext.setTenantName(tenantName);
 
-                TenancyContext.setTenantName(null);
+                    Integration integration = integrationService.retrieveById(integrationId);
+                    integrationInitializer.initIntegration(integration, tenantName);
+
+                    TenancyContext.setTenantName(null);
+                }
+            } catch (Exception e) {
+                LOGGER.error(String.format("Unable to initialize adapter for integration with id %d. ", integrationId) + e.getMessage(), e);
             }
-        } catch (Exception e) {
-            LOGGER.error(String.format("Unable to initialize adapter for integration with id %d. ", integrationId) + e.getMessage(), e);
+        } catch (JsonIOException | JsonSyntaxException e) {
+            LOGGER.error("Unable to map even message to ReinitEventMessage type. " + e.getMessage(), e);
         }
     }
 
