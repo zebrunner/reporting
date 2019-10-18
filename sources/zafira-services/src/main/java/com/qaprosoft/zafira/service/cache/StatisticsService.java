@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Component
 public class StatisticsService {
+
     private static final String TEST_RUN_STATISTICS_CACHE_NAME = "testRunStatistics";
 
     private final ICacheableService<Long, TestRunStatistics> cacheableService;

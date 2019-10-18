@@ -50,6 +50,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import static com.qaprosoft.zafira.models.db.Status.QUEUED;
 import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_BLOCKER;
 import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_KNOWN_ISSUE;
 import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.REMOVE_BLOCKER;
@@ -92,6 +93,9 @@ public class TestService {
     @Autowired
     private TagService tagService;
 
+    @Autowired
+    private TestRunStatisticsService testRunStatisticsService;
+
     @Transactional(rollbackFor = Exception.class)
     public Test startTest(Test test, List<String> jiraIds, String configXML) {
         // New or Queued test
@@ -117,11 +121,11 @@ public class TestService {
             }
             Set<Tag> tags = saveTags(test.getId(), test.getTags());
             test.setTags(tags);
-            testRunService.updateStatistics(test.getTestRunId(), test.getStatus());
+            testRunStatisticsService.updateStatistics(test.getTestRunId(), test.getStatus());
         }
         // Existing test
         else {
-            testRunService.updateStatistics(test.getTestRunId(), test.getStatus(), true);
+            testRunStatisticsService.updateStatistics(test.getTestRunId(), test.getStatus(), true);
             test.setMessage(null);
             test.setFinishTime(null);
             test.setStatus(Status.IN_PROGRESS);
@@ -140,6 +144,22 @@ public class TestService {
     public void createTest(Test test) {
         validateTestFieldsLength(test);
         testMapper.createTest(test);
+    }
+
+    public void createQueuedTest(Test test, long testRunId) {
+        test.setId(null);
+        test.setTestRunId(testRunId);
+        test.setStatus(QUEUED);
+        test.setMessage(null);
+        test.setKnownIssue(false);
+        test.setBlocker(false);
+        test.setDependsOnMethods(null);
+        test.setTestConfig(null);
+        test.setNeedRerun(true);
+        test.setCiTestId(null);
+        test.setTags(null);
+
+        createTest(test);
     }
 
     private void validateTestFieldsLength(Test test) {
@@ -201,9 +221,9 @@ public class TestService {
                     if (!closed) {
                         existingTest.setKnownIssue(true);
                         existingTest.setBlocker(knownIssue.isBlocker());
-                        testRunService.updateStatistics(test.getTestRunId(), MARK_AS_KNOWN_ISSUE);
+                        testRunStatisticsService.updateStatistics(test.getTestRunId(), MARK_AS_KNOWN_ISSUE);
                         if (existingTest.isBlocker()) {
-                            testRunService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.MARK_AS_BLOCKER);
+                            testRunStatisticsService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.MARK_AS_BLOCKER);
                         }
                         testMapper.createTestWorkItem(existingTest, knownIssue);
                         if (existingTest.getWorkItems() == null) {
@@ -235,7 +255,7 @@ public class TestService {
             LOGGER.error("Test finalization error: " + e.getMessage());
         } finally {
             testMapper.updateTest(existingTest);
-            testRunService.updateStatistics(existingTest.getTestRunId(), existingTest.getStatus());
+            testRunStatisticsService.updateStatistics(existingTest.getTestRunId(), existingTest.getStatus());
         }
         return existingTest;
     }
@@ -243,7 +263,7 @@ public class TestService {
     @Transactional(rollbackFor = Exception.class)
     public Test skipTest(Test test) {
         test.setStatus(Status.SKIPPED);
-        testRunService.updateStatistics(test.getTestRunId(), Status.SKIPPED);
+        testRunStatisticsService.updateStatistics(test.getTestRunId(), Status.SKIPPED);
         updateTest(test);
         return test;
     }
@@ -252,7 +272,7 @@ public class TestService {
     public Test abortTest(Test test, String abortCause) {
         test.setStatus(Status.ABORTED);
         test.setMessage(abortCause);
-        testRunService.updateStatistics(test.getTestRunId(), Status.ABORTED);
+        testRunStatisticsService.updateStatistics(test.getTestRunId(), Status.ABORTED);
         updateTest(test);
         return test;
     }
@@ -263,7 +283,7 @@ public class TestService {
         if (test == null) {
             throw new ResourceNotFoundException(TEST_NOT_FOUND, String.format(ERR_MSG_TEST_NOT_FOUND, id));
         }
-        testRunService.updateStatistics(test.getTestRunId(), newStatus, test.getStatus());
+        testRunStatisticsService.updateStatistics(test.getTestRunId(), newStatus, test.getStatus());
         test.setStatus(newStatus);
         updateTest(test);
         TestCase testCase = testCaseService.getTestCaseById(test.getTestCaseId());
@@ -356,11 +376,11 @@ public class TestService {
         if (workItemType == Type.BUG) {
             workItem.setHashCode(getTestMessageHashCode(test.getMessage()));
             if (!test.isKnownIssue())
-                testRunService.updateStatistics(test.getTestRunId(), MARK_AS_KNOWN_ISSUE);
+                testRunStatisticsService.updateStatistics(test.getTestRunId(), MARK_AS_KNOWN_ISSUE);
             if (!test.isBlocker() && workItem.isBlocker())
-                testRunService.updateStatistics(test.getTestRunId(), MARK_AS_BLOCKER);
+                testRunStatisticsService.updateStatistics(test.getTestRunId(), MARK_AS_BLOCKER);
             else if (test.isBlocker() && !workItem.isBlocker())
-                testRunService.updateStatistics(test.getTestRunId(), REMOVE_BLOCKER);
+                testRunStatisticsService.updateStatistics(test.getTestRunId(), REMOVE_BLOCKER);
 
             test.setKnownIssue(true);
             test.setBlocker(workItem.isBlocker());

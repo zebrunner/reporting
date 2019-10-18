@@ -190,7 +190,7 @@ public class TestRunController extends AbstractController {
         }
         Status testRunStatus = testRun.getStatus();
         if (Status.IN_PROGRESS.equals(testRunStatus) || Status.QUEUED.equals(testRunStatus)) {
-            testRunService.abortTestRun(testRun, abortCauseDecoded);
+            testRun = testRunService.abortTestRun(testRun, abortCauseDecoded);
             for (Test test : testService.getTestsByTestRunId(testRun.getId())) {
                 if (Status.ABORTED.equals(test.getStatus())) {
                     websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
