@@ -5,15 +5,14 @@ ext {
 
         boot_starter_web : "org.springframework.boot:spring-boot-starter-web",
         boot_starter_security : "org.springframework.boot:spring-boot-starter-security",
-//        boot_starter_data_jdbc : "org.springframework.boot:spring-boot-starter-data-jdbc",
         boot_starter_data_jpa : "org.springframework.boot:spring-boot-starter-data-jpa",
         boot_starter_data_redis : "org.springframework.boot:spring-boot-starter-data-redis",
         boot_starter_amqp : "org.springframework.boot:spring-boot-starter-amqp",
         boot_starter_freemarker : "org.springframework.boot:spring-boot-starter-freemarker",
         boot_starter_websocket: "org.springframework.boot:spring-boot-starter-websocket",
         boot_starter_reactor_netty: "org.springframework.boot:spring-boot-starter-reactor-netty",
-        spring_security_ldap : "org.springframework.security:spring-security-ldap:4.2.13.RELEASE",
-        spring_test : "org.springframework:spring-test:4.3.23.RELEASE",
+        spring_security_ldap : "org.springframework.security:spring-security-ldap",
+        spring_test : "org.springframework:spring-test",
 
         persistence_core: [
             "org.postgresql:postgresql:42.2.4",
@@ -60,7 +59,7 @@ ext {
         hibernate_validator : "org.hibernate:hibernate-validator:5.2.4.Final",
 
         jaxb : [
-            "javax.xml.bind:jaxb-api:2.3.1", // to be replaced with modern alternative
+            "javax.xml.bind:jaxb-api:2.3.1",
             "org.glassfish.jaxb:jaxb-runtime:2.3.2"
         ],
 
