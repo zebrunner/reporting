@@ -29,7 +29,7 @@ public class ConnectedToolType extends AbstractType {
 
     private static final long serialVersionUID = -5862684391407534486L;
 
-    private Setting.Tool name;
+    private String name;
     private List<Setting> settingList;
     private boolean isConnected;
 
@@ -49,11 +49,11 @@ public class ConnectedToolType extends AbstractType {
         isConnected = connected;
     }
 
-    public Setting.Tool getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(Setting.Tool name) {
+    public void setName(String name) {
         this.name = name;
     }
 }

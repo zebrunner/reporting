@@ -25,7 +25,7 @@ public enum ErrorCode {
     INVALID_MIME_TYPE(2),
 
     UNAUTHORIZED(401),
-    FORBIDDENT(403),
+    FORBIDDEN(403),
 
     INTERNAL_SERVER_ERROR(500),
 

@@ -17,15 +17,15 @@ package com.qaprosoft.zafira.models.db;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude(Include.NON_NULL)
 public class Setting extends AbstractEntity {
 
@@ -33,11 +33,11 @@ public class Setting extends AbstractEntity {
 
     private String name;
     private String value;
-    private boolean isEncrypted;
-    private Tool tool;
-    private byte[] file;
+    //private boolean isEncrypted;
+    //private Tool tool;
+    //private byte[] file;
 
-    public enum Tool {
+    /*public enum Tool {
         RABBITMQ(
                 true,
                 SettingType.RABBITMQ_ENABLED,
@@ -47,7 +47,6 @@ public class Setting extends AbstractEntity {
                 SettingType.RABBITMQ_PASSWORD),
         GOOGLE(SettingType.GOOGLE_CLIENT_SECRET_ORIGIN, SettingType.GOOGLE_ENABLED),
         JIRA(SettingType.JIRA_URL, SettingType.JIRA_USER, SettingType.JIRA_PASSWORD, SettingType.JIRA_CLOSED_STATUS, SettingType.JIRA_ENABLED),
-        ELASTICSEARCH,
         JENKINS(
                 SettingType.JENKINS_URL,
                 SettingType.JENKINS_USER,
@@ -81,8 +80,7 @@ public class Setting extends AbstractEntity {
                 SettingType.SELENIUM_URL,
                 SettingType.SELENIUM_USER,
                 SettingType.SELENIUM_PASSWORD,
-                SettingType.SELENIUM_ENABLED),
-        CRYPTO(1, SettingType.CRYPTO_KEY_TYPE, SettingType.CRYPTO_ALGORITHM, SettingType.CRYPTO_KEY_SIZE, SettingType.KEY);
+                SettingType.SELENIUM_ENABLED);
 
         private final List<SettingType> toolSettings;
         private int priority;
@@ -119,10 +117,10 @@ public class Setting extends AbstractEntity {
             Arrays.sort(result, Comparator.comparing(Tool::getPriority).reversed());
             return result;
         }
-    }
+    }*/
 
     public enum SettingType {
-        GOOGLE_CLIENT_SECRET_ORIGIN,
+        /*GOOGLE_CLIENT_SECRET_ORIGIN,
         GOOGLE_ENABLED,
         JIRA_URL,
         JIRA_USER,
@@ -137,9 +135,9 @@ public class Setting extends AbstractEntity {
         SLACK_WEB_HOOK_URL,
         SLACK_NOTIF_CHANNEL_EXAMPLE,
         SLACK_ENABLED,
-        TESTRAIL_URL(false, false),
+        TESTRAIL_URL,
         TESTRAIL_ENABLED,
-        QTEST_URL(false, false),
+        QTEST_URL,
         QTEST_ENABLED,
         EMAIL_HOST,
         EMAIL_PORT,
@@ -158,10 +156,6 @@ public class Setting extends AbstractEntity {
         LDAP_MANAGER_USER,
         LDAP_MANAGER_PASSWORD(true),
         LDAP_ENABLED,
-        CRYPTO_KEY_TYPE,
-        CRYPTO_ALGORITHM(false, false),
-        CRYPTO_KEY_SIZE,
-        KEY(false, false),
         RABBITMQ_HOST,
         RABBITMQ_PORT,
         RABBITMQ_USER,
@@ -170,7 +164,7 @@ public class Setting extends AbstractEntity {
         SELENIUM_URL,
         SELENIUM_USER(false, false),
         SELENIUM_PASSWORD(false, true),
-        SELENIUM_ENABLED,
+        SELENIUM_ENABLED,*/
         COMPANY_LOGO_URL;
 
         private final Boolean required;
@@ -198,8 +192,8 @@ public class Setting extends AbstractEntity {
         }
     }
 
-    public boolean isValueForEncrypting() {
-        return this.tool != null && SettingType.valueOf(this.name).isEncrypted();
-    }
+//    public boolean isValueForEncrypting() {
+//        return this.tool != null && SettingType.valueOf(this.name).isEncrypted();
+//    }
 
 }

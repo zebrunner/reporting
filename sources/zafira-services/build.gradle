@@ -17,6 +17,7 @@ dependencies {
     compile libraries.commons_lang
     compile libraries.commons_io
     compile libraries.apache_http_client
+    compile libraries.unirest_http_client
     compile libraries.jasypt
     compile libraries.logging
     compile libraries.google_api_services
