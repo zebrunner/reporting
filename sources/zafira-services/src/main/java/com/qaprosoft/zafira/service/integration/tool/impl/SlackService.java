@@ -26,6 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalTime;
+
 @Component
 public class SlackService extends AbstractIntegrationService<SlackAdapter> {
 
@@ -67,23 +69,12 @@ public class SlackService extends AbstractIntegrationService<SlackAdapter> {
     }
 
     /**
-     * Converts to execution time in seconds to user-friendly form such as 10 h 13 min 33 sec
+     * Converts to execution time in seconds to user-friendly form such as 10:13:33
      * @param elapsed elapsed time in seconds
      * @return formatted value
      */
     private String asReadableTime(Integer elapsed) {
-        if (elapsed != null) {
-            int s = elapsed % 60;
-            int m = (elapsed / 60) % 60;
-            int h = (elapsed / (60 * 60)) % 24;
-            StringBuilder sb = new StringBuilder(String.format("%02d sec", s));
-            if (m > 0)
-                sb.insert(0, String.format("%02d min ", m));
-            if (h > 0)
-                sb.insert(0, String.format("%02d h ", h));
-            return sb.toString();
-        }
-        return null;
+        return elapsed != null ? LocalTime.ofSecondOfDay(elapsed).toString() : "";
     }
 
 }
