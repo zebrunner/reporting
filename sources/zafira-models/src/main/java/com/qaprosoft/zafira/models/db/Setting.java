@@ -34,8 +34,4 @@ public class Setting extends AbstractEntity {
     private String name;
     private String value;
 
-    public enum SettingType {
-        COMPANY_LOGO_URL;
-    }
-
 }
