@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.ws.controller.application;
+package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.db.LauncherPreset;
 import com.qaprosoft.zafira.models.dto.LauncherPresetDTO;
-import com.qaprosoft.zafira.services.services.application.LauncherPresetService;
-import com.qaprosoft.zafira.ws.controller.AbstractController;
-import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
+import com.qaprosoft.zafira.service.LauncherPresetService;
+import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -52,7 +51,7 @@ public class LauncherPresetAPIController extends AbstractController {
         this.mapper = mapper;
     }
 
-    @ResponseStatusDetails
+    @ApiResponseStatuses
     @ApiOperation(value = "Create launcher preset", nickname = "createLauncherPreset", httpMethod = "POST", response = LauncherPresetDTO.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
@@ -64,7 +63,7 @@ public class LauncherPresetAPIController extends AbstractController {
         return launcherPresetDTO;
     }
 
-    @ResponseStatusDetails
+    @ApiResponseStatuses
     @ApiOperation(value = "Build webHookUrl", nickname = "buildWebHookUrl", httpMethod = "GET", response = String.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
@@ -73,7 +72,7 @@ public class LauncherPresetAPIController extends AbstractController {
         return launcherPresetService.buildWebHookUrl(id, launcherId);
     }
 
-    @ResponseStatusDetails
+    @ApiResponseStatuses
     @ApiOperation(value = "Update launcher preset", nickname = "updateLauncherPreset", httpMethod = "PUT", response = LauncherPresetDTO.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")

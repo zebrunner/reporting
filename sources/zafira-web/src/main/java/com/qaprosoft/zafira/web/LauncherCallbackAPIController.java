@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.ws.controller.application;
+package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.dto.TestRunType;
-import com.qaprosoft.zafira.services.services.application.LauncherCallbackService;
-import com.qaprosoft.zafira.ws.controller.AbstractController;
-import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
+import com.qaprosoft.zafira.service.LauncherCallbackService;
+import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -47,7 +46,7 @@ public class LauncherCallbackAPIController extends AbstractController {
         this.mapper = mapper;
     }
 
-    @ResponseStatusDetails
+    @ApiResponseStatuses
     @ApiOperation(value = "Get info", nickname = "getInfo", httpMethod = "GET", response = TestRunType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
