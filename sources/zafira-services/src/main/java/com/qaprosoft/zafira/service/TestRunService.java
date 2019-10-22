@@ -491,7 +491,7 @@ public class TestRunService {
         }
 
         updateTestRun(testRun);
-        testService.updateTestRerunFlags(testRun, tests);
+        testService.updateTestRerunFlags(tests);
         return testRun;
     }
 

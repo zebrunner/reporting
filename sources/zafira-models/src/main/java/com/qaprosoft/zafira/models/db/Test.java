@@ -57,7 +57,7 @@ public class Test extends AbstractEntity implements Comparable<Test> {
     private Set<Tag> tags;
 
     public Test() {
-        testConfig = new TestConfig();
+        this.testConfig = new TestConfig();
     }
 
     public String getNotNullTestGroup() {
@@ -65,14 +65,10 @@ public class Test extends AbstractEntity implements Comparable<Test> {
     }
 
     public WorkItem getWorkItemByType(WorkItem.Type type) {
-        if (workItems != null) {
-            for (WorkItem workItem : workItems) {
-                if (type.equals(workItem.getType())) {
-                    return workItem;
-                }
-            }
-        }
-        return null;
+        return workItems.stream()
+                        .filter(workItem -> type.equals(workItem.getType()))
+                        .findFirst()
+                        .orElse(null);
     }
 
     @Override
