@@ -36,7 +36,6 @@ import java.util.Optional;
 @Getter
 @Setter
 @NoArgsConstructor
-//@ToString(exclude = "backReferenceId")
 @NamedEntityGraph(
         name = "integration.expanded",
         attributeNodes = {

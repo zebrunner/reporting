@@ -168,6 +168,7 @@ public abstract class IntegrationAdapterProxy {
     }
 
     private IntegrationAdapter createAdapter(Integration integration, Class<? extends IntegrationAdapter> adapterClass) {
+        LOGGER.info("Creating adapter for integration " + integration.getName());
         integration.getSettings().forEach(setting -> {
             if (setting.isEncrypted()) {
                 if (StringUtils.isNotEmpty(setting.getValue())) {

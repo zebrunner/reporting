@@ -18,7 +18,6 @@ package com.qaprosoft.zafira.models.entity.integration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -29,19 +28,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
-import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
-//@ToString
 @NamedEntityGraph(name = "integrationType.expanded", attributeNodes = {
     @NamedAttributeNode("params")
 })

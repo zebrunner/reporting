@@ -16,6 +16,9 @@
 package com.qaprosoft.zafira.service.integration.core;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
 import com.qaprosoft.zafira.service.CryptoService;
@@ -104,10 +107,25 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
 
     @RabbitListener(queues = "#{settingsQueue.name}")
     public void process(Message message) {
-        ReinitEventMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
-        if (!eventPushService.isSettingQueueConsumer(message)) {
-            Integration integration = integrationService.retrieveById(rm.getIntegrationId());
-            integrationInitializer.initIntegration(integration, rm.getTenancy());
+        try {
+            ReinitEventMessage event = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
+
+            long integrationId = event.getIntegrationId();
+            String tenantName = event.getTenancy();
+            try {
+                if (!eventPushService.isSettingQueueConsumer(message)) {
+                    TenancyContext.setTenantName(tenantName);
+
+                    Integration integration = integrationService.retrieveById(integrationId);
+                    integrationInitializer.initIntegration(integration, tenantName);
+
+                    TenancyContext.setTenantName(null);
+                }
+            } catch (Exception e) {
+                LOGGER.error(String.format("Unable to initialize adapter for integration with id %d. ", integrationId) + e.getMessage(), e);
+            }
+        } catch (JsonIOException | JsonSyntaxException e) {
+            LOGGER.error("Unable to map even message to ReinitEventMessage type. " + e.getMessage(), e);
         }
     }
 

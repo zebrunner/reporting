@@ -98,7 +98,7 @@ public class SettingsController extends AbstractController {
 
             return rabbitSettings;
         } else {
-            throw new RuntimeException("Unsupported tool, this API should not be used for anything but ElasticSearch");
+            throw new RuntimeException(String.format("Unsupported tool %s, this API should not be used for anything but ElasticSearch or Rabbit", tool));
         }
     }
 
@@ -115,7 +115,7 @@ public class SettingsController extends AbstractController {
     @ApiOperation(value = "Get company logo URL", nickname = "getSettingValue", httpMethod = "GET", response = Setting.class)
     @GetMapping("companyLogo")
     public Setting getCompanyLogoURL() {
-        return settingsService.getSettingByName(Setting.SettingType.COMPANY_LOGO_URL.name());
+        return settingsService.getSettingByName("COMPANY_LOGO_URL");
     }
 
     // TODO by nsidorevich on 2019-10-09: remove this crap
