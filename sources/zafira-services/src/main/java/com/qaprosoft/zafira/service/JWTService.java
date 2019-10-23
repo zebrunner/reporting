@@ -20,6 +20,7 @@ import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.models.db.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,17 +83,27 @@ public class JWTService {
      *            - to parse
      * @return retrieved user details
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ "rawtypes" })
     public User parseAuthToken(String token) {
         final Claims body = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
         User user = new User();
         user.setId(Long.valueOf(body.getSubject()));
         user.setUsername((String) body.get("username"));
-        ((List) body.get("groupIds"))
-                .forEach(groupId -> user.getGroups().add(groupService.getGroupById(((Number) groupId).longValue())));
+        List groups = ((List) body.get("groupIds"));
+        user.setGroups(retrieveUserGroups(groups));
         user.setStatus(userService.getUserByIdTrusted(user.getId()).getStatus());
         user.setTenant((String) body.get("tenant"));
         return user;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Group> retrieveUserGroups(List groupIds) {
+        if (groupIds == null) {
+            throw new MalformedJwtException("Group id list is required to authenticate");
+        }
+        return (List<Group>) groupIds.stream()
+                                     .map(id -> groupService.getGroupById(((Number)id).longValue()))
+                                     .collect(Collectors.toList());
     }
 
     /**
