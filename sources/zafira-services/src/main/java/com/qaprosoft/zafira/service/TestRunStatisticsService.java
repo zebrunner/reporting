@@ -183,8 +183,10 @@ public class TestRunStatisticsService {
      * @return new statistics
      */
     public TestRunStatistics updateStatistics(Long testRunId, Status newStatus, Status currentStatus) {
-        return updateStatisticsSafe(testRunId, testRunStatistics -> updateStatistics(
-                updateStatistics(testRunStatistics, currentStatus, -1), newStatus, 1));
+        return updateStatisticsSafe(testRunId, testRunStatistics -> {
+            TestRunStatistics decrementedStatistics = updateStatistics(testRunStatistics, currentStatus, -1);
+            return updateStatistics(decrementedStatistics, newStatus, 1);
+        });
     }
 
     public TestRunStatistics updateStatistics(Long testRunId, Status status) {
