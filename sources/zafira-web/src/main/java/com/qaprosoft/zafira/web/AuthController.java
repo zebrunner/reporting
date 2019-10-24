@@ -178,7 +178,9 @@ public class AuthController extends AbstractController {
             throw new ForbiddenOperationException();
         }
         if (invitation.getSource().equals(User.Source.LDAP)) {
-            if (accessManagementService.isEnabledAndConnected(null) && accessManagementService.isUserExists(userType.getUsername())) {
+            boolean ldapEnabled = accessManagementService.isEnabledAndConnected(null);
+            boolean userExists = accessManagementService.isUserExists(userType.getUsername());
+            if (ldapEnabled && !userExists) {
                 throw new ForbiddenOperationException();
             }
         }
