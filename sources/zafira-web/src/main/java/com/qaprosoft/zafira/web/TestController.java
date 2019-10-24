@@ -33,6 +33,7 @@ import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
 import com.qaprosoft.zafira.service.TestArtifactService;
 import com.qaprosoft.zafira.service.TestMetricService;
 import com.qaprosoft.zafira.service.TestRunService;
+import com.qaprosoft.zafira.service.TestRunStatisticsService;
 import com.qaprosoft.zafira.service.TestService;
 import com.qaprosoft.zafira.service.WorkItemService;
 import com.qaprosoft.zafira.service.cache.StatisticsService;
@@ -93,6 +94,9 @@ public class TestController extends AbstractController {
 
     @Autowired
     private StatisticsService statisticsService;
+
+    @Autowired
+    private TestRunStatisticsService testRunStatisticsService;
 
     @ApiResponseStatuses
     @ApiOperation(value = "Start test", nickname = "startTest", httpMethod = "POST", response = TestType.class)
@@ -226,9 +230,9 @@ public class TestController extends AbstractController {
         Test test = testService.getTestById(testId);
         WorkItem workItem = workItemService.getWorkItemById(workItemId);
         if (workItem.getType() == Type.BUG) {
-            testRunService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_KNOWN_ISSUE);
+            testRunStatisticsService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_KNOWN_ISSUE);
             if (test.isBlocker()) {
-                testRunService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_BLOCKER);
+                testRunStatisticsService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_BLOCKER);
             }
             TestRunStatistics testRunStatistic = statisticsService.getTestRunStatistic(test.getTestRunId());
             websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(testRunStatistic));

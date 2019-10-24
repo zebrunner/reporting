@@ -18,7 +18,6 @@ package com.qaprosoft.zafira.service;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.ProjectMapper;
 import com.qaprosoft.zafira.models.db.Project;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -29,8 +28,12 @@ import java.util.List;
 
 @Service
 public class ProjectService {
-    @Autowired
-    private ProjectMapper projectMapper;
+
+    private final ProjectMapper projectMapper;
+
+    public ProjectService(ProjectMapper projectMapper) {
+        this.projectMapper = projectMapper;
+    }
 
     @CachePut(value = "projects", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #project.name", condition = "#project != null && #project.name != null")
     @Transactional(rollbackFor = Exception.class)
@@ -50,7 +53,7 @@ public class ProjectService {
         return !StringUtils.isEmpty(name) ? projectMapper.getProjectByName(name) : null;
     }
 
-    @CacheEvict(value = "projects", allEntries = true)
+    @CachePut(value = "projects", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #project.name", condition = "#project != null && #project.name != null")
     @Transactional(rollbackFor = Exception.class)
     public Project updateProject(Project project) {
         projectMapper.updateProject(project);
