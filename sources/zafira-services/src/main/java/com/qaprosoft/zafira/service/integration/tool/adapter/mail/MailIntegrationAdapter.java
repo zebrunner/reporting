@@ -29,6 +29,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class MailIntegrationAdapter extends AbstractIntegrationAdapter implements MailServiceAdapter {
 
+    private static final String ERR_MSG_SMTP_CONNECTION_IS_NOT_ESTABLISHED = "SMTP connection is not established";
+
     private final String host;
     private final int port;
     private final String username;
@@ -90,7 +92,7 @@ public class MailIntegrationAdapter extends AbstractIntegrationAdapter implement
                 connected = true;
             } catch (MessagingException e) {
                 // Will be thrown when SMTP not configured properly
-                LOGGER.error(e.getMessage(), e);
+                LOGGER.error(ERR_MSG_SMTP_CONNECTION_IS_NOT_ESTABLISHED, e);
                 connected = false;
             }
             setConnected(connected);
