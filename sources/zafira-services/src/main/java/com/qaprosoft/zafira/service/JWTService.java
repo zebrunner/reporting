@@ -30,10 +30,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Calendar;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 @Component
@@ -61,17 +60,11 @@ public class JWTService {
         this.refreshTokenExp = refreshTokenExp;
     }
 
-    /**
-     * Generates JWT auth token storing id, username, email, roles of the user and specifies expiration date.
-     * 
-     * @param user
-     *            - for token generation
-     * @return generated JWT token
-     */
     public String generateAuthToken(final User user, final String tenant) {
         Claims claims = Jwts.claims().setSubject(user.getId().toString());
         claims.put("username", user.getUsername());
-        claims.put("groupIds", user.getGroups().stream().map(Group::getId).collect(Collectors.toList()));
+        List<Long> groupIds = user.getGroups().stream().map(Group::getId).collect(Collectors.toList());
+        claims.put("groupIds", groupIds);
         claims.put("tenant", tenant);
         return buildToken(claims, authTokenExp);
     }
@@ -83,42 +76,35 @@ public class JWTService {
      *            - to parse
      * @return retrieved user details
      */
-    @SuppressWarnings({ "rawtypes" })
+    @SuppressWarnings("unchecked")
     public User parseAuthToken(String token) {
-        final Claims body = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        Claims jwtBody = getTokenBody(token);
         User user = new User();
-        user.setId(Long.valueOf(body.getSubject()));
-        user.setUsername((String) body.get("username"));
-        List groups = ((List) body.get("groupIds"));
-        user.setGroups(retrieveUserGroups(groups));
-        user.setStatus(userService.getUserByIdTrusted(user.getId()).getStatus());
-        user.setTenant((String) body.get("tenant"));
+        Long userId = Long.valueOf(jwtBody.getSubject());
+        user.setId(userId);
+        user.setUsername(jwtBody.get("username", String.class));
+        List<Long> groupIds = (List<Long>) jwtBody.get("groupIds");
+        user.setGroups(retrieveUserGroups(groupIds));
+        user.setStatus(userService.getUserByIdTrusted(userId).getStatus());
+        user.setTenant(jwtBody.get("tenant", String.class));
         return user;
     }
 
-    @SuppressWarnings("unchecked")
-    private List<Group> retrieveUserGroups(List groupIds) {
+    private List<Group> retrieveUserGroups(List<Long> groupIds) {
         if (groupIds == null) {
             throw new MalformedJwtException("Group id list is required to authenticate");
         }
-        return (List<Group>) groupIds.stream()
-                                     .map(id -> groupService.getGroupById(((Number)id).longValue()))
-                                     .collect(Collectors.toList());
+        return groupIds.stream()
+                       .map(groupId -> groupService.getGroupById(groupId))
+                       .collect(Collectors.toList());
     }
 
-    /**
-     * Verifies JWT refresh token.
-     * 
-     * @param token
-     *            - tp refresh
-     * @return parsed user
-     */
     public User parseRefreshToken(final String token) {
-        final Claims body = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        Claims body = getTokenBody(token);
         User user = new User();
         user.setId(Long.valueOf(body.getSubject()));
-        user.setPassword((String) body.get("password"));
-        user.setTenant((String) body.get("tenant"));
+        user.setPassword(body.get("password", String.class));
+        user.setTenant(body.get("tenant", String.class));
         return user;
     }
 
@@ -151,42 +137,43 @@ public class JWTService {
     }
 
     private String buildToken(Claims claims, Integer exp) {
-        Calendar c = Calendar.getInstance();
-        c.add(Calendar.MINUTE, exp);
-        return Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS512, secret).setExpiration(c.getTime())
-                .compact();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MINUTE, exp);
+        return Jwts.builder()
+                   .setClaims(claims)
+                   .signWith(SignatureAlgorithm.HS512, secret)
+                   .setExpiration(calendar.getTime())
+                   .compact();
     }
 
     @SuppressWarnings("unchecked")
     public boolean checkPermissions(String tenantName, String token, Set<Permission.Name> permissionsToCheck) {
         Set<Permission.Name> permissions = null;
-        Object tenantObj = null;
+        String tenant = null;
         try {
-            final Claims body = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-            tenantObj = body.get("tenant");
-            List groupIds = (List) body.get("groupIds");
-            permissions = (Set) groupIds.stream()
-                                        .map(groupId -> retrievePermissionNames(((Number) groupId).longValue()))
-                                        .reduce(new HashSet<>(), collectPermissions());
+            Claims jwtBody = getTokenBody(token);
+            tenant = jwtBody.get("tenant", String.class);
+            List<Long> groupIds = (List<Long>) jwtBody.get("groupIds");
+            permissions = collectPermissions(groupIds);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
 
-        return tenantObj != null && tenantObj.equals(tenantName) && ! CollectionUtils.isEmpty(permissions) && permissions.containsAll(permissionsToCheck);
+        return tenant != null && tenant.equals(tenantName) && ! CollectionUtils.isEmpty(permissions) && permissions.containsAll(permissionsToCheck);
     }
 
-    private Set<Permission.Name> retrievePermissionNames(long groupId) {
-        Group group = groupService.getGroupById(groupId);
-        return group.getPermissions().stream()
-                    .map(Permission::getName)
-                    .collect(Collectors.toSet());
+    private Set<Permission.Name> collectPermissions(List<Long> groupIds) {
+        return groupIds.stream()
+                       .map(groupId -> groupService.getGroupById(groupId)) // get group by its id
+                       .map(Group::getPermissions)                         // collect group permissions
+                       .flatMap(Collection::stream)                        // flatten all permission
+                       .distinct()                                         // keep unique permissions only
+                       .map(Permission::getName)
+                       .collect(Collectors.toSet());
     }
 
-    private BinaryOperator<Set<Permission.Name>> collectPermissions() {
-        return (name1, name2) -> {
-            name1.addAll(name2);
-            return name1;
-        };
+    private Claims getTokenBody(String token) {
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
     public Integer getExpiration() {
