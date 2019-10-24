@@ -47,7 +47,7 @@ spring:
         concurrency: 1
         max-concurrency: 25
     template:
-      exchange: eventsTopicExchange
+      exchange: events
   freemarker:
     template-loader-path: classpath:/templates/
     suffix: ftl

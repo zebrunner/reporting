@@ -148,21 +148,22 @@ public class IntegrationSettingServiceImpl implements IntegrationSettingService,
      * @param integrationSetting - setting to encrypt
      */
     private void encryptIfNeed(IntegrationSetting integrationSetting) {
+        String value = integrationSetting.getValue();
         try {
             if (integrationSetting.getId() == null) {
                 IntegrationParam integrationParam = integrationParamService.retrieveById(integrationSetting.getParam().getId());
                 if (integrationParam.isNeedEncryption()) {
                     integrationSetting.setEncrypted(true);
-                    String encryptedValue = cryptoService.encrypt(integrationSetting.getValue());
+                    String encryptedValue = cryptoService.encrypt(value);
                     integrationSetting.setValue(encryptedValue);
                 }
             } else {
                 IntegrationSetting dbIntegrationSetting = retrieveById(integrationSetting.getId());
-                if (integrationSetting.getValue() == null || integrationSetting.getValue().isBlank()) {
+                if (value == null || value.isBlank()) {
                     integrationSetting.setEncrypted(false);
-                } else if (dbIntegrationSetting.getParam().isNeedEncryption() && !dbIntegrationSetting.getValue().equals(integrationSetting.getValue())) {
+                } else if (dbIntegrationSetting.getParam().isNeedEncryption() && !value.equals(dbIntegrationSetting.getValue())) {
                     integrationSetting.setEncrypted(true);
-                    String encryptedValue = cryptoService.encrypt(integrationSetting.getValue());
+                    String encryptedValue = cryptoService.encrypt(value);
                     integrationSetting.setValue(encryptedValue);
                 } else {
                     integrationSetting.setEncrypted(dbIntegrationSetting.isEncrypted());
@@ -171,11 +172,11 @@ public class IntegrationSettingServiceImpl implements IntegrationSettingService,
         } catch (ResourceNotFoundException e) {
             integrationSetting.setEncrypted(false);
             IntegrationParam integrationParam = integrationParamService.retrieveById(integrationSetting.getParam().getId());
-            if (integrationSetting.getValue() == null || integrationSetting.getValue().isBlank()) {
+            if (value == null || value.isBlank()) {
                 integrationSetting.setEncrypted(false);
             } else if (integrationParam.isNeedEncryption()) {
                 integrationSetting.setEncrypted(true);
-                String encryptedValue = cryptoService.encrypt(integrationSetting.getValue());
+                String encryptedValue = cryptoService.encrypt(value);
                 integrationSetting.setValue(encryptedValue);
             }
         }
