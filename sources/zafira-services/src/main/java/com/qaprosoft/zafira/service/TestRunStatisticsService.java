@@ -61,18 +61,18 @@ public class TestRunStatisticsService {
      * Method contains a container needed to do a work safe with Test run statistics cache thread
      *
      * @param testRunId - test run id
-     * @param statisticsFunction - action with cached values
+     * @param statsFunction - action with cached values
      * @return testRunStatistics with value incremented
      */
-    private TestRunStatistics updateStatisticsSafe(Long testRunId, Function<TestRunStatistics, TestRunStatistics> statisticsFunction) {
-        TestRunStatistics testRunStatistics = null;
+    private TestRunStatistics updateStatisticsSafe(Long testRunId, Function<TestRunStatistics, TestRunStatistics> statsFunction) {
+        TestRunStatistics stats = null;
         Lock lock = null;
         try {
             lock = updateLocks.get(testRunId);
             lock.lock();
-            testRunStatistics = statisticsService.getTestRunStatistic(testRunId);
-            testRunStatistics = statisticsFunction.apply(testRunStatistics);
-            testRunStatistics = statisticsService.setTestRunStatistic(testRunStatistics);
+            stats = statisticsService.getTestRunStatistic(testRunId);
+            stats = statsFunction.apply(stats);
+            stats = statisticsService.setTestRunStatistic(stats);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
@@ -80,38 +80,38 @@ public class TestRunStatisticsService {
                 lock.unlock();
             }
         }
-        return testRunStatistics;
+        return stats;
     }
 
     /**
      * Increment value to statistics
      *
-     * @param testRunStatistics - cached test run statistic
+     * @param stats - cached test run statistic
      * @param status - test status
      * @param increment - integer (to increment - positive number, to decrement - negative number)
      * @return testRunStatistics with value incremented
      */
-    private TestRunStatistics updateStatistics(TestRunStatistics testRunStatistics, Status status, int increment) {
+    private TestRunStatistics updateStatistics(TestRunStatistics stats, Status status, int increment) {
         switch (status) {
             case PASSED:
-                testRunStatistics.setPassed(testRunStatistics.getPassed() + increment);
+                stats.setPassed(stats.getPassed() + increment);
                 break;
             case FAILED:
-                testRunStatistics.setFailed(testRunStatistics.getFailed() + increment);
+                stats.setFailed(stats.getFailed() + increment);
                 break;
             case SKIPPED:
-                testRunStatistics.setSkipped(testRunStatistics.getSkipped() + increment);
+                stats.setSkipped(stats.getSkipped() + increment);
                 break;
             case ABORTED:
-                testRunStatistics.setAborted(testRunStatistics.getAborted() + increment);
+                stats.setAborted(stats.getAborted() + increment);
                 break;
             case IN_PROGRESS:
-                testRunStatistics.setInProgress(testRunStatistics.getInProgress() + increment);
+                stats.setInProgress(stats.getInProgress() + increment);
                 break;
             default:
                 break;
         }
-        return testRunStatistics;
+        return stats;
     }
 
     /**
@@ -121,30 +121,30 @@ public class TestRunStatisticsService {
      * @return new statistics
      */
     public TestRunStatistics updateStatistics(Long testRunId, TestRunStatistics.Action action) {
-        return updateStatisticsSafe(testRunId, testRunStatistics -> {
+        return updateStatisticsSafe(testRunId, stats -> {
             switch (action) {
                 case MARK_AS_KNOWN_ISSUE:
-                    testRunStatistics.setFailedAsKnown(testRunStatistics.getFailedAsKnown() + 1);
+                    stats.setFailedAsKnown(stats.getFailedAsKnown() + 1);
                     break;
                 case REMOVE_KNOWN_ISSUE:
-                    testRunStatistics.setFailedAsKnown(testRunStatistics.getFailedAsKnown() - 1);
+                    stats.setFailedAsKnown(stats.getFailedAsKnown() - 1);
                     break;
                 case MARK_AS_BLOCKER:
-                    testRunStatistics.setFailedAsBlocker(testRunStatistics.getFailedAsBlocker() + 1);
+                    stats.setFailedAsBlocker(stats.getFailedAsBlocker() + 1);
                     break;
                 case REMOVE_BLOCKER:
-                    testRunStatistics.setFailedAsBlocker(testRunStatistics.getFailedAsBlocker() - 1);
+                    stats.setFailedAsBlocker(stats.getFailedAsBlocker() - 1);
                     break;
                 case MARK_AS_REVIEWED:
-                    testRunStatistics.setReviewed(true);
+                    stats.setReviewed(true);
                     break;
                 case MARK_AS_NOT_REVIEWED:
-                    testRunStatistics.setReviewed(false);
+                    stats.setReviewed(false);
                     break;
                 default:
                     break;
             }
-            return testRunStatistics;
+            return stats;
         });
     }
 
@@ -163,15 +163,15 @@ public class TestRunStatisticsService {
             return inProgressOrRerun ? updateStatistics(testRunStatistics, IN_PROGRESS, -increment) : testRunStatistics;
         };
 
-        TestRunStatistics trs = updateStatisticsSafe(testRunId, updateFunction);
+        TestRunStatistics stats = updateStatisticsSafe(testRunId, updateFunction);
 
-        if (trs != null && trs.getQueued() > 0 && (status.equals(IN_PROGRESS) || status.equals(ABORTED))) {
+        if (stats != null && stats.getQueued() > 0 && (status.equals(IN_PROGRESS) || status.equals(ABORTED))) {
             updateStatisticsSafe(testRunId, testRunStatistics -> {
                 testRunStatistics.setQueued(testRunStatistics.getQueued() - 1);
                 return testRunStatistics;
             });
         }
-        return updateStatisticsSafe(testRunId, testRunStatistics -> updateStatistics(testRunStatistics, status, increment));
+        return updateStatisticsSafe(testRunId, statistics -> updateStatistics(statistics, status, increment));
     }
 
     /**
@@ -184,8 +184,8 @@ public class TestRunStatisticsService {
      */
     public TestRunStatistics updateStatistics(Long testRunId, Status newStatus, Status currentStatus) {
         return updateStatisticsSafe(testRunId, testRunStatistics -> {
-            TestRunStatistics decrementedStatistics = updateStatistics(testRunStatistics, currentStatus, -1);
-            return updateStatistics(decrementedStatistics, newStatus, 1);
+            TestRunStatistics decrementedStats = updateStatistics(testRunStatistics, currentStatus, -1);
+            return updateStatistics(decrementedStats, newStatus, 1);
         });
     }
 
