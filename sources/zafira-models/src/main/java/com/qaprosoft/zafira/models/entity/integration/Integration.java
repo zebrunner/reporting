@@ -73,8 +73,16 @@ public class Integration {
     public Optional<String> getAttributeValue(String attributeName) {
         IntegrationSetting integrationSetting = getAttribute(attributeName)
                 .orElse(null);
-        String value = integrationSetting == null ? null : integrationSetting.getValue();
+        String value = integrationSetting == null ? null : getSettingValue(integrationSetting);
         return Optional.ofNullable(value);
+    }
+
+    private String getSettingValue(IntegrationSetting integrationSetting) {
+        String value = integrationSetting.getValue();
+        if (integrationSetting.getValue() == null && !integrationSetting.getParam().isMandatory()) {
+            value = "";
+        }
+        return value;
     }
 
     public Optional<byte[]> getAttributeBinaryData(String attributeName) {
