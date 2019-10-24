@@ -83,20 +83,21 @@ public class JWTService {
         Long userId = Long.valueOf(jwtBody.getSubject());
         user.setId(userId);
         user.setUsername(jwtBody.get("username", String.class));
-        List<Long> groupIds = (List<Long>) jwtBody.get("groupIds");
+        List groupIds = (List) jwtBody.get("groupIds");
         user.setGroups(retrieveUserGroups(groupIds));
         user.setStatus(userService.getUserByIdTrusted(userId).getStatus());
         user.setTenant(jwtBody.get("tenant", String.class));
         return user;
     }
 
-    private List<Group> retrieveUserGroups(List<Long> groupIds) {
+    @SuppressWarnings("unchecked")
+    private List<Group> retrieveUserGroups(List groupIds) {
         if (groupIds == null) {
             throw new MalformedJwtException("Group id list is required to authenticate");
         }
-        return groupIds.stream()
-                       .map(groupId -> groupService.getGroupById(groupId))
-                       .collect(Collectors.toList());
+        return (List<Group>) groupIds.stream()
+                                     .map(groupId -> groupService.getGroupById(((Number) groupId).longValue()))
+                                     .collect(Collectors.toList());
     }
 
     public User parseRefreshToken(final String token) {
@@ -163,13 +164,13 @@ public class JWTService {
     }
 
     private Set<Permission.Name> collectPermissions(List<Long> groupIds) {
-        return groupIds.stream()
-                       .map(groupId -> groupService.getGroupById(groupId)) // get group by its id
-                       .map(Group::getPermissions)                         // collect group permissions
-                       .flatMap(Collection::stream)                        // flatten all permission
-                       .distinct()                                         // keep unique permissions only
-                       .map(Permission::getName)
-                       .collect(Collectors.toSet());
+        List<Group> groups = retrieveUserGroups(groupIds);
+        return groups.stream()
+                     .map(Group::getPermissions)                         // collect group permissions
+                     .flatMap(Collection::stream)                        // flatten all permission
+                     .distinct()                                         // keep unique permissions only
+                     .map(Permission::getName)
+                     .collect(Collectors.toSet());
     }
 
     private Claims getTokenBody(String token) {
