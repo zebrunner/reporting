@@ -83,13 +83,15 @@ public class MailIntegrationAdapter extends AbstractIntegrationAdapter implement
     @Override
     public boolean isConnected() {
         return obtainConnectedStatus().orElseGet(() -> {
-            boolean connected = false;
+            boolean connected;
             JavaMailSenderImpl sender = (JavaMailSenderImpl) javaMailSender;
             try {
                 sender.testConnection();
                 connected = true;
             } catch (MessagingException e) {
                 // Will be thrown when SMTP not configured properly
+                LOGGER.error(e.getMessage(), e);
+                connected = false;
             }
             setConnected(connected);
             return connected;
