@@ -39,7 +39,8 @@ public class IllegalOperationException extends ApplicationException {
         JOB_CAN_NOT_BE_STARTED(2064),
         INVITATION_CAN_NOT_BE_CREATED(2065),
         ILLEGAL_FILTER_ACCESS(2066),
-        TEST_RUN_CAN_NOT_BE_STARTED(2067);
+        TEST_RUN_CAN_NOT_BE_STARTED(2067),
+        LAUNCHER_PRESET_CAN_NOT_BE_CREATED(2068);
 
         private final Integer code;
         private String messageKey;

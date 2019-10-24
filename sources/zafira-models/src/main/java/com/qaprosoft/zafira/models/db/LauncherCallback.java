@@ -12,38 +12,28 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- ******************************************************************************/
-package com.qaprosoft.zafira.models.dto;
+ *******************************************************************************/
+package com.qaprosoft.zafira.models.db;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Getter
 @Setter
-public class LauncherType extends AbstractType {
+@NoArgsConstructor
+@AllArgsConstructor
+public class LauncherCallback extends AbstractEntity {
 
-    private static final long serialVersionUID = 7778329756348322538L;
+    private String ref;
+    private String ciRunId;
+    private String url;
+    private LauncherPreset preset;
 
-    @NotEmpty(message = "{error.name.required}")
-    private String name;
-
-    @NotEmpty(message = "{error.model.required}")
-    private String model;
-
-    @NotNull
-    @Valid
-    private ScmAccountType scmAccountType;
-
-    @Valid
-    private List<LauncherPresetDTO> presets;
-
-    private JobType job;
-    private boolean autoScan;
-
-
+    public LauncherCallback(String ciRunId, String url, LauncherPreset preset) {
+        this.ciRunId = ciRunId;
+        this.url = url;
+        this.preset = preset;
+    }
 }

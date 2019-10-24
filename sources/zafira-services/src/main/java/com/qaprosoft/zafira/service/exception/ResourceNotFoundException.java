@@ -29,7 +29,10 @@ public class ResourceNotFoundException extends ApplicationException {
         TEST_NOT_FOUND(2030),
         PROJECT_NOT_FOUND(2031),
         INVITATION_NOT_FOUND(2032),
-        INTEGRATION_PARAM_NOT_FOUND(2033);
+        INTEGRATION_PARAM_NOT_FOUND(2033),
+        LAUNCHER_NOT_FOUND(2034),
+        LAUNCHER_CALLBACK_NOT_FOUND(2035),
+        LAUNCHER_PRESET_NOT_FOUND(2036);
 
         private final Integer code;
         private String messageKey;

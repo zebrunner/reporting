@@ -12,38 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- ******************************************************************************/
+ *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-public class LauncherType extends AbstractType {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class LauncherPresetDTO extends AbstractType {
 
-    private static final long serialVersionUID = 7778329756348322538L;
-
-    @NotEmpty(message = "{error.name.required}")
+    @NotEmpty(message = "Name required")
+    @Size(max = 50, message = "Name length should include between 1 and 50 characters")
     private String name;
-
-    @NotEmpty(message = "{error.model.required}")
-    private String model;
-
-    @NotNull
-    @Valid
-    private ScmAccountType scmAccountType;
-
-    @Valid
-    private List<LauncherPresetDTO> presets;
-
-    private JobType job;
-    private boolean autoScan;
-
-
+    private String params;
 }

@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.db.Launcher;
+import com.qaprosoft.zafira.models.db.LauncherWebHookPayload;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.LauncherScannerType;
@@ -77,7 +78,10 @@ public class LauncherController extends AbstractController {
                                        @RequestParam(name = "automationServerId", required = false) Long automationServerId) {
         User owner = new User(getPrincipalId());
         launcherType.setAutoScan(false);
-        return mapper.map(launcherService.createLauncher(mapper.map(launcherType, Launcher.class), owner, automationServerId), LauncherType.class);
+
+        Launcher launcher = mapper.map(launcherType, Launcher.class);
+        launcher = launcherService.createLauncher(launcher, owner, automationServerId);
+        return mapper.map(launcher, LauncherType.class);
     }
 
     @ApiResponseStatuses
@@ -86,7 +90,8 @@ public class LauncherController extends AbstractController {
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping("/{id}")
     public LauncherType getLauncherById(@PathVariable("id") Long id) {
-        return mapper.map(launcherService.getLauncherById(id), LauncherType.class);
+        Launcher launcher = launcherService.getLauncherById(id);
+        return mapper.map(launcher, LauncherType.class);
     }
 
     @ApiResponseStatuses
@@ -129,6 +134,19 @@ public class LauncherController extends AbstractController {
         User principal = userService.getNotNullUserById(getPrincipalId());
         String ciRunId = launcherService.buildLauncherJob(launcher, principal);
         websocketTemplate.convertAndSend(getLauncherRunsWebsocketPath(), new LauncherRunPush(launcher, ciRunId));
+    }
+
+    @ApiResponseStatuses
+    @ApiOperation(value = "Build job by webHook", nickname = "buildByWebHook", httpMethod = "POST", response = String.class)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
+    @PostMapping("/{id}/build/{ref}")
+    public String buildByWebHook(@RequestBody @Valid LauncherWebHookPayload payload,
+                               @PathVariable("id") Long id,
+                               @PathVariable("ref") String ref
+    ) throws IOException {
+        User principal = userService.getNotNullUserById(getPrincipalId());
+        return launcherService.buildLauncherJobByPresetRef(id, ref, payload, principal);
     }
 
     @ApiResponseStatuses

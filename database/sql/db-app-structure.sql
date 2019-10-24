@@ -869,6 +869,46 @@ CREATE TRIGGER update_timestamp_launchers
 EXECUTE PROCEDURE update_timestamp();
 
 
+DROP TABLE IF EXISTS launcher_presets;
+CREATE TABLE IF NOT EXISTS launcher_presets (
+    id SERIAL,
+    name VARCHAR(50) NOT NULL,
+    reference VARCHAR(20) NOT NULL,
+    params TEXT NULL,
+    launcher_id INT NOT NULL,
+    modified_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+    created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+    PRIMARY KEY (id),
+    CONSTRAINT fk_LAUNCHER_PRESET_LAUNCHERS1
+        FOREIGN KEY (launcher_id)
+            REFERENCES LAUNCHERS (id)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION);
+CREATE UNIQUE INDEX LAUNCHER_PRESET_LAUNCHER_ID_NAME_UNIQUE ON launcher_presets (name, launcher_id);
+CREATE UNIQUE INDEX LAUNCHER_PRESET_REFERENCE_UNIQUE ON launcher_presets (reference);
+CREATE TRIGGER update_timestamp_launcher_presets BEFORE INSERT OR UPDATE ON launcher_presets FOR EACH ROW EXECUTE PROCEDURE update_timestamp();
+
+
+DROP TABLE IF EXISTS launcher_callbacks;
+CREATE TABLE IF NOT EXISTS launcher_callbacks (
+  id SERIAL,
+  ci_run_id VARCHAR(50) NOT NULL,
+  url VARCHAR(255) NOT NULL,
+  reference VARCHAR(20) NOT NULL,
+  launcher_preset_id INT NOT NULL,
+  modified_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+  created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+  PRIMARY KEY (id),
+  CONSTRAINT fk_LAUNCHER_CALLBACK_LAUNCHER_PRESETS1
+      FOREIGN KEY (launcher_preset_id)
+          REFERENCES LAUNCHER_PRESETS (ID)
+          ON DELETE NO ACTION
+          ON UPDATE NO ACTION);
+CREATE UNIQUE INDEX LAUNCHER_CALLBACK_CI_RUN_ID_UNIQUE ON launcher_callbacks (ci_run_id);
+CREATE UNIQUE INDEX LAUNCHER_CALLBACK_REFERENCE_UNIQUE ON launcher_callbacks (reference);
+CREATE TRIGGER update_timestamp_launcher_callback BEFORE INSERT OR UPDATE ON launcher_callbacks FOR EACH ROW EXECUTE PROCEDURE update_timestamp();
+
+
 CREATE OR REPLACE FUNCTION check_version(INTEGER) RETURNS VOID AS
 $$
 DECLARE
