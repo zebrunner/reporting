@@ -44,6 +44,10 @@
 				L.MODEL AS LAUNCHER_MODEL,
 				L.AUTO_SCAN AS LAUNCHER_AUTO_SCAN,
 
+		]]>
+	<include refid="com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherPresetMapper.body"/>
+		<![CDATA[
+				,
 				S.ID AS SCM_ID,
 				S.NAME AS SCM_NAME,
 				S.ACCESS_TOKEN AS SCM_ACCESS_TOKEN,
@@ -65,7 +69,7 @@
 				J.CREATED_AT AS JOB_CREATED_AT,
 
 				L.CREATED_AT AS LAUNCHER_CREATED_AT,
-				L.MODIFIED_AT AS _MODIFIED_AT
+				L.MODIFIED_AT AS LAUNCHER_MODIFIED_AT
 			FROM
 				LAUNCHERS L
             LEFT JOIN
@@ -76,6 +80,10 @@
                 JOBS J
             ON
                 J.ID = L.JOB_ID
+			LEFT JOIN
+				LAUNCHER_PRESETS LP
+			ON
+				L.ID = LP.LAUNCHER_ID
         ]]>
 	</sql>
 
@@ -157,6 +165,8 @@
 		<association property="job"
 			javaType="com.qaprosoft.zafira.models.db.Job"
 			resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.JobMapper.JobResultMap" />
+		<collection property="presets" ofType="com.qaprosoft.zafira.models.db.LauncherPreset"
+					resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherPresetMapper.LauncherPresetResultMap"/>
 	</resultMap>
 
 </mapper>

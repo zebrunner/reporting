@@ -20,6 +20,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -33,5 +35,13 @@ public class Launcher extends AbstractEntity {
     private ScmAccount scmAccount;
     private Job job;
     private boolean autoScan;
+    private List<LauncherPreset> presets;
 
+    public Launcher(String name, String model, ScmAccount scmAccount, Job job, boolean autoScan) {
+        this.name = name;
+        this.model = model;
+        this.scmAccount = scmAccount;
+        this.job = job;
+        this.autoScan = autoScan;
+    }
 }

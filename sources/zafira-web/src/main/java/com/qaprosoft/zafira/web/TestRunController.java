@@ -35,6 +35,7 @@ import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
 import com.qaprosoft.zafira.service.FilterService;
 import com.qaprosoft.zafira.service.JobsService;
+import com.qaprosoft.zafira.service.LauncherCallbackService;
 import com.qaprosoft.zafira.service.ProjectService;
 import com.qaprosoft.zafira.service.TestRunService;
 import com.qaprosoft.zafira.service.TestService;
@@ -123,6 +124,9 @@ public class TestRunController extends AbstractController {
     @Autowired
     private StatisticsService statisticsService;
 
+    @Autowired
+    private LauncherCallbackService launcherCallbackService;
+
     @ApiResponseStatuses
     @ApiOperation(value = "Start test run", nickname = "startTestRun", httpMethod = "POST", response = TestRunType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -165,6 +169,9 @@ public class TestRunController extends AbstractController {
     public TestRunType finishTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable("id") long id) {
         TestRun testRun = testRunService.calculateTestRunResult(id, true);
         TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
+
+        launcherCallbackService.notifyOnTestRunFinish(testRun.getCiRunId());
+
         websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(id)));
         websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunFull));
         return mapper.map(testRun, TestRunType.class);
@@ -190,7 +197,7 @@ public class TestRunController extends AbstractController {
         }
         Status testRunStatus = testRun.getStatus();
         if (Status.IN_PROGRESS.equals(testRunStatus) || Status.QUEUED.equals(testRunStatus)) {
-            testRunService.abortTestRun(testRun, abortCauseDecoded);
+            testRun = testRunService.abortTestRun(testRun, abortCauseDecoded);
             for (Test test : testService.getTestsByTestRunId(testRun.getId())) {
                 if (Status.ABORTED.equals(test.getStatus())) {
                     websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));

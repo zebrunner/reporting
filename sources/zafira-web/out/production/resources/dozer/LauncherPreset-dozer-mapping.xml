@@ -4,8 +4,8 @@
 	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
 
 	<mapping type="bi-directional" wildcard="false">
-		<class-a>com.qaprosoft.zafira.models.dto.LauncherType</class-a>
-		<class-b>com.qaprosoft.zafira.models.db.Launcher</class-b>
+		<class-a>com.qaprosoft.zafira.models.dto.LauncherPresetDTO</class-a>
+		<class-b>com.qaprosoft.zafira.models.db.LauncherPreset</class-b>
 
 		<field>
 			<a>id</a>
@@ -16,24 +16,8 @@
 			<b>name</b>
 		</field>
 		<field>
-			<a>model</a>
-			<b>model</b>
-		</field>
-		<field>
-			<a>scmAccountType</a>
-			<b>scmAccount</b>
-		</field>
-		<field>
-			<a>job</a>
-			<b>job</b>
-		</field>
-		<field>
-			<a>autoScan</a>
-			<b>autoScan</b>
-		</field>
-		<field>
-			<a>presets</a>
-			<b>presets</b>
+			<a>params</a>
+			<b>params</b>
 		</field>
 	</mapping>
 </mappings>
