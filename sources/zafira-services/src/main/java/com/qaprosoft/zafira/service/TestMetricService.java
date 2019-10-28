@@ -54,8 +54,8 @@ public class TestMetricService {
     public void createTestMetrics(Long testId, Map<String, Long> metrics) {
         try {
             if (metrics != null) {
-                metrics.keySet().stream()
-                       .map(key -> new TestMetric(key, metrics.get(key), testId))
+                metrics.entrySet().stream()
+                       .map(entry -> new TestMetric(entry.getKey(), entry.getValue(), testId))
                        .forEach(metric -> testMetricMapper.createTestMetric(metric));
             }
         } catch (Exception e) {
