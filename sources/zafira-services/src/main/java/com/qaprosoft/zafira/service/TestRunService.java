@@ -168,7 +168,7 @@ public class TestRunService {
         result.setSortOrder(sc.getSortOrder());
 
         List<TestRun> testRuns = testRunMapper.searchTestRuns(sc);
-        hideJobUrlsIdNeed(testRuns);
+        hideJobUrlsIfNeed(testRuns);
         result.setResults(testRuns);
         result.setTotalResults(testRunMapper.getTestRunsSearchCount(sc));
         return result;
@@ -641,7 +641,7 @@ public class TestRunService {
         return testRunMapper.getPlatforms();
     }
 
-    private void hideJobUrlsIdNeed(List<TestRun> testRuns) {
+    private void hideJobUrlsIfNeed(List<TestRun> testRuns) {
         testRuns.stream()
                 .filter(testRun -> !automationServerService.isUrlVisibilityEnabled(testRun.getJob().getAutomationServerId()))
                 .forEach(testRun -> testRun.getJob().setJobURL(null));
