@@ -51,12 +51,12 @@ public class TestMetricService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void createTestMetrics(Long testId, Map<String, Long> testMetrics) {
+    public void createTestMetrics(Long testId, Map<String, Long> metrics) {
         try {
-            if (testMetrics != null) {
-                for (String key : testMetrics.keySet()) {
-                    testMetricMapper.createTestMetric(new TestMetric(key, testMetrics.get(key), testId));
-                }
+            if (metrics != null) {
+                metrics.entrySet().stream()
+                       .map(entry -> new TestMetric(entry.getKey(), entry.getValue(), testId))
+                       .forEach(metric -> testMetricMapper.createTestMetric(metric));
             }
         } catch (Exception e) {
             LOGGER.error("Unable to register test metrics: " + e.getMessage());
