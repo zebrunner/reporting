@@ -17,7 +17,7 @@ databaseChangeLog:
       author: brutskov
       changes:
         - sqlFile:
-          encoding: utf8
-          path: changeset/002_create_launcher_snapshot_table.sql
-          relativeToChangelogFile: true
-          splitStatements: false
+            encoding: utf8
+            path: changeset/002_create_launcher_snapshot_table.sql
+            relativeToChangelogFile: true
+            splitStatements: false
