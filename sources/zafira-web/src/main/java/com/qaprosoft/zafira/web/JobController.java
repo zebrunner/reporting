@@ -46,8 +46,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -139,14 +137,10 @@ public class JobController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/views/{id}")
     public Map<String, List<JobViewType>> getJobViews(@PathVariable("id") long id) {
-        Map<String, List<JobViewType>> jobViews = new LinkedHashMap<>();
-        for (JobView jobView : jobsService.getJobViewsByViewId(id)) {
-            if (!jobViews.containsKey(jobView.getEnv())) {
-                jobViews.put(jobView.getEnv(), new ArrayList<>());
-            }
-            jobViews.get(jobView.getEnv()).add(mapper.map(jobView, JobViewType.class));
-        }
-        return jobViews;
+        List<JobView> jobViews = jobsService.getJobViewsByViewId(id);
+        return jobViews.stream()
+                       .map(jobView -> mapper.map(jobView, JobViewType.class))
+                       .collect(Collectors.groupingBy(JobViewType::getEnv));
     }
 
     @ApiResponseStatuses
