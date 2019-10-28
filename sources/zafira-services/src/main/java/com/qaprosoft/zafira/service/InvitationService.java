@@ -37,7 +37,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -103,8 +102,8 @@ public class InvitationService {
     }
 
     @SuppressWarnings("rawtypes")
-    private CompletableFuture[] createInvitationsAsync(Long principalId, List<Invitation> results, Invitation... invitations) {
-        return Arrays.stream(invitations).map(invitation -> CompletableFuture.supplyAsync(() -> {
+    private CompletableFuture[] createInvitationsAsync(Long principalId, List<Invitation> results, List<Invitation> invitations) {
+        return invitations.stream().map(invitation -> CompletableFuture.supplyAsync(() -> {
             Invitation inv = null;
             try {
                 inv = createInvitation(principalId, invitation, false, false);
@@ -118,11 +117,9 @@ public class InvitationService {
         })).toArray(CompletableFuture[]::new);
     }
 
-    public List<Invitation> createInvitations(Long principalId, Invitation... invitations) {
+    public List<Invitation> createInvitations(Long principalId, List<Invitation> invitations) {
         List<Invitation> result = new ArrayList<>();
-        for (Invitation invitation : invitations) {
-            checkExisting(invitation.getEmail());
-        }
+        invitations.forEach(invitation -> checkExisting(invitation.getEmail()));
         CompletableFuture.allOf(createInvitationsAsync(principalId, result, invitations)).join();
         return result;
     }

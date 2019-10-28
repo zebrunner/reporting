@@ -198,11 +198,10 @@ public class TestRunController extends AbstractController {
         Status testRunStatus = testRun.getStatus();
         if (Status.IN_PROGRESS.equals(testRunStatus) || Status.QUEUED.equals(testRunStatus)) {
             testRun = testRunService.abortTestRun(testRun, abortCauseDecoded);
-            for (Test test : testService.getTestsByTestRunId(testRun.getId())) {
-                if (Status.ABORTED.equals(test.getStatus())) {
-                    websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
-                }
-            }
+            List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
+            tests.stream()
+                 .filter(test -> Status.ABORTED.equals(test.getStatus()))
+                 .forEach(test -> websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test)));
             websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
             websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
         }

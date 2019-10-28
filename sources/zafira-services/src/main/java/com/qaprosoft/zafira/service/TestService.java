@@ -510,12 +510,23 @@ public class TestService {
             Map<String, List<Long>> testCasesByMethod = new HashMap<>();
 
             List<TestCase> testCases = testCaseService.searchTestCases(sc).getResults();
+
+
+
             for (TestCase testCase : testCases) {
                 testCasesByMethod.putIfAbsent(testCase.getTestMethod(), new ArrayList<>());
 
                 testCasesById.put(testCase.getId(), testCase);
                 testCasesByMethod.get(testCase.getTestMethod()).add(testCase.getId());
             }
+
+//            List<TestCase> testCases = testCaseService.searchTestCases(sc).getResults();
+//
+//            Map<Long, TestCase> testCasesById = testCases.stream()
+//                                                         .collect(Collectors.toMap(AbstractEntity::getId, testCase -> testCase));
+//            Map<String, List<Long>> testCasesByMethod = testCases.stream()
+//                                                                 .collect(Collectors.groupingBy(TestCase::getTestMethod, Collectors.mapping(AbstractEntity::getId, Collectors.toList())));
+
 
             Set<Long> testCasesToRerun = new HashSet<>();
             for (Test test : tests) {
@@ -531,8 +542,9 @@ public class TestService {
                         testMapper.updateTestsNeedRerun(Collections.singletonList(test.getId()), true);
                     }
 
-                    if (StringUtils.isNotEmpty(test.getDependsOnMethods())) {
-                        for (String method : test.getDependsOnMethods().split(" ")) {
+                    String dependsOnMethods = test.getDependsOnMethods();
+                    if (StringUtils.isNotEmpty(dependsOnMethods)) {
+                        for (String method : dependsOnMethods.split(" ")) {
                             testCasesToRerun.addAll(testCasesByMethod.get(method));
                         }
                     }
