@@ -47,4 +47,6 @@ public interface AutomationServerAdapter extends IntegrationGroupAdapter {
 
     String buildScannerJobUrl(String repositoryName, boolean rescan);
 
+    boolean isUrlVisibilityEnabled();
+
 }

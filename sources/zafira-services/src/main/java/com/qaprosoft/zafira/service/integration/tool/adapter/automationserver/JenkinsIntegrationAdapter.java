@@ -82,7 +82,7 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
     private final String username;
     private final String tokenOrPassword;
     private final String folder;
-
+    private final boolean urlVisibility;
 
     public JenkinsIntegrationAdapter(Integration integration) {
         super(integration);
@@ -91,13 +91,17 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
         this.username = getAttributeValue(integration, JenkinsParam.JENKINS_USERNAME);
         this.tokenOrPassword = getAttributeValue(integration, JenkinsParam.JENKINS_API_TOKEN_OR_PASSWORD);
         this.folder = getAttributeValue(integration, JenkinsParam.JENKINS_FOLDER);
+
+        String urlVisibilityParamValue = integration.getAttributeValue(JenkinsParam.JENKINS_URL_VISIBILITY.getName()).orElse("false");
+        this.urlVisibility = Boolean.parseBoolean(urlVisibilityParamValue);
     }
 
     private enum JenkinsParam implements AdapterParam {
         JENKINS_URL("JENKINS_URL"),
         JENKINS_USERNAME("JENKINS_USER"),
         JENKINS_API_TOKEN_OR_PASSWORD("JENKINS_API_TOKEN_OR_PASSWORD"),
-        JENKINS_FOLDER("JENKINS_FOLDER");
+        JENKINS_FOLDER("JENKINS_FOLDER"),
+        JENKINS_URL_VISIBILITY("JENKINS_URL_VISIBILITY");
 
         private final String name;
 
@@ -137,6 +141,11 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
             jobUrl = formatScannerJobUrl(folder, url);
         }
         return jobUrl;
+    }
+
+    @Override
+    public boolean isUrlVisibilityEnabled() {
+        return this.urlVisibility;
     }
 
     @Override

@@ -22,8 +22,6 @@ import com.qaprosoft.zafira.service.integration.IntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.adapter.automationserver.AutomationServerAdapter;
 import com.qaprosoft.zafira.service.integration.tool.proxy.AutomationServerProxy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -31,8 +29,6 @@ import java.util.Map;
 
 @Component
 public class AutomationServerService extends AbstractIntegrationService<AutomationServerAdapter> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AutomationServerService.class);
 
     public AutomationServerService(IntegrationService integrationService, AutomationServerProxy automationServerProxy) {
         super(integrationService, automationServerProxy, "JENKINS");
@@ -116,6 +112,11 @@ public class AutomationServerService extends AbstractIntegrationService<Automati
     public String getFolder(Long automationServerId) {
         AutomationServerAdapter adapter = getAdapterByIntegrationId(automationServerId);
         return adapter.getFolder();
+    }
+
+    public boolean isUrlVisibilityEnabled(Long automationServerId) {
+        AutomationServerAdapter adapter = getAdapterByIntegrationId(automationServerId);
+        return adapter.isUrlVisibilityEnabled();
     }
 
 }
