@@ -643,7 +643,7 @@ public class TestRunService {
 
     private void hideJobUrlsIfNeed(List<TestRun> testRuns) {
         testRuns.stream()
-                .filter(testRun -> !automationServerService.isUrlVisibilityEnabled(testRun.getJob().getAutomationServerId()))
+                .filter(testRun -> !automationServerService.isJobUrlVisibilityEnabled(testRun.getJob().getAutomationServerId()))
                 .forEach(testRun -> testRun.getJob().setJobURL(null));
     }
 }
