@@ -18,12 +18,12 @@ package com.qaprosoft.zafira.service.integration.tool.impl;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.models.dto.JobResult;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationSetting;
 import com.qaprosoft.zafira.service.integration.IntegrationService;
+import com.qaprosoft.zafira.service.integration.IntegrationSettingService;
 import com.qaprosoft.zafira.service.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.adapter.automationserver.AutomationServerAdapter;
 import com.qaprosoft.zafira.service.integration.tool.proxy.AutomationServerProxy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -32,10 +32,11 @@ import java.util.Map;
 @Component
 public class AutomationServerService extends AbstractIntegrationService<AutomationServerAdapter> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AutomationServerService.class);
+    private final IntegrationSettingService integrationSettingService;
 
-    public AutomationServerService(IntegrationService integrationService, AutomationServerProxy automationServerProxy) {
+    public AutomationServerService(IntegrationService integrationService, AutomationServerProxy automationServerProxy, IntegrationSettingService integrationSettingService) {
         super(integrationService, automationServerProxy, "JENKINS");
+        this.integrationSettingService = integrationSettingService;
     }
 
     public void rerunJob(Job job, Integer buildNumber, boolean rerunFailures) {
@@ -116,6 +117,21 @@ public class AutomationServerService extends AbstractIntegrationService<Automati
     public String getFolder(Long automationServerId) {
         AutomationServerAdapter adapter = getAdapterByIntegrationId(automationServerId);
         return adapter.getFolder();
+    }
+
+    public boolean isJobUrlVisibilityEnabled(Long integrationId) {
+        IntegrationSetting setting = getSetting(integrationId, "JENKINS_JOB_URL_VISIBILITY");
+        return setting != null && Boolean.parseBoolean(setting.getValue());
+    }
+
+    private IntegrationSetting getSetting(Long integrationId, String name) {
+        IntegrationSetting setting;
+        if (integrationId == null) {
+            setting = integrationSettingService.retrieveByIntegrationTypeNameAndParamName(getDefaultType(), name);
+        } else {
+            setting = integrationSettingService.retrieveByIntegrationIdAndParamName(integrationId, name);
+        }
+        return setting;
     }
 
 }
