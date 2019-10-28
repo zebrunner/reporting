@@ -83,7 +83,6 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
     private final String tokenOrPassword;
     private final String folder;
 
-
     public JenkinsIntegrationAdapter(Integration integration) {
         super(integration);
 
