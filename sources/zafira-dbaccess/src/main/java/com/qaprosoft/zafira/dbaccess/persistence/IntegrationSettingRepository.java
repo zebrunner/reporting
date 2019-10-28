@@ -34,7 +34,8 @@ public interface IntegrationSettingRepository extends CrudRepository<Integration
     Optional<IntegrationSetting> findByIntegrationIdAndParamName(Long integrationId, String paramName);
 
     @EntityGraph(value = "integrationSetting.expanded")
-    Optional<IntegrationSetting> findByIntegrationTypeNameAndParamName(String integrationTypeName, String paramName);
+    @Query("select ist from IntegrationSetting ist join ist.param p join ist.integration i join i.type it where it.name = :integrationTypeName and p.name = :paramName and is_default = true")
+    Optional<IntegrationSetting> findByIntegrationTypeNameAndParamName(@Param("integrationTypeName") String integrationTypeName, @Param("paramName") String paramName);
 
     @EntityGraph(value = "integrationSetting.expanded")
     List<IntegrationSetting> findAll();
