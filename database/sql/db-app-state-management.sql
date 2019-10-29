@@ -41,4 +41,20 @@ INSERT INTO databasechangelog(
   current_timestamp,
   1,
   'EXECUTED'
-);
+),
+ (
+     '002_create_launcher_snapshot_table',
+     'brutskov',
+     'classpath:db/changelog.yml',
+     current_timestamp,
+     1,
+     'EXECUTED'
+ ),
+ (
+     '003_add_jenkins_view_links_setting',
+     'brutskov',
+     'classpath:db/changelog.yml',
+     current_timestamp,
+     1,
+     'EXECUTED'
+ );
