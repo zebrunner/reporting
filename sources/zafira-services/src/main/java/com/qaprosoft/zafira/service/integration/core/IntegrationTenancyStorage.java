@@ -111,7 +111,7 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
             ReinitEventMessage event = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
 
             long integrationId = event.getIntegrationId();
-            String tenantName = event.getTenancy();
+            String tenantName = event.getTenantName();
             try {
                 if (!eventPushService.isSettingQueueConsumer(message)) {
                     TenancyContext.setTenantName(tenantName);
