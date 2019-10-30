@@ -17,8 +17,8 @@ ext {
         persistence_core: [
             "org.postgresql:postgresql:42.2.4",
             "com.mchange:c3p0:0.9.5.4",
-            "org.mybatis:mybatis:3.2.3",
-            "org.mybatis:mybatis-spring:1.3.0"
+            "org.mybatis:mybatis:3.5.3",
+            "org.mybatis:mybatis-spring:1.3.3"
         ],
 
         javax_persistence: "javax.persistence:javax.persistence-api:2.2",
