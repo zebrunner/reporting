@@ -15,12 +15,12 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.service.integration.tool.impl;
 
+import com.qaprosoft.zafira.dbaccess.persistence.IntegrationSettingRepository;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationSetting;
 import com.qaprosoft.zafira.service.integration.IntegrationService;
-import com.qaprosoft.zafira.service.integration.IntegrationSettingService;
 import com.qaprosoft.zafira.service.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.adapter.automationserver.AutomationServerAdapter;
 import com.qaprosoft.zafira.service.integration.tool.proxy.AutomationServerProxy;
@@ -28,15 +28,16 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class AutomationServerService extends AbstractIntegrationService<AutomationServerAdapter> {
 
-    private final IntegrationSettingService integrationSettingService;
+    private final IntegrationSettingRepository integrationSettingRepository;
 
-    public AutomationServerService(IntegrationService integrationService, AutomationServerProxy automationServerProxy, IntegrationSettingService integrationSettingService) {
+    public AutomationServerService(IntegrationService integrationService, AutomationServerProxy automationServerProxy, IntegrationSettingRepository integrationSettingRepository) {
         super(integrationService, automationServerProxy, "JENKINS");
-        this.integrationSettingService = integrationSettingService;
+        this.integrationSettingRepository = integrationSettingRepository;
     }
 
     public void rerunJob(Job job, Integer buildNumber, boolean rerunFailures) {
@@ -120,18 +121,18 @@ public class AutomationServerService extends AbstractIntegrationService<Automati
     }
 
     public boolean isJobUrlVisibilityEnabled(Long integrationId) {
-        IntegrationSetting setting = getSetting(integrationId, "JENKINS_JOB_URL_VISIBILITY");
-        return setting != null && Boolean.parseBoolean(setting.getValue());
+        Optional<IntegrationSetting> maybeSetting = getSetting(integrationId, "JENKINS_JOB_URL_VISIBILITY");
+        return maybeSetting.isPresent() && Boolean.parseBoolean(maybeSetting.get().getValue());
     }
 
-    private IntegrationSetting getSetting(Long integrationId, String name) {
-        IntegrationSetting setting;
+    private Optional<IntegrationSetting> getSetting(Long integrationId, String name) {
+        Optional<IntegrationSetting> maybeSetting;
         if (integrationId == null) {
-            setting = integrationSettingService.retrieveByIntegrationTypeNameAndParamName(getDefaultType(), name);
+            maybeSetting = integrationSettingRepository.findByIntegrationTypeNameAndParamName(getDefaultType(), name);
         } else {
-            setting = integrationSettingService.retrieveByIntegrationIdAndParamName(integrationId, name);
+            maybeSetting = integrationSettingRepository.findByIntegrationIdAndParamName(integrationId, name);
         }
-        return setting;
+        return maybeSetting;
     }
 
 }
