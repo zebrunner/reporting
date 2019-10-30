@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.StringUtils;
 
 import java.util.AbstractMap;
 import java.util.List;
@@ -143,13 +144,14 @@ public class IntegrationServiceImpl implements IntegrationService {
     private Integration getIntegrationByJenkinsHost(List<Integration> integrations, String jenkinsHost) {
         return integrations.stream()
                            .filter(integration -> findIntegrationSettingWithJenkinsHost(jenkinsHost, integration))
-                           .findAny().orElse(new Integration());
+                           .findAny()
+                           .orElse(new Integration());
     }
 
     private boolean findIntegrationSettingWithJenkinsHost(String jenkinsHost, Integration integration) {
         return integration.getSettings()
                           .stream()
-                          .anyMatch(setting -> setting.getValue().equals(jenkinsHost));
+                          .anyMatch(setting -> !StringUtils.isEmpty(setting.getValue()) && setting.getValue().equals(jenkinsHost));
     }
 
     @Override

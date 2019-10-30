@@ -32,7 +32,6 @@ import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
-import com.qaprosoft.zafira.service.cache.StatisticsService;
 import com.qaprosoft.zafira.service.email.TestRunResultsEmail;
 import com.qaprosoft.zafira.service.exception.IllegalOperationException;
 import com.qaprosoft.zafira.service.exception.IntegrationException;
@@ -167,7 +166,10 @@ public class TestRunService {
         result.setPage(sc.getPage());
         result.setPageSize(sc.getPageSize());
         result.setSortOrder(sc.getSortOrder());
-        result.setResults(testRunMapper.searchTestRuns(sc));
+
+        List<TestRun> testRuns = testRunMapper.searchTestRuns(sc);
+        hideJobUrlsIfNeed(testRuns);
+        result.setResults(testRuns);
         result.setTotalResults(testRunMapper.getTestRunsSearchCount(sc));
         return result;
     }
@@ -637,5 +639,11 @@ public class TestRunService {
     @Transactional(readOnly = true)
     public List<String> getPlatforms() {
         return testRunMapper.getPlatforms();
+    }
+
+    private void hideJobUrlsIfNeed(List<TestRun> testRuns) {
+        testRuns.stream()
+                .filter(testRun -> !automationServerService.isJobUrlVisibilityEnabled(testRun.getJob().getAutomationServerId()))
+                .forEach(testRun -> testRun.getJob().setJobURL(null));
     }
 }

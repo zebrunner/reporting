@@ -201,6 +201,8 @@ public class TestService {
     public Test finishTest(Test test, String configXML) {
         Test existingTest = getNotNullTestById(test.getId());
 
+        Long testCaseId = existingTest.getTestCaseId();
+
         // Wrap all additional test finalization logic to make sure status saved
         try {
             String message = test.getMessage();
@@ -212,7 +214,6 @@ public class TestService {
 
             // Resolve known issues
             if (Status.FAILED.equals(test.getStatus())) {
-                Long testCaseId = existingTest.getTestCaseId();
                 int testMessageHashCode = getTestMessageHashCode(test.getMessage());
 
                 WorkItem knownIssue = workItemService.getWorkItemByTestCaseIdAndHashCode(testCaseId, testMessageHashCode);
@@ -230,7 +231,7 @@ public class TestService {
 
                         testRunStatisticsService.updateStatistics(test.getTestRunId(), MARK_AS_KNOWN_ISSUE);
                         if (existingTest.isBlocker()) {
-                            testRunStatisticsService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.MARK_AS_BLOCKER);
+                            testRunStatisticsService.updateStatistics(test.getTestRunId(), MARK_AS_BLOCKER);
                         }
                     }
                 }
@@ -243,19 +244,21 @@ public class TestService {
                 existingTest.setArtifacts(createdArtifacts);
             }
 
-            updateTestCaseStatus(existingTest);
+            updateTestCaseStatus(testCaseId, test.getStatus());
 
             Set<Tag> tags = saveTags(test.getId(), test.getTags());
-
             existingTest.setTags(tags);
-            existingTest.setFinishTime(test.getFinishTime());
-            existingTest.setStatus(test.getStatus());
-            existingTest.setRetry(test.getRetry());
-            existingTest.setTestConfig(testConfigService.createTestConfigForTest(test, configXML));
+
+            TestConfig config = testConfigService.createTestConfigForTest(test, configXML);
+            existingTest.setTestConfig(config);
 
         } catch (Exception e) {
             LOGGER.error("Test finalization error: " + e.getMessage());
         } finally {
+            existingTest.setFinishTime(test.getFinishTime());
+            existingTest.setStatus(test.getStatus());
+            existingTest.setRetry(test.getRetry());
+
             testMapper.updateTest(existingTest);
             testRunStatisticsService.updateStatistics(existingTest.getTestRunId(), existingTest.getStatus());
         }
@@ -309,17 +312,17 @@ public class TestService {
 
         test.setStatus(newStatus);
         updateTest(test);
-        updateTestCaseStatus(test);
+        updateTestCaseStatus(test.getTestCaseId(), test.getStatus());
         testRunService.calculateTestRunResult(test.getTestRunId(), false);
 
         testRunStatisticsService.updateStatistics(test.getTestRunId(), newStatus, oldStatus);
         return test;
     }
 
-    private void updateTestCaseStatus(Test test)  {
-        TestCase testCase = testCaseService.getTestCaseById(test.getTestCaseId());
+    private void updateTestCaseStatus(Long testCaseId, Status status)  {
+        TestCase testCase = testCaseService.getTestCaseById(testCaseId);
         if (testCase != null) {
-            testCase.setStatus(test.getStatus());
+            testCase.setStatus(status);
             testCaseService.updateTestCase(testCase);
         }
     }
@@ -510,12 +513,23 @@ public class TestService {
             Map<String, List<Long>> testCasesByMethod = new HashMap<>();
 
             List<TestCase> testCases = testCaseService.searchTestCases(sc).getResults();
+
+
+
             for (TestCase testCase : testCases) {
                 testCasesByMethod.putIfAbsent(testCase.getTestMethod(), new ArrayList<>());
 
                 testCasesById.put(testCase.getId(), testCase);
                 testCasesByMethod.get(testCase.getTestMethod()).add(testCase.getId());
             }
+
+//            List<TestCase> testCases = testCaseService.searchTestCases(sc).getResults();
+//
+//            Map<Long, TestCase> testCasesById = testCases.stream()
+//                                                         .collect(Collectors.toMap(AbstractEntity::getId, testCase -> testCase));
+//            Map<String, List<Long>> testCasesByMethod = testCases.stream()
+//                                                                 .collect(Collectors.groupingBy(TestCase::getTestMethod, Collectors.mapping(AbstractEntity::getId, Collectors.toList())));
+
 
             Set<Long> testCasesToRerun = new HashSet<>();
             for (Test test : tests) {
@@ -531,8 +545,9 @@ public class TestService {
                         testMapper.updateTestsNeedRerun(Collections.singletonList(test.getId()), true);
                     }
 
-                    if (StringUtils.isNotEmpty(test.getDependsOnMethods())) {
-                        for (String method : test.getDependsOnMethods().split(" ")) {
+                    String dependsOnMethods = test.getDependsOnMethods();
+                    if (StringUtils.isNotEmpty(dependsOnMethods)) {
+                        for (String method : dependsOnMethods.split(" ")) {
                             testCasesToRerun.addAll(testCasesByMethod.get(method));
                         }
                     }

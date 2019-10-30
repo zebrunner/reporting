@@ -15,27 +15,29 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.service.integration.tool.impl;
 
+import com.qaprosoft.zafira.dbaccess.persistence.IntegrationSettingRepository;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.models.dto.JobResult;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationSetting;
 import com.qaprosoft.zafira.service.integration.IntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.AbstractIntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.adapter.automationserver.AutomationServerAdapter;
 import com.qaprosoft.zafira.service.integration.tool.proxy.AutomationServerProxy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class AutomationServerService extends AbstractIntegrationService<AutomationServerAdapter> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AutomationServerService.class);
+    private final IntegrationSettingRepository integrationSettingRepository;
 
-    public AutomationServerService(IntegrationService integrationService, AutomationServerProxy automationServerProxy) {
+    public AutomationServerService(IntegrationService integrationService, AutomationServerProxy automationServerProxy, IntegrationSettingRepository integrationSettingRepository) {
         super(integrationService, automationServerProxy, "JENKINS");
+        this.integrationSettingRepository = integrationSettingRepository;
     }
 
     public void rerunJob(Job job, Integer buildNumber, boolean rerunFailures) {
@@ -116,6 +118,21 @@ public class AutomationServerService extends AbstractIntegrationService<Automati
     public String getFolder(Long automationServerId) {
         AutomationServerAdapter adapter = getAdapterByIntegrationId(automationServerId);
         return adapter.getFolder();
+    }
+
+    public boolean isJobUrlVisibilityEnabled(Long integrationId) {
+        Optional<IntegrationSetting> maybeSetting = getSetting(integrationId, "JENKINS_JOB_URL_VISIBILITY");
+        return maybeSetting.isPresent() && Boolean.parseBoolean(maybeSetting.get().getValue());
+    }
+
+    private Optional<IntegrationSetting> getSetting(Long integrationId, String name) {
+        Optional<IntegrationSetting> maybeSetting;
+        if (integrationId == null) {
+            maybeSetting = integrationSettingRepository.findByIntegrationTypeNameAndParamName(getDefaultType(), name);
+        } else {
+            maybeSetting = integrationSettingRepository.findByIntegrationIdAndParamName(integrationId, name);
+        }
+        return maybeSetting;
     }
 
 }

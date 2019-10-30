@@ -111,9 +111,15 @@ public class JiraIntegrationAdapter extends AbstractIntegrationAdapter implement
 
     @Override
     public boolean isIssueClosed(String issueId) {
-        IssueDTO issueDTO = getIssue(issueId);
-        return closedStatuses.stream()
-                             .anyMatch(closedStatus -> issueDTO.getStatus().equalsIgnoreCase(closedStatus));
+        boolean closed;
+        try {
+            IssueDTO issueDTO = getIssue(issueId);
+            closed = closedStatuses.stream()
+                                   .anyMatch(closedStatus -> issueDTO.getStatus().equalsIgnoreCase(closedStatus));
+        } catch (ExternalSystemException e) {
+            closed = false;
+        }
+        return closed;
     }
 
     @Override
