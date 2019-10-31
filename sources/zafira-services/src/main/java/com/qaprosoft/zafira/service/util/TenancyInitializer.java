@@ -78,7 +78,7 @@ public class TenancyInitializer {
     public void initTenancy(Message message) {
         try {
             EventMessage eventMessage = new Gson().fromJson(new String(message.getBody()), EventMessage.class);
-            String tenancy = eventMessage.getTenancy();
+            String tenancy = eventMessage.getTenantName();
             LOGGER.info("Tenancy with name '" + tenancy + "' initialization is starting....");
             initTenancy(tenancy);
         } catch (Exception e) {
@@ -92,7 +92,7 @@ public class TenancyInitializer {
         try {
             boolean success = false;
             EmailEventMessage eventMessage = new Gson().fromJson(new String(message.getBody()), EmailEventMessage.class);
-            String tenancy = eventMessage.getTenancy();
+            String tenancy = eventMessage.getTenantName();
             result = new TenancyResponseEventMessage(tenancy);
             try {
                 LOGGER.info("Tenancy with name '" + tenancy + "' DB initialization is starting....");

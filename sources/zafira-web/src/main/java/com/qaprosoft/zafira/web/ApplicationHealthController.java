@@ -16,7 +16,6 @@
 package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.dbaccess.persistence.IntegrationRepository;
-import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.service.SettingsService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.ApiOperation;
@@ -27,8 +26,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
-
-import java.util.List;
 
 @ApiIgnore
 @RequestMapping(path = "api/status", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -53,18 +50,6 @@ public class ApplicationHealthController extends AbstractController {
             throw new RuntimeException("Unable to retrieve Postgres version");
         }
         return "Service is up and running. Integration: " + integrationRepository.findById(1L).orElse(null);
-    }
-
-    @GetMapping(path = "/integrations")
-    public String getAll() {
-        StringBuilder result = new StringBuilder();
-        List<Integration> integrations = integrationRepository.findAll();
-
-        for (Integration i : integrations) {
-            result.append(i.toString()).append("   ");
-        }
-
-        return result.toString();
     }
 
 }

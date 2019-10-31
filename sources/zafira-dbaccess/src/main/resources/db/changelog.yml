@@ -10,3 +10,25 @@ databaseChangeLog:
             path: changeset/001_create_integrations_structure.sql
             relativeToChangelogFile: true
             splitStatements: false
+  - changeSet:
+      id: 002_create_launcher_snapshot_table
+      validCheckSum: ANY
+      labels: stable
+      author: brutskov
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/002_create_launcher_snapshot_table.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+  - changeSet:
+      id: 003_add_jenkins_view_links_setting
+      validCheckSum: ANY
+      labels: stable
+      author: brutskov
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/003_add_jenkins_view_links_setting.sql
+            relativeToChangelogFile: true
+            splitStatements: false

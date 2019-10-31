@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Api("Invites API")
 @CrossOrigin
@@ -64,9 +65,9 @@ public class InvitationController extends AbstractController {
     @PostMapping()
     public List<Invitation> inviteUsers(@Valid @RequestBody InvitationListType invitationList) {
         List<InvitationType> invitationTypes = invitationList.getInvitationTypes();
-        Invitation[] invitations = invitationTypes.stream()
+        List<Invitation> invitations = invitationTypes.stream()
                                                   .map(invitationType -> mapper.map(invitationType, Invitation.class))
-                                                  .toArray(Invitation[]::new);
+                                                  .collect(Collectors.toList());
         return invitationService.createInvitations(getPrincipalId(), invitations);
     }
 

@@ -13,21 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.push.events;
+package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import com.qaprosoft.zafira.models.db.LauncherCallback;
 
-import java.io.Serializable;
+public interface LauncherCallbackMapper {
 
-@Getter
-@Setter
-@AllArgsConstructor
-public class EventMessage implements Serializable {
+    void create(LauncherCallback callback);
 
-    private static final long serialVersionUID = 2241656564064701459L;
+    LauncherCallback findByCiRunId(String ciRunId);
 
-    private String tenantName;
+    LauncherCallback findByRef(String ref);
 
+    boolean existsByCiRunId(String cirunId);
+
+    void deleteById(Long id);
 }

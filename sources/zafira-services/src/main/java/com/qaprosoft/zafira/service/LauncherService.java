@@ -21,6 +21,9 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherMapper;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Launcher;
+import com.qaprosoft.zafira.models.db.LauncherCallback;
+import com.qaprosoft.zafira.models.db.LauncherPreset;
+import com.qaprosoft.zafira.models.db.LauncherWebHookPayload;
 import com.qaprosoft.zafira.models.db.ScmAccount;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.JenkinsLauncherType;
@@ -28,6 +31,7 @@ import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.service.exception.IllegalOperationException;
+import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import com.qaprosoft.zafira.service.integration.IntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.impl.AutomationServerService;
 import com.qaprosoft.zafira.service.integration.tool.impl.TestAutomationToolService;
@@ -48,6 +52,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.JOB_CAN_NOT_BE_STARTED;
+import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.LAUNCHER_NOT_FOUND;
 
 @Service
 public class LauncherService {
@@ -58,6 +63,8 @@ public class LauncherService {
     private static final Set<String> MANDATORY_ARGUMENTS = Set.of("scmURL", "branch", "zafiraFields");
 
     private final LauncherMapper launcherMapper;
+    private final LauncherPresetService launcherPresetService;
+    private final LauncherCallbackService launcherCallbackService;
     private final AutomationServerService automationServerService;
     private final ScmAccountService scmAccountService;
     private final JobsService jobsService;
@@ -70,6 +77,8 @@ public class LauncherService {
 
     public LauncherService(
             LauncherMapper launcherMapper,
+            LauncherPresetService launcherPresetService,
+            LauncherCallbackService launcherCallbackService,
             AutomationServerService automationServerService,
             ScmAccountService scmAccountService,
             JobsService jobsService,
@@ -80,6 +89,8 @@ public class LauncherService {
             URLResolver urlResolver, IntegrationService integrationService
     ) {
         this.launcherMapper = launcherMapper;
+        this.launcherPresetService = launcherPresetService;
+        this.launcherCallbackService = launcherCallbackService;
         this.automationServerService = automationServerService;
         this.scmAccountService = scmAccountService;
         this.jobsService = jobsService;
@@ -205,6 +216,23 @@ public class LauncherService {
         }
 
         return jobParameters;
+    }
+
+    @Transactional()
+    public String buildLauncherJobByPresetRef(Long id, String ref, LauncherWebHookPayload payload, User user) throws IOException {
+        Launcher launcher = getLauncherById(id);
+        if (launcher == null) {
+            throw new ResourceNotFoundException(LAUNCHER_NOT_FOUND, String.format("Unable to locate launcher with id '%d'", id));
+        }
+
+        LauncherPreset preset = launcherPresetService.retrieveByRef(ref);
+        launcher.setModel(preset.getParams());
+        String ciRunId = buildLauncherJob(launcher, user);
+
+        LauncherCallback callback = new LauncherCallback(ciRunId, payload.getCallbackUrl(), preset);
+        launcherCallbackService.create(callback);
+
+        return callback.getRef();
     }
 
     @Transactional(readOnly = true)

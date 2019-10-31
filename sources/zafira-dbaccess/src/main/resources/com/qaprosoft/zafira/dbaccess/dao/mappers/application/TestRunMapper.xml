@@ -243,7 +243,19 @@
     </select>
 
     <sql id="filterWhereClause">
-        ${filterSearchCriteria.filterWhereClause}
+        <if test="null != filterSearchCriteria">
+            ${filterSearchCriteria.filterWhereClause}
+        </if>
+        <if test="null != projects">
+            <foreach item="project" index="index" collection="projects"
+                     open="AND (" separator=" OR " close=")">
+                <if test="null != project.id">
+                    <![CDATA[
+							TR.PROJECT_ID = #{project.id}
+						]]>
+                </if>
+            </foreach>
+        </if>
     </sql>
 
     <sql id="testRunSearchWhereClause">

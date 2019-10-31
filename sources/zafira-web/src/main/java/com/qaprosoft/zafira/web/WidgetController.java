@@ -180,15 +180,7 @@ public class WidgetController extends AbstractController {
     }
 
     private String formatProjects(List<String> projects) {
-        String result = "%";
-        if (!CollectionUtils.isEmpty(projects)) {
-            StringBuilder sb = new StringBuilder();
-            for (String project : projects) {
-                sb.append(project).append(",");
-            }
-            result = StringUtils.removeEnd(sb.toString(), ",");
-        }
-        return result;
+        return !CollectionUtils.isEmpty(projects) ? String.join(",", projects) : "%";
     }
 
     @ApiResponseStatuses

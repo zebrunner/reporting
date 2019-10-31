@@ -40,7 +40,12 @@ public abstract class AbstractIntegrationService<T extends IntegrationGroupAdapt
     }
 
     public boolean isEnabledAndConnected(Long integrationId) {
-        IntegrationAdapter adapter = (IntegrationAdapter) getAdapterByIntegrationId(integrationId);
+        Optional<IntegrationAdapter> maybeAdapter = getAdapter(integrationId);
+        if (maybeAdapter.isEmpty()) {
+            return false;
+        }
+
+        IntegrationAdapter adapter = maybeAdapter.get();
         // adapter presence is already verified
         Long adapterIntegrationId = adapter.getIntegrationId();
         // we now use proper integration id since it can be null prior to this point, but never for adapter
@@ -51,15 +56,23 @@ public abstract class AbstractIntegrationService<T extends IntegrationGroupAdapt
 
     @SuppressWarnings("unchecked")
     public T getAdapterByIntegrationId(Long integrationId) {
+        Optional<IntegrationAdapter> maybeAdapter = getAdapter(integrationId);
+        if (integrationId == null) {
+            return (T) maybeAdapter.orElseThrow(() -> new IntegrationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND_BY_TYPE, defaultType)));
+        } else {
+            return (T) maybeAdapter.orElseThrow(() -> new IntegrationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND, integrationId)));
+        }
+    }
+
+    private Optional<IntegrationAdapter> getAdapter(Long integrationId) {
         Optional<IntegrationAdapter> maybeAdapter;
         if (integrationId == null) {
             // can be null in case of legacy client call - use default adapter
             maybeAdapter = integrationAdapterProxy.getDefaultAdapter(defaultType);
-            return (T) maybeAdapter.orElseThrow(() -> new IntegrationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND_BY_TYPE, defaultType)));
         } else {
             maybeAdapter = IntegrationAdapterProxy.getAdapter(integrationId);
-            return (T) maybeAdapter.orElseThrow(() -> new IntegrationException(String.format(ERR_MSG_ADAPTER_NOT_FOUND, integrationId)));
         }
+        return maybeAdapter;
     }
 
     @SuppressWarnings("unchecked")
@@ -70,5 +83,9 @@ public abstract class AbstractIntegrationService<T extends IntegrationGroupAdapt
 
     public IntegrationAdapterProxy getIntegrationAdapterProxy() {
         return integrationAdapterProxy;
+    }
+
+    public String getDefaultType() {
+        return defaultType;
     }
 }
