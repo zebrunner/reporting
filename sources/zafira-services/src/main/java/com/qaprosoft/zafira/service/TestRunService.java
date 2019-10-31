@@ -162,16 +162,19 @@ public class TestRunService {
     @Transactional(readOnly = true)
     public SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc) {
         DateTimeUtil.actualizeSearchCriteriaDate(sc);
-        SearchResult<TestRun> result = new SearchResult<>();
-        result.setPage(sc.getPage());
-        result.setPageSize(sc.getPageSize());
-        result.setSortOrder(sc.getSortOrder());
 
         List<TestRun> testRuns = testRunMapper.searchTestRuns(sc);
+        int count = testRunMapper.getTestRunsSearchCount(sc);
+
         hideJobUrlsIfNeed(testRuns);
-        result.setResults(testRuns);
-        result.setTotalResults(testRunMapper.getTestRunsSearchCount(sc));
-        return result;
+
+        return SearchResult.<TestRun>builder()
+                .page(sc.getPage())
+                .pageSize(sc.getPageSize())
+                .sortOrder(sc.getSortOrder())
+                .results(testRuns)
+                .totalResults(count)
+                .build();
     }
 
     @Transactional(readOnly = true)

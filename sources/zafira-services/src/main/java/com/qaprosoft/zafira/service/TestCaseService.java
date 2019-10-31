@@ -29,6 +29,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -108,12 +109,16 @@ public class TestCaseService {
     @Transactional(readOnly = true)
     public SearchResult<TestCase> searchTestCases(TestCaseSearchCriteria sc) {
         DateTimeUtil.actualizeSearchCriteriaDate(sc);
-        SearchResult<TestCase> results = new SearchResult<>();
-        results.setPage(sc.getPage());
-        results.setPageSize(sc.getPageSize());
-        results.setSortOrder(sc.getSortOrder());
-        results.setResults(testCaseMapper.searchTestCases(sc));
-        results.setTotalResults(testCaseMapper.getTestCasesSearchCount(sc));
-        return results;
+
+        List<TestCase> testCases = testCaseMapper.searchTestCases(sc);
+        int count = testCaseMapper.getTestCasesSearchCount(sc);
+
+        return SearchResult.<TestCase>builder()
+                .page(sc.getPage())
+                .pageSize(sc.getPageSize())
+                .sortOrder(sc.getSortOrder())
+                .results(testCases)
+                .totalResults(count)
+                .build();
     }
 }

@@ -384,15 +384,15 @@ public class TestService {
     public SearchResult<Test> searchTests(TestSearchCriteria sc) {
         List<Test> tests = testMapper.searchTests(sc);
         tests.forEach(test -> test.setArtifacts(new TreeSet<>(test.getArtifacts())));
-        int testsCount = testMapper.getTestsSearchCount(sc);
+        int count = testMapper.getTestsSearchCount(sc);
 
-        SearchResult<Test> results = new SearchResult<>();
-        results.setPage(sc.getPage());
-        results.setPageSize(sc.getPageSize());
-        results.setSortOrder(sc.getSortOrder());
-        results.setResults(tests);
-        results.setTotalResults(testsCount);
-        return results;
+        return SearchResult.<Test>builder()
+                .page(sc.getPage())
+                .pageSize(sc.getPageSize())
+                .sortOrder(sc.getSortOrder())
+                .results(tests)
+                .totalResults(count)
+                .build();
     }
 
     @Transactional(rollbackFor = Exception.class)

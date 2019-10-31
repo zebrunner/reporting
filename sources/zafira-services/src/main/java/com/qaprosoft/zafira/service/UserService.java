@@ -43,6 +43,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 
+import java.util.List;
+
 import static com.qaprosoft.zafira.models.db.User.Source.INTERNAL;
 
 @Service
@@ -244,13 +246,17 @@ public class UserService implements TenancyDbInitial {
     @Transactional(readOnly = true)
     public SearchResult<User> searchUsers(UserSearchCriteria sc, Boolean publicDetails) {
         DateTimeUtil.actualizeSearchCriteriaDate(sc);
-        SearchResult<User> results = new SearchResult<>();
-        results.setPage(sc.getPage());
-        results.setPageSize(sc.getPageSize());
-        results.setSortOrder(sc.getSortOrder());
-        results.setResults(userMapper.searchUsers(sc, publicDetails));
-        results.setTotalResults(userMapper.getUserSearchCount(sc, publicDetails));
-        return results;
+
+        List<User> users = userMapper.searchUsers(sc, publicDetails);
+        int count = userMapper.getUserSearchCount(sc, publicDetails);
+
+        return SearchResult.<User>builder()
+                .page(sc.getPage())
+                .pageSize(sc.getPageSize())
+                .sortOrder(sc.getSortOrder())
+                .results(users)
+                .totalResults(count)
+                .build();
     }
 
     public String getAdminUsername() {
