@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.web;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.FilterSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
@@ -29,14 +28,11 @@ import com.qaprosoft.zafira.models.dto.EmailType;
 import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
 import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.TestType;
-import com.qaprosoft.zafira.models.dto.filter.FilterType;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
-import com.qaprosoft.zafira.service.FilterService;
 import com.qaprosoft.zafira.service.JobsService;
 import com.qaprosoft.zafira.service.LauncherCallbackService;
-import com.qaprosoft.zafira.service.ProjectService;
 import com.qaprosoft.zafira.service.TestRunService;
 import com.qaprosoft.zafira.service.TestService;
 import com.qaprosoft.zafira.service.TestSuiteService;
@@ -70,14 +66,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.qaprosoft.zafira.service.FilterService.Template.TEST_RUN_TEMPLATE;
+import static com.qaprosoft.zafira.models.db.Status.IN_PROGRESS;
+import static com.qaprosoft.zafira.models.db.Status.QUEUED;
 import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_RUN_NOT_FOUND;
 
 @Api("Test runs API")
@@ -86,7 +81,6 @@ import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.R
 public class TestRunController extends AbstractController {
 
     private static final String ERR_MSG_TEST_RUN_NOT_FOUND = "Test run with id %s can not be found";
-    private static final String ERR_MSG_TEST_RUN_NOT_FOUND_BY_CI_RUN_ID = "Test run for CI run id %s can not be found";
 
     @Autowired
     private Mapper mapper;
@@ -101,16 +95,10 @@ public class TestRunController extends AbstractController {
     private TestRunSpreadsheetService testRunSpreadsheetService;
 
     @Autowired
-    private FilterService filterService;
-
-    @Autowired
     private TestService testService;
 
     @Autowired
     private JobsService jobsService;
-
-    @Autowired
-    private ProjectService projectService;
 
     @Autowired
     private UserService userService;
@@ -132,15 +120,16 @@ public class TestRunController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping()
     public TestRunType startTestRun(
-            @RequestBody @Valid TestRunType tr,
+            @RequestBody @Valid TestRunType testRunType,
             @RequestHeader(value = "Project", required = false) String project
     ) {
-        TestRun testRun = mapper.map(tr, TestRun.class);
-        testRun.setProject(projectService.getProjectByName(project));
+        TestRun testRun = mapper.map(testRunType, TestRun.class);
+        testRun.setProject(new Project(project));
         testRun = testRunService.startTestRun(testRun);
-        TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
-        websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunFull));
+
+        websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRun));
         websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
+
         return mapper.map(testRun, TestRunType.class);
     }
 
@@ -148,17 +137,13 @@ public class TestRunController extends AbstractController {
     @ApiOperation(value = "Update test run config", nickname = "updateTestRun", httpMethod = "PUT", response = TestRunType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PutMapping()
-    public TestRunType updateTestRun(@RequestBody TestRunType tr) {
-        TestRun testRun = testRunService.getTestRunById(tr.getId());
-        if (testRun == null && !StringUtils.isEmpty(tr.getConfigXML())) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, tr.getId());
-        }
-        testRun.setConfigXML(tr.getConfigXML());
-        testRunService.initTestRunWithXml(testRun);
-        testRunService.updateTestRun(testRun);
-        TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
-        websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunFull));
+    public TestRunType updateTestRun(@Valid @RequestBody TestRunType testRunType) {
+        TestRun testRun = mapper.map(testRunType, TestRun.class);
+        testRunService.updateTestRunWithXml(testRun);
+
+        websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRun));
         websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
+
         return mapper.map(testRun, TestRunType.class);
     }
 
@@ -174,6 +159,7 @@ public class TestRunController extends AbstractController {
 
         websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(id)));
         websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunFull));
+
         return mapper.map(testRun, TestRunType.class);
     }
 
@@ -186,22 +172,19 @@ public class TestRunController extends AbstractController {
             @ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
             @ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId,
             @RequestBody(required = false) CommentType abortCause
-    ) throws UnsupportedEncodingException {
-        TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
-        if (testRun == null) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
-        }
-        String abortCauseDecoded = null;
-        if (abortCause != null && abortCause.getComment() != null) {
-            abortCauseDecoded = URLDecoder.decode(abortCause.getComment(), "UTF-8");
-        }
-        Status testRunStatus = testRun.getStatus();
-        if (Status.IN_PROGRESS.equals(testRunStatus) || Status.QUEUED.equals(testRunStatus)) {
-            testRun = testRunService.abortTestRun(testRun, abortCauseDecoded);
+    ) {
+        TestRun testRun = new TestRun();
+        testRun.setId(id);
+        testRun.setCiRunId(ciRunId);
+
+        testRun = testRunService.abortTestRun(testRun, abortCause);
+
+        if (List.of(IN_PROGRESS, QUEUED).contains(testRun.getStatus())) {
             List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
             tests.stream()
                  .filter(test -> Status.ABORTED.equals(test.getStatus()))
                  .forEach(test -> websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test)));
+
             websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
             websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
         }
@@ -225,10 +208,7 @@ public class TestRunController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/{id}")
     public TestRunType getTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable("id") long id) {
-        TestRun testRun = testRunService.getTestRunById(id);
-        if (testRun == null) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
-        }
+        TestRun testRun = testRunService.getNotNullTestRunById(id);
         return mapper.map(testRun, TestRunType.class);
     }
 
@@ -241,20 +221,7 @@ public class TestRunController extends AbstractController {
             @RequestParam(value = "projectNames", required = false) List<String> projectNames,
             @RequestParam(value = "filterId", required = false) Long filterId
     ) {
-        if (filterId != null) {
-            FilterType filterType = mapper.map(filterService.getFilterById(filterId), FilterType.class);
-            if (filterType != null) {
-                String whereClause = filterService.getTemplate(filterType, TEST_RUN_TEMPLATE);
-                sc.setFilterSearchCriteria(new FilterSearchCriteria(whereClause));
-            }
-        }
-        if (projectNames != null) {
-            List<Project> projects = projectNames.stream()
-                                                 .map(name -> projectService.getProjectByName(name))
-                                                 .collect(Collectors.toList());
-            sc.setProjects(projects);
-        }
-        return testRunService.searchTestRuns(sc);
+        return testRunService.search(sc, projectNames, filterId);
     }
 
     @ApiResponseStatuses
@@ -277,10 +244,7 @@ public class TestRunController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping()
     public TestRunType getTestRunByCiRunId(@RequestParam("ciRunId") String ciRunId) {
-        TestRun testRun = testRunService.getTestRunByCiRunId(ciRunId);
-        if (testRun == null) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND_BY_CI_RUN_ID, ciRunId);
-        }
+        TestRun testRun = testRunService.getNotNullTestRunByCiRunId(ciRunId);
         return mapper.map(testRun, TestRunType.class);
     }
 
@@ -485,11 +449,10 @@ public class TestRunController extends AbstractController {
             @RequestParam(value = "id", required = false) Long id,
             @RequestParam(value = "ciRunId", required = false) String ciRunId
     ) {
-        TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id) : testRunService.getTestRunByCiRunIdFull(ciRunId);
-        if (testRun == null) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
-        }
-        return automationServerService.getBuildConsoleOutput(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
+        TestRun testRun = new TestRun();
+        testRun.setId(id);
+        testRun.setCiRunId(ciRunId);
+        return testRunService.getBuildConsoleOutput(testRun, count, fullCount);
     }
 
     private String[] getRecipients(String recipients) {
