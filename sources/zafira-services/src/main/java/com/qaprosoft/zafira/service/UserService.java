@@ -25,6 +25,7 @@ import com.qaprosoft.zafira.models.db.User.Status;
 import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
 import com.qaprosoft.zafira.service.exception.ForbiddenOperationException;
 import com.qaprosoft.zafira.service.exception.UserNotFoundException;
+import com.qaprosoft.zafira.service.integration.tool.impl.StorageProviderService;
 import com.qaprosoft.zafira.service.management.TenancyService;
 import com.qaprosoft.zafira.service.util.DateTimeUtil;
 import com.qaprosoft.zafira.service.util.TenancyDbInitial;
@@ -79,6 +80,9 @@ public class UserService implements TenancyDbInitial {
     @Autowired
     private TenancyService tenancyService;
 
+    @Autowired
+    private StorageProviderService storageProviderService;
+
     @PostConstruct
     public void postConstruct() {
         tenancyService.iterateItems(this::initDb);
@@ -111,6 +115,14 @@ public class UserService implements TenancyDbInitial {
     @Transactional(readOnly = true)
     public User getUserById(long id) {
         return userMapper.getUserById(id);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteProfilePhoto(Long userId) {
+        User user = getUserById(userId);
+        storageProviderService.removeFile(user.getPhotoURL());
+        user.setPhotoURL(StringUtils.EMPTY);
+        updateUser(user);
     }
 
     @Transactional(readOnly = true)

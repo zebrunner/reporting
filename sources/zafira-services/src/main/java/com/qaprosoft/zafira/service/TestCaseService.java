@@ -21,14 +21,15 @@ import com.google.common.cache.LoadingCache;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestCaseMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestCaseSearchCriteria;
+import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestCase;
 import com.qaprosoft.zafira.service.util.DateTimeUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -37,13 +38,19 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 public class TestCaseService {
-    @Autowired
-    private TestCaseMapper testCaseMapper;
+
+    private final TestCaseMapper testCaseMapper;
+    private final ProjectService projectService;
+
+    public TestCaseService(TestCaseMapper testCaseMapper, ProjectService projectService) {
+        this.testCaseMapper = testCaseMapper;
+        this.projectService = projectService;
+    }
 
     private static final LoadingCache<String, Lock> updateLocks = CacheBuilder.newBuilder()
-            .maximumSize(100000)
-            .expireAfterWrite(15, TimeUnit.SECONDS)
-            .build(
+                                                                              .maximumSize(100000)
+                                                                              .expireAfterWrite(15, TimeUnit.SECONDS)
+                                                                              .build(
                     new CacheLoader<>() {
                         public Lock load(String key) {
                             return new ReentrantLock();
@@ -76,6 +83,13 @@ public class TestCaseService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public TestCase createOrUpdateCase(TestCase testCase, String projectName) throws ExecutionException {
+        Project project = projectService.getProjectByName(projectName);
+        testCase.setProject(project);
+        return createOrUpdateCase(testCase);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public TestCase createOrUpdateCase(TestCase newTestCase) throws ExecutionException {
         final String CLASS_METHOD = newTestCase.getTestClass() + "." + newTestCase.getTestMethod();
         try {
@@ -95,6 +109,14 @@ public class TestCaseService {
             updateLocks.get(CLASS_METHOD).unlock();
         }
         return newTestCase;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public TestCase[] createOrUpdateCases(TestCase[] testCases, String projectName) throws ExecutionException {
+        Project project = projectService.getProjectByName(projectName);
+        Arrays.stream(testCases)
+              .forEach(testCase -> testCase.setProject(project));
+        return createOrUpdateCases(testCases);
     }
 
     @Transactional(rollbackFor = Exception.class)

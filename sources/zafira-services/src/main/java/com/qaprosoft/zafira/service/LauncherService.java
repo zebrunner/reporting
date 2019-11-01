@@ -74,6 +74,7 @@ public class LauncherService {
     private final CryptoService cryptoService;
     private final URLResolver urlResolver;
     private final IntegrationService integrationService;
+    private final UserService userService;
 
     public LauncherService(
             LauncherMapper launcherMapper,
@@ -86,7 +87,9 @@ public class LauncherService {
             GitHubService gitHubService,
             TestAutomationToolService testAutomationToolService,
             CryptoService cryptoService,
-            URLResolver urlResolver, IntegrationService integrationService
+            URLResolver urlResolver,
+            IntegrationService integrationService,
+            UserService userService
     ) {
         this.launcherMapper = launcherMapper;
         this.launcherPresetService = launcherPresetService;
@@ -100,10 +103,12 @@ public class LauncherService {
         this.cryptoService = cryptoService;
         this.urlResolver = urlResolver;
         this.integrationService = integrationService;
+        this.userService = userService;
     }
 
     @Transactional(rollbackFor = Exception.class)
     public Launcher createLauncher(Launcher launcher, User owner, Long automationServerId) {
+        launcher.setAutoScan(false);
         if (automationServerService.isEnabledAndConnected(automationServerId)) {
             String launcherJobUrl = automationServerService.buildLauncherJobUrl(automationServerId);
             // Checks whether job is present om Jenkins. If it is not, exception will be thrown.
@@ -164,7 +169,8 @@ public class LauncherService {
     }
 
     @Transactional(readOnly = true)
-    public String buildLauncherJob(Launcher launcher, User user) throws IOException {
+    public String buildLauncherJob(Launcher launcher, Long userId) throws IOException {
+        User user = userService.getNotNullUserById(userId);
         Long scmAccountId = launcher.getScmAccount().getId();
         ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
         Job job = launcher.getJob();
@@ -219,7 +225,7 @@ public class LauncherService {
     }
 
     @Transactional()
-    public String buildLauncherJobByPresetRef(Long id, String ref, LauncherWebHookPayload payload, User user) throws IOException {
+    public String buildLauncherJobByPresetRef(Long id, String ref, LauncherWebHookPayload payload, Long userId) throws IOException {
         Launcher launcher = getLauncherById(id);
         if (launcher == null) {
             throw new ResourceNotFoundException(LAUNCHER_NOT_FOUND, String.format("Unable to locate launcher with id '%d'", id));
@@ -227,7 +233,7 @@ public class LauncherService {
 
         LauncherPreset preset = launcherPresetService.retrieveByRef(ref);
         launcher.setModel(preset.getParams());
-        String ciRunId = buildLauncherJob(launcher, user);
+        String ciRunId = buildLauncherJob(launcher, userId);
 
         LauncherCallback callback = new LauncherCallback(ciRunId, payload.getCallbackUrl(), preset);
         launcherCallbackService.create(callback);
@@ -236,8 +242,9 @@ public class LauncherService {
     }
 
     @Transactional(readOnly = true)
-    public JobResult buildScannerJob(User user, String branch, long scmAccountId, boolean rescan, Long automationServerId) {
+    public JobResult buildScannerJob(Long userId, String branch, long scmAccountId, boolean rescan, Long automationServerId) {
         ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
+        User user = userService.getNotNullUserById(userId);
         Map<String, String> jobParameters = buildScannerJobParametersMap(automationServerId, user, branch, scmAccount);
         return automationServerService.buildScannerJob(scmAccount.getRepositoryName(), jobParameters, rescan, automationServerId);
     }

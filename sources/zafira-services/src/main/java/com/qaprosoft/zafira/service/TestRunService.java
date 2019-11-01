@@ -31,6 +31,7 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
+import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.models.dto.CommentType;
 import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
@@ -41,9 +42,12 @@ import com.qaprosoft.zafira.service.exception.IntegrationException;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import com.qaprosoft.zafira.service.integration.IntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.impl.AutomationServerService;
+import com.qaprosoft.zafira.service.integration.tool.impl.google.models.TestRunSpreadsheetService;
 import com.qaprosoft.zafira.service.util.DateTimeUtil;
+import com.qaprosoft.zafira.service.util.EmailUtils;
 import com.qaprosoft.zafira.service.util.FreemarkerUtil;
 import com.qaprosoft.zafira.service.util.URLResolver;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +79,7 @@ import static com.qaprosoft.zafira.models.db.Status.PASSED;
 import static com.qaprosoft.zafira.models.db.Status.QUEUED;
 import static com.qaprosoft.zafira.models.db.Status.SKIPPED;
 import static com.qaprosoft.zafira.service.FilterService.Template.TEST_RUN_TEMPLATE;
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.ILLEGAL_TEST_RUN_ACTION_BY_ID;
 import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.TEST_RUN_CAN_NOT_BE_STARTED;
 import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_RUN_NOT_FOUND;
 import static com.qaprosoft.zafira.service.util.XmlConfigurationUtil.readArguments;
@@ -91,6 +96,7 @@ public class TestRunService {
     private static final String ERR_MSG_INVALID_TEST_RUN_INITIATED_BY_HUMAN = "Username is not specified for test run initiated by HUMAN";
     private static final String ERR_MSG_INVALID_TEST_RUN_INITIATED_BY_UPSTREAM_JOB = "Upstream job id and upstream build number are not specified for test run initiated by UPSTREAM_JOB";
     private static final String ERR_MSG_TEST_RUN_NOT_FOUND_BY_CI_RUN_ID = "Test run for CI run id %s can not be found";
+    private static final String ERR_MSG_TEST_RUN_ANY_ID_REQUIRED = "Cannot execute an action without test run id or ciRunId";
 
     @Autowired
     private TestRunMapper testRunMapper;
@@ -130,6 +136,15 @@ public class TestRunService {
 
     @Autowired
     private FilterService filterService;
+
+    @Autowired
+    private TestRunSpreadsheetService testRunSpreadsheetService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private TestSuiteService testSuiteService;
 
     public enum FailureCause {
         UNRECOGNIZED_FAILURE("UNRECOGNIZED FAILURE"),
@@ -292,25 +307,30 @@ public class TestRunService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TestRun queueTestRun(QueueTestRunParamsType testRunParams, User user) {
+    public TestRun queueTestRun(QueueTestRunParamsType testRunParams, Long userId) {
         // Check if testRun with provided ci_run_id exists in DB (mostly for queued and aborted without execution)
-        String ciRunId = testRunParams.getCiRunId();
-        TestRun testRun = getTestRunByCiRunId(ciRunId);
+        TestRun testRun = new TestRun();
+        Job job = jobsService.getJobByJobURL(testRunParams.getJobUrl());
+        if (job != null) {
+            String ciRunId = testRunParams.getCiRunId();
+            testRun = getTestRunByCiRunId(ciRunId);
 
-        if (testRun == null || QUEUED.equals(testRun.getStatus())) {
-            testRun = getLatestJobTestRunByBranchAndJobURL(testRunParams.getBranch(), testRunParams.getJobUrl());
-            if (testRun != null) {
-                Long latestTestRunId = testRun.getId();
-                testRun = createQueuedTestRun(testRun, testRunParams, user);
-                final long testRunId = testRun.getId();
-                List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
-                tests.stream()
-                     .filter(test -> !QUEUED.equals(test.getStatus()))
-                     .forEach(test -> testService.createQueuedTest(test, testRunId));
+            if (testRun == null || QUEUED.equals(testRun.getStatus())) {
+                testRun = getLatestJobTestRunByBranchAndJobURL(testRunParams.getBranch(), testRunParams.getJobUrl());
+                if (testRun != null) {
+                    Long latestTestRunId = testRun.getId();
+                    User user = userService.getUserById(userId);
+                    testRun = createQueuedTestRun(testRun, testRunParams, user);
+                    final long testRunId = testRun.getId();
+                    List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
+                    tests.stream()
+                         .filter(test -> !QUEUED.equals(test.getStatus()))
+                         .forEach(test -> testService.createQueuedTest(test, testRunId));
+                }
+            } else {
+                setMinimalQueuedTestRunData(testRun, testRunParams);
+                updateTestRun(testRun);
             }
-        } else {
-            setMinimalQueuedTestRunData(testRun, testRunParams);
-            updateTestRun(testRun);
         }
         return testRun;
     }
@@ -483,6 +503,62 @@ public class TestRunService {
         return testRun;
     }
 
+    @Transactional(readOnly = true)
+    public void abortTestRunJob(TestRun testRun) {
+        Long id = testRun.getId();
+        if (id != null) {
+            testRun = getTestRunByIdFull(id);
+        } else if (testRun.getCiRunId() != null) {
+            testRun = getTestRunByCiRunIdFull(testRun.getCiRunId());
+        } else {
+            throw new IllegalOperationException(ILLEGAL_TEST_RUN_ACTION_BY_ID, ERR_MSG_TEST_RUN_ANY_ID_REQUIRED);
+        }
+        if (testRun == null) {
+            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
+        }
+        automationServerService.abortJob(testRun.getJob(), testRun.getBuildNumber());
+    }
+
+    @Transactional(readOnly = true)
+    public void buildTestRunJob(Long id, Map<String, String> jobParameters) {
+        TestRun testRun = getTestRunByIdFull(id);
+        if (testRun == null) {
+            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
+        }
+        automationServerService.buildJob(testRun.getJob(), jobParameters);
+    }
+
+    @Transactional(readOnly = true)
+    public List<BuildParameterType> getTestRunJobParameters(Long id) {
+        TestRun testRun = getTestRunByIdFull(id);
+        if (testRun == null) {
+            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
+        }
+        return automationServerService.getBuildParameters(testRun.getJob(), testRun.getBuildNumber());
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void rerunTestRun(Long id, boolean rerunFailures) {
+        TestRun testRun = getTestRunByIdFull(id);
+        if (testRun == null) {
+            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
+        }
+        testRun.setComments(null);
+        testRun.setReviewed(false);
+        updateTestRun(testRun);
+        automationServerService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
+    }
+
+    @Transactional(readOnly = true)
+    public void debugTestRun(Long id) {
+        TestRun testRun = getTestRunByIdFull(id);
+        if (testRun == null) {
+            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
+        }
+
+        automationServerService.debugJob(testRun.getJob(), testRun.getBuildNumber());
+    }
+
     private boolean hasValidTestRunStatusToAbort(Status status, String abortCause) {
         return IN_PROGRESS.equals(status) || QUEUED.equals(status) && isBuildFailure(abortCause);
     }
@@ -649,6 +725,21 @@ public class TestRunService {
         return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
     }
 
+    @Transactional(readOnly = true)
+    public String sendTestRunResultsEmailFailure(String id, boolean toSuiteOwner, boolean toSuiteRunner, String[] recipients) {
+        if (toSuiteOwner) {
+            Long testSuiteId = getTestRunByCiRunIdFull(id).getTestSuite().getId();
+            String suiteOwnerEmail = testSuiteService.getTestSuiteByIdFull(testSuiteId).getUser().getEmail();
+            ArrayUtils.add(recipients, suiteOwnerEmail);
+        }
+        if (toSuiteRunner) {
+            String suiteRunnerEmail = getTestRunByCiRunIdFull(id).getUser().getEmail();
+            ArrayUtils.add(recipients, suiteRunnerEmail);
+        }
+
+        return sendTestRunResultsEmail(id, false, true, recipients);
+    }
+
     private String sendTestRunResultsNotification(final TestRun testRun,
                                                   final List<Test> tests,
                                                   boolean showOnlyFailures,
@@ -695,6 +786,17 @@ public class TestRunService {
         return result;
     }
 
+    @Transactional(readOnly = true)
+    public String createTestRunResultSpreadsheet(String id, Long principalId, String[] recipients) {
+        TestRun testRun = getTestRunByIdFull(id);
+
+        User user = userService.getUserById(principalId);
+        List<String> recipientsList = Arrays.asList(recipients);
+        recipientsList.add(user.getEmail());
+
+        return testRunSpreadsheetService.createTestRunResultSpreadsheet(testRun, recipientsList.toArray(String[]::new));
+    }
+
     private TestRunResultsEmail buildTestRunResultEmail(TestRun testRun, List<Test> tests) {
         Configuration configuration = readArguments(testRun.getConfigXML());
         // Forward from API to Web
@@ -729,6 +831,7 @@ public class TestRunService {
     public List<String> getPlatforms() {
         return testRunMapper.getPlatforms();
     }
+
 
     private void hideJobUrlsIfNeed(List<TestRun> testRuns) {
         testRuns.stream()

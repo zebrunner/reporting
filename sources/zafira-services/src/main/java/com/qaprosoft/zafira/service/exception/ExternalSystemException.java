@@ -26,7 +26,8 @@ public class ExternalSystemException extends ApplicationException {
     @AllArgsConstructor
     public enum IllegalOperationErrorDetail implements ErrorDetail {
 
-        JIRA_ISSUE_CAN_NOT_BE_FOUND(2150);
+        JIRA_ISSUE_CAN_NOT_BE_FOUND(2150),
+        POSTGRES_VERSION_CAN_NOT_BE_FOUND(2151);
 
         private final Integer code;
         private String messageKey;

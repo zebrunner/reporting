@@ -40,7 +40,8 @@ public class IllegalOperationException extends ApplicationException {
         INVITATION_CAN_NOT_BE_CREATED(2065),
         ILLEGAL_FILTER_ACCESS(2066),
         TEST_RUN_CAN_NOT_BE_STARTED(2067),
-        LAUNCHER_PRESET_CAN_NOT_BE_CREATED(2068);
+        LAUNCHER_PRESET_CAN_NOT_BE_CREATED(2068),
+        ILLEGAL_TEST_RUN_ACTION_BY_ID(2069);
 
         private final Integer code;
         private String messageKey;

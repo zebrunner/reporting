@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.DASHBOARD_CAN_NOT_BE_CREATED;
 import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.DASHBOARD_NOT_FOUND;
@@ -128,6 +129,13 @@ public class DashboardService {
     public Widget updateDashboardWidget(Long dashboardId, Widget widget) {
         dashboardMapper.updateDashboardWidget(dashboardId, widget);
         return widget;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public List<Widget> batchUpdateDashboardWidgets(Long dashboardId, List<Widget> widgets) {
+        return widgets.stream()
+                      .map(widget -> updateDashboardWidget(dashboardId, widget))
+                      .collect(Collectors.toList());
     }
 
     @Transactional(rollbackFor = Exception.class)

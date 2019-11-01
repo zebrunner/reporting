@@ -18,7 +18,9 @@ package com.qaprosoft.zafira.models.db;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
@@ -27,6 +29,7 @@ import java.util.Map;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
 public class TestRun extends AbstractEntity {
     private static final long serialVersionUID = -1847933012610222160L;
@@ -70,6 +73,12 @@ public class TestRun extends AbstractEntity {
     private Integer aborted;
     private Integer queued;
     private boolean reviewed;
+
+    @Builder
+    public TestRun(Long id, String ciRunId) {
+        super(id);
+        this.ciRunId = ciRunId;
+    }
 
     public String getName(Map<String, String> configuration) {
         this.configuration = configuration;
