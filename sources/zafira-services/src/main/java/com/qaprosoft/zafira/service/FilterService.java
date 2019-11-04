@@ -17,7 +17,6 @@ package com.qaprosoft.zafira.service;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.FilterMapper;
 import com.qaprosoft.zafira.models.db.Filter;
-import com.qaprosoft.zafira.models.dto.filter.FilterType;
 import com.qaprosoft.zafira.models.dto.filter.StoredSubject;
 import com.qaprosoft.zafira.models.dto.filter.Subject;
 import com.qaprosoft.zafira.service.exception.IllegalOperationException;
@@ -113,7 +112,7 @@ public class FilterService {
         return storedSubject.getSubjectByName(name);
     }
 
-    public String getTemplate(FilterType filter, Template template) {
+    public String getTemplate(Filter filter, Template template) {
         return freemarkerUtil.getFreeMarkerTemplateContent(template.getPath(), filter);
     }
 

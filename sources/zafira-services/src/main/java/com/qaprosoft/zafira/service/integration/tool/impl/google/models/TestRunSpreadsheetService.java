@@ -30,7 +30,6 @@ import com.qaprosoft.zafira.service.util.DateTimeUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -46,23 +45,20 @@ import static com.qaprosoft.zafira.service.util.XmlConfigurationUtil.getConfigVa
 import static com.qaprosoft.zafira.service.util.XmlConfigurationUtil.isConfigValueIsEmpty;
 
 @Service
-public class
-TestRunSpreadsheetService {
+public class TestRunSpreadsheetService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestRunSpreadsheetService.class);
 
     private static final String TEST_RUN_INFO_SHEET_NAME = "INFO";
-
     private static final String TEST_RUN_RESULTS_SHEET_NAME = "RESULT";
 
-    @Autowired
-    private GoogleService googleService;
+    private final GoogleService googleService;
+    private final TestService testService;
 
-    @Autowired
-    private TestService testService;
-
-    @Autowired
-    private TestRunService testRunService;
+    public TestRunSpreadsheetService(GoogleService googleService, TestService testService) {
+        this.googleService = googleService;
+        this.testService = testService;
+    }
 
     public String createTestRunResultSpreadsheet(TestRun testRun, String... accessRecipients) {
         String result = null;

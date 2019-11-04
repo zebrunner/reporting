@@ -97,6 +97,9 @@ public class TestService {
     @Autowired
     private TestRunStatisticsService testRunStatisticsService;
 
+    @Autowired
+    private TestMetricService testMetricService;
+
     @Transactional(rollbackFor = Exception.class)
     public Test startTest(Test test, List<String> jiraIds, String configXML) {
 
@@ -198,7 +201,7 @@ public class TestService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Test finishTest(Test test, String configXML) {
+    public Test finishTest(Test test, String configXML, Map<String, Long> testMetrics) {
         Test existingTest = getNotNullTestById(test.getId());
 
         Long testCaseId = existingTest.getTestCaseId();
@@ -262,6 +265,8 @@ public class TestService {
             testMapper.updateTest(existingTest);
             testRunStatisticsService.updateStatistics(existingTest.getTestRunId(), existingTest.getStatus());
         }
+        deleteQueuedTest(test);
+        testMetricService.createTestMetrics(test.getId(), testMetrics);
         return existingTest;
     }
 
@@ -363,6 +368,15 @@ public class TestService {
                 testMapper.getTestsByTestRunCiRunId(testRunId);
     }
 
+    public List<WorkItem> getTestCaseWorkItems(Long testId, Type type) {
+        List<WorkItem> workItems = new ArrayList<>();
+        Test test = getTestById(testId);
+        if (test != null) {
+            workItems = workItemService.getWorkItemsByTestCaseIdAndType(test.getTestCaseId(), type);
+        }
+        return workItems;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public Test updateTest(Test test) {
         validateTestFieldsLength(test);
@@ -384,15 +398,15 @@ public class TestService {
     public SearchResult<Test> searchTests(TestSearchCriteria sc) {
         List<Test> tests = testMapper.searchTests(sc);
         tests.forEach(test -> test.setArtifacts(new TreeSet<>(test.getArtifacts())));
-        int testsCount = testMapper.getTestsSearchCount(sc);
+        int count = testMapper.getTestsSearchCount(sc);
 
-        SearchResult<Test> results = new SearchResult<>();
-        results.setPage(sc.getPage());
-        results.setPageSize(sc.getPageSize());
-        results.setSortOrder(sc.getSortOrder());
-        results.setResults(tests);
-        results.setTotalResults(testsCount);
-        return results;
+        return SearchResult.<Test>builder()
+                .page(sc.getPage())
+                .pageSize(sc.getPageSize())
+                .sortOrder(sc.getSortOrder())
+                .results(tests)
+                .totalResults(count)
+                .build();
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -591,6 +605,27 @@ public class TestService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteTags(Long testId) {
         testMapper.deleteTags(testId);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public WorkItem updateTestWorkItem(Long testId, WorkItem workItem) {
+        Test test = getTestById(testId);
+        int messageHashcode = getTestMessageHashCode(test.getMessage());
+        workItem.setHashCode(messageHashcode);
+        return workItemService.updateWorkItem(workItem);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteTestWorkItem(Long id, Long workItemId) {
+        Test test = getTestById(id);
+        WorkItem workItem = workItemService.getWorkItemById(workItemId);
+        if (Type.BUG.equals(workItem.getType())) {
+            testRunStatisticsService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_KNOWN_ISSUE);
+            if (test.isBlocker()) {
+                testRunStatisticsService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_BLOCKER);
+            }
+        }
+        deleteTestWorkItemByWorkItemIdAndTest(workItemId, test);
     }
 
     public int getTestMessageHashCode(String message) {

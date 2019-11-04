@@ -16,10 +16,18 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application.search;
 
 import com.qaprosoft.zafira.models.db.Project;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SearchCriteria {
 
     private String query;
@@ -30,59 +38,14 @@ public class SearchCriteria {
     // The very default page size, just not to get NPE'd
     private Integer pageSize = 20;
     private List<Project> projects;
+    private SortOrder sortOrder = SortOrder.ASC;
 
     public enum SortOrder {
         ASC, DESC
     }
 
-    private SortOrder sortOrder = SortOrder.ASC;
-
-    public String getQuery() {
-        return query;
-    }
-
-    public void setQuery(String query) {
-        this.query = query;
-    }
-
-    public String getOrderBy() {
-        return orderBy;
-    }
-
-    public void setOrderBy(String orderBy) {
-        this.orderBy = orderBy;
-    }
-
-    public Integer getPage() {
-        return page;
-    }
-
-    public void setPage(Integer page) {
-        this.page = page;
-    }
-
-    public Integer getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
-    }
-
     public Integer getOffset() {
         return (page - 1) * pageSize;
-    }
-
-    public SortOrder getSortOrder() {
-        return sortOrder;
-    }
-
-    public void setSortOrder(SortOrder sortOrder) {
-        this.sortOrder = sortOrder;
-    }
-
-    public List<Project> getProjects() {
-        return projects;
     }
 
     public void setProjects(List<Project> projects) {

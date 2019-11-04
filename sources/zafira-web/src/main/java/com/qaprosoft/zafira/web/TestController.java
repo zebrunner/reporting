@@ -31,9 +31,7 @@ import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
 import com.qaprosoft.zafira.service.TestArtifactService;
-import com.qaprosoft.zafira.service.TestMetricService;
 import com.qaprosoft.zafira.service.TestRunService;
-import com.qaprosoft.zafira.service.TestRunStatisticsService;
 import com.qaprosoft.zafira.service.TestService;
 import com.qaprosoft.zafira.service.WorkItemService;
 import com.qaprosoft.zafira.service.cache.StatisticsService;
@@ -60,7 +58,6 @@ import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @Api("Tests API")
@@ -78,9 +75,6 @@ public class TestController extends AbstractController {
     private TestArtifactService testArtifactService;
 
     @Autowired
-    private TestMetricService testMetricService;
-
-    @Autowired
     private TestRunService testRunService;
 
     @Autowired
@@ -94,9 +88,6 @@ public class TestController extends AbstractController {
 
     @Autowired
     private StatisticsService statisticsService;
-
-    @Autowired
-    private TestRunStatisticsService testRunStatisticsService;
 
     @ApiResponseStatuses
     @ApiOperation(value = "Start test", nickname = "startTest", httpMethod = "POST", response = TestType.class)
@@ -115,10 +106,10 @@ public class TestController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/{id}/finish")
     public TestType finishTest(@ApiParam(value = "Test ID", required = true) @PathVariable("id") long id, @RequestBody TestType t) {
-        t.setId(id);
-        Test test = testService.finishTest(mapper.map(t, Test.class), t.getConfigXML());
-        testService.deleteQueuedTest(test);
-        testMetricService.createTestMetrics(t.getId(), t.getTestMetrics());
+        Test test = mapper.map(t, Test.class);
+        test.setId(id);
+        test = testService.finishTest(test, t.getConfigXML(), t.getTestMetrics());
+
         TestRunStatistics testRunStatistic = statisticsService.getTestRunStatistic(test.getTestRunId());
         websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(testRunStatistic));
         websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
@@ -132,11 +123,14 @@ public class TestController extends AbstractController {
     @PutMapping()
     public Test updateTest(@RequestBody Test test) {
         Test updatedTest = testService.changeTestStatus(test.getId(), test.getStatus());
+
         TestRunStatistics testRunStatistic = statisticsService.getTestRunStatistic(updatedTest.getTestRunId());
         websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(testRunStatistic));
         websocketTemplate.convertAndSend(getTestsWebsocketPath(updatedTest.getTestRunId()), new TestPush(updatedTest));
+
         TestRun testRun = testRunService.getTestRunById(updatedTest.getTestRunId());
         websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRun));
+
         return updatedTest;
     }
 
@@ -148,7 +142,8 @@ public class TestController extends AbstractController {
             @ApiParam(value = "Work item ID", required = true) @PathVariable("id") long id,
             @RequestBody List<String> workItems
     ) {
-        return mapper.map(testService.createTestWorkItems(id, workItems), TestType.class);
+        Test test = testService.createTestWorkItems(id, workItems);
+        return mapper.map(test, TestType.class);
     }
 
     @ApiResponseStatuses
@@ -173,14 +168,9 @@ public class TestController extends AbstractController {
     @GetMapping("/{id}/workitem/{type}")
     public List<WorkItem> getTestCaseWorkItemsByType(
             @ApiParam(value = "Test ID", required = true) @PathVariable("id") long id,
-            @PathVariable("type") String type
+            @PathVariable("type") Type type
     ) {
-        List<WorkItem> workItems = new ArrayList<>();
-        Test test = testService.getTestById(id);
-        if (test != null) {
-            workItems = workItemService.getWorkItemsByTestCaseIdAndType(test.getTestCaseId(), Type.valueOf(type));
-        }
-        return workItems;
+        return testService.getTestCaseWorkItems(id, type);
     }
 
     @ApiResponseStatuses
@@ -199,10 +189,12 @@ public class TestController extends AbstractController {
         } else {
             workItem = testService.createWorkItem(id, workItem);
         }
+
         Test test = testService.getTestById(id);
         TestRunStatistics testRunStatistic = statisticsService.getTestRunStatistic(test.getTestRunId());
         websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(testRunStatistic));
         websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
+
         TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
         websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRun));
 
@@ -217,9 +209,7 @@ public class TestController extends AbstractController {
             @ApiParam(value = "Test ID", required = true) @PathVariable("id") long id,
             @RequestBody WorkItem workItem
     ) {
-        Test test = testService.getTestById(id);
-        workItem.setHashCode(testService.getTestMessageHashCode(test.getMessage()));
-        return workItemService.updateWorkItem(workItem);
+        return testService.updateTestWorkItem(id, workItem);
     }
 
     @ApiResponseStatuses
@@ -229,20 +219,19 @@ public class TestController extends AbstractController {
     public void deleteTestWorkItem(@PathVariable("workItemId") long workItemId, @PathVariable("testId") long testId) {
         Test test = testService.getTestById(testId);
         WorkItem workItem = workItemService.getWorkItemById(workItemId);
-        if (workItem.getType() == Type.BUG) {
-            testRunStatisticsService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_KNOWN_ISSUE);
-            if (test.isBlocker()) {
-                testRunStatisticsService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_BLOCKER);
-            }
+        testService.deleteTestWorkItem(testId, workItemId);
+
+        if (Type.BUG.equals(workItem.getType())) {
             TestRunStatistics testRunStatistic = statisticsService.getTestRunStatistic(test.getTestRunId());
             websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(testRunStatistic));
             websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
+
             TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
             websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRun));
         }
-        testService.deleteTestWorkItemByWorkItemIdAndTest(workItemId, test);
     }
 
+    // // TODO: 11/1/19 get rid of jira endpoints
     @ApiIgnore
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/jira/{issue}")

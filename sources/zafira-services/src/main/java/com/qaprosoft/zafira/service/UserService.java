@@ -25,6 +25,7 @@ import com.qaprosoft.zafira.models.db.User.Status;
 import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
 import com.qaprosoft.zafira.service.exception.ForbiddenOperationException;
 import com.qaprosoft.zafira.service.exception.UserNotFoundException;
+import com.qaprosoft.zafira.service.integration.tool.impl.StorageProviderService;
 import com.qaprosoft.zafira.service.management.TenancyService;
 import com.qaprosoft.zafira.service.util.DateTimeUtil;
 import com.qaprosoft.zafira.service.util.TenancyDbInitial;
@@ -42,6 +43,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+
+import java.util.List;
 
 import static com.qaprosoft.zafira.models.db.User.Source.INTERNAL;
 
@@ -77,6 +80,9 @@ public class UserService implements TenancyDbInitial {
     @Autowired
     private TenancyService tenancyService;
 
+    @Autowired
+    private StorageProviderService storageProviderService;
+
     @PostConstruct
     public void postConstruct() {
         tenancyService.iterateItems(this::initDb);
@@ -109,6 +115,14 @@ public class UserService implements TenancyDbInitial {
     @Transactional(readOnly = true)
     public User getUserById(long id) {
         return userMapper.getUserById(id);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteProfilePhoto(Long userId) {
+        User user = getUserById(userId);
+        storageProviderService.removeFile(user.getPhotoURL());
+        user.setPhotoURL(StringUtils.EMPTY);
+        updateUser(user);
     }
 
     @Transactional(readOnly = true)
@@ -244,13 +258,17 @@ public class UserService implements TenancyDbInitial {
     @Transactional(readOnly = true)
     public SearchResult<User> searchUsers(UserSearchCriteria sc, Boolean publicDetails) {
         DateTimeUtil.actualizeSearchCriteriaDate(sc);
-        SearchResult<User> results = new SearchResult<>();
-        results.setPage(sc.getPage());
-        results.setPageSize(sc.getPageSize());
-        results.setSortOrder(sc.getSortOrder());
-        results.setResults(userMapper.searchUsers(sc, publicDetails));
-        results.setTotalResults(userMapper.getUserSearchCount(sc, publicDetails));
-        return results;
+
+        List<User> users = userMapper.searchUsers(sc, publicDetails);
+        int count = userMapper.getUserSearchCount(sc, publicDetails);
+
+        return SearchResult.<User>builder()
+                .page(sc.getPage())
+                .pageSize(sc.getPageSize())
+                .sortOrder(sc.getSortOrder())
+                .results(users)
+                .totalResults(count)
+                .build();
     }
 
     public String getAdminUsername() {

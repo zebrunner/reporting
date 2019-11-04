@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.web;
+package com.qaprosoft.zafira.web.security;
 
 import com.qaprosoft.zafira.web.security.PasswordEncoder;
 import com.qaprosoft.zafira.web.security.UserPassAuthService;

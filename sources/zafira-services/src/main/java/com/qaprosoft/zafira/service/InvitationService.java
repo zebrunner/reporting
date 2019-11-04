@@ -195,16 +195,15 @@ public class InvitationService {
         invitations = invitations.stream()
                                  .peek(this::insertInvitationUrl)
                                  .collect(Collectors.toList());
-        Integer totalCount = invitationMapper.searchCount(sc);
+        Integer count = invitationMapper.searchCount(sc);
 
-        SearchResult<Invitation> sr = new SearchResult<>();
-        sr.setPage(sc.getPage());
-        sr.setPageSize(sc.getPageSize());
-        sr.setSortOrder(sc.getSortOrder());
-
-        sr.setResults(invitations);
-        sr.setTotalResults(totalCount);
-        return sr;
+        return SearchResult.<Invitation>builder()
+                .page(sc.getPage())
+                .pageSize(sc.getPageSize())
+                .sortOrder(sc.getSortOrder())
+                .results(invitations)
+                .totalResults(count)
+                .build();
     }
 
     @Transactional(rollbackFor = Exception.class)

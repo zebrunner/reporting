@@ -13,26 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.dbaccess.dao.mysql.application.search;
+package com.qaprosoft.zafira.service.util;
 
-import com.qaprosoft.zafira.models.db.Project;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import org.springframework.util.StringUtils;
 
-import java.util.List;
+public class EmailUtils {
 
-@Getter
-@Setter
-public class SearchResult<T> extends SearchCriteria {
-
-    private final List<T> results;
-    private final Integer totalResults;
-
-    @Builder
-    public SearchResult(String query, String orderBy, Integer page, Integer pageSize, List<Project> projects, SortOrder sortOrder, List<T> results, Integer totalResults) {
-        super(query, orderBy, page, pageSize, projects, sortOrder);
-        this.results = results;
-        this.totalResults = totalResults;
+    public static String[] obtainRecipients(String recipientsLine) {
+        String[] recipients = null;
+        if (StringUtils.isEmpty(recipientsLine)) {
+            recipients = new String[] {};
+        } else {
+            recipients = recipientsLine.trim()
+                                       .replaceAll(",", " ")
+                                       .replaceAll(";", " ")
+                                       .replaceAll("\\[]", " ")
+                                       .split(" ");
+        }
+        return recipients;
     }
 }
