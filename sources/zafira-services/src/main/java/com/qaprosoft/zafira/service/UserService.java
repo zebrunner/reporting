@@ -24,6 +24,7 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.User.Status;
 import com.qaprosoft.zafira.service.exception.IllegalOperationException;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
+import com.qaprosoft.zafira.service.integration.tool.impl.StorageProviderService;
 import com.qaprosoft.zafira.service.management.TenancyService;
 import com.qaprosoft.zafira.service.util.DateTimeUtil;
 import com.qaprosoft.zafira.service.util.TenancyDbInitial;

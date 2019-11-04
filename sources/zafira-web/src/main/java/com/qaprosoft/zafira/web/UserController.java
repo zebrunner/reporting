@@ -24,7 +24,6 @@ import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.service.DashboardService;
 import com.qaprosoft.zafira.service.UserPreferenceService;
 import com.qaprosoft.zafira.service.UserService;
-import com.qaprosoft.zafira.service.integration.tool.impl.StorageProviderService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -133,8 +132,7 @@ public class UserController extends AbstractController {
     public void updateUserPassword(@Valid @RequestBody ChangePasswordDTO password) {
         checkCurrentUserAccess(password.getUserId());
         boolean forceUpdate = isAdmin() && password.getOldPassword() == null;
-        userService.updateUserPassword(password, forceUpdate);
-        userService.updateUserPassword(password.getUserId(), password.getOldPassword(), password.getPassword(), isAdmin() && password.getOldPassword() == null);
+        userService.updateUserPassword(password.getUserId(), password.getOldPassword(), password.getPassword(), forceUpdate);
     }
 
     @ApiResponseStatuses
