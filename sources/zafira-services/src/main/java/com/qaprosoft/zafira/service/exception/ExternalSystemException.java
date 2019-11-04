@@ -26,7 +26,8 @@ public class ExternalSystemException extends ApplicationException {
     @AllArgsConstructor
     public enum IllegalOperationErrorDetail implements ErrorDetail {
 
-        JIRA_ISSUE_CAN_NOT_BE_FOUND(2150);
+        JIRA_ISSUE_CAN_NOT_BE_FOUND(2150),
+        LDAP_USER_DOES_NOT_EXIST(2151);
 
         private final Integer code;
         private String messageKey;
@@ -35,6 +36,9 @@ public class ExternalSystemException extends ApplicationException {
 
     public ExternalSystemException(IllegalOperationErrorDetail errorDetail, String message, Throwable cause) {
         super(errorDetail, message, cause);
+    }
+    public ExternalSystemException(IllegalOperationErrorDetail errorDetail, String message, Object... args) {
+        super(errorDetail, message, args);
     }
 
     public ExternalSystemException(IllegalOperationErrorDetail errorDetail, String message) {

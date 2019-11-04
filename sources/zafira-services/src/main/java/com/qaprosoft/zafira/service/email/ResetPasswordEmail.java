@@ -15,13 +15,13 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.service.email;
 
-public class ForgotPasswordEmail extends AbstractEmail {
+public class ResetPasswordEmail extends AbstractEmail {
 
     private static final String SUBJECT = "Password reset";
 
     private final String token;
 
-    public ForgotPasswordEmail(String token, String zafiraLogoURL, String workspaceURL) {
+    public ResetPasswordEmail(String token, String zafiraLogoURL, String workspaceURL) {
         super(SUBJECT, EmailType.FORGOT_PASSWORD, zafiraLogoURL, workspaceURL);
         this.token = token;
     }

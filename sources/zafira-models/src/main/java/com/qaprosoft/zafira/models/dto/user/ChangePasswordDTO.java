@@ -13,33 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.dto.auth;
+package com.qaprosoft.zafira.models.dto.user;
 
-import org.hibernate.validator.constraints.Email;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
+@Getter
+@Setter
+public class ChangePasswordDTO extends PasswordDTO {
 
-public class EmailType implements Serializable {
+    private static final long serialVersionUID = 6708214365157741315L;
 
-    private static final long serialVersionUID = 2359053026630602599L;
+    private String oldPassword;
 
-    @NotNull(message = "{error.email.required}")
-    @Email(message = "{error.email.invalid}")
-    private String email;
-
-    public EmailType() {
-    }
-
-    public EmailType(String email) {
-        this.email = email;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 }

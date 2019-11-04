@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
-public class TenantType implements Serializable {
+public class TenancyInfoDTO implements Serializable {
     private static final long serialVersionUID = 8220711984153406216L;
 
     private String tenant;
@@ -29,17 +29,18 @@ public class TenantType implements Serializable {
     private boolean multitenant;
     private boolean useArtifactsProxy;
 
-    public TenantType() {
+    public TenancyInfoDTO() {
     }
 
-    public TenantType(String tenant) {
+    public TenancyInfoDTO(String tenant) {
         this.tenant = tenant;
     }
 
-    public TenantType(String tenant, String serviceUrl, Boolean useArtifactsProxy) {
+    public TenancyInfoDTO(String tenant, String serviceUrl, Boolean useArtifactsProxy, boolean multitenant) {
         this.tenant = tenant;
         this.serviceUrl = serviceUrl;
         this.useArtifactsProxy = useArtifactsProxy;
+        this.multitenant = multitenant;
     }
 
     public String getTenant() {

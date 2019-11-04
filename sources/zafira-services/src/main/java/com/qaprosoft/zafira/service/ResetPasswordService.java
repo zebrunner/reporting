@@ -16,10 +16,9 @@
 package com.qaprosoft.zafira.service;
 
 import com.qaprosoft.zafira.models.db.User;
-import com.qaprosoft.zafira.models.dto.auth.EmailType;
 import com.qaprosoft.zafira.service.email.AbstractEmail;
-import com.qaprosoft.zafira.service.email.ForgotPasswordEmail;
-import com.qaprosoft.zafira.service.email.ForgotPasswordLdapEmail;
+import com.qaprosoft.zafira.service.email.ResetPasswordEmail;
+import com.qaprosoft.zafira.service.email.ResetPasswordLdapEmail;
 import com.qaprosoft.zafira.service.util.URLResolver;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,14 +26,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ForgotPasswordService {
+public class ResetPasswordService {
 
     private final String zafiraLogoURL;
     private final URLResolver urlResolver;
     private final EmailService emailService;
     private final UserService userService;
 
-    public ForgotPasswordService(
+    public ResetPasswordService(
             @Value("${zafira.slack.image-url}") String zafiraLogoURL,
             URLResolver urlResolver,
             EmailService emailService,
@@ -47,16 +46,23 @@ public class ForgotPasswordService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void sendForgotPasswordEmail(EmailType emailType, User user) {
+    public void sendResetPasswordEmail(String email) {
+        User user = userService.getNotNullUserByEmail(email);
         AbstractEmail emailMessage;
         if (User.Source.INTERNAL.equals(user.getSource())) {
             String token = RandomStringUtils.randomAlphanumeric(50);
             userService.updateResetToken(token, user.getId());
-            emailMessage = new ForgotPasswordEmail(token, zafiraLogoURL, urlResolver.buildWebURL());
+            emailMessage = new ResetPasswordEmail(token, zafiraLogoURL, urlResolver.buildWebURL());
         } else {
-            emailMessage = new ForgotPasswordLdapEmail(zafiraLogoURL, urlResolver.buildWebURL());
+            emailMessage = new ResetPasswordLdapEmail(zafiraLogoURL, urlResolver.buildWebURL());
         }
-        emailService.sendEmail(emailMessage, emailType.getEmail());
+        emailService.sendEmail(emailMessage, email);
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public void resetPassword(String token, String password) {
+        User user = userService.getUserByResetToken(token);
+        userService.updateUserPassword(user, password);
+        userService.updateResetToken(null, user.getId());
+    }
 }

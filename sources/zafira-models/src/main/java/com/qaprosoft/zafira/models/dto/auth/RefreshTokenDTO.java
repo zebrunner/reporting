@@ -13,32 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.dto.user;
+package com.qaprosoft.zafira.models.dto.auth;
+
+import java.io.Serializable;
+
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-import java.io.Serializable;
-
-@Getter
-@Setter
 @JsonInclude(Include.NON_NULL)
-public class PasswordType implements Serializable {
-
-    private static final long serialVersionUID = 8483235107118081307L;
+public class RefreshTokenDTO implements Serializable {
+    private static final long serialVersionUID = -586102250911687530L;
 
     @NotNull
-    private Long userId;
+    private String refreshToken;
 
-    @NotEmpty(message = "Password required")
-    @Size(min = 8, max = 50, message = "Too short password")
-    @Pattern(regexp = "^[A-Za-z0-9_@!#\"$%&'()*+,-./:;<>=?\\[\\]\\\\^`{}|~]+$")
-    protected String password;
+    public RefreshTokenDTO() {
+    }
 
+    public RefreshTokenDTO(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }

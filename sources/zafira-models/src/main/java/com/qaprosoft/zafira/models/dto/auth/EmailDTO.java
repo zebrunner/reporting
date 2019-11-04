@@ -13,14 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.service.email;
+package com.qaprosoft.zafira.models.dto.auth;
 
-public class ForgotPasswordLdapEmail extends AbstractEmail {
+import org.hibernate.validator.constraints.Email;
 
-    private static final String SUBJECT = "Password reset";
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
-    public ForgotPasswordLdapEmail(String zafiraLogoURL, String workspaceURL) {
-        super(SUBJECT, EmailType.FORGOT_PASSWORD_LDAP, zafiraLogoURL, workspaceURL);
+public class EmailDTO implements Serializable {
+
+    private static final long serialVersionUID = 2359053026630602599L;
+
+    @NotNull(message = "{error.email.required}")
+    @Email(message = "{error.email.invalid}")
+    private String email;
+
+    public EmailDTO() {
     }
 
+    public EmailDTO(String email) {
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }

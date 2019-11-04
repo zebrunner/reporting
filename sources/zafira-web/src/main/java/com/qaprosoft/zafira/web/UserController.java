@@ -19,12 +19,11 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.UserSearchCriteria;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.UserPreference;
-import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
+import com.qaprosoft.zafira.models.dto.user.ChangePasswordDTO;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.service.DashboardService;
 import com.qaprosoft.zafira.service.UserPreferenceService;
 import com.qaprosoft.zafira.service.UserService;
-import com.qaprosoft.zafira.service.exception.UserNotFoundException;
 import com.qaprosoft.zafira.service.integration.tool.impl.StorageProviderService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
@@ -78,11 +77,8 @@ public class UserController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/profile")
     public UserType getUserProfile(@RequestParam(value = "username", required = false) String username) {
-        User user = StringUtils.isEmpty(username) ? userService.getUserById(getPrincipalId())
-                                                  : userService.getUserByUsername(username);
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
+        User user = StringUtils.isEmpty(username) ? userService.getNotNullUserById(getPrincipalId())
+                                                  : userService.getNotNullUserByUsername(username);
         UserType userType = mapper.map(user, UserType.class);
         userType.setRoles(user.getRoles());
         userType.setPreferences(user.getPreferences());
@@ -137,9 +133,9 @@ public class UserController extends AbstractController {
     @ApiOperation(value = "Update user password", nickname = "updateUserPassword", httpMethod = "PUT")
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PutMapping("/password")
-    public void updateUserPassword(@Valid @RequestBody PasswordChangingType password) {
+    public void updateUserPassword(@Valid @RequestBody ChangePasswordDTO password) {
         checkCurrentUserAccess(password.getUserId());
-        userService.updateUserPassword(password, isAdmin() && password.getOldPassword() == null);
+        userService.updateUserPassword(password.getUserId(), password.getOldPassword(), password.getPassword(), isAdmin() && password.getOldPassword() == null);
     }
 
     @ApiResponseStatuses
