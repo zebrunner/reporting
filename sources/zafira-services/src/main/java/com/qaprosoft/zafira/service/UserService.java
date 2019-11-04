@@ -85,6 +85,9 @@ public class UserService implements TenancyDbInitial {
     @Autowired
     private TenancyService tenancyService;
 
+    @Autowired
+    private StorageProviderService storageProviderService;
+
     @PostConstruct
     public void postConstruct() {
         tenancyService.iterateItems(this::initDb);
@@ -117,6 +120,14 @@ public class UserService implements TenancyDbInitial {
     @Transactional(readOnly = true)
     public User getUserById(long id) {
         return userMapper.getUserById(id);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteProfilePhoto(Long userId) {
+        User user = getUserById(userId);
+        storageProviderService.removeFile(user.getPhotoURL());
+        user.setPhotoURL(StringUtils.EMPTY);
+        updateUser(user);
     }
 
     @Transactional(readOnly = true)

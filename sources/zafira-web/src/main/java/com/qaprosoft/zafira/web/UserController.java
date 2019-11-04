@@ -60,15 +60,13 @@ public class UserController extends AbstractController {
     private final UserService userService;
     private final DashboardService dashboardService;
     private final UserPreferenceService userPreferenceService;
-    private final StorageProviderService storageProviderService;
     private final Mapper mapper;
 
     public UserController(UserService userService, DashboardService dashboardService,
-                          UserPreferenceService userPreferenceService, StorageProviderService storageProviderService, Mapper mapper) {
+                          UserPreferenceService userPreferenceService, Mapper mapper) {
         this.userService = userService;
         this.dashboardService = dashboardService;
         this.userPreferenceService = userPreferenceService;
-        this.storageProviderService = storageProviderService;
         this.mapper = mapper;
     }
 
@@ -109,12 +107,14 @@ public class UserController extends AbstractController {
     @ApiOperation(value = "Update user profile", nickname = "updateUserProfile", httpMethod = "PUT", response = UserType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PutMapping("/profile")
-    public UserType updateUserProfile(@Valid @RequestBody UserType user) {
-        checkCurrentUserAccess(user.getId());
-        UserType userType = mapper.map(userService.updateUser(mapper.map(user, User.class)), UserType.class);
-        userType.setRoles(user.getRoles());
-        userType.setPreferences(user.getPreferences());
-        userType.setPhotoURL(user.getPhotoURL());
+    public UserType updateUserProfile(@Valid @RequestBody UserType userType) {
+        checkCurrentUserAccess(userType.getId());
+        User user = mapper.map(userType, User.class);
+        user = userService.updateUser(user);
+        userType = mapper.map(user, UserType.class);
+        userType.setRoles(userType.getRoles());
+        userType.setPreferences(userType.getPreferences());
+        userType.setPhotoURL(userType.getPhotoURL());
         return userType;
     }
 
@@ -123,10 +123,7 @@ public class UserController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @DeleteMapping("/profile/photo")
     public void deleteUserProfilePhoto() {
-        User user = userService.getUserById(getPrincipalId());
-        storageProviderService.removeFile(user.getPhotoURL());
-        user.setPhotoURL(StringUtils.EMPTY);
-        userService.updateUser(user);
+        userService.deleteProfilePhoto(getPrincipalId());
     }
 
     @ApiResponseStatuses
@@ -135,6 +132,8 @@ public class UserController extends AbstractController {
     @PutMapping("/password")
     public void updateUserPassword(@Valid @RequestBody ChangePasswordDTO password) {
         checkCurrentUserAccess(password.getUserId());
+        boolean forceUpdate = isAdmin() && password.getOldPassword() == null;
+        userService.updateUserPassword(password, forceUpdate);
         userService.updateUserPassword(password.getUserId(), password.getOldPassword(), password.getPassword(), isAdmin() && password.getOldPassword() == null);
     }
 
@@ -155,8 +154,10 @@ public class UserController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USERS')")
     @PutMapping()
-    public UserType createOrUpdateUser(@RequestBody @Valid UserType user) {
-        return mapper.map(userService.createOrUpdateUser(mapper.map(user, User.class)), UserType.class);
+    public UserType createOrUpdateUser(@RequestBody @Valid UserType userType) {
+        User user = mapper.map(userType, User.class);
+        user = userService.createOrUpdateUser(user);
+        return mapper.map(user, UserType.class);
     }
 
     @ApiResponseStatuses
@@ -164,8 +165,10 @@ public class UserController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USERS')")
     @PutMapping("/status")
-    public UserType updateStatus(@RequestBody @Valid UserType user) {
-        return mapper.map(userService.updateStatus(mapper.map(user, User.class)), UserType.class);
+    public UserType updateStatus(@RequestBody @Valid UserType userType) {
+        User user = mapper.map(userType, User.class);
+        user = userService.updateStatus(user);
+        return mapper.map(user, UserType.class);
     }
 
     @ApiResponseStatuses
@@ -191,7 +194,8 @@ public class UserController extends AbstractController {
     @ApiOperation(value = "Get default user preferences", nickname = "getDefaultUserPreferences", httpMethod = "GET", response = List.class)
     @GetMapping("/preferences")
     public List<UserPreference> getDefaultUserPreferences() {
-        return userPreferenceService.getAllUserPreferences(userService.getUserByUsername("anonymous").getId());
+        User user = userService.getUserByUsername("anonymous");
+        return userPreferenceService.getAllUserPreferences(user.getId());
     }
 
     @ApiResponseStatuses

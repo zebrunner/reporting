@@ -27,7 +27,8 @@ public class ExternalSystemException extends ApplicationException {
     public enum IllegalOperationErrorDetail implements ErrorDetail {
 
         JIRA_ISSUE_CAN_NOT_BE_FOUND(2150),
-        LDAP_USER_DOES_NOT_EXIST(2151);
+        POSTGRES_VERSION_CAN_NOT_BE_FOUND(2151),
+        LDAP_USER_DOES_NOT_EXIST(2152);
 
         private final Integer code;
         private String messageKey;

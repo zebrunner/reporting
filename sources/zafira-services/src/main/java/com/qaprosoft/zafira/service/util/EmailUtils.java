@@ -13,29 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.db;
+package com.qaprosoft.zafira.service.util;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.data.annotation.Transient;
+import org.springframework.util.StringUtils;
 
-import java.io.Serializable;
-import java.util.Date;
+public class EmailUtils {
 
-@Getter
-@Setter
-@NoArgsConstructor
-public abstract class AbstractEntity implements Serializable {
-    private static final long serialVersionUID = 6187567312503626298L;
-
-    private Long id;
-    @Transient
-    private Date modifiedAt;
-    @Transient
-    private Date createdAt;
-
-    public AbstractEntity(Long id) {
-        this.id = id;
+    public static String[] obtainRecipients(String recipientsLine) {
+        String[] recipients = null;
+        if (StringUtils.isEmpty(recipientsLine)) {
+            recipients = new String[] {};
+        } else {
+            recipients = recipientsLine.trim()
+                                       .replaceAll(",", " ")
+                                       .replaceAll(";", " ")
+                                       .replaceAll("\\[]", " ")
+                                       .split(" ");
+        }
+        return recipients;
     }
 }

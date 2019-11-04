@@ -15,12 +15,9 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.web;
 
-import com.qaprosoft.zafira.dbaccess.persistence.IntegrationRepository;
-import com.qaprosoft.zafira.service.SettingsService;
+import com.qaprosoft.zafira.service.ApplicationHealthService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,24 +29,17 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 public class ApplicationHealthController extends AbstractController {
 
-    private final SettingsService settingsService;
+    private final ApplicationHealthService applicationHealthService;
 
-    @Autowired
-    private IntegrationRepository integrationRepository;
-
-    public ApplicationHealthController(SettingsService settingsService) {
-        this.settingsService = settingsService;
+    public ApplicationHealthController(ApplicationHealthService applicationHealthService) {
+        this.applicationHealthService = applicationHealthService;
     }
 
     @ApiResponseStatuses
     @ApiOperation(value = "Get service status", nickname = "status", httpMethod = "GET", response = String.class)
     @GetMapping()
     public String getStatus() {
-        String version = settingsService.getPostgresVersion();
-        if (StringUtils.isEmpty(version)) {
-            throw new RuntimeException("Unable to retrieve Postgres version");
-        }
-        return "Service is up and running. Integration: " + integrationRepository.findById(1L).orElse(null);
+        return applicationHealthService.getStatus();
     }
 
 }
