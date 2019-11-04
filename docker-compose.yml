@@ -61,13 +61,12 @@ services:
       - elasticsearch
   zafira:
     container_name: zfr_zafira_back_end
-#    image: qaprosoft/zafira:4.1.76
-    build: .
+    image: qaprosoft/zafira:4.1.76
+    # build: .
     volumes:
       - ./assets:/opt/assets
     ports:
       - 8080:8080
-      - 8000:8002
     env_file:
       - zafira-properties.env
     depends_on:
@@ -77,7 +76,7 @@ services:
     restart: always
   zafira-ui:
     container_name: zfr_zafira_ui
-    image: qaprosoft/zafira-ui:1.252-SNAPSHOT
+    image: qaprosoft/zafira-ui:1.22
     ports:
       - 80:80
     environment:
