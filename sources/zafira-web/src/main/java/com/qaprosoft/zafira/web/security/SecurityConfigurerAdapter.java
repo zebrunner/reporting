@@ -15,8 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.web.security;
 
-import com.qaprosoft.zafira.web.security.PasswordEncoder;
-import com.qaprosoft.zafira.web.security.UserPassAuthService;
 import com.qaprosoft.zafira.web.security.filter.CORSFilter;
 import com.qaprosoft.zafira.web.security.filter.JwtTokenAuthenticationFilter;
 import com.qaprosoft.zafira.web.security.filter.RestAccessDeniedHandler;
@@ -125,8 +123,8 @@ public class SecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    @DependsOn("authenticationLdapManager")
-    public AuthenticationManager authenticationInternalManager(PasswordEncoder passwordEncoder) {
+    @DependsOn("ldapAuthManager")
+    public AuthenticationManager zafiraAuthManager(PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userPassAuthService);
         authenticationProvider.setPasswordEncoder(passwordEncoder);
@@ -134,7 +132,7 @@ public class SecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public AuthenticationManager authenticationLdapManager() {
+    public AuthenticationManager ldapAuthManager() {
         return new ProviderManager(Collections.singletonList(ldapProvider));
     }
 

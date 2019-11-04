@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 import static com.qaprosoft.zafira.service.exception.AuthException.AuthErrorDetail.ADMIN_CREDENTIALS_INVALID;
@@ -22,32 +23,35 @@ public class AuthService {
     private static final String ERR_MSG_USER_IS_FROM_OTHER_TENANT = "User with id %d is from tenant %s";
     private static final String ERR_MSG_USERNAME_OR_PASSWORD_IS_INVALID = "Username or password for user %s is invalid";
 
-    private final AuthenticationManager authenticationInternalManager;
-    private final AuthenticationManager authenticationLdapManager;
+    private final AuthenticationManager zafiraAuthManager;
+    private final AuthenticationManager ldapAuthManager;
     private final UserService userService;
     private final String adminUsername;
 
-    public AuthService(AuthenticationManager authenticationInternalManager,
-                       AuthenticationManager authenticationLdapManager,
-                       UserService userService,
-                       @Value("${zafira.admin.username}") String adminUsername) {
-        this.authenticationInternalManager = authenticationInternalManager;
-        this.authenticationLdapManager = authenticationLdapManager;
+    public AuthService(
+        AuthenticationManager zafiraAuthManager,
+        AuthenticationManager ldapAuthManager,
+        UserService userService,
+        @Value("${zafira.admin.username}") String adminUsername
+    ) {
+        this.zafiraAuthManager = zafiraAuthManager;
+        this.ldapAuthManager = ldapAuthManager;
         this.userService = userService;
         this.adminUsername = adminUsername;
     }
 
     public Authentication getAuthentication(String username, String password, User user) {
+        boolean isLdapUser = user == null || user.getSource().equals(User.Source.LDAP);
+
+        AuthenticationManager authManager = isLdapUser ? ldapAuthManager : zafiraAuthManager;
+
         Authentication authentication;
         try {
-            final AuthenticationManager authenticationManager = user == null
-                    || user.getSource().equals(User.Source.LDAP) ? authenticationLdapManager : authenticationInternalManager;
-
-            authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch (Exception e) {
+            authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        } catch (AuthenticationException e) {
             throw new AuthException(INVALID_USER_CREDENTIALS, e, ERR_MSG_INVALID_CREDENTIALS, username);
         }
+
         user = userService.getUserByUsernameOrEmail(username);
         userService.updateLastLoginDate(user.getId());
         return authentication;

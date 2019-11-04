@@ -58,7 +58,7 @@ public class InvitationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(InvitationService.class);
 
     private static final String ERR_MSG_INVITATION_FOR_EMAIL_NOT_FOUND = "Invitation for email %s can not be found";
-    private static final String ERR_MSG_INVITATION_FOR_TOKEN_NOT_FOUND = "Invitation for tokrn %s can not be found";
+    private static final String ERR_MSG_INVITATION_FOR_TOKEN_NOT_FOUND = "Invitation for token %s can not be found";
     private static final String ERR_MSG_USER_ALREADY_EXISTS = "User with such email already exists";
     private static final String ERR_MSG_INVITATION_ALREADY_EXISTS = "User with such email was invited already";
     private static final String ERR_MSG_INVITATION_CAN_NOT_BE_RETRIED = "Invitation was already accepted, can not retry";
