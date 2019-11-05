@@ -13,7 +13,7 @@ import java.util.Map;
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class IntegrationDataType {
+public class TagIntegrationDataDTO {
 
     private String projectId;
     private String suiteId;
