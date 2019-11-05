@@ -17,6 +17,7 @@ package com.qaprosoft.zafira.service;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.ProjectMapper;
 import com.qaprosoft.zafira.models.db.Project;
+import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -26,8 +27,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.PROJECT_NOT_FOUND;
+
 @Service
 public class ProjectService {
+
+    private static final String ERR_MSG_PROJECT_CAN_NOT_BE_FOUND_BY_NAME = "Project with name %s can not be found";
 
     private final ProjectMapper projectMapper;
 
@@ -51,6 +56,16 @@ public class ProjectService {
     @Transactional(readOnly = true)
     public Project getProjectByName(String name) {
         return !StringUtils.isEmpty(name) ? projectMapper.getProjectByName(name) : null;
+    }
+
+    @Cacheable(value = "projects", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #name", condition = "#name != null")
+    @Transactional(readOnly = true)
+    public Project getNotNullProjectByName(String name) {
+        Project project = !StringUtils.isEmpty(name) ? projectMapper.getProjectByName(name) : null;
+        if (project == null) {
+            throw new ResourceNotFoundException(PROJECT_NOT_FOUND, ERR_MSG_PROJECT_CAN_NOT_BE_FOUND_BY_NAME, name);
+        }
+        return project;
     }
 
     @CachePut(value = "projects", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #project.name", condition = "#project != null && #project.name != null")

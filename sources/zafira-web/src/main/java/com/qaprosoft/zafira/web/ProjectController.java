@@ -49,8 +49,6 @@ import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.R
 @RestController
 public class ProjectController extends AbstractController {
 
-    private static final String ERR_MSG_PROJECT_CAN_NOT_BE_FOUND_BY_NAME = "Project with name %s can not be found";
-
     private final Mapper mapper;
 
     private final ProjectService projectService;
@@ -105,11 +103,7 @@ public class ProjectController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/{name}")
     public ProjectType getProjectByName(@PathVariable("name") String name) {
-        Project project = projectService.getProjectByName(name);
-        if (project == null) {
-            throw new ResourceNotFoundException(PROJECT_NOT_FOUND, ERR_MSG_PROJECT_CAN_NOT_BE_FOUND_BY_NAME, name);
-        }
-        return mapper.map(project, ProjectType.class);
+        return mapper.map(projectService.getNotNullProjectByName(name), ProjectType.class);
     }
 
 }
