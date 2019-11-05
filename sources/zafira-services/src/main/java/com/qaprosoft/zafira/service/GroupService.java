@@ -19,6 +19,8 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.GroupMapper;
 import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.Group.Role;
 import com.qaprosoft.zafira.models.db.Permission;
+import com.qaprosoft.zafira.service.exception.IllegalOperationException;
+import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -33,10 +35,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.INTEGRATION_GROUP_CAN_NOT_BE_DELETED;
+import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.GROUP_NOT_FOUND;
+
 @Service
 public class GroupService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupService.class);
+
+    private static final String ERR_MSG_GROUP_CAN_NOT_BE_FOUND = "Group with id %s can not be found";
 
     private final GroupMapper groupMapper;
 
@@ -120,6 +127,13 @@ public class GroupService {
     @CacheEvict(value = "groups", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #id")
     @Transactional(rollbackFor = Exception.class)
     public void deleteGroup(long id) {
+        Group group = getGroupById(id);
+        if (group == null) {
+            throw new ResourceNotFoundException(GROUP_NOT_FOUND, ERR_MSG_GROUP_CAN_NOT_BE_FOUND, id);
+        }
+        if (group.getUsers().size() > 0) {
+            throw new IllegalOperationException(INTEGRATION_GROUP_CAN_NOT_BE_DELETED, "It's necessary to clear the group initially.");
+        }
         groupMapper.deleteGroup(id);
     }
 
