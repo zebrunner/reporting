@@ -17,14 +17,19 @@ package com.qaprosoft.zafira.service.scm;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.ScmAccountMapper;
 import com.qaprosoft.zafira.models.db.ScmAccount;
+import com.qaprosoft.zafira.models.dto.scm.Organization;
 import com.qaprosoft.zafira.models.dto.scm.Repository;
 import com.qaprosoft.zafira.service.CryptoService;
 import com.qaprosoft.zafira.service.exception.ForbiddenOperationException;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.SCM_ACCOUNT_NOT_FOUND;
 
@@ -54,6 +59,16 @@ public class ScmAccountService {
         return scmAccount;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public ScmAccount createScmAccount(String code, ScmAccount.Name name) throws IOException, URISyntaxException {
+        String token = gitHubService.getAccessToken(code);
+        if (StringUtils.isEmpty(token)) {
+            throw new ForbiddenOperationException("Cannot recognize your authority");
+        }
+        ScmAccount scmAccount = new ScmAccount(token, name);
+        return createScmAccount(scmAccount);
+    }
+
     @Transactional(readOnly = true)
     public ScmAccount getScmAccountById(Long id) {
         ScmAccount scmAccount = scmAccountMapper.getScmAccountById(id);
@@ -75,6 +90,29 @@ public class ScmAccountService {
     @Transactional(readOnly = true)
     public List<ScmAccount> getAllScmAccounts() {
         return scmAccountMapper.getAllScmAccounts();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Organization> getScmAccountOrganizations(Long id) throws IOException {
+        ScmAccount scmAccount = getScmAccountById(id);
+        return gitHubService.getOrganizations(scmAccount);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Repository> getScmAccountRepositories(Long id, String organizationName) throws IOException {
+        ScmAccount scmAccount = getScmAccountById(id);
+        List<ScmAccount> allAccounts = getAllScmAccounts();
+        List<String> repositoryUrls = allAccounts.stream()
+                                                 .map(ScmAccount::getRepositoryURL)
+                                                 .collect(Collectors.toList());
+        List<Repository> repositories = gitHubService.getRepositories(scmAccount, organizationName);
+        return repositories.stream()
+                           .filter(repository -> !repositoryUrls.contains(repository.getUrl()))
+                           .collect(Collectors.toList());
+    }
+
+    public String getScmClientId() {
+        return gitHubService.getClientId();
     }
 
     @Transactional(rollbackFor = Exception.class)
