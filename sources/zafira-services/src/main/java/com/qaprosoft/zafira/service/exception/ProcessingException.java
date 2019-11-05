@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 /**
  * Exception that is meant to be thrown when error, related to processing application own resources (e.g. application
  * configuration and/or properties are invalid) occurs.
- * Reserved range 2100 - 2119
+ * Reserved range 2100 - 2149
  */
 public class ProcessingException extends ApplicationException {
 

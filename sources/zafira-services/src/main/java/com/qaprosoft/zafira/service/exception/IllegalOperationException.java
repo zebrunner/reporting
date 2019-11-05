@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
  * Exception that is thrown to indicate that certain operation is not valid according to business logic of application
  * (e.g. when someone attempts to update recourse with a certain status that indicates immutable state at given moment -
  * simply put can not be updated).
- * Reserved range 2060 - 2079
+ * Reserved range 2060 - 2099
  */
 public class IllegalOperationException extends ApplicationException {
 

@@ -19,6 +19,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Exception that is meant to be thrown when we get a technical runtime error from integrated system
+ * (e.g. connection timeout).
+ * Reserved range 2150 - 2199
+ */
 public class ExternalSystemException extends ApplicationException {
 
     @Getter

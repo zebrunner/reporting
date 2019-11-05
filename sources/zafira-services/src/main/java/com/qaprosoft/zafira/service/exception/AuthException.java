@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * Exception that should be thrown to indicate that problem related to authorization or authentication occurs.
- * Reserved range 1140 - 1159
+ * Reserved range 2250 - 2299
  */
 public class AuthException extends ApplicationException {
 
