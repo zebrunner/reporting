@@ -26,7 +26,7 @@ import java.io.IOException;
 
 @Getter
 @Setter
-public class FilterType extends AbstractEntity {
+public class FilterDTO extends AbstractEntity {
 
     private static final long serialVersionUID = -2497558955789794119L;
 

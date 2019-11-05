@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.FILTER_CAN_NOT_BE_CREATED;
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.ILLEGAL_FILTER_ACCESS;
 import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.FILTER_NOT_FOUND;
 
 @Service
@@ -35,6 +36,7 @@ public class FilterService {
 
     private static final String ERR_MSG_FILTER_CAN_NOT_BE_FOUND = "Filter with id %s can not be found";
     private static final String ERR_MSG_FILTER_WITH_SUCH_NAME_ALREADY_EXISTS = "Filter with such name already exists";
+    private static final String ERR_MSG_ILLEGAL_FILTER_MODIFICATION = "Only creator can modify or delete filter";
 
     private final FilterMapper filterMapper;
     private final FreemarkerUtil freemarkerUtil;
@@ -61,7 +63,14 @@ public class FilterService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Filter createFilter(Filter filter) {
+    public Filter createFilter(Filter filter, long userId, boolean isAdmin) {
+        filter.setUserId(userId);
+        if (isFilterExists(filter)) {
+            throw new IllegalOperationException(FILTER_CAN_NOT_BE_CREATED, ERR_MSG_FILTER_WITH_SUCH_NAME_ALREADY_EXISTS);
+        }
+        if (filter.isPublicAccess() && !isAdmin) {
+            filter.setPublicAccess(false);
+        }
         filterMapper.createFilter(filter);
         return filter;
     }
@@ -87,11 +96,12 @@ public class FilterService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Filter updateFilter(Filter filter, boolean isAdmin) {
+    public Filter updateFilter(Filter filter, long userId, boolean isAdmin) {
         Filter dbFilter = getFilterById(filter.getId());
         if (dbFilter == null) {
             throw new ResourceNotFoundException(FILTER_NOT_FOUND, ERR_MSG_FILTER_CAN_NOT_BE_FOUND, filter.getId());
         }
+        checkFilterAccess(userId, filter);
         if (!filter.getName().equals(dbFilter.getName()) && isFilterExists(filter)) {
             throw new IllegalOperationException(FILTER_CAN_NOT_BE_CREATED, ERR_MSG_FILTER_WITH_SUCH_NAME_ALREADY_EXISTS);
         }
@@ -104,8 +114,16 @@ public class FilterService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteFilterById(long id) {
+    public void deleteFilterById(long id, long userId) {
+        Filter filter = getFilterById(id);
+        checkFilterAccess(userId, filter);
         filterMapper.deleteFilterById(id);
+    }
+
+    private void checkFilterAccess(long userId, Filter filter) {
+        if (filter != null && !filter.getUserId().equals(userId)) {
+            throw new IllegalOperationException(ILLEGAL_FILTER_ACCESS, ERR_MSG_ILLEGAL_FILTER_MODIFICATION);
+        }
     }
 
     public Subject getStoredSubject(Subject.Name name) {
