@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import static com.qaprosoft.zafira.service.exception.ExternalSystemException.IllegalOperationErrorDetail.POSTGRES_VERSION_CAN_NOT_BE_FOUND;
+import static com.qaprosoft.zafira.service.exception.ExternalSystemException.ExternalSystemErrorDetail.POSTGRES_VERSION_CAN_NOT_BE_FOUND;
 
 @Service
 public class ApplicationHealthService {

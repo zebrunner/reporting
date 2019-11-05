@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.service.exception;
+package com.qaprosoft.zafira.service.email;
 
-public class UserNotFoundException extends ApplicationException {
-    private static final long serialVersionUID = 201855553642859489L;
+public class ResetPasswordEmail extends AbstractEmail {
 
-    public UserNotFoundException() {
-        super();
+    private static final String SUBJECT = "Password reset";
+
+    private final String token;
+
+    public ResetPasswordEmail(String token, String zafiraLogoURL, String workspaceURL) {
+        super(SUBJECT, EmailType.FORGOT_PASSWORD, zafiraLogoURL, workspaceURL);
+        this.token = token;
     }
 
-    public UserNotFoundException(String message) {
-        super(message);
+    public String getToken() {
+        return token;
     }
 
-    public UserNotFoundException(Throwable cause) {
-        super(cause);
-    }
-
-    public UserNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }

@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.service.email;
+package com.qaprosoft.zafira.models.dto.user;
 
-public class ForgotPasswordEmail extends AbstractEmail {
+import lombok.Getter;
+import lombok.Setter;
 
-    private static final String SUBJECT = "Password reset";
+@Getter
+@Setter
+public class ChangePasswordDTO extends PasswordDTO {
 
-    private final String token;
+    private static final long serialVersionUID = 6708214365157741315L;
 
-    public ForgotPasswordEmail(String token, String zafiraLogoURL, String workspaceURL) {
-        super(SUBJECT, EmailType.FORGOT_PASSWORD, zafiraLogoURL, workspaceURL);
-        this.token = token;
-    }
-
-    public String getToken() {
-        return token;
-    }
+    private String oldPassword;
 
 }

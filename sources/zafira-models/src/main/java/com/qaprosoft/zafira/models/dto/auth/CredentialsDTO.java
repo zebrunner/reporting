@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
 
-public class CredentialsType implements Serializable {
+public class CredentialsDTO implements Serializable {
     private static final long serialVersionUID = 1567014101763491651L;
 
     @NotNull
@@ -28,10 +28,10 @@ public class CredentialsType implements Serializable {
     @NotNull
     private String password;
 
-    public CredentialsType() {
+    public CredentialsDTO() {
     }
 
-    public CredentialsType(String username, String password) {
+    public CredentialsDTO(String username, String password) {
         this.username = username;
         this.password = password;
     }

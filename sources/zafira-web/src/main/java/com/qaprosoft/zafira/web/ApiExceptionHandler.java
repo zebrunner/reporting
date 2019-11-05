@@ -5,17 +5,16 @@ import com.qaprosoft.zafira.models.dto.errors.Error;
 import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
 import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
 import com.qaprosoft.zafira.service.exception.ApplicationException;
+import com.qaprosoft.zafira.service.exception.AuthException;
 import com.qaprosoft.zafira.service.exception.ForbiddenOperationException;
 import com.qaprosoft.zafira.service.exception.IllegalOperationException;
 import com.qaprosoft.zafira.service.exception.IntegrationException;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
-import com.qaprosoft.zafira.service.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.util.MimeType;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -101,9 +100,9 @@ public class ApiExceptionHandler {
         return response;
     }
 
-    @ExceptionHandler(BadCredentialsException.class)
+    @ExceptionHandler(AuthException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse handleBadCredentialsException(BadCredentialsException e) {
+    public ErrorResponse handleAuthException(AuthException e) {
         ErrorResponse response = new ErrorResponse();
         response.setError(new Error(ErrorCode.UNAUTHORIZED));
         return response;
@@ -114,14 +113,6 @@ public class ApiExceptionHandler {
     public ErrorResponse handleForbiddenOperationException(ForbiddenOperationException e) {
         ErrorResponse response = new ErrorResponse();
         response.setError(new Error(ErrorCode.FORBIDDEN, null, e.isShowMessage() ? e.getMessage() : null));
-        return response;
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleUserNotFoundException(UserNotFoundException e) {
-        ErrorResponse response = new ErrorResponse();
-        response.setError(new Error(ErrorCode.USER_NOT_FOUND));
         return response;
     }
 

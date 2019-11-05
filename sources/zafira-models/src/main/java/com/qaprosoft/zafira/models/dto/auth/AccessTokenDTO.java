@@ -21,13 +21,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
-public class AccessTokenType implements Serializable {
+public class AccessTokenDTO implements Serializable {
     private static final long serialVersionUID = 2982073032065087590L;
 
-    public AccessTokenType() {
+    public AccessTokenDTO() {
     }
 
-    public AccessTokenType(String token) {
+    public AccessTokenDTO(String token) {
         this.token = token;
     }
 

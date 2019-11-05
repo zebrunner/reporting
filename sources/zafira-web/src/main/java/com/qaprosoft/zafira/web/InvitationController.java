@@ -85,9 +85,6 @@ public class InvitationController extends AbstractController {
     @GetMapping("/info")
     public InvitationType getInvitation(@RequestParam("token") String token) {
         Invitation invitation = invitationService.getInvitationByToken(token);
-        if (invitation == null || !invitation.isValid()) {
-            throw new ForbiddenOperationException();
-        }
         return mapper.map(invitation, InvitationType.class);
     }
 

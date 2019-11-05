@@ -31,7 +31,7 @@ import lombok.Getter;
 
 import java.util.Set;
 
-import static com.qaprosoft.zafira.service.exception.ExternalSystemException.IllegalOperationErrorDetail.JIRA_ISSUE_CAN_NOT_BE_FOUND;
+import static com.qaprosoft.zafira.service.exception.ExternalSystemException.ExternalSystemErrorDetail.JIRA_ISSUE_CAN_NOT_BE_FOUND;
 
 public class JiraIntegrationAdapter extends AbstractIntegrationAdapter implements TestCaseManagementAdapter {
 

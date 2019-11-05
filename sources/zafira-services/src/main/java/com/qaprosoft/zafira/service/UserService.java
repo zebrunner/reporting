@@ -22,9 +22,8 @@ import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.Group.Role;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.User.Status;
-import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
-import com.qaprosoft.zafira.service.exception.ForbiddenOperationException;
-import com.qaprosoft.zafira.service.exception.UserNotFoundException;
+import com.qaprosoft.zafira.service.exception.IllegalOperationException;
+import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import com.qaprosoft.zafira.service.integration.tool.impl.StorageProviderService;
 import com.qaprosoft.zafira.service.management.TenancyService;
 import com.qaprosoft.zafira.service.util.DateTimeUtil;
@@ -43,15 +42,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-
 import java.util.List;
 
 import static com.qaprosoft.zafira.models.db.User.Source.INTERNAL;
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.CHANGE_PASSWORD_IS_NOT_POSSIBLE;
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.RESET_TOKEN_IS_NOT_POSSIBLE;
+import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.USER_NOT_FOUND;
 
 @Service
 public class UserService implements TenancyDbInitial {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+    private static final String ERR_MSG_UNABLE_TO_RESET_TOKEN = "Unable to reset token, user is null or not internal";
+    private static final String ERR_MSG_USER_WITH_THIS_ID_DOES_NOT_EXIST = "User with id %d doesn't exist";
+    private static final String ERR_MSG_USER_WITH_THIS_USERNAME_DOES_NOT_EXIST = "User with username %s doesn't exist";
+    private static final String ERR_MSG_USER_WITH_THIS_EMAIL_DOES_NOT_EXIST = "User with email %s doesn't exist";
+    private static final String UNABLE_TO_CHANGE_PASSWORD = "Unable to change password for user %s";
 
     @Value("${zafira.admin.username}")
     private String adminUsername;
@@ -135,7 +141,7 @@ public class UserService implements TenancyDbInitial {
     public User getNotNullUserById(long id) {
         User user = getUserById(id);
         if (user == null) {
-            throw new UserNotFoundException();
+            throw new ResourceNotFoundException(USER_NOT_FOUND, ERR_MSG_USER_WITH_THIS_ID_DOES_NOT_EXIST, id);
         }
         return user;
     }
@@ -146,6 +152,15 @@ public class UserService implements TenancyDbInitial {
     }
 
     @Transactional(readOnly = true)
+    public User getNotNullUserByUsername(String username) {
+        User user = getUserByUsername(username);
+        if (user == null) {
+            throw new ResourceNotFoundException(USER_NOT_FOUND, ERR_MSG_USER_WITH_THIS_USERNAME_DOES_NOT_EXIST, username);
+        }
+        return user;
+    }
+
+    @Transactional(readOnly = true)
     public User getUserByUsernameOrEmail(String usernameOrEmail) {
         boolean isEmail = new EmailValidator().isValid(usernameOrEmail, null);
         return isEmail ? getUserByEmail(usernameOrEmail) : getUserByUsername(usernameOrEmail);
@@ -153,6 +168,15 @@ public class UserService implements TenancyDbInitial {
 
     @Transactional(readOnly = true)
     public User getUserByEmail(String email) {
+        return userMapper.getUserByEmail(email);
+    }
+
+    @Transactional(readOnly = true)
+    public User getNotNullUserByEmail(String email) {
+        User user = userMapper.getUserByEmail(email);
+        if (user == null) {
+            throw new ResourceNotFoundException(USER_NOT_FOUND, ERR_MSG_USER_WITH_THIS_EMAIL_DOES_NOT_EXIST, email);
+        }
         return userMapper.getUserByEmail(email);
     }
 
@@ -174,19 +198,18 @@ public class UserService implements TenancyDbInitial {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void updateUserPassword(PasswordChangingType password, boolean forceUpdate) {
-        User user = getNotNullUserById(password.getUserId());
-        if (!forceUpdate && (password.getOldPassword() == null || !passwordEncryptor.checkPassword(password.getOldPassword(), user.getPassword()))) {
-            throw new ForbiddenOperationException();
+    public void updateUserPassword(Long userId, String oldPassword, String password, boolean forceUpdate) {
+        User user = getNotNullUserById(userId);
+        if (!forceUpdate && (oldPassword == null || !passwordEncryptor.checkPassword(oldPassword, user.getPassword()))) {
+            throw new IllegalOperationException(CHANGE_PASSWORD_IS_NOT_POSSIBLE, UNABLE_TO_CHANGE_PASSWORD, user.getUsername());
         }
         updateUserPassword(user, password);
     }
 
-    @CacheEvict(value = "users", condition = "#password.userId != null", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #password.userId")
+    @CacheEvict(value = "users", condition = "#user.id != null", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #user.id")
     @Transactional(rollbackFor = Exception.class)
-    public void updateUserPassword(User user, PasswordChangingType password) {
-        user = user != null ? user : getNotNullUserById(password.getUserId());
-        user.setPassword(passwordEncryptor.encryptPassword(password.getPassword()));
+    public void updateUserPassword(User user, String password) {
+        user.setPassword(passwordEncryptor.encryptPassword(password));
         updateUser(user);
     }
 
@@ -197,11 +220,15 @@ public class UserService implements TenancyDbInitial {
 
     @Transactional(readOnly = true)
     public User getUserByResetToken(String token) {
-        return userMapper.getUserByResetToken(token);
+        User user = userMapper.getUserByResetToken(token);
+        if (user == null || !user.getSource().equals(User.Source.INTERNAL)) {
+            throw new IllegalOperationException(RESET_TOKEN_IS_NOT_POSSIBLE, ERR_MSG_UNABLE_TO_RESET_TOKEN);
+        }
+        return user;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public User createOrUpdateUser(User newUser, Group group) {
+    public User createOrUpdateUser(User newUser, Long groupId) {
         User user = getUserByUsername(newUser.getUsername());
         if (user == null) {
             if (!StringUtils.isEmpty(newUser.getPassword())) {
@@ -210,13 +237,12 @@ public class UserService implements TenancyDbInitial {
             newUser.setSource(newUser.getSource() != null ? newUser.getSource() : INTERNAL);
             newUser.setStatus(User.Status.ACTIVE);
             createUser(newUser);
-            group = group != null ? group : groupService.getPrimaryGroupByRole(Role.ROLE_USER);
+            Group group = groupId != null ? groupService.getGroupById(groupId) : groupService.getPrimaryGroupByRole(Role.ROLE_USER);
             if (group != null) {
                 addUserToGroup(newUser, group.getId());
                 newUser.getGroups().add(group);
             }
             userPreferenceService.createDefaultUserPreferences(newUser.getId());
-
         } else {
             newUser.setId(user.getId());
             updateUser(newUser);

@@ -13,24 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.service.exception;
+package com.qaprosoft.zafira.models.dto.auth;
 
-public class InvalidCredentialsException extends ApplicationException {
-    private static final long serialVersionUID = -7280348651406679381L;
+import org.hibernate.validator.constraints.Email;
 
-    public InvalidCredentialsException() {
-        super();
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+
+public class EmailDTO implements Serializable {
+
+    private static final long serialVersionUID = 2359053026630602599L;
+
+    @NotNull(message = "{error.email.required}")
+    @Email(message = "{error.email.invalid}")
+    private String email;
+
+    public EmailDTO() {
     }
 
-    public InvalidCredentialsException(String message) {
-        super(message);
+    public EmailDTO(String email) {
+        this.email = email;
     }
 
-    public InvalidCredentialsException(Throwable cause) {
-        super(cause);
+    public String getEmail() {
+        return email;
     }
 
-    public InvalidCredentialsException(String message, Throwable cause) {
-        super(message, cause);
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

@@ -17,23 +17,45 @@ package com.qaprosoft.zafira.models.dto.auth;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
-public class RefreshTokenType implements Serializable {
+public class AuthTokenDTO implements Serializable {
+
     private static final long serialVersionUID = -586102250911687530L;
 
-    @NotNull
+    private String type;
+    private String accessToken;
     private String refreshToken;
+    private int expiresIn;
+    private String tenant;
 
-    public RefreshTokenType() {
+    public AuthTokenDTO() {
     }
 
-    public RefreshTokenType(String refreshToken) {
+    public AuthTokenDTO(String type, String accessToken, String refreshToken, int expiresIn, String tenant) {
+        this.type = type;
+        this.accessToken = accessToken;
         this.refreshToken = refreshToken;
+        this.expiresIn = expiresIn;
+        this.tenant = tenant;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     public String getRefreshToken() {
@@ -42,5 +64,21 @@ public class RefreshTokenType implements Serializable {
 
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public int getExpiresIn() {
+        return expiresIn;
+    }
+
+    public void setExpiresIn(int expiresIn) {
+        this.expiresIn = expiresIn;
+    }
+
+    public String getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(String tenant) {
+        this.tenant = tenant;
     }
 }
