@@ -43,7 +43,7 @@ public interface TagMapper {
 
     Tag getTagByNameAndTestId(@Param(value = "name") String name, @Param(value = "testId") Long testId);
 
-    List<TestInfo> getTestInfoByTagNameAndTestRunCiRunId(@Param(value = "tagName") IntegrationTag name,
+    List<TestInfo> getTestInfoByTagNameAndTestRunCiRunId(@Param(value = "tagName") IntegrationTag tagName,
             @Param(value = "testRunCiRunId") String testRunCiRunId);
 
     Tag getTagByNameAndValue(@Param(value = "name") String name, @Param(value = "value") String value);
