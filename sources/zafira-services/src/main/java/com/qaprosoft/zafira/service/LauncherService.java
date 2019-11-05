@@ -107,13 +107,13 @@ public class LauncherService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Launcher createLauncher(Launcher launcher, User owner, Long automationServerId) {
+    public Launcher createLauncher(Launcher launcher, long userId, Long automationServerId) {
         launcher.setAutoScan(false);
         if (automationServerService.isEnabledAndConnected(automationServerId)) {
             String launcherJobUrl = automationServerService.buildLauncherJobUrl(automationServerId);
             // Checks whether job is present om Jenkins. If it is not, exception will be thrown.
             automationServerService.getJobByUrl(launcherJobUrl, automationServerId);
-            Job job = jobsService.createOrUpdateJobByURL(launcherJobUrl, owner);
+            Job job = jobsService.createOrUpdateJobByURL(launcherJobUrl, userId);
             launcher.setJob(job);
         }
         launcherMapper.createLauncher(launcher);
@@ -121,7 +121,7 @@ public class LauncherService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public List<Launcher> createLaunchersForJob(ScannedRepoLaunchersType scannedRepoLaunchersType, User owner) {
+    public List<Launcher> createLaunchersForJob(ScannedRepoLaunchersType scannedRepoLaunchersType, long userId) {
         if (!scannedRepoLaunchersType.isSuccess()) {
             return new ArrayList<>();
         }
@@ -130,13 +130,13 @@ public class LauncherService {
         deleteAutoScannedLaunchersByScmAccountId(scmAccount.getId());
 
         return scannedRepoLaunchersType.getJenkinsLaunchers().stream()
-                                       .map(jenkinsLauncherType -> launcherTypeToLauncher(owner, scmAccount, jenkinsLauncherType))
+                                       .map(jenkinsLauncherType -> launcherTypeToLauncher(userId, scmAccount, jenkinsLauncherType))
                                        .collect(Collectors.toList());
     }
 
-    private Launcher launcherTypeToLauncher(User owner, ScmAccount scmAccount, JenkinsLauncherType jenkinsLauncherType) {
+    private Launcher launcherTypeToLauncher(long userId, ScmAccount scmAccount, JenkinsLauncherType jenkinsLauncherType) {
         String jobUrl = jenkinsLauncherType.getJobUrl();
-        Job job = jobsService.createOrUpdateJobByURL(jobUrl, owner);
+        Job job = jobsService.createOrUpdateJobByURL(jobUrl, userId);
         Launcher launcher = new Launcher(job.getName(), jenkinsLauncherType.getJobParameters(), scmAccount, job, true);
         launcherMapper.createLauncher(launcher);
         return launcher;
