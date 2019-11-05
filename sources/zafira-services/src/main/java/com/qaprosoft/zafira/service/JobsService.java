@@ -36,11 +36,13 @@ public class JobsService {
     private final JobMapper jobMapper;
     private final JobViewMapper jobViewMapper;
     private final IntegrationService integrationService;
+    private final UserService userService;
 
-    public JobsService(JobMapper jobMapper, JobViewMapper jobViewMapper, IntegrationService integrationService) {
+    public JobsService(JobMapper jobMapper, JobViewMapper jobViewMapper, IntegrationService integrationService, UserService userService) {
         this.jobMapper = jobMapper;
         this.jobViewMapper = jobViewMapper;
         this.integrationService = integrationService;
+        this.userService = userService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -50,12 +52,13 @@ public class JobsService {
 
     // Check the same logic in ZafiraClient method registerJob
     @Transactional(rollbackFor = Exception.class)
-    public Job createOrUpdateJobByURL(String jobUrl, User user) {
-        Job job = createJobFromURL(jobUrl, user);
+    public Job createOrUpdateJobByURL(String jobUrl, long userId) {
+        Job job = createJobFromURL(jobUrl, userId);
         return createOrUpdateJob(job);
     }
 
-    private Job createJobFromURL(String jobUrl, User user) {
+    private Job createJobFromURL(String jobUrl, long userId) {
+        User user = userService.getUserById(userId);
         jobUrl = jobUrl.replaceAll("/$", "");
         String jobName = StringUtils.substringAfterLast(jobUrl, "/");
         String jenkinsHost = parseJenkinsHost(jobUrl);
@@ -110,13 +113,24 @@ public class JobsService {
         return jobView;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public void createJobViews(List<JobView> jobViews) {
+        jobViews.forEach(jobViewMapper::createJobView);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateJobViews(List<JobView> jobViews, long viewId, String env) {
+        deleteJobView(viewId, env);
+        createJobViews(jobViews);
+    }
+
     @Transactional(readOnly = true)
     public List<JobView> getJobViewsByViewId(long viewId) {
         return jobViewMapper.getJobViewsByViewId(viewId);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteJobViews(long viewId, String env) {
+    public void deleteJobView(long viewId, String env) {
         jobViewMapper.deleteJobViewsByViewIdAndEnv(viewId, env);
     }
 }

@@ -27,7 +27,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @JsonInclude(Include.NON_NULL)
-public class JobViewType extends AbstractEntity {
+public class JobViewDTO extends AbstractEntity {
 
     private static final long serialVersionUID = -3868077369004418496L;
 

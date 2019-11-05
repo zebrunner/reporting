@@ -29,7 +29,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(Include.NON_NULL)
-public class JobType extends AbstractType {
+public class JobDTO extends AbstractType {
 
     private static final long serialVersionUID = 4123576956700125643L;
 

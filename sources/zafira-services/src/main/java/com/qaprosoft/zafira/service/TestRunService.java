@@ -319,8 +319,7 @@ public class TestRunService {
                 testRun = getLatestJobTestRunByBranchAndJobURL(testRunParams.getBranch(), testRunParams.getJobUrl());
                 if (testRun != null) {
                     Long latestTestRunId = testRun.getId();
-                    User user = userService.getUserById(userId);
-                    testRun = createQueuedTestRun(testRun, testRunParams, user);
+                    testRun = createQueuedTestRun(testRun, testRunParams, userId);
                     final long testRunId = testRun.getId();
                     List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
                     tests.stream()
@@ -335,7 +334,7 @@ public class TestRunService {
         return testRun;
     }
 
-    private TestRun createQueuedTestRun(TestRun testRun, QueueTestRunParamsType testRunParams, User user) {
+    private TestRun createQueuedTestRun(TestRun testRun, QueueTestRunParamsType testRunParams, Long userId) {
         String ciParentUrl = testRunParams.getCiParentUrl();
         String ciParentBuild = testRunParams.getCiParentBuild();
         String projectName = testRunParams.getProject();
@@ -343,7 +342,7 @@ public class TestRunService {
         setMinimalQueuedTestRunData(testRun, testRunParams);
 
         if (StringUtils.isNotBlank(ciParentUrl)) {
-            Job job = jobsService.createOrUpdateJobByURL(ciParentUrl, user);
+            Job job = jobsService.createOrUpdateJobByURL(ciParentUrl, userId);
             testRun.setUpstreamJob(job);
         }
         if (StringUtils.isNotBlank(ciParentBuild)) {
