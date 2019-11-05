@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 
 import static com.qaprosoft.zafira.models.db.Group.Role.ROLE_ADMIN;
 import static com.qaprosoft.zafira.models.db.User.Source.LDAP;
-import static com.qaprosoft.zafira.service.exception.ExternalSystemException.IllegalOperationErrorDetail.LDAP_USER_DOES_NOT_EXIST;
+import static com.qaprosoft.zafira.service.exception.ExternalSystemException.ExternalSystemErrorDetail.LDAP_USER_DOES_NOT_EXIST;
 import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.INVITATION_CAN_NOT_BE_CREATED;
 import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.INVITATION_IS_INVALID;
 import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.USER_CAN_NOT_BE_CREATED;

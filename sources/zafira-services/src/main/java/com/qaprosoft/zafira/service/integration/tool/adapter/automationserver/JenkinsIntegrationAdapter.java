@@ -53,6 +53,9 @@ import java.util.UUID;
 import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterClass.BOOLEAN;
 import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterClass.HIDDEN;
 import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterClass.STRING;
+import static com.qaprosoft.zafira.service.exception.ExternalSystemException.ExternalSystemErrorDetail.JENKINS_BUILD_DOES_NOT_EXIST;
+import static com.qaprosoft.zafira.service.exception.ExternalSystemException.ExternalSystemErrorDetail.JENKINS_JOB_DOES_NOT_EXIST;
+import static com.qaprosoft.zafira.service.exception.ExternalSystemException.ExternalSystemErrorDetail.JENKINS_QUEUE_REFERENCE_IS_NOT_OBTAINED;
 import static com.qaprosoft.zafira.service.exception.IntegrationException.IntegrationExceptionDetail.JENKINS_SERVER_INITIALIZATION_FAILED;
 
 public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implements AutomationServerAdapter {
@@ -130,7 +133,7 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
     @Override
     public String buildScannerJobUrl(String repositoryName, boolean rescan) {
         String jobUrl;
-        if(rescan) {
+        if (rescan) {
             jobUrl = formatReScannerJobUrl(folder, url, repositoryName);
         } else {
             jobUrl = formatScannerJobUrl(folder, url);
@@ -190,7 +193,7 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
         JobWithDetails jobWithDetails = getJobWithDetails(jobURL);
         Build build = jobWithDetails.getBuildByNumber(buildNumber);
         if (build == null) {
-            throw new ExternalSystemException(String.format(ERR_MSG_UNABLE_TO_GET_BUILD_FROM_JOB, buildNumber, jobURL));
+            throw new ExternalSystemException(JENKINS_BUILD_DOES_NOT_EXIST, String.format(ERR_MSG_UNABLE_TO_GET_BUILD_FROM_JOB, buildNumber, jobURL));
         }
         BuildWithDetails buildWithDetails;
         try {
@@ -216,7 +219,7 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
         }
         boolean success = checkReference(queueReference);
         if (!success) {
-            throw new ExternalSystemException(String.format(ERR_MSG_UNABLE_TO_BUILD_JOB_WITH_PARAMETERS, jobWithDetails.getDisplayName(), jobParameters));
+            throw new ExternalSystemException(JENKINS_QUEUE_REFERENCE_IS_NOT_OBTAINED, String.format(ERR_MSG_UNABLE_TO_BUILD_JOB_WITH_PARAMETERS, jobWithDetails.getDisplayName(), jobParameters));
         }
         return queueReference;
     }
@@ -230,7 +233,7 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
             success = checkReference(reference);
         }
         if (!success) {
-            throw new ExternalSystemException(String.format(ERR_MSG_UNABLE_TO_ABORT_JOB, jobURL));
+            throw new ExternalSystemException(JENKINS_QUEUE_REFERENCE_IS_NOT_OBTAINED, String.format(ERR_MSG_UNABLE_TO_ABORT_JOB, jobURL));
         }
     }
 
@@ -325,7 +328,7 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
 
         JobWithDetails jobWithDetails = getJobByFolderAndName(folderJob, jobName);
         if (jobWithDetails == null) {
-            throw new ExternalSystemException(String.format(ERR_MSG_UNABLE_TO_GET_JOB_BY_URL, jobURL));
+            throw new ExternalSystemException(JENKINS_JOB_DOES_NOT_EXIST, String.format(ERR_MSG_UNABLE_TO_GET_JOB_BY_URL, jobURL));
         }
         return jobWithDetails;
     }
