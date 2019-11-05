@@ -16,9 +16,8 @@
 package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.db.Project;
-import com.qaprosoft.zafira.models.dto.ProjectType;
+import com.qaprosoft.zafira.models.dto.ProjectDTO;
 import com.qaprosoft.zafira.service.ProjectService;
-import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -41,8 +40,6 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.PROJECT_NOT_FOUND;
-
 @Api("Projects API")
 @CrossOrigin
 @RequestMapping(path = "api/projects", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -59,13 +56,13 @@ public class ProjectController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Create project", nickname = "createProject", httpMethod = "POST", response = ProjectType.class)
+    @ApiOperation(value = "Create project", nickname = "createProject", httpMethod = "POST", response = ProjectDTO.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_PROJECTS')")
     @PostMapping()
-    public ProjectType createProject(@RequestBody @Valid ProjectType project) {
+    public ProjectDTO createProject(@RequestBody @Valid ProjectDTO project) {
         Project newProject = projectService.createProject(mapper.map(project, Project.class));
-        return mapper.map(newProject, ProjectType.class);
+        return mapper.map(newProject, ProjectDTO.class);
     }
 
     @ApiResponseStatuses
@@ -78,32 +75,32 @@ public class ProjectController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Update project", nickname = "updateProject", httpMethod = "PUT", response = ProjectType.class)
+    @ApiOperation(value = "Update project", nickname = "updateProject", httpMethod = "PUT", response = ProjectDTO.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_PROJECTS')")
     @PutMapping()
-    public ProjectType updateProject(@RequestBody @Valid ProjectType project) {
+    public ProjectDTO updateProject(@RequestBody @Valid ProjectDTO project) {
         Project updatedProject = projectService.updateProject(mapper.map(project, Project.class));
-        return mapper.map(updatedProject, ProjectType.class);
+        return mapper.map(updatedProject, ProjectDTO.class);
     }
 
     @ApiResponseStatuses
     @ApiOperation(value = "Get all projects", nickname = "getAllProjects", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping()
-    public List<ProjectType> getAllProjects() {
+    public List<ProjectDTO> getAllProjects() {
         List<Project> projects = projectService.getAllProjects();
         return projects.stream()
-                       .map(project -> mapper.map(project, ProjectType.class))
+                       .map(project -> mapper.map(project, ProjectDTO.class))
                        .collect(Collectors.toList());
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get project by name", nickname = "getProjectByName", httpMethod = "GET", response = ProjectType.class)
+    @ApiOperation(value = "Get project by name", nickname = "getProjectByName", httpMethod = "GET", response = ProjectDTO.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/{name}")
-    public ProjectType getProjectByName(@PathVariable("name") String name) {
-        return mapper.map(projectService.getNotNullProjectByName(name), ProjectType.class);
+    public ProjectDTO getProjectByName(@PathVariable("name") String name) {
+        return mapper.map(projectService.getNotNullProjectByName(name), ProjectDTO.class);
     }
 
 }

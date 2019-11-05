@@ -23,7 +23,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonInclude(Include.NON_NULL)
-public class ProjectType extends AbstractType {
+public class ProjectDTO extends AbstractType {
 
     private static final long serialVersionUID = 1489890001065170767L;
 
