@@ -169,7 +169,7 @@ public class LauncherService {
     }
 
     @Transactional(readOnly = true)
-    public String buildLauncherJob(Launcher launcher, Long userId) throws IOException {
+    public String buildLauncherJob(Launcher launcher, Long userId, Long providerId) throws IOException {
         User user = userService.getNotNullUserById(userId);
         Long scmAccountId = launcher.getScmAccount().getId();
         ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
@@ -181,13 +181,13 @@ public class LauncherService {
         // It must be returned with test run on start in testRun.ciRunId field
         String ciRunId = UUID.randomUUID().toString();
 
-        Map<String, String> jobParameters = buildLauncherJobParametersMap(job.getAutomationServerId(), launcher, user, scmAccount, ciRunId);
+        Map<String, String> jobParameters = buildLauncherJobParametersMap(job.getAutomationServerId(), launcher, user, scmAccount, ciRunId, providerId);
         automationServerService.buildJob(job, jobParameters);
 
         return ciRunId;
     }
 
-    private Map<String, String> buildLauncherJobParametersMap(Long automationServerId, Launcher launcher, User user, ScmAccount scmAccount, String ciRunId) throws IOException {
+    private Map<String, String> buildLauncherJobParametersMap(Long automationServerId, Launcher launcher, User user, ScmAccount scmAccount, String ciRunId, Long providerId) throws IOException {
         Map<String, String> jobParameters = new ObjectMapper().readValue(launcher.getModel(), new TypeReference<Map<String, String>>() {});
 
         String decryptedAccessToken = cryptoService.decrypt(scmAccount.getAccessToken());
@@ -201,7 +201,8 @@ public class LauncherService {
         // If Selenium integration is enabled pass selenium_host with basic auth as job argument
         Integration selenium = integrationService.retrieveDefaultByIntegrationTypeName("SELENIUM");
         if (testAutomationToolService.isEnabledAndConnected(selenium.getId())) {
-            String seleniumURL = testAutomationToolService.buildUrl();
+            providerId = launcherPresetService.getTestEnvironmentProviderId(providerId);
+            String seleniumURL = testAutomationToolService.buildUrl(providerId);
             jobParameters.put("selenium_url", seleniumURL);
         }
 
@@ -225,7 +226,7 @@ public class LauncherService {
     }
 
     @Transactional()
-    public String buildLauncherJobByPresetRef(Long id, String ref, LauncherWebHookPayload payload, Long userId) throws IOException {
+    public String buildLauncherJobByPresetRef(Long id, String ref, LauncherWebHookPayload payload, Long userId, Long providerId) throws IOException {
         Launcher launcher = getLauncherById(id);
         if (launcher == null) {
             throw new ResourceNotFoundException(LAUNCHER_NOT_FOUND, String.format("Unable to locate launcher with id '%d'", id));
@@ -233,7 +234,7 @@ public class LauncherService {
 
         LauncherPreset preset = launcherPresetService.retrieveByRef(ref);
         launcher.setModel(preset.getParams());
-        String ciRunId = buildLauncherJob(launcher, userId);
+        String ciRunId = buildLauncherJob(launcher, userId, providerId);
 
         LauncherCallback callback = new LauncherCallback(ciRunId, payload.getCallbackUrl(), preset);
         launcherCallbackService.create(callback);

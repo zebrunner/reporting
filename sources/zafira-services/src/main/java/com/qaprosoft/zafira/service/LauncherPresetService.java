@@ -19,6 +19,8 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherPresetMapper;
 import com.qaprosoft.zafira.models.db.LauncherPreset;
 import com.qaprosoft.zafira.service.exception.IllegalOperationException;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
+import com.qaprosoft.zafira.service.integration.tool.adapter.IntegrationGroupAdapter;
+import com.qaprosoft.zafira.service.integration.tool.impl.TestAutomationToolService;
 import com.qaprosoft.zafira.service.util.URLResolver;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
@@ -34,14 +36,16 @@ public class LauncherPresetService {
     private static final String ERR_MSG_LAUNCHER_PRESET_NOT_FOUND_BY_ID = "Launcher preset not found by id '%d'";
     private static final String ERR_MSG_LAUNCHER_PRESET_NOT_FOUND_BY_REF = "Launcher preset not found by ref '%s'";
 
-    private static final String WEBHOOK_API_URL_PATTERN = "%s/api/launchers/%d/build/%s";
+    private static final String WEBHOOK_API_URL_PATTERN = "%s/api/launchers/%d/build/%s?providerId=%d";
 
     private final LauncherPresetMapper launcherPresetMapper;
     private final URLResolver urlResolver;
+    private final TestAutomationToolService testAutomationToolService;
 
-    public LauncherPresetService(LauncherPresetMapper launcherPresetMapper, URLResolver urlResolver) {
+    public LauncherPresetService(LauncherPresetMapper launcherPresetMapper, URLResolver urlResolver, TestAutomationToolService testAutomationToolService) {
         this.launcherPresetMapper = launcherPresetMapper;
         this.urlResolver = urlResolver;
+        this.testAutomationToolService = testAutomationToolService;
     }
 
     @Transactional()
@@ -94,10 +98,16 @@ public class LauncherPresetService {
     }
 
     @Transactional(readOnly = true)
-    public String buildWebHookUrl(Long id, Long launcherId) {
+    public String buildWebHookUrl(Long id, Long launcherId, Long providerId) {
+        providerId = getTestEnvironmentProviderId(providerId);
         LauncherPreset launcherPreset = retrieveById(id);
         String webserviceUrl = urlResolver.buildWebserviceUrl();
-        return String.format(WEBHOOK_API_URL_PATTERN, webserviceUrl, launcherId, launcherPreset.getRef());
+        return String.format(WEBHOOK_API_URL_PATTERN, webserviceUrl, launcherId, launcherPreset.getRef(), providerId);
+    }
+
+    public Long getTestEnvironmentProviderId(Long maybeId) {
+        IntegrationGroupAdapter groupAdapter = testAutomationToolService.getAdapterByIntegrationId(maybeId);
+        return groupAdapter.getIntegrationId();
     }
 
     private boolean canPersist(LauncherPreset launcherPreset, Long launcherId) {

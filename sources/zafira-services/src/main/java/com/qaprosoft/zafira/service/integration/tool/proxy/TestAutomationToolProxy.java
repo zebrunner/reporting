@@ -19,7 +19,9 @@ import com.qaprosoft.zafira.service.CryptoService;
 import com.qaprosoft.zafira.service.integration.IntegrationGroupService;
 import com.qaprosoft.zafira.service.integration.IntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.adapter.IntegrationAdapter;
+import com.qaprosoft.zafira.service.integration.tool.adapter.testautomationtool.BrowserStackIntegrationAdapter;
 import com.qaprosoft.zafira.service.integration.tool.adapter.testautomationtool.SeleniumIntegrationAdapter;
+import com.qaprosoft.zafira.service.integration.tool.adapter.testautomationtool.ZebrunnerIntegrationAdapter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +31,9 @@ import java.util.Map;
 public class TestAutomationToolProxy extends IntegrationAdapterProxy {
 
     private static final Map<String, Class<? extends IntegrationAdapter>> INTEGRATION_TYPE_ADAPTERS = Map.of(
-            "SELENIUM", SeleniumIntegrationAdapter.class
+            "SELENIUM", SeleniumIntegrationAdapter.class,
+            "ZEBRUNNER", ZebrunnerIntegrationAdapter.class,
+            "BROWSER_STACK", BrowserStackIntegrationAdapter.class
     );
 
     public TestAutomationToolProxy(ApplicationContext applicationContext,

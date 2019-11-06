@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -68,8 +69,12 @@ public class LauncherPresetAPIController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @GetMapping("/{id}/webhook")
-    public String buildWebHookUrl(@PathVariable("id") Long id, @PathVariable("launcherId") Long launcherId) {
-        return launcherPresetService.buildWebHookUrl(id, launcherId);
+    public String buildWebHookUrl(
+            @PathVariable("id") Long id,
+            @PathVariable("launcherId") Long launcherId,
+            @RequestParam(name = "providerId", required = false) Long providerId
+    ) {
+        return launcherPresetService.buildWebHookUrl(id, launcherId, providerId);
     }
 
     @ApiResponseStatuses
