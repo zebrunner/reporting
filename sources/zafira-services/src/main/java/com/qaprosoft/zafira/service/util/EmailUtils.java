@@ -20,16 +20,14 @@ import org.springframework.util.StringUtils;
 public class EmailUtils {
 
     public static String[] obtainRecipients(String recipientsLine) {
-        String[] recipients = null;
         if (StringUtils.isEmpty(recipientsLine)) {
-            recipients = new String[] {};
+            return new String[] {};
         } else {
-            recipients = recipientsLine.trim()
-                                       .replaceAll(",", " ")
-                                       .replaceAll(";", " ")
-                                       .replaceAll("\\[]", " ")
-                                       .split(" ");
+            return recipientsLine.trim()
+                                 .replaceAll(",", " ")
+                                 .replaceAll(";", " ")
+                                 .replaceAll("\\[]", " ")
+                                 .split(" ");
         }
-        return recipients;
     }
 }

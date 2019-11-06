@@ -146,9 +146,6 @@ public class AmazonIntegrationAdapter extends AbstractIntegrationAdapter impleme
             CannedAccessControlList controlList = multitenant ? CannedAccessControlList.Private : CannedAccessControlList.PublicRead;
             amazonS3.setObjectAcl(bucket, key, controlList);
 
-            result = multitenant ? urlResolver.getServiceURL() + relativePath
-                    : amazonS3.getUrl(bucket, key).toString();
-
             CannedAccessControlList acl = multitenant ? CannedAccessControlList.Private : CannedAccessControlList.PublicRead;
             amazonS3.setObjectAcl(bucket, key, acl);
 
