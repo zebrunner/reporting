@@ -33,6 +33,8 @@ public interface TestCaseMapper {
 
     void updateTestCase(TestCase testCase);
 
+    void reassignToProject(@Param("fromProjectId") Long fromProjectId, @Param("toProjectId") Long toProjectId);
+
     void deleteTestCaseById(long id);
 
     void deleteTestCase(TestCase testCase);

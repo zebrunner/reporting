@@ -613,6 +613,12 @@
 		]]>
     </update>
 
+    <update id="reassignToProject">
+		<![CDATA[
+        UPDATE TEST_RUNS SET PROJECT_ID = #{toProjectId} WHERE PROJECT_ID = #{fromProjectId}
+        ]]>
+	</update>
+
     <sql id="deleteTestRun">
 		<![CDATA[
         DELETE

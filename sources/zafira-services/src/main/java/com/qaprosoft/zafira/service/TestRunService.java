@@ -43,8 +43,9 @@ import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import com.qaprosoft.zafira.service.integration.IntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.impl.AutomationServerService;
 import com.qaprosoft.zafira.service.integration.tool.impl.google.models.TestRunSpreadsheetService;
+import com.qaprosoft.zafira.service.project.ProjectReassignable;
+import com.qaprosoft.zafira.service.project.ProjectService;
 import com.qaprosoft.zafira.service.util.DateTimeUtil;
-import com.qaprosoft.zafira.service.util.EmailUtils;
 import com.qaprosoft.zafira.service.util.FreemarkerUtil;
 import com.qaprosoft.zafira.service.util.URLResolver;
 import org.apache.commons.lang.ArrayUtils;
@@ -85,11 +86,10 @@ import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.R
 import static com.qaprosoft.zafira.service.util.XmlConfigurationUtil.readArguments;
 
 @Service
-public class TestRunService {
+public class TestRunService implements ProjectReassignable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestRunService.class);
 
-    private static final String DEFAULT_PROJECT = "UNKNOWN";
     private static final String UNDEFINED_FAILURE_COMMENT = "undefined failure";
 
     private static final String ERR_MSG_TEST_RUN_NOT_FOUND = "Test run with id %s can not be found";
@@ -351,7 +351,7 @@ public class TestRunService {
         if (StringUtils.isNotBlank(projectName)) {
             Project project = projectService.getProjectByName(projectName);
             if (project == null) {
-                project = projectService.getProjectByName(DEFAULT_PROJECT);
+                project = projectService.getProjectByName(ProjectService.getDefaultProject());
             }
             testRun.setProject(project);
         }
@@ -836,5 +836,11 @@ public class TestRunService {
         testRuns.stream()
                 .filter(testRun -> !automationServerService.isJobUrlVisibilityEnabled(testRun.getJob().getAutomationServerId()))
                 .forEach(testRun -> testRun.getJob().setJobURL(null));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void reassignProject(Long fromId, Long toId) {
+        testRunMapper.reassignToProject(fromId, toId);
     }
 }

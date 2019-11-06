@@ -13,25 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
+package com.qaprosoft.zafira.dbaccess.persistence;
 
-package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
+import com.qaprosoft.zafira.models.entity.Project;
+import org.springframework.data.repository.CrudRepository;
 
-import com.qaprosoft.zafira.models.db.View;
+import java.util.Optional;
 
-import java.util.List;
+public interface ProjectRepository extends CrudRepository<Project, Long> {
 
-import org.apache.ibatis.annotations.Param;
-
-public interface ViewMapper {
-    void createView(View view);
-
-    View getViewById(long id);
-
-    List<View> getAllViews(@Param("projectId") Long projectId);
-
-    void updateView(View view);
-
-    void reassignToProject(@Param("fromProjectId") Long fromProjectId, @Param("toProjectId") Long toProjectId);
-
-    void deleteViewById(long id);
+    Optional<Project> findByName(String name);
 }
