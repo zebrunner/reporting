@@ -24,6 +24,8 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestCaseSearch
 import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestCase;
+import com.qaprosoft.zafira.service.project.ProjectReassignable;
+import com.qaprosoft.zafira.service.project.ProjectService;
 import com.qaprosoft.zafira.service.util.DateTimeUtil;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -37,7 +39,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Service
-public class TestCaseService {
+public class TestCaseService implements ProjectReassignable {
 
     private final TestCaseMapper testCaseMapper;
     private final ProjectService projectService;
@@ -142,5 +144,11 @@ public class TestCaseService {
                 .results(testCases)
                 .totalResults(count)
                 .build();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void reassignProject(Long fromId, Long toId) {
+        testCaseMapper.reassignToProject(fromId, toId);
     }
 }

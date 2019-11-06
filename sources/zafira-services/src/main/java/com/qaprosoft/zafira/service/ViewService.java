@@ -17,13 +17,14 @@ package com.qaprosoft.zafira.service;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.ViewMapper;
 import com.qaprosoft.zafira.models.db.View;
+import com.qaprosoft.zafira.service.project.ProjectReassignable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-public class ViewService {
+public class ViewService implements ProjectReassignable {
 
     private final ViewMapper viewMapper;
 
@@ -56,5 +57,11 @@ public class ViewService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteViewById(long id) {
         viewMapper.deleteViewById(id);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void reassignProject(Long fromId, Long toId) {
+        viewMapper.reassignToProject(fromId, toId);
     }
 }

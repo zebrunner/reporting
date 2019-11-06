@@ -13,25 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
+package com.qaprosoft.zafira.models.entity;
 
-package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import com.qaprosoft.zafira.models.db.View;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-import java.util.List;
+@Getter
+@Setter
+@NoArgsConstructor
+@Entity
+@Table(name = "projects")
+public class Project {
 
-import org.apache.ibatis.annotations.Param;
-
-public interface ViewMapper {
-    void createView(View view);
-
-    View getViewById(long id);
-
-    List<View> getAllViews(@Param("projectId") Long projectId);
-
-    void updateView(View view);
-
-    void reassignToProject(@Param("fromProjectId") Long fromProjectId, @Param("toProjectId") Long toProjectId);
-
-    void deleteViewById(long id);
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    private String description;
 }

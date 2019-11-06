@@ -47,6 +47,8 @@ public interface TestRunMapper {
 
     void updateTestRun(TestRun testRun);
 
+    void reassignToProject(@Param("fromProjectId") Long fromProjectId, @Param("toProjectId") Long toProjectId);
+
     void deleteTestRunById(long id);
 
     void deleteTestRun(TestRun testRun);
