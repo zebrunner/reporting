@@ -812,7 +812,8 @@ public class TestRunService implements ProjectReassignable {
         // THIS IS VERY BAD AND NEEDS TO BE FIXED IN FUTURE
         // this approach ignores if JIRA enabled at all
         Integration jira = integrationService.retrieveDefaultByIntegrationTypeName("JIRA");
-        return jira.getAttributeValue("JIRA_URL").orElse("");
+        String jiraUrl = jira.getAttributeValue("JIRA_URL");
+        return jiraUrl != null ? jiraUrl : "";
     }
 
     public static int calculateSuccessRate(TestRun testRun) {
