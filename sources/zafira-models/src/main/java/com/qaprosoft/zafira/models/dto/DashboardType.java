@@ -16,7 +16,7 @@
 package com.qaprosoft.zafira.models.dto;
 
 import com.qaprosoft.zafira.models.db.Attribute;
-import com.qaprosoft.zafira.models.dto.widget.WidgetType;
+import com.qaprosoft.zafira.models.dto.widget.WidgetDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,7 +30,7 @@ public class DashboardType extends AbstractType {
     private static final long serialVersionUID = -562795025453363474L;
 
     private String title;
-    private List<WidgetType> widgets = new ArrayList<>();
+    private List<WidgetDTO> widgets = new ArrayList<>();
     private boolean hidden;
     private Integer position;
     private boolean editable;

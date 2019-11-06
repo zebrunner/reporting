@@ -13,26 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.dto;
+package com.qaprosoft.zafira.models.dto.widget;
 
+import com.qaprosoft.zafira.models.db.WidgetTemplate;
+import com.qaprosoft.zafira.models.dto.AbstractType;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.Map;
-
 @Getter
 @Setter
-public class SQLExecuteType implements Serializable {
+public class WidgetTemplateDTO extends AbstractType {
 
-    private static final long serialVersionUID = 5765973760872185602L;
+    private static final long serialVersionUID = 7998270816228259812L;
 
-    @NotNull
-    @Min(1)
-    private Long templateId;
-
-    private Map<String, Object> paramsConfig;
+    private String name;
+    private String description;
+    private WidgetTemplate.Type type;
+    private String chartConfig;
+    private String paramsConfig;
+    private String legendConfig;
+    private Boolean hidden;
 
 }
