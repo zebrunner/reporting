@@ -65,6 +65,12 @@
         ]]>
 	</update>
 
+	<update id="reassignToProject">
+		<![CDATA[
+		UPDATE VIEWS SET PROJECT_ID = #{toProjectId} WHERE PROJECT_ID = #{fromProjectId}
+		]]>
+	</update>
+
 	<delete id="deleteViewById">
         <![CDATA[
           DELETE

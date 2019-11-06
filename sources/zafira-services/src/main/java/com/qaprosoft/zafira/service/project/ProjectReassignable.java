@@ -13,25 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
+package com.qaprosoft.zafira.service.project;
 
-package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
+public interface ProjectReassignable {
 
-import com.qaprosoft.zafira.models.db.View;
-
-import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
-
-public interface ViewMapper {
-    void createView(View view);
-
-    View getViewById(long id);
-
-    List<View> getAllViews(@Param("projectId") Long projectId);
-
-    void updateView(View view);
-
-    void reassignToProject(@Param("fromProjectId") Long fromProjectId, @Param("toProjectId") Long toProjectId);
-
-    void deleteViewById(long id);
+    void reassignProject(Long fromId, Long toId);
 }

@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.service.ConfigurationService;
-import com.qaprosoft.zafira.service.ProjectService;
+import com.qaprosoft.zafira.service.project.ProjectService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

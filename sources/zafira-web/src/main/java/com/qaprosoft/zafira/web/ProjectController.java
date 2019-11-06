@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.dto.ProjectType;
-import com.qaprosoft.zafira.service.ProjectService;
+import com.qaprosoft.zafira.service.project.ProjectService;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -75,8 +76,8 @@ public class ProjectController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_PROJECTS')")
     @DeleteMapping("/{id}")
-    public void deleteProject(@PathVariable("id") long id) {
-        projectService.deleteProjectById(id);
+    public void deleteProject(@PathVariable("id") long id, @RequestParam(name = "reassignTo", required = false) Long reassignToId) {
+        projectService.deleteProjectById(id, reassignToId);
     }
 
     @ApiResponseStatuses
