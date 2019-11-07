@@ -444,22 +444,28 @@ public class TestService {
         actions.forEach(action -> testRunStatisticsService.updateStatistics(test.getTestRunId(), action));
     }
 
-    private void linkWorkItem(Test test, WorkItem workItem) {
-        Type workItemType = workItem.getType();
-        WorkItem attachedWorkItem = test.getWorkItemByType(workItemType);
-        if (workItem.getId() != null) {
+    private void linkWorkItem(Test test, WorkItem workItemToLink) {
+        Type workItemType = workItemToLink.getType();
+        if (workItemExists(workItemToLink)) {
+            WorkItem attachedWorkItem = test.getWorkItemByType(workItemType);
             if (attachedWorkItem != null) {
                 unlinkWorkItem(attachedWorkItem);
                 deleteTestWorkItemByTestIdAndWorkItemType(test.getId(), workItemType);
             } else {
-                workItemService.updateWorkItem(workItem);
+                workItemService.updateWorkItem(workItemToLink);
             }
         } else {
-            workItemService.createWorkItem(workItem);
+            workItemService.createWorkItem(workItemToLink);
             deleteTestWorkItemByTestIdAndWorkItemType(test.getId(), workItemType);
         }
+        testMapper.createTestWorkItem(test, workItemToLink);
+    }
 
-        testMapper.createTestWorkItem(test, workItem);
+    private boolean workItemExists(WorkItem workItemToLink) {
+        WorkItem dbWorkItem =  workItemService.getWorkItemByJiraIdAndTypeAndHashcode(workItemToLink.getJiraId(),
+                    workItemToLink.getType(),
+                    workItemToLink.getHashCode());
+        return dbWorkItem != null;
     }
 
     private void unlinkWorkItem(WorkItem workItem) {
