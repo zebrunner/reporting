@@ -72,11 +72,6 @@ public class FilterService {
     }
 
     @Transactional(readOnly = true)
-    public List<Filter> getAllFilters() {
-        return filterMapper.getAllFilters();
-    }
-
-    @Transactional(readOnly = true)
     public List<Filter> getFiltersByName(String name) {
         return filterMapper.getFiltersByName(name);
     }
