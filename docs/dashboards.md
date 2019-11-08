@@ -1,6 +1,4 @@
-## Dashboards
-
-  General is the main page that will be displayed by default when you open Zebrunner.
+General is the main page that will be displayed by default when you open Zebrunner.
 By default, it accumulates 4 widgets - 30 days total, 30 days pass rate by platform, 30 days test details, and 30 days tests trend.
 Later on, all the other added widgets would also be displayed there:
 
