@@ -37,8 +37,6 @@ import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.R
 @Service
 public class ProjectService {
 
-    private static final String ERR_MSG_PROJECT_CAN_NOT_BE_FOUND_BY_NAME = "Project with name %s can not be found";
-
     private static final String ERR_MSG_PROJECT_NOT_FOUND_BY_ID = "Requested company can not be found by id '%d'";
     private static final String ERR_MSG_PROJECT_NOT_FOUND_BY_NAME = "Requested company can not be found by name '%s'";
 
@@ -82,16 +80,6 @@ public class ProjectService {
     @Transactional(readOnly = true)
     public Project getProjectByName(String name) {
         return !StringUtils.isEmpty(name) ? projectMapper.getProjectByName(name) : null;
-    }
-
-    @Cacheable(value = "projects", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #name", condition = "#name != null")
-    @Transactional(readOnly = true)
-    public Project getNotNullProjectByName(String name) {
-        Project project = !StringUtils.isEmpty(name) ? projectMapper.getProjectByName(name) : null;
-        if (project == null) {
-            throw new ResourceNotFoundException(PROJECT_NOT_FOUND, ERR_MSG_PROJECT_CAN_NOT_BE_FOUND_BY_NAME, name);
-        }
-        return project;
     }
 
     @CachePut(value = "projects", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #project.name", condition = "#project != null && #project.name != null")
