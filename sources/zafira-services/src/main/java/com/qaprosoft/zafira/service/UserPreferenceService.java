@@ -28,6 +28,8 @@ import static com.qaprosoft.zafira.models.db.UserPreference.Name.DEFAULT_DASHBOA
 @Service
 public class UserPreferenceService {
 
+    private static final String DEFAULT_DASHBOARD_NAME = "General";
+
     @Autowired
     private UserPreferenceMapper userPreferenceMapper;
 
@@ -97,7 +99,11 @@ public class UserPreferenceService {
         return newUserPreference;
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    public void resetDefaultDashboardPreference(String fromTitle) {
+        updateDefaultDashboardPreference(fromTitle, DEFAULT_DASHBOARD_NAME);
+    }
+
+    @Transactional
     public void updateDefaultDashboardPreference(String fromTitle, String toTitle) {
         List<UserPreference> userPreferences = getUserPreferencesByNameAndDashboardTitle(DEFAULT_DASHBOARD, fromTitle);
         for (UserPreference userPreference : userPreferences) {
