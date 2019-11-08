@@ -45,13 +45,13 @@ public class JobsService {
         this.userService = userService;
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public void createJob(Job job) {
         jobMapper.createJob(job);
     }
 
     // Check the same logic in ZafiraClient method registerJob
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Job createOrUpdateJobByURL(String jobUrl, Long userId) {
         Job job = createJobFromURL(jobUrl, userId);
         return createOrUpdateJob(job);
@@ -87,13 +87,13 @@ public class JobsService {
         return jobMapper.getJobByJobURL(url);
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Job updateJob(Job job) {
         jobMapper.updateJob(job);
         return job;
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Job createOrUpdateJob(Job newJob) {
         Integration integration = integrationService.retrieveByJobAndIntegrationTypeName(newJob, INTEGRATION_TYPE_NAME);
         newJob.setAutomationServerId(integration.getId());
@@ -109,18 +109,18 @@ public class JobsService {
         return newJob;
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public JobView createJobView(JobView jobView) {
         jobViewMapper.createJobView(jobView);
         return jobView;
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public void createJobViews(List<JobView> jobViews) {
         jobViews.forEach(jobViewMapper::createJobView);
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public void updateJobViews(List<JobView> jobViews, long viewId, String env) {
         deleteJobView(viewId, env);
         createJobViews(jobViews);
@@ -131,7 +131,7 @@ public class JobsService {
         return jobViewMapper.getJobViewsByViewId(viewId);
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public void deleteJobView(long viewId, String env) {
         jobViewMapper.deleteJobViewsByViewIdAndEnv(viewId, env);
     }
