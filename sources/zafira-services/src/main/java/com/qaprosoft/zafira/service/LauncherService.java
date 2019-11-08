@@ -107,7 +107,7 @@ public class LauncherService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Launcher createLauncher(Launcher launcher, long userId, Long automationServerId) {
+    public Launcher createLauncher(Launcher launcher, Long userId, Long automationServerId) {
         launcher.setAutoScan(false);
         if (automationServerService.isEnabledAndConnected(automationServerId)) {
             String launcherJobUrl = automationServerService.buildLauncherJobUrl(automationServerId);
