@@ -16,26 +16,20 @@
 package com.qaprosoft.zafira.models.dto.auth;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
-import java.io.Serializable;
 import java.util.List;
 
+@Getter
+@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class InvitationListType implements Serializable {
-
-    private static final long serialVersionUID = 4160656524657426059L;
+public class InvitationListType {
 
     @Valid
     @NotEmpty(message = "{error.emailList.notEmpty}")
     private List<InvitationType> invitationTypes;
 
-    public List<InvitationType> getInvitationTypes() {
-        return invitationTypes;
-    }
-
-    public void setInvitationTypes(List<InvitationType> invitationTypes) {
-        this.invitationTypes = invitationTypes;
-    }
 }
