@@ -45,7 +45,11 @@ public class FilterController extends AbstractController {
     @PostMapping()
     public FilterDTO createFilter(@RequestBody @Valid FilterDTO filterDTO) {
         filterDTO.getSubject().sortCriterias();
-        return mapper.map(filterService.createFilter(mapper.map(filterDTO, Filter.class), getPrincipalId(), isAdmin()), FilterDTO.class);
+        Long principalId = getPrincipalId();
+        boolean isAdmin = isAdmin();
+        Filter filter = mapper.map(filterDTO, Filter.class);
+        Filter createdFilter = filterService.createFilter(filter, principalId, isAdmin);
+        return mapper.map(createdFilter, FilterDTO.class);
     }
 
     @ApiResponseStatuses
@@ -53,7 +57,8 @@ public class FilterController extends AbstractController {
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping("/all/public")
     public List<FilterDTO> getAllPublicFilters() {
-        List<Filter> publicFilters = filterService.getAllPublicFilters(getPrincipalId());
+        Long principalId = getPrincipalId();
+        List<Filter> publicFilters = filterService.getAllPublicFilters(principalId);
         return publicFilters.stream()
                             .map(filter -> mapper.map(filter, FilterDTO.class))
                             .collect(Collectors.toList());
@@ -65,7 +70,11 @@ public class FilterController extends AbstractController {
     @PutMapping()
     public FilterDTO updateFilter(@RequestBody @Valid FilterDTO filterDTO) {
         filterDTO.getSubject().sortCriterias();
-        return mapper.map(filterService.updateFilter(mapper.map(filterDTO, Filter.class), getPrincipalId(), isAdmin()), FilterDTO.class);
+        Long principalId = getPrincipalId();
+        boolean isAdmin = isAdmin();
+        Filter filter = mapper.map(filterDTO, Filter.class);
+        Filter updatedFilter = filterService.updateFilter(filter, principalId, isAdmin);
+        return mapper.map(updatedFilter, FilterDTO.class);
     }
 
     @ApiResponseStatuses
@@ -73,7 +82,8 @@ public class FilterController extends AbstractController {
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @DeleteMapping("/{id}")
     public void deleteFilter(@PathVariable("id") Long id) {
-        filterService.deleteFilterById(id, getPrincipalId());
+        Long principalId = getPrincipalId();
+        filterService.deleteFilterById(id, principalId);
     }
 
     @ApiResponseStatuses

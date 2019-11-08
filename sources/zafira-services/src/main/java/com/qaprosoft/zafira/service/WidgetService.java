@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -125,7 +126,7 @@ public class WidgetService {
             resultList = executeSQL(widgetTemplate.getSql(), params, additionalParams, true);
         } catch (Exception e) {
             if (stackTraceRequired) {
-                resultList = List.of(Map.of("Check your query", ExceptionUtils.getFullStackTrace(e)));
+                resultList = Collections.singletonList(Collections.singletonMap("Check your query", ExceptionUtils.getFullStackTrace(e)));
             } else {
                 // wrap whatever error is thrown
                 throw new ProcessingException(WIDGET_QUERY_EXECUTION_ERROR, e.getMessage(), e);
@@ -140,30 +141,24 @@ public class WidgetService {
      */
 
     @Transactional(readOnly = true)
-    public List<Map<String, Object>> getQueryResultObsolete(List<String> projects,
-                                                            String currentUserId,
-                                                            String dashboardName,
-                                                            boolean stackTraceRequired,
-                                                            String query,
-                                                            List<Attribute> attributes,
-                                                            Long userId,
-                                                            String userName) {
+    public List<Map<String, Object>> getQueryResultObsolete(
+            List<String> projects,
+            String currentUserId,
+            String dashboardName,
+            boolean stackTraceRequired,
+            String query,
+            List<Attribute> attributes,
+            Long userId,
+            String userName
+    ) {
         List<Map<String, Object>> resultList;
         try {
             query = applyAttributes(attributes, query);
-            query = query
-                    .replaceAll("#\\{project}", formatProjects(projects))
-                    .replaceAll("#\\{dashboardName}", !StringUtils.isEmpty(dashboardName) ? dashboardName : "")
-                    .replaceAll("#\\{currentUserId}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(userId))
-                    .replaceAll("#\\{currentUserName}", String.valueOf(userName))
-                    .replaceAll("#\\{zafiraURL}", urlResolver.buildWebURL())
-                    .replaceAll("#\\{hashcode}", "0")
-                    .replaceAll("#\\{testCaseId}", "0");
-
+            query = replacePlaceholders(projects, currentUserId, dashboardName, query, userId, userName);
             resultList = executeSQL(query);
         } catch (Exception e) {
             if (stackTraceRequired) {
-                resultList = List.of(Map.of("Check your query", ExceptionUtils.getFullStackTrace(e)));
+                resultList = Collections.singletonList(Collections.singletonMap("Check your query", ExceptionUtils.getFullStackTrace(e)));
             } else {
                 throw new ProcessingException(WIDGET_QUERY_EXECUTION_ERROR, e.getMessage(), e);
             }
@@ -180,7 +175,19 @@ public class WidgetService {
         return query;
     }
 
-    private String formatProjects(List<String> projects) {
+    private String replacePlaceholders(List<String> projects, String currentUserId, String dashboardName, String query, Long userId, String userName) {
+        query = query
+                .replaceAll("#\\{project}", concatProjectNames(projects))
+                .replaceAll("#\\{dashboardName}", !StringUtils.isEmpty(dashboardName) ? dashboardName : "")
+                .replaceAll("#\\{currentUserId}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(userId))
+                .replaceAll("#\\{currentUserName}", String.valueOf(userName))
+                .replaceAll("#\\{zafiraURL}", urlResolver.buildWebURL())
+                .replaceAll("#\\{hashcode}", "0")
+                .replaceAll("#\\{testCaseId}", "0");
+        return query;
+    }
+
+    private String concatProjectNames(List<String> projects) {
         return !CollectionUtils.isEmpty(projects) ? String.join(",", projects) : "%";
     }
     @Transactional(readOnly = true)

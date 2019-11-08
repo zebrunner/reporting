@@ -32,8 +32,6 @@ import java.util.Map;
 
 import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.PROJECT_NOT_FOUND;
 
-import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.PROJECT_NOT_FOUND;
-
 @Service
 public class ProjectService {
 

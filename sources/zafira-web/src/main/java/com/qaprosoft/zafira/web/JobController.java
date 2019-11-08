@@ -68,8 +68,10 @@ public class JobController extends AbstractController {
     @ApiOperation(value = "Create job", nickname = "createJob", httpMethod = "POST", response = JobDTO.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PostMapping()
-    public JobDTO createJob(@RequestBody @Valid JobDTO job) {
-        return mapper.map(jobsService.createOrUpdateJob(mapper.map(job, Job.class)), JobDTO.class);
+    public JobDTO createJob(@RequestBody @Valid JobDTO jobDTO) {
+        Job job = mapper.map(jobDTO, Job.class);
+        Job updatedJob = jobsService.createOrUpdateJob(job);
+        return mapper.map(updatedJob, JobDTO.class);
     }
 
     @ApiResponseStatuses
@@ -77,7 +79,9 @@ public class JobController extends AbstractController {
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PostMapping("/url")
     public JobDTO createJobByUrl(@RequestBody @Valid JobUrlType jobUrl) {
-        return mapper.map(jobsService.createOrUpdateJobByURL(jobUrl.getJobUrlValue(), getPrincipalId()), JobDTO.class);
+        Long principalId = getPrincipalId();
+        Job updatedJob = jobsService.createOrUpdateJobByURL(jobUrl.getJobUrlValue(), principalId);
+        return mapper.map(updatedJob, JobDTO.class);
     }
 
     @ApiResponseStatuses

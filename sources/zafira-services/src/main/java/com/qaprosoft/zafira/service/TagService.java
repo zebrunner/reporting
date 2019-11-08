@@ -22,9 +22,7 @@ import com.qaprosoft.zafira.models.db.TestInfo;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationTag;
-import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import com.qaprosoft.zafira.service.util.URLResolver;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,14 +35,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_RUN_NOT_FOUND;
 import static com.qaprosoft.zafira.service.util.XmlConfigurationUtil.parseConfigToMap;
 import static com.qaprosoft.zafira.service.util.XmlConfigurationUtil.readArguments;
 
 @Service
 public class TagService {
-
-    private static final String ERR_MSG_TEST_RUN_NOT_FOUND = "Test run with id %s can not be found";
 
     private final TagMapper tagMapper;
     private final TestRunService testRunService;
@@ -90,27 +85,20 @@ public class TagService {
     @Transactional(readOnly = true)
     public TagIntegrationData exportTagIntegrationData(String ciRunId, IntegrationTag tagName) {
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
-
-        if (testRun == null) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND);
-        }
-
-        TagIntegrationData tagIntegrationData = new TagIntegrationData();
         // ConfigXML parsing for TestRunName generation
         Configuration configuration = readArguments(testRun.getConfigXML());
         Map<String, String> configMap = parseConfigToMap(configuration);
-
-        tagIntegrationData.setTestRunName(testRun.getName(configMap));
-        tagIntegrationData.setTestInfo(getTestInfoByTagNameAndTestRunCiRunId(tagName, ciRunId));
-        tagIntegrationData.setFinishedAt(getFinishedAt(testRun));
-        tagIntegrationData.setStartedAt(testRun.getStartedAt());
-        tagIntegrationData.setCreatedAfter(testRun.getCreatedAt());
-        tagIntegrationData.setEnv(testRun.getEnv());
-        tagIntegrationData.setTestRunId(testRun.getId().toString());
-        tagIntegrationData.setZafiraServiceUrl(urlResolver.buildWebURL());
-        tagIntegrationData.setCustomParams(getCustomParams(tagName, configuration));
-
-        return tagIntegrationData;
+        return TagIntegrationData.builder()
+                                 .testRunName(testRun.getName(configMap))
+                                 .testInfo(getTestInfoByTagNameAndTestRunCiRunId(tagName, ciRunId))
+                                 .finishedAt(getFinishedAt(testRun))
+                                 .startedAt(testRun.getStartedAt())
+                                 .createdAfter(testRun.getCreatedAt())
+                                 .env(testRun.getEnv())
+                                 .testRunId(testRun.getId().toString())
+                                 .zafiraServiceUrl(urlResolver.buildWebURL())
+                                 .customParams(getCustomParams(tagName, configuration))
+                                 .build();
     }
 
     private Map<String, String> getCustomParams(IntegrationTag tagName, Configuration configuration) {
@@ -119,19 +107,23 @@ public class TagService {
         switch (tagName) {
             case TESTRAIL_TESTCASE_UUID:
                 configuration.getArg().forEach(arg -> {
-                    if (arg.getKey().contains("testrail_assignee")) {
-                        customParams.put("assignee", arg.getValue());
-                    } else if (arg.getKey().contains("testrail_milestone")) {
-                        customParams.put("milestone", arg.getValue());
-                    } else if (arg.getKey().contains("testrail_run_name")) {
-                        customParams.put("testrail_run_name", arg.getValue());
+                    String key = arg.getKey();
+                    String value = arg.getValue();
+                    if (key.contains("testrail_assignee")) {
+                        customParams.put("assignee", value);
+                    } else if (key.contains("testrail_milestone")) {
+                        customParams.put("milestone", value);
+                    } else if (key.contains("testrail_run_name")) {
+                        customParams.put("testrail_run_name", value);
                     }
                 });
                 break;
             case QTEST_TESTCASE_UUID:
                 configuration.getArg().forEach(arg -> {
-                    if (arg.getKey().contains("qtest_cycle_name")) {
-                        customParams.put("cycle_name", arg.getValue());
+                    String key = arg.getKey();
+                    String value = arg.getValue();
+                    if (key.contains("qtest_cycle_name")) {
+                        customParams.put("cycle_name", value);
                     }
                 });
         }

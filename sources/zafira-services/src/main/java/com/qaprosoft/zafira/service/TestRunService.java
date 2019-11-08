@@ -80,7 +80,6 @@ import static com.qaprosoft.zafira.models.db.Status.PASSED;
 import static com.qaprosoft.zafira.models.db.Status.QUEUED;
 import static com.qaprosoft.zafira.models.db.Status.SKIPPED;
 import static com.qaprosoft.zafira.service.FilterService.Template.TEST_RUN_TEMPLATE;
-import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.ILLEGAL_TEST_RUN_ACTION_BY_ID;
 import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.TEST_RUN_CAN_NOT_BE_STARTED;
 import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_RUN_NOT_FOUND;
 import static com.qaprosoft.zafira.service.util.XmlConfigurationUtil.readArguments;
@@ -96,7 +95,6 @@ public class TestRunService implements ProjectReassignable {
     private static final String ERR_MSG_INVALID_TEST_RUN_INITIATED_BY_HUMAN = "Username is not specified for test run initiated by HUMAN";
     private static final String ERR_MSG_INVALID_TEST_RUN_INITIATED_BY_UPSTREAM_JOB = "Upstream job id and upstream build number are not specified for test run initiated by UPSTREAM_JOB";
     private static final String ERR_MSG_TEST_RUN_NOT_FOUND_BY_CI_RUN_ID = "Test run for CI run id %s can not be found";
-    private static final String ERR_MSG_TEST_RUN_ANY_ID_REQUIRED = "Cannot execute an action without test run id or ciRunId";
 
     @Autowired
     private TestRunMapper testRunMapper;
@@ -245,7 +243,11 @@ public class TestRunService implements ProjectReassignable {
 
     @Transactional(readOnly = true)
     public TestRun getTestRunByCiRunIdFull(String ciRunId) {
-        return testRunMapper.getTestRunByCiRunIdFull(ciRunId);
+        TestRun testRun = testRunMapper.getTestRunByCiRunIdFull(ciRunId);
+        if (testRun == null) {
+            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND);
+        }
+        return testRun;
     }
 
     @Transactional(readOnly = true)
@@ -255,9 +257,6 @@ public class TestRunService implements ProjectReassignable {
             testRun = getTestRunByIdFull(id);
         } else if (testRun.getCiRunId() != null) {
             testRun = getTestRunByCiRunIdFull(testRun.getCiRunId());
-        }
-        if (testRun == null) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
         }
         return automationServerService.getBuildConsoleOutput(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
     }
@@ -509,11 +508,6 @@ public class TestRunService implements ProjectReassignable {
             testRun = getTestRunByIdFull(id);
         } else if (testRun.getCiRunId() != null) {
             testRun = getTestRunByCiRunIdFull(testRun.getCiRunId());
-        } else {
-            throw new IllegalOperationException(ILLEGAL_TEST_RUN_ACTION_BY_ID, ERR_MSG_TEST_RUN_ANY_ID_REQUIRED);
-        }
-        if (testRun == null) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
         }
         automationServerService.abortJob(testRun.getJob(), testRun.getBuildNumber());
     }
@@ -622,7 +616,7 @@ public class TestRunService implements ProjectReassignable {
         }
     }
 
-    private void resetTestRunComments(TestRun testRun){
+    private void resetTestRunComments(TestRun testRun) {
         TestRun testRunFull = getTestRunByIdFull(testRun.getId());
         if (StringUtils.isNotBlank(testRunFull.getComments())) {
             testRunFull.setComments(null);
@@ -680,7 +674,7 @@ public class TestRunService implements ProjectReassignable {
         tests.stream()
              .filter(test -> {
                  boolean isFailed = Arrays.asList(FAILED, SKIPPED).contains(test.getStatus());
-                 return  (isFailed && !test.isKnownIssue()) || (isFailed && test.isBlocker());
+                 return (isFailed && !test.isKnownIssue()) || (isFailed && test.isBlocker());
              })
              .findFirst()
              .ifPresent(test -> testRun.setStatus(FAILED));
@@ -763,6 +757,7 @@ public class TestRunService implements ProjectReassignable {
 
     /**
      * Generates a string with test run html report
+     *
      * @param id - test run id or test run ciRunId to find
      * @return built test run report or null if test run is not found
      */

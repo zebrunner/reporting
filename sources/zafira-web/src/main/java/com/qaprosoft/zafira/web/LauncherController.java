@@ -73,7 +73,8 @@ public class LauncherController extends AbstractController {
     public LauncherType createLauncher(@RequestBody @Valid LauncherType launcherType,
                                        @RequestParam(name = "automationServerId", required = false) Long automationServerId) {
         Launcher launcher = mapper.map(launcherType, Launcher.class);
-        launcher = launcherService.createLauncher(launcher, getPrincipalId(), automationServerId);
+        Long principalId = getPrincipalId();
+        launcher = launcherService.createLauncher(launcher, principalId, automationServerId);
         return mapper.map(launcher, LauncherType.class);
     }
 
@@ -186,7 +187,8 @@ public class LauncherController extends AbstractController {
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PostMapping("/create")
     public List<LauncherType> createLaunchersFromJenkins(@RequestBody @Valid ScannedRepoLaunchersType scannedRepoLaunchersType) {
-        List<Launcher> launchers = launcherService.createLaunchersForJob(scannedRepoLaunchersType, getPrincipalId());
+        Long principalId = getPrincipalId();
+        List<Launcher> launchers = launcherService.createLaunchersForJob(scannedRepoLaunchersType, principalId);
         List<LauncherType> launcherTypes = launchers.stream()
                                                     .map(launcher -> mapper.map(launcher, LauncherType.class))
                                                     .collect(Collectors.toList());

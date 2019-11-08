@@ -97,9 +97,6 @@ public class InvitationService {
         }
         Long groupId = invitation.getGroupId();
         Group group = groupService.getGroupById(groupId);
-        if (group == null) {
-            throw new ResourceNotFoundException(GROUP_NOT_FOUND, "Group with id %s does not exists", groupId);
-        }
         if (!group.getInvitable() && !force) {
             throw new ForbiddenOperationException("Cannot invite users to not invitable group '" + group.getName() + "'");
         }

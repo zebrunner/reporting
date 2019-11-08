@@ -38,7 +38,9 @@ public class ExternalSystemException extends ApplicationException {
         JWT_TOKEN_IS_INVALID(2154),
         JENKINS_JOB_DOES_NOT_EXIST(2155),
         JENKINS_BUILD_DOES_NOT_EXIST(2156),
-        JENKINS_QUEUE_REFERENCE_IS_NOT_OBTAINED(2157);
+        JENKINS_QUEUE_REFERENCE_IS_NOT_OBTAINED(2157),
+        GITHUB_AUTHENTICATION_FAILED(2158),
+        GITHUB_DEFAULT_BRANCH_IS_NOT_OBTAINED(2159);
 
         private final Integer code;
         private String messageKey;

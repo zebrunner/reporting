@@ -52,13 +52,15 @@ public class JobsService {
 
     // Check the same logic in ZafiraClient method registerJob
     @Transactional(rollbackFor = Exception.class)
-    public Job createOrUpdateJobByURL(String jobUrl, long userId) {
+    public Job createOrUpdateJobByURL(String jobUrl, Long userId) {
         Job job = createJobFromURL(jobUrl, userId);
         return createOrUpdateJob(job);
     }
 
-    private Job createJobFromURL(String jobUrl, long userId) {
+    private Job createJobFromURL(String jobUrl, Long userId) {
         User user = userService.getUserById(userId);
+        // Replacing trailing slash we make sure that further operations
+        // based on splitting by slash will be performed correctly
         jobUrl = jobUrl.replaceAll("/$", "");
         String jobName = StringUtils.substringAfterLast(jobUrl, "/");
         String jenkinsHost = parseJenkinsHost(jobUrl);

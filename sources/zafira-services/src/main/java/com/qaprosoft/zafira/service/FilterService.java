@@ -116,7 +116,8 @@ public class FilterService {
     }
 
     private void checkFilterAccess(long userId, Filter filter) {
-        if (filter != null && !filter.getUserId().equals(userId)) {
+        boolean ownedByUser = filter.getUserId().equals(userId);
+        if (!ownedByUser) {
             throw new IllegalOperationException(ILLEGAL_FILTER_ACCESS, ERR_MSG_ILLEGAL_FILTER_MODIFICATION);
         }
     }
