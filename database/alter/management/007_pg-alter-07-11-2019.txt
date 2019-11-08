@@ -1,21 +1,21 @@
 set schema 'management';
 
 -- insert new 'MILESTONE DETAILS' widget_template
-INSERT INTO WIDGET_TEMPLATES ( ID, NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES (17,'MILESTONE DETAILS', 'Consolidated test status trend with the ability to specify 10+ extra filters and grouping by hours, days, month, etc.', 'OTHER','<#global IGNORE_TOTAL_PARAMS = ["DEVICE", "APP_VERSION", "LOCALE", "LANGUAGE", "JOB_NAME", "PARENT_JOB"] >
-
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('MILESTONE DETAILS', 'Consolidated test status trend with the ability to specify 10+ extra filters and grouping by hours, days, month, etc.', 'OTHER','<#global IGNORE_TOTAL_PARAMS = ["DEVICE", "APP_VERSION", "LOCALE", "LANGUAGE", "JOB_NAME", "PARENT_JOB"] >
 <#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
+
 <#global MULTIPLE_VALUES = {
-    "PROJECT": multiJoin(PROJECT, projects),
-    "OWNER_USERNAME": join(USER),
-    "ENV": join(ENV),
-    "PRIORITY": join(PRIORITY),
-    "FEATURE": join(FEATURE),
-    "TASK": join(TASK),
-    "LOWER(PLATFORM)": join(PLATFORM),
-    "DEVICE": join(DEVICE),
-    "APP_VERSION": join(APP_VERSION),
-    "LOCALE": join(LOCALE),
-    "LANGUAGE": join(LANGUAGE)
+  "PROJECT": multiJoin(PROJECT, projects),
+  "OWNER_USERNAME": join(USER),
+  "ENV": join(ENV),
+  "PRIORITY": join(PRIORITY),
+  "FEATURE": join(FEATURE),
+  "TASK": join(TASK),
+  "LOWER(PLATFORM)": join(PLATFORM),
+  "DEVICE": join(DEVICE),
+  "APP_VERSION": join(APP_VERSION),
+  "LOCALE": join(LOCALE),
+  "LANGUAGE": join(LANGUAGE)
 }>
 <#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
 <#global VIEW = getView(PERIOD) />
@@ -39,10 +39,9 @@ SELECT
     @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
     @return - generated WHERE clause
   -->
-
 <#function generateMultipleWhereClause map>
-<#local result = "" />
-<#list map?keys as key>
+  <#local result = "" />
+  <#list map?keys as key>
     <#if map[key] != "" >
       <#if PERIOD == "Total" && IGNORE_TOTAL_PARAMS?seq_contains(key)>
         <#-- Ignore non supported filters for Total View: PLATFORM, DEVICE, APP_VERSION, LOCALE, LANGUAGE, JOB_NAME-->
@@ -70,16 +69,15 @@ SELECT
 <#if PERIOD != "Total">
   <#if PARENT_JOB != "">
       <#if result?length != 0>
-      <#local result = result + " AND "/>
+        <#local result = result + " AND "/>
       </#if>
       <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
   </#if>
  </#if>
 
- <#if result?length != 0>
-  <#local result = " WHERE " + result/>
- </#if>
-
+  <#if result?length != 0>
+    <#local result = " WHERE " + result/>
+  </#if>
  <#return result>
 </#function>
 
@@ -88,7 +86,6 @@ SELECT
     @value - abstract view description
     @return - actual view name
   -->
-
 <#function getGroupBy Period, parentJob>
   <#local result = "" />
   <#if parentJob != "">
@@ -104,7 +101,6 @@ SELECT
     @value - abstract view description
     @return - actual view name
   -->
-
 <#function getCreatedAt value>
   <#local result = "to_char(date_trunc(''day'', CREATED_AT), ''YYYY-MM-DD'')" />
   <#switch value>
@@ -133,7 +129,6 @@ SELECT
     @value - abstract view description
     @return - actual view name
   -->
-
 <#function getView value>
  <#local result = "LAST24HOURS_VIEW" />
  <#switch value>
@@ -170,7 +165,6 @@ SELECT
     @array - to join
     @return - joined array as string
   -->
-
 <#function join array=[]>
   <#return array?join('', '') />
 </#function>
@@ -181,7 +175,6 @@ SELECT
     @array2 - alternative to join if array1 does not exist or is empty
     @return - joined array as string
   -->
-
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
 </#function>' , '
@@ -207,11 +200,8 @@ setTimeout( function() {
         }
       })
     }
-
     return dataSource;
   };
-
-
 
   let newLine = "";
   let grid, legend, pieStyle, title;
@@ -228,7 +218,6 @@ setTimeout( function() {
         KNOWN_ISSUE:{ color: "#9f5487", fontSize: fontSize }
       }
     };
-
     if (chart._dom.clientWidth === 280) {
       grid = {
         top: "50%",
@@ -326,7 +315,6 @@ setTimeout( function() {
   }
   customStyle();
 
-
   let lineRow = {
     type: "line",
     smooth: false,
@@ -368,12 +356,10 @@ setTimeout( function() {
   }
   series.push(pie);
 
-
   const changeTitle = (value = lastCount) => {
     let titleValue="";
     let total = 0;
     let newDataObj = {};
-
 
     for (const testName in dataset[value]){
       if (testName === "CREATED_AT") continue;
@@ -396,9 +382,7 @@ setTimeout( function() {
         }
       })
     }
-
   changeTitle();
-
 
 let colors = ["#61c8b3", "#e76a77", "#fddb7a", "#6dbbe7", "#b5b5b5", "#9f5487"];
 let option = {
