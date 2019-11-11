@@ -49,7 +49,7 @@ public class TestRunType extends AbstractType {
     private Initiator startedBy;
     private Long userId;
     private String workItem;
-    private ProjectType project;
+    private ProjectDTO project;
     private boolean knownIssue;
     private boolean blocker;
     private boolean reviewed;

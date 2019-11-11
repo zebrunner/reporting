@@ -24,7 +24,7 @@ import javax.validation.Valid;
 
 @Getter
 @Setter
-public class WidgetType extends AbstractType {
+public class WidgetDTO extends AbstractType {
 
     private static final long serialVersionUID = -8163778207543974125L;
 
@@ -36,7 +36,7 @@ public class WidgetType extends AbstractType {
     private String legendConfig;
 
     @Valid
-    private WidgetTemplateType widgetTemplate;
+    private WidgetTemplateDTO widgetTemplate;
 
     private boolean refreshable;
     private String type;

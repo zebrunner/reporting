@@ -21,6 +21,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.management.WidgetTemplateMapper;
 import com.qaprosoft.zafira.models.db.WidgetTemplate;
 import com.qaprosoft.zafira.models.dto.widget.WidgetTemplateParameter;
 import com.qaprosoft.zafira.service.exception.ForbiddenOperationException;
+import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import com.qaprosoft.zafira.service.util.SQLUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -36,10 +37,14 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.WIDGET_TEMPLATE_NOT_FOUND;
+
 @Service
 public class WidgetTemplateService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WidgetTemplateService.class);
+
+    private static final String ERR_MSG_WIDGET_TEMPLATE_NOT_FOUND = "Widget template with id %s can not be found";
 
     @Autowired
     private WidgetTemplateMapper widgetTemplateMapper;
@@ -55,6 +60,15 @@ public class WidgetTemplateService {
     }
 
     @Transactional(readOnly = true)
+    public WidgetTemplate getNotNullWidgetTemplateById(Long id) {
+        WidgetTemplate widgetTemplate = widgetTemplateMapper.getWidgetTemplateById(id);
+        if (widgetTemplate == null) {
+            throw new ResourceNotFoundException(WIDGET_TEMPLATE_NOT_FOUND, ERR_MSG_WIDGET_TEMPLATE_NOT_FOUND, id);
+        }
+        return widgetTemplate;
+    }
+
+    @Transactional(readOnly = true)
     public List<WidgetTemplate> getAllWidgetTemplates() {
         return widgetTemplateMapper.getAllWidgetTemplates();
     }
@@ -66,7 +80,7 @@ public class WidgetTemplateService {
                                       .collect(Collectors.toList());
     }
 
-    public WidgetTemplate prepareWidgetTemplate(WidgetTemplate widgetTemplate) {
+    private WidgetTemplate prepareWidgetTemplate(WidgetTemplate widgetTemplate) {
         if (widgetTemplate == null) {
             throw new ForbiddenOperationException("Unable to prepare widget template data");
         }

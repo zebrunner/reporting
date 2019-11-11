@@ -22,7 +22,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class WidgetTemplateType extends AbstractType {
+public class WidgetTemplateDTO extends AbstractType {
 
     private static final long serialVersionUID = 7998270816228259812L;
 

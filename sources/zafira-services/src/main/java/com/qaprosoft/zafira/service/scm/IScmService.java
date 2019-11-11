@@ -28,7 +28,7 @@ public interface IScmService {
 
     List<Organization> getOrganizations(ScmAccount scmAccount) throws IOException;
 
-    List<Repository> getRepositories(ScmAccount scmAccount, String organizationName) throws IOException;
+    List<Repository> getRepositories(ScmAccount scmAccount, String organizationName, List<String> existingRepos) throws IOException;
 
     Repository getRepository(ScmAccount scmAccount);
 

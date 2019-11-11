@@ -28,8 +28,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.dozer.Mapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -52,8 +50,6 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "api/integrations", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class IntegrationController extends AbstractController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(IntegrationController.class);
 
     private final IntegrationService integrationService;
     private final StorageProviderService storageProviderService;
@@ -134,7 +130,8 @@ public class IntegrationController extends AbstractController {
         Integration integration = mapper.map(integrationDTO, Integration.class);
         integration.setId(id);
 
-        IntegrationDTO integrationUpdateResultDTO =  mapper.map(integrationService.update(integration), IntegrationDTO.class);
+        integration = integrationService.update(integration);
+        IntegrationDTO integrationUpdateResultDTO =  mapper.map(integration, IntegrationDTO.class);
 
         IntegrationInfo integrationInfo = integrationService.retrieveInfoByIntegration(integration);
         integrationUpdateResultDTO.setConnected(integrationInfo.isConnected());

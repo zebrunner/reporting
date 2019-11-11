@@ -42,7 +42,7 @@ public class LauncherType extends AbstractType {
     @Valid
     private List<LauncherPresetDTO> presets;
 
-    private JobType job;
+    private JobDTO job;
     private boolean autoScan;
 
 

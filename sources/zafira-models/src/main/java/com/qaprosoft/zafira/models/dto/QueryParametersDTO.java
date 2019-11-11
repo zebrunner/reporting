@@ -15,33 +15,24 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.Map;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@JsonInclude(Include.NON_NULL)
-public class JobType extends AbstractType {
+public class QueryParametersDTO implements Serializable {
 
-    private static final long serialVersionUID = 4123576956700125643L;
+    private static final long serialVersionUID = 5765973760872185602L;
 
     @NotNull
-    private String name;
-    @NotNull
-    private String jobURL;
-    @NotNull
-    private String jenkinsHost;
-    @NotNull
-    private Long userId;
+    @Min(1)
+    private Long templateId;
 
-    private Long automationServerId;
+    private Map<String, Object> paramsConfig;
 
 }

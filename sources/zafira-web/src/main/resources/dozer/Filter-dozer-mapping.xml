@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
 
 	<mapping type="bi-directional" wildcard="false">
-		<class-a>com.qaprosoft.zafira.models.dto.filter.FilterType</class-a>
+		<class-a>com.qaprosoft.zafira.models.dto.filter.FilterDTO</class-a>
 		<class-b>com.qaprosoft.zafira.models.db.Filter</class-b>
 
 		<field>

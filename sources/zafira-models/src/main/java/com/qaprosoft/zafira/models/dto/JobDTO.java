@@ -1,46 +1,47 @@
 /*******************************************************************************
  * Copyright 2013-2019 Qaprosoft (http://www.qaprosoft.com).
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- ******************************************************************************/
-package com.qaprosoft.zafira.models.dto.filter;
+ *******************************************************************************/
+package com.qaprosoft.zafira.models.dto;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.qaprosoft.zafira.models.db.AbstractEntity;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
 
 @Getter
 @Setter
-public class FilterType extends AbstractEntity {
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonInclude(Include.NON_NULL)
+public class JobDTO extends AbstractType {
 
-    private static final long serialVersionUID = -2497558955789794119L;
+    private static final long serialVersionUID = 4123576956700125643L;
 
-    @NotNull(message = "Name required")
+    @NotNull
     private String name;
-    private String description;
-    @Valid
-    private Subject subject;
+    @NotNull
+    private String jobURL;
+    @NotNull
+    private String jenkinsHost;
+    @NotNull
     private Long userId;
-    private boolean publicAccess;
 
-    public void setSubjectFromString(String subject) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        this.subject = mapper.readValue(subject, Subject.class);
-    }
+    private Long automationServerId;
 
 }

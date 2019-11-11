@@ -15,24 +15,31 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.qaprosoft.zafira.models.db.AbstractEntity;
+import com.qaprosoft.zafira.models.db.Job;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.Map;
 
 @Getter
 @Setter
-public class SQLExecuteType implements Serializable {
+@JsonInclude(Include.NON_NULL)
+public class JobViewDTO extends AbstractEntity {
 
-    private static final long serialVersionUID = 5765973760872185602L;
+    private static final long serialVersionUID = -3868077369004418496L;
 
     @NotNull
-    @Min(1)
-    private Long templateId;
-
-    private Map<String, Object> paramsConfig;
+    private Job job;
+    @NotNull
+    private Long viewId;
+    @NotNull
+    private String env;
+    @NotNull
+    private Integer position;
+    @NotNull
+    private Integer size;
 
 }

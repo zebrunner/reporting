@@ -17,7 +17,6 @@ package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.db.Launcher;
 import com.qaprosoft.zafira.models.db.LauncherWebHookPayload;
-import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.LauncherScannerType;
 import com.qaprosoft.zafira.models.dto.LauncherType;
@@ -73,9 +72,9 @@ public class LauncherController extends AbstractController {
     @PostMapping()
     public LauncherType createLauncher(@RequestBody @Valid LauncherType launcherType,
                                        @RequestParam(name = "automationServerId", required = false) Long automationServerId) {
-        User owner = new User(getPrincipalId());
         Launcher launcher = mapper.map(launcherType, Launcher.class);
-        launcher = launcherService.createLauncher(launcher, owner, automationServerId);
+        Long principalId = getPrincipalId();
+        launcher = launcherService.createLauncher(launcher, principalId, automationServerId);
         return mapper.map(launcher, LauncherType.class);
     }
 
@@ -188,7 +187,8 @@ public class LauncherController extends AbstractController {
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PostMapping("/create")
     public List<LauncherType> createLaunchersFromJenkins(@RequestBody @Valid ScannedRepoLaunchersType scannedRepoLaunchersType) {
-        List<Launcher> launchers = launcherService.createLaunchersForJob(scannedRepoLaunchersType, new User(getPrincipalId()));
+        Long principalId = getPrincipalId();
+        List<Launcher> launchers = launcherService.createLaunchersForJob(scannedRepoLaunchersType, principalId);
         List<LauncherType> launcherTypes = launchers.stream()
                                                     .map(launcher -> mapper.map(launcher, LauncherType.class))
                                                     .collect(Collectors.toList());

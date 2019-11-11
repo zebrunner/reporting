@@ -41,7 +41,7 @@ public class TestCaseType extends AbstractType {
     @NotNull
     private Long primaryOwnerId;
     private Long secondaryOwnerId;
-    private ProjectType project;
+    private ProjectDTO project;
 
     public TestCaseType(String testClass, String testMethod, String info, Long testSuiteId, Long primaryOwnerId) {
         this.testClass = testClass;

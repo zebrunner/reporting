@@ -19,15 +19,12 @@ import com.qaprosoft.zafira.models.db.ScmAccount;
 import com.qaprosoft.zafira.models.dto.ScmAccountType;
 import com.qaprosoft.zafira.models.dto.scm.Organization;
 import com.qaprosoft.zafira.models.dto.scm.Repository;
-import com.qaprosoft.zafira.service.exception.ForbiddenOperationException;
-import com.qaprosoft.zafira.service.scm.GitHubService;
 import com.qaprosoft.zafira.service.scm.ScmAccountService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -54,15 +51,11 @@ import java.util.stream.Collectors;
 @RestController
 public class ScmAccountController extends AbstractController {
 
-    private static final String ERR_MSG_SCM_ACCOUNT_NOT_FOUND = "SCM account with id %s can not be found";
-
     private final ScmAccountService scmAccountService;
-    private final GitHubService gitHubService;
     private final Mapper mapper;
 
-    public ScmAccountController(ScmAccountService scmAccountService, GitHubService gitHubService, Mapper mapper) {
+    public ScmAccountController(ScmAccountService scmAccountService, Mapper mapper) {
         this.scmAccountService = scmAccountService;
-        this.gitHubService = gitHubService;
         this.mapper = mapper;
     }
 
@@ -72,7 +65,9 @@ public class ScmAccountController extends AbstractController {
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS')")
     @PostMapping("/accounts")
     public ScmAccountType createScmAccount(@Valid @RequestBody ScmAccountType scmAccountType) {
-        return mapper.map(scmAccountService.createScmAccount(mapper.map(scmAccountType, ScmAccount.class)), ScmAccountType.class);
+        ScmAccount scmAccount = mapper.map(scmAccountType, ScmAccount.class);
+        scmAccount = scmAccountService.createScmAccount(scmAccount);
+        return mapper.map(scmAccount, ScmAccountType.class);
     }
 
     @ApiResponseStatuses
@@ -81,7 +76,8 @@ public class ScmAccountController extends AbstractController {
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping("/accounts/{id}")
     public ScmAccountType getScmAccountById(@PathVariable("id") Long id) {
-        return mapper.map(scmAccountService.getScmAccountById(id), ScmAccountType.class);
+        ScmAccount scmAccount = scmAccountService.getScmAccountById(id);
+        return mapper.map(scmAccount, ScmAccountType.class);
     }
 
     @ApiResponseStatuses
@@ -117,7 +113,8 @@ public class ScmAccountController extends AbstractController {
         if (account.getUserId() == null || account.getUserId() <= 0) {
             currentAccount.setUserId(getPrincipalId());
         }
-        return mapper.map(scmAccountService.updateScmAccount(currentAccount), ScmAccountType.class);
+        currentAccount = scmAccountService.updateScmAccount(currentAccount);
+        return mapper.map(currentAccount, ScmAccountType.class);
     }
 
     @ApiResponseStatuses
@@ -135,7 +132,7 @@ public class ScmAccountController extends AbstractController {
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS')")
     @GetMapping(path = "github/client", produces = MediaType.TEXT_PLAIN_VALUE)
     public String getScmClientId() {
-        return gitHubService.getClientId();
+        return scmAccountService.getScmClientId();
     }
 
     @ApiResponseStatuses
@@ -144,11 +141,7 @@ public class ScmAccountController extends AbstractController {
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS')")
     @GetMapping("/github/exchange")
     public ScmAccountType authorizeCallback(@RequestParam("code") String code) throws IOException, URISyntaxException {
-        String accessToken = gitHubService.getAccessToken(code);
-        if (StringUtils.isBlank(accessToken)) {
-            throw new ForbiddenOperationException("Cannot recognize your authority");
-        }
-        ScmAccount scmAccount = scmAccountService.createScmAccount(new ScmAccount(accessToken, ScmAccount.Name.GITHUB));
+        ScmAccount scmAccount = scmAccountService.createScmAccount(code, ScmAccount.Name.GITHUB);
         return mapper.map(scmAccount, ScmAccountType.class);
     }
 
@@ -158,8 +151,7 @@ public class ScmAccountController extends AbstractController {
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS')")
     @GetMapping("/github/organizations/{scmId}")
     public List<Organization> getOrganizations(@PathVariable("scmId") Long id) throws IOException {
-        ScmAccount scmAccount = scmAccountService.getScmAccountById(id);
-        return gitHubService.getOrganizations(scmAccount);
+        return scmAccountService.getScmAccountOrganizations(id);
     }
 
     @ApiResponseStatuses
@@ -171,16 +163,7 @@ public class ScmAccountController extends AbstractController {
             @PathVariable("scmId") Long id,
             @RequestParam(name = "org", required = false) String organizationName
     ) throws IOException {
-        ScmAccount scmAccount = scmAccountService.getScmAccountById(id);
-        List<ScmAccount> allAccounts = scmAccountService.getAllScmAccounts();
-        List<String> repositoryUrls = allAccounts.stream()
-                                                 .map(ScmAccount::getRepositoryURL)
-                                                 .collect(Collectors.toList());
-
-        List<Repository> repositories = gitHubService.getRepositories(scmAccount, organizationName);
-        return repositories.stream()
-                           .filter(repository -> !repositoryUrls.contains(repository.getUrl()))
-                           .collect(Collectors.toList());
+        return scmAccountService.getScmAccountRepositories(id, organizationName);
     }
 
 }
