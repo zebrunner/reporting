@@ -616,6 +616,7 @@ public class TestRunService implements ProjectReassignable {
             try {
                 automationServerService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
             } catch (ExternalSystemException e) {
+                // If job is not present on Jenkins, rerun is performed for all the others without interruption.
                 LOGGER.error(e.getMessage());
             }
         }
