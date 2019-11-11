@@ -4,7 +4,7 @@
 By default, it accumulates 4 widgets - 30 days total, 30 days pass rate by platform, 30 days test details, and 30 days tests trend.
 Later on, all the other added widgets would also be displayed there:
 
-![alt text](https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr%20_general%20dashboards.png?raw=true)
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr%20_general%20dashboards.png?raw=true" alt="" width="900" />
 
 The upper bar of the window holds several icons with the actions that could be performed with the dashboard and its widgets:
 
@@ -19,11 +19,11 @@ The upper bar of the window holds several icons with the actions that could be p
 
 1. Click on the arrow icon in the upper-right corner of the window:
 
-![alt text](https://github.com/APGorobets/mkdocks1/blob/master/images/01-01.jpg?raw=true)
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/01-01.jpg?raw=true" alt="" width="900" />
 
 2. The following pop-up would appear:
 
-![alt text](https://github.com/APGorobets/mkdocks1/blob/master/images/06-01.jpg?raw=true)
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/06-01.jpg?raw=true" alt="" width="700" />
 
 3. “Name” and “Text” fields are filled by default, the text is changeable. Fill in the “Recipients” field (unlimited number of emails per time), and press the “Send” button.
 
@@ -31,23 +31,23 @@ The upper bar of the window holds several icons with the actions that could be p
 
 5. Email view of the General Dashboards page:
 
-![alt text](https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_dashboards%20via%20email_sent.png?raw=true)
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_dashboards%20via%20email_sent.png?raw=true" alt="" width="900" />
 
 #### Working with widgets
 
 To change the widget placement / resize the widget, click on the “Widgets” icon in the upper-right corner of the window:
 
-![alt text](https://github.com/APGorobets/mkdocks1/blob/master/images/04-01.jpg?raw=true)
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/04-01.jpg?raw=true" alt="" width="900" />
 
 In this mode, the size of all widgets can be changed (the arrows at every corner of the widget - the same principle as system windows):
 
-![alt text](https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_dashboards_widget_changesize.jpeg?raw=true)
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_dashboards_widget_changesize.jpeg?raw=true" alt="" width="500" />
 
 All the widgets on a dashboard could be arranged the way you prefer using the drag and drop method.
-![alt text](https://github.com/APGorobets/mkdocks1/blob/master/images/dashboards-overview.gif?raw=true)
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/dashboards-overview.gif?raw=true" alt="" width="900" />
 
 Once all the necessary changes are done, click on “Apply” button in the upper-right corner of the page:
-![alt text](https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_widgets_actions_apply-cancel.jpeg?raw=true)
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_widgets_actions_apply-cancel.jpeg?raw=true" alt="" width="900" />
 
 If you’ve changed your mind, click on **“Cancel”** button. The last saved version of the Widgets set and placement will be displayed.
 
@@ -59,8 +59,7 @@ There are two types of widgets: default and custom. You can choose between the 1
 
 1. Navigate to the "Dashboards" page (a.k.a “General”) and click "+ NEW WIDGET" button in the top-right corner of the page:
 
-![alt text](https://github.com/APGorobets/mkdocks1/blob/master/images/04-01.jpg?raw=true)
-
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/04-01.jpg?raw=true" alt="" width="900" />
 
 2. The “Choose widget” pop-up would appear, where you can choose one or several of the following configurable templates:
  
@@ -113,7 +112,8 @@ When you’ve added a widget to the dashboard, it would be marked with the word 
 
 To edit the dashboard, click on the pencil icon in the upper-right corner of the window:
 
-![alt text](https://github.com/APGorobets/mkdocks1/blob/master/images/03-01.jpg?raw=true)
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/03-01.jpg?raw=true" alt="" width="900" />
+
 
 The following pop-up will appear:
 ![alt text](https://github.com/APGorobets/mkdocks1/blob/master/images/edit_dashboards_popup.jpeg?raw=true)
