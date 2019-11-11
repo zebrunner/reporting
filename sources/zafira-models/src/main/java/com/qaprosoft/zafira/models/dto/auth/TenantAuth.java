@@ -16,46 +16,18 @@
 package com.qaprosoft.zafira.models.dto.auth;
 
 import com.qaprosoft.zafira.models.db.Permission;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import java.io.Serializable;
 import java.util.Set;
 
-public class TenantAuth implements Serializable {
+@Getter
+@Setter
+public class TenantAuth {
 
-    private static final long serialVersionUID = -1075126053459147979L;
-
-    @NotEmpty
-    private String tenantName;
-
-    @NotEmpty
-    private String token;
-
-    @NotEmpty
-    private Set<Permission.Name> permissions;
-
-    public String getTenantName() {
-        return tenantName;
-    }
-
-    public void setTenantName(String tenantName) {
-        this.tenantName = tenantName;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public Set<Permission.Name> getPermissions() {
-        return permissions;
-    }
-
-    public void setPermissions(Set<Permission.Name> permissions) {
-        this.permissions = permissions;
-    }
+    @NotEmpty private String tenantName;
+    @NotEmpty private String token;
+    @NotEmpty private Set<Permission.Name> permissions;
 
 }
