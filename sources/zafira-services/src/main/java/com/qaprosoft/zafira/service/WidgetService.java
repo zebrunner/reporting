@@ -125,12 +125,18 @@ public class WidgetService {
             additionalParams.put(WidgetService.DefaultParam.CURRENT_USER_ID, userId);
             resultList = executeSQL(widgetTemplate.getSql(), params, additionalParams, true);
         } catch (Exception e) {
-            if (stackTraceRequired) {
-                resultList = Collections.singletonList(Collections.singletonMap("Check your query", ExceptionUtils.getFullStackTrace(e)));
-            } else {
-                // wrap whatever error is thrown
-                throw new ProcessingException(WIDGET_QUERY_EXECUTION_ERROR, e.getMessage(), e);
-            }
+            resultList = handleExecuteSQLException(stackTraceRequired, e);
+        }
+        return resultList;
+    }
+
+    private List<Map<String, Object>> handleExecuteSQLException(boolean stackTraceRequired, Exception e) {
+        List<Map<String, Object>> resultList;
+        if (stackTraceRequired) {
+            resultList = Collections.singletonList(Collections.singletonMap("Check your query", ExceptionUtils.getFullStackTrace(e)));
+        } else {
+            // wrap whatever error is thrown
+            throw new ProcessingException(WIDGET_QUERY_EXECUTION_ERROR, e.getMessage(), e);
         }
         return resultList;
     }
@@ -157,11 +163,7 @@ public class WidgetService {
             query = replacePlaceholders(projects, currentUserId, dashboardName, query, userId, userName);
             resultList = executeSQL(query);
         } catch (Exception e) {
-            if (stackTraceRequired) {
-                resultList = Collections.singletonList(Collections.singletonMap("Check your query", ExceptionUtils.getFullStackTrace(e)));
-            } else {
-                throw new ProcessingException(WIDGET_QUERY_EXECUTION_ERROR, e.getMessage(), e);
-            }
+            resultList = handleExecuteSQLException(stackTraceRequired, e);
         }
         return resultList;
     }
@@ -190,6 +192,7 @@ public class WidgetService {
     private String concatProjectNames(List<String> projects) {
         return !CollectionUtils.isEmpty(projects) ? String.join(",", projects) : "%";
     }
+
     @Transactional(readOnly = true)
     public List<Map<String, Object>> executeSQL(String sql) {
         return widgetMapper.executeSQL(new SQLAdapter(sql));
