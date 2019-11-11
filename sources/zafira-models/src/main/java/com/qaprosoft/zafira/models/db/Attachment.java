@@ -30,5 +30,5 @@ public class Attachment {
 
     private String name;
     private File file;
-
+    private String filename;
 }
