@@ -29,12 +29,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -75,7 +73,7 @@ public class EmailService {
                 msg.setText(text, true);
                 if (hasAttachments) {
                     for (Attachment attachment : message.getAttachments()) {
-                        msg.addInline(attachment.getName().replaceAll(" ", "_"), attachment.getFile());
+                        EmailUtils.addNamedInline(msg, attachment);
                     }
                 }
             };
@@ -85,17 +83,15 @@ public class EmailService {
     }
 
     public String sendEmail(EmailType email, MultipartFile file) throws IOException {
-        List<Attachment> attachments = new ArrayList<>();
-        String filename = FilenameUtils.getName(file.getOriginalFilename());
-        if (StringUtils.isEmpty(filename)) {
-            filename = UUID.randomUUID().toString();
-        }
         String fileExtension = String.format(".%s", FilenameUtils.getExtension(file.getOriginalFilename()));
-        File attachment = File.createTempFile(filename, fileExtension);
-        file.transferTo(attachment);
-        attachments.add(new Attachment(email.getSubject(), attachment));
+        File attachmentFile = File.createTempFile(UUID.randomUUID().toString(), fileExtension);
+        file.transferTo(attachmentFile);
+
+        Attachment attachment = new Attachment(email.getSubject(), attachmentFile, file.getResource().getFilename());
+        List<Attachment> attachments = List.of(attachment);
         String[] emails = EmailUtils.obtainRecipients(email.getRecipients());
         IEmailMessage message = new CommonEmail(email.getSubject(), email.getText(), attachments);
+
         return sendEmail(message, emails);
     }
 
