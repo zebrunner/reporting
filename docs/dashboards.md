@@ -116,7 +116,7 @@ To edit the dashboard, click on the pencil icon in the upper-right corner of the
 
 
 The following pop-up will appear:
-![alt text](https://github.com/APGorobets/mkdocks1/blob/master/images/edit_dashboards_popup.jpeg?raw=true)
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/edit_dashboards_popup.jpeg?raw=true" alt="" width="700" />
 
 Fill in the *Key* and *Value* fields and click on **“Save”** button.
 
@@ -126,17 +126,17 @@ Fill in the *Key* and *Value* fields and click on **“Save”** button.
 
 To create a new dashboard, navigate to the side menu and click on the “Dashboards” icon and then on the “+Add dashboard” button:
 
-![alt text](https://github.com/APGorobets/mkdocks1/blob/master/images/05-01.jpg?raw=true)
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/05-01.jpg?raw=true" alt="" width="900" />
 
 The following pop-up will appear:
 
-![alt text](https://github.com/APGorobets/mkdocks1/blob/master/images/new_dashboad_popup.jpeg?raw=true)
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/new_dashboad_popup.jpeg?raw=true" alt="" width="700" />
 
 Create the name for the dashboard, choose whether it would be hidden or seen to other users (incl. admins), and press **“Create”** button.
 
 #### Search panel
 
-![alt text](https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_dashboards_search.png?raw=true)
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_dashboards_search.png?raw=true" alt="" width="500" />
 
 The search criteria:
 
@@ -166,4 +166,4 @@ The list of default Dashboards (with widgets):
   + Test Case Stability Trend (%)
   + Test Case Duration Details (Sec)
 
-![alt text](https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_dashboards_personal_filled.png?raw=true)
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_dashboards_personal_filled.png?raw=true" alt="" width="900" />
