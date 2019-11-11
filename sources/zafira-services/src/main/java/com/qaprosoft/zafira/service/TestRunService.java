@@ -37,6 +37,7 @@ import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.service.email.TestRunResultsEmail;
+import com.qaprosoft.zafira.service.exception.ExternalSystemException;
 import com.qaprosoft.zafira.service.exception.IllegalOperationException;
 import com.qaprosoft.zafira.service.exception.IntegrationException;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
@@ -612,7 +613,12 @@ public class TestRunService implements ProjectReassignable {
     private void rerun(TestRun testRun, boolean rerunRequired, boolean rerunFailures) {
         resetTestRunComments(testRun);
         if (rerunRequired) {
-            automationServerService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
+            try {
+                automationServerService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
+            } catch (ExternalSystemException e) {
+                // If job is not present on Jenkins, rerun is performed for all the others without interruption.
+                LOGGER.error(e.getMessage());
+            }
         }
     }
 
