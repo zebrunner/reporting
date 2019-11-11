@@ -4,16 +4,18 @@ def libraries = rootProject.ext.dependencyManagement
 
 dependencies {
 
-    compile project(':zafira-models')
+    implementation project(':zafira-models')
 
-    compile libraries.persistence_core
-    compile libraries.boot_starter_data_jpa
-    compile libraries.jaxb
+    implementation libraries.persistence_core
+    implementation libraries.boot_starter_data_jpa
+    implementation libraries.jaxb
+    implementation libraries.jackson_databind
 
     implementation libraries.liquibase
+    implementation libraries.hibernate_validator
 
-    testCompile libraries.testNG
-    testCompile libraries.spring_test
+    testImplementation libraries.testNG
+    testImplementation libraries.spring_test
 
 }
 

@@ -22,20 +22,16 @@ import com.qaprosoft.zafira.service.email.IEmailMessage;
 import com.qaprosoft.zafira.service.integration.tool.impl.MailService;
 import com.qaprosoft.zafira.service.util.EmailUtils;
 import com.qaprosoft.zafira.service.util.FreemarkerUtil;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Component
@@ -82,12 +78,8 @@ public class EmailService {
         return text;
     }
 
-    public String sendEmail(EmailType email, MultipartFile file) throws IOException {
-        String fileExtension = String.format(".%s", FilenameUtils.getExtension(file.getOriginalFilename()));
-        File attachmentFile = File.createTempFile(UUID.randomUUID().toString(), fileExtension);
-        file.transferTo(attachmentFile);
-
-        Attachment attachment = new Attachment(email.getSubject(), attachmentFile, file.getResource().getFilename());
+    public String sendEmail(EmailType email, File file, String filename) {
+        Attachment attachment = new Attachment(email.getSubject(), file, filename);
         List<Attachment> attachments = List.of(attachment);
         String[] emails = EmailUtils.obtainRecipients(email.getRecipients());
         IEmailMessage message = new CommonEmail(email.getSubject(), email.getText(), attachments);

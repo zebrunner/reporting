@@ -17,18 +17,19 @@ package com.qaprosoft.zafira.models.dto.aws;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.io.InputStream;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class FileUploadType {
 
-    private MultipartFile file;
-    private Type type;
+    private final InputStream inputStream;
+    private final Type type;
+    private final String fileName;
+    private final long fileSize;
 
     public enum Type {
         USERS("/users"),
