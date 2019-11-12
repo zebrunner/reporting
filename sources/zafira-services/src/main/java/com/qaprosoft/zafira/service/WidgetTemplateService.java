@@ -22,7 +22,7 @@ import com.qaprosoft.zafira.models.db.WidgetTemplate;
 import com.qaprosoft.zafira.models.dto.widget.WidgetTemplateParameter;
 import com.qaprosoft.zafira.service.exception.ForbiddenOperationException;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
-import com.qaprosoft.zafira.service.util.SQLUtils;
+import com.qaprosoft.zafira.service.util.SQLExecutor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +50,7 @@ public class WidgetTemplateService {
     private WidgetTemplateMapper widgetTemplateMapper;
 
     @Autowired
-    private SQLUtils sqlUtils;
+    private SQLExecutor sqlExecutor;
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -132,7 +132,7 @@ public class WidgetTemplateService {
     }
 
     private void retrieveParameterValues(String query, WidgetTemplateParameter parameter) {
-        List<Object> data = sqlUtils.getSingleRowResult(query);
+        List<Object> data = sqlExecutor.getSingleRowResult(query);
         if (data != null) {
             if (parameter.getValues() == null) {
                 parameter.setValues(new ArrayList<>());

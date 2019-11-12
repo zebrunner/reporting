@@ -16,13 +16,13 @@
 package com.qaprosoft.zafira.service;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.WidgetMapper;
-import com.qaprosoft.zafira.dbaccess.utils.SQLAdapter;
 import com.qaprosoft.zafira.dbaccess.utils.SQLTemplateAdapter;
 import com.qaprosoft.zafira.models.db.Attribute;
 import com.qaprosoft.zafira.models.db.Widget;
 import com.qaprosoft.zafira.models.db.WidgetTemplate;
 import com.qaprosoft.zafira.service.exception.ProcessingException;
 import com.qaprosoft.zafira.service.util.FreemarkerUtil;
+import com.qaprosoft.zafira.service.util.SQLExecutor;
 import com.qaprosoft.zafira.service.util.URLResolver;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -49,12 +49,14 @@ public class WidgetService {
     private final FreemarkerUtil freemarkerUtil;
     private final URLResolver urlResolver;
     private final WidgetTemplateService widgetTemplateService;
+    private final SQLExecutor sqlExecutor;
 
-    public WidgetService(WidgetMapper widgetMapper, FreemarkerUtil freemarkerUtil, URLResolver urlResolver, WidgetTemplateService widgetTemplateService) {
+    public WidgetService(WidgetMapper widgetMapper, FreemarkerUtil freemarkerUtil, URLResolver urlResolver, WidgetTemplateService widgetTemplateService, SQLExecutor sqlExecutor) {
         this.widgetMapper = widgetMapper;
         this.freemarkerUtil = freemarkerUtil;
         this.urlResolver = urlResolver;
         this.widgetTemplateService = widgetTemplateService;
+        this.sqlExecutor = sqlExecutor;
     }
 
     public enum DefaultParam {
@@ -195,7 +197,7 @@ public class WidgetService {
 
     @Transactional(readOnly = true)
     public List<Map<String, Object>> executeSQL(String sql) {
-        return widgetMapper.executeSQL(new SQLAdapter(sql));
+        return sqlExecutor.getMultiRowResult(sql);
     }
 
     @Transactional(readOnly = true)
