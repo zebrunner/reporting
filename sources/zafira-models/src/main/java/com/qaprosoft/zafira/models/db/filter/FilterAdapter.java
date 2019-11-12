@@ -17,7 +17,9 @@ package com.qaprosoft.zafira.models.db.filter;
 
 import com.qaprosoft.zafira.models.dto.filter.Subject;
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 @Builder
 public class FilterAdapter {
 
