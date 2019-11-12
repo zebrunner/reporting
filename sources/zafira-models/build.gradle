@@ -2,6 +2,8 @@ description = 'zafira-domain'
 
 def libraries = rootProject.ext.dependencyManagement
 
+apply plugin: 'java-library'
+
 dependencies {
 
     implementation libraries.boot_starter_security  // got rid of this

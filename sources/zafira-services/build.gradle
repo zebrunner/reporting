@@ -2,6 +2,8 @@ description = 'zafira-service'
 
 def libraries = rootProject.ext.dependencyManagement
 
+apply plugin: 'java-library'
+
 dependencies {
 
     implementation project(':zafira-dbaccess')
@@ -11,7 +13,6 @@ dependencies {
     implementation libraries.boot_starter_freemarker
     implementation libraries.boot_starter_data_redis
     implementation libraries.boot_starter_security  // got rid of this
-    implementation libraries.boot_starter_data_jpa  // got rid of this
 
     implementation libraries.spring_security_ldap
     implementation libraries.javax_mail

@@ -2,12 +2,14 @@ description = 'zafira-persistence'
 
 def libraries = rootProject.ext.dependencyManagement
 
+apply plugin: 'java-library'
+
 dependencies {
 
     implementation project(':zafira-models')
 
     implementation libraries.persistence_core
-    implementation libraries.boot_starter_data_jpa
+    api libraries.boot_starter_data_jpa
     implementation libraries.jaxb
     implementation libraries.jackson_databind
 
