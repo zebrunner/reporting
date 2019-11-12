@@ -177,7 +177,7 @@ public class InvitationService {
         return invitation;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(rollbackFor = Exception.class)
     public Invitation acceptInvitation(String token, String username) {
         if (userService.getUserByUsername(username) != null) {
             throw new IllegalOperationException(USER_CAN_NOT_BE_CREATED, ERR_MSG_USER_ALREADY_EXISTS);
