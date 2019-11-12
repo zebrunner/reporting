@@ -15,12 +15,14 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.FilterSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
-import com.qaprosoft.zafira.models.db.Filter;
+import com.qaprosoft.zafira.models.db.filter.FilterAdapter;
+import com.qaprosoft.zafira.models.db.filter.Filter;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.db.Status;
@@ -35,6 +37,7 @@ import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.models.dto.CommentType;
 import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.models.dto.filter.Subject;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.service.email.TestRunResultsEmail;
 import com.qaprosoft.zafira.service.exception.ExternalSystemException;
@@ -59,6 +62,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URLDecoder;
@@ -145,6 +149,9 @@ public class TestRunService implements ProjectReassignable {
     @Autowired
     private TestSuiteService testSuiteService;
 
+    @Autowired
+    private ObjectMapper mapper;
+
     public enum FailureCause {
         UNRECOGNIZED_FAILURE("UNRECOGNIZED FAILURE"),
         COMPILATION_FAILURE("COMPILATION FAILURE"),
@@ -184,11 +191,19 @@ public class TestRunService implements ProjectReassignable {
     }
 
     @Transactional(readOnly = true)
-    public SearchResult<TestRun> search(TestRunSearchCriteria sc, List<String> projectNames, Long filterId) {
+    public SearchResult<TestRun> search(TestRunSearchCriteria sc, List<String> projectNames, Long filterId) throws IOException {
         if (filterId != null) {
             Filter filter = filterService.getFilterById(filterId);
             if (filter != null) {
-                String whereClause = filterService.getTemplate(filter, TEST_RUN_TEMPLATE);
+                Subject subject = mapper.readValue(filter.getSubject(), Subject.class);
+                FilterAdapter filterAdapter = FilterAdapter.builder()
+                                                           .name(filter.getName())
+                                                           .description(filter.getDescription())
+                                                           .subject(subject)
+                                                           .publicAccess(filter.isPublicAccess())
+                                                           .userId(filter.getUserId())
+                                                           .build();
+                String whereClause = filterService.getTemplate(filterAdapter, TEST_RUN_TEMPLATE);
                 sc.setFilterSearchCriteria(new FilterSearchCriteria(whereClause));
             }
         }

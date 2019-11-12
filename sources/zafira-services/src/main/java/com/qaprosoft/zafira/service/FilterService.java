@@ -16,7 +16,8 @@
 package com.qaprosoft.zafira.service;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.FilterMapper;
-import com.qaprosoft.zafira.models.db.Filter;
+import com.qaprosoft.zafira.models.db.filter.FilterAdapter;
+import com.qaprosoft.zafira.models.db.filter.Filter;
 import com.qaprosoft.zafira.models.dto.filter.StoredSubject;
 import com.qaprosoft.zafira.models.dto.filter.Subject;
 import com.qaprosoft.zafira.service.exception.IllegalOperationException;
@@ -126,8 +127,8 @@ public class FilterService {
         return storedSubject.getSubjectByName(name);
     }
 
-    public String getTemplate(Filter filter, Template template) {
-        return freemarkerUtil.getFreeMarkerTemplateContent(template.getPath(), filter);
+    public String getTemplate(FilterAdapter filterAdapter, Template template) {
+        return freemarkerUtil.getFreeMarkerTemplateContent(template.getPath(), filterAdapter);
     }
 
     public boolean isFilterExists(Filter filter) {

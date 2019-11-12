@@ -5,7 +5,7 @@
 
 	<mapping type="bi-directional" wildcard="false">
 		<class-a>com.qaprosoft.zafira.models.dto.filter.FilterDTO</class-a>
-		<class-b>com.qaprosoft.zafira.models.db.Filter</class-b>
+		<class-b>com.qaprosoft.zafira.models.db.filter.Filter</class-b>
 
 		<field>
 			<a>id</a>
