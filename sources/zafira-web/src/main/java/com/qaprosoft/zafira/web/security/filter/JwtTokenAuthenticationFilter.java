@@ -18,11 +18,11 @@ package com.qaprosoft.zafira.web.security.filter;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 import com.qaprosoft.zafira.service.JWTService;
-import com.qaprosoft.zafira.service.exception.ExternalSystemException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,13 +40,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.qaprosoft.zafira.service.exception.ExternalSystemException.ExternalSystemErrorDetail.JWT_TOKEN_IS_INVALID;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Component
 public class JwtTokenAuthenticationFilter extends GenericFilterBean {
-
-    private static final String ERR_MSG_JWT_TOKEN_IS_INVALID = "JWT token is invalid";
 
     @Autowired
     private JWTService jwtService;
@@ -95,7 +92,7 @@ public class JwtTokenAuthenticationFilter extends GenericFilterBean {
 
             chain.doFilter(request, response);
         } catch (ExpiredJwtException | MalformedJwtException | SignatureException ex) {
-            throw new ExternalSystemException(JWT_TOKEN_IS_INVALID, ERR_MSG_JWT_TOKEN_IS_INVALID, ex);
+            throw new BadCredentialsException("Token is expired or malformed");
         }
 
         /* SecurityContext is then cleared since we are stateless. */
