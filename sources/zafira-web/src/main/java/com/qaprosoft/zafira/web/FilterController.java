@@ -1,6 +1,6 @@
 package com.qaprosoft.zafira.web;
 
-import com.qaprosoft.zafira.models.db.Filter;
+import com.qaprosoft.zafira.models.db.filter.Filter;
 import com.qaprosoft.zafira.models.dto.filter.FilterDTO;
 import com.qaprosoft.zafira.models.dto.filter.Subject;
 import com.qaprosoft.zafira.service.FilterService;
