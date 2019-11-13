@@ -66,21 +66,23 @@ public class DashboardController extends AbstractController {
     @ApiOperation(value = "Create dashboard", nickname = "createDashboard", httpMethod = "POST", response = Dashboard.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
-    @PostMapping
-    public DashboardType createDashboard(@RequestBody @Valid DashboardType dashboard) {
-        return mapper.map(dashboardService.createDashboard(mapper.map(dashboard, Dashboard.class)), DashboardType.class);
+    @PostMapping()
+    public DashboardType createDashboard(@RequestBody @Valid DashboardType dashboardType) {
+        Dashboard dashboard = mapper.map(dashboardType, Dashboard.class);
+        dashboard = dashboardService.createDashboard(dashboard);
+        return mapper.map(dashboard, DashboardType.class);
     }
 
     @ApiResponseStatuses
     @ApiOperation(value = "Get dashboards", nickname = "getAllDashboards", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @GetMapping
+    @GetMapping()
     public List<DashboardType> getAllDashboards(@RequestParam(value = "hidden", required = false) boolean hidden) {
         List<Dashboard> dashboards;
         if (!hidden && hasPermission(Permission.Name.VIEW_HIDDEN_DASHBOARDS)) {
-            dashboards = dashboardService.getAllDashboards();
+            dashboards = dashboardService.retrieveAll();
         } else {
-            dashboards = dashboardService.getDashboardsByHidden(false);
+            dashboards = dashboardService.retrieveByVisibility(false);
         }
 
         return dashboards.stream()
@@ -103,7 +105,8 @@ public class DashboardController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/title")
     public DashboardType getDashboardByTitle(@RequestParam(name = "title", required = false) String title) {
-        return mapper.map(dashboardService.getDashboardByTitle(title), DashboardType.class);
+        Dashboard dashboard = dashboardService.retrieveByTitle(title);
+        return mapper.map(dashboard, DashboardType.class);
     }
 
     @ApiResponseStatuses
@@ -112,16 +115,18 @@ public class DashboardController extends AbstractController {
     @PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
     @DeleteMapping("/{id}")
     public void deleteDashboard(@PathVariable("id") long id) {
-        dashboardService.deleteDashboardById(id);
+        dashboardService.removeById(id);
     }
 
     @ApiResponseStatuses
     @ApiOperation(value = "Update dashboard", nickname = "updateDashboard", httpMethod = "PUT", response = Dashboard.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
-    @PutMapping
-    public DashboardType updateDashboard(@Valid @RequestBody DashboardType dashboard) {
-        return mapper.map(dashboardService.updateDashboard(mapper.map(dashboard, Dashboard.class)), DashboardType.class);
+    @PutMapping()
+    public DashboardType updateDashboard(@Valid @RequestBody DashboardType dashboardType) {
+        Dashboard dashboard = mapper.map(dashboardType, Dashboard.class);
+        dashboard = dashboardService.update(dashboard);
+        return mapper.map(dashboard, DashboardType.class);
     }
 
     @ApiResponseStatuses
@@ -148,7 +153,7 @@ public class DashboardController extends AbstractController {
     @PreAuthorize("hasPermission('MODIFY_WIDGETS')")
     @DeleteMapping("/{dashboardId}/widgets/{widgetId}")
     public void deleteDashboardWidget(@PathVariable("dashboardId") long dashboardId, @PathVariable("widgetId") long widgetId) {
-        dashboardService.deleteDashboardWidget(dashboardId, widgetId);
+        dashboardService.removeDashboardWidget(dashboardId, widgetId);
     }
 
     @ApiResponseStatuses
@@ -166,8 +171,7 @@ public class DashboardController extends AbstractController {
     @PreAuthorize("hasPermission('MODIFY_WIDGETS')")
     @PutMapping("/{dashboardId}/widgets/all")
     public List<Widget> updateDashboardWidgets(@PathVariable("dashboardId") long dashboardId, @RequestBody List<Widget> widgets) {
-        widgets.forEach(widget -> dashboardService.updateDashboardWidget(dashboardId, widget));
-        return widgets;
+        return dashboardService.updateDashboardWidgets(dashboardId, widgets);
     }
 
     @ApiResponseStatuses
@@ -177,7 +181,7 @@ public class DashboardController extends AbstractController {
     @PostMapping("/{dashboardId}/attributes")
     public List<Attribute> createDashboardAttribute(@PathVariable("dashboardId") long dashboardId, @RequestBody Attribute attribute) {
         dashboardService.createDashboardAttribute(dashboardId, attribute);
-        return dashboardService.getAttributesByDashboardId(dashboardId);
+        return dashboardService.retrieveAttributesByDashboardId(dashboardId);
     }
 
     @ApiResponseStatuses
@@ -187,7 +191,7 @@ public class DashboardController extends AbstractController {
     @PutMapping("/{dashboardId}/attributes")
     public List<Attribute> updateDashboardAttribute(@PathVariable("dashboardId") long dashboardId, @RequestBody Attribute attribute) {
         dashboardService.updateAttribute(attribute);
-        return dashboardService.getAttributesByDashboardId(dashboardId);
+        return dashboardService.retrieveAttributesByDashboardId(dashboardId);
     }
 
     @ApiResponseStatuses
@@ -196,8 +200,8 @@ public class DashboardController extends AbstractController {
     @PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
     @DeleteMapping("/{dashboardId}/attributes/{id}")
     public List<Attribute> deleteDashboardAttribute(@PathVariable("dashboardId") long dashboardId, @PathVariable("id") long id) {
-        dashboardService.deleteDashboardAttributeById(id);
-        return dashboardService.getAttributesByDashboardId(dashboardId);
+        dashboardService.removeByAttributeById(id);
+        return dashboardService.retrieveAttributesByDashboardId(dashboardId);
     }
 
 }

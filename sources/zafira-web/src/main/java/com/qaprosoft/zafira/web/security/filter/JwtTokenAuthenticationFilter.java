@@ -92,7 +92,7 @@ public class JwtTokenAuthenticationFilter extends GenericFilterBean {
 
             chain.doFilter(request, response);
         } catch (ExpiredJwtException | MalformedJwtException | SignatureException ex) {
-            throw new BadCredentialsException("JWT not valid");
+            throw new BadCredentialsException("Token is expired or malformed");
         }
 
         /* SecurityContext is then cleared since we are stateless. */

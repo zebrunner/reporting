@@ -21,7 +21,6 @@ import com.qaprosoft.zafira.models.db.Invitation;
 import com.qaprosoft.zafira.models.dto.auth.InvitationListType;
 import com.qaprosoft.zafira.models.dto.auth.InvitationType;
 import com.qaprosoft.zafira.service.InvitationService;
-import com.qaprosoft.zafira.service.exception.ForbiddenOperationException;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -85,9 +84,6 @@ public class InvitationController extends AbstractController {
     @GetMapping("/info")
     public InvitationType getInvitation(@RequestParam("token") String token) {
         Invitation invitation = invitationService.getInvitationByToken(token);
-        if (invitation == null || !invitation.isValid()) {
-            throw new ForbiddenOperationException();
-        }
         return mapper.map(invitation, InvitationType.class);
     }
 

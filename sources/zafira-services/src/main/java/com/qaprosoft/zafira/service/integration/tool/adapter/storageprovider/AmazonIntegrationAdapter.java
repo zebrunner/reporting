@@ -45,9 +45,7 @@ import com.qaprosoft.zafira.service.util.URLResolver;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -127,13 +125,12 @@ public class AmazonIntegrationAdapter extends AbstractIntegrationAdapter impleme
         String result;
         SdkBufferedInputStream stream = null;
         try {
-            MultipartFile file = fileType.getFile();
-            InputStream inputStream = file.getInputStream();
-            long originalSize = file.getSize();
+            InputStream inputStream = fileType.getInputStream();
+            long originalSize = fileType.getFileSize();
             int size = (int) (originalSize + 100);
 
             stream = new SdkBufferedInputStream(inputStream, size);
-            String type = Mimetypes.getInstance().getMimetype(file.getOriginalFilename());
+            String type = Mimetypes.getInstance().getMimetype(fileType.getFileName());
             String relativePath = getFileKey(fileType);
             String key = TenancyContext.getTenantName() + relativePath;
 
@@ -146,15 +143,12 @@ public class AmazonIntegrationAdapter extends AbstractIntegrationAdapter impleme
             CannedAccessControlList controlList = multitenant ? CannedAccessControlList.Private : CannedAccessControlList.PublicRead;
             amazonS3.setObjectAcl(bucket, key, controlList);
 
-            result = multitenant ? urlResolver.getServiceURL() + relativePath
-                    : amazonS3.getUrl(bucket, key).toString();
-
             CannedAccessControlList acl = multitenant ? CannedAccessControlList.Private : CannedAccessControlList.PublicRead;
             amazonS3.setObjectAcl(bucket, key, acl);
 
             result = multitenant ? urlResolver.getServiceURL() + relativePath : amazonS3.getUrl(bucket, key).toString();
 
-        } catch (IOException | AmazonClientException e) {
+        } catch (AmazonClientException e) {
             throw new ExternalSystemException("Can't save file to AWS S3", e);
         } finally {
             IOUtils.closeQuietly(stream);
@@ -190,7 +184,7 @@ public class AmazonIntegrationAdapter extends AbstractIntegrationAdapter impleme
 
     private String getFileKey(final FileUploadType file) {
         return file.getType().getPath() + FILE_PATH_SEPARATOR + RandomStringUtils.randomAlphanumeric(20) + "." +
-                FilenameUtils.getExtension(file.getFile().getOriginalFilename());
+                FilenameUtils.getExtension(file.getFileName());
     }
 
     public String getAccessKey() {

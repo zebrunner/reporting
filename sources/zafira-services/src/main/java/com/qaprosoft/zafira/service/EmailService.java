@@ -16,8 +16,11 @@
 package com.qaprosoft.zafira.service;
 
 import com.qaprosoft.zafira.models.db.Attachment;
+import com.qaprosoft.zafira.models.dto.EmailType;
+import com.qaprosoft.zafira.service.email.CommonEmail;
 import com.qaprosoft.zafira.service.email.IEmailMessage;
 import com.qaprosoft.zafira.service.integration.tool.impl.MailService;
+import com.qaprosoft.zafira.service.util.EmailUtils;
 import com.qaprosoft.zafira.service.util.FreemarkerUtil;
 import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
@@ -26,7 +29,9 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 @Component
@@ -64,13 +69,22 @@ public class EmailService {
                 msg.setText(text, true);
                 if (hasAttachments) {
                     for (Attachment attachment : message.getAttachments()) {
-                        msg.addInline(attachment.getName().replaceAll(" ", "_"), attachment.getFile());
+                        EmailUtils.addNamedInline(msg, attachment);
                     }
                 }
             };
             this.mailService.send(preparator);
         }
         return text;
+    }
+
+    public String sendEmail(EmailType email, File file, String filename) {
+        Attachment attachment = new Attachment(email.getSubject(), file, filename);
+        List<Attachment> attachments = List.of(attachment);
+        String[] emails = EmailUtils.obtainRecipients(email.getRecipients());
+        IEmailMessage message = new CommonEmail(email.getSubject(), email.getText(), attachments);
+
+        return sendEmail(message, emails);
     }
 
     private String[] processRecipients(String... emails) {

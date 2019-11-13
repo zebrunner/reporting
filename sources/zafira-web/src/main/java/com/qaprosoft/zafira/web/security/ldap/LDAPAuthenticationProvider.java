@@ -15,13 +15,13 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.web.security.ldap;
 
+import com.qaprosoft.zafira.service.exception.ExternalSystemException;
 import com.qaprosoft.zafira.service.integration.tool.impl.AccessManagementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NamingException;
 import org.springframework.ldap.core.DirContextOperations;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,6 +37,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
+
+import static com.qaprosoft.zafira.service.exception.ExternalSystemException.ExternalSystemErrorDetail.LDAP_AUTHENTICATION_FAILED;
 
 /**
  * Uses for load user from LDAP and recognize it.
@@ -87,7 +89,7 @@ public class LDAPAuthenticationProvider extends AbstractLdapAuthenticationProvid
             throw new LockedException(this.messages.getMessage(e.getStatus().getErrorCode(), e.getStatus().getDefaultMessage()));
         } catch (UsernameNotFoundException e) {
             LOGGER.debug(e.getMessage(), e);
-            throw new BadCredentialsException(this.messages.getMessage("LdapAuthenticationProvider.badCredentials", "Bad credentials"));
+            throw new ExternalSystemException(LDAP_AUTHENTICATION_FAILED, this.messages.getMessage("LdapAuthenticationProvider.badCredentials", "Bad credentials"));
         } catch (NamingException e) {
             LOGGER.debug(e.getMessage(), e);
             throw new InternalAuthenticationServiceException(e.getMessage(), e);

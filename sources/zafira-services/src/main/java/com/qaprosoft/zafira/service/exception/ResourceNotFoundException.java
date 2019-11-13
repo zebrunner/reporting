@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 /**
  * Exception that should be thrown to indicate that requested entity is not found (because of the actual absence of
  * such entity or lack of permissions required to retrieve it).
- * Reserved range 2020 - 2039
+ * Reserved range 2020 - 2059
  */
 public class ResourceNotFoundException extends ApplicationException {
 
@@ -32,7 +32,8 @@ public class ResourceNotFoundException extends ApplicationException {
         INTEGRATION_PARAM_NOT_FOUND(2033),
         LAUNCHER_NOT_FOUND(2034),
         LAUNCHER_CALLBACK_NOT_FOUND(2035),
-        LAUNCHER_PRESET_NOT_FOUND(2036);
+        LAUNCHER_PRESET_NOT_FOUND(2036),
+        USER_NOT_FOUND(2037);
 
         private final Integer code;
         private String messageKey;

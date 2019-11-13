@@ -17,7 +17,6 @@ package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.db.Launcher;
 import com.qaprosoft.zafira.models.db.LauncherWebHookPayload;
-import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.dto.LauncherScannerType;
 import com.qaprosoft.zafira.models.dto.LauncherType;
@@ -25,7 +24,6 @@ import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
 import com.qaprosoft.zafira.models.push.LauncherPush;
 import com.qaprosoft.zafira.models.push.LauncherRunPush;
 import com.qaprosoft.zafira.service.LauncherService;
-import com.qaprosoft.zafira.service.UserService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -58,13 +56,11 @@ import java.util.stream.Collectors;
 public class LauncherController extends AbstractController {
 
     private final LauncherService launcherService;
-    private final UserService userService;
     private final Mapper mapper;
     private final SimpMessagingTemplate websocketTemplate;
 
-    public LauncherController(LauncherService launcherService, UserService userService, Mapper mapper, SimpMessagingTemplate websocketTemplate) {
+    public LauncherController(LauncherService launcherService, Mapper mapper, SimpMessagingTemplate websocketTemplate) {
         this.launcherService = launcherService;
-        this.userService = userService;
         this.mapper = mapper;
         this.websocketTemplate = websocketTemplate;
     }
@@ -76,11 +72,9 @@ public class LauncherController extends AbstractController {
     @PostMapping()
     public LauncherType createLauncher(@RequestBody @Valid LauncherType launcherType,
                                        @RequestParam(name = "automationServerId", required = false) Long automationServerId) {
-        User owner = new User(getPrincipalId());
-        launcherType.setAutoScan(false);
-
         Launcher launcher = mapper.map(launcherType, Launcher.class);
-        launcher = launcherService.createLauncher(launcher, owner, automationServerId);
+        Long principalId = getPrincipalId();
+        launcher = launcherService.createLauncher(launcher, principalId, automationServerId);
         return mapper.map(launcher, LauncherType.class);
     }
 
@@ -112,7 +106,9 @@ public class LauncherController extends AbstractController {
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PutMapping()
     public LauncherType updateLauncher(@RequestBody @Valid LauncherType launcherType) {
-        return mapper.map(launcherService.updateLauncher(mapper.map(launcherType, Launcher.class)), LauncherType.class);
+        Launcher launcher = mapper.map(launcherType, Launcher.class);
+        launcher = launcherService.updateLauncher(launcher);
+        return mapper.map(launcher, LauncherType.class);
     }
 
     @ApiResponseStatuses
@@ -131,8 +127,7 @@ public class LauncherController extends AbstractController {
     @PostMapping("/build")
     public void build(@RequestBody @Valid LauncherType launcherType) throws IOException {
         Launcher launcher = mapper.map(launcherType, Launcher.class);
-        User principal = userService.getNotNullUserById(getPrincipalId());
-        String ciRunId = launcherService.buildLauncherJob(launcher, principal);
+        String ciRunId = launcherService.buildLauncherJob(launcher, getPrincipalId());
         websocketTemplate.convertAndSend(getLauncherRunsWebsocketPath(), new LauncherRunPush(launcher, ciRunId));
     }
 
@@ -145,8 +140,7 @@ public class LauncherController extends AbstractController {
                                @PathVariable("id") Long id,
                                @PathVariable("ref") String ref
     ) throws IOException {
-        User principal = userService.getNotNullUserById(getPrincipalId());
-        return launcherService.buildLauncherJobByPresetRef(id, ref, payload, principal);
+        return launcherService.buildLauncherJobByPresetRef(id, ref, payload, getPrincipalId());
     }
 
     @ApiResponseStatuses
@@ -166,9 +160,8 @@ public class LauncherController extends AbstractController {
     @PostMapping("/scanner")
     public JobResult runScanner(@RequestBody @Valid LauncherScannerType launcherScannerType,
                                 @RequestParam(name = "automationServerId", required = false) Long automationServerId) {
-        User user = userService.getNotNullUserById(getPrincipalId());
         return launcherService.buildScannerJob(
-                user,
+                getPrincipalId(),
                 launcherScannerType.getBranch(),
                 launcherScannerType.getScmAccountId(),
                 launcherScannerType.isRescan(),
@@ -194,12 +187,13 @@ public class LauncherController extends AbstractController {
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PostMapping("/create")
     public List<LauncherType> createLaunchersFromJenkins(@RequestBody @Valid ScannedRepoLaunchersType scannedRepoLaunchersType) {
-        List<Launcher> launchers = launcherService.createLaunchersForJob(scannedRepoLaunchersType, new User(getPrincipalId()));
-        List<LauncherType> launcherTypes = launchers.stream().map(launcher -> mapper.map(launcher, LauncherType.class)).collect(Collectors.toList());
+        Long principalId = getPrincipalId();
+        List<Launcher> launchers = launcherService.createLaunchersForJob(scannedRepoLaunchersType, principalId);
+        List<LauncherType> launcherTypes = launchers.stream()
+                                                    .map(launcher -> mapper.map(launcher, LauncherType.class))
+                                                    .collect(Collectors.toList());
         websocketTemplate.convertAndSend(getLaunchersWebsocketPath(), new LauncherPush(launcherTypes, scannedRepoLaunchersType.getUserId(), scannedRepoLaunchersType.isSuccess()));
-        return launchers.stream()
-                        .map(launcher -> mapper.map(launcher, LauncherType.class))
-                        .collect(Collectors.toList());
+        return launcherTypes;
     }
 
 }

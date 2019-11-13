@@ -16,21 +16,13 @@
 package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.db.Project;
-import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.service.ProjectService;
-import com.qaprosoft.zafira.service.TestRunService;
-import com.qaprosoft.zafira.service.VersionService;
-import com.qaprosoft.zafira.service.integration.tool.impl.AutomationServerService;
-import com.qaprosoft.zafira.service.integration.tool.impl.SlackService;
-import com.qaprosoft.zafira.service.integration.tool.impl.TestCaseManagementService;
-import com.qaprosoft.zafira.service.util.URLResolver;
+import com.qaprosoft.zafira.service.ConfigurationService;
+import com.qaprosoft.zafira.service.project.ProjectService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Api("Configuration API")
 @CrossOrigin
@@ -47,37 +40,20 @@ import java.util.Map;
 @RestController
 public class ConfigurationController extends AbstractController {
 
-    @Autowired
-    private VersionService versionService;
+    private final ConfigurationService configurationService;
+    private final ProjectService projectService;
 
-    @Autowired
-    private ProjectService projectService;
-
-    @Autowired
-    private AutomationServerService automationServerService;
-
-    @Autowired
-    private TestCaseManagementService testCaseManagementService;
-
-    @Autowired
-    private SlackService slackService;
-
-    @Autowired
-    private TestRunService testRunService;
-
-    @Autowired
-    private URLResolver urlResolver;
+    public ConfigurationController(ConfigurationService configurationService, ProjectService projectService) {
+        this.configurationService = configurationService;
+        this.projectService = projectService;
+    }
 
     @ApiResponseStatuses
     @ApiOperation(value = "Get version", nickname = "getVersion", httpMethod = "GET", response = Map.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/version")
     public Map<String, Object> getVersion() {
-        return Map.of(
-        "service", versionService.getServiceVersion(),
-        "client", versionService.getClientVersion(),
-        "service_url", urlResolver.buildWebserviceUrl()
-        );
+        return configurationService.getAppConfig();
     }
 
     @ApiResponseStatuses
@@ -93,8 +69,7 @@ public class ConfigurationController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/jenkins")
     public Map<String, Object> getJenkinsConfig() {
-        boolean enabledAndConnected = automationServerService.isEnabledAndConnected(null);
-        return Map.of("connected", enabledAndConnected);
+        return configurationService.getJenkinsConfig();
     }
 
     @ApiResponseStatuses
@@ -102,28 +77,21 @@ public class ConfigurationController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/jira")
     public Map<String, Object> getJiraConfig() {
-        boolean enabledAndConnected = testCaseManagementService.isEnabledAndConnected(null);
-        return Map.of("connected", enabledAndConnected);
+        return configurationService.getJiraConfig();
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Is slack available for test run", nickname = "isSlackAvailableForRun", httpMethod = "GET", response = Map.class)
+    @ApiOperation(value = "Get slack config", nickname = "getSlackConfig", httpMethod = "GET", response = Map.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @GetMapping("/slack/{id}")
-    public Map<String, Object> isSlackAvailable(@PathVariable("id") long id) {
-        TestRun tr = testRunService.getTestRunByIdFull(id);
-        boolean available = slackService.getWebhook() != null && StringUtils.isNotEmpty(tr.getSlackChannels())
-                && slackService.isEnabledAndConnected(null);
-        return Map.of("available", available);
-    }
-
-    @ApiResponseStatuses
-    @ApiOperation(value = "Is slack available", nickname = "isSlackAvailable", httpMethod = "GET", response = Map.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @GetMapping("/slack")
-    public Map<String, Object> isSlackAvailable() {
-        boolean available = slackService.getWebhook() != null && slackService.isEnabledAndConnected(null);
-        return Map.of("available", available);
+    @GetMapping({"/slack", "/slack/{id}"})
+    public Map<String, Object> getSlackConfig(@PathVariable(value = "id", required = false) Optional<Long> testRunId) {
+        Map<String, Object> config;
+        if (testRunId.isPresent()) {
+            config = configurationService.getSlackConfigByTestRunId(testRunId.get());
+        } else {
+            config = configurationService.getSlackConfig();
+        }
+        return config;
     }
 
 }

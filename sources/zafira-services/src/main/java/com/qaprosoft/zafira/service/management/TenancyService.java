@@ -18,6 +18,7 @@ package com.qaprosoft.zafira.service.management;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.management.TenancyMapper;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Tenancy;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,8 +33,13 @@ public class TenancyService {
     @Autowired
     private TenancyMapper tenancyMapper;
 
+    @Getter
     @Value("#{new Boolean('${zafira.multitenant}')}")
     private Boolean isMultitenant;
+
+    @Getter
+    @Value("${zafira.use-artifact-proxy:false}")
+    private boolean useArtifactsProxy;
 
     @Transactional(readOnly = true)
     public List<Tenancy> getAllTenancies() {

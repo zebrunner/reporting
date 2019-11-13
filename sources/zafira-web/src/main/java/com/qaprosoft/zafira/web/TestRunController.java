@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.web;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.FilterSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
@@ -29,32 +28,21 @@ import com.qaprosoft.zafira.models.dto.EmailType;
 import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
 import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.TestType;
-import com.qaprosoft.zafira.models.dto.filter.FilterType;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
-import com.qaprosoft.zafira.service.FilterService;
-import com.qaprosoft.zafira.service.JobsService;
 import com.qaprosoft.zafira.service.LauncherCallbackService;
-import com.qaprosoft.zafira.service.ProjectService;
 import com.qaprosoft.zafira.service.TestRunService;
 import com.qaprosoft.zafira.service.TestService;
-import com.qaprosoft.zafira.service.TestSuiteService;
-import com.qaprosoft.zafira.service.UserService;
 import com.qaprosoft.zafira.service.cache.StatisticsService;
-import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
-import com.qaprosoft.zafira.service.integration.tool.impl.AutomationServerService;
-import com.qaprosoft.zafira.service.integration.tool.impl.google.models.TestRunSpreadsheetService;
+import com.qaprosoft.zafira.service.util.EmailUtils;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -70,77 +58,52 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.qaprosoft.zafira.service.FilterService.Template.TEST_RUN_TEMPLATE;
-import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_RUN_NOT_FOUND;
+import static com.qaprosoft.zafira.models.db.Status.IN_PROGRESS;
+import static com.qaprosoft.zafira.models.db.Status.QUEUED;
 
 @Api("Test runs API")
 @RequestMapping(path = "api/tests/runs", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class TestRunController extends AbstractController {
 
-    private static final String ERR_MSG_TEST_RUN_NOT_FOUND = "Test run with id %s can not be found";
-    private static final String ERR_MSG_TEST_RUN_NOT_FOUND_BY_CI_RUN_ID = "Test run for CI run id %s can not be found";
+    private final TestRunService testRunService;
+    private final TestService testService;
+    private final SimpMessagingTemplate websocketTemplate;
+    private final StatisticsService statisticsService;
+    private final LauncherCallbackService launcherCallbackService;
+    private final Mapper mapper;
 
-    @Autowired
-    private Mapper mapper;
-
-    @Autowired
-    private TestRunService testRunService;
-
-    @Autowired
-    private TestSuiteService testSuiteService;
-
-    @Autowired
-    private TestRunSpreadsheetService testRunSpreadsheetService;
-
-    @Autowired
-    private FilterService filterService;
-
-    @Autowired
-    private TestService testService;
-
-    @Autowired
-    private JobsService jobsService;
-
-    @Autowired
-    private ProjectService projectService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private AutomationServerService automationServerService;
-
-    @Autowired
-    private SimpMessagingTemplate websocketTemplate;
-
-    @Autowired
-    private StatisticsService statisticsService;
-
-    @Autowired
-    private LauncherCallbackService launcherCallbackService;
+    public TestRunController(TestRunService testRunService, TestService testService, SimpMessagingTemplate websocketTemplate,
+                             StatisticsService statisticsService, LauncherCallbackService launcherCallbackService, Mapper mapper) {
+        this.testRunService = testRunService;
+        this.testService = testService;
+        this.websocketTemplate = websocketTemplate;
+        this.statisticsService = statisticsService;
+        this.launcherCallbackService = launcherCallbackService;
+        this.mapper = mapper;
+    }
 
     @ApiResponseStatuses
     @ApiOperation(value = "Start test run", nickname = "startTestRun", httpMethod = "POST", response = TestRunType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping()
     public TestRunType startTestRun(
-            @RequestBody @Valid TestRunType tr,
+            @RequestBody @Valid TestRunType testRunType,
             @RequestHeader(value = "Project", required = false) String project
     ) {
-        TestRun testRun = mapper.map(tr, TestRun.class);
-        testRun.setProject(projectService.getProjectByName(project));
+        TestRun testRun = mapper.map(testRunType, TestRun.class);
+        testRun.setProject(new Project(project));
         testRun = testRunService.startTestRun(testRun);
-        TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
-        websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunFull));
+
+        websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRun));
         websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
+
         return mapper.map(testRun, TestRunType.class);
     }
 
@@ -148,17 +111,13 @@ public class TestRunController extends AbstractController {
     @ApiOperation(value = "Update test run config", nickname = "updateTestRun", httpMethod = "PUT", response = TestRunType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PutMapping()
-    public TestRunType updateTestRun(@RequestBody TestRunType tr) {
-        TestRun testRun = testRunService.getTestRunById(tr.getId());
-        if (testRun == null && !StringUtils.isEmpty(tr.getConfigXML())) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, tr.getId());
-        }
-        testRun.setConfigXML(tr.getConfigXML());
-        testRunService.initTestRunWithXml(testRun);
-        testRunService.updateTestRun(testRun);
-        TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
-        websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunFull));
+    public TestRunType updateTestRun(@Valid @RequestBody TestRunType testRunType) {
+        TestRun testRun = mapper.map(testRunType, TestRun.class);
+        testRunService.updateTestRunWithXml(testRun);
+
+        websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRun));
         websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
+
         return mapper.map(testRun, TestRunType.class);
     }
 
@@ -174,6 +133,7 @@ public class TestRunController extends AbstractController {
 
         websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(id)));
         websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunFull));
+
         return mapper.map(testRun, TestRunType.class);
     }
 
@@ -186,22 +146,20 @@ public class TestRunController extends AbstractController {
             @ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
             @ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId,
             @RequestBody(required = false) CommentType abortCause
-    ) throws UnsupportedEncodingException {
-        TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
-        if (testRun == null) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
-        }
-        String abortCauseDecoded = null;
-        if (abortCause != null && abortCause.getComment() != null) {
-            abortCauseDecoded = URLDecoder.decode(abortCause.getComment(), "UTF-8");
-        }
-        Status testRunStatus = testRun.getStatus();
-        if (Status.IN_PROGRESS.equals(testRunStatus) || Status.QUEUED.equals(testRunStatus)) {
-            testRun = testRunService.abortTestRun(testRun, abortCauseDecoded);
+    ) {
+        TestRun testRun = TestRun.builder()
+                                 .id(id)
+                                 .ciRunId(ciRunId)
+                                 .build();
+
+        testRun = testRunService.abortTestRun(testRun, abortCause);
+
+        if (List.of(IN_PROGRESS, QUEUED).contains(testRun.getStatus())) {
             List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
             tests.stream()
                  .filter(test -> Status.ABORTED.equals(test.getStatus()))
                  .forEach(test -> websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test)));
+
             websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
             websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
         }
@@ -213,10 +171,7 @@ public class TestRunController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/queue")
     public TestRunType createQueuedTestRun(@RequestBody QueueTestRunParamsType queuedTestRunParams) {
-        TestRun testRun = new TestRun();
-        if (jobsService.getJobByJobURL(queuedTestRunParams.getJobUrl()) != null) {
-            testRun = testRunService.queueTestRun(queuedTestRunParams, userService.getUserById(getPrincipalId()));
-        }
+        TestRun testRun = testRunService.queueTestRun(queuedTestRunParams, getPrincipalId());
         return mapper.map(testRun, TestRunType.class);
     }
 
@@ -225,10 +180,7 @@ public class TestRunController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/{id}")
     public TestRunType getTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable("id") long id) {
-        TestRun testRun = testRunService.getTestRunById(id);
-        if (testRun == null) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
-        }
+        TestRun testRun = testRunService.getNotNullTestRunById(id);
         return mapper.map(testRun, TestRunType.class);
     }
 
@@ -240,21 +192,8 @@ public class TestRunController extends AbstractController {
             TestRunSearchCriteria sc,
             @RequestParam(value = "projectNames", required = false) List<String> projectNames,
             @RequestParam(value = "filterId", required = false) Long filterId
-    ) {
-        if (filterId != null) {
-            FilterType filterType = mapper.map(filterService.getFilterById(filterId), FilterType.class);
-            if (filterType != null) {
-                String whereClause = filterService.getTemplate(filterType, TEST_RUN_TEMPLATE);
-                sc.setFilterSearchCriteria(new FilterSearchCriteria(whereClause));
-            }
-        }
-        if (projectNames != null) {
-            List<Project> projects = projectNames.stream()
-                                                 .map(name -> projectService.getProjectByName(name))
-                                                 .collect(Collectors.toList());
-            sc.setProjects(projects);
-        }
-        return testRunService.searchTestRuns(sc);
+    ) throws IOException {
+        return testRunService.search(sc, projectNames, filterId);
     }
 
     @ApiResponseStatuses
@@ -277,10 +216,7 @@ public class TestRunController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping()
     public TestRunType getTestRunByCiRunId(@RequestParam("ciRunId") String ciRunId) {
-        TestRun testRun = testRunService.getTestRunByCiRunId(ciRunId);
-        if (testRun == null) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND_BY_CI_RUN_ID, ciRunId);
-        }
+        TestRun testRun = testRunService.getNotNullTestRunByCiRunId(ciRunId);
         return mapper.map(testRun, TestRunType.class);
     }
 
@@ -326,7 +262,7 @@ public class TestRunController extends AbstractController {
             @RequestParam(value = "filter", defaultValue = "all", required = false) String filter,
             @RequestParam(value = "showStacktrace", defaultValue = "true", required = false) boolean showStacktrace
     ) {
-        String[] recipients = getRecipients(email.getRecipients());
+        String[] recipients = EmailUtils.obtainRecipients(email.getRecipients());
         return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), showStacktrace, recipients);
     }
 
@@ -340,27 +276,17 @@ public class TestRunController extends AbstractController {
             @RequestParam(name = "suiteOwner", defaultValue = "false", required = false) boolean suiteOwner,
             @RequestParam(name = "suiteRunner", defaultValue = "false", required = false) boolean suiteRunner
     ) {
-        String[] recipients = getRecipients(email.getRecipients());
-        if (suiteOwner) {
-            Long testSuiteId = testRunService.getTestRunByCiRunIdFull(id).getTestSuite().getId();
-            String suiteOwnerEmail = testSuiteService.getTestSuiteByIdFull(testSuiteId).getUser().getEmail();
-            ArrayUtils.add(recipients, suiteOwnerEmail);
-        }
-        if (suiteRunner) {
-            String suiteRunnerEmail = testRunService.getTestRunByCiRunIdFull(id).getUser().getEmail();
-            ArrayUtils.add(recipients, suiteRunnerEmail);
-        }
-
-        return testRunService.sendTestRunResultsEmail(id, false, true, recipients);
+        String[] recipients = EmailUtils.obtainRecipients(email.getRecipients());
+        return testRunService.sendTestRunResultsEmailFailure(id, suiteOwner, suiteRunner, recipients);
     }
 
     @ApiResponseStatuses
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Create test run results spreadsheet", nickname = "createTestRunResultSpreadsheet", httpMethod = "POST", response = String.class)
     @PostMapping(path = "/{id}/spreadsheet", produces = MediaType.TEXT_HTML_VALUE)
-    public String createTestRunResultSpreadsheet(@PathVariable("id") String id, @RequestBody String recipients) {
-        recipients = recipients + ";" + userService.getUserById(getPrincipalId()).getEmail();
-        return testRunSpreadsheetService.createTestRunResultSpreadsheet(testRunService.getTestRunByIdFull(id), getRecipients(recipients));
+    public String createTestRunResultSpreadsheet(@PathVariable("id") String id, @RequestBody String recipientsLine) {
+        String[] recipients = EmailUtils.obtainRecipients(recipientsLine);
+        return testRunService.createTestRunResultSpreadsheet(id, getPrincipalId(), recipients);
     }
 
     @ApiResponseStatuses
@@ -377,8 +303,8 @@ public class TestRunController extends AbstractController {
     @PreAuthorize("hasPermission('MODIFY_TEST_RUNS')")
     @PostMapping("/{id}/markReviewed")
     public void markTestRunAsReviewed(@PathVariable("id") long id, @RequestBody @Valid CommentType comment) {
-        TestRun tr = testRunService.markAsReviewed(id, comment.getComment());
-        websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(tr.getId())));
+        TestRun testRun = testRunService.markAsReviewed(id, comment.getComment());
+        websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
     }
 
     @ApiResponseStatuses
@@ -386,18 +312,8 @@ public class TestRunController extends AbstractController {
     @ApiOperation(value = "Rerun test run", nickname = "rerunTestRun", httpMethod = "GET")
     @PreAuthorize("hasPermission('TEST_RUNS_CI')")
     @GetMapping("/{id}/rerun")
-    public void rerunTestRun(
-            @PathVariable("id") long id,
-            @RequestParam(name = "rerunFailures", required = false, defaultValue = "false") boolean rerunFailures
-    ) {
-        TestRun testRun = testRunService.getTestRunByIdFull(id);
-        if (testRun == null) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
-        }
-        testRun.setComments(null);
-        testRun.setReviewed(false);
-        testRunService.updateTestRun(testRun);
-        automationServerService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
+    public void rerunTestRun(@PathVariable("id") long id, @RequestParam(name = "rerunFailures", required = false) boolean rerunFailures) {
+        testRunService.rerunTestRun(id, rerunFailures);
     }
 
     @ApiResponseStatuses
@@ -406,12 +322,7 @@ public class TestRunController extends AbstractController {
     @PreAuthorize("hasPermission('TEST_RUNS_CI')")
     @GetMapping("/{id}/debug")
     public void debugTestRun(@PathVariable("id") long id) {
-        TestRun testRun = testRunService.getTestRunByIdFull(id);
-        if (testRun == null) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
-        }
-
-        automationServerService.debugJob(testRun.getJob(), testRun.getBuildNumber());
+        testRunService.debugTestRun(id);
     }
 
     @ApiResponseStatuses
@@ -423,11 +334,11 @@ public class TestRunController extends AbstractController {
             @ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
             @ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId
     ) {
-        TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id) : testRunService.getTestRunByCiRunIdFull(ciRunId);
-        if (testRun == null) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
-        }
-        automationServerService.abortJob(testRun.getJob(), testRun.getBuildNumber());
+        TestRun testRun = TestRun.builder()
+                                 .id(id)
+                                 .ciRunId(ciRunId)
+                                 .build();
+        testRunService.abortTestRunJob(testRun);
     }
 
     @ApiResponseStatuses
@@ -439,11 +350,7 @@ public class TestRunController extends AbstractController {
             @PathVariable("id") long id,
             @RequestBody Map<String, String> jobParameters
     ) {
-        TestRun testRun = testRunService.getTestRunByIdFull(id);
-        if (testRun == null) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
-        }
-        automationServerService.buildJob(testRun.getJob(), jobParameters);
+        testRunService.buildTestRunJob(id, jobParameters);
     }
 
     @ApiResponseStatuses
@@ -452,11 +359,7 @@ public class TestRunController extends AbstractController {
     @PreAuthorize("hasPermission('TEST_RUNS_CI')")
     @GetMapping("/{id}/jobParameters")
     public List<BuildParameterType> getJobParameters(@PathVariable("id") long id) {
-        TestRun testRun = testRunService.getTestRunByIdFull(id);
-        if (testRun == null) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
-        }
-        return automationServerService.getBuildParameters(testRun.getJob(), testRun.getBuildNumber());
+        return testRunService.getTestRunJobParameters(id);
     }
 
     @ApiResponseStatuses
@@ -485,17 +388,11 @@ public class TestRunController extends AbstractController {
             @RequestParam(value = "id", required = false) Long id,
             @RequestParam(value = "ciRunId", required = false) String ciRunId
     ) {
-        TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id) : testRunService.getTestRunByCiRunIdFull(ciRunId);
-        if (testRun == null) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
-        }
-        return automationServerService.getBuildConsoleOutput(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
-    }
-
-    private String[] getRecipients(String recipients) {
-        return !StringUtils.isEmpty(recipients)
-                ? recipients.trim().replaceAll(",", " ").replaceAll(";", " ").replaceAll("\\[\\]", " ").split(" ")
-                : new String[] {};
+        TestRun testRun = TestRun.builder()
+                                 .id(id)
+                                 .ciRunId(ciRunId)
+                                 .build();
+        return testRunService.getBuildConsoleOutput(testRun, count, fullCount);
     }
 
 }

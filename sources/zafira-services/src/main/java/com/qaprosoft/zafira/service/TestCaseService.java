@@ -21,28 +21,38 @@ import com.google.common.cache.LoadingCache;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestCaseMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestCaseSearchCriteria;
+import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestCase;
+import com.qaprosoft.zafira.service.project.ProjectReassignable;
+import com.qaprosoft.zafira.service.project.ProjectService;
 import com.qaprosoft.zafira.service.util.DateTimeUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Service
-public class TestCaseService {
-    @Autowired
-    private TestCaseMapper testCaseMapper;
+public class TestCaseService implements ProjectReassignable {
+
+    private final TestCaseMapper testCaseMapper;
+    private final ProjectService projectService;
+
+    public TestCaseService(TestCaseMapper testCaseMapper, ProjectService projectService) {
+        this.testCaseMapper = testCaseMapper;
+        this.projectService = projectService;
+    }
 
     private static final LoadingCache<String, Lock> updateLocks = CacheBuilder.newBuilder()
-            .maximumSize(100000)
-            .expireAfterWrite(15, TimeUnit.SECONDS)
-            .build(
+                                                                              .maximumSize(100000)
+                                                                              .expireAfterWrite(15, TimeUnit.SECONDS)
+                                                                              .build(
                     new CacheLoader<>() {
                         public Lock load(String key) {
                             return new ReentrantLock();
@@ -75,6 +85,13 @@ public class TestCaseService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public TestCase createOrUpdateCase(TestCase testCase, String projectName) throws ExecutionException {
+        Project project = projectService.getProjectByName(projectName);
+        testCase.setProject(project);
+        return createOrUpdateCase(testCase);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public TestCase createOrUpdateCase(TestCase newTestCase) throws ExecutionException {
         final String CLASS_METHOD = newTestCase.getTestClass() + "." + newTestCase.getTestMethod();
         try {
@@ -97,6 +114,14 @@ public class TestCaseService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public TestCase[] createOrUpdateCases(TestCase[] testCases, String projectName) throws ExecutionException {
+        Project project = projectService.getProjectByName(projectName);
+        Arrays.stream(testCases)
+              .forEach(testCase -> testCase.setProject(project));
+        return createOrUpdateCases(testCases);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public TestCase[] createOrUpdateCases(TestCase[] newTestCases) throws ExecutionException {
         int index = 0;
         for (TestCase newTestCase : newTestCases) {
@@ -108,12 +133,22 @@ public class TestCaseService {
     @Transactional(readOnly = true)
     public SearchResult<TestCase> searchTestCases(TestCaseSearchCriteria sc) {
         DateTimeUtil.actualizeSearchCriteriaDate(sc);
-        SearchResult<TestCase> results = new SearchResult<>();
-        results.setPage(sc.getPage());
-        results.setPageSize(sc.getPageSize());
-        results.setSortOrder(sc.getSortOrder());
-        results.setResults(testCaseMapper.searchTestCases(sc));
-        results.setTotalResults(testCaseMapper.getTestCasesSearchCount(sc));
-        return results;
+
+        List<TestCase> testCases = testCaseMapper.searchTestCases(sc);
+        int count = testCaseMapper.getTestCasesSearchCount(sc);
+
+        return SearchResult.<TestCase>builder()
+                .page(sc.getPage())
+                .pageSize(sc.getPageSize())
+                .sortOrder(sc.getSortOrder())
+                .results(testCases)
+                .totalResults(count)
+                .build();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void reassignProject(Long fromId, Long toId) {
+        testCaseMapper.reassignToProject(fromId, toId);
     }
 }

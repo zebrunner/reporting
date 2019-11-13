@@ -17,11 +17,9 @@ package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestCaseSearchCriteria;
-import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.db.TestCase;
 import com.qaprosoft.zafira.models.db.TestMetric;
 import com.qaprosoft.zafira.models.dto.TestCaseType;
-import com.qaprosoft.zafira.service.ProjectService;
 import com.qaprosoft.zafira.service.TestCaseService;
 import com.qaprosoft.zafira.service.TestMetricService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
@@ -41,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -53,13 +52,11 @@ public class TestCaseController extends AbstractController {
     private final Mapper mapper;
     private final TestCaseService testCaseService;
     private final TestMetricService testMetricService;
-    private final ProjectService projectService;
 
-    public TestCaseController(Mapper mapper, TestCaseService testCaseService, TestMetricService testMetricService, ProjectService projectService) {
+    public TestCaseController(Mapper mapper, TestCaseService testCaseService, TestMetricService testMetricService) {
         this.mapper = mapper;
         this.testCaseService = testCaseService;
         this.testMetricService = testMetricService;
-        this.projectService = projectService;
     }
 
     @ApiResponseStatuses
@@ -87,8 +84,7 @@ public class TestCaseController extends AbstractController {
             @RequestHeader(name = "Project", required = false) String projectName
     ) throws ExecutionException {
         TestCase tc = mapper.map(testCase, TestCase.class);
-        tc.setProject(projectService.getProjectByName(projectName));
-        return mapper.map(testCaseService.createOrUpdateCase(tc), TestCaseType.class);
+        return mapper.map(testCaseService.createOrUpdateCase(tc, projectName), TestCaseType.class);
     }
 
     @ApiResponseStatuses
@@ -99,21 +95,18 @@ public class TestCaseController extends AbstractController {
             @RequestBody @Valid TestCaseType[] tcs,
             @RequestHeader(name = "Project", required = false) String projectName
     ) throws ExecutionException {
-        if (!ArrayUtils.isEmpty(tcs)) {
-            Project project = projectService.getProjectByName(projectName);
-            TestCase[] testCases = new TestCase[tcs.length];
-            for (int i = 0; i < tcs.length; i++) {
-                testCases[i] = mapper.map(tcs[i], TestCase.class);
-                testCases[i].setProject(project);
-            }
-            testCases = testCaseService.createOrUpdateCases(testCases);
-            for (int i = 0; i < testCases.length; i++) {
-                tcs[i] = mapper.map(testCases[i], TestCaseType.class);
-            }
-            return tcs;
-        } else {
+        if (ArrayUtils.isEmpty(tcs)) {
             return new TestCaseType[0];
         }
+        TestCase[] testCases = Arrays.stream(tcs)
+                                     .map(testCaseType -> mapper.map(testCaseType, TestCase.class))
+                                     .toArray(TestCase[]::new);
+        testCases = testCaseService.createOrUpdateCases(testCases, projectName);
+
+        tcs = Arrays.stream(testCases)
+                    .map(testCase -> mapper.map(testCase, TestCaseType.class))
+                    .toArray(TestCaseType[]::new);
+        return tcs;
     }
 
 }

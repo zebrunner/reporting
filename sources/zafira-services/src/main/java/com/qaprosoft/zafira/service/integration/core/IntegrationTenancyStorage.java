@@ -81,9 +81,7 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
 
     @Override
     public void init() {
-        integrationProxies.forEach((name, proxy) -> {
-            proxy.init();
-        });
+        integrationProxies.forEach((name, proxy) -> proxy.init());
     }
 
     @Override
@@ -91,15 +89,13 @@ public class IntegrationTenancyStorage implements TenancyInitial, TenancyDbIniti
         try {
             cryptoService.init();
             List<Integration> integrations = integrationService.retrieveAll();
-            integrations.forEach(integration -> {
-                integration.getSettings().forEach(integrationSetting -> {
-                    if (!StringUtils.isEmpty(integrationSetting.getValue()) && integrationSetting.getParam().isNeedEncryption() && !integrationSetting.isEncrypted()) {
-                        integrationSetting.setValue(cryptoService.encrypt(integrationSetting.getValue()));
-                        integrationSetting.setEncrypted(true);
-                        integrationSettingService.update(integrationSetting);
-                    }
-                });
-            });
+            integrations.forEach(integration -> integration.getSettings().forEach(integrationSetting -> {
+                if (!StringUtils.isEmpty(integrationSetting.getValue()) && integrationSetting.getParam().isNeedEncryption() && !integrationSetting.isEncrypted()) {
+                    integrationSetting.setValue(cryptoService.encrypt(integrationSetting.getValue()));
+                    integrationSetting.setEncrypted(true);
+                    integrationSettingService.update(integrationSetting);
+                }
+            }));
         } catch (Exception e) {
             LOGGER.error("Unable to encrypt value: " + e.getMessage(), e);
         }

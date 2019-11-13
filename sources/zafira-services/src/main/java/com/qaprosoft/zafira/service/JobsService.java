@@ -36,26 +36,31 @@ public class JobsService {
     private final JobMapper jobMapper;
     private final JobViewMapper jobViewMapper;
     private final IntegrationService integrationService;
+    private final UserService userService;
 
-    public JobsService(JobMapper jobMapper, JobViewMapper jobViewMapper, IntegrationService integrationService) {
+    public JobsService(JobMapper jobMapper, JobViewMapper jobViewMapper, IntegrationService integrationService, UserService userService) {
         this.jobMapper = jobMapper;
         this.jobViewMapper = jobViewMapper;
         this.integrationService = integrationService;
+        this.userService = userService;
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public void createJob(Job job) {
         jobMapper.createJob(job);
     }
 
     // Check the same logic in ZafiraClient method registerJob
-    @Transactional(rollbackFor = Exception.class)
-    public Job createOrUpdateJobByURL(String jobUrl, User user) {
-        Job job = createJobFromURL(jobUrl, user);
+    @Transactional
+    public Job createOrUpdateJobByURL(String jobUrl, Long userId) {
+        Job job = createJobFromURL(jobUrl, userId);
         return createOrUpdateJob(job);
     }
 
-    private Job createJobFromURL(String jobUrl, User user) {
+    private Job createJobFromURL(String jobUrl, Long userId) {
+        User user = userService.getUserById(userId);
+        // Replacing trailing slash we make sure that further operations
+        // based on splitting by slash will be performed correctly
         jobUrl = jobUrl.replaceAll("/$", "");
         String jobName = StringUtils.substringAfterLast(jobUrl, "/");
         String jenkinsHost = parseJenkinsHost(jobUrl);
@@ -82,13 +87,13 @@ public class JobsService {
         return jobMapper.getJobByJobURL(url);
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Job updateJob(Job job) {
         jobMapper.updateJob(job);
         return job;
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Job createOrUpdateJob(Job newJob) {
         Integration integration = integrationService.retrieveByJobAndIntegrationTypeName(newJob, INTEGRATION_TYPE_NAME);
         newJob.setAutomationServerId(integration.getId());
@@ -104,10 +109,21 @@ public class JobsService {
         return newJob;
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public JobView createJobView(JobView jobView) {
         jobViewMapper.createJobView(jobView);
         return jobView;
+    }
+
+    @Transactional
+    public void createJobViews(List<JobView> jobViews) {
+        jobViews.forEach(jobViewMapper::createJobView);
+    }
+
+    @Transactional
+    public void updateJobViews(List<JobView> jobViews, long viewId, String env) {
+        deleteJobView(viewId, env);
+        createJobViews(jobViews);
     }
 
     @Transactional(readOnly = true)
@@ -115,8 +131,8 @@ public class JobsService {
         return jobViewMapper.getJobViewsByViewId(viewId);
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteJobViews(long viewId, String env) {
+    @Transactional
+    public void deleteJobView(long viewId, String env) {
         jobViewMapper.deleteJobViewsByViewIdAndEnv(viewId, env);
     }
 }

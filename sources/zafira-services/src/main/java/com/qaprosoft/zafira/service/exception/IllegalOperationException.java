@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
  * Exception that is thrown to indicate that certain operation is not valid according to business logic of application
  * (e.g. when someone attempts to update recourse with a certain status that indicates immutable state at given moment -
  * simply put can not be updated).
- * Reserved range 2060 - 2079
+ * Reserved range 2060 - 2099
  */
 public class IllegalOperationException extends ApplicationException {
 
@@ -40,7 +40,14 @@ public class IllegalOperationException extends ApplicationException {
         INVITATION_CAN_NOT_BE_CREATED(2065),
         ILLEGAL_FILTER_ACCESS(2066),
         TEST_RUN_CAN_NOT_BE_STARTED(2067),
-        LAUNCHER_PRESET_CAN_NOT_BE_CREATED(2068);
+        LAUNCHER_PRESET_CAN_NOT_BE_CREATED(2068),
+        ILLEGAL_TEST_RUN_ACTION_BY_ID(2069),
+        INVITATION_IS_INVALID(2070),
+        RESET_TOKEN_IS_NOT_POSSIBLE(2071),
+        CHANGE_PASSWORD_IS_NOT_POSSIBLE(2072),
+        DASHBOARD_CAN_NOT_BE_UPDATED(2073),
+        GROUP_CAN_NOT_BE_DELETED(2074),
+        ATTACHMENT_RESOURCE_NOT_NULL(2075);
 
         private final Integer code;
         private String messageKey;

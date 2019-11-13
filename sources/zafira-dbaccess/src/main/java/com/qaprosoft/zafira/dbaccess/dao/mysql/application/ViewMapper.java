@@ -31,5 +31,7 @@ public interface ViewMapper {
 
     void updateView(View view);
 
+    void reassignToProject(@Param("fromProjectId") Long fromProjectId, @Param("toProjectId") Long toProjectId);
+
     void deleteViewById(long id);
 }

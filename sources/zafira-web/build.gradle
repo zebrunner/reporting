@@ -9,24 +9,27 @@ def libraries = rootProject.ext.dependencyManagement
 
 dependencies {
 
-    compile project(':zafira-dbaccess')
-    compile project(':zafira-models')
-    compile project(':zafira-services')
+    implementation project(':zafira-dbaccess')
+    implementation project(':zafira-models')
+    implementation project(':zafira-services')
 
     implementation libraries.boot_starter_web
     implementation libraries.boot_starter_security
     implementation libraries.boot_starter_websocket
     implementation libraries.boot_starter_reactor_netty
     implementation libraries.boot_starter_data_redis
+    implementation libraries.spring_security_ldap
 
-    compile libraries.swagger
-    compile libraries.jasypt
-    compile libraries.commons_lang
-    compile libraries.commons_io
-    compile libraries.commons_fileupload
-    compile libraries.dozer
-    compile libraries.jackson_databind
-    compile libraries.hibernate_validator
-    compile libraries.logging
+    implementation libraries.swagger
+    implementation libraries.jasypt
+    implementation libraries.commons_lang
+    implementation libraries.commons_io
+    implementation libraries.commons_fileupload
+    implementation libraries.dozer
+    implementation libraries.jackson_databind
+    implementation libraries.hibernate_validator
+    implementation libraries.logging
+    implementation libraries.jwt
+    implementation libraries.javax_persistence
 
 }

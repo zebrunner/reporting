@@ -15,16 +15,19 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.utils;
 
-import java.util.List;
-
 import com.qaprosoft.zafira.models.db.Attribute;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * SQLAdapter wraps SQL query and parametarizes it with attributes.
- * 
+ *
  * @author akhursevich
  */
 public class SQLAdapter {
+
+    @NotNull
     private String sql;
     private List<Attribute> attributes;
 
