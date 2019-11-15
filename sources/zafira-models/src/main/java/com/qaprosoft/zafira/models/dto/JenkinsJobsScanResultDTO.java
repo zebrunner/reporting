@@ -20,20 +20,25 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class JenkinsLauncherType implements Serializable {
+public class JenkinsJobsScanResultDTO implements Serializable {
 
     private static final long serialVersionUID = -5754742673797369219L;
 
-    @NotEmpty(message = "{error.job.url.required}")
-    private String jobUrl;
+    @NotEmpty
+    private String repo;
 
-    @NotNull(message = "{error.job.parameters.required}")
-    private String jobParameters;
+    @NotNull
+    @Min(1)
+    private Long userId;
+    private List<JenkinsJobDTO> jenkinsJobs;
+    private boolean success;
 
 }
