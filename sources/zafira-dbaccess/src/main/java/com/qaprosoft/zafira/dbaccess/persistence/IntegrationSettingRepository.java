@@ -47,7 +47,4 @@ public interface IntegrationSettingRepository extends CrudRepository<Integration
     @EntityGraph(value = "integrationSetting.expanded")
     List<IntegrationSetting> findAllByEncryptedTrue();
 
-    @EntityGraph(value = "integrationSetting.expanded")
-    IntegrationSetting save(IntegrationSetting integrationSetting);
-
 }

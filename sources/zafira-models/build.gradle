@@ -2,13 +2,15 @@ description = 'zafira-domain'
 
 def libraries = rootProject.ext.dependencyManagement
 
+apply plugin: 'java-library'
+
 dependencies {
 
-    compile libraries.boot_starter_security
-    compile libraries.jackson_databind
-    compile libraries.hibernate_validator
-    compile libraries.javax_validation
-    compile libraries.boot_starter_data_jpa
-    compile libraries.jaxb
+    implementation libraries.boot_starter_security  // got rid of this
+    implementation libraries.jackson_databind
+    implementation libraries.hibernate_validator
+    implementation libraries.javax_validation
+    implementation libraries.boot_starter_data_jpa  // got rid of this
+    implementation libraries.jaxb
 
 }

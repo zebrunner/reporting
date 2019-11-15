@@ -15,11 +15,9 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
-import java.util.List;
-
 import com.qaprosoft.zafira.models.db.Setting;
-import org.apache.ibatis.annotations.Param;
-import static com.qaprosoft.zafira.models.db.Setting.*;
+
+import java.util.List;
 
 public interface SettingsMapper {
     void createSetting(Setting setting);

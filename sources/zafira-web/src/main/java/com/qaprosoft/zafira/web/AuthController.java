@@ -59,7 +59,7 @@ import javax.validation.Valid;
 
 @Api("Auth API")
 @CrossOrigin
-@RequestMapping(path = "api/auth", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(path = "api/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class AuthController extends AbstractController {
 

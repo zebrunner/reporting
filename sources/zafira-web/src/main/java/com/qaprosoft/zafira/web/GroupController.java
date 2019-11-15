@@ -47,8 +47,6 @@ import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.R
 @RestController
 public class GroupController extends AbstractController {
 
-    private static final String ERR_MSG_GROUP_CAN_NOT_BE_FOUND = "Group with id %s can not be found";
-
     private final GroupService groupService;
 
     public GroupController(GroupService groupService) {
@@ -124,13 +122,6 @@ public class GroupController extends AbstractController {
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
     @DeleteMapping("/{id}")
     public void deleteGroup(@PathVariable("id") long id) {
-        Group group = groupService.getGroupById(id);
-        if (group == null) {
-            throw new ResourceNotFoundException(GROUP_NOT_FOUND, ERR_MSG_GROUP_CAN_NOT_BE_FOUND, id);
-        }
-        if (group.getUsers().size() > 0) {
-            throw new ForbiddenOperationException("It's necessary to clear the group initially.", true);
-        }
         groupService.deleteGroup(id);
     }
 

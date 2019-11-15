@@ -44,7 +44,10 @@ public class IllegalOperationException extends ApplicationException {
         ILLEGAL_TEST_RUN_ACTION_BY_ID(2069),
         INVITATION_IS_INVALID(2070),
         RESET_TOKEN_IS_NOT_POSSIBLE(2071),
-        CHANGE_PASSWORD_IS_NOT_POSSIBLE(2072);
+        CHANGE_PASSWORD_IS_NOT_POSSIBLE(2072),
+        DASHBOARD_CAN_NOT_BE_UPDATED(2073),
+        GROUP_CAN_NOT_BE_DELETED(2074),
+        ATTACHMENT_RESOURCE_NOT_NULL(2075);
 
         private final Integer code;
         private String messageKey;

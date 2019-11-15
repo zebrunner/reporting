@@ -61,10 +61,13 @@ public class GitHubService implements IScmService {
     }
 
     @Override
-    public List<Repository> getRepositories(ScmAccount scmAccount, String organizationName) throws IOException {
+    public List<Repository> getRepositories(ScmAccount scmAccount, String organizationName, List<String> existingRepos) throws IOException {
         GitHub gitHub = connectToGitHub(scmAccount);
         GHPerson person = StringUtils.isBlank(organizationName) ? gitHub.getMyself() : gitHub.getOrganization(organizationName);
-        return person.listRepositories().asList().stream().map(this::mapRepository).collect(Collectors.toList());
+        List<Repository> repositories = person.listRepositories().asList().stream().map(this::mapRepository).collect(Collectors.toList());
+        return repositories.stream()
+                           .filter(repository -> !existingRepos.contains(repository.getUrl()))
+                           .collect(Collectors.toList());
     }
 
     @Override
