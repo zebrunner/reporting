@@ -851,6 +851,7 @@ CREATE TABLE IF NOT EXISTS launchers (
   model TEXT NOT NULL,
   scm_id INT NOT NULL,
   job_id INT NULL,
+  type VARCHAR(50),
   auto_scan BOOLEAN NOT NULL DEFAULT FALSE,
   modified_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
   created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,

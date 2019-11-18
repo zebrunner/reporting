@@ -57,4 +57,12 @@ INSERT INTO databasechangelog(
      current_timestamp,
      1,
      'EXECUTED'
+ ),
+ (
+     '004_add_launcher_type_column',
+     'itsvirko',
+     'classpath:db/changelog.yml',
+     current_timestamp,
+     1,
+     'EXECUTED'
  );

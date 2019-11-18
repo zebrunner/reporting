@@ -25,7 +25,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class LauncherType extends AbstractType {
+public class LauncherDTO extends AbstractType {
 
     private static final long serialVersionUID = 7778329756348322538L;
 
@@ -34,6 +34,8 @@ public class LauncherType extends AbstractType {
 
     @NotEmpty(message = "{error.model.required}")
     private String model;
+
+    private String type;
 
     @NotNull
     @Valid

@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherMapper;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
+import com.qaprosoft.zafira.models.db.JenkinsJob;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Launcher;
 import com.qaprosoft.zafira.models.db.LauncherCallback;
@@ -26,9 +27,7 @@ import com.qaprosoft.zafira.models.db.LauncherPreset;
 import com.qaprosoft.zafira.models.db.LauncherWebHookPayload;
 import com.qaprosoft.zafira.models.db.ScmAccount;
 import com.qaprosoft.zafira.models.db.User;
-import com.qaprosoft.zafira.models.dto.JenkinsLauncherType;
 import com.qaprosoft.zafira.models.dto.JobResult;
-import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.service.exception.IllegalOperationException;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
@@ -121,23 +120,21 @@ public class LauncherService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public List<Launcher> createLaunchersForJob(ScannedRepoLaunchersType scannedRepoLaunchersType, long userId) {
-        if (!scannedRepoLaunchersType.isSuccess()) {
+    public List<Launcher> createLaunchersForJenkinsJobs(List<JenkinsJob> jenkinsJobs, String repo, boolean isSuccess, long userId) {
+        if (!isSuccess) {
             return new ArrayList<>();
         }
-        String repoName = scannedRepoLaunchersType.getRepo();
-        ScmAccount scmAccount = scmAccountService.getScmAccountByRepo(repoName);
+        ScmAccount scmAccount = scmAccountService.getScmAccountByRepo(repo);
         deleteAutoScannedLaunchersByScmAccountId(scmAccount.getId());
-
-        return scannedRepoLaunchersType.getJenkinsLaunchers().stream()
-                                       .map(jenkinsLauncherType -> launcherTypeToLauncher(userId, scmAccount, jenkinsLauncherType))
-                                       .collect(Collectors.toList());
+        return jenkinsJobs.stream()
+                          .map(jenkinsJob -> createLauncherForJenkinsJob(userId, scmAccount, jenkinsJob))
+                          .collect(Collectors.toList());
     }
 
-    private Launcher launcherTypeToLauncher(long userId, ScmAccount scmAccount, JenkinsLauncherType jenkinsLauncherType) {
-        String jobUrl = jenkinsLauncherType.getJobUrl();
+    private Launcher createLauncherForJenkinsJob(long userId, ScmAccount scmAccount, JenkinsJob jenkinsJob) {
+        String jobUrl = jenkinsJob.getUrl();
         Job job = jobsService.createOrUpdateJobByURL(jobUrl, userId);
-        Launcher launcher = new Launcher(job.getName(), jenkinsLauncherType.getJobParameters(), scmAccount, job, true);
+        Launcher launcher = new Launcher(job.getName(), jenkinsJob.getParameters(), scmAccount, job, jenkinsJob.getType(), true);
         launcherMapper.createLauncher(launcher);
         return launcher;
     }
