@@ -17,6 +17,7 @@ package com.qaprosoft.zafira.service.integration.tool.impl;
 
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
+import com.qaprosoft.zafira.service.TestRunService;
 import com.qaprosoft.zafira.service.email.TestRunResultsEmail;
 import com.qaprosoft.zafira.service.integration.IntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.AbstractIntegrationService;
@@ -37,13 +38,20 @@ public class SlackService extends AbstractIntegrationService<SlackAdapter> {
     private final static String REVIEWED_PATTERN = "Test run #%1$d has been reviewed. Status: %2$s\n";
 
     private final IntegrationService integrationService;
+    private final TestRunService testRunService;
 
-    public SlackService(IntegrationService integrationService, SlackProxy slackProxy, IntegrationService integrationService1) {
+    public SlackService(IntegrationService integrationService, SlackProxy slackProxy, TestRunService testRunService) {
         super(integrationService, slackProxy, "SLACK");
-        this.integrationService = integrationService1;
+        this.integrationService = integrationService;
+        this.testRunService = testRunService;
     }
 
-    public void sendStatusOnFinish(TestRun testRun) {
+    public void sendStatusOnFinish(String ciRunId, String channels) {
+        TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
+        // Triggered from Jenkins pipeline with the lis of channels passed in configXML
+        //TODO by tsvrko on 2019-11-05: parse this field from configXML on testRun finish?
+        testRun.setSlackChannels(channels);
+        testRunService.updateTestRun(testRun);
         Integration slack = integrationService.retrieveDefaultByIntegrationTypeName("SLACK");
         if (slack.isEnabled()) {
             String readableTime = asReadableTime(testRun.getElapsed());
@@ -56,7 +64,8 @@ public class SlackService extends AbstractIntegrationService<SlackAdapter> {
         LOGGER.info(String.format("Slack notification for test run %d is not sent: integration disabled", testRun.getId()));
     }
 
-    public void sendStatusReviewed(TestRun testRun) {
+    public void sendStatusReviewed(long testRunId) {
+        TestRun testRun = testRunService.getTestRunById(testRunId);
         String statusText = TestRunResultsEmail.buildStatusText(testRun);
         String reviewedMessage = String.format(REVIEWED_PATTERN, testRun.getId(), statusText);
         SlackAdapter adapter = getAdapterByIntegrationId(null);

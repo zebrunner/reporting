@@ -105,7 +105,7 @@
 		<include refid="getCount" />
 	</select>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.Filter"
+	<resultMap type="com.qaprosoft.zafira.models.db.filter.Filter"
 		id="FilterResultMap" autoMapping="false">
 		<id column="FILTER_ID" property="id" />
 		<result column="FILTER_NAME" property="name" />

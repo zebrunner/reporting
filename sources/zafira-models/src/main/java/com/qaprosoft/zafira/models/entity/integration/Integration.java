@@ -70,18 +70,16 @@ public class Integration {
     @OneToMany(mappedBy = "integration")
     private List<IntegrationSetting> settings;
 
-    public Optional<String> getAttributeValue(String attributeName) {
+    public String getAttributeValue(String attributeName) {
         IntegrationSetting integrationSetting = getAttribute(attributeName)
                 .orElse(null);
-        String value = integrationSetting == null ? null : integrationSetting.getValue();
-        return Optional.ofNullable(value);
+        return integrationSetting == null ? null : integrationSetting.getValue();
     }
 
-    public Optional<byte[]> getAttributeBinaryData(String attributeName) {
+    public byte[] getAttributeBinaryData(String attributeName) {
         IntegrationSetting integrationSetting = getAttribute(attributeName)
                 .orElse(null);
-        byte[] binaryData = integrationSetting == null ? null : integrationSetting.getBinaryData();
-        return Optional.ofNullable(binaryData);
+        return integrationSetting == null ? null : integrationSetting.getBinaryData();
     }
 
     private Optional<IntegrationSetting> getAttribute(String attributeName) {

@@ -49,7 +49,6 @@ import static com.qaprosoft.zafira.service.exception.ExternalSystemException.Ext
 import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.INVITATION_CAN_NOT_BE_CREATED;
 import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.INVITATION_IS_INVALID;
 import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.USER_CAN_NOT_BE_CREATED;
-import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.GROUP_NOT_FOUND;
 import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.INVITATION_NOT_FOUND;
 
 @Service
@@ -73,7 +72,6 @@ public class InvitationService {
     private final GroupService groupService;
     private final AccessManagementService accessManagementService;
 
-
     public InvitationService(@Value("${zafira.slack.image-url}") String zafiraLogoURL,
                              URLResolver urlResolver,
                              InvitationMapper invitationMapper,
@@ -90,16 +88,13 @@ public class InvitationService {
         this.accessManagementService = accessManagementService;
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Invitation createInvitation(Long principalId, Invitation invitation, boolean checkExisting, boolean force) {
         if (checkExisting) {
             checkExisting(invitation.getEmail());
         }
         Long groupId = invitation.getGroupId();
         Group group = groupService.getGroupById(groupId);
-        if (group == null) {
-            throw new ResourceNotFoundException(GROUP_NOT_FOUND, "Group with id %s does not exists", groupId);
-        }
         if (!group.getInvitable() && !force) {
             throw new ForbiddenOperationException("Cannot invite users to not invitable group '" + group.getName() + "'");
         }
@@ -136,7 +131,7 @@ public class InvitationService {
         return result;
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Invitation createInitialInvitation(String email, String groupName) {
         Invitation invitation = null;
         if (!StringUtils.isBlank(userService.getAdminUsername())) {
@@ -159,7 +154,7 @@ public class InvitationService {
         return invitation;
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Invitation retryInvitation(Long inviterId, String email) {
         Invitation invitation = getInvitationByEmail(email);
 
@@ -180,7 +175,7 @@ public class InvitationService {
         return invitation;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Invitation acceptInvitation(String token, String username) {
         if (userService.getUserByUsername(username) != null) {
             throw new IllegalOperationException(USER_CAN_NOT_BE_CREATED, ERR_MSG_USER_ALREADY_EXISTS);
@@ -242,18 +237,18 @@ public class InvitationService {
                 .build();
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Invitation updateInvitation(Invitation invitation) {
         invitationMapper.updateInvitation(invitation);
         return invitation;
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public void deleteInvitation(Long id) {
         invitationMapper.deleteInvitationById(id);
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public void deleteInvitation(String email) {
         invitationMapper.deleteInvitationByEmail(email);
     }

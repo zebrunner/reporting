@@ -97,6 +97,19 @@
 		]]>
 	</select>
 
+    <select id="getWorkItemByJiraIdAndTypeAndHashcode"
+		resultMap="WorkItemResultMap">
+		<include refid="getWorkItem" />
+		<![CDATA[
+			WHERE
+				WI.JIRA_ID = #{jiraId} AND WI.TYPE = #{type} AND WI.HASH_CODE = #{hashCode}
+			ORDER BY
+				WI.ID DESC
+			LIMIT 1;
+		]]>
+	</select>
+
+
 	<select id="getWorkItemByTestCaseIdAndHashCode"
 		resultMap="WorkItemResultMap">
 		<include refid="getWorkItem" />

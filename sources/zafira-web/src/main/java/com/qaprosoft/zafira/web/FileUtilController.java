@@ -23,6 +23,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.FileCopyUtils;
@@ -41,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.UUID;
 
 import static com.qaprosoft.zafira.models.dto.aws.FileUploadType.Type;
 
@@ -69,15 +71,18 @@ public class FileUtilController extends AbstractController {
     @ApiOperation(value = "Upload file", nickname = "uploadFile", httpMethod = "POST", response = String.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("api/upload")
-    public String uploadFile(@RequestHeader("FileType") Type type, @RequestParam("file") MultipartFile file) {
-        return uploadService.upload(type, file);
+    public String uploadFile(@RequestHeader("FileType") Type type, @RequestParam("file") MultipartFile file) throws IOException {
+        return uploadService.upload(type, file.getInputStream(), file.getOriginalFilename(), file.getSize());
     }
 
     @ApiOperation(value = "Send image by email", nickname = "sendImageByEmail", httpMethod = "POST")
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("api/upload/email")
     public void sendImageByEmail(@RequestPart("file") MultipartFile file, @RequestPart("email") EmailType email) throws IOException {
-        emailService.sendEmail(email, file);
+        String fileExtension = String.format(".%s", FilenameUtils.getExtension(file.getOriginalFilename()));
+        File attachmentFile = File.createTempFile(UUID.randomUUID().toString(), fileExtension);
+        file.transferTo(attachmentFile);
+        emailService.sendEmail(email, attachmentFile, file.getResource().getFilename());
     }
 
     @ApiResponseStatuses

@@ -29,6 +29,8 @@ public interface WorkItemMapper {
 
     WorkItem getWorkItemByJiraIdAndType(@Param("jiraId") String jiraId, @Param("type") Type type);
 
+    WorkItem getWorkItemByJiraIdAndTypeAndHashcode(@Param("jiraId") String jiraId, @Param("type") Type type, @Param("hashCode") int hashCode);
+
     WorkItem getWorkItemByTestCaseIdAndHashCode(@Param("testCaseId") long testCaseId, @Param("hashCode") int hashCode);
 
     List<WorkItem> getWorkItemsByTestCaseIdAndType(@Param("testCaseId") long testCaseId, @Param("type") Type type);

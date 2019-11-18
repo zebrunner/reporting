@@ -16,12 +16,12 @@
 package com.qaprosoft.zafira.web.security.filter;
 
 import com.google.common.net.InternetDomainName;
-import com.mchange.v2.lang.StringUtils;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -57,7 +57,7 @@ public class TenancyFilter extends GenericFilterBean {
             if (isMultitenant) {
                 String host = servletRequest.getServerName(); // API clients without Origin
                 String origin = servletRequest.getHeader("Origin"); // Web clients has Origin header
-                if (StringUtils.nonEmptyString(origin)) {
+                if (!StringUtils.isEmpty(origin)) {
                     host = origin.split("//")[1].split(":")[0];
                 }
                 try {
