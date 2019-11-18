@@ -32,3 +32,14 @@ databaseChangeLog:
             path: changeset/003_add_jenkins_view_links_setting.sql
             relativeToChangelogFile: true
             splitStatements: false
+  - changeSet:
+      id: 004_add_launcher_type_column
+      validCheckSum: ANY
+      labels: stable
+      author: itsvirko
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/004_add_launcher_type_column.sql
+            relativeToChangelogFile: true
+            splitStatements: false
