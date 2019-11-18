@@ -36,7 +36,7 @@ databaseChangeLog:
       id: 004_add_launcher_type_column
       validCheckSum: ANY
       labels: stable
-      author: brutskov
+      author: itsvirko
       changes:
         - sqlFile:
             encoding: utf8
