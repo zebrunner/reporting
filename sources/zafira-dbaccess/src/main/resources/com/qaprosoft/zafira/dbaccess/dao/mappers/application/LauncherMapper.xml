@@ -45,7 +45,7 @@
 				L.NAME AS LAUNCHER_NAME,
 				L.MODEL AS LAUNCHER_MODEL,
 				L.AUTO_SCAN AS LAUNCHER_AUTO_SCAN,
-				L.TYPE AS LAUNCHER_TYPE
+				L.TYPE AS LAUNCHER_TYPE,
 		]]>
         <include refid="com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherPresetMapper.body"/>
         <![CDATA[
