@@ -9,6 +9,7 @@ DO $$
 
         DECLARE zebrunner_back_reference_id VARCHAR := 'zebrunner';
         DECLARE browser_stack_back_reference_id VARCHAR := 'browser_stack';
+        DECLARE mcloud_back_reference_id VARCHAR := 'mcloud';
 
     BEGIN
         SELECT id INTO integration_group_id_var FROM integration_groups WHERE name = 'TEST_AUTOMATION_TOOL';
@@ -28,5 +29,14 @@ DO $$
         INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('BROWSER_STACK_USER', true, false, integration_type_id_var) RETURNING id INTO integration_param_id_var;
         INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
         INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('BROWSER_STACK_ACCESS_KEY', true, true, integration_type_id_var) RETURNING id INTO integration_param_id_var;
+        INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
+
+        INSERT INTO integration_types(name, display_name, icon_url, integration_group_id) VALUES ('MCLOUD', 'MCloud', '', integration_group_id_var) RETURNING id INTO integration_type_id_var;
+        INSERT INTO integrations(name, back_reference_id, is_default, enabled, integration_type_id) VALUES ('MCLOUD', mcloud_back_reference_id, true, false, integration_type_id_var) RETURNING id INTO integration_id_var;
+        INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('MCLOUD_URL', true, false, integration_type_id_var) RETURNING id INTO integration_param_id_var;
+        INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
+        INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('MCLOUD_USER', true, false, integration_type_id_var) RETURNING id INTO integration_param_id_var;
+        INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
+        INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('MCLOUD_PASSWORD', true, true, integration_type_id_var) RETURNING id INTO integration_param_id_var;
         INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
     END$$;
