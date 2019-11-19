@@ -75,6 +75,7 @@ public class BrowserStackIntegrationAdapter extends AbstractIntegrationAdapter i
             HttpResponse response = restClient.get(url).asEmpty();
             return response.getStatus() == 200;
         } catch (UnirestException e) {
+            LOGGER.error("Unable to check BrowserStack connectivity", e);
             return false;
         }
     }

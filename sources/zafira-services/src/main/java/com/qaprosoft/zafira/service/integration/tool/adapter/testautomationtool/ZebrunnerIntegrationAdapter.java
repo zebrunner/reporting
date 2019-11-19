@@ -75,6 +75,7 @@ public class ZebrunnerIntegrationAdapter extends AbstractIntegrationAdapter impl
             HttpResponse response = restClient.get(url).asEmpty();
             return response.getStatus() == 200;
         } catch (UnirestException e) {
+            LOGGER.error("Unable to check Zebrunner connectivity", e);
             return false;
         }
     }

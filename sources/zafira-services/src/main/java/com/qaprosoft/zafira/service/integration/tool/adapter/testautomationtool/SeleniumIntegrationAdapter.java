@@ -65,6 +65,7 @@ public class SeleniumIntegrationAdapter extends AbstractIntegrationAdapter imple
             HttpResponse response = restClient.get(url).asEmpty();
             return response.getStatus() == 200;
         } catch (UnirestException e) {
+            LOGGER.error("Unable to check Selenium connectivity", e);
             return false;
         }
     }
