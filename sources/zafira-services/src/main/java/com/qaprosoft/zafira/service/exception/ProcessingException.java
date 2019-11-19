@@ -20,7 +20,8 @@ public class ProcessingException extends ApplicationException {
         UNPROCESSABLE_XML_ENTITY(2101),
         UNPROCESSABLE_DOCUMENT(2102),
         MALFORMED_FREEMARKER_TEMPLATE(2103),
-        UNPROCESSABLE_JSON_ENTITY(2104);
+        UNPROCESSABLE_JSON_ENTITY(2104),
+        UNPROCESSABLE_URL(2105);
 
         private final Integer code;
         private String messageKey;
