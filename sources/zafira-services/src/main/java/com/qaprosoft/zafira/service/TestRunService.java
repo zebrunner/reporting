@@ -475,14 +475,11 @@ public class TestRunService implements ProjectReassignable {
     public void initTestRunWithXml(TestRun testRun) {
         if (StringUtils.isNotBlank(testRun.getConfigXML())) {
             TestConfig config = testConfigService.createTestConfigForTestRun(testRun.getConfigXML());
-            String browser = config.getBrowser();
-            boolean isBrowserExists = StringUtils.isNotBlank(browser) && !"*".equals(browser);
-            String platform = isBrowserExists ? browser : config.getPlatform();
 
             testRun.setConfig(config);
             testRun.setEnv(config.getEnv());
             testRun.setAppVersion(config.getAppVersion());
-            testRun.setPlatform(platform);
+            testRun.setPlatform(config.getPlatform());
         }
     }
 
