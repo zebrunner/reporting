@@ -28,7 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.PreDestroy;
 
-public class SeleniumIntegrationAdapter extends AbstractIntegrationAdapter implements TestAutomationToolAdapter {
+public class SeleniumAdapter extends AbstractIntegrationAdapter implements TestAutomationToolAdapter {
 
     private final String url;
     private final String username;
@@ -36,7 +36,7 @@ public class SeleniumIntegrationAdapter extends AbstractIntegrationAdapter imple
 
     private final UnirestInstance restClient = initClient();
 
-    public SeleniumIntegrationAdapter(Integration integration) {
+    public SeleniumAdapter(Integration integration) {
         super(integration);
         this.url = getAttributeValue(integration, Parameter.URL);
         this.username = getAttributeValue(integration, Parameter.USERNAME);

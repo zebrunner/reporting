@@ -8,8 +8,10 @@ DO $$
         DECLARE integration_id_var integrations.id%TYPE;
 
         DECLARE zebrunner_back_reference_id VARCHAR := 'zebrunner';
-        DECLARE browser_stack_back_reference_id VARCHAR := 'browser_stack';
+        DECLARE browserstack_back_reference_id VARCHAR := 'browserstack';
         DECLARE mcloud_back_reference_id VARCHAR := 'mcloud';
+        DECLARE saucelabs_back_reference_id VARCHAR := 'saucelabs';
+        DECLARE aerokube_back_reference_id VARCHAR := 'aerokube';
 
     BEGIN
         SELECT id INTO integration_group_id_var FROM integration_groups WHERE name = 'TEST_AUTOMATION_TOOL';
@@ -22,13 +24,13 @@ DO $$
         INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('ZEBRUNNER_PASSWORD', false, true, integration_type_id_var) RETURNING id INTO integration_param_id_var;
         INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
 
-        INSERT INTO integration_types(name, display_name, icon_url, integration_group_id) VALUES ('BROWSER_STACK', 'BrowserStack', '', integration_group_id_var) RETURNING id INTO integration_type_id_var;
-        INSERT INTO integrations(name, back_reference_id, is_default, enabled, integration_type_id) VALUES ('BROWSER_STACK', browser_stack_back_reference_id, true, false, integration_type_id_var) RETURNING id INTO integration_id_var;
-        INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('BROWSER_STACK_URL', true, false, integration_type_id_var) RETURNING id INTO integration_param_id_var;
+        INSERT INTO integration_types(name, display_name, icon_url, integration_group_id) VALUES ('BROWSERSTACK', 'BrowserStack', '', integration_group_id_var) RETURNING id INTO integration_type_id_var;
+        INSERT INTO integrations(name, back_reference_id, is_default, enabled, integration_type_id) VALUES ('BROWSERSTACK', browserstack_back_reference_id, true, false, integration_type_id_var) RETURNING id INTO integration_id_var;
+        INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('BROWSERSTACK_URL', true, false, integration_type_id_var) RETURNING id INTO integration_param_id_var;
         INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
-        INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('BROWSER_STACK_USER', true, false, integration_type_id_var) RETURNING id INTO integration_param_id_var;
+        INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('BROWSERSTACK_USER', true, false, integration_type_id_var) RETURNING id INTO integration_param_id_var;
         INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
-        INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('BROWSER_STACK_ACCESS_KEY', true, true, integration_type_id_var) RETURNING id INTO integration_param_id_var;
+        INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('BROWSERSTACK_ACCESS_KEY', true, true, integration_type_id_var) RETURNING id INTO integration_param_id_var;
         INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
 
         INSERT INTO integration_types(name, display_name, icon_url, integration_group_id) VALUES ('MCLOUD', 'MCloud', '', integration_group_id_var) RETURNING id INTO integration_type_id_var;
@@ -38,5 +40,23 @@ DO $$
         INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('MCLOUD_USER', true, false, integration_type_id_var) RETURNING id INTO integration_param_id_var;
         INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
         INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('MCLOUD_PASSWORD', true, true, integration_type_id_var) RETURNING id INTO integration_param_id_var;
+        INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
+
+        INSERT INTO integration_types(name, display_name, icon_url, integration_group_id) VALUES ('SAUCELABS', 'MCloud', '', integration_group_id_var) RETURNING id INTO integration_type_id_var;
+        INSERT INTO integrations(name, back_reference_id, is_default, enabled, integration_type_id) VALUES ('SAUCELABS', saucelabs_back_reference_id, true, false, integration_type_id_var) RETURNING id INTO integration_id_var;
+        INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('SAUCELABS_URL', true, false, integration_type_id_var) RETURNING id INTO integration_param_id_var;
+        INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
+        INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('SAUCELABS_USER', true, false, integration_type_id_var) RETURNING id INTO integration_param_id_var;
+        INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
+        INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('SAUCELABS_PASSWORD', true, true, integration_type_id_var) RETURNING id INTO integration_param_id_var;
+        INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
+
+        INSERT INTO integration_types(name, display_name, icon_url, integration_group_id) VALUES ('AEROKUBE', 'MCloud', '', integration_group_id_var) RETURNING id INTO integration_type_id_var;
+        INSERT INTO integrations(name, back_reference_id, is_default, enabled, integration_type_id) VALUES ('AEROKUBE', aerokube_back_reference_id, true, false, integration_type_id_var) RETURNING id INTO integration_id_var;
+        INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('AEROKUBE_URL', true, false, integration_type_id_var) RETURNING id INTO integration_param_id_var;
+        INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
+        INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('AEROKUBE_USER', true, false, integration_type_id_var) RETURNING id INTO integration_param_id_var;
+        INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
+        INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('AEROKUBE_PASSWORD', true, true, integration_type_id_var) RETURNING id INTO integration_param_id_var;
         INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
     END$$;

@@ -28,19 +28,19 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PreDestroy;
 
-public class ZebrunnerIntegrationAdapter extends AbstractIntegrationAdapter implements TestAutomationToolAdapter {
+public class BrowserStackAdapter extends AbstractIntegrationAdapter implements TestAutomationToolAdapter {
 
     private final String url;
     private final String username;
-    private final String password;
+    private final String accessKey;
 
     private final UnirestInstance restClient = initClient();
 
-    public ZebrunnerIntegrationAdapter(Integration integration) {
+    public BrowserStackAdapter(Integration integration) {
         super(integration);
         this.url = getAttributeValue(integration, Parameter.URL);
         this.username = getAttributeValue(integration, Parameter.USERNAME);
-        this.password = getAttributeValue(integration, Parameter.PASSWORD);
+        this.accessKey = getAttributeValue(integration, Parameter.ACCESS_KEY);
     }
 
     private UnirestInstance initClient() {
@@ -52,9 +52,9 @@ public class ZebrunnerIntegrationAdapter extends AbstractIntegrationAdapter impl
     @Override
     public String buildUrl() {
         String result = null;
-        if(!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
+        if(!StringUtils.isEmpty(username) && !StringUtils.isEmpty(accessKey)) {
             String[] urlSlices = url.split("//");
-            result = String.format("%s//%s:%s@%s", urlSlices[0], username, password, urlSlices[1]);
+            result = String.format("%s//%s:%s@%s", urlSlices[0], username, accessKey, urlSlices[1]);
         }
         return result != null ? result : url;
     }
@@ -65,7 +65,7 @@ public class ZebrunnerIntegrationAdapter extends AbstractIntegrationAdapter impl
             HttpResponse response = restClient.get(url).asEmpty();
             return response.getStatus() == 200;
         } catch (UnirestException e) {
-            LOGGER.error("Unable to check Zebrunner connectivity", e);
+            LOGGER.error("Unable to check BrowserStack connectivity", e);
             return false;
         }
     }
@@ -78,9 +78,9 @@ public class ZebrunnerIntegrationAdapter extends AbstractIntegrationAdapter impl
     @Getter
     @AllArgsConstructor
     private enum Parameter implements AdapterParam {
-        URL("ZEBRUNNER_URL"),
-        USERNAME("ZEBRUNNER_USER"),
-        PASSWORD("ZEBRUNNER_PASSWORD");
+        URL("BROWSERSTACK_URL"),
+        USERNAME("BROWSERSTACK_USER"),
+        ACCESS_KEY("BROWSERSTACK_ACCESS_KEY");
 
         private final String name;
     }
