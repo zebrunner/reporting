@@ -38,25 +38,15 @@ public class ZebrunnerIntegrationAdapter extends AbstractIntegrationAdapter impl
 
     public ZebrunnerIntegrationAdapter(Integration integration) {
         super(integration);
-        this.url = getAttributeValue(integration, ZebrunnerParam.ZEBRUNNER_URL);
-        this.username = getAttributeValue(integration, ZebrunnerParam.ZEBRUNNER_USER);
-        this.password = getAttributeValue(integration, ZebrunnerParam.ZEBRUNNER_PASSWORD);
+        this.url = getAttributeValue(integration, Parameter.URL);
+        this.username = getAttributeValue(integration, Parameter.USERNAME);
+        this.password = getAttributeValue(integration, Parameter.PASSWORD);
     }
 
     private UnirestInstance initClient() {
         Config config = new Config();
         config.connectTimeout(5000);
         return new UnirestInstance(config);
-    }
-
-    @Getter
-    @AllArgsConstructor
-    private enum ZebrunnerParam implements AdapterParam {
-        ZEBRUNNER_URL("ZEBRUNNER_URL"),
-        ZEBRUNNER_USER("ZEBRUNNER_USER"),
-        ZEBRUNNER_PASSWORD("ZEBRUNNER_PASSWORD");
-
-        private final String name;
     }
 
     @Override
@@ -83,5 +73,15 @@ public class ZebrunnerIntegrationAdapter extends AbstractIntegrationAdapter impl
     @PreDestroy
     private void close() {
         restClient.shutDown();
+    }
+
+    @Getter
+    @AllArgsConstructor
+    private enum Parameter implements AdapterParam {
+        URL("ZEBRUNNER_URL"),
+        USERNAME("ZEBRUNNER_USER"),
+        PASSWORD("ZEBRUNNER_PASSWORD");
+
+        private final String name;
     }
 }

@@ -38,25 +38,15 @@ public class SeleniumIntegrationAdapter extends AbstractIntegrationAdapter imple
 
     public SeleniumIntegrationAdapter(Integration integration) {
         super(integration);
-        this.url = getAttributeValue(integration, SeleniumParam.SELENIUM_URL);
-        this.username = getAttributeValue(integration, SeleniumParam.SELENIUM_USERNAME);
-        this.password = getAttributeValue(integration, SeleniumParam.SELENIUM_PASSWORD);
+        this.url = getAttributeValue(integration, Parameter.URL);
+        this.username = getAttributeValue(integration, Parameter.USERNAME);
+        this.password = getAttributeValue(integration, Parameter.PASSWORD);
     }
 
     private UnirestInstance initClient() {
         Config config = new Config();
         config.connectTimeout(5000);
         return new UnirestInstance(config);
-    }
-
-    @Getter
-    @AllArgsConstructor
-    private enum SeleniumParam implements AdapterParam {
-        SELENIUM_URL("SELENIUM_URL"),
-        SELENIUM_USERNAME("SELENIUM_USER"),
-        SELENIUM_PASSWORD("SELENIUM_PASSWORD");
-
-        private final String name;
     }
 
     @Override
@@ -84,4 +74,15 @@ public class SeleniumIntegrationAdapter extends AbstractIntegrationAdapter imple
     private void close() {
         restClient.shutDown();
     }
+
+    @Getter
+    @AllArgsConstructor
+    private enum Parameter implements AdapterParam {
+        URL("SELENIUM_URL"),
+        USERNAME("SELENIUM_USER"),
+        PASSWORD("SELENIUM_PASSWORD");
+
+        private final String name;
+    }
+
 }

@@ -38,25 +38,15 @@ public class BrowserStackIntegrationAdapter extends AbstractIntegrationAdapter i
 
     public BrowserStackIntegrationAdapter(Integration integration) {
         super(integration);
-        this.url = getAttributeValue(integration, BrowserStackParam.BROWSER_STACK_URL);
-        this.username = getAttributeValue(integration, BrowserStackParam.BROWSER_STACK_USER);
-        this.accessKey = getAttributeValue(integration, BrowserStackParam.BROWSER_STACK_ACCESS_KEY);
+        this.url = getAttributeValue(integration, Parameter.URL);
+        this.username = getAttributeValue(integration, Parameter.USERNAME);
+        this.accessKey = getAttributeValue(integration, Parameter.ACCESS_KEY);
     }
 
     private UnirestInstance initClient() {
         Config config = new Config();
         config.connectTimeout(5000);
         return new UnirestInstance(config);
-    }
-
-    @Getter
-    @AllArgsConstructor
-    private enum BrowserStackParam implements AdapterParam {
-        BROWSER_STACK_URL("BROWSER_STACK_URL"),
-        BROWSER_STACK_USER("BROWSER_STACK_USER"),
-        BROWSER_STACK_ACCESS_KEY("BROWSER_STACK_ACCESS_KEY");
-
-        private final String name;
     }
 
     @Override
@@ -83,5 +73,15 @@ public class BrowserStackIntegrationAdapter extends AbstractIntegrationAdapter i
     @PreDestroy
     private void close() {
         restClient.shutDown();
+    }
+
+    @Getter
+    @AllArgsConstructor
+    private enum Parameter implements AdapterParam {
+        URL("BROWSER_STACK_URL"),
+        USERNAME("BROWSER_STACK_USER"),
+        ACCESS_KEY("BROWSER_STACK_ACCESS_KEY");
+
+        private final String name;
     }
 }
