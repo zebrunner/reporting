@@ -16,10 +16,14 @@
 package com.qaprosoft.zafira.models.dto.integration;
 
 import com.qaprosoft.zafira.models.dto.AbstractType;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+@Getter
+@Setter
 public class IntegrationSettingDTO extends AbstractType {
 
     @NotNull(message = "Value required")
@@ -31,35 +35,4 @@ public class IntegrationSettingDTO extends AbstractType {
     @NotNull(message = "Integration params required")
     private IntegrationParamDTO param;
 
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public byte[] getBinaryData() {
-        return binaryData;
-    }
-
-    public void setBinaryData(byte[] binaryData) {
-        this.binaryData = binaryData;
-    }
-
-    public boolean isEncrypted() {
-        return encrypted;
-    }
-
-    public void setEncrypted(boolean encrypted) {
-        this.encrypted = encrypted;
-    }
-
-    public IntegrationParamDTO getParam() {
-        return param;
-    }
-
-    public void setParam(IntegrationParamDTO param) {
-        this.param = param;
-    }
 }
