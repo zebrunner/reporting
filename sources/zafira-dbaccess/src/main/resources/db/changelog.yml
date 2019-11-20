@@ -43,3 +43,14 @@ databaseChangeLog:
             path: changeset/004_add_launcher_type_column.sql
             relativeToChangelogFile: true
             splitStatements: false
+  - changeSet:
+      id: 005_add_project_to_test_cases_unique_key
+      validCheckSum: ANY
+      labels: stable
+      author: brutskov
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/005_add_project_to_test_cases_unique_key.sql
+            relativeToChangelogFile: true
+            splitStatements: false
