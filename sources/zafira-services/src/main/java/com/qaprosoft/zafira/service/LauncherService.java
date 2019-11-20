@@ -247,19 +247,19 @@ public class LauncherService {
 
         String organizationName = scmAccount.getOrganizationName();
         String repositoryName = scmAccount.getRepositoryName();
-        String githubUser = gitHubService.getLoginName(scmAccount);
-        String githubToken = cryptoService.decrypt(scmAccount.getAccessToken());
+        String scmUser = gitHubService.getLoginName(scmAccount);
+        String scmToken = cryptoService.decrypt(scmAccount.getAccessToken());
         String zafiraServiceUrl = urlResolver.buildWebserviceUrl();
         String zafiraAccessToken = jwtService.generateAccessToken(user, TenancyContext.getTenantName());
 
         jobParameters.put("userId", String.valueOf(user.getId()));
         if (StringUtils.isNotEmpty(automationServerService.getFolder(automationServerId))) {
-            jobParameters.put("organization", organizationName);
+            jobParameters.put("scmOrg", organizationName);
         }
         jobParameters.put("repo", repositoryName);
         jobParameters.put("branch", branch);
-        jobParameters.put("githubUser", githubUser);
-        jobParameters.put("githubToken", githubToken);
+        jobParameters.put("scmUser", scmUser);
+        jobParameters.put("scmToken", scmToken);
         jobParameters.put("zafira_service_url", zafiraServiceUrl);
         jobParameters.put("zafira_access_token", zafiraAccessToken);
         jobParameters.put("onlyUpdated", String.valueOf(false));
