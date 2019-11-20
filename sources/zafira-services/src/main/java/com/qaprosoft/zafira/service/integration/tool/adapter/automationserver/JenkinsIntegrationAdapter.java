@@ -29,6 +29,7 @@ import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.models.dto.JobResult;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
+import com.qaprosoft.zafira.service.JobsService;
 import com.qaprosoft.zafira.service.exception.ExternalSystemException;
 import com.qaprosoft.zafira.service.exception.IntegrationException;
 import com.qaprosoft.zafira.service.integration.tool.adapter.AbstractIntegrationAdapter;
@@ -186,7 +187,8 @@ public class JenkinsIntegrationAdapter extends AbstractIntegrationAdapter implem
 
     public Job getJobDetailsFromJenkins(String jobUrl) {
         JobWithDetails jobWithDetails = getJobWithDetails(jobUrl);
-        return new Job(jobWithDetails.getDisplayName(), jobWithDetails.getUrl().replaceAll("/$", ""));
+        String jobName = JobsService.retrieveJobName(jobWithDetails.getDisplayName());
+        return new Job(jobName, jobWithDetails.getUrl().replaceAll("/$", ""));
     }
 
     private BuildWithDetails getBuildWithDetails(String jobURL, Integer buildNumber) {
