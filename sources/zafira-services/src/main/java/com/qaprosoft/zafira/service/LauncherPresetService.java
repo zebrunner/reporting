@@ -105,8 +105,8 @@ public class LauncherPresetService {
         return String.format(WEBHOOK_API_URL_PATTERN, webserviceUrl, launcherId, launcherPreset.getRef(), providerId);
     }
 
-    public Long getTestEnvironmentProviderId(Long maybeId) {
-        IntegrationGroupAdapter groupAdapter = testAutomationToolService.getAdapterByIntegrationId(maybeId);
+    public Long getTestEnvironmentProviderId(Long id) {
+        IntegrationGroupAdapter groupAdapter = testAutomationToolService.getAdapterByIntegrationId(id);
         return groupAdapter.getIntegrationId();
     }
 
