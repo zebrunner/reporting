@@ -76,13 +76,12 @@ public class JobsService {
     }
 
     public static String retrieveJobName(String jobUrl) {
-        String decodedJobUrl;
         try {
-            decodedJobUrl = URLDecoder.decode(jobUrl, StandardCharsets.UTF_8.toString());
+            String decodedJobUrl = URLDecoder.decode(jobUrl, StandardCharsets.UTF_8.toString());
+            return StringUtils.substringAfterLast(decodedJobUrl, "/");
         } catch (UnsupportedEncodingException e) {
             throw new ProcessingException(UNPROCESSABLE_URL, String.format(ERR_MSG_UNABLE_TO_PARSE_URI, jobUrl));
         }
-        return StringUtils.substringAfterLast(decodedJobUrl, "/");
     }
 
     private String parseJenkinsHost(String jobUrl) {
