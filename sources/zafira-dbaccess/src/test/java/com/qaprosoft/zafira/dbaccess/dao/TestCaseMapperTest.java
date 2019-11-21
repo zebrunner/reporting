@@ -82,10 +82,10 @@ public class TestCaseMapperTest extends AbstractTestNGSpringContextTests {
         checkTestCase(testCaseMapper.getTestCaseById(TEST_CASE.getId()));
     }
 
-    @Test(enabled = ENABLED, dependsOnMethods = { "createTestCase" })
+    /*@Test(enabled = ENABLED, dependsOnMethods = { "createTestCase" })
     public void getTestCaseByClassAndMethod() {
         checkTestCase(testCaseMapper.getOwnedTestCase(TEST_CASE.getSecondaryOwner().getId(), TEST_CASE.getTestClass(), TEST_CASE.getTestMethod()));
-    }
+    }*/
 
     @Test(enabled = ENABLED, dependsOnMethods = { "createTestCase" })
     public void updateTestCase() {
