@@ -65,4 +65,12 @@ INSERT INTO databasechangelog(
      current_timestamp,
      1,
      'EXECUTED'
+ ),
+ (
+     '006_add_project_to_test_cases_unique_key',
+     'brutskov',
+     'classpath:db/changelog.yml',
+     current_timestamp,
+     1,
+     'EXECUTED'
  );
