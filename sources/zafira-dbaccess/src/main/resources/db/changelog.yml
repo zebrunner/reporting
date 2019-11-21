@@ -44,13 +44,13 @@ databaseChangeLog:
             relativeToChangelogFile: true
             splitStatements: false
   - changeSet:
-      id: 005_add_project_to_test_cases_unique_key
+      id: 006_add_project_to_test_cases_unique_key
       validCheckSum: ANY
       labels: stable
       author: brutskov
       changes:
         - sqlFile:
             encoding: utf8
-            path: changeset/005_add_project_to_test_cases_unique_key.sql
+            path: changeset/006_add_project_to_test_cases_unique_key.sql
             relativeToChangelogFile: true
             splitStatements: false
