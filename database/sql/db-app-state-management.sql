@@ -65,4 +65,12 @@ INSERT INTO databasechangelog(
      current_timestamp,
      1,
      'EXECUTED'
+ ),
+ (
+     '005_add_test_environment_provider_integrations',
+     'nsidorevich',
+     'classpath:db/changelog.yml',
+     current_timestamp,
+     1,
+     'EXECUTED'
  );
