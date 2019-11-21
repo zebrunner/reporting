@@ -126,9 +126,10 @@ public class LauncherController extends AbstractController {
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @PostMapping("/build")
-    public void build(@RequestBody @Valid LauncherDTO launcherDTO) throws IOException {
+    public void build(@RequestBody @Valid LauncherDTO launcherDTO,
+                      @RequestParam(name = "providerId", required = false) Long providerId) throws IOException {
         Launcher launcher = mapper.map(launcherDTO, Launcher.class);
-        String ciRunId = launcherService.buildLauncherJob(launcher, getPrincipalId());
+        String ciRunId = launcherService.buildLauncherJob(launcher, getPrincipalId(), providerId);
         websocketTemplate.convertAndSend(getLauncherRunsWebsocketPath(), new LauncherRunPush(launcher, ciRunId));
     }
 
@@ -137,11 +138,13 @@ public class LauncherController extends AbstractController {
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @PostMapping("/{id}/build/{ref}")
-    public String buildByWebHook(@RequestBody @Valid LauncherWebHookPayload payload,
-                                 @PathVariable("id") Long id,
-                                 @PathVariable("ref") String ref
+    public String buildByWebHook(
+        @RequestBody @Valid LauncherWebHookPayload payload,
+        @PathVariable("id") Long id,
+        @PathVariable("ref") String ref,
+        @RequestParam(name = "providerId", required = false) Long providerId
     ) throws IOException {
-        return launcherService.buildLauncherJobByPresetRef(id, ref, payload, getPrincipalId());
+        return launcherService.buildLauncherJobByPresetRef(id, ref, payload, getPrincipalId(), providerId);
     }
 
     @ApiResponseStatuses

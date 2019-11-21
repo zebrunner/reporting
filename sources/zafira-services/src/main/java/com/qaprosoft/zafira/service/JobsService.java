@@ -21,17 +21,25 @@ import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.JobView;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
+import com.qaprosoft.zafira.service.exception.ProcessingException;
 import com.qaprosoft.zafira.service.integration.IntegrationService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+
+import static com.qaprosoft.zafira.service.exception.ProcessingException.ProcessingErrorDetail.UNPROCESSABLE_URL;
 
 @Service
 public class JobsService {
 
     private static final String  INTEGRATION_TYPE_NAME = "JENKINS";
+
+    private static final String ERR_MSG_UNABLE_TO_PARSE_URI = "Provided uri '%s' is malformed";
 
     private final JobMapper jobMapper;
     private final JobViewMapper jobViewMapper;
@@ -62,9 +70,18 @@ public class JobsService {
         // Replacing trailing slash we make sure that further operations
         // based on splitting by slash will be performed correctly
         jobUrl = jobUrl.replaceAll("/$", "");
-        String jobName = StringUtils.substringAfterLast(jobUrl, "/");
+        String jobName = retrieveJobName(jobUrl);
         String jenkinsHost = parseJenkinsHost(jobUrl);
         return new Job(jobName, jobUrl, jenkinsHost, user);
+    }
+
+    public static String retrieveJobName(String jobUrl) {
+        try {
+            String decodedJobUrl = URLDecoder.decode(jobUrl, StandardCharsets.UTF_8.toString());
+            return StringUtils.substringAfterLast(decodedJobUrl, "/");
+        } catch (UnsupportedEncodingException e) {
+            throw new ProcessingException(UNPROCESSABLE_URL, String.format(ERR_MSG_UNABLE_TO_PARSE_URI, jobUrl));
+        }
     }
 
     private String parseJenkinsHost(String jobUrl) {

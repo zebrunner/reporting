@@ -57,7 +57,10 @@ public class TestConfigService {
         List<Argument> testRunConfig = readArguments(testRun.getConfigXML()).getArg();
         List<Argument> testConfig = readArguments(testConfigXML).getArg();
 
-        TestConfig config = new TestConfig().init(testRunConfig).init(testConfig);
+        TestConfig config = new TestConfig()
+                .init(testRunConfig)
+                .init(testConfig)
+                .afterPropertiesSet();
 
         TestConfig existingTestConfig = searchTestConfig(config);
         if (existingTestConfig != null) {
@@ -73,7 +76,9 @@ public class TestConfigService {
     public TestConfig createTestConfigForTestRun(String configXML) {
         List<Argument> testRunConfig = readArguments(configXML).getArg();
 
-        TestConfig config = new TestConfig().init(testRunConfig);
+        TestConfig config = new TestConfig()
+                .init(testRunConfig)
+                .afterPropertiesSet();
 
         TestConfig existingTestConfig = searchTestConfig(config);
         if (existingTestConfig != null) {

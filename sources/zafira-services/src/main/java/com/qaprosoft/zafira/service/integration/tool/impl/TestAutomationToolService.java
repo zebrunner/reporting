@@ -28,8 +28,8 @@ public class TestAutomationToolService extends AbstractIntegrationService<TestAu
         super(integrationService, testAutomationToolProxy, "SELENIUM");
     }
 
-    public String buildUrl() {
-        TestAutomationToolAdapter adapter = getAdapterByIntegrationId(null);
+    public String buildUrl(Long integrationId) {
+        TestAutomationToolAdapter adapter = getAdapterByIntegrationId(integrationId);
         return adapter.buildUrl();
     }
 

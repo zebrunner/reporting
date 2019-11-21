@@ -19,13 +19,7 @@ package com.qaprosoft.zafira.service.integration.tool.adapter;
  * Represents adapter for specific integration instance of certain type.
  * Adapter is created per integration rather than per integration type or group.
  */
-public interface IntegrationAdapter {
-
-    /**
-     * Returns id of integration adapter corresponds to.
-     * @return integration id
-     */
-    Long getIntegrationId();
+public interface IntegrationAdapter extends IntegrationGroupAdapter {
 
     /**
      * Returns current adapter connectivity state.

@@ -28,10 +28,8 @@ import com.qaprosoft.zafira.models.db.LauncherWebHookPayload;
 import com.qaprosoft.zafira.models.db.ScmAccount;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.JobResult;
-import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.service.exception.IllegalOperationException;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
-import com.qaprosoft.zafira.service.integration.IntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.impl.AutomationServerService;
 import com.qaprosoft.zafira.service.integration.tool.impl.TestAutomationToolService;
 import com.qaprosoft.zafira.service.scm.GitHubService;
@@ -72,7 +70,6 @@ public class LauncherService {
     private final TestAutomationToolService testAutomationToolService;
     private final CryptoService cryptoService;
     private final URLResolver urlResolver;
-    private final IntegrationService integrationService;
     private final UserService userService;
 
     public LauncherService(
@@ -87,7 +84,6 @@ public class LauncherService {
             TestAutomationToolService testAutomationToolService,
             CryptoService cryptoService,
             URLResolver urlResolver,
-            IntegrationService integrationService,
             UserService userService
     ) {
         this.launcherMapper = launcherMapper;
@@ -101,7 +97,6 @@ public class LauncherService {
         this.testAutomationToolService = testAutomationToolService;
         this.cryptoService = cryptoService;
         this.urlResolver = urlResolver;
-        this.integrationService = integrationService;
         this.userService = userService;
     }
 
@@ -166,7 +161,7 @@ public class LauncherService {
     }
 
     @Transactional(readOnly = true)
-    public String buildLauncherJob(Launcher launcher, Long userId) throws IOException {
+    public String buildLauncherJob(Launcher launcher, Long userId, Long providerId) throws IOException {
         User user = userService.getNotNullUserById(userId);
         Long scmAccountId = launcher.getScmAccount().getId();
         ScmAccount scmAccount = scmAccountService.getScmAccountById(scmAccountId);
@@ -178,13 +173,13 @@ public class LauncherService {
         // It must be returned with test run on start in testRun.ciRunId field
         String ciRunId = UUID.randomUUID().toString();
 
-        Map<String, String> jobParameters = buildLauncherJobParametersMap(job.getAutomationServerId(), launcher, user, scmAccount, ciRunId);
+        Map<String, String> jobParameters = buildLauncherJobParametersMap(launcher, user, scmAccount, ciRunId, providerId);
         automationServerService.buildJob(job, jobParameters);
 
         return ciRunId;
     }
 
-    private Map<String, String> buildLauncherJobParametersMap(Long automationServerId, Launcher launcher, User user, ScmAccount scmAccount, String ciRunId) throws IOException {
+    private Map<String, String> buildLauncherJobParametersMap(Launcher launcher, User user, ScmAccount scmAccount, String ciRunId, Long providerId) throws IOException {
         Map<String, String> jobParameters = new ObjectMapper().readValue(launcher.getModel(), new TypeReference<Map<String, String>>() {});
 
         String decryptedAccessToken = cryptoService.decrypt(scmAccount.getAccessToken());
@@ -195,11 +190,12 @@ public class LauncherService {
             jobParameters.put("branch", "*/master");
         }
 
-        // If Selenium integration is enabled pass selenium_host with basic auth as job argument
-        Integration selenium = integrationService.retrieveDefaultByIntegrationTypeName("SELENIUM");
-        if (testAutomationToolService.isEnabledAndConnected(selenium.getId())) {
-            String seleniumURL = testAutomationToolService.buildUrl();
-            jobParameters.put("selenium_url", seleniumURL);
+        // check if selected integration is enabled. Provider id can be null for API tests
+        if (providerId != null && testAutomationToolService.isEnabledAndConnected(providerId)) {
+            providerId = launcherPresetService.getTestEnvironmentProviderId(providerId);
+            String testExecutorHost = testAutomationToolService.buildUrl(providerId);
+            // param name is confusing but all automation tools follow the same contract so it will actually work
+            jobParameters.put("selenium_url", testExecutorHost);
         }
 
         jobParameters.put("zafira_enabled", "true");
@@ -222,7 +218,7 @@ public class LauncherService {
     }
 
     @Transactional()
-    public String buildLauncherJobByPresetRef(Long id, String ref, LauncherWebHookPayload payload, Long userId) throws IOException {
+    public String buildLauncherJobByPresetRef(Long id, String ref, LauncherWebHookPayload payload, Long userId, Long providerId) throws IOException {
         Launcher launcher = getLauncherById(id);
         if (launcher == null) {
             throw new ResourceNotFoundException(LAUNCHER_NOT_FOUND, String.format("Unable to locate launcher with id '%d'", id));
@@ -230,7 +226,7 @@ public class LauncherService {
 
         LauncherPreset preset = launcherPresetService.retrieveByRef(ref);
         launcher.setModel(preset.getParams());
-        String ciRunId = buildLauncherJob(launcher, userId);
+        String ciRunId = buildLauncherJob(launcher, userId, providerId);
 
         LauncherCallback callback = new LauncherCallback(ciRunId, payload.getCallbackUrl(), preset);
         launcherCallbackService.create(callback);

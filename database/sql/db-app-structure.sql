@@ -103,7 +103,7 @@ CREATE INDEX fk_test_case_secondary_owner_asc ON test_cases (secondary_owner_id)
 CREATE INDEX fk_test_cases_projects_asc ON test_cases (project_id);
 CREATE INDEX testcases_test_class_index ON test_cases (test_class);
 CREATE INDEX testcases_test_method_index ON test_cases (test_method);
-CREATE UNIQUE INDEX testcases_ownership_unique ON test_cases (primary_owner_id, test_class, test_method);
+CREATE UNIQUE INDEX testcases_ownership_unique ON test_cases (primary_owner_id, test_class, test_method, project_id);
 CREATE TRIGGER update_timestamp_test_cases
   BEFORE INSERT OR UPDATE
   ON test_cases
