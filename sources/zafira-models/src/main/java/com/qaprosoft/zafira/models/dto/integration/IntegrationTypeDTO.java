@@ -16,36 +16,17 @@
 package com.qaprosoft.zafira.models.dto.integration;
 
 import com.qaprosoft.zafira.models.dto.AbstractType;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
 public class IntegrationTypeDTO extends AbstractType {
 
     private String name;
     private String iconUrl;
     private List<IntegrationParamDTO> params;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getIconUrl() {
-        return iconUrl;
-    }
-
-    public void setIconUrl(String iconUrl) {
-        this.iconUrl = iconUrl;
-    }
-
-    public List<IntegrationParamDTO> getParams() {
-        return params;
-    }
-
-    public void setParams(List<IntegrationParamDTO> params) {
-        this.params = params;
-    }
 }

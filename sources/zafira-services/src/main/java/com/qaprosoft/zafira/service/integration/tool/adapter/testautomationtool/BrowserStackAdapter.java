@@ -24,23 +24,23 @@ import kong.unirest.UnirestException;
 import kong.unirest.UnirestInstance;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PreDestroy;
 
-public class SeleniumIntegrationAdapter extends AbstractIntegrationAdapter implements TestAutomationToolAdapter {
+public class BrowserStackAdapter extends AbstractIntegrationAdapter implements TestAutomationToolAdapter {
 
     private final String url;
     private final String username;
-    private final String password;
+    private final String accessKey;
 
     private final UnirestInstance restClient = initClient();
 
-    public SeleniumIntegrationAdapter(Integration integration) {
+    public BrowserStackAdapter(Integration integration) {
         super(integration);
-        this.url = getAttributeValue(integration, SeleniumParam.SELENIUM_URL);
-        this.username = getAttributeValue(integration, SeleniumParam.SELENIUM_USERNAME);
-        this.password = getAttributeValue(integration, SeleniumParam.SELENIUM_PASSWORD);
+        this.url = getAttributeValue(integration, Parameter.URL);
+        this.username = getAttributeValue(integration, Parameter.USERNAME);
+        this.accessKey = getAttributeValue(integration, Parameter.ACCESS_KEY);
     }
 
     private UnirestInstance initClient() {
@@ -49,14 +49,14 @@ public class SeleniumIntegrationAdapter extends AbstractIntegrationAdapter imple
         return new UnirestInstance(config);
     }
 
-    @Getter
-    @AllArgsConstructor
-    private enum SeleniumParam implements AdapterParam {
-        SELENIUM_URL("SELENIUM_URL"),
-        SELENIUM_USERNAME("SELENIUM_USER"),
-        SELENIUM_PASSWORD("SELENIUM_PASSWORD");
-
-        private final String name;
+    @Override
+    public String buildUrl() {
+        String result = null;
+        if(!StringUtils.isEmpty(username) && !StringUtils.isEmpty(accessKey)) {
+            String[] urlSlices = url.split("//");
+            result = String.format("%s//%s:%s@%s", urlSlices[0], username, accessKey, urlSlices[1]);
+        }
+        return result != null ? result : url;
     }
 
     @Override
@@ -65,21 +65,23 @@ public class SeleniumIntegrationAdapter extends AbstractIntegrationAdapter imple
             HttpResponse response = restClient.get(url).asEmpty();
             return response.getStatus() == 200;
         } catch (UnirestException e) {
+            LOGGER.error("Unable to check BrowserStack connectivity", e);
             return false;
         }
-    }
-
-    @Override
-    public String buildUrl() {
-        String result = null;
-        if(StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
-            result = String.format("%s//%s:%s@%s", url.split("//")[0], username, password, url.split("//")[1]);
-        }
-        return result != null ? result : url;
     }
 
     @PreDestroy
     private void close() {
         restClient.shutDown();
+    }
+
+    @Getter
+    @AllArgsConstructor
+    private enum Parameter implements AdapterParam {
+        URL("BROWSERSTACK_URL"),
+        USERNAME("BROWSERSTACK_USER"),
+        ACCESS_KEY("BROWSERSTACK_ACCESS_KEY");
+
+        private final String name;
     }
 }

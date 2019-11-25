@@ -80,6 +80,7 @@ public class JiraIntegrationAdapter extends AbstractIntegrationAdapter implement
                                               .asEmpty();
             return response.getStatus() == 200;
         } catch (UnirestException e) {
+            LOGGER.error("Unable to check Jira connectivity", e);
             return false;
         }
     }

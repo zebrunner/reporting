@@ -86,6 +86,7 @@ import static com.qaprosoft.zafira.models.db.Status.QUEUED;
 import static com.qaprosoft.zafira.models.db.Status.SKIPPED;
 import static com.qaprosoft.zafira.service.FilterService.Template.TEST_RUN_TEMPLATE;
 import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.TEST_RUN_CAN_NOT_BE_STARTED;
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.TEST_RUN_RERUN_CAN_NOT_BE_STARTED;
 import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_RUN_NOT_FOUND;
 import static com.qaprosoft.zafira.service.util.XmlConfigurationUtil.readArguments;
 
@@ -100,6 +101,7 @@ public class TestRunService implements ProjectReassignable {
     private static final String ERR_MSG_INVALID_TEST_RUN_INITIATED_BY_HUMAN = "Username is not specified for test run initiated by HUMAN";
     private static final String ERR_MSG_INVALID_TEST_RUN_INITIATED_BY_UPSTREAM_JOB = "Upstream job id and upstream build number are not specified for test run initiated by UPSTREAM_JOB";
     private static final String ERR_MSG_TEST_RUN_NOT_FOUND_BY_CI_RUN_ID = "Test run for CI run id %s can not be found";
+    private static final String ERR_MSG_TEST_RUN_UNABLE_TO_RERUN_PASSED = "Unable to rerun with failures test run with id '%d'. Test run is passed";
 
     @Autowired
     private TestRunMapper testRunMapper;
@@ -473,14 +475,11 @@ public class TestRunService implements ProjectReassignable {
     public void initTestRunWithXml(TestRun testRun) {
         if (StringUtils.isNotBlank(testRun.getConfigXML())) {
             TestConfig config = testConfigService.createTestConfigForTestRun(testRun.getConfigXML());
-            String browser = config.getBrowser();
-            boolean isBrowserExists = StringUtils.isNotBlank(browser) && !"*".equals(browser);
-            String platform = isBrowserExists ? browser : config.getPlatform();
 
             testRun.setConfig(config);
             testRun.setEnv(config.getEnv());
             testRun.setAppVersion(config.getAppVersion());
-            testRun.setPlatform(platform);
+            testRun.setPlatform(config.getPlatform());
         }
     }
 
@@ -551,6 +550,9 @@ public class TestRunService implements ProjectReassignable {
         TestRun testRun = getTestRunByIdFull(id);
         if (testRun == null) {
             throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
+        }
+        if (PASSED.equals(testRun.getStatus()) && rerunFailures) {
+            throw new IllegalOperationException(TEST_RUN_RERUN_CAN_NOT_BE_STARTED, String.format(ERR_MSG_TEST_RUN_UNABLE_TO_RERUN_PASSED, testRun.getId()));
         }
         testRun.setComments(null);
         testRun.setReviewed(false);
@@ -827,7 +829,8 @@ public class TestRunService implements ProjectReassignable {
         // THIS IS VERY BAD AND NEEDS TO BE FIXED IN FUTURE
         // this approach ignores if JIRA enabled at all
         Integration jira = integrationService.retrieveDefaultByIntegrationTypeName("JIRA");
-        return jira.getAttributeValue("JIRA_URL").orElse("");
+        String jiraUrl = jira.getAttributeValue("JIRA_URL");
+        return jiraUrl != null ? jiraUrl : "";
     }
 
     public static int calculateSuccessRate(TestRun testRun) {

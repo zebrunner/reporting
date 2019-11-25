@@ -149,22 +149,31 @@ public abstract class IntegrationAdapterProxy {
                            .forEach(IntegrationAdapterProxy::putAdapter);
     }
 
+    /**
+     * Checks whether integration has missing mandatory setting or not
+     */
     private boolean hasMandatorySettingsSet(Integration integration) {
         List<IntegrationSetting> integrationSettings = integration.getSettings();
 
-        // go over all mandatory integration settings and check if those have values set
         String missingSettings = integrationSettings.stream()
                                                     .filter(integrationSetting -> integrationSetting.getParam().isMandatory())
-                                                    .filter(integrationSetting -> integrationSetting.getValue() == null || integrationSetting.getValue().isBlank())
+                                                    .filter(integrationSetting -> !hasValueSet(integrationSetting))
                                                     .map(integrationSetting -> integrationSetting.getParam().getName())
                                                     .collect(Collectors.joining(", "));
 
-        if (!missingSettings.isEmpty()) {
+        if (missingSettings.isEmpty()) {
+            return true;
+        } else {
             LOGGER.error(String.format(ERR_MSG_MANDATORY_INTEGRATION_PARAMS_MISSING, missingSettings, integration.getName()));
             return false;
-        } else {
-            return true;
         }
+    }
+
+    private boolean hasValueSet(IntegrationSetting setting) {
+        boolean hasTextValueSet = setting.getValue() != null && !setting.getValue().isBlank();
+        boolean hasBinaryValueSet = setting.getBinaryData() != null && setting.getBinaryData().length != 0;
+
+        return hasTextValueSet || hasBinaryValueSet;
     }
 
     private IntegrationAdapter createAdapter(Integration integration, Class<? extends IntegrationAdapter> adapterClass) {

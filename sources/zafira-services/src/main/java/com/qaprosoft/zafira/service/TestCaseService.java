@@ -74,8 +74,8 @@ public class TestCaseService implements ProjectReassignable {
 
     @Transactional(readOnly = true)
     @Cacheable(value = "testCases", key = "{ new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #userId, new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #testClass,  new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #testMethod }")
-    public TestCase getOwnedTestCase(Long userId, String testClass, String testMethod) {
-        return testCaseMapper.getOwnedTestCase(userId, testClass, testMethod);
+    public TestCase getOwnedTestCase(Long userId, String testClass, String testMethod, Long projectId) {
+        return testCaseMapper.getOwnedTestCase(userId, testClass, testMethod, projectId);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -98,8 +98,8 @@ public class TestCaseService implements ProjectReassignable {
             // Locking by class name and method name to avoid concurrent save of the same test case https://github.com/qaprosoft/zafira/issues/46
             updateLocks.get(CLASS_METHOD).lock();
 
-            TestCase testCase = getOwnedTestCase(newTestCase.getPrimaryOwner().getId(), newTestCase.getTestClass(), newTestCase.getTestMethod());
-            if (testCase == null) {
+            TestCase testCase = getOwnedTestCase(newTestCase.getPrimaryOwner().getId(), newTestCase.getTestClass(), newTestCase.getTestMethod(), newTestCase.getProject().getId());
+            if (testCase == null || !testCase.getProject().getName().equals(newTestCase.getProject().getName())) {
                 createTestCase(newTestCase);
             } else if (!testCase.equals(newTestCase)) {
                 newTestCase.setId(testCase.getId());

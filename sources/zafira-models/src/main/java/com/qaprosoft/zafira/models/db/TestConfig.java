@@ -21,6 +21,7 @@ import com.qaprosoft.zafira.models.db.config.Argument;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -74,6 +75,12 @@ public class TestConfig extends AbstractEntity {
                 this.device = arg.getValue();
             }
         }
+        return this;
+    }
+
+    public TestConfig afterPropertiesSet() {
+        boolean isBrowserExists = !StringUtils.isEmpty(browser) && !"*".equals(browser);
+        platform = isBrowserExists ? browser : platform;
         return this;
     }
 
