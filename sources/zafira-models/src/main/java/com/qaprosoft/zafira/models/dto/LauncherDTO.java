@@ -12,26 +12,40 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
-package com.qaprosoft.zafira.models.dto.widget;
+ ******************************************************************************/
+package com.qaprosoft.zafira.models.dto;
 
-import com.qaprosoft.zafira.models.db.WidgetTemplate;
-import com.qaprosoft.zafira.models.dto.AbstractType;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Getter
 @Setter
-public class WidgetTemplateType extends AbstractType {
+public class LauncherDTO extends AbstractType {
 
-    private static final long serialVersionUID = 7998270816228259812L;
+    private static final long serialVersionUID = 7778329756348322538L;
 
+    @NotEmpty(message = "{error.name.required}")
     private String name;
-    private String description;
-    private WidgetTemplate.Type type;
-    private String chartConfig;
-    private String paramsConfig;
-    private String legendConfig;
-    private Boolean hidden;
+
+    @NotEmpty(message = "{error.model.required}")
+    private String model;
+
+    private String type;
+
+    @NotNull
+    @Valid
+    private ScmAccountType scmAccountType;
+
+    @Valid
+    private List<LauncherPresetDTO> presets;
+
+    private JobDTO job;
+    private boolean autoScan;
+
 
 }

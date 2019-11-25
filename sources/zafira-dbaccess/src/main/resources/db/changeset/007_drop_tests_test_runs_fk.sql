@@ -1,0 +1,1 @@
+ALTER TABLE tests DROP CONSTRAINT IF EXISTS fk_tests_test_runs1;

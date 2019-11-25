@@ -1,7 +1,7 @@
-package com.qaprosoft.zafira.models.dto.tag;
+package com.qaprosoft.zafira.models.db;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.qaprosoft.zafira.models.db.TestInfo;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,8 +12,9 @@ import java.util.Map;
 
 @Getter
 @Setter
+@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class IntegrationDataType {
+public class TagIntegrationData {
 
     private String projectId;
     private String suiteId;
@@ -24,7 +25,7 @@ public class IntegrationDataType {
     private Date createdAfter;
     private Date startedAt;
     private Date finishedAt;
-    private Map<String, String> customParams = new HashMap<>();
+    private Map<String, String> customParams;
     private String zafiraServiceUrl;
 
 }

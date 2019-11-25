@@ -17,29 +17,31 @@ package com.qaprosoft.zafira.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.qaprosoft.zafira.models.db.AbstractEntity;
-import com.qaprosoft.zafira.models.db.Job;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude(Include.NON_NULL)
-public class JobViewType extends AbstractEntity {
+public class JobDTO extends AbstractType {
 
-    private static final long serialVersionUID = -3868077369004418496L;
+    private static final long serialVersionUID = 4123576956700125643L;
 
     @NotNull
-    private Job job;
+    private String name;
     @NotNull
-    private Long viewId;
+    private String jobURL;
     @NotNull
-    private String env;
+    private String jenkinsHost;
     @NotNull
-    private Integer position;
-    @NotNull
-    private Integer size;
+    private Long userId;
+
+    private Long automationServerId;
 
 }

@@ -13,29 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.dto.config;
+package com.qaprosoft.zafira.models.dto.widget;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import com.qaprosoft.zafira.models.db.WidgetTemplate;
+import com.qaprosoft.zafira.models.dto.AbstractType;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+@Getter
+@Setter
+public class WidgetTemplateDTO extends AbstractType {
 
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "arg" })
-@XmlRootElement(name = "config")
-public class ConfigurationType implements Serializable {
+    private static final long serialVersionUID = 7998270816228259812L;
 
-    private static final long serialVersionUID = -5294342759368758407L;
-    protected List<ArgumentType> arg;
+    private String name;
+    private String description;
+    private WidgetTemplate.Type type;
+    private String chartConfig;
+    private String paramsConfig;
+    private String legendConfig;
+    private Boolean hidden;
 
-    public List<ArgumentType> getArg() {
-        if (arg == null) {
-            arg = new ArrayList<>();
-        }
-        return this.arg;
-    }
 }

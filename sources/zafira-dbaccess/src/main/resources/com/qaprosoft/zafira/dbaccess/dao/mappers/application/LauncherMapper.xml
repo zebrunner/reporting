@@ -2,51 +2,53 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper
-	namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherMapper">
+        namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherMapper">
 
-	<insert id="createLauncher" useGeneratedKeys="true"
-		keyProperty="id">
+    <insert id="createLauncher" useGeneratedKeys="true"
+            keyProperty="id">
         <![CDATA[
 			INSERT INTO LAUNCHERS (
 			    NAME
 			    , MODEL
 			    , SCM_ID
 			    , AUTO_SCAN
+			    , TYPE
         ]]>
-		<if test="null != job">
-                    <![CDATA[
+        <if test="null != job">
+            <![CDATA[
 			          , JOB_ID
                     ]]>
-		</if>
+        </if>
         <![CDATA[
             )
 			VALUES (
 				#{name},
 				#{model},
 			    #{scmAccount.id},
-			    #{autoScan}
+			    #{autoScan},
+			    #{type}
         ]]>
-		<if test="null != job">
-                    <![CDATA[
+        <if test="null != job">
+            <![CDATA[
 			          , #{job.id}
                     ]]>
-		</if>
+        </if>
         <![CDATA[
 			)
         ]]>
-	</insert>
+    </insert>
 
-	<sql id="getLaunchers">
+    <sql id="getLaunchers">
         <![CDATA[
 			SELECT
 				L.ID AS LAUNCHER_ID,
 				L.NAME AS LAUNCHER_NAME,
 				L.MODEL AS LAUNCHER_MODEL,
 				L.AUTO_SCAN AS LAUNCHER_AUTO_SCAN,
-
+				L.TYPE AS LAUNCHER_TYPE,
 		]]>
-	<include refid="com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherPresetMapper.body"/>
-		<![CDATA[
+        <include refid="com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherPresetMapper.body"/>
+        <![CDATA[
 				,
 				S.ID AS SCM_ID,
 				S.NAME AS SCM_NAME,
@@ -85,88 +87,95 @@
 			ON
 				L.ID = LP.LAUNCHER_ID
         ]]>
-	</sql>
+    </sql>
 
-	<select id="getLauncherById" resultMap="LauncherResultMap">
-		<include refid="getLaunchers" />
+    <select id="getLauncherById" resultMap="LauncherResultMap">
+        <include refid="getLaunchers"/>
         <![CDATA[
 			WHERE L.ID = #{id};
 		]]>
-	</select>
+    </select>
 
-	<select id="getLauncherByJobId" resultMap="LauncherResultMap">
-		<include refid="getLaunchers" />
+    <select id="getLauncherByJobId" resultMap="LauncherResultMap">
+        <include refid="getLaunchers"/>
         <![CDATA[
 			WHERE L.JOB_ID = #{jobId};
 		]]>
-	</select>
+    </select>
 
-	<select id="getAllLaunchers" resultMap="LauncherResultMap">
-		<include refid="getLaunchers" />
-	</select>
+    <select id="getAllLaunchers" resultMap="LauncherResultMap">
+        <include refid="getLaunchers"/>
+    </select>
 
-	<update id="updateLauncher">
+    <update id="updateLauncher">
         <![CDATA[
 			UPDATE LAUNCHERS
         ]]>
-		<set>
-			<if test="null != name">
+        <set>
+            <if test="null != name">
                 <![CDATA[
                    NAME = #{name},
                 ]]>
-			</if>
-			<if test="null != model">
+            </if>
+            <if test="null != model">
                 <![CDATA[
                    MODEL = #{model},
                 ]]>
-			</if>
-			<if test="null != scmAccount and null != scmAccount.id">
+            </if>
+            <if test="null != scmAccount and null != scmAccount.id">
                 <![CDATA[
-                   SCM_ID = #{scmAccount.id}
+                   SCM_ID = #{scmAccount.id},
                 ]]>
-			</if>
-		</set>
+            </if>
+            <if test="null != type">
+                <![CDATA[
+                   TYPE = #{type}
+                ]]>
+            </if>
+        </set>
         <![CDATA[
 			WHERE ID = #{id}
         ]]>
-	</update>
+    </update>
 
-	<sql id="deleteLauncher">
+    <sql id="deleteLauncher">
         <![CDATA[
-			DELETE FROM LAUNCHERS
+        DELETE
+        FROM LAUNCHERS
         ]]>
 	</sql>
 
-	<delete id="deleteLauncherById">
-		<include refid="deleteLauncher" />
-		<![CDATA[
+    <delete id="deleteLauncherById">
+        <include refid="deleteLauncher"/>
+        <![CDATA[
 			WHERE ID = #{id}
         ]]>
-	</delete>
+    </delete>
 
-	<delete id="deleteAutoScannedLaunchersByScmAccountId">
-		<include refid="deleteLauncher" />
-		<![CDATA[
+    <delete id="deleteAutoScannedLaunchersByScmAccountId">
+        <include refid="deleteLauncher"/>
+        <![CDATA[
 			WHERE AUTO_SCAN = true AND SCM_ID = #{scmAccountId}
         ]]>
-	</delete>
+    </delete>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.Launcher"
-		id="LauncherResultMap" autoMapping="false">
-		<id column="LAUNCHER_ID" property="id" />
-		<result column="LAUNCHER_NAME" property="name" />
-		<result column="LAUNCHER_MODEL" property="model" />
-		<result column="LAUNCHER_AUTO_SCAN" property="autoScan" />
-		<result column="LAUNCHER_MODIFIED_AT" property="modifiedAt" />
-		<result column="LAUNCHER_CREATED_AT" property="createdAt" />
-		<association property="scmAccount"
-			javaType="com.qaprosoft.zafira.models.db.ScmAccount"
-			resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.ScmAccountMapper.ScmAccountResultMap" />
-		<association property="job"
-			javaType="com.qaprosoft.zafira.models.db.Job"
-			resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.JobMapper.JobResultMap" />
-		<collection property="presets" ofType="com.qaprosoft.zafira.models.db.LauncherPreset"
-					resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherPresetMapper.LauncherPresetResultMap"/>
-	</resultMap>
+    <resultMap type="com.qaprosoft.zafira.models.db.Launcher"
+               id="LauncherResultMap" autoMapping="false">
+        <id column="LAUNCHER_ID" property="id"/>
+        <result column="LAUNCHER_NAME" property="name"/>
+        <result column="LAUNCHER_MODEL" property="model"/>
+        <result column="LAUNCHER_AUTO_SCAN" property="autoScan"/>
+        <result column="LAUNCHER_TYPE" property="type"/>
+        <result column="LAUNCHER_MODIFIED_AT" property="modifiedAt"/>
+        <result column="LAUNCHER_CREATED_AT" property="createdAt"/>
+        <association property="scmAccount"
+                     javaType="com.qaprosoft.zafira.models.db.ScmAccount"
+                     resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.ScmAccountMapper.ScmAccountResultMap"/>
+        <association property="job"
+                     javaType="com.qaprosoft.zafira.models.db.Job"
+                     resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.JobMapper.JobResultMap"/>
+        <collection property="presets" ofType="com.qaprosoft.zafira.models.db.LauncherPreset"
+                    resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.LauncherPresetMapper.LauncherPresetResultMap"/>
+    </resultMap>
 
 </mapper>

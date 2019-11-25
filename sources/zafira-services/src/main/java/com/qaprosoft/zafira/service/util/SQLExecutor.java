@@ -15,24 +15,28 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.service.util;
 
-import com.qaprosoft.zafira.service.WidgetService;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.WidgetMapper;
+import com.qaprosoft.zafira.dbaccess.utils.SQLAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Service
-public class SQLUtils {
+@Component
+public class SQLExecutor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SQLUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SQLExecutor.class);
 
-    @Autowired
-    private WidgetService widgetService;
+    // TODO: switch to generic mapper or raw JDBC api
+    private final WidgetMapper widgetMapper;
+
+    public SQLExecutor(WidgetMapper widgetMapper) {
+        this.widgetMapper = widgetMapper;
+    }
 
     /**
      * Returns result map if query is valid or single result with key == null on sql is invalid
@@ -41,11 +45,11 @@ public class SQLUtils {
      * @return result map
      */
     @Transactional(readOnly = true)
-    public List<Map<String, Object>> getResult(String sql) {
+    public List<Map<String, Object>> getMultiRowResult(String sql) {
         List<Map<String, Object>> result = null;
         if (sql != null) {
             try {
-                result = widgetService.executeSQL(sql);
+                result = widgetMapper.executeSQL(new SQLAdapter(sql));
             } catch (Exception e) {
                 result = new ArrayList<>();
                 LOGGER.debug("String starts with 'select' but is not" + " sql or is not valid: '" + sql + "'");
@@ -61,7 +65,7 @@ public class SQLUtils {
      * @return - result list
      */
     public List<Object> getSingleRowResult(String sql) {
-        List<Map<String, Object>> multiRowResult = getResult(sql);
+        List<Map<String, Object>> multiRowResult = getMultiRowResult(sql);
         List<Object> result = new ArrayList<>();
         if (multiRowResult != null && !multiRowResult.isEmpty() && multiRowResult.get(0).keySet().size() == 1) {
             multiRowResult.forEach(resultItem -> {

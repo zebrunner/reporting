@@ -15,12 +15,14 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.FilterSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
-import com.qaprosoft.zafira.models.db.Filter;
+import com.qaprosoft.zafira.models.db.filter.FilterAdapter;
+import com.qaprosoft.zafira.models.db.filter.Filter;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.db.Status;
@@ -35,8 +37,10 @@ import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.models.dto.CommentType;
 import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.models.dto.filter.Subject;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.service.email.TestRunResultsEmail;
+import com.qaprosoft.zafira.service.exception.ExternalSystemException;
 import com.qaprosoft.zafira.service.exception.IllegalOperationException;
 import com.qaprosoft.zafira.service.exception.IntegrationException;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
@@ -58,6 +62,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URLDecoder;
@@ -80,8 +85,8 @@ import static com.qaprosoft.zafira.models.db.Status.PASSED;
 import static com.qaprosoft.zafira.models.db.Status.QUEUED;
 import static com.qaprosoft.zafira.models.db.Status.SKIPPED;
 import static com.qaprosoft.zafira.service.FilterService.Template.TEST_RUN_TEMPLATE;
-import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.ILLEGAL_TEST_RUN_ACTION_BY_ID;
 import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.TEST_RUN_CAN_NOT_BE_STARTED;
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.TEST_RUN_RERUN_CAN_NOT_BE_STARTED;
 import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_RUN_NOT_FOUND;
 import static com.qaprosoft.zafira.service.util.XmlConfigurationUtil.readArguments;
 
@@ -96,7 +101,7 @@ public class TestRunService implements ProjectReassignable {
     private static final String ERR_MSG_INVALID_TEST_RUN_INITIATED_BY_HUMAN = "Username is not specified for test run initiated by HUMAN";
     private static final String ERR_MSG_INVALID_TEST_RUN_INITIATED_BY_UPSTREAM_JOB = "Upstream job id and upstream build number are not specified for test run initiated by UPSTREAM_JOB";
     private static final String ERR_MSG_TEST_RUN_NOT_FOUND_BY_CI_RUN_ID = "Test run for CI run id %s can not be found";
-    private static final String ERR_MSG_TEST_RUN_ANY_ID_REQUIRED = "Cannot execute an action without test run id or ciRunId";
+    private static final String ERR_MSG_TEST_RUN_UNABLE_TO_RERUN_PASSED = "Unable to rerun with failures test run with id '%d'. Test run is passed";
 
     @Autowired
     private TestRunMapper testRunMapper;
@@ -146,6 +151,9 @@ public class TestRunService implements ProjectReassignable {
     @Autowired
     private TestSuiteService testSuiteService;
 
+    @Autowired
+    private ObjectMapper mapper;
+
     public enum FailureCause {
         UNRECOGNIZED_FAILURE("UNRECOGNIZED FAILURE"),
         COMPILATION_FAILURE("COMPILATION FAILURE"),
@@ -185,11 +193,19 @@ public class TestRunService implements ProjectReassignable {
     }
 
     @Transactional(readOnly = true)
-    public SearchResult<TestRun> search(TestRunSearchCriteria sc, List<String> projectNames, Long filterId) {
+    public SearchResult<TestRun> search(TestRunSearchCriteria sc, List<String> projectNames, Long filterId) throws IOException {
         if (filterId != null) {
             Filter filter = filterService.getFilterById(filterId);
             if (filter != null) {
-                String whereClause = filterService.getTemplate(filter, TEST_RUN_TEMPLATE);
+                Subject subject = mapper.readValue(filter.getSubject(), Subject.class);
+                FilterAdapter filterAdapter = FilterAdapter.builder()
+                                                           .name(filter.getName())
+                                                           .description(filter.getDescription())
+                                                           .subject(subject)
+                                                           .publicAccess(filter.isPublicAccess())
+                                                           .userId(filter.getUserId())
+                                                           .build();
+                String whereClause = filterService.getTemplate(filterAdapter, TEST_RUN_TEMPLATE);
                 sc.setFilterSearchCriteria(new FilterSearchCriteria(whereClause));
             }
         }
@@ -245,7 +261,11 @@ public class TestRunService implements ProjectReassignable {
 
     @Transactional(readOnly = true)
     public TestRun getTestRunByCiRunIdFull(String ciRunId) {
-        return testRunMapper.getTestRunByCiRunIdFull(ciRunId);
+        TestRun testRun = testRunMapper.getTestRunByCiRunIdFull(ciRunId);
+        if (testRun == null) {
+            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND);
+        }
+        return testRun;
     }
 
     @Transactional(readOnly = true)
@@ -255,9 +275,6 @@ public class TestRunService implements ProjectReassignable {
             testRun = getTestRunByIdFull(id);
         } else if (testRun.getCiRunId() != null) {
             testRun = getTestRunByCiRunIdFull(testRun.getCiRunId());
-        }
-        if (testRun == null) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
         }
         return automationServerService.getBuildConsoleOutput(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
     }
@@ -319,8 +336,7 @@ public class TestRunService implements ProjectReassignable {
                 testRun = getLatestJobTestRunByBranchAndJobURL(testRunParams.getBranch(), testRunParams.getJobUrl());
                 if (testRun != null) {
                     Long latestTestRunId = testRun.getId();
-                    User user = userService.getUserById(userId);
-                    testRun = createQueuedTestRun(testRun, testRunParams, user);
+                    testRun = createQueuedTestRun(testRun, testRunParams, userId);
                     final long testRunId = testRun.getId();
                     List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
                     tests.stream()
@@ -335,7 +351,7 @@ public class TestRunService implements ProjectReassignable {
         return testRun;
     }
 
-    private TestRun createQueuedTestRun(TestRun testRun, QueueTestRunParamsType testRunParams, User user) {
+    private TestRun createQueuedTestRun(TestRun testRun, QueueTestRunParamsType testRunParams, Long userId) {
         String ciParentUrl = testRunParams.getCiParentUrl();
         String ciParentBuild = testRunParams.getCiParentBuild();
         String projectName = testRunParams.getProject();
@@ -343,7 +359,7 @@ public class TestRunService implements ProjectReassignable {
         setMinimalQueuedTestRunData(testRun, testRunParams);
 
         if (StringUtils.isNotBlank(ciParentUrl)) {
-            Job job = jobsService.createOrUpdateJobByURL(ciParentUrl, user);
+            Job job = jobsService.createOrUpdateJobByURL(ciParentUrl, userId);
             testRun.setUpstreamJob(job);
         }
         if (StringUtils.isNotBlank(ciParentBuild)) {
@@ -459,14 +475,11 @@ public class TestRunService implements ProjectReassignable {
     public void initTestRunWithXml(TestRun testRun) {
         if (StringUtils.isNotBlank(testRun.getConfigXML())) {
             TestConfig config = testConfigService.createTestConfigForTestRun(testRun.getConfigXML());
-            String browser = config.getBrowser();
-            boolean isBrowserExists = StringUtils.isNotBlank(browser) && !"*".equals(browser);
-            String platform = isBrowserExists ? browser : config.getPlatform();
 
             testRun.setConfig(config);
             testRun.setEnv(config.getEnv());
             testRun.setAppVersion(config.getAppVersion());
-            testRun.setPlatform(platform);
+            testRun.setPlatform(config.getPlatform());
         }
     }
 
@@ -510,11 +523,6 @@ public class TestRunService implements ProjectReassignable {
             testRun = getTestRunByIdFull(id);
         } else if (testRun.getCiRunId() != null) {
             testRun = getTestRunByCiRunIdFull(testRun.getCiRunId());
-        } else {
-            throw new IllegalOperationException(ILLEGAL_TEST_RUN_ACTION_BY_ID, ERR_MSG_TEST_RUN_ANY_ID_REQUIRED);
-        }
-        if (testRun == null) {
-            throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
         }
         automationServerService.abortJob(testRun.getJob(), testRun.getBuildNumber());
     }
@@ -542,6 +550,9 @@ public class TestRunService implements ProjectReassignable {
         TestRun testRun = getTestRunByIdFull(id);
         if (testRun == null) {
             throw new ResourceNotFoundException(TEST_RUN_NOT_FOUND, ERR_MSG_TEST_RUN_NOT_FOUND, id);
+        }
+        if (PASSED.equals(testRun.getStatus()) && rerunFailures) {
+            throw new IllegalOperationException(TEST_RUN_RERUN_CAN_NOT_BE_STARTED, String.format(ERR_MSG_TEST_RUN_UNABLE_TO_RERUN_PASSED, testRun.getId()));
         }
         testRun.setComments(null);
         testRun.setReviewed(false);
@@ -619,11 +630,16 @@ public class TestRunService implements ProjectReassignable {
     private void rerun(TestRun testRun, boolean rerunRequired, boolean rerunFailures) {
         resetTestRunComments(testRun);
         if (rerunRequired) {
-            automationServerService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
+            try {
+                automationServerService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
+            } catch (ExternalSystemException e) {
+                // If job is not present on Jenkins, rerun is performed for all the others without interruption.
+                LOGGER.error(e.getMessage());
+            }
         }
     }
 
-    private void resetTestRunComments(TestRun testRun){
+    private void resetTestRunComments(TestRun testRun) {
         TestRun testRunFull = getTestRunByIdFull(testRun.getId());
         if (StringUtils.isNotBlank(testRunFull.getComments())) {
             testRunFull.setComments(null);
@@ -681,7 +697,7 @@ public class TestRunService implements ProjectReassignable {
         tests.stream()
              .filter(test -> {
                  boolean isFailed = Arrays.asList(FAILED, SKIPPED).contains(test.getStatus());
-                 return  (isFailed && !test.isKnownIssue()) || (isFailed && test.isBlocker());
+                 return (isFailed && !test.isKnownIssue()) || (isFailed && test.isBlocker());
              })
              .findFirst()
              .ifPresent(test -> testRun.setStatus(FAILED));
@@ -764,6 +780,7 @@ public class TestRunService implements ProjectReassignable {
 
     /**
      * Generates a string with test run html report
+     *
      * @param id - test run id or test run ciRunId to find
      * @return built test run report or null if test run is not found
      */
@@ -812,7 +829,8 @@ public class TestRunService implements ProjectReassignable {
         // THIS IS VERY BAD AND NEEDS TO BE FIXED IN FUTURE
         // this approach ignores if JIRA enabled at all
         Integration jira = integrationService.retrieveDefaultByIntegrationTypeName("JIRA");
-        return jira.getAttributeValue("JIRA_URL").orElse("");
+        String jiraUrl = jira.getAttributeValue("JIRA_URL");
+        return jiraUrl != null ? jiraUrl : "";
     }
 
     public static int calculateSuccessRate(TestRun testRun) {

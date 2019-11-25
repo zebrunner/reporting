@@ -15,13 +15,13 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.web;
 
+import com.qaprosoft.zafira.models.db.JenkinsJob;
 import com.qaprosoft.zafira.models.db.Launcher;
 import com.qaprosoft.zafira.models.db.LauncherWebHookPayload;
-import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.dto.JenkinsJobsScanResultDTO;
 import com.qaprosoft.zafira.models.dto.JobResult;
+import com.qaprosoft.zafira.models.dto.LauncherDTO;
 import com.qaprosoft.zafira.models.dto.LauncherScannerType;
-import com.qaprosoft.zafira.models.dto.LauncherType;
-import com.qaprosoft.zafira.models.dto.ScannedRepoLaunchersType;
 import com.qaprosoft.zafira.models.push.LauncherPush;
 import com.qaprosoft.zafira.models.push.LauncherRunPush;
 import com.qaprosoft.zafira.service.LauncherService;
@@ -67,54 +67,54 @@ public class LauncherController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Create launcher", nickname = "createLauncher", httpMethod = "POST", response = LauncherType.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiOperation(value = "Create launcher", nickname = "createLauncher", httpMethod = "POST", response = LauncherDTO.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PostMapping()
-    public LauncherType createLauncher(@RequestBody @Valid LauncherType launcherType,
-                                       @RequestParam(name = "automationServerId", required = false) Long automationServerId) {
-        User owner = new User(getPrincipalId());
-        Launcher launcher = mapper.map(launcherType, Launcher.class);
-        launcher = launcherService.createLauncher(launcher, owner, automationServerId);
-        return mapper.map(launcher, LauncherType.class);
+    public LauncherDTO createLauncher(@RequestBody @Valid LauncherDTO launcherDTO,
+                                      @RequestParam(name = "automationServerId", required = false) Long automationServerId) {
+        Launcher launcher = mapper.map(launcherDTO, Launcher.class);
+        Long principalId = getPrincipalId();
+        launcher = launcherService.createLauncher(launcher, principalId, automationServerId);
+        return mapper.map(launcher, LauncherDTO.class);
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get launcher by id", nickname = "getLauncherById", httpMethod = "GET", response = LauncherType.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiOperation(value = "Get launcher by id", nickname = "getLauncherById", httpMethod = "GET", response = LauncherDTO.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping("/{id}")
-    public LauncherType getLauncherById(@PathVariable("id") Long id) {
+    public LauncherDTO getLauncherById(@PathVariable("id") Long id) {
         Launcher launcher = launcherService.getLauncherById(id);
-        return mapper.map(launcher, LauncherType.class);
+        return mapper.map(launcher, LauncherDTO.class);
     }
 
     @ApiResponseStatuses
     @ApiOperation(value = "Get all launchers", nickname = "getAllLaunchers", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping()
-    public List<LauncherType> getAllLaunchers() {
+    public List<LauncherDTO> getAllLaunchers() {
         List<Launcher> launchers = launcherService.getAllLaunchers();
         return launchers.stream()
-                        .map(launcher -> mapper.map(launcher, LauncherType.class))
+                        .map(launcher -> mapper.map(launcher, LauncherDTO.class))
                         .collect(Collectors.toList());
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Update launcher", nickname = "updateLauncher", httpMethod = "PUT", response = LauncherType.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiOperation(value = "Update launcher", nickname = "updateLauncher", httpMethod = "PUT", response = LauncherDTO.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PutMapping()
-    public LauncherType updateLauncher(@RequestBody @Valid LauncherType launcherType) {
-        Launcher launcher = mapper.map(launcherType, Launcher.class);
+    public LauncherDTO updateLauncher(@RequestBody @Valid LauncherDTO launcherDTO) {
+        Launcher launcher = mapper.map(launcherDTO, Launcher.class);
         launcher = launcherService.updateLauncher(launcher);
-        return mapper.map(launcher, LauncherType.class);
+        return mapper.map(launcher, LauncherDTO.class);
     }
 
     @ApiResponseStatuses
     @ApiOperation(value = "Delete launcher by id", nickname = "deleteLauncherById", httpMethod = "DELETE")
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @DeleteMapping("/{id}")
     public void deleteLauncherById(@PathVariable("id") Long id) {
@@ -123,30 +123,33 @@ public class LauncherController extends AbstractController {
 
     @ApiResponseStatuses
     @ApiOperation(value = "Build job with launcher", nickname = "build", httpMethod = "POST")
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @PostMapping("/build")
-    public void build(@RequestBody @Valid LauncherType launcherType) throws IOException {
-        Launcher launcher = mapper.map(launcherType, Launcher.class);
-        String ciRunId = launcherService.buildLauncherJob(launcher, getPrincipalId());
+    public void build(@RequestBody @Valid LauncherDTO launcherDTO,
+                      @RequestParam(name = "providerId", required = false) Long providerId) throws IOException {
+        Launcher launcher = mapper.map(launcherDTO, Launcher.class);
+        String ciRunId = launcherService.buildLauncherJob(launcher, getPrincipalId(), providerId);
         websocketTemplate.convertAndSend(getLauncherRunsWebsocketPath(), new LauncherRunPush(launcher, ciRunId));
     }
 
     @ApiResponseStatuses
     @ApiOperation(value = "Build job by webHook", nickname = "buildByWebHook", httpMethod = "POST", response = String.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @PostMapping("/{id}/build/{ref}")
-    public String buildByWebHook(@RequestBody @Valid LauncherWebHookPayload payload,
-                               @PathVariable("id") Long id,
-                               @PathVariable("ref") String ref
+    public String buildByWebHook(
+        @RequestBody @Valid LauncherWebHookPayload payload,
+        @PathVariable("id") Long id,
+        @PathVariable("ref") String ref,
+        @RequestParam(name = "providerId", required = false) Long providerId
     ) throws IOException {
-        return launcherService.buildLauncherJobByPresetRef(id, ref, payload, getPrincipalId());
+        return launcherService.buildLauncherJobByPresetRef(id, ref, payload, getPrincipalId(), providerId);
     }
 
     @ApiResponseStatuses
     @ApiOperation(value = "Get build number", nickname = "getBuildNumber", httpMethod = "GET", response = Integer.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping("/build/number")
     public Integer getBuildNumber(@RequestParam("queueItemUrl") String queueItemUrl,
@@ -156,7 +159,7 @@ public class LauncherController extends AbstractController {
 
     @ApiResponseStatuses
     @ApiOperation(value = "Scan launchers with jenkins", nickname = "runScanner", httpMethod = "POST", response = JobResult.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PostMapping("/scanner")
     public JobResult runScanner(@RequestBody @Valid LauncherScannerType launcherScannerType,
@@ -172,7 +175,7 @@ public class LauncherController extends AbstractController {
 
     @ApiResponseStatuses
     @ApiOperation(value = "Cancel launcher scanner", nickname = "cancelScanner", httpMethod = "DELETE")
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @DeleteMapping("/scanner/{buildNumber}")
     public void cancelScanner(@PathVariable("buildNumber") int buildNumber,
@@ -184,16 +187,21 @@ public class LauncherController extends AbstractController {
 
     @ApiResponseStatuses
     @ApiOperation(value = "Create launchers from Jenkins", nickname = "createLaunchersFromJenkins", httpMethod = "POST", response = List.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PostMapping("/create")
-    public List<LauncherType> createLaunchersFromJenkins(@RequestBody @Valid ScannedRepoLaunchersType scannedRepoLaunchersType) {
-        List<Launcher> launchers = launcherService.createLaunchersForJob(scannedRepoLaunchersType, new User(getPrincipalId()));
-        List<LauncherType> launcherTypes = launchers.stream()
-                                                    .map(launcher -> mapper.map(launcher, LauncherType.class))
-                                                    .collect(Collectors.toList());
-        websocketTemplate.convertAndSend(getLaunchersWebsocketPath(), new LauncherPush(launcherTypes, scannedRepoLaunchersType.getUserId(), scannedRepoLaunchersType.isSuccess()));
-        return launcherTypes;
+    public List<LauncherDTO> scanLaunchersFromJenkins(@RequestBody @Valid JenkinsJobsScanResultDTO jenkinsJobsScanResultDTO) {
+        Long principalId = getPrincipalId();
+        List<JenkinsJob> jenkinsJobs = jenkinsJobsScanResultDTO.getJenkinsJobs()
+                                                               .stream()
+                                                               .map(jenkinsLauncher -> mapper.map(jenkinsLauncher, JenkinsJob.class))
+                                                               .collect(Collectors.toList());
+        List<Launcher> launchers = launcherService.createLaunchersForJenkinsJobs(jenkinsJobs, jenkinsJobsScanResultDTO.getRepo(), jenkinsJobsScanResultDTO.isSuccess(), principalId);
+        List<LauncherDTO> launcherDTOS = launchers.stream()
+                                                  .map(launcher -> mapper.map(launcher, LauncherDTO.class))
+                                                  .collect(Collectors.toList());
+        websocketTemplate.convertAndSend(getLaunchersWebsocketPath(), new LauncherPush(launcherDTOS, jenkinsJobsScanResultDTO.getUserId(), jenkinsJobsScanResultDTO.isSuccess()));
+        return launcherDTOS;
     }
 
 }

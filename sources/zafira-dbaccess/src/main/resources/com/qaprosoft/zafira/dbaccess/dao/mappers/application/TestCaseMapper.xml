@@ -147,7 +147,7 @@
 		resultMap="TestCaseResultMap">
 		<include refid="getTestCase" />
 		<![CDATA[
-			WHERE TC.PRIMARY_OWNER_ID = #{userId} AND TC.TEST_CLASS = #{testClass} AND TC.TEST_METHOD = #{testMethod};
+			WHERE TC.PRIMARY_OWNER_ID = #{userId} AND TC.TEST_CLASS = #{testClass} AND TC.TEST_METHOD = #{testMethod} AND PROJECT_ID = #{projectId};
 		]]>
 	</select>
 

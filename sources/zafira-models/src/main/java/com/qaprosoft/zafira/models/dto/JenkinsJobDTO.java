@@ -13,37 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.dto.widget;
+package com.qaprosoft.zafira.models.dto;
 
-import com.qaprosoft.zafira.models.dto.AbstractType;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Getter
 @Setter
-public class WidgetType extends AbstractType {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class JenkinsJobDTO implements Serializable {
 
-    private static final long serialVersionUID = -8163778207543974125L;
+    private static final long serialVersionUID = -5754742673797369219L;
 
-    @NotEmpty(message = "{error.title.required}")
-    private String title;
+    @NotEmpty(message = "{error.job.url.required}")
+    private String url;
 
-    private String description;
-    private String paramsConfig;
-    private String legendConfig;
+    @NotNull(message = "{error.job.parameters.required}")
+    private String parameters;
 
-    @Valid
-    private WidgetTemplateType widgetTemplate;
-
-    private boolean refreshable;
     private String type;
-    private Integer size;
-    private Integer position;
-    private String location;
-    private String sql;
-    private String model;
-
 }

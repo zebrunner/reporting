@@ -17,15 +17,22 @@ package com.qaprosoft.zafira.service.scm;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.ScmAccountMapper;
 import com.qaprosoft.zafira.models.db.ScmAccount;
+import com.qaprosoft.zafira.models.dto.scm.Organization;
 import com.qaprosoft.zafira.models.dto.scm.Repository;
 import com.qaprosoft.zafira.service.CryptoService;
-import com.qaprosoft.zafira.service.exception.ForbiddenOperationException;
+import com.qaprosoft.zafira.service.exception.ExternalSystemException;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static com.qaprosoft.zafira.service.exception.ExternalSystemException.ExternalSystemErrorDetail.GITHUB_AUTHENTICATION_FAILED;
+import static com.qaprosoft.zafira.service.exception.ExternalSystemException.ExternalSystemErrorDetail.GITHUB_DEFAULT_BRANCH_IS_NOT_OBTAINED;
 import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.SCM_ACCOUNT_NOT_FOUND;
 
 @Service
@@ -33,6 +40,8 @@ public class ScmAccountService {
 
     private static final String ERR_MSG_SCM_ACCOUNT_NOT_FOUND = "SCM account with id %s can not be found";
     private static final String ERR_MSG_SCM_ACCOUNT_NOT_FOUND_FOR_REPO = "SCM account for repo %s can not be found";
+    private static final String ERR_MSG_CANNOT_RECOGNIZE_YOUR_AUTHORITY = "Cannot recognize your authority";
+    private static final String ERR_MSG_UNABLE_TO_OBTAIN_DEFAULT_BRANCH_NAME = "Unable to obtain scm account default branch name";
 
     private final ScmAccountMapper scmAccountMapper;
     private final GitHubService gitHubService;
@@ -52,6 +61,16 @@ public class ScmAccountService {
         }
         scmAccountMapper.createScmAccount(scmAccount);
         return scmAccount;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public ScmAccount createScmAccount(String code, ScmAccount.Name name) throws IOException, URISyntaxException {
+        String token = gitHubService.getAccessToken(code);
+        if (StringUtils.isEmpty(token)) {
+            throw new ExternalSystemException(GITHUB_AUTHENTICATION_FAILED, ERR_MSG_CANNOT_RECOGNIZE_YOUR_AUTHORITY);
+        }
+        ScmAccount scmAccount = new ScmAccount(token, name);
+        return createScmAccount(scmAccount);
     }
 
     @Transactional(readOnly = true)
@@ -77,6 +96,26 @@ public class ScmAccountService {
         return scmAccountMapper.getAllScmAccounts();
     }
 
+    @Transactional(readOnly = true)
+    public List<Organization> getScmAccountOrganizations(Long id) throws IOException {
+        ScmAccount scmAccount = getScmAccountById(id);
+        return gitHubService.getOrganizations(scmAccount);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Repository> getScmAccountRepositories(Long id, String organizationName) throws IOException {
+        ScmAccount scmAccount = getScmAccountById(id);
+        List<ScmAccount> allAccounts = getAllScmAccounts();
+        List<String> existingRepos = allAccounts.stream()
+                                                 .map(ScmAccount::getRepositoryURL)
+                                                 .collect(Collectors.toList());
+        return gitHubService.getRepositories(scmAccount, organizationName, existingRepos);
+    }
+
+    public String getScmClientId() {
+        return gitHubService.getClientId();
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public ScmAccount updateScmAccount(ScmAccount scmAccount) {
         scmAccountMapper.updateScmAccount(scmAccount);
@@ -91,12 +130,9 @@ public class ScmAccountService {
     @Transactional(readOnly = true)
     public String getDefaultBranch(Long id) {
         ScmAccount scmAccount = getScmAccountById(id);
-        if(scmAccount == null) {
-            throw new ForbiddenOperationException("Unable to retrieve scm account default branch name");
-        }
         Repository repository = gitHubService.getRepository(scmAccount);
-        if(repository == null) {
-            throw new ForbiddenOperationException("Unable to retrieve scm account default branch name");
+        if (repository == null) {
+            throw new ExternalSystemException(GITHUB_DEFAULT_BRANCH_IS_NOT_OBTAINED, ERR_MSG_UNABLE_TO_OBTAIN_DEFAULT_BRANCH_NAME);
         }
         return repository.getDefaultBranch();
     }

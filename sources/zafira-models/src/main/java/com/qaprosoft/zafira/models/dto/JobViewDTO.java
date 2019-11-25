@@ -16,24 +16,30 @@
 package com.qaprosoft.zafira.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.qaprosoft.zafira.models.db.AbstractEntity;
+import com.qaprosoft.zafira.models.db.Job;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
 @Getter
 @Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class JenkinsLauncherType implements Serializable {
+@JsonInclude(Include.NON_NULL)
+public class JobViewDTO extends AbstractEntity {
 
-    private static final long serialVersionUID = -5754742673797369219L;
+    private static final long serialVersionUID = -3868077369004418496L;
 
-    @NotEmpty(message = "{error.job.url.required}")
-    private String jobUrl;
-
-    @NotNull(message = "{error.job.parameters.required}")
-    private String jobParameters;
+    @NotNull
+    private Job job;
+    @NotNull
+    private Long viewId;
+    @NotNull
+    private String env;
+    @NotNull
+    private Integer position;
+    @NotNull
+    private Integer size;
 
 }

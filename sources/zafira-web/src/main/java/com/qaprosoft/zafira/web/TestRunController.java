@@ -58,6 +58,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -191,7 +192,7 @@ public class TestRunController extends AbstractController {
             TestRunSearchCriteria sc,
             @RequestParam(value = "projectNames", required = false) List<String> projectNames,
             @RequestParam(value = "filterId", required = false) Long filterId
-    ) {
+    ) throws IOException {
         return testRunService.search(sc, projectNames, filterId);
     }
 

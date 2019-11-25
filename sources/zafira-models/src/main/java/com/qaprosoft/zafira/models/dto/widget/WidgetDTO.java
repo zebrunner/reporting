@@ -13,32 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.dto;
+package com.qaprosoft.zafira.models.dto.widget;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.qaprosoft.zafira.models.dto.AbstractType;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.List;
+import javax.validation.Valid;
 
 @Getter
 @Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class ScannedRepoLaunchersType implements Serializable {
+public class WidgetDTO extends AbstractType {
 
-    private static final long serialVersionUID = -5754742673797369219L;
+    private static final long serialVersionUID = -8163778207543974125L;
 
-    @NotEmpty
-    private String repo;
+    @NotEmpty(message = "{error.title.required}")
+    private String title;
 
-    @NotNull
-    @Min(1)
-    private Long userId;
-    private List<JenkinsLauncherType> jenkinsLaunchers;
-    private boolean success;
+    private String description;
+    private String paramsConfig;
+    private String legendConfig;
+
+    @Valid
+    private WidgetTemplateDTO widgetTemplate;
+
+    private boolean refreshable;
+    private String type;
+    private Integer size;
+    private Integer position;
+    private String location;
+    private String sql;
+    private String model;
 
 }

@@ -23,7 +23,7 @@ apply from: 'dependencies.gradle'
 repositories {
     mavenLocal()
     maven {
-        url = 'http://repo.maven.apache.org/maven2'
+        url = 'https://repo.maven.apache.org/maven2'
     }
 }
 
@@ -36,7 +36,7 @@ subprojects {
     repositories {
         mavenLocal()
         maven {
-            url = 'http://repo.maven.apache.org/maven2'
+            url = 'https://repo.maven.apache.org/maven2'
         }
     }
 

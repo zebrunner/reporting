@@ -1063,7 +1063,7 @@ SELECT
 </#function>', '{
     "grid": {
         "right": "4%",
-        "left": "4%",
+        "left": "6%",
         "top": "8%",
         "bottom": "8%"
     },
@@ -2874,7 +2874,7 @@ INSERT INTO WIDGET_TEMPLATES (ID, NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PA
   ${WHERE_MULTIPLE_CLAUSE}
   GROUP BY "PROJECT", "TEST METHOD"
   <#if PERIOD == "Monthly" || PERIOD = "Total">
-    HAVING AVG(STABILITY) < ${PERCENT}
+    HAVING AVG(STABILITY) <= ${PERCENT}
   <#else>
     HAVING ROUND(SUM(PASSED)/SUM(TOTAL)*100) <= ${PERCENT}
   </#if>

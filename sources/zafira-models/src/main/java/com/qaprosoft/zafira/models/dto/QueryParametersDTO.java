@@ -13,40 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.dto.config;
+package com.qaprosoft.zafira.models.dto;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Map;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "key", "value" })
-public class ArgumentType implements Serializable {
+public class QueryParametersDTO implements Serializable {
 
-    private static final long serialVersionUID = 4556102912902781429L;
+    private static final long serialVersionUID = 5765973760872185602L;
 
-    @XmlElement(required = true)
-    protected String key;
+    @NotNull
+    @Min(1)
+    private Long templateId;
 
-    @XmlAttribute(name = "unique")
-    protected boolean unique;
-
-    @XmlElement(required = true)
-    protected String value;
-
-    public ArgumentType(String key, String value) {
-        this.key = key;
-        this.value = value;
-    }
+    private Map<String, Object> paramsConfig;
 
 }

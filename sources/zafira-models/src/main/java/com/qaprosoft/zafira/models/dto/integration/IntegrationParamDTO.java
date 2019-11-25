@@ -16,9 +16,13 @@
 package com.qaprosoft.zafira.models.dto.integration;
 
 import com.qaprosoft.zafira.models.dto.AbstractType;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 
+@Getter
+@Setter
 public class IntegrationParamDTO extends AbstractType {
 
     @NotNull(message = "Param name required")
@@ -28,43 +32,4 @@ public class IntegrationParamDTO extends AbstractType {
     private boolean mandatory;
     private boolean needEncryption;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(String metadata) {
-        this.metadata = metadata;
-    }
-
-    public String getDefaultValue() {
-        return defaultValue;
-    }
-
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
-    }
-
-    public boolean isMandatory() {
-        return mandatory;
-    }
-
-    public void setMandatory(boolean mandatory) {
-        this.mandatory = mandatory;
-    }
-
-    public boolean isNeedEncryption() {
-        return needEncryption;
-    }
-
-    public void setNeedEncryption(boolean needEncryption) {
-        this.needEncryption = needEncryption;
-    }
 }

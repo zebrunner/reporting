@@ -15,8 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.web;
 
-import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.service.TestRunService;
 import com.qaprosoft.zafira.service.integration.tool.impl.SlackService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
@@ -38,34 +36,26 @@ import org.springframework.web.bind.annotation.RestController;
 public class SlackController extends AbstractController {
 
     private final SlackService slackService;
-    private final TestRunService testRunService;
 
-    public SlackController(SlackService slackService, TestRunService testRunService) {
+    public SlackController(SlackService slackService) {
         this.slackService = slackService;
-        this.testRunService = testRunService;
     }
 
     @ApiResponseStatuses
     @ApiOperation(value = "Send notification on testrun review", nickname = "sendReviewNotification", httpMethod = "GET")
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping("/testrun/{id}/review")
-    public void sendOnReviewNotification(@PathVariable("id") long id) {
-        TestRun testRun = testRunService.getTestRunByIdFull(id);
-        slackService.sendStatusReviewed(testRun);
+    public void sendOnReviewNotification(@PathVariable("id") long testRunId) {
+        slackService.sendStatusReviewed(testRunId);
     }
 
     @ApiResponseStatuses
     @ApiOperation(value = "Send notification on testrun finish", nickname = "sendOnFinishNotification", httpMethod = "GET")
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping("/testrun/{ciRunId}/finish")
-    public void sendOnFinishNotification(
-            @PathVariable("ciRunId") String ciRunId,
-            @RequestParam(name = "channels", required = false) String channels
-    ) {
-        TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
-        testRun.setSlackChannels(channels);
-        testRunService.updateTestRun(testRun);
-        slackService.sendStatusOnFinish(testRun);
+    public void sendOnFinishNotification(@PathVariable("ciRunId") String ciRunId,
+                                         @RequestParam(name = "channels", required = false) String channels) {
+        slackService.sendStatusOnFinish(ciRunId, channels);
     }
 
 }

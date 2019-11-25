@@ -15,31 +15,22 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto.auth;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
-public class EmailDTO implements Serializable {
-
-    private static final long serialVersionUID = 2359053026630602599L;
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class EmailDTO {
 
     @NotNull(message = "{error.email.required}")
     @Email(message = "{error.email.invalid}")
     private String email;
 
-    public EmailDTO() {
-    }
-
-    public EmailDTO(String email) {
-        this.email = email;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 }

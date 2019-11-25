@@ -16,9 +16,13 @@
 package com.qaprosoft.zafira.models.dto.integration;
 
 import com.qaprosoft.zafira.models.dto.AbstractType;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
 public class IntegrationGroupDTO extends AbstractType {
 
     private String name;
@@ -27,43 +31,4 @@ public class IntegrationGroupDTO extends AbstractType {
     private boolean multipleAllowed;
     private List<IntegrationTypeDTO> types;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getIconUrl() {
-        return iconUrl;
-    }
-
-    public void setIconUrl(String iconUrl) {
-        this.iconUrl = iconUrl;
-    }
-
-    public boolean isMultipleAllowed() {
-        return multipleAllowed;
-    }
-
-    public void setMultipleAllowed(boolean multipleAllowed) {
-        this.multipleAllowed = multipleAllowed;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public List<IntegrationTypeDTO> getTypes() {
-        return types;
-    }
-
-    public void setTypes(List<IntegrationTypeDTO> types) {
-        this.types = types;
-    }
 }
