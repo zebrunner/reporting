@@ -7,7 +7,7 @@ DO $$
         DECLARE integration_param_id_var integration_params.id%TYPE;
         DECLARE integration_id_var integrations.id%TYPE;
 
-        DECLARE selenium_back_reference_id VARCHAR := 'selenium';
+--         DECLARE selenium_back_reference_id VARCHAR := 'selenium';
         DECLARE browserstack_back_reference_id VARCHAR := 'browserstack';
         DECLARE mcloud_back_reference_id VARCHAR := 'mcloud';
         DECLARE saucelabs_back_reference_id VARCHAR := 'saucelabs';
@@ -15,14 +15,14 @@ DO $$
 
     BEGIN
         SELECT id INTO integration_group_id_var FROM integration_groups WHERE name = 'TEST_AUTOMATION_TOOL';
-        INSERT INTO integration_types(name, display_name, icon_url, integration_group_id) VALUES ('SELENIUM', 'Selenium', '', integration_group_id_var) RETURNING id INTO integration_type_id_var;
-        INSERT INTO integrations(name, back_reference_id, is_default, enabled, integration_type_id) VALUES ('SELENIUM', selenium_back_reference_id, true, false, integration_type_id_var) RETURNING id INTO integration_id_var;
-        INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('SELENIUM_URL', true, false, integration_type_id_var) RETURNING id INTO integration_param_id_var;
-        INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
-        INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('SELENIUM_USER', false, false, integration_type_id_var) RETURNING id INTO integration_param_id_var;
-        INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
-        INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('SELENIUM_PASSWORD', false, true, integration_type_id_var) RETURNING id INTO integration_param_id_var;
-        INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
+--         INSERT INTO integration_types(name, display_name, icon_url, integration_group_id) VALUES ('SELENIUM', 'Selenium', '', integration_group_id_var) RETURNING id INTO integration_type_id_var;
+--         INSERT INTO integrations(name, back_reference_id, is_default, enabled, integration_type_id) VALUES ('SELENIUM', selenium_back_reference_id, true, false, integration_type_id_var) RETURNING id INTO integration_id_var;
+--         INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('SELENIUM_URL', true, false, integration_type_id_var) RETURNING id INTO integration_param_id_var;
+--         INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
+--         INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('SELENIUM_USER', false, false, integration_type_id_var) RETURNING id INTO integration_param_id_var;
+--         INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
+--         INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('SELENIUM_PASSWORD', false, true, integration_type_id_var) RETURNING id INTO integration_param_id_var;
+--         INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
 
         INSERT INTO integration_types(name, display_name, icon_url, integration_group_id) VALUES ('BROWSERSTACK', 'BrowserStack', '', integration_group_id_var) RETURNING id INTO integration_type_id_var;
         INSERT INTO integrations(name, back_reference_id, is_default, enabled, integration_type_id) VALUES ('BROWSERSTACK', browserstack_back_reference_id, true, false, integration_type_id_var) RETURNING id INTO integration_id_var;
