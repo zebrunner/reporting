@@ -68,7 +68,7 @@ INSERT INTO databasechangelog(
  ),
  (
      '005_add_test_environment_provider_integrations',
-     'nsidorevich',
+     'brutskov',
      'classpath:db/changelog.yml',
      current_timestamp,
      1,
