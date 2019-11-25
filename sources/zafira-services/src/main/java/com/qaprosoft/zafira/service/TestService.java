@@ -446,6 +446,7 @@ public class TestService {
 
     private void linkWorkItem(Test test, WorkItem workItemToLink) {
         Type workItemType = workItemToLink.getType();
+        updateSimilarWorkItems(workItemToLink);
         if (workItemExists(workItemToLink)) {
             WorkItem attachedWorkItem = test.getWorkItemByType(workItemType);
             if (attachedWorkItem != null) {
@@ -474,6 +475,15 @@ public class TestService {
             workItem.setHashCode(RandomUtils.nextInt());
             workItemService.updateWorkItem(workItem);
         }
+    }
+
+    private void updateSimilarWorkItems(WorkItem workItemToLink) {
+        List<WorkItem> workItems = workItemService.getWorkItemsByJiraIdAndType(workItemToLink.getJiraId(), workItemToLink.getType());
+        workItems.forEach(workItem -> {
+            workItem.setBlocker(workItemToLink.isBlocker());
+            workItem.setDescription(workItemToLink.getDescription());
+            workItemService.updateWorkItem(workItem);
+        });
     }
 
     @Transactional(rollbackFor = Exception.class)
