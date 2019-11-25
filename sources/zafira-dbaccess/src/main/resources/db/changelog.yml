@@ -65,3 +65,14 @@ databaseChangeLog:
             path: changeset/006_add_project_to_test_cases_unique_key.sql
             relativeToChangelogFile: true
             splitStatements: false
+  - changeSet:
+        id: 007_drop_tests_test_runs_fk
+        validCheckSum: ANY
+        labels: stable
+        author: nsidorevich
+        changes:
+            - sqlFile:
+                  encoding: utf8
+                  path: changeset/007_drop_tests_test_runs_fk.sql
+                  relativeToChangelogFile: true
+                  splitStatements: false
