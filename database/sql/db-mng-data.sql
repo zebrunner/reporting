@@ -3552,7 +3552,7 @@ let option = {
 }', '{
   "PERIOD": "Last 30 Days",
   "PERSONAL": "false",
-  "currentUserId": 2,
+  "currentUserId": 1,
   "PROJECT": [],
   "USER": ["anonymous"],
   "ENV": [],
