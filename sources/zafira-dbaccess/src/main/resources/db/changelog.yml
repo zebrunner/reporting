@@ -82,8 +82,8 @@ databaseChangeLog:
       labels: stable
       author: brutskov
       changes:
-          - sqlFile:
-              encoding: utf8
-              path: changeset/008_drop_message_broker_integration.sql
-              relativeToChangelogFile: true
-              splitStatements: false
+        - sqlFile:
+            encoding: utf8
+            path: changeset/008_drop_message_broker_integration.sql
+            relativeToChangelogFile: true
+            splitStatements: false
