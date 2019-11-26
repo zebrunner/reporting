@@ -33,6 +33,8 @@ spring:
     host: ${redis.host}
     port: ${redis.port}
     password: ${redis.password}
+    repositories:
+      enabled: false
   rabbitmq:
     host: ${rabbitmq.host}
     port: ${rabbitmq.port}
