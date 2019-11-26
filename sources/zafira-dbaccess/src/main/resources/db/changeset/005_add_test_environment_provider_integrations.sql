@@ -29,6 +29,19 @@ DO $$
         ELSE
         END IF;
 
+        IF NOT EXISTS(SELECT id FROM integration_types WHERE name = 'ZEBRUNNER')
+        THEN
+            INSERT INTO integration_types(name, display_name, icon_url, integration_group_id) VALUES ('ZEBRUNNER', 'Zebrunner', '', integration_group_id_var) RETURNING id INTO integration_type_id_var;
+            INSERT INTO integrations(name, back_reference_id, is_default, enabled, integration_type_id) VALUES ('ZEBRUNNER', selenium_back_reference_id, true, false, integration_type_id_var) RETURNING id INTO integration_id_var;
+            INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('ZEBRUNNER_URL', true, false, integration_type_id_var) RETURNING id INTO integration_param_id_var;
+            INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
+            INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('ZEBRUNNER_USER', false, false, integration_type_id_var) RETURNING id INTO integration_param_id_var;
+            INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
+            INSERT INTO integration_params(name, mandatory, need_encryption, integration_type_id) VALUES ('ZEBRUNNER_PASSWORD', false, true, integration_type_id_var) RETURNING id INTO integration_param_id_var;
+            INSERT INTO integration_settings(integration_id, integration_param_id) VALUES (integration_id_var, integration_param_id_var);
+        ELSE
+        END IF;
+
         IF NOT EXISTS(SELECT id FROM integration_types WHERE name = 'BROWSERSTACK')
         THEN
             INSERT INTO integration_types(name, display_name, icon_url, integration_group_id) VALUES ('BROWSERSTACK', 'BrowserStack', '', integration_group_id_var) RETURNING id INTO integration_type_id_var;
