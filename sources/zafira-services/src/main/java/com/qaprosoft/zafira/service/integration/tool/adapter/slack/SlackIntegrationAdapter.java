@@ -74,14 +74,14 @@ public class SlackIntegrationAdapter extends AbstractIntegrationAdapter implemen
 
     @Override
     public boolean isConnected() {
-        boolean result = false;
+        boolean result;
         try {
             push(null, new SlackMessage(StringUtils.EMPTY));
             result = true;
+        } catch (HttpResponseException e) {
+            result = e.getStatusCode() != HttpStatusCodes.STATUS_CODE_NOT_FOUND;
         } catch (IOException e) {
-            if (((HttpResponseException) e).getStatusCode() != HttpStatusCodes.STATUS_CODE_NOT_FOUND) {
-                result = true;
-            }
+            result = false;
         }
         return result;
     }
