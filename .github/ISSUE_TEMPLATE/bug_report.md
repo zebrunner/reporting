@@ -2,7 +2,7 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: awaiting triage, bug
+labels: 'status: pending-review, type: bug'
 assignees: ''
 
 ---
