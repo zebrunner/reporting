@@ -409,6 +409,16 @@ public class TestService {
                 .build();
     }
 
+    @Transactional()
+    public WorkItem linkWorkItem(long testId, WorkItem workItem) {
+        if (workItem.getType() == Type.BUG || workItem.getType() == Type.TASK) {
+            workItem = createOrUpdateTestWorkItem(testId, workItem);
+        } else {
+            workItem = createWorkItem(testId, workItem);
+        }
+        return workItem;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public WorkItem createOrUpdateTestWorkItem(long testId, WorkItem workItem) {
         Test test = getNotNullTestById(testId);
@@ -448,8 +458,10 @@ public class TestService {
         Type workItemType = workItemToLink.getType();
         updateSimilarWorkItems(workItemToLink);
         if (workItemExists(workItemToLink)) {
+            updateSimilarWorkItems(workItemToLink);
+
             WorkItem attachedWorkItem = test.getWorkItemByType(workItemType);
-            if (attachedWorkItem != null) {
+            if (attachedWorkItem != null && !attachedWorkItem.getId().equals(workItemToLink.getId())) {
                 unlinkWorkItem(attachedWorkItem);
                 deleteTestWorkItemByTestIdAndWorkItemType(test.getId(), workItemType);
             } else {
