@@ -35,6 +35,8 @@ import java.util.Map;
 
 public class SlackIntegrationAdapter extends AbstractIntegrationAdapter implements SlackAdapter {
 
+    private static final String ERR_MSG_SLACK_CONNECTION_IS_NOT_ESTABLISHED = "Slack connection is not established";
+
     private final static String RESULTS_PATTERN = "Passed: %d, Failed: %d, Known Issues: %d, Skipped: %d";
     private final static String INFO_PATTERN = "%1$s\n<%2$s|Open in Zafira>  |  <%3$s|Open in Jenkins>";
 
@@ -74,14 +76,16 @@ public class SlackIntegrationAdapter extends AbstractIntegrationAdapter implemen
 
     @Override
     public boolean isConnected() {
-        boolean result = false;
+        boolean result;
         try {
             push(null, new SlackMessage(StringUtils.EMPTY));
             result = true;
-        } catch (IOException e) {
-            if (((HttpResponseException) e).getStatusCode() != HttpStatusCodes.STATUS_CODE_NOT_FOUND) {
-                result = true;
-            }
+        } catch (HttpResponseException e) {
+            LOGGER.error(ERR_MSG_SLACK_CONNECTION_IS_NOT_ESTABLISHED, e);
+            result = e.getStatusCode() != HttpStatusCodes.STATUS_CODE_NOT_FOUND;
+        } catch (Exception e) {
+            LOGGER.error(ERR_MSG_SLACK_CONNECTION_IS_NOT_ESTABLISHED ,e);
+            result = false;
         }
         return result;
     }
