@@ -653,6 +653,7 @@ public class TestService {
                 testRunStatisticsService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_BLOCKER);
             }
         }
+        unlinkWorkItem(workItem);
         deleteTestWorkItemByWorkItemIdAndTest(workItemId, test);
     }
 
