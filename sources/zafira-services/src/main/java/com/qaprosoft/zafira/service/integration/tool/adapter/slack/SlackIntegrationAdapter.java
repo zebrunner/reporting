@@ -80,7 +80,7 @@ public class SlackIntegrationAdapter extends AbstractIntegrationAdapter implemen
             result = true;
         } catch (HttpResponseException e) {
             result = e.getStatusCode() != HttpStatusCodes.STATUS_CODE_NOT_FOUND;
-        } catch (IOException e) {
+        } catch (Exception e) {
             result = false;
         }
         return result;
