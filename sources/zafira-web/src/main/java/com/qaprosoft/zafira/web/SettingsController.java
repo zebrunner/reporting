@@ -18,11 +18,7 @@ package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
-import com.qaprosoft.zafira.models.entity.integration.Integration;
-import com.qaprosoft.zafira.service.CryptoService;
-import com.qaprosoft.zafira.service.ElasticsearchService;
 import com.qaprosoft.zafira.service.SettingsService;
-import com.qaprosoft.zafira.service.integration.IntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.impl.StorageProviderService;
 import com.qaprosoft.zafira.service.integration.tool.impl.google.GoogleService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
@@ -42,7 +38,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Api("Settings API")
 @CrossOrigin
@@ -51,24 +46,12 @@ import java.util.stream.Collectors;
 public class SettingsController extends AbstractController {
 
     private final SettingsService settingsService;
-    private final CryptoService cryptoService;
-    private final ElasticsearchService elasticsearchService;
-    private final IntegrationService integrationService;
 
     private final StorageProviderService storageProviderService;
     private final GoogleService googleService;
 
-    public SettingsController(
-            SettingsService settingsService,
-            CryptoService cryptoService,
-            ElasticsearchService elasticsearchService,
-            IntegrationService integrationService,
-            StorageProviderService storageProviderService, GoogleService googleService
-    ) {
+    public SettingsController(SettingsService settingsService, StorageProviderService storageProviderService, GoogleService googleService) {
         this.settingsService = settingsService;
-        this.cryptoService = cryptoService;
-        this.elasticsearchService = elasticsearchService;
-        this.integrationService = integrationService;
         this.storageProviderService = storageProviderService;
         this.googleService = googleService;
     }
@@ -79,27 +62,7 @@ public class SettingsController extends AbstractController {
     @GetMapping("tool/{tool}")
     public List<Setting> getSettingsByTool(@PathVariable("tool") String tool) {
         // TODO by nsidorevich on 2019-10-09: refactor and remove
-        if (tool.equalsIgnoreCase("ELASTICSEARCH")) {
-            return elasticsearchService.getSettings();
-        } else if (tool.equalsIgnoreCase("RABBITMQ")) {
-            Integration rabbit = integrationService.retrieveDefaultByIntegrationTypeName("RABBITMQ");
-            List<Setting> rabbitSettings =  rabbit.getSettings()
-                         .stream()
-                         .map(setting -> {
-                             if (setting.isEncrypted()) {
-                                 String decryptedValue = cryptoService.decrypt(setting.getValue());
-                                 setting.setValue(decryptedValue);
-                                 setting.setEncrypted(false);
-                             }
-                             return new Setting(setting.getParam().getName(), setting.getValue());
-                         })
-                         .collect(Collectors.toList());
-            rabbitSettings.add(new Setting("RABBITMQ_ENABLED", Boolean.toString(rabbit.isEnabled())));
-
-            return rabbitSettings;
-        } else {
-            throw new RuntimeException(String.format("Unsupported tool %s, this API should not be used for anything but ElasticSearch or Rabbit", tool));
-        }
+        return settingsService.getSystemSettings(tool);
     }
 
     @ApiResponseStatuses
