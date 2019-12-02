@@ -308,12 +308,24 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
 <#global VIEW = getView(PERIOD) />
 
 SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
-      round (100.0 * sum( PASSED ) / sum(TOTAL), 0)::integer AS "PASSED",
-      round (100.0 * sum( KNOWN_ISSUE ) / sum(TOTAL), 0)::integer AS "KNOWN ISSUE",
-      round (100.0 * sum( QUEUED) / sum(TOTAL), 0)::integer AS "QUEUED",
-      0 - round (100.0 * sum( FAILED ) / sum(TOTAL), 0)::integer AS "FAILED",
-      0 - round (100.0 * sum( SKIPPED ) / sum(TOTAL), 0)::integer AS "SKIPPED",
-      0 - round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED"
+      CASE 
+        WHEN sum( PASSED ) != 0 THEN sum( PASSED )
+      END AS "PASSED",
+      CASE 
+        WHEN sum( KNOWN_ISSUE ) != 0 THEN sum( KNOWN_ISSUE ) 
+      END AS "KNOWN ISSUE",
+      CASE 
+        WHEN sum( QUEUED ) != 0 THEN sum( QUEUED ) 
+      END AS "QUEUED",
+      CASE 
+        WHEN sum( FAILED ) != 0 THEN 0 - sum( FAILED )
+      END AS "FAILED",
+      CASE 
+        WHEN sum( SKIPPED ) != 0 THEN  0 - sum( SKIPPED ) 
+      END AS "SKIPPED",
+      CASE 
+        WHEN sum( ABORTED ) != 0 THEN 0 - sum( ABORTED ) 
+      END AS "ABORTED"
   FROM ${VIEW}
   ${WHERE_MULTIPLE_CLAUSE}
   GROUP BY "GROUP_FIELD"
@@ -418,122 +430,186 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
   -->
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', '{
-    "tooltip": {
-        "trigger": "axis",
-        "axisPointer": {
-            "type": "shadow"
-        }
+</#function>', 'setTimeout( function() {
+  
+  const dimensions = ["GROUP_FIELD","PASSED","FAILED","SKIPPED","KNOWN ISSUE","QUEUED","ABORTED"];
+  let note = true;
+  
+  const createSource = () => {
+    let source = [];
+    let amount = dataset.length;
+    for (let i = 0; i < amount; i++) {
+      let sourceData = [];
+      dimensions.forEach((value, index) => sourceData.push(dataset[i][value]));
+      source.push(sourceData);
+    }
+    return source;
+  };
+  
+  let numberDataSource = createSource();
+  let percentDataSource = [];
+  
+  const createPercentSource = (value, total) => {
+    let temporaryArr = [];
+    value.map( a => {
+      if (typeof a === "number")  a = Math.round(100 * a / total , 0);
+			temporaryArr.push(a);
+    });
+    percentDataSource.push(temporaryArr);
+  };
+
+  numberDataSource.forEach((value) => {
+    let total = 0;
+    value.map( a => {
+      if (typeof a === "number") total += a > 0 ? a : a * -1
+    });
+    createPercentSource(value, total);
+  });
+  
+  let option = {
+    title: {
+      text: "Note: click on bar to show absolute numbers",
+      textStyle: {
+        color: "grey",
+        fontWeight: "100",
+        fontSize: 14
+      },
+      right: "5%",
+      top: "94%"
     },
-    "legend": {
-        "data": [
-            "PASSED",
-            "FAILED",
-            "SKIPPED",
-            "KNOWN ISSUE",
-            "QUEUED",
-            "ABORTED"
-        ]
-    },
-    "grid": {
-        "left": "5%",
-        "right": "5%",
-        "bottom": "3%",
-        "containLabel": true
-    },
-    "xAxis": [
-        {
-            "type": "value"
+      tooltip: {
+        trigger: "axis",
+        axisPointer: {
+          type: "shadow"
         }
-    ],
-    "yAxis": [
-        {
-            "type": "category",
-            "axisTick": {
-                "show": false
-            }
-        }
-    ],
-    "color": [
+      },
+      legend: {},
+      grid: {
+        show: true,
+        top: 40,
+        left: "5%",
+        right: "5%",
+        bottom: 20,
+        containLabel: true
+      },
+      xAxis: [{
+          type: "value"
+        }],
+      yAxis: [{
+          type: "category",
+          axisTick: {
+            show: false
+          }
+        }],
+      color: [
         "#61c8b3",
         "#e76a77",
         "#fddb7a",
         "#9f5487",
         "#6dbbe7",
         "#b5b5b5"
-    ],
-    "dimensions": [
-        "GROUP_FIELD",
-        "PASSED",
-        "FAILED",
-        "SKIPPED",
-        "KNOWN ISSUE",
-        "QUEUED",
-        "ABORTED"
-    ],
-    "series": [
+      ],
+      dataset: {
+        source: percentDataSource
+      },
+      dimensions: dimensions,
+      series: [
         {
-            "type": "bar",
-            "stack": "stack",
-            "label": {
-                "normal": {
-                    "show": true,
-                    "position": "inside"
-                }
+          type: "bar",
+          name: "PASSED",
+          stack: "stack",
+          label: {
+            normal: {
+              show: true,
+              position: "inside",
+              formatter: (params) => `${params.value[1]}${note ? "%": ""}`
             }
+          }
         },
         {
-            "type": "bar",
-            "stack": "stack",
-            "label": {
-                "normal": {
-                    "show": true,
-                    "position": "left"
-                }
+          type: "bar",
+          name: "FAILED",
+          stack: "stack",
+          label: {
+            normal: {
+                show: true,
+                position: "inside",
+                formatter: (params) => `${params.value[2]}${note ? "%": ""}`
             }
+          }
         },
         {
-            "type": "bar",
-            "stack": "stack",
-            "label": {
-                "normal": {
-                    "show": true,
-                    "position": "left"
-                }
+          type: "bar",
+          name: "SKIPPED",
+          stack: "stack",
+          label: {
+            normal: {
+                show: true,
+                position: "inside",
+                formatter: (params) => `${params.value[3]}${note ? "%": ""}`
             }
+          }
         },
         {
-            "type": "bar",
-            "stack": "stack",
-            "label": {
-                "normal": {
-                    "show": true,
-                    "position": "inside"
-                }
+          type: "bar",
+          name: "KNOWN ISSUE",
+          stack: "stack",
+          label: {
+            normal: {
+                show: true,
+                position: "inside",
+                formatter: (params) => `${params.value[4]}${note ? "%": ""}`
             }
+          }
         },
         {
-            "type": "bar",
-            "stack": "stack",
-            "label": {
-                "normal": {
-                    "show": true,
-                    "position": "inside"
-                }
+          type: "bar",
+          name: "QUEUED",
+          stack: "stack",
+          label: {
+            normal: {
+                show: true,
+                position: "inside",
+                formatter: (params) => `${params.value[5]}${note ? "%": ""}`
             }
+          }
         },
         {
-            "type": "bar",
-            "stack": "stack",
-            "label": {
-                "normal": {
-                    "show": true,
-                    "position": "left"
-                }
+          type: "bar",
+          name: "ABORTED",
+          stack: "stack",
+          label: {
+            normal: {
+                show: true,
+                position:"left",
+                formatter: (params) => `${params.value[6]}${note ? "%": ""}`
             }
+          }
         }
-    ]
-}', '{
+      ]
+  };
+
+  const changeValue = (text, source) => {
+    chart.setOption({
+      dataset: {
+        source: source
+      },
+      title: { 
+        text: text
+      }
+    });
+  };
+  
+  chart.on("click", function (event) {
+    let text = `Note: click on bar to show ${!note ? "absolute numbers" : "numbers in percent"}`;
+    note = !note
+    if (!note) changeValue(text, numberDataSource);
+    else changeValue(text, percentDataSource);
+  });
+
+  chart.setOption(option);
+  angular.element($window).on("resize", onResize);
+}, 1000)', '{
   "PERIOD": {
     "values": [
       "Last 24 Hours",
