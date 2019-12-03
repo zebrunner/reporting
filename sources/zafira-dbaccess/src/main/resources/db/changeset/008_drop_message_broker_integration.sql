@@ -9,7 +9,7 @@ DO $$
 
         FOR integration_type_row IN SELECT * FROM integration_types WHERE integration_group_id = integration_group_id_var
             LOOP
-                FOR integration_param_row IN SELECT * FROM integration_params WHERE integration_type_id = integration_type_row.id
+                FOR integration_param_row IN SELECT * FROM zafira.integration_params WHERE integration_type_id = integration_type_row.id
                     LOOP
                         DELETE FROM integration_settings WHERE integration_param_id = integration_param_row.id;
                     END LOOP;
