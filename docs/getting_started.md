@@ -1,13 +1,13 @@
 # Getting started
 
-#### Prerequesties
-The easiest way to deploy Zafira is to use [Docker](https://docs.docker.com/). You will find all the details for installation of [Docker Engine](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/) in official documentation. Docker allows to install Zafira on Linux, Mac or Windows. Make sure that you have allocated at least 2 CPUs and 4Gb or RAM for Docker operations.
+#### Prerequisites
+The easiest way to deploy Zafira is to use [Docker](https://docs.docker.com/). You will find all the details for installation of [Docker Engine](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/) in the official documentation. Docker allows to install Zafira on Linux, Mac or Windows. Make sure that you have allocated at least 2 CPUs and 4Gb or RAM for Docker operations.
 
 <p align="center">
   <img width="650px" height="550px" src="../img/docker.png">
 </p>
 
-Before running Zafira, verify that following ports are not binded:
+Before running Zafira, verify that the following ports are not binded:
 
 * 8080  (Tomcat)
 * 5433  (PostgresDB)
@@ -24,7 +24,7 @@ Before running Zafira, verify that following ports are not binded:
 $ git clone https://github.com/qaprosoft/zafira.git
 ```
 
-* If you are planning to access Zafira remotely you will need to modify **docker-compose.yml** specifying appropriate IP address of your host:
+* If you are planning to access Zafira remotely, you will need to modify **docker-compose.yml** specifying the appropriate IP address of your host:
 ```
 environment:
   - ZAFIRA_URL=http://localhost:8080
