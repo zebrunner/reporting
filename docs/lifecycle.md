@@ -1,13 +1,13 @@
 # Lifecycle
 
-Schema below illustrates general test run flow that should be followed for new listeners implmentation:
+The schema below illustrates a general test run flow that should be followed to implement new listeners:
 <p align="center">
   <img width="700px" height="600px" src="../img/lifecycle.png">
 </p>
 
 ---
 
-### Step 1: Refresh token
+### Step 1: Refresh a token
 
 **POST: /zafira-ws/api/auth/refresh**
 
@@ -19,7 +19,7 @@ Schema below illustrates general test run flow that should be followed for new l
 ```
 |Field|Datatype|Description|
 |:---:|:------:|:---------:|
-|refreshToken|String|token obtained by generation|
+|refreshToken|String|Token obtained by generation|
 
 **Response**
 ```json
@@ -35,13 +35,13 @@ Schema below illustrates general test run flow that should be followed for new l
 |:--------:|:----------:|:----------:|
 |type| String   | Type of authorization |
 |accessToken| String   |  Refreshed token we need for headers |
-|expiresIn| int   | Expiration time of new token|
+|expiresIn| int   | Expiration time of a new token|
 |refreshToken| String   | Token |
 |tenant|String|Tenant name|
 
 ---
 
-### Step 2: Get user profile
+### Step 2: Get a user profile
 
 **GET: /zafira-ws/api/users/profile?username={username}**
 
@@ -81,12 +81,12 @@ None
 |id| int   | Unique user identifier |
 |username| String   | Credentials |
 |password| String   | Credentials|
-|roles| String array   | user roles("ROLE_ADMIN", "ROLE_ADMIN", "ROLE_SUPERADMIN") |
+|roles| String array   | User roles ("ROLE_ADMIN", "ROLE_ADMIN", "ROLE_SUPERADMIN") |
 |permissions|Object List   | List of user permissions |
 |preferences|Object List   | List of user preferences |
-|lastLogin|Date   | Date of users last login |
+|lastLogin|Date   | Date of a user's last login |
 |source|Object   | "INTERNAL", "LDAP" |
-|status|Object   | Logged in or not("ACTIVE","INACTIVE") |
+|status|Object   | Logged in or not ("ACTIVE","INACTIVE") |
 
 ---
 
@@ -190,7 +190,7 @@ None
 |jobId| int   |  Unique job identifier |
 |testSuiteId| int   | Unique test suite identifier  |
 |buildNumber| int   | Build number|
-|startedBy| String   | One of the values : "SCHEDULER", "UPSTREAM_JOB", "HUMAN" |
+|startedBy| String   | One of the values: "SCHEDULER", "UPSTREAM_JOB", "HUMAN" |
 
 **Response**
 ```json
@@ -215,7 +215,7 @@ None
 |testSuiteId| int   | Unique test suite identifier |
 |buildNumber| int   | Build number |
 |blocker| bool   | Unexpected behavior that keeps you from performing all test case steps |
-|knownIssue| bool   | Failing reason in ticket|
+|knownIssue| bool   | Failing reason in a ticket|
 |reviewed|bool| Shows whether a test has been reviewed |
 |status| String   | Test run status ("UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED", "QUEUED") |
 
@@ -238,9 +238,9 @@ None
 ```
 |Field   | Datatype | Description |
 |:--------:|:----------:|:----------:|
-|primaryOwnerId| int   | Unique identifier of test case creator |
-|testClass| String   | Name of test class |
-|testMethod| String   | Name of test method|
+|primaryOwnerId| int   | Unique identifier of a test case creator |
+|testClass| String   | Name of the test class |
+|testMethod| String   | Name of the test method|
 |testSuiteId| int   | Unique test suite identifier |
 
 **Response**
@@ -255,10 +255,10 @@ None
 ```
 |Field   | Datatype | Description |
 |:--------:|:----------:|:----------:|
-|id| int   | Unique identifier of test case|
-|primaryOwnerId| int   | Unique identifier of test case creator |
-|testClass| String   | Name of test class  |
-|testMethod| String   | Name of test method |
+|id| int   | Unique identifier of a test case|
+|primaryOwnerId| int   | Unique identifier of a test case creator |
+|testClass| String   | Name of the test class  |
+|testMethod| String   | Name of the test method |
 |testSuiteId| int   | Unique test suite identifier |
 
 ---
@@ -281,7 +281,7 @@ None
 |Field   | Datatype | Description |
 |:--------:|:----------:|:----------:|
 |testRunId| int   | Unique test run identifier |
-|testCaseId| int   | Unique identifier of test case |
+|testCaseId| int   | Unique identifier of a test case |
 |name|String| Test name  |
 |status|String| Test run status ("UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED", "QUEUED")  |
 
@@ -306,12 +306,12 @@ None
 |name|String|Test name |
 |status|String|Test run status ("UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED", "QUEUED")  |
 |testRunId| int   | Unique test run identifier|
-|testCaseId| int   |  Unique identifier of test case |
-|retry|int| Shows the count the test ran |
-|knownIssue| bool   | Failing reason in ticket |
+|testCaseId| int   |  Unique identifier of a test case |
+|retry|int| Shows the count a test ran |
+|knownIssue| bool   | Failing reason in a ticket |
 |blocker| bool   | Unexpected behavior that keeps you from performing all test case steps  |
-|needRerun|bool| Flag that indicates whether a reran is needed |
-|artifacts| Object array| List of test artifacts(logs, screenshots etc) |
+|needRerun|bool| Flag that indicates whether a rerun is needed |
+|artifacts| Object array| List of test artifacts (logs, screenshots etc) |
 
 ---
 
@@ -342,12 +342,12 @@ None
 |name|String| Test name |
 |status|String| Test run status ("UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED", "QUEUED") |
 |testRunId| int   | Unique test run identifier |
-|testCaseId| int   |  Unique identifier of test case|
-|retry|int| Shows the count the test ran |
-|knownIssue| bool   | Failing reason in ticket   |
+|testCaseId| int   |  Unique identifier of a test case|
+|retry|int| Shows the count a test ran |
+|knownIssue| bool   | Failing reason in a ticket   |
 |blocker| bool   | Unexpected behavior that keeps you from performing all test case steps  |
-|needRerun|bool| Flag that indicates whether a reran is needed |
-|artifacts|Object array| List of test artifacts(logs, screenshots etc)|
+|needRerun|bool| Flag that indicates whether a rerun is needed |
+|artifacts|Object array| List of test artifacts (logs, screenshots etc)|
 
 **Response**
 ```json
@@ -370,12 +370,12 @@ None
 |name|String|Test name |
 |status|String| Test run status ("UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED", "QUEUED") |
 |testRunId| int   | Unique test run identifier|
-|testCaseId| int   | Unique identifier of test case|
-|retry|int| Shows the count the test ran|
-|knownIssue| bool   |Failing reason in ticket |
+|testCaseId| int   | Unique identifier of a test case|
+|retry|int| Shows the count a test ran|
+|knownIssue| bool   |Failing reason in a ticket |
 |blocker| bool   |Unexpected behavior that keeps you from performing all test case steps |
-|needRerun|bool| Flag that indicates whether a reran is needed |
-|artifacts|Object array| List of test artifacts(logs, screenshots etc)|
+|needRerun|bool| Flag that indicates whether a rerun is needed |
+|artifacts|Object array| List of test artifacts (logs, screenshots etc)|
 
 ---
 
@@ -411,7 +411,7 @@ None
 |status| String   | Test run status ("UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED", "QUEUED")|
 |jobId| int   | Job id|
 |buildNumber| int   | Build number |
-|startedBy|String| One of the values : "SCHEDULER", "UPSTREAM_JOB", "HUMAN"|
-|knownIssue| bool   | Failing reason in ticket|
+|startedBy|String| One of the values: "SCHEDULER", "UPSTREAM_JOB", "HUMAN"|
+|knownIssue| bool   | Failing reason in a ticket|
 |blocker| bool   |Unexpected behavior that keeps you from performing all test case steps |
 |reviewed|bool| Shows whether a test has been reviewed|
