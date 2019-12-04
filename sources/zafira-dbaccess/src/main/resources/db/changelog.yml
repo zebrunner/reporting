@@ -76,3 +76,14 @@ databaseChangeLog:
             path: changeset/007_drop_tests_test_runs_fk.sql
             relativeToChangelogFile: true
             splitStatements: false
+  - changeSet:
+      id: 008_add_autovacuum
+      validCheckSum: ANY
+      labels: stable
+      author: brutskov
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/008_add_autovacuum.sql
+            relativeToChangelogFile: true
+            splitStatements: false
