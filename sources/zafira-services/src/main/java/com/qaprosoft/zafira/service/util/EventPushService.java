@@ -16,14 +16,13 @@
 package com.qaprosoft.zafira.service.util;
 
 import com.qaprosoft.zafira.models.push.events.EventMessage;
+import com.qaprosoft.zafira.service.integration.tool.impl.MessageBrokerService;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessagePostProcessor;
-import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 @Component
 public class EventPushService<T extends EventMessage> {
@@ -32,12 +31,12 @@ public class EventPushService<T extends EventMessage> {
     private static final String SUPPLIER_QUEUE_NAME_HEADER = "SUPPLIER_QUEUE";
 
     private final RabbitTemplate rabbitTemplate;
-    private final Map<String, Queue> queues;
+    private final MessageBrokerService messageBrokerService;
 
     public EventPushService(RabbitTemplate rabbitTemplate,
-                            Map<String, Queue> queues) {
+                            @Lazy MessageBrokerService messageBrokerService) {
         this.rabbitTemplate = rabbitTemplate;
-        this.queues = queues;
+        this.messageBrokerService = messageBrokerService;
     }
 
     public enum Type {
@@ -79,23 +78,19 @@ public class EventPushService<T extends EventMessage> {
 
     private MessagePostProcessor setSupplierQueueNameHeader() {
         return message -> {
-            message.getMessageProperties().getHeaders().putIfAbsent(SUPPLIER_QUEUE_NAME_HEADER, getSettingQueueName());
+            message.getMessageProperties().getHeaders().putIfAbsent(SUPPLIER_QUEUE_NAME_HEADER, messageBrokerService.getSettingQueueName());
             return message;
         };
     }
 
 
     public boolean isSettingQueueConsumer(Message message) {
-        return getSettingQueueName().equals(getSupplierQueueNameHeader(message));
+        return messageBrokerService.getSettingQueueName().equals(getSupplierQueueNameHeader(message));
     }
 
     private String getSupplierQueueNameHeader(Message message) {
         Object supplier =  message.getMessageProperties().getHeaders().get(SUPPLIER_QUEUE_NAME_HEADER);
         return supplier != null ? message.getMessageProperties().getHeaders().get(SUPPLIER_QUEUE_NAME_HEADER).toString() : null;
-    }
-
-    private String getSettingQueueName() {
-        return queues.get("settingsQueue").getName();
     }
 
 }
