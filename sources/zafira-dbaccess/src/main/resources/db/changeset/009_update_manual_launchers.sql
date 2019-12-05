@@ -9,6 +9,7 @@ WHERE NAME = 'Carina WEB';
 UPDATE LAUNCHERS
 SET TYPE  = 'api',
     MODEL = '{
+               "platform":"API",
                "branch":"master",
                "suite":"api"
             }'
