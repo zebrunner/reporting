@@ -19,11 +19,11 @@ The upper bar of the window holds several icons with the actions that could be p
 
 1. Click on the arrow icon in the upper-right corner of the window:
 
-<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/01-01.jpg?raw=true" alt="" width="900" />
+<img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/dashboards_2.jpg?raw=true" alt="" width="900" />
 
 2. The following pop-up would appear:
 
-<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/06-01.jpg?raw=true" alt="" width="700" />
+<img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/dashboards_3.jpg?raw=true" alt="" width="500" />
 
 3. “Name” and “Text” fields are filled by default, the text is changeable. Fill in the “Recipients” field (unlimited number of emails per time), and press the “Send” button.
 
@@ -31,13 +31,13 @@ The upper bar of the window holds several icons with the actions that could be p
 
 5. Email view of the General Dashboards page:
 
-<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_dashboards%20via%20email_sent.png?raw=true" alt="" width="900" />
+<img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/dashboards_4.png?raw=true" alt="" width="900" />
 
 #### Working with widgets
 
 To change the widget placement / resize the widget, click on the “Widgets” icon in the upper-right corner of the window:
 
-<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/04-01.jpg?raw=true" alt="" width="900" />
+<img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/dashboards_5.jpg?raw=true" alt="" width="900" />
 
 In this mode, the size of all widgets can be changed (the arrows at every corner of the widget - the same principle as system windows):
 
