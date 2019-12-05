@@ -4,7 +4,7 @@
 By default, it accumulates 4 widgets - 30 days total, 30 days pass rate by platform, 30 days test details, and 30 days tests trend.
 Later on, all the other added widgets would also be displayed there:
 
-<img src="../img/dashboards_1.jpg" alt="" width="900" />
+<img src="../img/dashboards_1.png" alt="" width="900" />
 
 The upper bar of the window holds several icons with the actions that could be performed with the dashboard and its widgets:
 
