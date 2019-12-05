@@ -174,21 +174,15 @@ public class TestController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Create or update test work item", nickname = "createOrUpdateTestWorkItem", httpMethod = "POST", response = WorkItem.class)
+    @ApiOperation(value = "Link test work item", nickname = "linkWorkItem", httpMethod = "POST", response = WorkItem.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/{id}/workitem")
-    public WorkItem createOrUpdateTestWorkItem(
-            @ApiParam(value = "Test ID", required = true) @PathVariable("id") long id,
-            @RequestBody WorkItem workItem
-    ) {
+    public WorkItem linkWorkItem(@PathVariable("id") long id, @RequestBody WorkItem workItem) {
         if (getPrincipalId() > 0) {
             workItem.setUser(new User(getPrincipalId()));
         }
-        if (workItem.getType() == Type.BUG || workItem.getType() == Type.TASK) {
-            workItem = testService.createOrUpdateTestWorkItem(id, workItem);
-        } else {
-            workItem = testService.createWorkItem(id, workItem);
-        }
+
+        workItem = testService.linkWorkItem(id, workItem);
 
         Test test = testService.getTestById(id);
         TestRunStatistics testRunStatistic = statisticsService.getTestRunStatistic(test.getTestRunId());

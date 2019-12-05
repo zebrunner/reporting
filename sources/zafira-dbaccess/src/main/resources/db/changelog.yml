@@ -66,13 +66,35 @@ databaseChangeLog:
             relativeToChangelogFile: true
             splitStatements: false
   - changeSet:
-        id: 007_drop_tests_test_runs_fk
-        validCheckSum: ANY
-        labels: stable
-        author: nsidorevich
-        changes:
-            - sqlFile:
-                  encoding: utf8
-                  path: changeset/007_drop_tests_test_runs_fk.sql
-                  relativeToChangelogFile: true
-                  splitStatements: false
+      id: 007_drop_tests_test_runs_fk
+      validCheckSum: ANY
+      labels: stable
+      author: nsidorevich
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/007_drop_tests_test_runs_fk.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+  - changeSet:
+      id: 008_add_autovacuum
+      validCheckSum: ANY
+      labels: stable
+      author: brutskov
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/008_add_autovacuum.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+  - changeSet:
+      id: 009_update_manual_launchers
+      validCheckSum: ANY
+      labels: stable
+      author: itsvirko
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/009_update_manual_launchers.sql
+            relativeToChangelogFile: true
+            splitStatements: false

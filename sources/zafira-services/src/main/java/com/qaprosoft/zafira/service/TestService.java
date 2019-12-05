@@ -29,6 +29,7 @@ import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.service.exception.IllegalOperationException;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import com.qaprosoft.zafira.service.integration.tool.impl.TestCaseManagementService;
 import org.apache.commons.lang.StringUtils;
@@ -51,10 +52,13 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import static com.qaprosoft.zafira.models.db.Status.FAILED;
 import static com.qaprosoft.zafira.models.db.Status.QUEUED;
+import static com.qaprosoft.zafira.models.db.Status.SKIPPED;
 import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_BLOCKER;
 import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_KNOWN_ISSUE;
 import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.REMOVE_BLOCKER;
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.WORK_ITEM_CAN_NOT_BE_ATTACHED;
 import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_NOT_FOUND;
 
 @Service
@@ -63,6 +67,8 @@ public class TestService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestService.class);
 
     private static final String ERR_MSG_TEST_NOT_FOUND = "Test with id %s can not be found";
+    private static final String ERR_MSG_KNOWN_ISSUE_TEST_STATUS= "Known issue cannot be attached to test with status '%s'";
+
     private static final String INV_COUNT = "InvCount";
     private static final List<String> SELENIUM_ERRORS = List.of(
             "org.openqa.selenium.remote.UnreachableBrowserException",
@@ -216,7 +222,7 @@ public class TestService {
             }
 
             // Resolve known issues
-            if (Status.FAILED.equals(test.getStatus())) {
+            if (FAILED.equals(test.getStatus())) {
                 int testMessageHashCode = getTestMessageHashCode(test.getMessage());
 
                 WorkItem knownIssue = workItemService.getWorkItemByTestCaseIdAndHashCode(testCaseId, testMessageHashCode);
@@ -290,10 +296,10 @@ public class TestService {
 
     @Transactional(rollbackFor = Exception.class)
     public Test skipTest(Test test) {
-        test.setStatus(Status.SKIPPED);
+        test.setStatus(SKIPPED);
         updateTest(test);
 
-        testRunStatisticsService.updateStatistics(test.getTestRunId(), Status.SKIPPED);
+        testRunStatisticsService.updateStatistics(test.getTestRunId(), SKIPPED);
         return test;
     }
 
@@ -409,11 +415,25 @@ public class TestService {
                 .build();
     }
 
+    @Transactional()
+    public WorkItem linkWorkItem(long testId, WorkItem workItem) {
+        if (workItem.getType() == Type.BUG || workItem.getType() == Type.TASK) {
+            workItem = createOrUpdateTestWorkItem(testId, workItem);
+        } else {
+            workItem = createWorkItem(testId, workItem);
+        }
+        return workItem;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public WorkItem createOrUpdateTestWorkItem(long testId, WorkItem workItem) {
         Test test = getNotNullTestById(testId);
 
         if (Type.BUG.equals(workItem.getType())) {
+            if (!Arrays.asList(FAILED, SKIPPED).contains(test.getStatus())) {
+                throw new IllegalOperationException(WORK_ITEM_CAN_NOT_BE_ATTACHED, String.format(ERR_MSG_KNOWN_ISSUE_TEST_STATUS, test.getStatus()));
+            }
+
             updateStatisticsOnWorkItemCreate(test, workItem);
 
             int messageHashCode = getTestMessageHashCode(test.getMessage());
@@ -446,9 +466,12 @@ public class TestService {
 
     private void linkWorkItem(Test test, WorkItem workItemToLink) {
         Type workItemType = workItemToLink.getType();
+        updateSimilarWorkItems(workItemToLink);
         if (workItemExists(workItemToLink)) {
+            updateSimilarWorkItems(workItemToLink);
+
             WorkItem attachedWorkItem = test.getWorkItemByType(workItemType);
-            if (attachedWorkItem != null) {
+            if (attachedWorkItem != null && !attachedWorkItem.getId().equals(workItemToLink.getId())) {
                 unlinkWorkItem(attachedWorkItem);
                 deleteTestWorkItemByTestIdAndWorkItemType(test.getId(), workItemType);
             } else {
@@ -474,6 +497,15 @@ public class TestService {
             workItem.setHashCode(RandomUtils.nextInt());
             workItemService.updateWorkItem(workItem);
         }
+    }
+
+    private void updateSimilarWorkItems(WorkItem workItemToLink) {
+        List<WorkItem> workItems = workItemService.getWorkItemsByJiraIdAndType(workItemToLink.getJiraId(), workItemToLink.getType());
+        workItems.forEach(workItem -> {
+            workItem.setBlocker(workItemToLink.isBlocker());
+            workItem.setDescription(workItemToLink.getDescription());
+            workItemService.updateWorkItem(workItem);
+        });
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -553,7 +585,7 @@ public class TestService {
 
             Set<Long> testCasesToRerun = new HashSet<>();
             for (Test test : tests) {
-                boolean isTestFailed = Arrays.asList(Status.FAILED, Status.SKIPPED).contains(test.getStatus()) && !test.isKnownIssue();
+                boolean isTestFailed = Arrays.asList(FAILED, SKIPPED).contains(test.getStatus()) && !test.isKnownIssue();
                 boolean isTestAborted = test.getStatus().equals(Status.ABORTED);
                 boolean isTestQueued = test.getStatus().equals(Status.QUEUED);
                 if (isTestFailed || isTestAborted || isTestQueued) {
@@ -631,6 +663,7 @@ public class TestService {
                 testRunStatisticsService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_BLOCKER);
             }
         }
+        unlinkWorkItem(workItem);
         deleteTestWorkItemByWorkItemIdAndTest(workItemId, test);
     }
 

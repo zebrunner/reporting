@@ -1,8 +1,8 @@
 ---
-name: Feature request
+name: Enhancement request
 about: Suggest an idea for Zafira
 title: ''
-labels: enhancement
+labels: 'status: pending-review, type: enhancement'
 assignees: ''
 
 ---
