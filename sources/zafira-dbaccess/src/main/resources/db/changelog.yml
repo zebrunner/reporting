@@ -87,3 +87,14 @@ databaseChangeLog:
             path: changeset/008_add_autovacuum.sql
             relativeToChangelogFile: true
             splitStatements: false
+  - changeSet:
+      id: 009_update_manual_launchers
+      validCheckSum: ANY
+      labels: stable
+      author: itsvirko
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/009_update_manual_launchers.sql
+            relativeToChangelogFile: true
+            splitStatements: false
