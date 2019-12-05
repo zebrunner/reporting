@@ -475,7 +475,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
     let total = getTotalValue(params.value);
     let controlValue = params.value[index] * 100 / total;
     controlValue = controlValue > 0 ? controlValue : controlValue * -1;
-    if (controlValue > 3) return `${params.value[index]}${plus ? "%" : ""}`;
+    if (controlValue > 5) return `${params.value[index]}${plus ? "%" : ""}`;
     else return '';
   };
   
