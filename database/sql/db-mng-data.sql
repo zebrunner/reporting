@@ -458,13 +458,26 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
     percentDataSource.push(temporaryArr);
   };
 
-  numberDataSource.forEach((value) => {
+  getTotalValue = (value) => {
     let total = 0;
     value.map( a => {
       if (typeof a === "number") total += a > 0 ? a : a * -1
     });
+    return total;
+  };
+  
+  numberDataSource.forEach((value) => {
+    let total = getTotalValue(value);
     createPercentSource(value, total);
   });
+  
+  formatterFunc = (params, index, plus) => {
+    let total = getTotalValue(params.value);
+    let controlValue = params.value[index] * 100 / total;
+    controlValue = controlValue > 0 ? controlValue : controlValue * -1;
+    if (controlValue > 5) return `${params.value[index]}${plus ? "%" : ""}`;
+    else return '';
+  };
   
   let option = {
     title: {
@@ -522,7 +535,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
             normal: {
               show: true,
               position: "inside",
-              formatter: (params) => `${params.value[1]}${note ? "%": ""}`
+              formatter: (params) => formatterFunc(params, 1, note)
             }
           }
         },
@@ -534,7 +547,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
             normal: {
                 show: true,
                 position: "inside",
-                formatter: (params) => `${params.value[2]}${note ? "%": ""}`
+                formatter: (params) => formatterFunc(params, 2, note)
             }
           }
         },
@@ -546,7 +559,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
             normal: {
                 show: true,
                 position: "inside",
-                formatter: (params) => `${params.value[3]}${note ? "%": ""}`
+                formatter: (params) => formatterFunc(params, 3, note)
             }
           }
         },
@@ -558,7 +571,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
             normal: {
                 show: true,
                 position: "inside",
-                formatter: (params) => `${params.value[4]}${note ? "%": ""}`
+                formatter: (params) => formatterFunc(params, 4, note)
             }
           }
         },
@@ -570,7 +583,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
             normal: {
                 show: true,
                 position: "inside",
-                formatter: (params) => `${params.value[5]}${note ? "%": ""}`
+                formatter: (params) => formatterFunc(params, 5, note)
             }
           }
         },
@@ -582,7 +595,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
             normal: {
                 show: true,
                 position:"left",
-                formatter: (params) => `${params.value[6]}${note ? "%": ""}`
+                formatter: (params) => formatterFunc(params, 6, note)
             }
           }
         }
