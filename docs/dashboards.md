@@ -136,7 +136,7 @@ Create the name for the dashboard, choose whether it would be hidden or seen to 
 
 #### Search panel
 
-<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_dashboards_search.png?raw=true" alt="" width="50" />
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_dashboards_search.png?raw=true" alt="" width="150" />
 
 The search criteria:
 
