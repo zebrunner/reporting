@@ -1,14 +1,14 @@
 ## Dashboards
 
-  General is the main page that will be displayed by default when you open Zebrunner.
+  General is the main page that is displayed when you open Zebrunner.
 By default, it accumulates 4 widgets - 30 days total, 30 days pass rate by platform, 30 days test details, and 30 days tests trend.
-Later on, all the other added widgets would also be displayed there:
+Later on, all the added widgets will also be displayed there:
 
 <img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/dashboards_1.png?raw=true" alt="" width="900" />
 
-The upper bar of the window holds several icons with the actions that could be performed with the dashboard and its widgets:
+The upper bar of the window holds several icons with the actions that can be performed with the dashboard and its widgets:
 
-* Sending the dashboard by email
+* Sending the dashboard via email
 * Widget placement / resizing / rearrangement
 * Dashboard editing
 * Adding new widget to the dashboard
@@ -25,9 +25,9 @@ The upper bar of the window holds several icons with the actions that could be p
 
 <img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/dashboards_3.jpg?raw=true" alt="" width="500" />
 
-3. “Name” and “Text” fields are filled by default, the text is changeable. Fill in the “Recipients” field (unlimited number of emails per time), and press the “Send” button.
+3. “**Name**” and “**Text**” fields are filled by default, the text is changeable. Fill in the “**Recipients**” field (unlimited number of emails per time), and press the “**Send**” button.
 
-4. Pop-up message “Email was successfully sent” would appear in the lower-right corner of the window
+4. Pop-up message “**Email was successfully sent**” would appear in the lower-right corner of the window.
 
 5. Email view of the General Dashboards page:
 
@@ -35,33 +35,35 @@ The upper bar of the window holds several icons with the actions that could be p
 
 #### Working with widgets
 
-To change the widget placement / resize the widget, click on the “Widgets” icon in the upper-right corner of the window:
+To change the widget placement or to resize the widget, click on the “**Widgets**” icon in the upper-right corner of the window:
 
 <img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/dashboards_5.jpg?raw=true" alt="" width="900" />
 
-In this mode, the size of all widgets can be changed (the arrows at every corner of the widget - the same principle as system windows):
+In this mode, the size of all widgets can be changed (the arrows in the lower corners of the widget - the same principle as with the system windows):
 
 <img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/dashboards_6.jpg?raw=true" alt="" width="500" />
 
-All the widgets on a dashboard could be arranged the way you prefer using the drag and drop method.
+All the widgets on the dashboard could be arranged the way you prefer using the drag and drop method:
 <img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/widget%20placement_resize.gif?raw=true" alt="" width="900" />
 
-Once all the necessary changes are done, click on “Apply” button in the upper-right corner of the page:
+Once all the necessary changes are done, click on the “**Apply**” button in the upper-right corner of the page:
 <img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_widgets_actions_apply-cancel.jpeg?raw=true" alt="" width="900" />
 
-If you’ve changed your mind, click on **“Cancel”** button. The last saved version of the Widgets set and placement will be displayed.
+If you’ve changed your mind, click on the “**Cancel**” button. The last saved version of the Widgets set and placement will be displayed.
+
+#### Widgets
 
 Widgets are grouped into dashboards.
 
-There are two types of widgets: default and custom. You can choose between the 14 types of pre-configured widgets or 11 types of configurable templates.
+There are two types of widgets: default and custom. You can choose between 14 types of pre-configured widgets or 11 types of configurable templates.
 
 #### To create a new widget, perform the following steps:
 
-1. Navigate to the "Dashboards" page (a.k.a “General”) and click "+ NEW WIDGET" button in the top-right corner of the page:
+1. Navigate to the "**Dashboards**" page (a.k.a “General”) and click the "**+ NEW WIDGET**" button in the top-right corner of the page:
 
 <img src="https://github.com/APGorobets/mkdocks1/blob/master/images/04-01.jpg?raw=true" alt="" width="900" />
 
-2. The “Choose widget” pop-up would appear, where you can choose one or several of the following configurable templates:
+2. The “**Choose widget**” pop-up would appear, where you can choose one or several of the following configurable templates:
  
 <img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr-widgets-2.png?raw=true" alt="" width="500" />
  
@@ -99,11 +101,11 @@ There are two types of widgets: default and custom. You can choose between the 1
 * Personal total tests (man-hours) (Monthly personal automation ROI by tests execution. 160+hours for UI tests indicates that your execution ROI…….)
 * Total personal tests trend (Totally consolidated personal tests status trend)
 
-3. You can add an unlimited quantity of widgets to the dashboard.
-To add the widget, click on it, and when you’ve chosen all the widgets you need, click the «Add» button.
+3. You can add an unlimited number of widgets to the dashboard.
+To add the widget, click on it, and when have selected all the widgets you need, click the "**Add**" button.
 
-4. If you’ve changed your mind and don’t want to add one or several of the already chosen widgets, click on the three dots/additional options/menu icon and choose «Delete», all the selected items will be deleted.
-When you’ve added a widget to the dashboard, it would be marked with the word «Added» and the tick:
+4. If you’ve changed your mind and don’t want to add one or several of the already selected widgets, click on the additional options menu icon and choose "**Delete**", all the selected elements will be deleted.
+When you’ve added a widget to the dashboard, it would be marked with the word "**Added**" and the tick and a checkmark:
 
 <img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr-widgets-17.png?raw=true" alt="" width="500" />
 
@@ -118,13 +120,14 @@ To edit the dashboard, click on the pencil icon in the upper-right corner of the
 The following pop-up will appear:
 <img src="https://github.com/APGorobets/mkdocks1/blob/master/images/edit_dashboards_popup.jpeg?raw=true" alt="" width="700" />
 
-Fill in the *Key* and *Value* fields and click on **“Save”** button.
+Fill in the *Key* and *Value* fields and click the "**Save**" button.
 
-*Please, note that neither the name of the General dashboard nor **“Hidden”** status cannot be changed - they are set by default. These options are available for custom dashboards. **(Permissions here)***
+*Please, note that neither the name of the General dashboard nor "**Hidden**" status cannot be changed - they are set by default. These options are available for custom dashboards. **(Permissions here)***
+
 
 #### Creating a new dashboard
 
-To create a new dashboard, navigate to the side menu and click on the “Dashboards” icon and then on the “+Add dashboard” button:
+To create a new dashboard, navigate to the side menu and click on the “**Dashboards**” icon and then on the “**+Add dashboard**" button:
 
 <img src="https://github.com/APGorobets/mkdocks1/blob/master/images/05-01.jpg?raw=true" alt="" width="900" />
 
@@ -132,15 +135,15 @@ The following pop-up will appear:
 
 <img src="https://github.com/APGorobets/mkdocks1/blob/master/images/new_dashboad_popup.jpeg?raw=true" alt="" width="700" />
 
-Create the name for the dashboard, choose whether it would be hidden or seen to other users (incl. admins), and press **“Create”** button.
+Create the name for the dashboard, choose whether it would be hidden or seen to other users (including admins), and click the "**Create**" button.
 
 #### Search panel
 
 <img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_dashboards_search.png?raw=true" alt="" width="150" />
 
-The search criteria:
+Search criteria:
 
-* Name of the dashboard
+* The name/part of the name of the dashboard
 
 The list of default Dashboards (with widgets):
 
@@ -149,6 +152,8 @@ The list of default Dashboards (with widgets):
   + 7 days/ 30 days personal
   + 30 days tests personal trend
   + Last 24 hours personal + failures
+  
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_dashboards_personal_filled.png?raw=true" alt="" width="900" />
 
 * Failures Analysis
   + Last 24 hours failure count
@@ -165,5 +170,3 @@ The list of default Dashboards (with widgets):
   + Testcase info
   + Test Case Stability Trend (%)
   + Test Case Duration Details (Sec)
-
-<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_dashboards_personal_filled.png?raw=true" alt="" width="900" />
