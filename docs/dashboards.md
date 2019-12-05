@@ -41,7 +41,7 @@ To change the widget placement / resize the widget, click on the “Widgets” i
 
 In this mode, the size of all widgets can be changed (the arrows at every corner of the widget - the same principle as system windows):
 
-<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_dashboards_widget_changesize.jpeg?raw=true" alt="" width="500" />
+<img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/dashboards_6.jpg?raw=true" alt="" width="500" />
 
 All the widgets on a dashboard could be arranged the way you prefer using the drag and drop method.
 <img src="https://github.com/APGorobets/mkdocks1/blob/master/images/dashboards-overview.gif?raw=true" alt="" width="900" />
