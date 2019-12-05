@@ -44,7 +44,7 @@ In this mode, the size of all widgets can be changed (the arrows at every corner
 <img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/dashboards_6.jpg?raw=true" alt="" width="500" />
 
 All the widgets on a dashboard could be arranged the way you prefer using the drag and drop method.
-<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/dashboards-overview.gif?raw=true" alt="" width="900" />
+<img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/widget%20placement_resize.gif?raw=true" alt="" width="900" />
 
 Once all the necessary changes are done, click on “Apply” button in the upper-right corner of the page:
 <img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_widgets_actions_apply-cancel.jpeg?raw=true" alt="" width="900" />
