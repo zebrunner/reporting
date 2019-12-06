@@ -191,7 +191,7 @@ UPDATE WIDGET_TEMPLATES SET CHART_CONFIG='setTimeout( function() {
     let controlValue = params.value[index] * 100 / total;
     controlValue = controlValue > 0 ? controlValue : controlValue * -1;
     if (controlValue > 5) return `${params.value[index]}${plus ? "%" : ""}`;
-    else return '';
+    else return "";
   };
   
   let option = {
