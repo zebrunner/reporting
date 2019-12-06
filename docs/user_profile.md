@@ -2,7 +2,7 @@
 
 A personal user’s profile with some settings subject to change: first, last name & password. 
 
-![alt text](https://github.com/APGorobets/mkdocks1/blob/master/images/zbrn-userprofile-1.png?raw=true)
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrn-userprofile-1.png?raw=true" alt="" width="500" />
 
 #### 1. Profile picture and permissions status
 The user can set/change the profile picture by clicking on it:
