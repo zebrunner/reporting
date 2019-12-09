@@ -3,7 +3,6 @@
   General is the main page that is displayed when you open Zebrunner.
 
 By default, it accumulates 4 widgets - 30 days total, 30 days pass rate by platform, 30 days test details, and 30 days tests trend.
-Later on, all the added widgets will also be displayed there:
 
 <img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/dashboards_1.png?raw=true" alt="" width="900" />
 
@@ -14,9 +13,9 @@ The upper bar of the window holds several icons with the actions that can be per
 * Dashboard editing
 * Adding new widget to the dashboard
 
-#### Sending dashboards via email 
+#### Sending the dashboard via email 
 
-##### To send the current dashboard via email:
+**To send the current dashboard via email:**
 
 1. Click on the arrow icon in the upper-right corner of the window:
 
@@ -40,7 +39,7 @@ To change the widget placement or to resize the widget, click on the “**Widget
 
 <img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/dashboards_5.jpg?raw=true" alt="" width="900" />
 
-In this mode, the size of all widgets can be changed (the arrows in the lower corners of the widget - the same principle as with the system windows):
+In this mode, the size of all the widgets can be changed (the arrows in the lower corners of the widget - the same principle as with the system windows):
 
 <img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/dashboards_6.jpg?raw=true" alt="" width="500" />
 
@@ -50,21 +49,22 @@ All the widgets on the dashboard could be arranged the way you prefer using the 
 Once all the necessary changes are done, click on the “**Apply**” button in the upper-right corner of the page:
 <img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_widgets_actions_apply-cancel.jpeg?raw=true" alt="" width="900" />
 
-If you’ve changed your mind, click on the “**Cancel**” button. The last saved version of the Widgets set and placement will be displayed.
+If you’ve changed your mind, click on the “**Cancel**” button. The last saved version of the widgets set and placement will be displayed.
 
-#### Widgets
+#### Working with widgets
 
-Widgets are grouped into dashboards.
+Widgets are grouped into the dashboards.
 
 There are two types of widgets: default and custom. You can choose between 14 types of pre-configured widgets or 11 types of configurable templates.
 
-#### To create a new widget, perform the following steps:
+###### Creating a new widget
+To create a new widget perform the following steps:
 
-1. Navigate to the "**Dashboards**" page (a.k.a “General”) and click the "**+ NEW WIDGET**" button in the top-right corner of the page:
+1. Navigate to the "**Dashboards**" (a.k.a “General”) page and click the "**+ NEW WIDGET**" button in the top-right corner of the page:
 
 <img src="https://github.com/APGorobets/mkdocks1/blob/master/images/04-01.jpg?raw=true" alt="" width="900" />
 
-2. The “**Choose widget**” pop-up would appear, where you can choose one or several of the following configurable templates:
+2. The “**Choose template**” pop-up would appear, where you can choose one or several of the following configurable templates:
  
 <img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr-widgets-2.png?raw=true" alt="" width="500" />
  
@@ -82,7 +82,7 @@ There are two types of widgets: default and custom. You can choose between 14 ty
 * Tests failures by reason (Summarized information about test failures grouped by reason)
 * Tests summary (Detailed information about passed, failed, skipped, etc. tests)
 
-##### **OR choose from various existing widgets**
+or choose from various existing widgets:
 
 <img src="https://github.com/APGorobets/mkdocks1/blob/master/images/choose_widget_1.jpg?raw=true" alt="" width="500" />
 
@@ -103,7 +103,7 @@ There are two types of widgets: default and custom. You can choose between 14 ty
 * Total personal tests trend (Totally consolidated personal tests status trend)
 
 3. You can add an unlimited number of widgets to the dashboard.
-To add the widget, click on it, and when have selected all the widgets you need, click the "**Add**" button.
+To add the widget, click on it, and when you have selected all the widgets you need, click the "**Add**" button.
 
 4. If you’ve changed your mind and don’t want to add one or several of the already selected widgets, click on the additional options menu icon and choose "**Delete**", all the selected elements will be deleted.
 When you’ve added a widget to the dashboard, it would be marked with the word "**Added**" and the tick and a checkmark:
@@ -123,12 +123,12 @@ The following pop-up will appear:
 
 Fill in the *Key* and *Value* fields and click the "**Save**" button.
 
-*Please, note that neither the name of the General dashboard nor "**Hidden**" status cannot be changed - they are set by default. These options are available for custom dashboards. **(Permissions here)***
+*Please, note that neither the name of the General dashboard nor "**Hidden**" status off cannot be changed - they are set by default. These options are available for custom dashboards. **(Permissions here)***
 
 
 #### Creating a new dashboard
 
-To create a new dashboard, navigate to the side menu and click on the “**Dashboards**” icon and then on the “**+Add dashboard**" button:
+To create a new dashboard, navigate to the sidebar menu and click on the “**Dashboards**” icon and then on the “**+Add dashboard**" button:
 
 <img src="https://github.com/APGorobets/mkdocks1/blob/master/images/05-01.jpg?raw=true" alt="" width="900" />
 
@@ -136,7 +136,7 @@ The following pop-up will appear:
 
 <img src="https://github.com/APGorobets/mkdocks1/blob/master/images/new_dashboad_popup.jpeg?raw=true" alt="" width="700" />
 
-Create the name for the dashboard, choose whether it would be hidden or seen to other users (including admins), and click the "**Create**" button.
+Create the name for the dashboard, choose whether it would be hidden or seen to other users, and click the "**Create**" button.
 
 #### Search panel
 
@@ -144,7 +144,7 @@ Create the name for the dashboard, choose whether it would be hidden or seen to 
 
 Search criteria:
 
-* The name/part of the name of the dashboard
+* The name/a part of the name of the dashboard
 
 The list of default Dashboards (with widgets):
 
