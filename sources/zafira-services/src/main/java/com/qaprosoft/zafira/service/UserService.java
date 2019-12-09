@@ -197,6 +197,15 @@ public class UserService implements TenancyDbInitial {
         return user;
     }
 
+    @CacheEvict(value = "users", condition = "#user.id != null", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #user.id")
+    @Transactional(rollbackFor = Exception.class)
+    public User updateUserProfile(User user) {
+        User dbUser = getNotNullUserById(user.getId());
+        dbUser.setFirstName(user.getFirstName());
+        dbUser.setLastName(user.getLastName());
+        return updateUser(dbUser);
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public void updateUserPassword(Long userId, String oldPassword, String password, boolean forceUpdate) {
         User user = getNotNullUserById(userId);
