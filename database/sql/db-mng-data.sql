@@ -1149,39 +1149,41 @@ SELECT
   -->
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', '{
+</#function>', 'let option = {
     "grid": {
         "right": "4%",
-        "left": "6%",
+        "left": "8%",
         "top": "8%",
         "bottom": "8%"
     },
     "legend": {},
     "tooltip": {
-        "trigger": "axis"
+        "trigger": "axis",
+        "extraCssText": "transform: translateZ(0);"
     },
-    "dimensions": [
-        "CREATED_AT",
-        "PASSED",
-        "FAILED",
-        "SKIPPED",
-        "KNOWN ISSUE",
-        "ABORTED",
-        "QUEUED"
-    ],
     "color": [
-        "#61c8b3",
         "#e76a77",
+        "#6dbbe7",
         "#fddb7a",
-        "#9f5487",
         "#b5b5b5",
-        "#6dbbe7"
+        "#61c8b3",
+        "#9f5487"
     ],
     "xAxis": {
         "type": "category",
         "boundaryGap": false
     },
-    "yAxis": {},
+    "yAxis": {
+      axisLabel : {
+        formatter: (value) => {
+          if(value == 0) return value
+          if(value >= 1000000000) return `${(value/1000000).toFixed(2)}B`
+          else if(value >= 1000000) return `${(value/1000000).toFixed(2)}M`
+          else if (value >= 1000) return `${(value/1000).toFixed(2)}K`
+          else return value
+        }
+      }
+    },
     "series": [
         {
             "type": "line",
@@ -1280,7 +1282,20 @@ SELECT
             }
         }
     ]
-}', '{
+}
+
+window.onresize = function(event) {
+  optimizeGrid(event.target);
+};
+
+function optimizeGrid(window) {
+  const leftCorner = chart.getWidth() < 700 ? "10%" : "4%";
+  option.grid.left = leftCorner;
+  chart.setOption(option);
+};
+
+optimizeGrid(window);
+chart.setOption(option);', '{
     "PERIOD": {
     "values": [
       "Last 24 Hours",
