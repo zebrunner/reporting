@@ -33,7 +33,35 @@ The upper bar of the window holds several icons with the actions that can be per
 
 <img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/dashboards_4.png?raw=true" alt="" width="900" />
 
-#### Working with widgets
+#### Editing the dashboard
+
+To edit the dashboard, click on the pencil icon in the upper-right corner of the window:
+
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/03-01.jpg?raw=true" alt="" width="900" />
+
+
+The following pop-up will appear:
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/edit_dashboards_popup.jpeg?raw=true" alt="" width="700" />
+
+Fill in the *Key* and *Value* fields and click the "**Save**" button.
+
+*Please, note that neither the name of the General dashboard nor "**Hidden**" status off cannot be changed - they are set by default. These options are available for custom dashboards. **(Permissions here)***
+
+
+#### Creating a new dashboard
+
+To create a new dashboard, navigate to the sidebar menu and click on the “**Dashboards**” icon and then on the “**+Add dashboard**" button:
+
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/05-01.jpg?raw=true" alt="" width="900" />
+
+The following pop-up will appear:
+
+<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/new_dashboad_popup.jpeg?raw=true" alt="" width="700" />
+
+Create the name for the dashboard, choose whether it would be hidden or seen to other users, and click the "**Create**" button.
+
+
+## Working with widgets
 
 To change the widget placement or to resize the widget, click on the “**Widgets**” icon in the upper-right corner of the window:
 
@@ -51,13 +79,11 @@ Once all the necessary changes are done, click on the “**Apply**” button in 
 
 If you’ve changed your mind, click on the “**Cancel**” button. The last saved version of the widgets set and placement will be displayed.
 
-#### Working with widgets
-
 Widgets are grouped into the dashboards.
 
 There are two types of widgets: default and custom. You can choose between 14 types of pre-configured widgets or 11 types of configurable templates.
 
-###### Creating a new widget
+#### Creating a new widget
 To create a new widget perform the following steps:
 
 1. Navigate to the "**Dashboards**" (a.k.a “General”) page and click the "**+ NEW WIDGET**" button in the top-right corner of the page:
@@ -110,35 +136,7 @@ When you’ve added a widget to the dashboard, it would be marked with the word 
 
 <img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr-widgets-17.png?raw=true" alt="" width="500" />
 
-
-#### Editing the dashboard
-
-To edit the dashboard, click on the pencil icon in the upper-right corner of the window:
-
-<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/03-01.jpg?raw=true" alt="" width="900" />
-
-
-The following pop-up will appear:
-<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/edit_dashboards_popup.jpeg?raw=true" alt="" width="700" />
-
-Fill in the *Key* and *Value* fields and click the "**Save**" button.
-
-*Please, note that neither the name of the General dashboard nor "**Hidden**" status off cannot be changed - they are set by default. These options are available for custom dashboards. **(Permissions here)***
-
-
-#### Creating a new dashboard
-
-To create a new dashboard, navigate to the sidebar menu and click on the “**Dashboards**” icon and then on the “**+Add dashboard**" button:
-
-<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/05-01.jpg?raw=true" alt="" width="900" />
-
-The following pop-up will appear:
-
-<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/new_dashboad_popup.jpeg?raw=true" alt="" width="700" />
-
-Create the name for the dashboard, choose whether it would be hidden or seen to other users, and click the "**Create**" button.
-
-#### Search panel
+## Search panel
 
 <img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_dashboards_search.png?raw=true" alt="" width="150" />
 
