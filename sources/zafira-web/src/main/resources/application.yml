@@ -33,8 +33,6 @@ spring:
     host: ${redis.host}
     port: ${redis.port}
     password: ${redis.password}
-    repositories:
-      enabled: false
   rabbitmq:
     host: ${rabbitmq.host}
     port: ${rabbitmq.port}
@@ -59,7 +57,9 @@ spring:
   autoconfigure:
     # since Boot detects liquibase library on classpath it'll try to supply autoconfigured datasource
     # however for Zafira we do not use datasource autoconfiguration that's why need to disable this
-    exclude: org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
+    exclude:
+      - org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
 
 ### Logging configuration. See logback.xml for more
 logging:
