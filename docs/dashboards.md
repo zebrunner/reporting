@@ -4,7 +4,7 @@
 
 By default, it accumulates 4 widgets - 30 days total, 30 days pass rate by platform, 30 days test details, and 30 days tests trend.
 
-<img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/dashboards_1.png?raw=true" alt="" width="900" />
+<img src="../img/dashboards/dashboards_1.png" alt="" width="900" />
 
 The upper bar of the window holds several icons with the actions that can be performed with the dashboard and its widgets:
 
@@ -19,11 +19,11 @@ To send the current dashboard via email:
 
 1. Click on the arrow icon in the upper-right corner of the window:
 
-<img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/dashboards_2.jpg?raw=true" alt="" width="900" />
+<img src="../img/dashboards/dashboards_2.png" alt="" width="900" />
 
 2. The following pop-up would appear:
 
-<img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/dashboards_3.jpg?raw=true" alt="" width="500" />
+<img src="../img/dashboards/dashboards_3.png" alt="" width="500" />
 
 3. “**Name**” and “**Text**” fields are filled by default, the text is changeable. Fill in the “**Recipients**” field (unlimited number of emails per time), and press the “**Send**” button.
 
@@ -31,7 +31,7 @@ To send the current dashboard via email:
 
 5. Email view of the General Dashboards page:
 
-<img src="https://github.com/qaprosoft/zafira/blob/develop/docs/img/dashboards_4.png?raw=true" alt="" width="900" />
+<img src="../img/dashboards/dashboards_4.png" alt="" width="900" />
 
 #### Editing the dashboard
 
