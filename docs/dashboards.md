@@ -92,9 +92,7 @@ To create a new widget perform the following steps:
 
 2. The “**Choose template**” pop-up would appear, where you can choose one or several of the following configurable templates:
  
-<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr-widgets-2.png?raw=true" alt="" width="500" />
- 
-<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr-widgets-3.png?raw=true" alt="" width="500" />
+ <img src="../img/dashboards/zbrnnr_dashboards_choose_templates.png" alt="" width="500" />
 
 * Application issues (blockers) count (A number of unique application bugs discovered and submitted by automation)
 * Application issues (blocker) details (Detailed information about known issues and blockers)
@@ -110,9 +108,7 @@ To create a new widget perform the following steps:
 
 or choose from various existing widgets:
 
-<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/choose_widget_1.jpg?raw=true" alt="" width="500" />
-
-<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/choose_widgets_2.jpg?raw=true" alt="" width="500" />
+ <img src="../img/dashboards/zbrnnr_dashboards_choose_widgets.png" alt="" width="500" />
 
 * 30 days pass rate by platform (%) (Pass rate by platform (%))
 * 30 days test details (Detailed information about passed, failed, skipped, etc. tests for the last 30 days)
