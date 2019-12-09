@@ -152,7 +152,7 @@ The list of default Dashboards (with widgets):
   + 30 days tests personal trend
   + Last 24 hours personal + failures
   
-<img src="https://github.com/APGorobets/mkdocks1/blob/master/images/zbrnnr_dashboards_personal_filled.png?raw=true" alt="" width="900" />
+<img src="../img/dashboards/zbrnnr_dashboards_personal_filled.png"> alt="" width="900" />
 
 * Failures Analysis
   + Last 24 hours failure count
