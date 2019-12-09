@@ -3647,14 +3647,14 @@ let option = {
 
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTS FAILURES STATISTIC', 'Shows all test cases with failures count per appropriate period and possibility to view detailed information for each test.', 'TABLE', ' <#global IGNORE_TOTAL_PARAMS = ["DEVICE", "APP_VERSION", "LOCALE", "LANGUAGE", "JOB_NAME", "PARENT_JOB", "PARENT_BUILD"] >
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTS FAILURES BY SUITE', 'Shows all test cases with failures count per appropriate period and possibility to view detailed information for each suite/test.', 'TABLE', '<#global IGNORE_TOTAL_PARAMS = ["DEVICE", "APP_VERSION", "LOCALE", "LANGUAGE", "JOB_NAME", "PARENT_JOB", "PARENT_BUILD"] >
 <#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
 
 <#global MULTIPLE_VALUES = {
   "PROJECT": multiJoin(PROJECT, projects),
   "OWNER_USERNAME": join(USER),
   "ENV": join(ENV),
-  "TEST_SUITE_NAME": join(TEST_SUITE_NAME),
+  "TEST_SUITE_FILE": join(TEST_SUITE_FILE),
   "PRIORITY": join(PRIORITY),
   "FEATURE": join(FEATURE),
   "LOWER(PLATFORM)": join(PLATFORM),
@@ -3667,23 +3667,17 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
 <#global VIEW = getView(PERIOD) />
 
   SELECT 
-      count(*) as "FAILURES COUNT",
-      JOB_NAME AS "SUITE",
-      TEST_CLASS as "CLASS",
-      ''<a href="dashboards/'' || (select ID from dashboards where title=''Failures analysis'') || ''?hashcode='' || max(MESSAGE_HASHCODE)  || ''">Failures Analysis</a>'' AS "REPORT",
-      STABILITY_URL as "NAME"
+      TEST_SUITE_FILE AS "SUITE",
+      TEST_METHOD_NAME AS "NAME",
+      --STABILITY_URL as "NAME",
+      SUM(FAILED) AS "FAILURES COUNT",
+      SUM(TOTAL) AS "TOTAL COUNT",
+      ROUND(SUM(FAILED)*100/COUNT(*)) AS "FAILURE %"
     FROM ${VIEW}
-    INNER JOIN tests ON ${VIEW}.test_run_id = tests.test_run_id
-    INNER JOIN test_cases ON  tests.test_case_id = test_cases.id
     ${WHERE_MULTIPLE_CLAUSE}
-    AND tests.status LIKE ''FAILED''
-    <#if GROUP_BY="OWNER_USERNAME" >
-      GROUP BY OWNER_ID, OWNER_USERNAME, STABILITY_URL, JOB_NAME, TEST_CLASS
-    <#elseif GROUP_BY="TEST_SUITE_NAME">
-      GROUP BY TEST_SUITE_NAME, STABILITY_URL, JOB_NAME, TEST_CLASS
-    <#elseif GROUP_BY="APP_VERSION">
-      GROUP BY APP_VERSION, JOB_NAME, TEST_CLASS, STABILITY_URL
-    </#if>
+    GROUP BY TEST_SUITE_FILE, TEST_METHOD_NAME--, STABILITY_URL
+    HAVING SUM(FAILED) > 0
+
     
 <#--
     Generates WHERE clause for multiple choosen parameters
@@ -3795,9 +3789,8 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   -->
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>
-', '{"columns": ["SUITE", "CLASS", "NAME", "FAILURES COUN", "REPORT"]}', '{
-  "PERIOD": {
+</#function>', '{"columns": ["SUITE", "NAME", "FAILURES COUNT", "TOTAL COUNT", "FAILURE %"]}', '{
+    "PERIOD": {
     "values": [
       "Last 24 Hours",
       "Last 7 Days",
@@ -3805,7 +3798,8 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
       "Last 30 Days",
       "Nightly",
       "Weekly",
-      "Monthly"
+      "Monthly",
+      "Total"
       ],
     "required": true
   },
@@ -3817,20 +3811,13 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     "required": true,
     "type": "radio"
   },
-  "GROUP_BY": {
-    "values": [
-      "OWNER_USERNAME",
-      "TEST_SUITE_NAME",
-      "APP_VERSION"
-      ],
+  "TEST_SUITE_FILE": {
+    "valuesQuery": "SELECT DISTINCT(FILE_NAME) FROM TEST_SUITES WHERE FILE_NAME IS NOT NULL AND FILE_NAME <> '' ORDER BY 1;",
+    "multiple": true,
     "required": true
-  },
+  },  
   "PROJECT": {
     "valuesQuery": "SELECT NAME FROM PROJECTS WHERE NAME <> '' ORDER BY 1;",
-    "multiple": true
-  },
-  "TEST_SUITE_NAME": {
-    "valuesQuery": "SELECT TEST_SUITE_NAME FROM LAST30DAYS_VIEW GROUP BY TEST_SUITE_NAME ORDER BY 1;",
     "multiple": true
   },
   "PLATFORM": {
@@ -3887,10 +3874,10 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     "required": false
   }
 }', '{
-  "PERIOD": "Last 30 Days",
+  "PERIOD": "Last 7 Days",
   "PERSONAL": "false",
-  "GROUP_BY": "",
-  "TEST_SUITE_NAME":[],
+  "GROUP_BY": "TEST_SUITE_NAME",
+  "TEST_SUITE_FILE":[],
   "currentUserId": 1,
   "PROJECT": [],
   "USER": ["anonymous"],
@@ -3905,4 +3892,4 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "JOB_NAME": "",
   "PARENT_JOB": "",
   "PARENT_BUILD": ""
-  }', false);
+}', false);
