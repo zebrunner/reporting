@@ -9,12 +9,11 @@ pages:
     - Dashboards: dashboards.md
     - Test runs: test_runs.md
     - User management: user_management.md
-    - Release notes: releases.md
     - User profile: user_profile.md
     - User groups: user_groups.md
     - Projects: projects.md
     - Registration: registration.md
-
+    - Release notes: releases.md
 theme:
   name: 'material'
 repo_url: https://github.com/qaprosoft/zafira
