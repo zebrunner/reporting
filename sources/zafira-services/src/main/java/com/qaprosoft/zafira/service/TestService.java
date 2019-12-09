@@ -467,14 +467,16 @@ public class TestService {
     private void linkWorkItem(Test test, WorkItem workItemToLink) {
         Type workItemType = workItemToLink.getType();
         updateSimilarWorkItems(workItemToLink);
-        if (workItemExists(workItemToLink)) {
-            updateSimilarWorkItems(workItemToLink);
-
+        WorkItem dbWorkItem =  workItemService.getWorkItemByJiraIdAndTypeAndHashcode(workItemToLink.getJiraId(),
+                workItemToLink.getType(),
+                workItemToLink.getHashCode());
+        if (dbWorkItem != null) {
             WorkItem attachedWorkItem = test.getWorkItemByType(workItemType);
             if (attachedWorkItem != null && !attachedWorkItem.getId().equals(workItemToLink.getId())) {
                 unlinkWorkItem(attachedWorkItem);
                 deleteTestWorkItemByTestIdAndWorkItemType(test.getId(), workItemType);
             } else {
+                workItemToLink.setId(dbWorkItem.getId());
                 workItemService.updateWorkItem(workItemToLink);
             }
         } else {
@@ -482,13 +484,6 @@ public class TestService {
             deleteTestWorkItemByTestIdAndWorkItemType(test.getId(), workItemType);
         }
         testMapper.createTestWorkItem(test, workItemToLink);
-    }
-
-    private boolean workItemExists(WorkItem workItemToLink) {
-        WorkItem dbWorkItem =  workItemService.getWorkItemByJiraIdAndTypeAndHashcode(workItemToLink.getJiraId(),
-                    workItemToLink.getType(),
-                    workItemToLink.getHashCode());
-        return dbWorkItem != null;
     }
 
     private void unlinkWorkItem(WorkItem workItem) {
