@@ -15,7 +15,7 @@ The upper bar of the window holds several icons with the actions that can be per
 
 #### Sending the dashboard via email 
 
-**To send the current dashboard via email:**
+To send the current dashboard via email:
 
 1. Click on the arrow icon in the upper-right corner of the window:
 
