@@ -458,13 +458,26 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
     percentDataSource.push(temporaryArr);
   };
 
-  numberDataSource.forEach((value) => {
+  getTotalValue = (value) => {
     let total = 0;
     value.map( a => {
       if (typeof a === "number") total += a > 0 ? a : a * -1
     });
+    return total;
+  };
+  
+  numberDataSource.forEach((value) => {
+    let total = getTotalValue(value);
     createPercentSource(value, total);
   });
+  
+  formatterFunc = (params, index, plus) => {
+    let total = getTotalValue(params.value);
+    let controlValue = params.value[index] * 100 / total;
+    controlValue = controlValue > 0 ? controlValue : controlValue * -1;
+    if (controlValue > 5) return `${params.value[index]}${plus ? "%" : ""}`;
+    else return '';
+  };
   
   let option = {
     title: {
@@ -522,7 +535,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
             normal: {
               show: true,
               position: "inside",
-              formatter: (params) => `${params.value[1]}${note ? "%": ""}`
+              formatter: (params) => formatterFunc(params, 1, note)
             }
           }
         },
@@ -534,7 +547,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
             normal: {
                 show: true,
                 position: "inside",
-                formatter: (params) => `${params.value[2]}${note ? "%": ""}`
+                formatter: (params) => formatterFunc(params, 2, note)
             }
           }
         },
@@ -546,7 +559,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
             normal: {
                 show: true,
                 position: "inside",
-                formatter: (params) => `${params.value[3]}${note ? "%": ""}`
+                formatter: (params) => formatterFunc(params, 3, note)
             }
           }
         },
@@ -558,7 +571,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
             normal: {
                 show: true,
                 position: "inside",
-                formatter: (params) => `${params.value[4]}${note ? "%": ""}`
+                formatter: (params) => formatterFunc(params, 4, note)
             }
           }
         },
@@ -570,7 +583,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
             normal: {
                 show: true,
                 position: "inside",
-                formatter: (params) => `${params.value[5]}${note ? "%": ""}`
+                formatter: (params) => formatterFunc(params, 5, note)
             }
           }
         },
@@ -582,7 +595,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
             normal: {
                 show: true,
                 position:"left",
-                formatter: (params) => `${params.value[6]}${note ? "%": ""}`
+                formatter: (params) => formatterFunc(params, 6, note)
             }
           }
         }
@@ -1136,39 +1149,41 @@ SELECT
   -->
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', '{
+</#function>', 'let option = {
     "grid": {
         "right": "4%",
-        "left": "6%",
+        "left": "8%",
         "top": "8%",
         "bottom": "8%"
     },
     "legend": {},
     "tooltip": {
-        "trigger": "axis"
+        "trigger": "axis",
+        "extraCssText": "transform: translateZ(0);"
     },
-    "dimensions": [
-        "CREATED_AT",
-        "PASSED",
-        "FAILED",
-        "SKIPPED",
-        "KNOWN ISSUE",
-        "ABORTED",
-        "QUEUED"
-    ],
     "color": [
-        "#61c8b3",
         "#e76a77",
+        "#6dbbe7",
         "#fddb7a",
-        "#9f5487",
         "#b5b5b5",
-        "#6dbbe7"
+        "#61c8b3",
+        "#9f5487"
     ],
     "xAxis": {
         "type": "category",
         "boundaryGap": false
     },
-    "yAxis": {},
+    "yAxis": {
+      axisLabel : {
+        formatter: (value) => {
+          if(value == 0) return value
+          if(value >= 1000000000) return `${(value/1000000).toFixed(2)}B`
+          else if(value >= 1000000) return `${(value/1000000).toFixed(2)}M`
+          else if (value >= 1000) return `${(value/1000).toFixed(2)}K`
+          else return value
+        }
+      }
+    },
     "series": [
         {
             "type": "line",
@@ -1267,7 +1282,20 @@ SELECT
             }
         }
     ]
-}', '{
+}
+
+window.onresize = function(event) {
+  optimizeGrid(event.target);
+};
+
+function optimizeGrid(window) {
+  const leftCorner = chart.getWidth() < 700 ? "10%" : "4%";
+  option.grid.left = leftCorner;
+  chart.setOption(option);
+};
+
+optimizeGrid(window);
+chart.setOption(option);', '{
     "PERIOD": {
     "values": [
       "Last 24 Hours",
