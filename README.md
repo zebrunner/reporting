@@ -52,6 +52,10 @@ Zafira was initially designed to track automation progress of the tests written 
 </table>
 
 ## Installation steps
+
+Disclaimer: installation steps described below are not suitable for production-grade deployment and meant for development purposes primarily. If you are looking for production-ready solution to deploy in your own private cloud please see [QPS Infra](https://github.com/qaprosoft/qps-infra). Zafira is also offered as a managed Cloud service - see [zebrunner.com](https://zebrunner.com). For more info and help do not hesitate to contact us via support channels listed at the bottom of this document.
+
+---
 The only dependency Zafira requires in order to spin it up (deploy to localhost) is Docker Compose installed. More information on Docker Compose installation can be found [here](https://docs.docker.com/compose/install/). Once you'll have Docker Compose installed you'll have two options, so let's take a closer look at both of them.
 ### 1. Spinning Zafira using Qaprosoft images
 In order to install Zafira (deploy to localhost) you'll need to complete following steps:
