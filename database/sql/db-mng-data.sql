@@ -308,23 +308,23 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
 <#global VIEW = getView(PERIOD) />
 
 SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
-      CASE 
+      CASE
         WHEN sum( PASSED ) != 0 THEN sum( PASSED )
       END AS "PASSED",
-      CASE 
-        WHEN sum( KNOWN_ISSUE ) != 0 THEN sum( KNOWN_ISSUE ) 
+      CASE
+        WHEN sum( KNOWN_ISSUE ) != 0 THEN sum( KNOWN_ISSUE )
       END AS "KNOWN ISSUE",
-      CASE 
-        WHEN sum( QUEUED ) != 0 THEN sum( QUEUED ) 
+      CASE
+        WHEN sum( QUEUED ) != 0 THEN sum( QUEUED )
       END AS "QUEUED",
-      CASE 
+      CASE
         WHEN sum( FAILED ) != 0 THEN 0 - sum( FAILED )
       END AS "FAILED",
-      CASE 
-        WHEN sum( SKIPPED ) != 0 THEN  0 - sum( SKIPPED ) 
+      CASE
+        WHEN sum( SKIPPED ) != 0 THEN  0 - sum( SKIPPED )
       END AS "SKIPPED",
-      CASE 
-        WHEN sum( ABORTED ) != 0 THEN 0 - sum( ABORTED ) 
+      CASE
+        WHEN sum( ABORTED ) != 0 THEN 0 - sum( ABORTED )
       END AS "ABORTED"
   FROM ${VIEW}
   ${WHERE_MULTIPLE_CLAUSE}
@@ -431,10 +431,10 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
 </#function>', 'setTimeout( function() {
-  
+
   const dimensions = ["GROUP_FIELD","PASSED","FAILED","SKIPPED","KNOWN ISSUE","QUEUED","ABORTED"];
   let note = true;
-  
+
   const createSource = () => {
     let source = [];
     let amount = dataset.length;
@@ -445,10 +445,10 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
     }
     return source;
   };
-  
+
   let numberDataSource = createSource();
   let percentDataSource = [];
-  
+
   const createPercentSource = (value, total) => {
     let temporaryArr = [];
     value.map( a => {
@@ -465,12 +465,12 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
     });
     return total;
   };
-  
+
   numberDataSource.forEach((value) => {
     let total = getTotalValue(value);
     createPercentSource(value, total);
   });
-  
+
   formatterFunc = (params, index, plus) => {
     let total = getTotalValue(params.value);
     let controlValue = params.value[index] * 100 / total;
@@ -478,7 +478,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
     if (controlValue > 5) return `${params.value[index]}${plus ? "%" : ""}`;
     else return '';
   };
-  
+
   let option = {
     title: {
       text: "Note: click on bar to show absolute numbers",
@@ -607,12 +607,12 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
       dataset: {
         source: source
       },
-      title: { 
+      title: {
         text: text
       }
     });
   };
-  
+
   chart.on("click", function (event) {
     let text = `Note: click on bar to show ${!note ? "absolute numbers" : "numbers in percent"}`;
     note = !note
@@ -3327,7 +3327,7 @@ SELECT
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
 </#function>' , '
-setTimeout( function() { 
+setTimeout( function() {
   const created = dataset[0].CREATED_AT.toString();
   const lastCount = dataset.length - 1;
   const lastValue = dataset[lastCount].CREATED_AT.toString();
@@ -3694,7 +3694,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
 <#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
 <#global VIEW = getView(PERIOD) />
 
-  SELECT 
+  SELECT
       TEST_SUITE_FILE AS "SUITE",
       TEST_METHOD_NAME AS "NAME",
       --STABILITY_URL as "NAME",
@@ -3706,7 +3706,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     GROUP BY TEST_SUITE_FILE, TEST_METHOD_NAME--, STABILITY_URL
     HAVING SUM(FAILED) > 0
 
-    
+
 <#--
     Generates WHERE clause for multiple choosen parameters
     @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
@@ -3744,13 +3744,13 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
       <#if result?length != 0>
        <#local result = result + " AND "/>
       </#if>
-      <#local result = result + "UPSTREAM_JOB_NAME = '" + PARENT_JOB + "' AND UPSTREAM_JOB_BUILD_NUMBER = '" + PARENT_BUILD + "'"/>
+      <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "'' AND UPSTREAM_JOB_BUILD_NUMBER = ''" + PARENT_BUILD + "''"/>
     <#elseif PARENT_JOB != "" && PARENT_BUILD == "">
       <#if result?length != 0>
        <#local result = result + " AND "/>
       </#if>
-      <#local result = result + "UPSTREAM_JOB_NAME = '" + PARENT_JOB +
-        "' AND UPSTREAM_JOB_BUILD_NUMBER = (
+      <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB +
+        "'' AND UPSTREAM_JOB_BUILD_NUMBER = (
             SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
             FROM TEST_RUNS INNER JOIN
               JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
@@ -3843,7 +3843,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     "valuesQuery": "SELECT DISTINCT(FILE_NAME) FROM TEST_SUITES WHERE FILE_NAME IS NOT NULL AND FILE_NAME <> '' ORDER BY 1;",
     "multiple": true,
     "required": true
-  },  
+  },
   "PROJECT": {
     "valuesQuery": "SELECT NAME FROM PROJECTS WHERE NAME <> '' ORDER BY 1;",
     "multiple": true
