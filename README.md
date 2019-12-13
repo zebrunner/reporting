@@ -81,6 +81,8 @@ In order to install Zafira (deploy to localhost) you'll need to complete followi
 
 ```
 docker-volume create --name=pgdata
+```
+```
 docker-volume create --name=esdata
 ```
 
