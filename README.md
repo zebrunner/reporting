@@ -81,14 +81,13 @@ In order to install Zafira (deploy to localhost) you'll need to complete followi
 
 ```
 docker-volume create --name=pgdata
-```
-```
+
 docker-volume create --name=esdata
 ```
 
 5. Start services:
 ```
-docker-compose -f docker-compose-win.yaml -d
+docker-compose -f docker-compose-win.yaml up -d
 ```
     
 ### 2. Building Zafira image(s) from sources
