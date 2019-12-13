@@ -85,6 +85,6 @@ services:
       - "zafira"
 volumes:
   pgdata:
-    extenal: true
+    external: true
   esdata:
-    extenal: true
+    external: true
