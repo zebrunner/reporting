@@ -5,7 +5,7 @@ services:
     container_name: zfr_postgres
     image: qaprosoft/postgres:9.6
     volumes:
-      - ${PWD}/pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
       - ${PWD}/database/:/docker-entrypoint-initdb.d
     ports:
       - 5433:5432
@@ -39,7 +39,7 @@ services:
     container_name: zfr_elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:6.3.1
     volumes:
-      - ${PWD}/esdata:/usr/share/elasticsearch/data
+      - esdata:/usr/share/elasticsearch/data
       - ${PWD}/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     environment:
       - bootstrap.memory_lock=true
