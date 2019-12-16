@@ -65,7 +65,7 @@ public class SlackService extends AbstractIntegrationService<SlackAdapter> {
     }
 
     public void sendStatusReviewed(long testRunId) {
-        TestRun testRun = testRunService.getTestRunById(testRunId);
+        TestRun testRun = testRunService.getTestRunByIdFull(testRunId);
         String statusText = TestRunResultsEmail.buildStatusText(testRun);
         String reviewedMessage = String.format(REVIEWED_PATTERN, testRun.getId(), statusText);
         SlackAdapter adapter = getAdapterByIntegrationId(null);
