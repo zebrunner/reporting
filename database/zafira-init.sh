@@ -85,5 +85,5 @@ then
     psql --username $POSTGRES_USER -c "update zafira.integration_settings ise set value='$ZAFIRA_SAUCELABS_ENABLED' from zafira.integration_params ip where ise.integration_param_id=ip.id and ip.name='SAUCELABS_ENABLED';"
     psql --username $POSTGRES_USER -c "update zafira.integration_settings ise set value='$ZAFIRA_SAUCELABS_URL' from zafira.integration_params ip where ise.integration_param_id=ip.id and ip.name='SAUCELABS_URL';"
     psql --username $POSTGRES_USER -c "update zafira.integration_settings ise set value='$ZAFIRA_SAUCELABS_USER' from zafira.integration_params ip where ise.integration_param_id=ip.id and ip.name='SAUCELABS_USER';"
-    psql --username $POSTGRES_USER -c "update zafira.integration_settings ise set value='$ZAFIRA_SAUCELABS_PASS' from zafira.integration_params ip where ise.integration_param_id=ip.id and ip.name='SAUCELABS_PASSWORD';"
+    psql --username $POSTGRES_USER -c "update zafira.integration_settings ise set value='$ZAFIRA_SAUCELABS_PASSWORD' from zafira.integration_params ip where ise.integration_param_id=ip.id and ip.name='SAUCELABS_PASSWORD';"
 fi
