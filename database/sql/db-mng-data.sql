@@ -308,23 +308,23 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
 <#global VIEW = getView(PERIOD) />
 
 SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
-      CASE 
+      CASE
         WHEN sum( PASSED ) != 0 THEN sum( PASSED )
       END AS "PASSED",
-      CASE 
-        WHEN sum( KNOWN_ISSUE ) != 0 THEN sum( KNOWN_ISSUE ) 
+      CASE
+        WHEN sum( KNOWN_ISSUE ) != 0 THEN sum( KNOWN_ISSUE )
       END AS "KNOWN ISSUE",
-      CASE 
-        WHEN sum( QUEUED ) != 0 THEN sum( QUEUED ) 
+      CASE
+        WHEN sum( QUEUED ) != 0 THEN sum( QUEUED )
       END AS "QUEUED",
-      CASE 
+      CASE
         WHEN sum( FAILED ) != 0 THEN 0 - sum( FAILED )
       END AS "FAILED",
-      CASE 
-        WHEN sum( SKIPPED ) != 0 THEN  0 - sum( SKIPPED ) 
+      CASE
+        WHEN sum( SKIPPED ) != 0 THEN  0 - sum( SKIPPED )
       END AS "SKIPPED",
-      CASE 
-        WHEN sum( ABORTED ) != 0 THEN 0 - sum( ABORTED ) 
+      CASE
+        WHEN sum( ABORTED ) != 0 THEN 0 - sum( ABORTED )
       END AS "ABORTED"
   FROM ${VIEW}
   ${WHERE_MULTIPLE_CLAUSE}
@@ -431,10 +431,10 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
 </#function>', 'setTimeout( function() {
-  
+
   const dimensions = ["GROUP_FIELD","PASSED","FAILED","SKIPPED","KNOWN ISSUE","QUEUED","ABORTED"];
   let note = true;
-  
+
   const createSource = () => {
     let source = [];
     let amount = dataset.length;
@@ -445,10 +445,10 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
     }
     return source;
   };
-  
+
   let numberDataSource = createSource();
   let percentDataSource = [];
-  
+
   const createPercentSource = (value, total) => {
     let temporaryArr = [];
     value.map( a => {
@@ -458,14 +458,27 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
     percentDataSource.push(temporaryArr);
   };
 
-  numberDataSource.forEach((value) => {
+  getTotalValue = (value) => {
     let total = 0;
     value.map( a => {
       if (typeof a === "number") total += a > 0 ? a : a * -1
     });
+    return total;
+  };
+
+  numberDataSource.forEach((value) => {
+    let total = getTotalValue(value);
     createPercentSource(value, total);
   });
-  
+
+  formatterFunc = (params, index, plus) => {
+    let total = getTotalValue(params.value);
+    let controlValue = params.value[index] * 100 / total;
+    controlValue = controlValue > 0 ? controlValue : controlValue * -1;
+    if (controlValue > 5) return `${params.value[index]}${plus ? "%" : ""}`;
+    else return '';
+  };
+
   let option = {
     title: {
       text: "Note: click on bar to show absolute numbers",
@@ -522,7 +535,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
             normal: {
               show: true,
               position: "inside",
-              formatter: (params) => `${params.value[1]}${note ? "%": ""}`
+              formatter: (params) => formatterFunc(params, 1, note)
             }
           }
         },
@@ -534,7 +547,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
             normal: {
                 show: true,
                 position: "inside",
-                formatter: (params) => `${params.value[2]}${note ? "%": ""}`
+                formatter: (params) => formatterFunc(params, 2, note)
             }
           }
         },
@@ -546,7 +559,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
             normal: {
                 show: true,
                 position: "inside",
-                formatter: (params) => `${params.value[3]}${note ? "%": ""}`
+                formatter: (params) => formatterFunc(params, 3, note)
             }
           }
         },
@@ -558,7 +571,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
             normal: {
                 show: true,
                 position: "inside",
-                formatter: (params) => `${params.value[4]}${note ? "%": ""}`
+                formatter: (params) => formatterFunc(params, 4, note)
             }
           }
         },
@@ -570,7 +583,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
             normal: {
                 show: true,
                 position: "inside",
-                formatter: (params) => `${params.value[5]}${note ? "%": ""}`
+                formatter: (params) => formatterFunc(params, 5, note)
             }
           }
         },
@@ -582,7 +595,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
             normal: {
                 show: true,
                 position:"left",
-                formatter: (params) => `${params.value[6]}${note ? "%": ""}`
+                formatter: (params) => formatterFunc(params, 6, note)
             }
           }
         }
@@ -594,12 +607,12 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
       dataset: {
         source: source
       },
-      title: { 
+      title: {
         text: text
       }
     });
   };
-  
+
   chart.on("click", function (event) {
     let text = `Note: click on bar to show ${!note ? "absolute numbers" : "numbers in percent"}`;
     note = !note
@@ -1136,39 +1149,41 @@ SELECT
   -->
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', '{
+</#function>', 'let option = {
     "grid": {
         "right": "4%",
-        "left": "6%",
+        "left": "8%",
         "top": "8%",
         "bottom": "8%"
     },
     "legend": {},
     "tooltip": {
-        "trigger": "axis"
+        "trigger": "axis",
+        "extraCssText": "transform: translateZ(0);"
     },
-    "dimensions": [
-        "CREATED_AT",
-        "PASSED",
-        "FAILED",
-        "SKIPPED",
-        "KNOWN ISSUE",
-        "ABORTED",
-        "QUEUED"
-    ],
     "color": [
-        "#61c8b3",
         "#e76a77",
+        "#6dbbe7",
         "#fddb7a",
-        "#9f5487",
         "#b5b5b5",
-        "#6dbbe7"
+        "#61c8b3",
+        "#9f5487"
     ],
     "xAxis": {
         "type": "category",
         "boundaryGap": false
     },
-    "yAxis": {},
+    "yAxis": {
+      axisLabel : {
+        formatter: (value) => {
+          if(value == 0) return value
+          if(value >= 1000000000) return `${(value/1000000).toFixed(2)}B`
+          else if(value >= 1000000) return `${(value/1000000).toFixed(2)}M`
+          else if (value >= 1000) return `${(value/1000).toFixed(2)}K`
+          else return value
+        }
+      }
+    },
     "series": [
         {
             "type": "line",
@@ -1267,7 +1282,20 @@ SELECT
             }
         }
     ]
-}', '{
+}
+
+window.onresize = function(event) {
+  optimizeGrid(event.target);
+};
+
+function optimizeGrid(window) {
+  const leftCorner = chart.getWidth() < 700 ? "10%" : "4%";
+  option.grid.left = leftCorner;
+  chart.setOption(option);
+};
+
+optimizeGrid(window);
+chart.setOption(option);', '{
     "PERIOD": {
     "values": [
       "Last 24 Hours",
@@ -3299,7 +3327,7 @@ SELECT
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
 </#function>' , '
-setTimeout( function() { 
+setTimeout( function() {
   const created = dataset[0].CREATED_AT.toString();
   const lastCount = dataset.length - 1;
   const lastValue = dataset[lastCount].CREATED_AT.toString();
@@ -3642,5 +3670,254 @@ let option = {
   "LANGUAGE": [],
   "JOB_NAME": "",
   "PARENT_JOB": "Carina-Demo-Regression-Pipeline",
+  "PARENT_BUILD": ""
+}', false);
+
+
+
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTS FAILURES BY SUITE', 'Shows all test cases with failures count per appropriate period and possibility to view detailed information for each suite/test.', 'TABLE', '<#global IGNORE_TOTAL_PARAMS = ["DEVICE", "APP_VERSION", "LOCALE", "LANGUAGE", "JOB_NAME", "PARENT_JOB", "PARENT_BUILD"] >
+<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
+
+<#global MULTIPLE_VALUES = {
+  "PROJECT": multiJoin(PROJECT, projects),
+  "OWNER_USERNAME": join(USER),
+  "ENV": join(ENV),
+  "TEST_SUITE_FILE": join(TEST_SUITE_FILE),
+  "PRIORITY": join(PRIORITY),
+  "FEATURE": join(FEATURE),
+  "LOWER(PLATFORM)": join(PLATFORM),
+  "DEVICE": join(DEVICE),
+  "APP_VERSION": join(APP_VERSION),
+  "LOCALE": join(LOCALE),
+  "LANGUAGE": join(LANGUAGE)
+}>
+<#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
+<#global VIEW = getView(PERIOD) />
+
+  SELECT
+      TEST_SUITE_FILE AS "SUITE",
+      TEST_METHOD_NAME AS "NAME",
+      --STABILITY_URL as "NAME",
+      SUM(FAILED) AS "FAILURES COUNT",
+      SUM(TOTAL) AS "TOTAL COUNT",
+      ROUND(SUM(FAILED)*100/COUNT(*)) AS "FAILURE %"
+    FROM ${VIEW}
+    ${WHERE_MULTIPLE_CLAUSE}
+    GROUP BY TEST_SUITE_FILE, TEST_METHOD_NAME--, STABILITY_URL
+    HAVING SUM(FAILED) > 0
+
+
+<#--
+    Generates WHERE clause for multiple choosen parameters
+    @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
+    @return - generated WHERE clause
+  -->
+<#function generateMultipleWhereClause map>
+ <#local result = "" />
+ <#list map?keys as key>
+    <#if map[key] != "" >
+      <#if PERIOD == "Total" && IGNORE_TOTAL_PARAMS?seq_contains(key)>
+        <#-- Ignore non supported filters for Total View: PLATFORM, DEVICE, APP_VERSION, LOCALE, LANGUAGE, JOB_NAME-->
+        <#continue>
+      </#if>
+      <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
+        <#-- Ignore non supported filters for Personal chart: USER -->
+        <#continue>
+      </#if>
+      <#if result?length != 0>
+       <#local result = result + " AND "/>
+      </#if>
+      <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
+    </#if>
+ </#list>
+
+ <#if result?length != 0 && PERSONAL == "true">
+   <!-- add personal filter by currentUserId with AND -->
+   <#local result = result + " AND OWNER_ID=${currentUserId} "/>
+ <#elseif result?length == 0 && PERSONAL == "true">
+ <!-- add personal filter by currentUserId without AND -->
+   <#local result = " OWNER_ID=${currentUserId} "/>
+ </#if>
+
+  <#if PERIOD != "Total">
+    <#if PARENT_JOB != "" && PARENT_BUILD != "">
+      <#if result?length != 0>
+       <#local result = result + " AND "/>
+      </#if>
+      <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "'' AND UPSTREAM_JOB_BUILD_NUMBER = ''" + PARENT_BUILD + "''"/>
+    <#elseif PARENT_JOB != "" && PARENT_BUILD == "">
+      <#if result?length != 0>
+       <#local result = result + " AND "/>
+      </#if>
+      <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB +
+        "'' AND UPSTREAM_JOB_BUILD_NUMBER = (
+            SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
+            FROM TEST_RUNS INNER JOIN
+              JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
+            WHERE JOBS.NAME=''${PARENT_JOB}'')"/>
+    </#if>
+  </#if>
+
+ <#if result?length != 0>
+  <#local result = " WHERE " + result/>
+ </#if>
+ <#return result>
+</#function>
+
+<#--
+    Retrieves actual view name by abstract view description
+    @value - abstract view description
+    @return - actual view name
+  -->
+<#function getView value>
+ <#local result = "LAST24HOURS_VIEW" />
+ <#switch value>
+  <#case "Last 24 Hours">
+    <#local result = "LAST24HOURS_VIEW" />
+    <#break>
+  <#case "Last 7 Days">
+    <#local result = "LAST7DAYS_VIEW" />
+    <#break>
+  <#case "Last 14 Days">
+    <#local result = "LAST14DAYS_VIEW" />
+    <#break>
+  <#case "Last 30 Days">
+    <#local result = "LAST30DAYS_VIEW" />
+    <#break>
+  <#case "Nightly">
+    <#local result = "NIGHTLY_VIEW" />
+    <#break>
+  <#case "Weekly">
+    <#local result = "WEEKLY_VIEW" />
+    <#break>
+  <#case "Monthly">
+    <#local result = "MONTHLY_VIEW" />
+    <#break>
+  <#case "Total">
+    <#local result = "TOTAL_VIEW" />
+    <#break>
+ </#switch>
+ <#return result>
+</#function>
+
+<#--
+    Joins array values using '', '' separator
+    @array - to join
+    @return - joined array as string
+  -->
+<#function join array=[]>
+  <#return array?join('', '') />
+</#function>
+
+<#--
+    Joins array values using '', '' separator
+    @array1 - to join, has higher priority that array2
+    @array2 - alternative to join if array1 does not exist or is empty
+    @return - joined array as string
+  -->
+<#function multiJoin array1=[] array2=[]>
+  <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
+</#function>', '{"columns": ["SUITE", "NAME", "FAILURES COUNT", "TOTAL COUNT", "FAILURE %"]}', '{
+    "PERIOD": {
+    "values": [
+      "Last 24 Hours",
+      "Last 7 Days",
+      "Last 14 Days",
+      "Last 30 Days",
+      "Nightly",
+      "Weekly",
+      "Monthly",
+      "Total"
+      ],
+    "required": true
+  },
+  "PERSONAL": {
+    "values": [
+      "false",
+      "true"
+      ],
+    "required": true,
+    "type": "radio"
+  },
+  "TEST_SUITE_FILE": {
+    "valuesQuery": "SELECT DISTINCT(FILE_NAME) FROM TEST_SUITES WHERE FILE_NAME IS NOT NULL AND FILE_NAME <> '' ORDER BY 1;",
+    "multiple": true,
+    "required": true
+  },
+  "PROJECT": {
+    "valuesQuery": "SELECT NAME FROM PROJECTS WHERE NAME <> '' ORDER BY 1;",
+    "multiple": true
+  },
+  "PLATFORM": {
+    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '' ORDER BY 1;",
+    "multiple": true
+  },
+  "USER": {
+    "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
+    "multiple": true
+  },
+  "ENV": {
+    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '' ORDER BY 1;",
+    "multiple": true
+  },
+  "PRIORITY": {
+    "valuesQuery": "SELECT VALUE FROM TAGS WHERE NAME=''priority'' ORDER BY 1;",
+    "multiple": true
+  },
+  "FEATURE": {
+    "valuesQuery": "SELECT VALUE FROM TAGS WHERE NAME=''feature'' ORDER BY 1;",
+    "multiple": true
+  },
+  "Separator": {
+    "value": "Below params are not applicable for Total period!",
+    "type": "title",
+    "required": false
+  },
+  "DEVICE": {
+    "valuesQuery": "SELECT DISTINCT DEVICE FROM TEST_CONFIGS WHERE DEVICE IS NOT NULL AND DEVICE <> '' ORDER BY 1;",
+    "multiple": true
+  },
+  "APP_VERSION": {
+    "valuesQuery": "SELECT DISTINCT APP_VERSION FROM TEST_CONFIGS WHERE APP_VERSION IS NOT NULL AND APP_VERSION <> '';",
+    "multiple": true
+  },
+  "LOCALE": {
+    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '';",
+    "multiple": true
+  },
+  "LANGUAGE": {
+    "valuesQuery": "SELECT DISTINCT LANGUAGE FROM TEST_CONFIGS WHERE LANGUAGE IS NOT NULL AND LANGUAGE <> '';",
+    "multiple": true
+  },
+  "JOB_NAME": {
+    "value": "",
+    "required": false
+  },
+  "PARENT_JOB": {
+    "value": "",
+    "required": false
+  },
+  "PARENT_BUILD": {
+    "value": "",
+    "required": false
+  }
+}', '{
+  "PERIOD": "Last 7 Days",
+  "PERSONAL": "false",
+  "GROUP_BY": "TEST_SUITE_NAME",
+  "TEST_SUITE_FILE":[],
+  "currentUserId": 1,
+  "PROJECT": [],
+  "USER": ["anonymous"],
+  "ENV": [],
+  "PRIORITY": [],
+  "FEATURE": [],
+  "PLATFORM": [],
+  "DEVICE": [],
+  "APP_VERSION": [],
+  "LOCALE": [],
+  "LANGUAGE": [],
+  "JOB_NAME": "",
+  "PARENT_JOB": "",
   "PARENT_BUILD": ""
 }', false);

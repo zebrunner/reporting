@@ -36,9 +36,9 @@ public class TestAutomationToolProxy extends IntegrationAdapterProxy {
     private static final Map<String, Class<? extends IntegrationAdapter>> INTEGRATION_TYPE_ADAPTERS = Map.of(
         "SELENIUM", SeleniumAdapter.class,
         "ZEBRUNNER", ZebrunnerAdapter.class,
-        "BROWSER_STACK", BrowserStackAdapter.class,
+        "BROWSERSTACK", BrowserStackAdapter.class,
         "MCLOUD", MCloudAdapter.class,
-        "SAUCE_LABS", SauceLabsAdapter.class,
+        "SAUCELABS", SauceLabsAdapter.class,
         "AEROKUBE", AerokubeAdapter.class
     );
 
