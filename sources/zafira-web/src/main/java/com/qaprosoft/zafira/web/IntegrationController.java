@@ -21,7 +21,6 @@ import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationInfo;
 import com.qaprosoft.zafira.service.integration.IntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.impl.StorageProviderService;
-import com.qaprosoft.zafira.service.integration.tool.impl.google.GoogleService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -41,7 +40,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,13 +51,11 @@ public class IntegrationController extends AbstractController {
 
     private final IntegrationService integrationService;
     private final StorageProviderService storageProviderService;
-    private final GoogleService googleService;
     private final Mapper mapper;
 
-    public IntegrationController(IntegrationService integrationService, StorageProviderService storageProviderService, GoogleService googleService, Mapper mapper) {
+    public IntegrationController(IntegrationService integrationService, StorageProviderService storageProviderService, Mapper mapper) {
         this.integrationService = integrationService;
         this.storageProviderService = storageProviderService;
-        this.googleService = googleService;
         this.mapper = mapper;
     }
 
@@ -110,15 +106,6 @@ public class IntegrationController extends AbstractController {
     public SessionCredentials getAmazonTemporaryCredentials() {
         return storageProviderService.getTemporarySessionCredentials()
                                      .orElse(null);
-    }
-
-    @ApiResponseStatuses
-    @ApiOperation(value = "Get google temporary credentials", nickname = "getGoogleTemporaryCredentials", httpMethod = "GET", response = String.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @PreAuthorize("hasPermission('VIEW_INTEGRATIONS')")
-    @GetMapping("/creds/google")
-    public String getGoogleTemporaryCredentials() throws IOException {
-        return googleService.getTemporaryAccessToken();
     }
 
     @ApiResponseStatuses

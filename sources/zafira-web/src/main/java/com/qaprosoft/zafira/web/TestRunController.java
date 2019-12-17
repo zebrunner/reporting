@@ -282,15 +282,6 @@ public class TestRunController extends AbstractController {
 
     @ApiResponseStatuses
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Create test run results spreadsheet", nickname = "createTestRunResultSpreadsheet", httpMethod = "POST", response = String.class)
-    @PostMapping(path = "/{id}/spreadsheet", produces = MediaType.TEXT_HTML_VALUE)
-    public String createTestRunResultSpreadsheet(@PathVariable("id") String id, @RequestBody String recipientsLine) {
-        String[] recipients = EmailUtils.obtainRecipients(recipientsLine);
-        return testRunService.createTestRunResultSpreadsheet(id, getPrincipalId(), recipients);
-    }
-
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Get test run result html text", nickname = "exportTestRunHTML", httpMethod = "GET", response = String.class)
     @GetMapping(path = "/{id}/export", produces = "text/html;charset=UTF-8")
     public String exportTestRunHTML(@PathVariable("id") String id) {
