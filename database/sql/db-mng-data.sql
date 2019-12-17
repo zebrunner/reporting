@@ -1199,7 +1199,7 @@ let option = {
       axisLabel : {
         formatter: (value) => {
           if(value == 0) return value
-          if(value >= 1000000000) return `${(value/1000000).toFixed(2)}B`
+          if(value >= 1000000000) return `${(value/1000000000).toFixed(2)}B`
           else if(value >= 1000000) return `${(value/1000000).toFixed(2)}M`
           else if (value >= 1000) return `${(value/1000).toFixed(2)}K`
           else return value
@@ -1207,7 +1207,7 @@ let option = {
       }
     },
     "series": series
-}
+};
 
 window.onresize = function(event) {
   const leftCorner = chart.getWidth() < 700 ? "10%" : "8%";
