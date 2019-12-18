@@ -3,21 +3,18 @@ package com.qaprosoft.zafira.service.integration.tool.adapter.testautomationtool
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.service.integration.tool.adapter.AbstractIntegrationAdapter;
 import com.qaprosoft.zafira.service.integration.tool.adapter.AdapterParam;
-import kong.unirest.Config;
-import kong.unirest.HttpResponse;
+import com.qaprosoft.zafira.service.util.UrlUtils;
 import kong.unirest.UnirestException;
-import kong.unirest.UnirestInstance;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.util.StringUtils;
+
+import java.net.MalformedURLException;
 
 public class AerokubeAdapter extends AbstractIntegrationAdapter implements TestAutomationToolAdapter {
 
     private final String url;
     private final String username;
     private final String accessKey;
-
-    private final UnirestInstance restClient = initClient();
 
     public AerokubeAdapter(Integration integration) {
         super(integration);
@@ -26,17 +23,12 @@ public class AerokubeAdapter extends AbstractIntegrationAdapter implements TestA
         this.accessKey = getAttributeValue(integration, Parameter.PASSWORD);
     }
 
-    private UnirestInstance initClient() {
-        Config config = new Config();
-        config.connectTimeout(5000);
-        return new UnirestInstance(config);
-    }
     @Override
     public boolean isConnected() {
         try {
-            HttpResponse response = restClient.get(url).asEmpty();
-            return response.getStatus() == 200;
-        } catch (UnirestException e) {
+            return UrlUtils.verifyStatusByPath(url, username, accessKey, "/quota") &&
+                    UrlUtils.verifyStatusByPath(url, username, accessKey, "/status", false);
+        } catch (UnirestException | MalformedURLException e) {
             LOGGER.error("Unable to check Aerokube connectivity", e);
             return false;
         }
@@ -44,12 +36,7 @@ public class AerokubeAdapter extends AbstractIntegrationAdapter implements TestA
 
     @Override
     public String buildUrl() {
-        String result = null;
-        if(!StringUtils.isEmpty(username) && !StringUtils.isEmpty(accessKey)) {
-            String[] urlSlices = url.split("//");
-            result = String.format("%s//%s:%s@%s", urlSlices[0], username, accessKey, urlSlices[1]);
-        }
-        return result != null ? result : url;
+        return UrlUtils.buildBasicAuthUrl(url, username, accessKey);
     }
 
     @Getter

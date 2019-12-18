@@ -3,21 +3,20 @@ package com.qaprosoft.zafira.service.integration.tool.adapter.testautomationtool
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.service.integration.tool.adapter.AbstractIntegrationAdapter;
 import com.qaprosoft.zafira.service.integration.tool.adapter.AdapterParam;
-import kong.unirest.Config;
-import kong.unirest.HttpResponse;
+import com.qaprosoft.zafira.service.util.UrlUtils;
 import kong.unirest.UnirestException;
-import kong.unirest.UnirestInstance;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.util.StringUtils;
+
+import java.net.MalformedURLException;
 
 public class SauceLabsAdapter extends AbstractIntegrationAdapter implements TestAutomationToolAdapter {
+
+    private static final String HEALTH_CHECK_PATH_PATTERN = "https://saucelabs.com/rest/v1/users/%s";
 
     private final String url;
     private final String username;
     private final String accessKey;
-
-    private final UnirestInstance restClient = initClient();
 
     public SauceLabsAdapter(Integration integration) {
         super(integration);
@@ -26,17 +25,13 @@ public class SauceLabsAdapter extends AbstractIntegrationAdapter implements Test
         this.accessKey = getAttributeValue(integration, Parameter.PASSWORD);
     }
 
-    private UnirestInstance initClient() {
-        Config config = new Config();
-        config.connectTimeout(5000);
-        return new UnirestInstance(config);
-    }
     @Override
     public boolean isConnected() {
         try {
-            HttpResponse response = restClient.get(url).asEmpty();
-            return response.getStatus() == 200;
-        } catch (UnirestException e) {
+            String usersPath = String.format(HEALTH_CHECK_PATH_PATTERN, username);
+            return UrlUtils.verifyStatusByPath(usersPath, username, accessKey, "", false) &&
+                    UrlUtils.verifyStatusByPath(url, username, accessKey, "/status", false);
+        } catch (UnirestException | MalformedURLException e) {
             LOGGER.error("Unable to check SauceLabs connectivity", e);
             return false;
         }
@@ -44,12 +39,7 @@ public class SauceLabsAdapter extends AbstractIntegrationAdapter implements Test
 
     @Override
     public String buildUrl() {
-        String result = null;
-        if(!StringUtils.isEmpty(username) && !StringUtils.isEmpty(accessKey)) {
-            String[] urlSlices = url.split("//");
-            result = String.format("%s//%s:%s@%s", urlSlices[0], username, accessKey, urlSlices[1]);
-        }
-        return result != null ? result : url;
+        return UrlUtils.buildBasicAuthUrl(url, username, accessKey);
     }
 
     @Getter
