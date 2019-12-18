@@ -136,7 +136,11 @@ public class LauncherService {
 
     @Transactional(readOnly = true)
     public Launcher getLauncherById(Long id) {
-        return launcherMapper.getLauncherById(id);
+        Launcher launcher = launcherMapper.getLauncherById(id);
+        if (launcher == null) {
+            throw new ResourceNotFoundException(LAUNCHER_NOT_FOUND, String.format("Unable to locate launcher with id '%d'", id));
+        }
+        return launcher;
     }
 
     @Transactional(readOnly = true)
@@ -220,10 +224,6 @@ public class LauncherService {
     @Transactional()
     public String buildLauncherJobByPresetRef(Long id, String ref, LauncherWebHookPayload payload, Long userId, Long providerId) throws IOException {
         Launcher launcher = getLauncherById(id);
-        if (launcher == null) {
-            throw new ResourceNotFoundException(LAUNCHER_NOT_FOUND, String.format("Unable to locate launcher with id '%d'", id));
-        }
-
         LauncherPreset preset = launcherPresetService.retrieveByRef(ref);
         launcher.setModel(preset.getParams());
         String ciRunId = buildLauncherJob(launcher, userId, providerId);
