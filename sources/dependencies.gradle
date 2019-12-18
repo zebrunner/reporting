@@ -27,7 +27,8 @@ ext {
 
         swagger: [
             "io.springfox:springfox-swagger2:2.9.2",
-            "io.springfox:springfox-swagger-ui:2.9.2"
+            "io.springfox:springfox-swagger-ui:2.9.2",
+            "io.springfox:springfox-bean-validators:2.9.2"
         ],
 
         commons_lang : "commons-lang:commons-lang:2.6",

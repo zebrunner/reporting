@@ -1149,10 +1149,32 @@ SELECT
   -->
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', 'let option = {
+</#function>', 'let lineRow = {
+    "type": "line",
+    "smooth": false,
+    "stack": "Status",
+    "itemStyle": {
+      "normal": {
+        "areaStyle": {
+            "opacity": 0.8,
+            "type": "default"
+        }
+      }
+    },
+    "lineStyle": {
+      "width": 1
+    }
+};
+
+let series = [];
+  for (var i = 0; i < 6 ; i++) {
+    series.push(lineRow);
+  };
+
+let option = {
     "grid": {
-        "right": "4%",
-        "left": "8%",
+        "right": "8%",
+        "left": "10%",
         "top": "8%",
         "bottom": "8%"
     },
@@ -1177,124 +1199,22 @@ SELECT
       axisLabel : {
         formatter: (value) => {
           if(value == 0) return value
-          if(value >= 1000000000) return `${(value/1000000).toFixed(2)}B`
+          if(value >= 1000000000) return `${(value/1000000000).toFixed(2)}B`
           else if(value >= 1000000) return `${(value/1000000).toFixed(2)}M`
           else if (value >= 1000) return `${(value/1000).toFixed(2)}K`
           else return value
         }
       }
     },
-    "series": [
-        {
-            "type": "line",
-            "smooth": false,
-            "stack": "Status",
-            "itemStyle": {
-                "normal": {
-                    "areaStyle": {
-                        "opacity": 0.8,
-                        "type": "default"
-                    }
-                }
-            },
-            "lineStyle": {
-                "width": 1
-            }
-        },
-        {
-            "type": "line",
-            "smooth": false,
-            "stack": "Status",
-            "itemStyle": {
-                "normal": {
-                    "areaStyle": {
-                        "opacity": 0.8,
-                        "type": "default"
-                    }
-                }
-            },
-            "lineStyle": {
-                "width": 1
-            }
-        },
-        {
-            "type": "line",
-            "smooth": false,
-            "stack": "Status",
-            "itemStyle": {
-                "normal": {
-                    "areaStyle": {
-                        "opacity": 0.8,
-                        "type": "default"
-                    }
-                }
-            },
-            "lineStyle": {
-                "width": 1
-            }
-        },
-        {
-            "type": "line",
-            "smooth": false,
-            "stack": "Status",
-            "itemStyle": {
-                "normal": {
-                    "areaStyle": {
-                        "opacity": 0.8,
-                        "type": "default"
-                    }
-                }
-            },
-            "lineStyle": {
-                "width": 1
-            }
-        },
-        {
-            "type": "line",
-            "smooth": false,
-            "stack": "Status",
-            "itemStyle": {
-                "normal": {
-                    "areaStyle": {
-                        "opacity": 0.8,
-                        "type": "default"
-                    }
-                }
-            },
-            "lineStyle": {
-                "width": 1
-            }
-        },
-        {
-            "type": "line",
-            "smooth": false,
-            "stack": "Status",
-            "itemStyle": {
-                "normal": {
-                    "areaStyle": {
-                        "opacity": 0.8,
-                        "type": "default"
-                    }
-                }
-            },
-            "lineStyle": {
-                "width": 1
-            }
-        }
-    ]
-}
-
-window.onresize = function(event) {
-  optimizeGrid(event.target);
+    "series": series
 };
 
-function optimizeGrid(window) {
-  const leftCorner = chart.getWidth() < 700 ? "10%" : "4%";
+window.onresize = function(event) {
+  const leftCorner = chart.getWidth() < 700 ? "10%" : "8%";
   option.grid.left = leftCorner;
   chart.setOption(option);
 };
 
-optimizeGrid(window);
 chart.setOption(option);', '{
     "PERIOD": {
     "values": [
@@ -2079,7 +1999,7 @@ SELECT count(*) AS "COUNT",
   -->
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', '{"columns": ["COUNT", "ENV", "BUG", "SUBJECT", "REPORT", "MESSAGE"]}', '{
+</#function>', '{"columns": ["COUNT", "ENV", "REPORT", "MESSAGE", "BUG", "SUBJECT"]}', '{
     "PERIOD": {
     "values": [
       "Last 24 Hours",
@@ -3327,139 +3247,138 @@ SELECT
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
 </#function>' , '
-setTimeout( function() {
+setTimeout(function() {
   const created = dataset[0].CREATED_AT.toString();
   const lastCount = dataset.length - 1;
   const lastValue = dataset[lastCount].CREATED_AT.toString();
-  let dataSource = [
-      ["CREATED_AT"], ["PASSED"], ["FAILED"], ["SKIPPED"], ["QUEUED"], ["ABORTED"], ["KNOWN ISSUE"]
-    ];
+  
+  let dataSource = [["CREATED_AT"], ["PASSED"], ["FAILED"], ["SKIPPED"], ["QUEUED"], ["ABORTED"], ["KNOWN ISSUE"]];
+  
   const createDatasetSource = () => {
     let amount = dataset.length;
     for (let i = 0; i < amount; i++) {
       dataSource.forEach((value, index) => {
         let valueName = value[0];
         let pushValue = dataset[i][valueName];
-        if (valueName === "CREATED_AT") {
-          value.push(pushValue.toString());
-        } else {
-          value.push(pushValue);
-        }
+        if (valueName === "CREATED_AT") value.push(pushValue.toString());
+        else value.push(pushValue);
       })
     }
     return dataSource;
   };
-  let newLine = "";
+  
   let grid, legend, pieStyle, title;
+  
   customStyle = () => {
     const screenWidth = window.innerWidth;
-    const rich = (fontSize) => {
+    const rich = (fontSize, padding, fontWeight) => {
       return {
-        PASSED:{ color: "#61c8b3", fontSize: fontSize},
-        FAILED:{ color: "#e76a77", fontSize: fontSize },
-        SKIPPED:{ color: "#fddb7a", fontSize: fontSize },
-        QUEUED:{ color: "#6dbbe7", fontSize: fontSize },
-        ABORTED:{ color: "#b5b5b5", fontSize: fontSize },
-        KNOWN_ISSUE:{ color: "#9f5487", fontSize: fontSize }
+        PASSED:{ color: "#61c8b3", fontSize, fontWeight },
+        FAILED:{ color: "#e76a77", fontSize, fontWeight },
+        SKIPPED:{ color: "#fddb7a", fontSize, fontWeight},
+        QUEUED:{ color: "#6dbbe7", fontSize, fontWeight },
+        ABORTED:{ color: "#b5b5b5", fontSize, fontWeight },
+        KNOWN_ISSUE:{ color: "#9f5487", fontSize, fontWeight },
+        BUILD:{ color: "#0a0a0a", fontSize, padding, fontWeight: 700 }
       }
     };
-    if (chart._dom.clientWidth === 280) {
-      grid = {
-        top: "50%",
-        left:"30px",
-        right:"15px",
-        bottom:"15%",
-      };
-      legend = {
-        orient: "vertical",
-        x: "left",
-        y: "top",
-        left: "1%",
-        top: "10px",
-        icon:"roundRect",
-        itemGap: 2,
-        itemWidth:10,
-        itemHeight:7,
-        textStyle: {
-          fontSize: 7
-        }
-      };
-      title = {
-        show:true,
-        right:"2.5%",
-        top:"41%",
-        textStyle:{
-         rich: rich(8)
-        }
-      };
-      pieStyle = {
-        radius: "40%",
-        center: ["60%", "23%"]
-      };
-    } else if (screenWidth < 481) {
-        grid = {
-          top: "50%",
-          left:"30px",
-          right:"15px",
-          bottom:"15%",
-        }
-        legend = {
-          orient: "vertical",
-          x: "left",
-          y: "top",
-          left: "1%",
-          top: "10px",
-          icon:"roundRect",
-          itemGap: 5,
-          textStyle: {
-            fontSize: 10
-          }
-        }
-        pieStyle = {
-          radius: "40%",
-          center: ["65%", "23%"]
-        }
-        title = {
-        show: true,
-        right: "2.5%",
-        top: "44%",
-        textStyle: {
-          rich: rich(10)
-        }
+    
+    grid = {
+      top: "8%",
+      left: "27%",
+      right: "3%",
+      bottom: "17%"
+    };
+    legend = {
+      orient: "vertical",
+      x: "left",
+      y: "center",
+      left: "1%",
+      icon: "roundRect",
+      textStyle: {
+        fontSize: 12
       }
-    } else {
-      grid = {
-        top: "7%",
-        left: "27%",
-        right:"3%",
-        bottom:"17%"
-      };
-      if (screenWidth > 1250) grid.left = "30%";
-      else grid.left = "35%";
-      legend = {
-        orient: "vertical",
-        x: "left",
-        y: "center",
-        left: "1%",
-        icon:"roundRect"
-      };
-      title = {
-        show:true,
-        right: "3%",
-        top:"0",
-        textStyle: {
-          fontWeight:"bolder",
-          rich: rich(13)
-        }
-      };
-      pieStyle = {
-        radius: "70%",
-        center: ["15%", "47%"]
-      };
+    };
+    title = {
+      show: true,
+      right: "3%",
+      top: 0,
+      textStyle: {
+        rich: rich(12, [0, 0, 0, 50], 500)
+      }
+    };
+    pieStyle = {
+      radius: "70%",
+      center: ["15%", "47%"]
+    };
+    if (screenWidth > 1250) grid.left = "30%";
+    else grid.left = "35%";
+    if (chart._dom.clientWidth === 280 || screenWidth < 481) {
+      grid.top = "50%";
+      grid.left = 30;
+      grid.right = 15;
+      grid.bottom = "15%";
+      legend.x = "left";
+      legend.y = "top";
+      legend.top = 10;
+      legend.itemGap = 2;
+      legend.itemWidth = 10;
+      legend.itemHeight = 7;
+      legend.textStyle.fontSize = 7;
+      title.right = "3%",
+      title.top = "40%";
+      title.textStyle.rich = rich(6);
+      pieStyle.radius = "40%";
+      pieStyle.center = ["60%", "23%"];
+      if (screenWidth < 481) {
+        legend.itemGap = 5;
+        legend.textStyle.fontSize = 10;
+        pieStyle.center = ["60%", "23%"];
+        title.right = "3%",
+        title.right = "2.5%";
+        title.top = "43%";
+        title.textStyle.rich = rich(8, [0, 0, 0, 20], 400);
+      }
     }
   }
   customStyle();
-  let lineRow = {
+  
+  const changeTitle = (value = lastCount) => {
+    let titleValue = "";
+    let name = "";
+    let total = 0;
+    let newDataObj = {};
+    
+    for (const testName in dataset[value]){
+      if (testName === "CREATED_AT") continue;
+      total +=  dataset[value][testName];
+    }
+    
+    for (let i = 0; i < dataSource.length; i++){
+      newDataObj[dataSource[i][0]] = dataset[value][dataSource[i][0]]
+    }
+    
+    Object.entries(newDataObj).forEach(([key, value]) => {
+      if (value === 0) return;
+      if (key === "CREATED_AT") return name = typeof value == "number"? `{BUILD|Build: ${value}}` : `{BUILD|Date: ${value}}`;
+
+      let parameter = key === "KNOWN ISSUE" ? "KNOWN_ISSUE" : key;
+      persentValue = (value * 100 / total).toFixed(2);
+      titleValue += ` {${parameter}|${key}: ${persentValue}%;}`;
+    });
+    
+    titleValue += name;
+    
+    chart.setOption({
+      title:{
+        text: titleValue
+      }
+    })
+  };
+  changeTitle();
+  
+let colors = ["#61c8b3", "#e76a77", "#fddb7a", "#6dbbe7", "#b5b5b5", "#9f5487"];
+let lineRow = {
     type: "line",
     smooth: false,
     seriesLayoutBy: "row",
@@ -3473,6 +3392,7 @@ setTimeout( function() {
       }
     }
   };
+  
   let pie = {
     type: "pie",
     id: "pie",
@@ -3480,9 +3400,9 @@ setTimeout( function() {
     center:  pieStyle.center,
     label: { show: false },
     encode: {
-        itemName: "CREATED_AT",
-        value: lastValue,
-        tooltip: lastValue
+      itemName: "CREATED_AT",
+      value: lastValue,
+      tooltip: lastValue
     },
     selectedMode : true,
     emphasis: {
@@ -3491,39 +3411,16 @@ setTimeout( function() {
         formatter: "{b}: {d}%"
       }
     }
-  }
+  };
+  
   let series = [];
   for (var i = 0; i < dataSource.length - 1 ; i++) {
     series.push(lineRow);
-  }
+  };
   series.push(pie);
-  const changeTitle = (value = lastCount) => {
-    let titleValue="";
-    let total = 0;
-    let newDataObj = {};
-    for (const testName in dataset[value]){
-      if (testName === "CREATED_AT") continue;
-      total +=  dataset[value][testName];
-    }
-    for (let i = 0; i < dataSource.length; i++){
-      newDataObj[dataSource[i][0]] = dataset[value][dataSource[i][0]]
-    }
-    Object.entries(newDataObj).forEach(([key, value]) => {
-      if (value === 0 || key === "CREATED_AT")  return
-        let parameter = key === "KNOWN ISSUE" ? "KNOWN_ISSUE" : key;
-        persentValue = (value * 100 / total).toFixed(2);
-        titleValue += `{${parameter}|${key}: ${persentValue}%; }`;
-      });
-      chart.setOption({
-        title:{
-          text: titleValue
-        }
-      })
-    }
-  changeTitle();
-let colors = ["#61c8b3", "#e76a77", "#fddb7a", "#6dbbe7", "#b5b5b5", "#9f5487"];
-let option = {
-        title:title,
+
+  let option = {
+        title: title,
         grid: grid,
         color: colors,
         legend: legend,
@@ -3537,7 +3434,9 @@ let option = {
             bottom: "0",
             height : "25px"
           },
-          {type: "inside"}
+          {
+            type: "inside"
+          }
         ],
         dataset: {
           source: createDatasetSource()
@@ -3551,15 +3450,16 @@ let option = {
         },
         series: series
     };
-    chart.on("updateAxisPointer", function (event) {
-        var xAxisInfo = event.axesInfo[0];
+    
+    chart.on("updateAxisPointer", (event) => {
+        let xAxisInfo = event.axesInfo[0];
         if (xAxisInfo) {
-            var dimension = xAxisInfo.value + 1;
+            let dimension = xAxisInfo.value + 1;
             chart.setOption({
                 series: {
                   id: "pie",
                   label: {
-                      formatter: "{b}: ({d}%)"
+                    formatter: "{b}: ({d}%)"
                   },
                   encode: {
                     value: dimension,
@@ -3570,7 +3470,9 @@ let option = {
             changeTitle(dimension - 1);
         }
     });
+    
     chart.setOption(option);
+    angular.element($window).on("resize", onResize);
 }, 1000)' , '{
   "PERIOD": {
     "values": [

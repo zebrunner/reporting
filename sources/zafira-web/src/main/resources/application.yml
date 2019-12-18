@@ -95,7 +95,7 @@ github:
 ### Auth settings
 auth:
   token:
-    expiration: 300
+    expiration: 480
     refresh-expiration: 10080
     secret: ${auth.token.secret}
 
