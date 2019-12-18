@@ -17,6 +17,7 @@ package com.qaprosoft.zafira.service.util;
 
 import kong.unirest.Config;
 import kong.unirest.HttpResponse;
+import kong.unirest.UnirestException;
 import kong.unirest.UnirestInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,10 +56,12 @@ public class HttpUtils {
             String pathToCheck = url + path;
             String basicAuthHeaderValue = getBasicAuthHeaderValue(username, password);
             response = restClient.get(pathToCheck)
-                                                 .header("Authorization", basicAuthHeaderValue)
-                                                 .asEmpty();
+                                 .header("Authorization", basicAuthHeaderValue)
+                                 .asEmpty();
         } catch (MalformedURLException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error(String.format("Unable to verify connectivity for malformed url '%s'", baseUrl), e);
+        } catch (UnirestException e) {
+            LOGGER.error(String.format("Unable to check connectivity for url '%s'", baseUrl), e);
         }
         return response != null && response.getStatus() >= 200 && response.getStatus() <= 299;
     }
