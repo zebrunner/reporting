@@ -18,13 +18,17 @@ package com.qaprosoft.zafira.service.util;
 import kong.unirest.Config;
 import kong.unirest.HttpResponse;
 import kong.unirest.UnirestInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Base64;
 
-public class UrlUtils {
+public class HttpUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpUtils.class);
 
     private static final UnirestInstance restClient;
 
@@ -35,7 +39,7 @@ public class UrlUtils {
     }
 
     /**
-     * Varify that GET request to baseUrl returns 200 status
+     * Checks that GET request to baseUrl returns 200 status
      * @param baseUrl - predefined url
      * @param username - username to build an url with basic auth
      * @param password - password to build an url with basic auth
@@ -43,24 +47,29 @@ public class UrlUtils {
      * @param replacePath - true if need to replace baseUrl endpoint with path
      * @return true if status is OK
      */
-    public static boolean verifyStatusByPath(String baseUrl, String username, String password, String path, boolean replacePath) throws MalformedURLException {
+    public static boolean isReachable(String baseUrl, String username, String password, String path, boolean replacePath) {
         String basicAuthUrl = buildBasicAuthUrl(baseUrl, username, password);
-        String url = replacePath ? retrieveServletPath(basicAuthUrl) : basicAuthUrl;
-        String pathToCheck = url + path;
-        String basicAuthHeaderValue = getBasicAuthHeaderValue(username, password);
-        HttpResponse<?> response = restClient.get(pathToCheck)
-                                             .header("Authorization", basicAuthHeaderValue)
-                                             .asEmpty();
-        return response.getStatus() == 200;
+        HttpResponse<?> response = null;
+        try {
+            String url = replacePath ? retrieveServletPath(basicAuthUrl) : basicAuthUrl;
+            String pathToCheck = url + path;
+            String basicAuthHeaderValue = getBasicAuthHeaderValue(username, password);
+            response = restClient.get(pathToCheck)
+                                                 .header("Authorization", basicAuthHeaderValue)
+                                                 .asEmpty();
+        } catch (MalformedURLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return response != null && response.getStatus() >= 200 && response.getStatus() <= 299;
+    }
+
+    public static boolean isReachable(String baseUrl, String username, String password, String path) {
+        return isReachable(baseUrl, username, password, path, true);
     }
 
     private static String getBasicAuthHeaderValue(String username, String password) {
         String basicAuthHeaderValue = Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
         return "Basic " + basicAuthHeaderValue;
-    }
-
-    public static boolean verifyStatusByPath(String baseUrl, String username, String password, String path) throws MalformedURLException {
-        return verifyStatusByPath(baseUrl, username, password, path, true);
     }
 
     public static String buildBasicAuthUrl(String baseUrl, String username, String password) {
@@ -77,8 +86,14 @@ public class UrlUtils {
         return originalUrl.split(url.getPath())[0];
     }
 
-    public static String retrievePath(String originalUrl) throws MalformedURLException {
-        URL url = new URL(originalUrl);
-        return url.getPath();
+    public static String retrievePath(String originalUrl) {
+        String result = null;
+        try {
+            URL url = new URL(originalUrl);
+            result = url.getPath();
+        } catch (MalformedURLException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return result;
     }
 }

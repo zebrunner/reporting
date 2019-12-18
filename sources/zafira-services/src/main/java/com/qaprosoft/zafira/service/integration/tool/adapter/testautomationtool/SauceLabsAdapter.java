@@ -3,12 +3,9 @@ package com.qaprosoft.zafira.service.integration.tool.adapter.testautomationtool
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.service.integration.tool.adapter.AbstractIntegrationAdapter;
 import com.qaprosoft.zafira.service.integration.tool.adapter.AdapterParam;
-import com.qaprosoft.zafira.service.util.UrlUtils;
-import kong.unirest.UnirestException;
+import com.qaprosoft.zafira.service.util.HttpUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.net.MalformedURLException;
 
 public class SauceLabsAdapter extends AbstractIntegrationAdapter implements TestAutomationToolAdapter {
 
@@ -27,19 +24,14 @@ public class SauceLabsAdapter extends AbstractIntegrationAdapter implements Test
 
     @Override
     public boolean isConnected() {
-        try {
-            String usersPath = String.format(HEALTH_CHECK_PATH_PATTERN, username);
-            return UrlUtils.verifyStatusByPath(usersPath, username, accessKey, "", false) &&
-                    UrlUtils.verifyStatusByPath(url, username, accessKey, "/status", false);
-        } catch (UnirestException | MalformedURLException e) {
-            LOGGER.error("Unable to check SauceLabs connectivity", e);
-            return false;
-        }
+        String usersPath = String.format(HEALTH_CHECK_PATH_PATTERN, username);
+        return HttpUtils.isReachable(usersPath, username, accessKey, "", false) &&
+                HttpUtils.isReachable(url, username, accessKey, "/status", false);
     }
 
     @Override
     public String buildUrl() {
-        return UrlUtils.buildBasicAuthUrl(url, username, accessKey);
+        return HttpUtils.buildBasicAuthUrl(url, username, accessKey);
     }
 
     @Getter

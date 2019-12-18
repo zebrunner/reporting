@@ -18,12 +18,9 @@ package com.qaprosoft.zafira.service.integration.tool.adapter.testautomationtool
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.service.integration.tool.adapter.AbstractIntegrationAdapter;
 import com.qaprosoft.zafira.service.integration.tool.adapter.AdapterParam;
-import com.qaprosoft.zafira.service.util.UrlUtils;
-import kong.unirest.UnirestException;
+import com.qaprosoft.zafira.service.util.HttpUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.net.MalformedURLException;
 
 public class ZebrunnerAdapter extends AbstractIntegrationAdapter implements TestAutomationToolAdapter {
 
@@ -40,18 +37,13 @@ public class ZebrunnerAdapter extends AbstractIntegrationAdapter implements Test
 
     @Override
     public String buildUrl() {
-        return UrlUtils.buildBasicAuthUrl(url, username, password);
+        return HttpUtils.buildBasicAuthUrl(url, username, password);
     }
 
     @Override
     public boolean isConnected() {
-        try {
-            return UrlUtils.verifyStatusByPath(url, username, password, "", true) &&
-                    UrlUtils.retrievePath(url).equals("/wd/hub");
-        } catch (UnirestException | MalformedURLException e) {
-            LOGGER.error("Unable to check Zebrunner connectivity", e);
-            return false;
-        }
+        return HttpUtils.isReachable(url, username, password, "", true) &&
+                "/wd/hub".equals(HttpUtils.retrievePath(url));
     }
 
     @Getter

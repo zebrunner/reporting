@@ -18,14 +18,9 @@ package com.qaprosoft.zafira.service.integration.tool.adapter.testautomationtool
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.service.integration.tool.adapter.AbstractIntegrationAdapter;
 import com.qaprosoft.zafira.service.integration.tool.adapter.AdapterParam;
-import com.qaprosoft.zafira.service.util.UrlUtils;
-import kong.unirest.Config;
-import kong.unirest.UnirestException;
-import kong.unirest.UnirestInstance;
+import com.qaprosoft.zafira.service.util.HttpUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.net.MalformedURLException;
 
 public class BrowserStackAdapter extends AbstractIntegrationAdapter implements TestAutomationToolAdapter {
 
@@ -42,26 +37,15 @@ public class BrowserStackAdapter extends AbstractIntegrationAdapter implements T
         this.accessKey = getAttributeValue(integration, Parameter.ACCESS_KEY);
     }
 
-    private UnirestInstance initClient() {
-        Config config = new Config();
-        config.connectTimeout(5000);
-        return new UnirestInstance(config);
-    }
-
     @Override
     public String buildUrl() {
-        return UrlUtils.buildBasicAuthUrl(url, username, accessKey);
+        return HttpUtils.buildBasicAuthUrl(url, username, accessKey);
     }
 
     @Override
     public boolean isConnected() {
-        try {
-            return UrlUtils.verifyStatusByPath(HEALTH_CHECK_PATH, username, accessKey, "", false) &&
-                    UrlUtils.verifyStatusByPath(url, username, accessKey, "/status", false);
-        } catch (UnirestException | MalformedURLException e) {
-            LOGGER.error("Unable to check BrowserStack connectivity", e);
-            return false;
-        }
+        return HttpUtils.isReachable(HEALTH_CHECK_PATH, username, accessKey, "", false) &&
+                HttpUtils.isReachable(url, username, accessKey, "/status", false);
     }
 
     @Getter
