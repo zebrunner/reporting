@@ -41,7 +41,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.dozer.Mapper;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -125,7 +124,7 @@ public class TestRunController extends AbstractController {
     @ApiOperation(value = "Finish test run", nickname = "finishTestRun", httpMethod = "POST", response = TestRunType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/{id}/finish")
-    public TestRunType finishTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable("id") long id) {
+    public TestRunType finishTestRun(@PathVariable("id") long id) {
         TestRun testRun = testRunService.calculateTestRunResult(id, true);
         TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
 
@@ -143,8 +142,8 @@ public class TestRunController extends AbstractController {
     @PreAuthorize("hasPermission('MODIFY_TEST_RUNS')")
     @PostMapping("/abort")
     public TestRunType abortTestRun(
-            @ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
-            @ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId,
+            @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "ciRunId", required = false) String ciRunId,
             @RequestBody(required = false) CommentType abortCause
     ) {
         TestRun testRun = TestRun.builder()
@@ -179,7 +178,7 @@ public class TestRunController extends AbstractController {
     @ApiOperation(value = "Get test run", nickname = "getTestRun", httpMethod = "GET", response = TestRunType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/{id}")
-    public TestRunType getTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable("id") long id) {
+    public TestRunType getTestRun(@PathVariable("id") long id) {
         TestRun testRun = testRunService.getNotNullTestRunById(id);
         return mapper.map(testRun, TestRunType.class);
     }
@@ -331,8 +330,8 @@ public class TestRunController extends AbstractController {
     @PreAuthorize("hasPermission('TEST_RUNS_CI')")
     @GetMapping({ "/abort/ci", "/abort/debug" })
     public void abortCIJob(
-            @ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
-            @ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId
+            @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "ciRunId", required = false) String ciRunId
     ) {
         TestRun testRun = TestRun.builder()
                                  .id(id)
