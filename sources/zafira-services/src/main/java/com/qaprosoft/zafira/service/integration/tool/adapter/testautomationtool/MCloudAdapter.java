@@ -3,21 +3,15 @@ package com.qaprosoft.zafira.service.integration.tool.adapter.testautomationtool
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.service.integration.tool.adapter.AbstractIntegrationAdapter;
 import com.qaprosoft.zafira.service.integration.tool.adapter.AdapterParam;
-import kong.unirest.Config;
-import kong.unirest.HttpResponse;
-import kong.unirest.UnirestException;
-import kong.unirest.UnirestInstance;
+import com.qaprosoft.zafira.service.util.HttpUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.util.StringUtils;
 
 public class MCloudAdapter extends AbstractIntegrationAdapter implements TestAutomationToolAdapter  {
 
     private final String url;
     private final String username;
     private final String accessKey;
-
-    private final UnirestInstance restClient = initClient();
 
     public MCloudAdapter(Integration integration) {
         super(integration);
@@ -26,31 +20,14 @@ public class MCloudAdapter extends AbstractIntegrationAdapter implements TestAut
         this.accessKey = getAttributeValue(integration, Parameter.PASSWORD);
     }
 
-    private UnirestInstance initClient() {
-        Config config = new Config();
-        config.connectTimeout(5000);
-        return new UnirestInstance(config);
-    }
-
     @Override
     public boolean isConnected() {
-        try {
-            HttpResponse response = restClient.get(url).asEmpty();
-            return response.getStatus() == 200;
-        } catch (UnirestException e) {
-            LOGGER.error("Unable to check MCloud connectivity", e);
-            return false;
-        }
+        return HttpUtils.isReachable(url, username, accessKey, "/status", false);
     }
 
     @Override
     public String buildUrl() {
-        String result = null;
-        if(!StringUtils.isEmpty(username) && !StringUtils.isEmpty(accessKey)) {
-            String[] urlSlices = url.split("//");
-            result = String.format("%s//%s:%s@%s", urlSlices[0], username, accessKey, urlSlices[1]);
-        }
-        return result != null ? result : url;
+        return HttpUtils.buildBasicAuthUrl(url, username, accessKey);
     }
 
     @Getter
