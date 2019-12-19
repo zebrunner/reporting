@@ -18,23 +18,17 @@ package com.qaprosoft.zafira.service.integration.tool.adapter.testautomationtool
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.service.integration.tool.adapter.AbstractIntegrationAdapter;
 import com.qaprosoft.zafira.service.integration.tool.adapter.AdapterParam;
-import kong.unirest.Config;
-import kong.unirest.HttpResponse;
-import kong.unirest.UnirestException;
-import kong.unirest.UnirestInstance;
+import com.qaprosoft.zafira.service.util.HttpUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.util.StringUtils;
-
-import javax.annotation.PreDestroy;
 
 public class BrowserStackAdapter extends AbstractIntegrationAdapter implements TestAutomationToolAdapter {
+
+    private static final String HEALTH_CHECK_PATH = "https://api.browserstack.com/automate/plan.json/";
 
     private final String url;
     private final String username;
     private final String accessKey;
-
-    private final UnirestInstance restClient = initClient();
 
     public BrowserStackAdapter(Integration integration) {
         super(integration);
@@ -43,36 +37,15 @@ public class BrowserStackAdapter extends AbstractIntegrationAdapter implements T
         this.accessKey = getAttributeValue(integration, Parameter.ACCESS_KEY);
     }
 
-    private UnirestInstance initClient() {
-        Config config = new Config();
-        config.connectTimeout(5000);
-        return new UnirestInstance(config);
-    }
-
     @Override
     public String buildUrl() {
-        String result = null;
-        if(!StringUtils.isEmpty(username) && !StringUtils.isEmpty(accessKey)) {
-            String[] urlSlices = url.split("//");
-            result = String.format("%s//%s:%s@%s", urlSlices[0], username, accessKey, urlSlices[1]);
-        }
-        return result != null ? result : url;
+        return HttpUtils.buildBasicAuthUrl(url, username, accessKey);
     }
 
     @Override
     public boolean isConnected() {
-        try {
-            HttpResponse response = restClient.get(url).asEmpty();
-            return response.getStatus() == 200;
-        } catch (UnirestException e) {
-            LOGGER.error("Unable to check BrowserStack connectivity", e);
-            return false;
-        }
-    }
-
-    @PreDestroy
-    private void close() {
-        restClient.shutDown();
+        return HttpUtils.isReachable(HEALTH_CHECK_PATH, username, accessKey, "", false) &&
+                HttpUtils.isReachable(url, username, accessKey, "/status", false);
     }
 
     @Getter

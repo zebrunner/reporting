@@ -251,6 +251,8 @@ public class IntegrationServiceImpl implements IntegrationService {
             unAssignIfDefault(integration, null);
 
             Integration dbIntegration = retrieveById(integration.getId());
+
+            // attributes update: update integration attributes and persisted
             integration.setBackReferenceId(dbIntegration.getBackReferenceId());
             integration.setType(dbIntegration.getType());
 

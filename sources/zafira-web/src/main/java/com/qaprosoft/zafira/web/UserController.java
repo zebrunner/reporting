@@ -109,7 +109,7 @@ public class UserController extends AbstractController {
     public UserType updateUserProfile(@Valid @RequestBody UserType userType) {
         checkCurrentUserAccess(userType.getId());
         User user = mapper.map(userType, User.class);
-        user = userService.updateUser(user);
+        user = userService.updateUserProfile(user);
         userType = mapper.map(user, UserType.class);
         userType.setRoles(userType.getRoles());
         userType.setPreferences(userType.getPreferences());

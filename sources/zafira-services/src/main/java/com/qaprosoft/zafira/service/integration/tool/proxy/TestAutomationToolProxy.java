@@ -21,6 +21,7 @@ import com.qaprosoft.zafira.service.integration.IntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.adapter.IntegrationAdapter;
 import com.qaprosoft.zafira.service.integration.tool.adapter.testautomationtool.AerokubeAdapter;
 import com.qaprosoft.zafira.service.integration.tool.adapter.testautomationtool.BrowserStackAdapter;
+import com.qaprosoft.zafira.service.integration.tool.adapter.testautomationtool.LambdaTestAdapter;
 import com.qaprosoft.zafira.service.integration.tool.adapter.testautomationtool.MCloudAdapter;
 import com.qaprosoft.zafira.service.integration.tool.adapter.testautomationtool.SauceLabsAdapter;
 import com.qaprosoft.zafira.service.integration.tool.adapter.testautomationtool.SeleniumAdapter;
@@ -36,10 +37,11 @@ public class TestAutomationToolProxy extends IntegrationAdapterProxy {
     private static final Map<String, Class<? extends IntegrationAdapter>> INTEGRATION_TYPE_ADAPTERS = Map.of(
         "SELENIUM", SeleniumAdapter.class,
         "ZEBRUNNER", ZebrunnerAdapter.class,
-        "BROWSER_STACK", BrowserStackAdapter.class,
+        "BROWSERSTACK", BrowserStackAdapter.class,
         "MCLOUD", MCloudAdapter.class,
-        "SAUCE_LABS", SauceLabsAdapter.class,
-        "AEROKUBE", AerokubeAdapter.class
+        "SAUCELABS", SauceLabsAdapter.class,
+        "AEROKUBE", AerokubeAdapter.class,
+        "LAMBDATEST", LambdaTestAdapter.class
     );
 
     public TestAutomationToolProxy(

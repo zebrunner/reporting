@@ -52,8 +52,13 @@ Zafira was initially designed to track automation progress of the tests written 
 </table>
 
 ## Installation steps
+
+Disclaimer: installation steps described below are not suitable for production-grade deployment and meant for development purposes primarily. If you are looking for production-ready solution to deploy in your own private cloud please see [QPS Infra](https://github.com/qaprosoft/qps-infra). Zafira is also offered as a managed Cloud service - see [zebrunner.com](https://zebrunner.com). For more info and help do not hesitate to contact us via support channels listed at the bottom of this document.
+
+---
 The only dependency Zafira requires in order to spin it up (deploy to localhost) is Docker Compose installed. More information on Docker Compose installation can be found [here](https://docs.docker.com/compose/install/). Once you'll have Docker Compose installed you'll have two options, so let's take a closer look at both of them.
 ### 1. Spinning Zafira using Qaprosoft images
+## Linux or MaxOS
 In order to install Zafira (deploy to localhost) you'll need to complete following steps:
 1. Clone current repo and navigate to the repo root on your local machine
 2. To start Zafira execute:
@@ -62,6 +67,29 @@ In order to install Zafira (deploy to localhost) you'll need to complete followi
     ```
     That's about it! Docker Compose will automatically pull all Zafira images from Docker Registry and spin those up. You can check list of running images by executing `docker ps` command.
     Images and their versions are declared in deployment descriptor called `docker-compose.yml` residing in git repository root directory. Please, note that descriptor does not necessarily contains all latest versions of images (however we usually update it in no time after newer versions are released), but you can be sure that the ones declared there are cross-compatible.
+## Windows
+1. [Docker for Desktop](https://hub.docker.com/?overlay=onboarding) shoud be installed
+2. Make sure you have allocated at least 2CPU and 4GB of RAM for Docker (via Docker settings)
+<p align="center">
+  <img width="600px" src="./docs/img/docker-resources.png">
+</p>
+3. Make sure that you enabled drive sharing for Docker
+<p align="center">
+  <img width="600px" src="./docs/img/docker-drive.png">
+</p>
+4. Create volumes:
+
+```
+docker volume create --name=pgdata
+
+docker volume create --name=esdata
+```
+
+5. Start services:
+```
+docker-compose -f docker-compose-win.yml up -d
+```
+    
 ### 2. Building Zafira image(s) from sources
 Alternatively, if you'd like to play around with Zafira codebase and/or contribute to our project you might need to spin up images built from source code vs ones pulled from Docker Registry. In order to do so:
 1. Once you'll update the code make sure to re-package the `.jar` file by executing following command from `sources` directory:

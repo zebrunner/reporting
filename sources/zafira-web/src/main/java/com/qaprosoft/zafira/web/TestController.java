@@ -41,7 +41,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -105,7 +104,7 @@ public class TestController extends AbstractController {
     @ApiOperation(value = "Finish test", nickname = "finishTest", httpMethod = "POST", response = TestType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/{id}/finish")
-    public TestType finishTest(@ApiParam(value = "Test ID", required = true) @PathVariable("id") long id, @RequestBody TestType t) {
+    public TestType finishTest(@PathVariable("id") long id, @RequestBody TestType t) {
         Test test = mapper.map(t, Test.class);
         test.setId(id);
         test = testService.finishTest(test, t.getConfigXML(), t.getTestMetrics());
@@ -139,7 +138,7 @@ public class TestController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/{id}/workitems")
     public TestType createTestWorkItems(
-            @ApiParam(value = "Work item ID", required = true) @PathVariable("id") long id,
+            @PathVariable("id") long id,
             @RequestBody List<String> workItems
     ) {
         Test test = testService.createTestWorkItems(id, workItems);
@@ -150,7 +149,7 @@ public class TestController extends AbstractController {
     @ApiOperation(value = "Delete test by id", nickname = "deleteTest", httpMethod = "DELETE")
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @DeleteMapping("/{id}")
-    public void deleteTest(@ApiParam(value = "Test ID", required = true) @PathVariable("id") long id) {
+    public void deleteTest(@PathVariable("id") long id) {
         testService.deleteTestById(id);
     }
 
@@ -167,7 +166,7 @@ public class TestController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/{id}/workitem/{type}")
     public List<WorkItem> getTestCaseWorkItemsByType(
-            @ApiParam(value = "Test ID", required = true) @PathVariable("id") long id,
+            @PathVariable("id") long id,
             @PathVariable("type") Type type
     ) {
         return testService.getTestCaseWorkItems(id, type);
@@ -200,7 +199,7 @@ public class TestController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PutMapping("/{id}/issues")
     public WorkItem updateTestKnownIssue(
-            @ApiParam(value = "Test ID", required = true) @PathVariable("id") long id,
+            @PathVariable("id") long id,
             @RequestBody WorkItem workItem
     ) {
         return testService.updateTestWorkItem(id, workItem);
@@ -245,7 +244,7 @@ public class TestController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/{id}/artifacts")
     public void addTestArtifact(
-            @ApiParam(value = "Test ID", required = true) @PathVariable("id") long id,
+            @PathVariable("id") long id,
             @RequestBody TestArtifactType artifact
     ) {
         artifact.setTestId(id);
