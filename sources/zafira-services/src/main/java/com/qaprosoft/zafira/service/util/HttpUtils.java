@@ -76,9 +76,9 @@ public class HttpUtils {
 
     public static String buildBasicAuthUrl(String baseUrl, String username, String password) {
         String result = null;
-        if(!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
+        if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
             String[] urlSlices = baseUrl.split("//");
-            if(urlSlices.length == 2) {
+            if (urlSlices.length == 2) {
                 result = String.format("%s//%s:%s@%s", urlSlices[0], username, password, urlSlices[1]);
             }
         }
