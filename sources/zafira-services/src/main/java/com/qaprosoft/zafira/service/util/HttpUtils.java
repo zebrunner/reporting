@@ -49,10 +49,9 @@ public class HttpUtils {
      * @return true if status is OK
      */
     public static boolean isReachable(String baseUrl, String username, String password, String path, boolean replacePath) {
-        String basicAuthUrl = buildBasicAuthUrl(baseUrl, username, password);
         HttpResponse<?> response = null;
         try {
-            String url = replacePath ? retrieveServletPath(basicAuthUrl) : basicAuthUrl;
+            String url = replacePath ? retrieveServletPath(baseUrl) : baseUrl;
             String pathToCheck = url + path;
             String basicAuthHeaderValue = getBasicAuthHeaderValue(username, password);
             response = restClient.get(pathToCheck)
@@ -79,7 +78,9 @@ public class HttpUtils {
         String result = null;
         if(!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
             String[] urlSlices = baseUrl.split("//");
-            result = String.format("%s//%s:%s@%s", urlSlices[0], username, password, urlSlices[1]);
+            if(urlSlices.length == 2) {
+                result = String.format("%s//%s:%s@%s", urlSlices[0], username, password, urlSlices[1]);
+            }
         }
         return result != null ? result : baseUrl;
     }
