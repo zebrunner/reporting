@@ -252,23 +252,14 @@ public class IntegrationServiceImpl implements IntegrationService {
 
             Integration dbIntegration = retrieveById(integration.getId());
 
-            boolean enabledState = dbIntegration.isEnabled();
-            boolean newEnabledState = integration.isEnabled();
+            // attributes update: update integration attributes and persisted
+            integration.setBackReferenceId(dbIntegration.getBackReferenceId());
+            integration.setType(dbIntegration.getType());
 
-            if (enabledState != newEnabledState) {
-                // integration was turned on or off: only enabled/disabled state should be persisted
-                dbIntegration.setEnabled(newEnabledState);
-                return integrationRepository.save(dbIntegration);
-            } else {
-                // attributes update: update integration attributes and persisted
-                integration.setBackReferenceId(dbIntegration.getBackReferenceId());
-                integration.setType(dbIntegration.getType());
+            List<IntegrationSetting> integrationSettings = updateIntegrationSettings(integration, integrationType.getId());
+            integration.setSettings(integrationSettings);
 
-                List<IntegrationSetting> integrationSettings = updateIntegrationSettings(integration, integrationType.getId());
-                integration.setSettings(integrationSettings);
-
-                return integrationRepository.save(integration);
-            }
+            return integrationRepository.save(integration);
         });
 
         notifyToolReInitialized(updatedIntegration);
