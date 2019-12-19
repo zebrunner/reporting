@@ -42,7 +42,7 @@ public class ZebrunnerAdapter extends AbstractIntegrationAdapter implements Test
 
     @Override
     public boolean isConnected() {
-        return HttpUtils.isReachable(url, username, password, "", true) &&
+        return HttpUtils.isReachable(url, username, password, "", false) &&
                 "/wd/hub".equals(HttpUtils.retrievePath(url));
     }
 
