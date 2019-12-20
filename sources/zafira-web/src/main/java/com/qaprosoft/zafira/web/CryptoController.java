@@ -16,11 +16,7 @@
 package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.service.CryptoService;
-import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.qaprosoft.zafira.web.documented.CryptoDocumentedController;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -28,11 +24,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api("Security API")
 @CrossOrigin
 @RequestMapping(path = "api/security", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-public class CryptoController extends AbstractController {
+public class CryptoController extends AbstractController implements CryptoDocumentedController {
 
     private final CryptoService cryptoService;
 
@@ -40,11 +35,9 @@ public class CryptoController extends AbstractController {
         this.cryptoService = cryptoService;
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Regenerate crypto key", nickname = "regenerateCryptoKey", httpMethod = "PUT")
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_INTEGRATIONS')")
     @PutMapping("/cryptokey")
+    @Override
     public void regenerateCryptoKey() {
         cryptoService.regenerateKey();
     }
