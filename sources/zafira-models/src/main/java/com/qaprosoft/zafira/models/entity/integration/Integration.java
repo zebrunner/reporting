@@ -87,4 +87,9 @@ public class Integration {
                    .filter(is -> is.getParam().getName().equalsIgnoreCase(attributeName))
                    .findAny();
     }
+
+    @Override
+    public String toString() {
+        return name + ": " + enabled;
+    }
 }
