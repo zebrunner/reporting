@@ -18,11 +18,7 @@ package com.qaprosoft.zafira.web;
 import com.qaprosoft.zafira.models.dto.EmailType;
 import com.qaprosoft.zafira.service.EmailService;
 import com.qaprosoft.zafira.service.UploadService;
-import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.qaprosoft.zafira.web.documented.FileUtilDocumentedController;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -46,11 +42,10 @@ import java.util.UUID;
 
 import static com.qaprosoft.zafira.models.dto.aws.FileUploadType.Type;
 
-@Api("File utils API")
 @CrossOrigin
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-public class FileUtilController extends AbstractController {
+public class FileUtilController extends AbstractController implements FileUtilDocumentedController {
 
     private static final String DATA_FOLDER = "/opt/apk/%s";
 
@@ -68,16 +63,14 @@ public class FileUtilController extends AbstractController {
         this.context = context;
     }
 
-    @ApiOperation(value = "Upload file", nickname = "uploadFile", httpMethod = "POST", response = String.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("api/upload")
+    @Override
     public String uploadFile(@RequestHeader("FileType") Type type, @RequestParam("file") MultipartFile file) throws IOException {
         return uploadService.upload(type, file.getInputStream(), file.getOriginalFilename(), file.getSize());
     }
 
-    @ApiOperation(value = "Send image by email", nickname = "sendImageByEmail", httpMethod = "POST")
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("api/upload/email")
+    @Override
     public void sendImageByEmail(@RequestPart("file") MultipartFile file, @RequestPart("email") EmailType email) throws IOException {
         String fileExtension = String.format(".%s", FilenameUtils.getExtension(file.getOriginalFilename()));
         File attachmentFile = File.createTempFile(UUID.randomUUID().toString(), fileExtension);
@@ -85,10 +78,8 @@ public class FileUtilController extends AbstractController {
         emailService.sendEmail(email, attachmentFile, file.getResource().getFilename());
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Download file by filename", nickname = "downloadFile", httpMethod = "GET")
     @GetMapping("api/download")
+    @Override
     public void downloadFile(HttpServletResponse response, @RequestParam("filename") String filename) throws IOException {
         File file = new File(String.format(DATA_FOLDER, filename));
         String mimeType = context.getMimeType(file.getPath());
@@ -100,10 +91,8 @@ public class FileUtilController extends AbstractController {
         response.flushBuffer();
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Check file is present in file system", nickname = "checkFilePresence", httpMethod = "GET")
     @GetMapping("api/download/check")
+    @Override
     public boolean checkFilePresence(@RequestParam("filename") String filename) {
         return new File(String.format(DATA_FOLDER, filename)).exists();
     }

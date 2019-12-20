@@ -41,7 +41,7 @@ public interface IntegrationInfoDocumentedController {
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found integrations", response = IntegrationInfo.class)
+            @ApiResponse(code = 200, message = "Returns found integrations", response = Map.class)
     })
     Map<String, Map<String, List<IntegrationInfo>>> getIntegrationsInfo();
 
