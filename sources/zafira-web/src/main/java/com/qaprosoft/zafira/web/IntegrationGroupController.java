@@ -17,11 +17,7 @@ package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.dto.integration.IntegrationGroupDTO;
 import com.qaprosoft.zafira.service.integration.IntegrationGroupService;
-import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.qaprosoft.zafira.web.documented.IntegrationGroupDocumentedController;
 import org.dozer.Mapper;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,11 +29,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Api("Integration groups API")
 @CrossOrigin
 @RequestMapping(path = "api/integration-groups", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-public class IntegrationGroupController extends AbstractController {
+public class IntegrationGroupController extends AbstractController implements IntegrationGroupDocumentedController {
 
     private final IntegrationGroupService integrationGroupService;
     private final Mapper mapper;
@@ -47,11 +42,9 @@ public class IntegrationGroupController extends AbstractController {
         this.mapper = mapper;
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Get integration groups", nickname = "getAll", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('VIEW_INTEGRATIONS')")
     @GetMapping()
+    @Override
     public List<IntegrationGroupDTO> getAll() {
         return integrationGroupService.retrieveAll().stream()
                                  .map(integration -> mapper.map(integration, IntegrationGroupDTO.class))
