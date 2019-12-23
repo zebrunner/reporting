@@ -23,7 +23,7 @@ public interface GroupDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "group", paramType = "body", dataType = "Group", required = true, value = "Group to create"),
+            @ApiImplicitParam(name = "group", paramType = "body", dataType = "Group", required = true, value = "Group to create")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns created group with created permissions inside", response = Group.class)
@@ -39,7 +39,7 @@ public interface GroupDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "group", paramType = "body", dataType = "Group", required = true, value = "Group with permissions to add inside"),
+            @ApiImplicitParam(name = "group", paramType = "body", dataType = "Group", required = true, value = "Group with permissions to add inside")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns group with attached attributes inside", response = Group.class)
@@ -55,7 +55,7 @@ public interface GroupDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Group id"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Group id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns found group", response = Group.class),
@@ -72,7 +72,7 @@ public interface GroupDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "isPublic", paramType = "query", dataType = "boolean", value = "Flag to indicate to retrieve public groups only"),
+            @ApiImplicitParam(name = "isPublic", paramType = "query", dataType = "boolean", value = "Flag to indicate to retrieve public groups only")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns found groups", response = List.class)
@@ -118,7 +118,7 @@ public interface GroupDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "group", paramType = "body", dataType = "Group", required = true, value = "Group to update"),
+            @ApiImplicitParam(name = "group", paramType = "body", dataType = "Group", required = true, value = "Group to update")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns updated group and attached permissions inside", response = Group.class)
@@ -133,7 +133,7 @@ public interface GroupDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Group id to delete"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Group id to delete")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns created dashboard"),
