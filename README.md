@@ -58,7 +58,7 @@ Disclaimer: installation steps described below are not suitable for production-g
 ---
 The only dependency Zafira requires in order to spin it up (deploy to localhost) is Docker Compose installed. More information on Docker Compose installation can be found [here](https://docs.docker.com/compose/install/). Once you'll have Docker Compose installed you'll have two options, so let's take a closer look at both of them.
 ### 1. Spinning Zafira using Qaprosoft images
-## Linux or MaxOS
+## Linux or MacOS
 In order to install Zafira (deploy to localhost) you'll need to complete following steps:
 1. Clone current repo and navigate to the repo root on your local machine
 2. To start Zafira execute:
