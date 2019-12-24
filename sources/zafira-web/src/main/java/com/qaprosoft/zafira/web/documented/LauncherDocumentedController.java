@@ -48,7 +48,7 @@ public interface LauncherDocumentedController {
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns created launcher", response = LauncherDTO.class),
-            @ApiResponse(code = 200, message = "Indicates that no automation servers were found (by id or default)", response = ErrorResponse.class)
+            @ApiResponse(code = 400, message = "Indicates that no automation servers were found (by id or default)", response = ErrorResponse.class)
     })
     LauncherDTO createLauncher(LauncherDTO launcherDTO, Long automationServerId);
 
