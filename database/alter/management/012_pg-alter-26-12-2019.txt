@@ -1,0 +1,155 @@
+set schema 'management';
+
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG='
+let lineRow = {
+    "type": "line",
+    "smooth": false,
+    "stack": "Status",
+    "itemStyle": {
+      "normal": {
+        "areaStyle": {
+            "opacity": 0.8,
+            "type": "default"
+        }
+      }
+    },
+    "lineStyle": {
+      "width": 1
+    }
+};
+
+let series = [];
+  for (var i = 0; i < 6 ; i++) {
+    series.push(lineRow);
+  };
+
+let option = {
+    "grid": {
+        "right": "8%",
+        "left": "10%",
+        "top": "8%",
+        "bottom": "8%"
+    },
+    "legend": {},
+    "tooltip": {
+        "trigger": "axis",
+        "extraCssText": "transform: translateZ(0);"
+    },
+    "color": [
+        "#e76a77",
+        "#6dbbe7",
+        "#fddb7a",
+        "#b5b5b5",
+        "#61c8b3",
+        "#9f5487"
+    ],
+    "xAxis": {
+        "type": "category",
+        "boundaryGap": false
+    },
+    "yAxis": {},
+    "series": series
+};
+
+window.onresize = function(event) {
+  const leftCorner = chart.getWidth() < 700 ? "10%" : "8%";
+  option.grid.left = leftCorner;
+  chart.setOption(option);
+};
+
+chart.setOption(option);' WHERE NAME='PASS RATE TREND';
+
+
+
+
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG='
+let data = [], invisibleData = [], xAxisData = [], lineData = [];
+let invisibleDataStep = 0, lineDataStep = 0;
+
+dataset.map(({CREATED_AT, AMOUNT}) => {
+  xAxisData.push(CREATED_AT);
+  data.push(AMOUNT);  //used in second bar series for building
+  invisibleData.push(invisibleDataStep);  //used in first bar series for creating step-effect
+  lineDataStep += AMOUNT;
+  lineData.push(lineDataStep); //used in line series for creating dashed-line
+  invisibleDataStep += AMOUNT; //the first element must be 0
+});
+  
+option = {
+  grid: {
+    right: "2%",
+    left: "4%",
+    top: "8%",
+    bottom: "8%"
+    },
+  tooltip : {
+    trigger: "axis",
+    axisPointer : {            
+      type : "shadow"        
+    },
+    formatter: function (params) {
+      let total = params[2]; // pick params.total
+      return total.name + "<br/>" + "Total" + " : " + total.value;
+    },
+    extraCssText: "transform: translateZ(0);"
+  },
+  color: ["#7fbae3", "#7fbae3"],
+  xAxis: {
+    type : "category",
+    splitLine: {
+      show: false
+    },
+    data : xAxisData
+  },
+  yAxis: {
+    type : "value"
+  },
+  series: [
+    {
+      type: "bar",
+      stack: "line",
+      itemStyle: {
+        normal: {
+          barBorderColor: "rgba(0,0,0,0)",
+          color: "rgba(127, 186, 227, 0.1)"
+        },
+        emphasis: {
+          barBorderColor: "rgba(0,0,0,0)",
+          color: "rgba(127, 186, 227, 0.1)"
+        }
+      },
+      data: invisibleData
+      },
+      {
+        type: "bar",
+        stack: "line",
+        label: {
+          normal: {
+            show: true,
+            distance: -15,
+            position: "top",
+            color: "black",
+             formatter: (params) => {
+              if (params.dataIndex === 0) return "";
+              return params.value;
+            }
+          }
+        },
+        data: data
+      },
+      {
+        type: "line",
+        smooth: true,
+        label: {
+          normal: {
+            show: true
+          }
+        },
+        lineStyle: {
+          color: "rgba(0,0,0,0)" // default invisible
+        },
+        data: lineData
+      }
+    ]
+};
+chart.setOption(option);' WHERE NAME='MONTHLY TEST IMPLEMENTATION PROGRESS';
