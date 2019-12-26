@@ -37,10 +37,6 @@ import com.qaprosoft.zafira.service.TestService;
 import com.qaprosoft.zafira.service.cache.StatisticsService;
 import com.qaprosoft.zafira.service.util.EmailUtils;
 import com.qaprosoft.zafira.web.documented.TestRunDocumentedController;
-import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import org.dozer.Mapper;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -180,9 +176,6 @@ public class TestRunController extends AbstractController implements TestRunDocu
         return testRunService.search(sc, projectNames, filterId);
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Rerun jobs", nickname = "smartRerun", httpMethod = "POST", response = SearchResult.class)
     @PostMapping("/rerun/jobs")
     @Override
     public List<TestRunType> rerunJobs(
@@ -222,9 +215,6 @@ public class TestRunController extends AbstractController implements TestRunDocu
         return testRunService.createCompareMatrix(ids);
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Delete test run", nickname = "deleteTestRun", httpMethod = "DELETE")
     @PreAuthorize("hasPermission('MODIFY_TEST_RUNS')")
     @DeleteMapping("/{id}")
     @Override
@@ -232,9 +222,6 @@ public class TestRunController extends AbstractController implements TestRunDocu
         testRunService.deleteTestRunById(id);
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Send test run result email", nickname = "sendTestRunResultsEmail", httpMethod = "POST", response = String.class)
     @PostMapping(path = "/{id}/email", produces = MediaType.TEXT_HTML_VALUE)
     @Override
     public String sendTestRunResultsEmail(
@@ -247,9 +234,6 @@ public class TestRunController extends AbstractController implements TestRunDocu
         return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), showStacktrace, recipients);
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Send failed test run result email", nickname = "sendTestRunFailureEmail", httpMethod = "POST", response = String.class)
     @PostMapping(path = "/{id}/emailFailure", produces = MediaType.TEXT_HTML_VALUE)
     @Override
     public String sendTestRunFailureEmail(
@@ -268,18 +252,12 @@ public class TestRunController extends AbstractController implements TestRunDocu
         return testRunService.createTestRunResultSpreadsheet(id, getPrincipalId(), recipients);
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Get test run result html text", nickname = "exportTestRunHTML", httpMethod = "GET", response = String.class)
     @GetMapping(path = "/{id}/export", produces = "text/html;charset=UTF-8")
     @Override
     public String exportTestRunHTML(@PathVariable("id") String id) {
         return testRunService.exportTestRunHTML(id);
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Mark test run as reviewed", nickname = "markTestRunAsReviewed", httpMethod = "POST")
     @PreAuthorize("hasPermission('MODIFY_TEST_RUNS')")
     @PostMapping("/{id}/markReviewed")
     @Override
@@ -288,9 +266,6 @@ public class TestRunController extends AbstractController implements TestRunDocu
         websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Rerun test run", nickname = "rerunTestRun", httpMethod = "GET")
     @PreAuthorize("hasPermission('TEST_RUNS_CI')")
     @GetMapping("/{id}/rerun")
     @Override
@@ -298,9 +273,6 @@ public class TestRunController extends AbstractController implements TestRunDocu
         testRunService.rerunTestRun(id, rerunFailures);
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Debug test run", nickname = "debugTestRun", httpMethod = "GET")
     @PreAuthorize("hasPermission('TEST_RUNS_CI')")
     @GetMapping("/{id}/debug")
     @Override
@@ -308,9 +280,6 @@ public class TestRunController extends AbstractController implements TestRunDocu
         testRunService.debugTestRun(id);
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Abort job or debug", nickname = "abortCIJob", httpMethod = "GET")
     @PreAuthorize("hasPermission('TEST_RUNS_CI')")
     @GetMapping({ "/abort/ci", "/abort/debug" })
     @Override
@@ -325,9 +294,6 @@ public class TestRunController extends AbstractController implements TestRunDocu
         testRunService.abortTestRunJob(testRun);
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Build test run", nickname = "buildTestRun", httpMethod = "POST")
     @PreAuthorize("hasPermission('TEST_RUNS_CI')")
     @PostMapping("/{id}/build")
     @Override
@@ -338,9 +304,6 @@ public class TestRunController extends AbstractController implements TestRunDocu
         testRunService.buildTestRunJob(id, jobParameters);
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Get job parameters", nickname = "getjobParameters", httpMethod = "GET", response = Map.class)
     @PreAuthorize("hasPermission('TEST_RUNS_CI')")
     @GetMapping("/{id}/jobParameters")
     @Override
@@ -348,27 +311,18 @@ public class TestRunController extends AbstractController implements TestRunDocu
         return testRunService.getTestRunJobParameters(id);
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Get environments", nickname = "getEnvironments", httpMethod = "GET", response = List.class)
     @GetMapping("/environments")
     @Override
     public List<String> getEnvironments() {
         return testRunService.getEnvironments();
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Get platforms", nickname = "getPlatforms", httpMethod = "GET", response = List.class)
     @GetMapping("/platforms")
     @Override
     public List<String> getPlatforms() {
         return testRunService.getPlatforms();
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Get console output from jenkins by test run id", nickname = "getConsoleOutput", httpMethod = "GET")
     @GetMapping("/jobConsoleOutput/{count}/{fullCount}")
     @Override
     public Map<Integer, String> getConsoleOutput(

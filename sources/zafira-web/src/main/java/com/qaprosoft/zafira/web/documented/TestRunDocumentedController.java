@@ -164,18 +164,21 @@ public interface TestRunDocumentedController {
     SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc, List<String> projectNames, Long filterId) throws IOException;
 
     @ApiOperation(
-            value = "Searches test cases by criteria",
-            notes = "Returns found test cases",
+            value = "Reruns test run jobs by search criteria",
+            notes = "Returns restarted test runs",
             nickname = "rerunJobs",
             httpMethod = "POST",
-            response = SearchResult.class
+            response = List.class
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "sc", paramType = "body", dataType = "TestCaseSearchCriteria", required = true, value = "Search criteria")
+            @ApiImplicitParam(name = "doRebuild", paramType = "query", dataType = "boolean", value = "Flag must be true for rerun action"),
+            @ApiImplicitParam(name = "rerunFailures", paramType = "query", dataType = "boolean", value = "Indicates that only failed tests will be restarted"),
+            @ApiImplicitParam(name = "sc", paramType = "body", dataType = "JobSearchCriteria", required = true, value = "Search criteria")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found test cases", response = SearchResult.class)
+            @ApiResponse(code = 200, message = "Returns restarted test runs", response = List.class),
+            @ApiResponse(code = 400, message = "Indicates that test automation integration does not exist", response = ErrorResponse.class)
     })
     List<TestRunType> rerunJobs(boolean doRebuild, boolean rerunFailures, JobSearchCriteria sc);
 
@@ -229,210 +232,224 @@ public interface TestRunDocumentedController {
     Map<Long, Map<String, Test>> createCompareMatrix(String testRunIds);
 
     @ApiOperation(
-            value = "Searches test cases by criteria",
-            notes = "Returns found test cases",
-            nickname = "searchTestCases",
-            httpMethod = "POST",
-            response = SearchResult.class
+            value = "Deletes test run by id",
+            nickname = "deleteTestRun",
+            httpMethod = "DELETE"
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "sc", paramType = "body", dataType = "TestCaseSearchCriteria", required = true, value = "Search criteria")
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Test run id")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found test cases", response = SearchResult.class)
+            @ApiResponse(code = 200, message = "Test run was deleted successfully")
     })
     void deleteTestRun(long id);
 
     @ApiOperation(
-            value = "Searches test cases by criteria",
-            notes = "Returns found test cases",
-            nickname = "searchTestCases",
+            value = "Sends test run result via email",
+            notes = "Collects test run result data and sends report via email",
+            nickname = "sendTestRunResultsEmail",
             httpMethod = "POST",
-            response = SearchResult.class
+            response = String.class
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "sc", paramType = "body", dataType = "TestCaseSearchCriteria", required = true, value = "Search criteria")
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Test run id"),
+            @ApiImplicitParam(name = "email", paramType = "body", dataType = "EmailType", required = true, value = "Email to send"),
+            @ApiImplicitParam(name = "filter", paramType = "query", dataType = "string", value = "Test run result filter (failures)"),
+            @ApiImplicitParam(name = "showStacktrace", paramType = "query", dataType = "boolean", value = "Indicates test logs visibility")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found test cases", response = SearchResult.class)
+            @ApiResponse(code = 200, message = "Email was sent successfully. Returns email content", response = String.class),
+            @ApiResponse(code = 404, message = "Indicates that test run does not exist", response = ErrorResponse.class)
     })
     String sendTestRunResultsEmail(String id, EmailType email, String filter, boolean showStacktrace);
 
     @ApiOperation(
-            value = "Searches test cases by criteria",
-            notes = "Returns found test cases",
-            nickname = "searchTestCases",
+            value = "Sends test run result via email",
+            notes = "Collects test run result data and sends report via email",
+            nickname = "sendTestRunFailureEmail",
             httpMethod = "POST",
-            response = SearchResult.class
+            response = String.class
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "sc", paramType = "body", dataType = "TestCaseSearchCriteria", required = true, value = "Search criteria")
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Test run id"),
+            @ApiImplicitParam(name = "email", paramType = "body", dataType = "EmailType", required = true, value = "Email to send"),
+            @ApiImplicitParam(name = "suiteOwner", paramType = "query", dataType = "boolean", value = "Indicates that email will be sent to suite owner"),
+            @ApiImplicitParam(name = "suiteRunner", paramType = "query", dataType = "boolean", value = "Indicates that email will be sent to suite runner")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found test cases", response = SearchResult.class)
+            @ApiResponse(code = 200, message = "Email was sent successfully. Returns email content", response = String.class),
+            @ApiResponse(code = 404, message = "Indicates that test run does not exist", response = ErrorResponse.class)
     })
     String sendTestRunFailureEmail(String id, EmailType email, boolean suiteOwner, boolean suiteRunner);
 
     @ApiOperation(
-            value = "Searches test cases by criteria",
-            notes = "Returns found test cases",
-            nickname = "searchTestCases",
-            httpMethod = "POST",
-            response = SearchResult.class
+            value = "Builds test run result html as string",
+            notes = "Returns built test run results html",
+            nickname = "exportTestRunHTML",
+            httpMethod = "GET",
+            response = String.class
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "sc", paramType = "body", dataType = "TestCaseSearchCriteria", required = true, value = "Search criteria")
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Test run id")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found test cases", response = SearchResult.class)
+            @ApiResponse(code = 200, message = "Returns built test run results html", response = String.class)
     })
     String exportTestRunHTML(String id);
 
     @ApiOperation(
-            value = "Searches test cases by criteria",
-            notes = "Returns found test cases",
-            nickname = "searchTestCases",
-            httpMethod = "POST",
-            response = SearchResult.class
+            value = "Marks test run as reviewed",
+            notes = "Attaches comment and marks as reviewed",
+            nickname = "markTestRunAsReviewed",
+            httpMethod = "POST"
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "sc", paramType = "body", dataType = "TestCaseSearchCriteria", required = true, value = "Search criteria")
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Test run id"),
+            @ApiImplicitParam(name = "comment", paramType = "body", dataType = "CommentType", required = true, value = "Test run comment")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found test cases", response = SearchResult.class)
+            @ApiResponse(code = 200, message = "Test run was marked as reviewed successfully"),
+            @ApiResponse(code = 404, message = "Indicates that test run does not exist", response = ErrorResponse.class)
     })
     void markTestRunAsReviewed(long id, CommentType comment);
 
     @ApiOperation(
-            value = "Searches test cases by criteria",
-            notes = "Returns found test cases",
-            nickname = "searchTestCases",
-            httpMethod = "POST",
-            response = SearchResult.class
+            value = "Rerun test run by id",
+            notes = "Rerun test run by id(all tests ar failed only)",
+            nickname = "rerunTestRun",
+            httpMethod = "GET"
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "sc", paramType = "body", dataType = "TestCaseSearchCriteria", required = true, value = "Search criteria")
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Test run id"),
+            @ApiImplicitParam(name = "rerunFailures", paramType = "query", dataType = "boolean", value = "Indicates that will be ran failed tests only")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found test cases", response = SearchResult.class)
+            @ApiResponse(code = 200, message = "Test run was re-ran successfully"),
+            @ApiResponse(code = 400, message = "Indicates that test run is passed but flag is rerun failures", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "Indicates that test run does not exist", response = ErrorResponse.class)
     })
     void rerunTestRun(long id, boolean rerunFailures);
 
     @ApiOperation(
-            value = "Searches test cases by criteria",
-            notes = "Returns found test cases",
-            nickname = "searchTestCases",
-            httpMethod = "POST",
-            response = SearchResult.class
+            value = "Starts debug job",
+            notes = "Needs to debug test run remotely",
+            nickname = "debugTestRun",
+            httpMethod = "GET"
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "sc", paramType = "body", dataType = "TestCaseSearchCriteria", required = true, value = "Search criteria")
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Test run id")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found test cases", response = SearchResult.class)
+            @ApiResponse(code = 200, message = "Returns found test cases"),
+            @ApiResponse(code = 400, message = "Indicates that test run is passed but flag is rerun failures or test automation integration does not exist", response = ErrorResponse.class)
     })
     void debugTestRun(long id);
 
     @ApiOperation(
-            value = "Searches test cases by criteria",
-            notes = "Returns found test cases",
-            nickname = "searchTestCases",
-            httpMethod = "POST",
-            response = SearchResult.class
+            value = "Aborts test run job or debug process",
+            nickname = "abortCIJob",
+            httpMethod = "GET"
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "sc", paramType = "body", dataType = "TestCaseSearchCriteria", required = true, value = "Search criteria")
+            @ApiImplicitParam(name = "id", paramType = "query", dataType = "number", value = "Test run id"),
+            @ApiImplicitParam(name = "ciRunId", paramType = "query", dataType = "string", value = "Test run ci run id")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found test cases", response = SearchResult.class)
+            @ApiResponse(code = 200, message = "Test run job or debug process was aborted successfully"),
+            @ApiResponse(code = 400, message = "Indicates that test automation integration does not exist", response = ErrorResponse.class)
     })
     void abortCIJob(Long id, String ciRunId);
 
     @ApiOperation(
-            value = "Searches test cases by criteria",
-            notes = "Returns found test cases",
-            nickname = "searchTestCases",
-            httpMethod = "POST",
-            response = SearchResult.class
+            value = "Builds test run job",
+            notes = "Builds test run job using custom provided job parameters",
+            nickname = "buildTestRun",
+            httpMethod = "POST"
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "sc", paramType = "body", dataType = "TestCaseSearchCriteria", required = true, value = "Search criteria")
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Test run id"),
+            @ApiImplicitParam(name = "jobParameters", paramType = "body", dataType = "Map", required = true, value = "Job parameters")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found test cases", response = SearchResult.class)
+            @ApiResponse(code = 200, message = "Test run job was built successfully"),
+            @ApiResponse(code = 400, message = "Indicates that test automation integration does not exist", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "Indicates that test run does not exist", response = ErrorResponse.class)
     })
     void buildTestRun(long id, Map<String, String> jobParameters);
 
     @ApiOperation(
-            value = "Searches test cases by criteria",
-            notes = "Returns found test cases",
-            nickname = "searchTestCases",
-            httpMethod = "POST",
-            response = SearchResult.class
+            value = "Retrieves job parameters from test run job by id",
+            nickname = "getJobParameters",
+            httpMethod = "GET",
+            response = List.class
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "sc", paramType = "body", dataType = "TestCaseSearchCriteria", required = true, value = "Search criteria")
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Test run id")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found test cases", response = SearchResult.class)
+            @ApiResponse(code = 200, message = "Returns found test cases", response = List.class),
+            @ApiResponse(code = 400, message = "Indicates that test automation integration does not exist", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "Indicates that test run does not exist", response = ErrorResponse.class)
     })
     List<BuildParameterType> getJobParameters(long id);
 
     @ApiOperation(
-            value = "Searches test cases by criteria",
-            notes = "Returns found test cases",
-            nickname = "searchTestCases",
-            httpMethod = "POST",
-            response = SearchResult.class
+            value = "Retrieves all test run environments",
+            notes = "Returns found test run environments",
+            nickname = "getEnvironments",
+            httpMethod = "GET",
+            response = List.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "sc", paramType = "body", dataType = "TestCaseSearchCriteria", required = true, value = "Search criteria")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found test cases", response = SearchResult.class)
+            @ApiResponse(code = 200, message = "Returns found test run environments", response = List.class)
     })
     List<String> getEnvironments();
 
     @ApiOperation(
-            value = "Searches test cases by criteria",
-            notes = "Returns found test cases",
-            nickname = "searchTestCases",
-            httpMethod = "POST",
-            response = SearchResult.class
+            value = "Retrieves all test run platforms",
+            notes = "Returns found test run platforms",
+            nickname = "getPlatforms",
+            httpMethod = "GET",
+            response = List.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "sc", paramType = "body", dataType = "TestCaseSearchCriteria", required = true, value = "Search criteria")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found test cases", response = SearchResult.class)
+            @ApiResponse(code = 200, message = "Returns found test run platforms", response = List.class)
     })
     List<String> getPlatforms();
 
     @ApiOperation(
-            value = "Searches test cases by criteria",
-            notes = "Returns found test cases",
-            nickname = "searchTestCases",
-            httpMethod = "POST",
-            response = SearchResult.class
+            value = "Retrieves test run job console lines",
+            notes = "Returns found lines",
+            nickname = "getConsoleOutput",
+            httpMethod = "GET",
+            response = Map.class
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "sc", paramType = "body", dataType = "TestCaseSearchCriteria", required = true, value = "Search criteria")
+            @ApiImplicitParam(name = "count", paramType = "path", dataType = "number", required = true, value = "Test run job console lines count"),
+            @ApiImplicitParam(name = "fullCount", paramType = "path", dataType = "number", required = true, value = "Offset from which will be searching start"),
+            @ApiImplicitParam(name = "id", paramType = "query", dataType = "number", value = "Test run id"),
+            @ApiImplicitParam(name = "ciRunId", paramType = "query", dataType = "string", value = "Test run ci run id")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found test cases", response = SearchResult.class)
+            @ApiResponse(code = 200, message = "Returns found lines", response = Map.class),
+            @ApiResponse(code = 400, message = "Indicates that test automation integration does not exist", response = ErrorResponse.class)
     })
     Map<Integer, String> getConsoleOutput(int count, int fullCount, Long id, String ciRunId);
 
