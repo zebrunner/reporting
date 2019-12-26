@@ -36,6 +36,7 @@ public class HttpUtils {
     static {
         Config config = new Config();
         config.connectTimeout(5000);
+        config.cookieSpec("standard");
         restClient = new UnirestInstance(config);
     }
 

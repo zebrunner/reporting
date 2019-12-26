@@ -24,7 +24,6 @@ import com.qaprosoft.zafira.service.ElasticsearchService;
 import com.qaprosoft.zafira.service.SettingsService;
 import com.qaprosoft.zafira.service.integration.IntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.impl.StorageProviderService;
-import com.qaprosoft.zafira.service.integration.tool.impl.google.GoogleService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -40,7 +39,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,21 +54,19 @@ public class SettingsController extends AbstractController {
     private final IntegrationService integrationService;
 
     private final StorageProviderService storageProviderService;
-    private final GoogleService googleService;
 
     public SettingsController(
             SettingsService settingsService,
             CryptoService cryptoService,
             ElasticsearchService elasticsearchService,
             IntegrationService integrationService,
-            StorageProviderService storageProviderService, GoogleService googleService
+            StorageProviderService storageProviderService
     ) {
         this.settingsService = settingsService;
         this.cryptoService = cryptoService;
         this.elasticsearchService = elasticsearchService;
         this.integrationService = integrationService;
         this.storageProviderService = storageProviderService;
-        this.googleService = googleService;
     }
 
     @ApiResponseStatuses
@@ -125,13 +121,6 @@ public class SettingsController extends AbstractController {
     @GetMapping("amazon/creds")
     public SessionCredentials getSessionCredentials() {
         return storageProviderService.getTemporarySessionCredentials().orElse(null);
-    }
-
-    @ApiOperation(value = "Get google session credentials", nickname = "getGoogleSessionCredentials", httpMethod = "GET", response = String.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @GetMapping(path = "google/creds", produces = MediaType.TEXT_PLAIN_VALUE)
-    public String getGoogleSessionCredentials() throws IOException {
-        return googleService.getTemporaryAccessToken();
     }
 
 }
