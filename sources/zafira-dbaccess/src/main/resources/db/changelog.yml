@@ -99,13 +99,24 @@ databaseChangeLog:
             relativeToChangelogFile: true
             splitStatements: false
   - changeSet:
-        id: 010_remove_google_integration
+        id: 010_add_lambda_test_integration
         validCheckSum: ANY
         labels: stable
         author: brutskov
         changes:
           - sqlFile:
               encoding: utf8
-              path: changeset/010_remove_google_integration.sql
+              path: changeset/010_add_lambda_test_integration.sql
+              relativeToChangelogFile: true
+              splitStatements: false
+  - changeSet:
+        id: 011_remove_google_integration
+        validCheckSum: ANY
+        labels: stable
+        author: brutskov
+        changes:
+          - sqlFile:
+              encoding: utf8
+              path: changeset/011_remove_google_integration.sql
               relativeToChangelogFile: true
               splitStatements: false

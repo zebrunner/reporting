@@ -41,7 +41,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.dozer.Mapper;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -101,7 +100,7 @@ public class TestRunController extends AbstractController {
         testRun.setProject(new Project(project));
         testRun = testRunService.startTestRun(testRun);
 
-        websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRun));
+        sendTestRunPush(testRun);
         websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 
         return mapper.map(testRun, TestRunType.class);
@@ -115,7 +114,7 @@ public class TestRunController extends AbstractController {
         TestRun testRun = mapper.map(testRunType, TestRun.class);
         testRunService.updateTestRunWithXml(testRun);
 
-        websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRun));
+        sendTestRunPush(testRun);
         websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 
         return mapper.map(testRun, TestRunType.class);
@@ -125,14 +124,14 @@ public class TestRunController extends AbstractController {
     @ApiOperation(value = "Finish test run", nickname = "finishTestRun", httpMethod = "POST", response = TestRunType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/{id}/finish")
-    public TestRunType finishTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable("id") long id) {
+    public TestRunType finishTestRun(@PathVariable("id") long id) {
         TestRun testRun = testRunService.calculateTestRunResult(id, true);
         TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
 
         launcherCallbackService.notifyOnTestRunFinish(testRun.getCiRunId());
 
         websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(id)));
-        websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunFull));
+        sendTestRunPush(testRunFull);
 
         return mapper.map(testRun, TestRunType.class);
     }
@@ -143,8 +142,8 @@ public class TestRunController extends AbstractController {
     @PreAuthorize("hasPermission('MODIFY_TEST_RUNS')")
     @PostMapping("/abort")
     public TestRunType abortTestRun(
-            @ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
-            @ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId,
+            @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "ciRunId", required = false) String ciRunId,
             @RequestBody(required = false) CommentType abortCause
     ) {
         TestRun testRun = TestRun.builder()
@@ -160,7 +159,7 @@ public class TestRunController extends AbstractController {
                  .filter(test -> Status.ABORTED.equals(test.getStatus()))
                  .forEach(test -> websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test)));
 
-            websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
+            sendTestRunPush(testRunService.getTestRunByIdFull(testRun.getId()));
             websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
         }
         return mapper.map(testRun, TestRunType.class);
@@ -179,7 +178,7 @@ public class TestRunController extends AbstractController {
     @ApiOperation(value = "Get test run", nickname = "getTestRun", httpMethod = "GET", response = TestRunType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/{id}")
-    public TestRunType getTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable("id") long id) {
+    public TestRunType getTestRun(@PathVariable("id") long id) {
         TestRun testRun = testRunService.getNotNullTestRunById(id);
         return mapper.map(testRun, TestRunType.class);
     }
@@ -322,8 +321,8 @@ public class TestRunController extends AbstractController {
     @PreAuthorize("hasPermission('TEST_RUNS_CI')")
     @GetMapping({ "/abort/ci", "/abort/debug" })
     public void abortCIJob(
-            @ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
-            @ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId
+            @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "ciRunId", required = false) String ciRunId
     ) {
         TestRun testRun = TestRun.builder()
                                  .id(id)
@@ -384,6 +383,11 @@ public class TestRunController extends AbstractController {
                                  .ciRunId(ciRunId)
                                  .build();
         return testRunService.getBuildConsoleOutput(testRun, count, fullCount);
+    }
+
+    private void sendTestRunPush(TestRun testRun) {
+        testRunService.hideJobUrlsIfNeed(List.of(testRun));
+        websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRun));
     }
 
 }
