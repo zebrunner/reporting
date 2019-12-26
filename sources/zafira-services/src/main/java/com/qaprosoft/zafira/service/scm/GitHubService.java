@@ -64,7 +64,9 @@ public class GitHubService implements IScmService {
     public List<Repository> getRepositories(ScmAccount scmAccount, String organizationName, List<String> existingRepos) throws IOException {
         GitHub gitHub = connectToGitHub(scmAccount);
         GHPerson person = StringUtils.isBlank(organizationName) ? gitHub.getMyself() : gitHub.getOrganization(organizationName);
-        List<Repository> repositories = person.listRepositories().asList().stream().map(this::mapRepository).collect(Collectors.toList());
+        List<Repository> repositories = person.listRepositories().asList().stream()
+                                              .filter(repository -> isRepositoryOwner(person.getLogin(), repository))
+                                              .map(GitHubService::mapRepository).collect(Collectors.toList());
         return repositories.stream()
                            .filter(repository -> !existingRepos.contains(repository.getUrl()))
                            .collect(Collectors.toList());
@@ -119,7 +121,17 @@ public class GitHubService implements IScmService {
         return result;
     }
 
-    private Repository mapRepository(GHRepository repository) {
+    private static boolean isRepositoryOwner(String loginName, GHRepository repository) {
+        boolean result = false;
+        try {
+            result = repository.getOwner().getLogin().equals(loginName);
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return result;
+    }
+
+    private static Repository mapRepository(GHRepository repository) {
         Repository repo = new Repository(repository.getName());
         repo.setDefaultBranch(repository.getDefaultBranch());
         repo.setPrivate(repository.isPrivate());
