@@ -63,7 +63,9 @@ public class GitHubService implements IScmService {
     @Override
     public List<Repository> getRepositories(ScmAccount scmAccount, String organizationName, List<String> existingRepos) throws IOException {
         GitHub gitHub = connectToGitHub(scmAccount);
-        GHPerson person = StringUtils.isBlank(organizationName) ? gitHub.getMyself() : gitHub.getOrganization(organizationName);
+        GHPerson tokenOwner = gitHub.getMyself();
+        GHPerson person = StringUtils.isBlank(organizationName) || tokenOwner.getLogin().equals(organizationName) ?
+                gitHub.getMyself() : gitHub.getOrganization(organizationName);
         List<Repository> repositories = person.listRepositories().asList().stream()
                                               .filter(repository -> isRepositoryOwner(person.getLogin(), repository))
                                               .map(GitHubService::mapRepository).collect(Collectors.toList());
