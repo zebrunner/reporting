@@ -1195,17 +1195,7 @@ let option = {
         "type": "category",
         "boundaryGap": false
     },
-    "yAxis": {
-      axisLabel : {
-        formatter: (value) => {
-          if(value == 0) return value
-          if(value >= 1000000000) return `${(value/1000000000).toFixed(2)}B`
-          else if(value >= 1000000) return `${(value/1000000).toFixed(2)}M`
-          else if (value >= 1000) return `${(value/1000).toFixed(2)}K`
-          else return value
-        }
-      }
-    },
+    "yAxis": {},
     "series": series
 };
 
@@ -1450,44 +1440,97 @@ SELECT
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
 </#function>
-', '{
-    "grid": {
-        "right": "2%",
-        "left": "4%",
-        "top": "8%",
-        "bottom": "8%"
+', '
+let data = [], invisibleData = [], xAxisData = [], lineData = [];
+let invisibleDataStep = 0, lineDataStep = 0;
+
+dataset.map(({CREATED_AT, AMOUNT}) => {
+  xAxisData.push(CREATED_AT);
+  data.push(AMOUNT);  //used in second bar series for building
+  invisibleData.push(invisibleDataStep);  //used in first bar series for creating step-effect
+  lineDataStep += AMOUNT;
+  lineData.push(lineDataStep); //used in line series for creating dashed-line
+  invisibleDataStep += AMOUNT; //the first element must be 0
+});
+  
+option = {
+  grid: {
+    right: "2%",
+    left: "4%",
+    top: "8%",
+    bottom: "8%"
     },
-    "legend": {
-        "top": -5
+  tooltip : {
+    trigger: "axis",
+    axisPointer : {            
+      type : "shadow"        
     },
-    "tooltip": {
-        "trigger": "axis"
+    formatter: function (params) {
+      let total = params[2]; // pick params.total
+      return total.name + "<br/>" + "Total" + " : " + total.value;
     },
-    "dimensions": [
-        "CREATED_AT",
-        "AMOUNT"
-    ],
-    "color": [
-        "#7fbae3",
-        "#919e8b"
-    ],
-    "xAxis": {
-        "type": "category"
+    extraCssText: "transform: translateZ(0);"
+  },
+  color: ["#7fbae3", "#7fbae3"],
+  xAxis: {
+    type : "category",
+    splitLine: {
+      show: false
     },
-    "yAxis": {},
-    "series": [
-        {
-            "type": "bar"
+    data : xAxisData
+  },
+  yAxis: {
+    type : "value"
+  },
+  series: [
+    {
+      type: "bar",
+      stack: "line",
+      itemStyle: {
+        normal: {
+          barBorderColor: "rgba(0,0,0,0)",
+          color: "rgba(127, 186, 227, 0.1)"
         },
-        {
-            "type": "line",
-            "smooth": true,
-            "lineStyle": {
-                "type": "dotted"
-            }
+        emphasis: {
+          barBorderColor: "rgba(0,0,0,0)",
+          color: "rgba(127, 186, 227, 0.1)"
         }
+      },
+      data: invisibleData
+      },
+      {
+        type: "bar",
+        stack: "line",
+        label: {
+          normal: {
+            show: true,
+            distance: -15,
+            position: "top",
+            color: "black",
+             formatter: (params) => {
+              if (params.dataIndex === 0) return "";
+              return params.value;
+            }
+          }
+        },
+        data: data
+      },
+      {
+        type: "line",
+        smooth: true,
+        label: {
+          normal: {
+            show: true
+          }
+        },
+        lineStyle: {
+          color: "rgba(0,0,0,0)" // default invisible
+        },
+        data: lineData
+      }
     ]
-}', '{
+};
+chart.setOption(option);', '{
   "PERSONAL": {
     "values": [
       "false",

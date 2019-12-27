@@ -93,7 +93,7 @@ public class TestRunController extends AbstractController implements TestRunDocu
         testRun.setProject(new Project(project));
         testRun = testRunService.startTestRun(testRun);
 
-        websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRun));
+        sendTestRunPush(testRun);
         websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 
         return mapper.map(testRun, TestRunType.class);
@@ -105,7 +105,7 @@ public class TestRunController extends AbstractController implements TestRunDocu
         TestRun testRun = mapper.map(testRunType, TestRun.class);
         testRunService.updateTestRunWithXml(testRun);
 
-        websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRun));
+        sendTestRunPush(testRun);
         websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 
         return mapper.map(testRun, TestRunType.class);
@@ -120,7 +120,7 @@ public class TestRunController extends AbstractController implements TestRunDocu
         launcherCallbackService.notifyOnTestRunFinish(testRun.getCiRunId());
 
         websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(id)));
-        websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunFull));
+        sendTestRunPush(testRunFull);
 
         return mapper.map(testRun, TestRunType.class);
     }
@@ -146,7 +146,7 @@ public class TestRunController extends AbstractController implements TestRunDocu
                  .filter(test -> Status.ABORTED.equals(test.getStatus()))
                  .forEach(test -> websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test)));
 
-            websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
+            sendTestRunPush(testRunService.getTestRunByIdFull(testRun.getId()));
             websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
         }
         return mapper.map(testRun, TestRunType.class);
@@ -246,12 +246,6 @@ public class TestRunController extends AbstractController implements TestRunDocu
         return testRunService.sendTestRunResultsEmailFailure(id, suiteOwner, suiteRunner, recipients);
     }
 
-    @PostMapping(path = "/{id}/spreadsheet", produces = MediaType.TEXT_HTML_VALUE)
-    public String createTestRunResultSpreadsheet(@PathVariable("id") String id, @RequestBody String recipientsLine) {
-        String[] recipients = EmailUtils.obtainRecipients(recipientsLine);
-        return testRunService.createTestRunResultSpreadsheet(id, getPrincipalId(), recipients);
-    }
-
     @GetMapping(path = "/{id}/export", produces = "text/html;charset=UTF-8")
     @Override
     public String exportTestRunHTML(@PathVariable("id") String id) {
@@ -336,6 +330,11 @@ public class TestRunController extends AbstractController implements TestRunDocu
                                  .ciRunId(ciRunId)
                                  .build();
         return testRunService.getBuildConsoleOutput(testRun, count, fullCount);
+    }
+
+    private void sendTestRunPush(TestRun testRun) {
+        testRunService.hideJobUrlsIfNeed(List.of(testRun));
+        websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRun));
     }
 
 }

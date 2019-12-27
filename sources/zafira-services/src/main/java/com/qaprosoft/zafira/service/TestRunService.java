@@ -29,7 +29,6 @@ import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestConfig;
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
@@ -46,7 +45,6 @@ import com.qaprosoft.zafira.service.exception.IntegrationException;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import com.qaprosoft.zafira.service.integration.IntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.impl.AutomationServerService;
-import com.qaprosoft.zafira.service.integration.tool.impl.google.models.TestRunSpreadsheetService;
 import com.qaprosoft.zafira.service.project.ProjectReassignable;
 import com.qaprosoft.zafira.service.project.ProjectService;
 import com.qaprosoft.zafira.service.util.DateTimeUtil;
@@ -141,9 +139,6 @@ public class TestRunService implements ProjectReassignable {
 
     @Autowired
     private FilterService filterService;
-
-    @Autowired
-    private TestRunSpreadsheetService testRunSpreadsheetService;
 
     @Autowired
     private UserService userService;
@@ -803,17 +798,6 @@ public class TestRunService implements ProjectReassignable {
         return result;
     }
 
-    @Transactional(readOnly = true)
-    public String createTestRunResultSpreadsheet(String id, Long principalId, String[] recipients) {
-        TestRun testRun = getTestRunByIdFull(id);
-
-        User user = userService.getUserById(principalId);
-        List<String> recipientsList = Arrays.asList(recipients);
-        recipientsList.add(user.getEmail());
-
-        return testRunSpreadsheetService.createTestRunResultSpreadsheet(testRun, recipientsList.toArray(String[]::new));
-    }
-
     private TestRunResultsEmail buildTestRunResultEmail(TestRun testRun, List<Test> tests) {
         Configuration configuration = readArguments(testRun.getConfigXML());
         // Forward from API to Web
@@ -850,8 +834,7 @@ public class TestRunService implements ProjectReassignable {
         return testRunMapper.getPlatforms();
     }
 
-
-    private void hideJobUrlsIfNeed(List<TestRun> testRuns) {
+    public void hideJobUrlsIfNeed(List<TestRun> testRuns) {
         testRuns.stream()
                 .filter(testRun -> !automationServerService.isJobUrlVisibilityEnabled(testRun.getJob().getAutomationServerId()))
                 .forEach(testRun -> testRun.getJob().setJobURL(null));

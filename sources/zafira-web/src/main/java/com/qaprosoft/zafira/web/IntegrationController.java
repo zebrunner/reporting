@@ -21,7 +21,6 @@ import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationInfo;
 import com.qaprosoft.zafira.service.integration.IntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.impl.StorageProviderService;
-import com.qaprosoft.zafira.service.integration.tool.impl.google.GoogleService;
 import com.qaprosoft.zafira.web.documented.IntegrationDocumentedController;
 import org.dozer.Mapper;
 import org.springframework.http.MediaType;
@@ -37,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,13 +46,11 @@ public class IntegrationController extends AbstractController implements Integra
 
     private final IntegrationService integrationService;
     private final StorageProviderService storageProviderService;
-    private final GoogleService googleService;
     private final Mapper mapper;
 
-    public IntegrationController(IntegrationService integrationService, StorageProviderService storageProviderService, GoogleService googleService, Mapper mapper) {
+    public IntegrationController(IntegrationService integrationService, StorageProviderService storageProviderService, Mapper mapper) {
         this.integrationService = integrationService;
         this.storageProviderService = storageProviderService;
-        this.googleService = googleService;
         this.mapper = mapper;
     }
 
@@ -99,12 +95,6 @@ public class IntegrationController extends AbstractController implements Integra
     public SessionCredentials getAmazonTemporaryCredentials() {
         return storageProviderService.getTemporarySessionCredentials()
                                      .orElse(null);
-    }
-
-    @PreAuthorize("hasPermission('VIEW_INTEGRATIONS')")
-    @GetMapping("/creds/google")
-    public String getGoogleTemporaryCredentials() throws IOException {
-        return googleService.getTemporaryAccessToken();
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_INTEGRATIONS')")
