@@ -125,7 +125,7 @@ public class UserService implements TenancyDbInitial {
 
     @Transactional(rollbackFor = Exception.class)
     public void deleteProfilePhoto(Long userId) {
-        User user = getUserById(userId);
+        User user = getNotNullUserById(userId);
         storageProviderService.removeFile(user.getPhotoURL());
         user.setPhotoURL(StringUtils.EMPTY);
         updateUser(user);
