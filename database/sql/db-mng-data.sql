@@ -1478,48 +1478,48 @@ dataset.map(({CREATED_AT, AMOUNT}) => {
   
 option = {
   grid: {
-      right: "2%",
-      left: "4%",
-      top: "8%",
-      bottom: "8%"
+    right: "2%",
+    left: "4%",
+    top: "8%",
+    bottom: "8%"
     },
-    tooltip : {
-        trigger: "axis",
-        axisPointer : {            
-          type : "shadow"        
-        },
-        formatter: function (params) {
-          let total = params[2]; // pick params.total
-          return total.name + "<br/>" + "Total" + " : " + total.value;
-        },
-        extraCssText: "transform: translateZ(0);"
+  tooltip : {
+    trigger: "axis",
+    axisPointer : {            
+      type : "shadow"        
     },
-    color: ["#7fbae3", "#7fbae3"],
-    xAxis: {
-      type : "category",
-      splitLine: {
-        show: false
+    formatter: function (params) {
+      let total = params[2]; // pick params.total
+      return total.name + "<br/>" + "Total" + " : " + total.value;
+    },
+    extraCssText: "transform: translateZ(0);"
+  },
+  color: ["#7fbae3", "#7fbae3"],
+  xAxis: {
+    type : "category",
+    splitLine: {
+      show: false
+    },
+    data : xAxisData
+  },
+  yAxis: {
+    type : "value"
+  },
+  series: [
+    {
+      type: "bar",
+      stack: "line",
+      itemStyle: {
+        normal: {
+          barBorderColor: "rgba(0,0,0,0)",
+          color: "rgba(127, 186, 227, 0.1)"
+        },
+        emphasis: {
+          barBorderColor: "rgba(0,0,0,0)",
+          color: "rgba(127, 186, 227, 0.1)"
+        }
       },
-      data : xAxisData
-    },
-    yAxis: {
-      type : "value"
-    },
-    series: [
-      {
-        type: "bar",
-        stack: "line",
-        itemStyle: {
-          normal: {
-            barBorderColor: "rgba(0,0,0,0)",
-            color: "rgba(127, 186, 227, 0.1)"
-          },
-          emphasis: {
-            barBorderColor: "rgba(0,0,0,0)",
-            color: "rgba(127, 186, 227, 0.1)"
-          }
-        },
-        data: invisibleData
+      data: invisibleData
       },
       {
         type: "bar",
