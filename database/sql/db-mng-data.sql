@@ -1303,22 +1303,23 @@ SELECT ENV AS "ENV",
 }', true);
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('MONTHLY TEST IMPLEMENTATION PROGRESS', 'A number of new automated cases per month.', 'BAR', '<#global IGNORE_PERSONAL_PARAMS = ["USERS.USERNAME"] >
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTS IMPLEMENTATION PROGRESS', 'A number of new automated cases per month.', 'BAR', '<#global IGNORE_TOTAL_PARAMS = ["PARENT_JOB"] ><#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
 
 <#global MULTIPLE_VALUES = {
-  "PROJECTS.NAME": multiJoin(PROJECT, projects),
-  "USERS.USERNAME": join(USER)
+  "PROJECT": multiJoin(PROJECT, projects),
+  "OWNER_USERNAME": join(USER)
 }>
 <#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
+<#global VIEW = getView(PERIOD) />
+<#global GROUP_AND_ORDER_BY = getGroupBy(PERIOD, PARENT_JOB) />
 
 SELECT
-      to_char(date_trunc(''month'', TEST_CASES.CREATED_AT), ''YYYY-MM'') AS "CREATED_AT",
+      ${GROUP_AND_ORDER_BY} AS "CREATED_AT",
       count(*) AS "AMOUNT"
-  FROM TEST_CASES INNER JOIN PROJECTS ON TEST_CASES.PROJECT_ID = PROJECTS.ID
-  INNER JOIN USERS ON TEST_CASES.PRIMARY_OWNER_ID=USERS.ID
-  ${WHERE_MULTIPLE_CLAUSE}
-  GROUP BY 1
-  ORDER BY 1;
+      FROM ${VIEW}
+      ${WHERE_MULTIPLE_CLAUSE}
+      GROUP BY 1
+      ORDER BY 1;
 
 
   <#--
@@ -1327,26 +1328,38 @@ SELECT
     @return - generated WHERE clause
   -->
 <#function generateMultipleWhereClause map>
- <#local result = "" />
- <#list map?keys as key>
-     <#if map[key] != "" >
+<#local result = "" />
+<#list map?keys as key>
+    <#if map[key] != "" >
+      <#if PERIOD == "Total" && IGNORE_TOTAL_PARAMS?seq_contains(key)>
+        <#-- Ignore non supported filters for Total View: PLATFORM, DEVICE, APP_VERSION, LOCALE, LANGUAGE, JOB_NAME-->
+        <#continue>
+      </#if>
       <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
         <#-- Ignore non supported filters for Personal chart: USER -->
         <#continue>
       </#if>
       <#if result?length != 0>
-       <#local result = result + " AND "/>
+      <#local result = result + " AND "/>
       </#if>
       <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
-     </#if>
- </#list>
+    </#if>
+</#list>
 
- <#if result?length != 0 && PERSONAL == "true">
-   <!-- add personal filter by currentUserId with AND -->
-   <#local result = result + " AND USERS.ID=${currentUserId} "/>
- <#elseif result?length == 0 && PERSONAL == "true">
- <!-- add personal filter by currentUserId without AND -->
-   <#local result = " USERS.ID=${currentUserId} "/>
+<#if result?length != 0 && PERSONAL == "true">
+  <!-- add personal filter by currentUserId with AND -->
+  <#local result = result + " AND OWNER_ID=${currentUserId} "/>
+<#elseif result?length == 0 && PERSONAL == "true">
+  <!-- add personal filter by currentUserId without AND -->
+  <#local result = " OWNER_ID=${currentUserId} "/>
+</#if>
+<#if PERIOD != "Total">
+  <#if PARENT_JOB != "">
+      <#if result?length != 0>
+      <#local result = result + " AND "/>
+      </#if>
+      <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
+  </#if>
  </#if>
 
 
@@ -1356,6 +1369,82 @@ SELECT
  <#return result>
 </#function>
 
+<#--
+    Retrieves actual view name by abstract view description
+    @value - abstract view description
+    @return - actual view name
+  -->
+<#function getGroupBy Period, parentJob>
+  <#local result = "" />
+  <#if parentJob != "">
+    <#local result = "UPSTREAM_JOB_BUILD_NUMBER" />
+  <#else>
+    <#local result = getCreatedAt(PERIOD) />
+  </#if>
+ <#return result>
+</#function>
+<#--
+    Retrieves actual CREATED_BY grouping  by abstract view description
+    @value - abstract view description
+    @return - actual view name
+  -->
+<#function getCreatedAt value>
+  <#local result = "to_char(date_trunc(''day'', CREATED_AT), ''MM/DD'')" />
+  <#switch value>
+    <#case "Last 24 Hours">
+    <#case "Nightly">
+      <#local result = "to_char(date_trunc(''hour'', CREATED_AT), ''HH24:MI'')" />
+      <#break>
+    <#case "Last 7 Days">
+    <#case "Weekly">
+    <#case "Last 14 Days">
+      <#local result = "to_char(date_trunc(''day'', CREATED_AT), ''MM/DD'')" />
+      <#break>
+    <#case "Last 30 Days">
+    <#case "Monthly">
+      <#local result = "to_char(date_trunc(''week'', CREATED_AT), ''MM/DD'')" />
+      <#break>
+    <#case "Total">
+      <#local result = "to_char(date_trunc(''quarter'', CREATED_AT), ''YYYY-MM'')" />
+      <#break>
+  </#switch>
+  <#return result>
+</#function>
+<#--
+    Retrieves actual view name by abstract view description
+    @value - abstract view description
+    @return - actual view name
+  -->
+<#function getView value>
+ <#local result = "LAST24HOURS_VIEW" />
+ <#switch value>
+  <#case "Last 24 Hours">
+    <#local result = "LAST24HOURS_VIEW" />
+    <#break>
+  <#case "Last 7 Days">
+    <#local result = "LAST7DAYS_VIEW" />
+    <#break>
+  <#case "Last 14 Days">
+    <#local result = "LAST14DAYS_VIEW" />
+    <#break>
+  <#case "Last 30 Days">
+    <#local result = "LAST30DAYS_VIEW" />
+    <#break>
+  <#case "Nightly">
+    <#local result = "NIGHTLY_VIEW" />
+    <#break>
+  <#case "Weekly">
+    <#local result = "WEEKLY_VIEW" />
+    <#break>
+  <#case "Monthly">
+    <#local result = "MONTHLY_VIEW" />
+    <#break>
+  <#case "Total">
+    <#local result = "TOTAL_VIEW" />
+    <#break>
+ </#switch>
+ <#return result>
+</#function>
 <#--
     Joins array values using '', '' separator
     @array - to join
@@ -1389,48 +1478,48 @@ dataset.map(({CREATED_AT, AMOUNT}) => {
   
 option = {
   grid: {
-    right: "2%",
-    left: "4%",
-    top: "8%",
-    bottom: "8%"
+      right: "2%",
+      left: "4%",
+      top: "8%",
+      bottom: "8%"
     },
-  tooltip : {
-    trigger: "axis",
-    axisPointer : {            
-      type : "shadow"        
-    },
-    formatter: function (params) {
-      let total = params[2]; // pick params.total
-      return total.name + "<br/>" + "Total" + " : " + total.value;
-    },
-    extraCssText: "transform: translateZ(0);"
-  },
-  color: ["#7fbae3", "#7fbae3"],
-  xAxis: {
-    type : "category",
-    splitLine: {
-      show: false
-    },
-    data : xAxisData
-  },
-  yAxis: {
-    type : "value"
-  },
-  series: [
-    {
-      type: "bar",
-      stack: "line",
-      itemStyle: {
-        normal: {
-          barBorderColor: "rgba(0,0,0,0)",
-          color: "rgba(127, 186, 227, 0.1)"
+    tooltip : {
+        trigger: "axis",
+        axisPointer : {            
+          type : "shadow"        
         },
-        emphasis: {
-          barBorderColor: "rgba(0,0,0,0)",
-          color: "rgba(127, 186, 227, 0.1)"
-        }
+        formatter: function (params) {
+          let total = params[2]; // pick params.total
+          return total.name + "<br/>" + "Total" + " : " + total.value;
+        },
+        extraCssText: "transform: translateZ(0);"
+    },
+    color: ["#7fbae3", "#7fbae3"],
+    xAxis: {
+      type : "category",
+      splitLine: {
+        show: false
       },
-      data: invisibleData
+      data : xAxisData
+    },
+    yAxis: {
+      type : "value"
+    },
+    series: [
+      {
+        type: "bar",
+        stack: "line",
+        itemStyle: {
+          normal: {
+            barBorderColor: "rgba(0,0,0,0)",
+            color: "rgba(127, 186, 227, 0.1)"
+          },
+          emphasis: {
+            barBorderColor: "rgba(0,0,0,0)",
+            color: "rgba(127, 186, 227, 0.1)"
+          }
+        },
+        data: invisibleData
       },
       {
         type: "bar",
@@ -1482,10 +1571,12 @@ chart.setOption(option);', '{
     "multiple": true
   }
 }', '', '2019-05-13 13:17:40.339082', '2019-04-09 13:04:34.054318', '{
-  "PROJECT": ["AURONIA", "UNKNOWN"],
+  "PERIOD": "Last 24 Hours",
   "PERSONAL": "true",
   "currentUserId": 1,
-  "USER": []
+  "PROJECT": ["AURONIA", "UNKNOWN"],
+  "USER": [],
+  "PARENT_JOB": ""
 }', false);
 
 
