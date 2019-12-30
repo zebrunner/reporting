@@ -99,24 +99,35 @@ databaseChangeLog:
             relativeToChangelogFile: true
             splitStatements: false
   - changeSet:
-        id: 010_add_lambda_test_integration
-        validCheckSum: ANY
-        labels: stable
-        author: brutskov
-        changes:
-          - sqlFile:
-              encoding: utf8
-              path: changeset/010_add_lambda_test_integration.sql
-              relativeToChangelogFile: true
-              splitStatements: false
+      id: 010_add_lambda_test_integration
+      validCheckSum: ANY
+      labels: stable
+      author: brutskov
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/010_add_lambda_test_integration.sql
+            relativeToChangelogFile: true
+            splitStatements: false
   - changeSet:
-        id: 011_remove_google_integration
-        validCheckSum: ANY
-        labels: stable
-        author: brutskov
-        changes:
-          - sqlFile:
-              encoding: utf8
-              path: changeset/011_remove_google_integration.sql
-              relativeToChangelogFile: true
-              splitStatements: false
+      id: 011_remove_google_integration
+      validCheckSum: ANY
+      labels: stable
+      author: brutskov
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/011_remove_google_integration.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+  - changeSet:
+      id: 012_test_sessions_tracking_table
+      validCheckSum: ANY
+      labels: stable
+      author: brutskov
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/012_test_sessions_tracking_table.sql
+            relativeToChangelogFile: true
+            splitStatements: false
