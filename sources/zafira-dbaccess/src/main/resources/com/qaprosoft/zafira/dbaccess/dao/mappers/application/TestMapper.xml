@@ -369,29 +369,22 @@
 		]]>
 	</update>
 
-	<update id="updateTestsNeedRerun">
-		<![CDATA[
+    <update id="updateTestsNeedRerun">
+        <if test="null != ids and ids.size > 0">
+            <![CDATA[
 			UPDATE
 			    TESTS
 			SET
 				NEED_RERUN = #{rerun}
-		]]>
-		<if test="null != ids and ids.size > 0">
-            <![CDATA[
-			WHERE
+				    			WHERE
 				ID
 			IN
 	        ]]>
-			<foreach item="id" index="index" collection="ids" open="("
-				separator="," close=");">
-				#{id}
-			</foreach>
-		</if>
-		<if test="null == ids or ids.size == 0">
-			<![CDATA[
-				(-1);
-			]]>
-		</if>
+            <foreach item="id" index="index" collection="ids" open="("
+                     separator="," close=");">
+                #{id}
+            </foreach>
+        </if>
 	</update>
 
 	<sql id="deleteTest">
