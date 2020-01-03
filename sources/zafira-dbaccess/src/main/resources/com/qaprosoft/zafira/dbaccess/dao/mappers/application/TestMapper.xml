@@ -375,10 +375,13 @@
 			    TESTS
 			SET
 				NEED_RERUN = #{rerun}
-			WHERE 
-				ID IN
 		]]>
 		<if test="null != ids and ids.size > 0">
+            <![CDATA[
+			WHERE
+				ID
+			IN
+	        ]]>
 			<foreach item="id" index="index" collection="ids" open="("
 				separator="," close=");">
 				#{id}
