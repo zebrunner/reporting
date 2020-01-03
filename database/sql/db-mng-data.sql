@@ -308,24 +308,12 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
 <#global VIEW = getView(PERIOD) />
 
 SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
-      CASE
-        WHEN sum( PASSED ) != 0 THEN sum( PASSED )
-      END AS "PASSED",
-      CASE
-        WHEN sum( KNOWN_ISSUE ) != 0 THEN sum( KNOWN_ISSUE )
-      END AS "KNOWN ISSUE",
-      CASE
-        WHEN sum( QUEUED ) != 0 THEN sum( QUEUED )
-      END AS "QUEUED",
-      CASE
-        WHEN sum( FAILED ) != 0 THEN 0 - sum( FAILED )
-      END AS "FAILED",
-      CASE
-        WHEN sum( SKIPPED ) != 0 THEN  0 - sum( SKIPPED )
-      END AS "SKIPPED",
-      CASE
-        WHEN sum( ABORTED ) != 0 THEN 0 - sum( ABORTED )
-      END AS "ABORTED"
+      sum( PASSED ) AS "PASSED",
+      sum( KNOWN_ISSUE ) AS "KNOWN ISSUE",
+      sum( QUEUED ) AS "QUEUED",
+      0 - sum( FAILED ) AS "FAILED",
+      0 - sum( SKIPPED ) AS "SKIPPED",
+      0 - sum( ABORTED ) AS "ABORTED"
   FROM ${VIEW}
   ${WHERE_MULTIPLE_CLAUSE}
   GROUP BY "GROUP_FIELD"
@@ -431,18 +419,18 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
 </#function>', 'setTimeout( function() {
-
-  const dimensions = ["GROUP_FIELD","PASSED","FAILED","SKIPPED","KNOWN ISSUE","QUEUED","ABORTED"];
+  const dimensions = ["GROUP_FIELD", "PASSED", "FAILED", "SKIPPED", "KNOWN ISSUE", "QUEUED", "ABORTED"];
   let note = true;
 
   const createSource = () => {
     let source = [];
-    let amount = dataset.length;
-    for (let i = 0; i < amount; i++) {
+    
+    for (let i = 0; i < dataset.length; i++) {
       let sourceData = [];
       dimensions.forEach((value, index) => sourceData.push(dataset[i][value]));
       source.push(sourceData);
-    }
+    };
+    
     return source;
   };
 
@@ -451,17 +439,19 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
 
   const createPercentSource = (value, total) => {
     let temporaryArr = [];
+    
     value.map( a => {
       if (typeof a === "number")  a = Math.round(100 * a / total , 0);
-			temporaryArr.push(a);
+      temporaryArr.push(a);
     });
+    
     percentDataSource.push(temporaryArr);
   };
-
-  getTotalValue = (value) => {
+  
+  const getTotalValue = (value) => {
     let total = 0;
     value.map( a => {
-      if (typeof a === "number") total += a > 0 ? a : a * -1
+      if (typeof a === "number") total += a > 0 ? a : a * -1;
     });
     return total;
   };
@@ -471,12 +461,30 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
     createPercentSource(value, total);
   });
 
-  formatterFunc = (params, index, plus) => {
+  const formatterFunc = (params, index) => {
     let total = getTotalValue(params.value);
     let controlValue = params.value[index] * 100 / total;
     controlValue = controlValue > 0 ? controlValue : controlValue * -1;
-    if (controlValue > 5) return `${params.value[index]}${plus ? "%" : ""}`;
-    else return '';
+    if (controlValue > 5) return `${params.value[index]}${note ? "%" : ""}`;
+    else return "";
+  };
+  
+  let series = [];
+  for (var i = 0; i < 6 ; i++) {
+    let index = i + 1;
+    let seriesBar = {
+      type: "bar",
+      name: dimensions[index],
+      stack: "stack",
+      label: {
+        normal: {
+          show: true,
+          position: "inside",
+          formatter: (params) =>  formatterFunc(params, index)
+        }
+      }
+    }
+    series.push(seriesBar);
   };
 
   let option = {
@@ -490,136 +498,62 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
       right: "5%",
       top: "94%"
     },
-      tooltip: {
-        trigger: "axis",
-        axisPointer: {
-          type: "shadow"
-        }
-      },
-      legend: {},
-      grid: {
-        show: true,
-        top: 40,
-        left: "5%",
-        right: "5%",
-        bottom: 20,
-        containLabel: true
-      },
-      xAxis: [{
-          type: "value"
-        }],
-      yAxis: [{
-          type: "category",
-          axisTick: {
-            show: false
-          }
-        }],
-      color: [
-        "#61c8b3",
-        "#e76a77",
-        "#fddb7a",
-        "#9f5487",
-        "#6dbbe7",
-        "#b5b5b5"
-      ],
-      dataset: {
-        source: percentDataSource
-      },
-      dimensions: dimensions,
-      series: [
-        {
-          type: "bar",
-          name: "PASSED",
-          stack: "stack",
-          label: {
-            normal: {
-              show: true,
-              position: "inside",
-              formatter: (params) => formatterFunc(params, 1, note)
-            }
-          }
-        },
-        {
-          type: "bar",
-          name: "FAILED",
-          stack: "stack",
-          label: {
-            normal: {
-                show: true,
-                position: "inside",
-                formatter: (params) => formatterFunc(params, 2, note)
-            }
-          }
-        },
-        {
-          type: "bar",
-          name: "SKIPPED",
-          stack: "stack",
-          label: {
-            normal: {
-                show: true,
-                position: "inside",
-                formatter: (params) => formatterFunc(params, 3, note)
-            }
-          }
-        },
-        {
-          type: "bar",
-          name: "KNOWN ISSUE",
-          stack: "stack",
-          label: {
-            normal: {
-                show: true,
-                position: "inside",
-                formatter: (params) => formatterFunc(params, 4, note)
-            }
-          }
-        },
-        {
-          type: "bar",
-          name: "QUEUED",
-          stack: "stack",
-          label: {
-            normal: {
-                show: true,
-                position: "inside",
-                formatter: (params) => formatterFunc(params, 5, note)
-            }
-          }
-        },
-        {
-          type: "bar",
-          name: "ABORTED",
-          stack: "stack",
-          label: {
-            normal: {
-                show: true,
-                position:"left",
-                formatter: (params) => formatterFunc(params, 6, note)
-            }
-          }
-        }
-      ]
-  };
-
-  const changeValue = (text, source) => {
-    chart.setOption({
-      dataset: {
-        source: source
-      },
-      title: {
-        text: text
+    tooltip: {
+      trigger: "axis",
+      axisPointer: {
+        type: "shadow"
       }
+    },
+    legend: {},
+    grid: {
+      show: true,
+      top: 40,
+      left: "5%",
+      right: "5%",
+      bottom: 20,
+      containLabel: true
+    },
+    xAxis: [{
+        type: "value",
+        min: "-100",
+        max: "100"
+      }],
+    yAxis: [{
+        type: "category",
+        axisTick: {
+          show: false
+        }
+      }],
+    color: [
+      "#61c8b3",
+      "#e76a77",
+      "#fddb7a",
+      "#9f5487",
+      "#6dbbe7",
+      "#b5b5b5"
+    ],
+    dataset: {
+      source: percentDataSource
+    },
+    dimensions: dimensions,
+    series: series
+  };
+  
+  const changeValue = (text, source, { min, max } ) => {
+    chart.setOption({
+      dataset: { source },
+      title: { text },
+      xAxis: [{ min, max }],
     });
   };
 
-  chart.on("click", function (event) {
+  chart.on("click", (event) => {
     let text = `Note: click on bar to show ${!note ? "absolute numbers" : "numbers in percent"}`;
     note = !note
-    if (!note) changeValue(text, numberDataSource);
-    else changeValue(text, percentDataSource);
+    if (!note) changeValue(text, numberDataSource, { min: null, max: null });
+    else changeValue(text, percentDataSource, { min:-100, max:100 });
   });
-
+  
   chart.setOption(option);
   angular.element($window).on("resize", onResize);
 }, 1000)', '{
@@ -1369,22 +1303,23 @@ SELECT ENV AS "ENV",
 }', true);
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('MONTHLY TEST IMPLEMENTATION PROGRESS', 'A number of new automated cases per month.', 'BAR', '<#global IGNORE_PERSONAL_PARAMS = ["USERS.USERNAME"] >
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTS IMPLEMENTATION PROGRESS', 'A number of new automated cases per month.', 'BAR', '<#global IGNORE_TOTAL_PARAMS = ["PARENT_JOB"] ><#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
 
 <#global MULTIPLE_VALUES = {
-  "PROJECTS.NAME": multiJoin(PROJECT, projects),
-  "USERS.USERNAME": join(USER)
+  "PROJECT": multiJoin(PROJECT, projects),
+  "OWNER_USERNAME": join(USER)
 }>
 <#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
+<#global VIEW = getView(PERIOD) />
+<#global GROUP_AND_ORDER_BY = getGroupBy(PERIOD, PARENT_JOB) />
 
 SELECT
-      to_char(date_trunc(''month'', TEST_CASES.CREATED_AT), ''YYYY-MM'') AS "CREATED_AT",
+      ${GROUP_AND_ORDER_BY} AS "CREATED_AT",
       count(*) AS "AMOUNT"
-  FROM TEST_CASES INNER JOIN PROJECTS ON TEST_CASES.PROJECT_ID = PROJECTS.ID
-  INNER JOIN USERS ON TEST_CASES.PRIMARY_OWNER_ID=USERS.ID
-  ${WHERE_MULTIPLE_CLAUSE}
-  GROUP BY 1
-  ORDER BY 1;
+      FROM ${VIEW}
+      ${WHERE_MULTIPLE_CLAUSE}
+      GROUP BY 1
+      ORDER BY 1;
 
 
   <#--
@@ -1393,26 +1328,38 @@ SELECT
     @return - generated WHERE clause
   -->
 <#function generateMultipleWhereClause map>
- <#local result = "" />
- <#list map?keys as key>
-     <#if map[key] != "" >
+<#local result = "" />
+<#list map?keys as key>
+    <#if map[key] != "" >
+      <#if PERIOD == "Total" && IGNORE_TOTAL_PARAMS?seq_contains(key)>
+        <#-- Ignore non supported filters for Total View: PLATFORM, DEVICE, APP_VERSION, LOCALE, LANGUAGE, JOB_NAME-->
+        <#continue>
+      </#if>
       <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
         <#-- Ignore non supported filters for Personal chart: USER -->
         <#continue>
       </#if>
       <#if result?length != 0>
-       <#local result = result + " AND "/>
+      <#local result = result + " AND "/>
       </#if>
       <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
-     </#if>
- </#list>
+    </#if>
+</#list>
 
- <#if result?length != 0 && PERSONAL == "true">
-   <!-- add personal filter by currentUserId with AND -->
-   <#local result = result + " AND USERS.ID=${currentUserId} "/>
- <#elseif result?length == 0 && PERSONAL == "true">
- <!-- add personal filter by currentUserId without AND -->
-   <#local result = " USERS.ID=${currentUserId} "/>
+<#if result?length != 0 && PERSONAL == "true">
+  <!-- add personal filter by currentUserId with AND -->
+  <#local result = result + " AND OWNER_ID=${currentUserId} "/>
+<#elseif result?length == 0 && PERSONAL == "true">
+  <!-- add personal filter by currentUserId without AND -->
+  <#local result = " OWNER_ID=${currentUserId} "/>
+</#if>
+<#if PERIOD != "Total">
+  <#if PARENT_JOB != "">
+      <#if result?length != 0>
+      <#local result = result + " AND "/>
+      </#if>
+      <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
+  </#if>
  </#if>
 
 
@@ -1422,6 +1369,82 @@ SELECT
  <#return result>
 </#function>
 
+<#--
+    Retrieves actual view name by abstract view description
+    @value - abstract view description
+    @return - actual view name
+  -->
+<#function getGroupBy Period, parentJob>
+  <#local result = "" />
+  <#if parentJob != "">
+    <#local result = "UPSTREAM_JOB_BUILD_NUMBER" />
+  <#else>
+    <#local result = getCreatedAt(PERIOD) />
+  </#if>
+ <#return result>
+</#function>
+<#--
+    Retrieves actual CREATED_BY grouping  by abstract view description
+    @value - abstract view description
+    @return - actual view name
+  -->
+<#function getCreatedAt value>
+  <#local result = "to_char(date_trunc(''day'', CREATED_AT), ''MM/DD'')" />
+  <#switch value>
+    <#case "Last 24 Hours">
+    <#case "Nightly">
+      <#local result = "to_char(date_trunc(''hour'', CREATED_AT), ''HH24:MI'')" />
+      <#break>
+    <#case "Last 7 Days">
+    <#case "Weekly">
+    <#case "Last 14 Days">
+      <#local result = "to_char(date_trunc(''day'', CREATED_AT), ''MM/DD'')" />
+      <#break>
+    <#case "Last 30 Days">
+    <#case "Monthly">
+      <#local result = "to_char(date_trunc(''week'', CREATED_AT), ''MM/DD'')" />
+      <#break>
+    <#case "Total">
+      <#local result = "to_char(date_trunc(''quarter'', CREATED_AT), ''YYYY-MM'')" />
+      <#break>
+  </#switch>
+  <#return result>
+</#function>
+<#--
+    Retrieves actual view name by abstract view description
+    @value - abstract view description
+    @return - actual view name
+  -->
+<#function getView value>
+ <#local result = "LAST24HOURS_VIEW" />
+ <#switch value>
+  <#case "Last 24 Hours">
+    <#local result = "LAST24HOURS_VIEW" />
+    <#break>
+  <#case "Last 7 Days">
+    <#local result = "LAST7DAYS_VIEW" />
+    <#break>
+  <#case "Last 14 Days">
+    <#local result = "LAST14DAYS_VIEW" />
+    <#break>
+  <#case "Last 30 Days">
+    <#local result = "LAST30DAYS_VIEW" />
+    <#break>
+  <#case "Nightly">
+    <#local result = "NIGHTLY_VIEW" />
+    <#break>
+  <#case "Weekly">
+    <#local result = "WEEKLY_VIEW" />
+    <#break>
+  <#case "Monthly">
+    <#local result = "MONTHLY_VIEW" />
+    <#break>
+  <#case "Total">
+    <#local result = "TOTAL_VIEW" />
+    <#break>
+ </#switch>
+ <#return result>
+</#function>
 <#--
     Joins array values using '', '' separator
     @array - to join
@@ -1548,10 +1571,12 @@ chart.setOption(option);', '{
     "multiple": true
   }
 }', '', '2019-05-13 13:17:40.339082', '2019-04-09 13:04:34.054318', '{
-  "PROJECT": ["AURONIA", "UNKNOWN"],
+  "PERIOD": "Last 24 Hours",
   "PERSONAL": "true",
   "currentUserId": 1,
-  "USER": []
+  "PROJECT": ["AURONIA", "UNKNOWN"],
+  "USER": [],
+  "PARENT_JOB": ""
 }', false);
 
 
