@@ -106,20 +106,6 @@ In order to setup Slack integration follow the next steps:
 </p>
 
 
-#### GOOGLE
-Integration with Google provides the ability to export test run results to spreadsheets.
-It also allows you to use client-side spreadsheet data using temporary credentials provided by Zafira API (GET: /api/settings/google/creds).
-
-To set up integration with Google, follow these steps:
-
-* Generate Google service account key (as a file) and attach it by clicking the UPLOAD CLIENT SECRET ORIGIN button in GOOGLE block on Zafira integrations page.
-* Click *Upload*, a green light indicates the correct integration status
-
-<p>
-  <img style="border: 1px solid grey;" height="420px" src="../img/int_google.png">
-</p>
-
-
 #### RABBITMQ
 RabbitMQ integration is used to provide Zafira with the ability to display test logs. Integration is the gateway to transferring logs to Zafira.
 Follow these steps to configure RabbitMQ integration:
