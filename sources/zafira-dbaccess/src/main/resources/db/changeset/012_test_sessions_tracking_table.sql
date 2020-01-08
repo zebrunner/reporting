@@ -1,4 +1,4 @@
-DROP TABLE test_sessions IF EXISTS;
+DROP TABLE IF EXISTS test_sessions;
 CREATE TABLE test_sessions (
     id SERIAL,
     session_id VARCHAR(255) NOT NULL,
