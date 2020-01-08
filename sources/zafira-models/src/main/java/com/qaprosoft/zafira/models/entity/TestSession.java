@@ -42,5 +42,7 @@ public class TestSession {
     private Long duration;
     private String osName;
     private String browserName;
+    private String testName;
+    private String buildNumber;
 
 }
