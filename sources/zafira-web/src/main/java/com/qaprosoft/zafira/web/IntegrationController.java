@@ -21,11 +21,7 @@ import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationInfo;
 import com.qaprosoft.zafira.service.integration.IntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.impl.StorageProviderService;
-import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.qaprosoft.zafira.web.documented.IntegrationDocumentedController;
 import org.dozer.Mapper;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -43,11 +39,10 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Api("Integrations API")
 @CrossOrigin
 @RequestMapping(path = "api/integrations", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-public class IntegrationController extends AbstractController {
+public class IntegrationController extends AbstractController implements IntegrationDocumentedController {
 
     private final IntegrationService integrationService;
     private final StorageProviderService storageProviderService;
@@ -59,11 +54,9 @@ public class IntegrationController extends AbstractController {
         this.mapper = mapper;
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Create integration", nickname = "createIntegration", httpMethod = "POST", response = IntegrationDTO.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_INTEGRATIONS')")
     @PostMapping()
+    @Override
     public IntegrationDTO create(@RequestBody @Valid IntegrationDTO integrationDTO, @RequestParam("integrationTypeId") Long integrationTypeId) {
         Integration integration = mapper.map(integrationDTO, Integration.class);
         integration = integrationService.create(integration, integrationTypeId);
@@ -76,11 +69,9 @@ public class IntegrationController extends AbstractController {
         return integrationUpdateResultDTO;
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Get integrations", nickname = "getAll", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('VIEW_INTEGRATIONS') or isAuthenticated()")
     @GetMapping()
+    @Override
     public List<IntegrationDTO> getAll(
             @RequestParam(name = "groupId", required = false) Long groupId,
             @RequestParam(name = "groupName", required = false) String groupName
@@ -98,21 +89,17 @@ public class IntegrationController extends AbstractController {
                            .collect(Collectors.toList());
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Get amazon temporary credentials", nickname = "getAmazonTemporaryCredentials", httpMethod = "GET", response = SessionCredentials.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('VIEW_INTEGRATIONS')")
     @GetMapping("/creds/amazon")
+    @Override
     public SessionCredentials getAmazonTemporaryCredentials() {
         return storageProviderService.getTemporarySessionCredentials()
                                      .orElse(null);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Update integration", nickname = "updateIntegration", httpMethod = "PUT", response = IntegrationDTO.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_INTEGRATIONS')")
     @PutMapping("/{id}")
+    @Override
     public IntegrationDTO update(@RequestBody IntegrationDTO integrationDTO, @PathVariable("id") Long id) {
         Integration integration = mapper.map(integrationDTO, Integration.class);
         integration.setId(id);

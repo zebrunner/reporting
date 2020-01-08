@@ -24,11 +24,7 @@ import com.qaprosoft.zafira.models.dto.JobUrlType;
 import com.qaprosoft.zafira.models.dto.JobViewDTO;
 import com.qaprosoft.zafira.service.JobsService;
 import com.qaprosoft.zafira.service.TestRunService;
-import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.qaprosoft.zafira.web.documented.JobDocumentedController;
 import org.dozer.Mapper;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
@@ -48,11 +44,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Api("Jobs API")
 @CrossOrigin
 @RequestMapping(path = "api/jobs", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-public class JobController extends AbstractController {
+public class JobController extends AbstractController implements JobDocumentedController {
 
     private final Mapper mapper;
     private final JobsService jobsService;
@@ -64,38 +59,30 @@ public class JobController extends AbstractController {
         this.testRunService = testRunService;
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Create job", nickname = "createJob", httpMethod = "POST", response = JobDTO.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PostMapping()
+    @Override
     public JobDTO createJob(@RequestBody @Valid JobDTO jobDTO) {
         Job job = mapper.map(jobDTO, Job.class);
         Job updatedJob = jobsService.createOrUpdateJob(job);
         return mapper.map(updatedJob, JobDTO.class);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Create job by url", nickname = "createJobByUrl", httpMethod = "POST", response = JobDTO.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PostMapping("/url")
+    @Override
     public JobDTO createJobByUrl(@RequestBody @Valid JobUrlType jobUrl) {
         Long principalId = getPrincipalId();
         Job updatedJob = jobsService.createOrUpdateJobByURL(jobUrl.getJobUrlValue(), principalId);
         return mapper.map(updatedJob, JobDTO.class);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Get all jobs", nickname = "getAllJobs", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping()
+    @Override
     public List<Job> getAllJobs() {
         return jobsService.getAllJobs();
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Get latest job test runs", nickname = "getLatestJobTestRuns", httpMethod = "POST", response = Map.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PostMapping("/views/{id}/tests/runs")
+    @Override
     public Map<Long, TestRun> getLatestJobTestRuns(@RequestParam("env") String env, @RequestBody @Valid List<JobViewDTO> jobViews) {
         List<Long> jobIds = jobViews.stream()
                                     .map(JobViewDTO::getJob)
@@ -104,11 +91,9 @@ public class JobController extends AbstractController {
         return testRunService.getLatestJobTestRuns(env, jobIds);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Create job view", nickname = "createJobViews", httpMethod = "POST", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-    @PostMapping("/views")
     @Secured({"ROLE_ADMIN"})
+    @PostMapping("/views")
+    @Override
     public List<JobViewDTO> createJobViews(@RequestBody @Valid List<JobViewDTO> jobViewDTOs) {
         List<JobView> jobViews = jobViewDTOs.stream()
                                             .map(jobView -> mapper.map(jobView, JobView.class))
@@ -117,11 +102,9 @@ public class JobController extends AbstractController {
         return jobViewDTOs;
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Update job view", nickname = "updateJobViews", httpMethod = "PUT", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-    @PutMapping("/views/{id}")
     @Secured({"ROLE_ADMIN"})
+    @PutMapping("/views/{id}")
+    @Override
     public List<JobViewDTO> updateJobViews(@RequestBody @Valid List<JobViewDTO> jobViewDTOs,
                                            @PathVariable("id") long viewId,
                                            @RequestParam("env") String env) {
@@ -132,10 +115,8 @@ public class JobController extends AbstractController {
         return jobViewDTOs;
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Get job views", nickname = "getJobViews", httpMethod = "GET", response = Map.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping("/views/{id}")
+    @Override
     public Map<String, List<JobViewDTO>> getJobViews(@PathVariable("id") long id) {
         List<JobView> jobViews = jobsService.getJobViewsByViewId(id);
         return jobViews.stream()
@@ -143,10 +124,8 @@ public class JobController extends AbstractController {
                        .collect(Collectors.groupingBy(JobViewDTO::getEnv));
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Delete job views", nickname = "deleteJobViews", httpMethod = "DELETE")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @DeleteMapping("views/{id}")
+    @Override
     public void deleteJobViews(@PathVariable("id") long viewId, @RequestParam("env") String env) {
         jobsService.deleteJobView(viewId, env);
     }

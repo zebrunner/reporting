@@ -17,13 +17,7 @@ package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.service.GroupService;
-import com.qaprosoft.zafira.service.exception.ForbiddenOperationException;
-import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
-import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.qaprosoft.zafira.web.documented.GroupDocumentedController;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -39,13 +33,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.GROUP_NOT_FOUND;
-
-@Api("Groups API")
 @CrossOrigin
 @RequestMapping(path = "api/groups", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-public class GroupController extends AbstractController {
+public class GroupController extends AbstractController implements GroupDocumentedController {
 
     private final GroupService groupService;
 
@@ -53,74 +44,58 @@ public class GroupController extends AbstractController {
         this.groupService = groupService;
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Create group", nickname = "createGroup", httpMethod = "POST", response = Group.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
     @PostMapping()
+    @Override
     public Group createGroup(@RequestBody Group group) {
         return groupService.createGroup(group);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Add permissions to group", nickname = "addPermissionsToGroup", httpMethod = "POST", response = Group.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
     @PostMapping("/permissions")
+    @Override
     public Group addPermissionsToGroup(@RequestBody Group group) {
         return groupService.addPermissionsToGroup(group);
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Get group", nickname = "getGroup", httpMethod = "GET", response = Group.class)
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
     @GetMapping("/{id}")
+    @Override
     public Group getGroup(@PathVariable("id") long id) {
         return groupService.getGroupById(id);
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Get all groups", nickname = "getAllGroups", httpMethod = "GET", response = List.class)
     @GetMapping("/all")
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS') or #isPublic")
+    @Override
     public List<Group> getAllGroups(@RequestParam(name = "public", required = false) boolean isPublic) {
         return groupService.getAllGroups(isPublic);
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Get groups count", nickname = "getGroupsCount", httpMethod = "GET", response = Integer.class)
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
     @GetMapping("/count")
+    @Override
     public Integer getGroupsCount() {
         return groupService.getGroupsCount();
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Get roles", nickname = "getRoles", httpMethod = "GET", response = List.class)
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
     @GetMapping("/roles")
+    @Override
     public List<Group.Role> getRoles() {
         return GroupService.getRoles();
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Update group", nickname = "updateGroup", httpMethod = "PUT", response = Group.class)
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
     @PutMapping()
+    @Override
     public Group updateGroup(@RequestBody Group group) {
         return groupService.updateGroup(group);
     }
 
-    @ApiResponseStatuses
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Delete group", nickname = "deleteGroup", httpMethod = "DELETE")
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
     @DeleteMapping("/{id}")
+    @Override
     public void deleteGroup(@PathVariable("id") long id) {
         groupService.deleteGroup(id);
     }

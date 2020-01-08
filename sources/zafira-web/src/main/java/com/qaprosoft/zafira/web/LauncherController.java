@@ -25,11 +25,7 @@ import com.qaprosoft.zafira.models.dto.LauncherScannerType;
 import com.qaprosoft.zafira.models.push.LauncherPush;
 import com.qaprosoft.zafira.models.push.LauncherRunPush;
 import com.qaprosoft.zafira.service.LauncherService;
-import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.qaprosoft.zafira.web.documented.LauncherDocumentedController;
 import org.dozer.Mapper;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -50,11 +46,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Api("Launchers API")
 @CrossOrigin
 @RequestMapping(path = "api/launchers", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-public class LauncherController extends AbstractController {
+public class LauncherController extends AbstractController implements LauncherDocumentedController {
 
     private final LauncherService launcherService;
     private final Mapper mapper;
@@ -66,11 +61,9 @@ public class LauncherController extends AbstractController {
         this.websocketTemplate = websocketTemplate;
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Create launcher", nickname = "createLauncher", httpMethod = "POST", response = LauncherDTO.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PostMapping()
+    @Override
     public LauncherDTO createLauncher(@RequestBody @Valid LauncherDTO launcherDTO,
                                       @RequestParam(name = "automationServerId", required = false) Long automationServerId) {
         Launcher launcher = mapper.map(launcherDTO, Launcher.class);
@@ -79,21 +72,17 @@ public class LauncherController extends AbstractController {
         return mapper.map(launcher, LauncherDTO.class);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Get launcher by id", nickname = "getLauncherById", httpMethod = "GET", response = LauncherDTO.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping("/{id}")
+    @Override
     public LauncherDTO getLauncherById(@PathVariable("id") Long id) {
         Launcher launcher = launcherService.getLauncherById(id);
         return mapper.map(launcher, LauncherDTO.class);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Get all launchers", nickname = "getAllLaunchers", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping()
+    @Override
     public List<LauncherDTO> getAllLaunchers() {
         List<Launcher> launchers = launcherService.getAllLaunchers();
         return launchers.stream()
@@ -101,31 +90,25 @@ public class LauncherController extends AbstractController {
                         .collect(Collectors.toList());
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Update launcher", nickname = "updateLauncher", httpMethod = "PUT", response = LauncherDTO.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PutMapping()
+    @Override
     public LauncherDTO updateLauncher(@RequestBody @Valid LauncherDTO launcherDTO) {
         Launcher launcher = mapper.map(launcherDTO, Launcher.class);
         launcher = launcherService.updateLauncher(launcher);
         return mapper.map(launcher, LauncherDTO.class);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Delete launcher by id", nickname = "deleteLauncherById", httpMethod = "DELETE")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @DeleteMapping("/{id}")
+    @Override
     public void deleteLauncherById(@PathVariable("id") Long id) {
         launcherService.deleteLauncherById(id);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Build job with launcher", nickname = "build", httpMethod = "POST")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @PostMapping("/build")
+    @Override
     public void build(@RequestBody @Valid LauncherDTO launcherDTO,
                       @RequestParam(name = "providerId", required = false) Long providerId) throws IOException {
         Launcher launcher = mapper.map(launcherDTO, Launcher.class);
@@ -133,11 +116,9 @@ public class LauncherController extends AbstractController {
         websocketTemplate.convertAndSend(getLauncherRunsWebsocketPath(), new LauncherRunPush(launcher, ciRunId));
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Build job by webHook", nickname = "buildByWebHook", httpMethod = "POST", response = String.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @PostMapping("/{id}/build/{ref}")
+    @Override
     public String buildByWebHook(
         @RequestBody @Valid LauncherWebHookPayload payload,
         @PathVariable("id") Long id,
@@ -147,21 +128,17 @@ public class LauncherController extends AbstractController {
         return launcherService.buildLauncherJobByPresetRef(id, ref, payload, getPrincipalId(), providerId);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Get build number", nickname = "getBuildNumber", httpMethod = "GET", response = Integer.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping("/build/number")
+    @Override
     public Integer getBuildNumber(@RequestParam("queueItemUrl") String queueItemUrl,
                                   @RequestParam(name = "automationServerId", required = false) Long automationServerId) {
         return launcherService.getBuildNumber(queueItemUrl, automationServerId);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Scan launchers with jenkins", nickname = "runScanner", httpMethod = "POST", response = JobResult.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PostMapping("/scanner")
+    @Override
     public JobResult runScanner(@RequestBody @Valid LauncherScannerType launcherScannerType,
                                 @RequestParam(name = "automationServerId", required = false) Long automationServerId) {
         return launcherService.buildScannerJob(
@@ -173,11 +150,9 @@ public class LauncherController extends AbstractController {
         );
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Cancel launcher scanner", nickname = "cancelScanner", httpMethod = "DELETE")
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @DeleteMapping("/scanner/{buildNumber}")
+    @Override
     public void cancelScanner(@PathVariable("buildNumber") int buildNumber,
                               @RequestParam("scmAccountId") Long scmAccountId,
                               @RequestParam("rescan") boolean rescan,
@@ -185,11 +160,9 @@ public class LauncherController extends AbstractController {
         launcherService.abortScannerJob(scmAccountId, buildNumber, rescan, automationServerId);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Create launchers from Jenkins", nickname = "createLaunchersFromJenkins", httpMethod = "POST", response = List.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PostMapping("/create")
+    @Override
     public List<LauncherDTO> scanLaunchersFromJenkins(@RequestBody @Valid JenkinsJobsScanResultDTO jenkinsJobsScanResultDTO) {
         Long principalId = getPrincipalId();
         List<JenkinsJob> jenkinsJobs = jenkinsJobsScanResultDTO.getJenkinsJobs()

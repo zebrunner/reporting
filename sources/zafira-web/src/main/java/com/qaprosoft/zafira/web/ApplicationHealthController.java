@@ -16,18 +16,15 @@
 package com.qaprosoft.zafira.web;
 
 import com.qaprosoft.zafira.service.ApplicationHealthService;
-import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
-import io.swagger.annotations.ApiOperation;
+import com.qaprosoft.zafira.web.documented.ApplicationHealthDocumentedController;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import springfox.documentation.annotations.ApiIgnore;
 
-@ApiIgnore
 @RequestMapping(path = "api/status", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-public class ApplicationHealthController extends AbstractController {
+public class ApplicationHealthController extends AbstractController implements ApplicationHealthDocumentedController {
 
     private final ApplicationHealthService applicationHealthService;
 
@@ -35,9 +32,8 @@ public class ApplicationHealthController extends AbstractController {
         this.applicationHealthService = applicationHealthService;
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Get service status", nickname = "status", httpMethod = "GET", response = String.class)
     @GetMapping()
+    @Override
     public String getStatus() {
         return applicationHealthService.getStatus();
     }
