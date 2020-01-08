@@ -1,3 +1,4 @@
+DROP TABLE test_sessions IF EXISTS;
 CREATE TABLE test_sessions (
     id SERIAL,
     session_id VARCHAR(255) NOT NULL,
@@ -7,6 +8,8 @@ CREATE TABLE test_sessions (
     duration INT NULL,
     os_name VARCHAR(255) NOT NULL,
     browser_name VARCHAR(255) NOT NULL,
+    test_name VARCHAR(255) NULL,
+    build_number VARCHAR(255) NULL,
     modified_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
