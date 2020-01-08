@@ -32,7 +32,7 @@ public interface TestSessionDocumentedController {
             value = "Search test sessions by criteria",
             notes = "Returns found test sessions",
             nickname = "search",
-            httpMethod = "POST",
+            httpMethod = "GET",
             response = SearchResult.class
     )
     @ApiImplicitParams({
