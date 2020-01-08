@@ -37,7 +37,7 @@ public interface TestDocumentedController {
 
     @ApiOperation(
             value = "Starts test",
-            notes = "Creates new test or updates old test if is rerun logic",
+            notes = "Creates new test or updates old test if there is any rerun logic",
             nickname = "startTest",
             httpMethod = "POST",
             response = TestType.class
@@ -47,7 +47,7 @@ public interface TestDocumentedController {
             @ApiImplicitParam(name = "t", paramType = "body", dataType = "TestType", required = true, value = "Test to create or update")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns created or update test", response = TestType.class),
+            @ApiResponse(code = 200, message = "Returns created or updated test", response = TestType.class),
             @ApiResponse(code = 404, message = "Indicates that test run for test does not exist", response = ErrorResponse.class)
     })
     TestType startTest(TestType t);
@@ -108,7 +108,7 @@ public interface TestDocumentedController {
     @ApiOperation(
             value = "Deletes test by id",
             nickname = "deleteTest",
-            httpMethod = "POST"
+            httpMethod = "DELETE"
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
