@@ -18,11 +18,7 @@ package com.qaprosoft.zafira.web;
 import com.qaprosoft.zafira.models.db.LauncherPreset;
 import com.qaprosoft.zafira.models.dto.LauncherPresetDTO;
 import com.qaprosoft.zafira.service.LauncherPresetService;
-import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.qaprosoft.zafira.web.documented.LauncherPresetDocumentedController;
 import org.dozer.Mapper;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,11 +34,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-@Api("Launcher presets API")
 @CrossOrigin
 @RequestMapping(path = "api/launchers/{launcherId}/presets", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-public class LauncherPresetAPIController extends AbstractController {
+public class LauncherPresetAPIController extends AbstractController implements LauncherPresetDocumentedController {
 
     private final LauncherPresetService launcherPresetService;
     private final Mapper mapper;
@@ -52,11 +47,9 @@ public class LauncherPresetAPIController extends AbstractController {
         this.mapper = mapper;
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Create launcher preset", nickname = "createLauncherPreset", httpMethod = "POST", response = LauncherPresetDTO.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PostMapping()
+    @Override
     public LauncherPresetDTO createLauncherPreset(@RequestBody @Valid LauncherPresetDTO launcherPresetDTO, @PathVariable("launcherId") Long launcherId) {
         LauncherPreset launcherPreset = mapper.map(launcherPresetDTO, LauncherPreset.class);
         launcherPreset = launcherPresetService.create(launcherPreset, launcherId);
@@ -64,11 +57,9 @@ public class LauncherPresetAPIController extends AbstractController {
         return launcherPresetDTO;
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Build webHookUrl", nickname = "buildWebHookUrl", httpMethod = "GET", response = String.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @GetMapping("/{id}/webhook")
+    @Override
     public String buildWebHookUrl(
             @PathVariable("id") Long id,
             @PathVariable("launcherId") Long launcherId,
@@ -77,11 +68,9 @@ public class LauncherPresetAPIController extends AbstractController {
         return launcherPresetService.buildWebHookUrl(id, launcherId, providerId);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Update launcher preset", nickname = "updateLauncherPreset", httpMethod = "PUT", response = LauncherPresetDTO.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @PutMapping("/{id}")
+    @Override
     public LauncherPresetDTO updateLauncherPreset(@RequestBody @Valid LauncherPresetDTO launcherPresetDTO, @PathVariable("id") Long id, @PathVariable("launcherId") Long launcherId) {
         LauncherPreset launcherPreset = mapper.map(launcherPresetDTO, LauncherPreset.class);
         launcherPreset.setId(id);

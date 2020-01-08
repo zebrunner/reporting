@@ -34,11 +34,7 @@ import com.qaprosoft.zafira.service.ResetPasswordService;
 import com.qaprosoft.zafira.service.UserService;
 import com.qaprosoft.zafira.service.management.TenancyService;
 import com.qaprosoft.zafira.service.util.URLResolver;
-import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.qaprosoft.zafira.web.documented.AuthDocumentedController;
 import org.dozer.Mapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -57,11 +53,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-@Api("Auth API")
 @CrossOrigin
 @RequestMapping(path = "api/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-public class AuthController extends AbstractController {
+public class AuthController extends AbstractController implements AuthDocumentedController {
 
     private final AuthService authService;
 
@@ -97,25 +92,22 @@ public class AuthController extends AbstractController {
 
     private final TenancyService tenancyService;
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Get current tenant", nickname = "getTenant", httpMethod = "GET", response = String.class)
     @GetMapping("/tenant")
+    @Override
     public TenancyInfoDTO getTenancyInfo() {
         return new TenancyInfoDTO(TenancyContext.getTenantName(), urlResolver.getServiceURL(), tenancyService.isUseArtifactsProxy(), tenancyService.getIsMultitenant());
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Check tenant permissions", nickname = "checkPermissions", httpMethod = "POST")
     @PostMapping("/tenant/verification")
+    @Override
     public ResponseEntity<Void> checkPermissions(@Valid @RequestBody TenantAuth tenantAuth) {
         boolean result = jwtService.checkPermissions(tenantAuth.getTenantName(), tenantAuth.getToken(), tenantAuth.getPermissions());
         HttpStatus httpStatus = result ? HttpStatus.OK : HttpStatus.FORBIDDEN;
         return new ResponseEntity<>(httpStatus);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Generates auth token", nickname = "login", httpMethod = "POST", response = AuthTokenDTO.class)
     @PostMapping("/login")
+    @Override
     public AuthTokenDTO login(@Valid @RequestBody CredentialsDTO credentialsDTO) {
         User user = userService.getUserByUsernameOrEmail(credentialsDTO.getUsername());
         Authentication authentication = authService.getAuthentication(credentialsDTO.getUsername(), credentialsDTO.getPassword(), user);
@@ -125,18 +117,16 @@ public class AuthController extends AbstractController {
                 jwtService.generateRefreshToken(user, tenant), jwtService.getExpiration(), tenant);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Sign up", nickname = "signup", httpMethod = "POST")
     @PostMapping("/signup")
+    @Override
     public void signup(@RequestHeader("Access-Token") String token, @Valid @RequestBody UserType userType) {
         Invitation invitation = invitationService.acceptInvitation(token, userType.getUsername());
         userType.setSource(invitation.getSource());
         userService.createOrUpdateUser(mapper.map(userType, User.class), invitation.getGroupId());
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Refreshes auth token", nickname = "refreshToken", httpMethod = "POST", response = AuthTokenDTO.class)
     @PostMapping("/refresh")
+    @Override
     public AuthTokenDTO refresh(@RequestBody @Valid RefreshTokenDTO refreshToken) {
         final String tenant = TenancyContext.getTenantName();
         User jwtUser = jwtService.parseRefreshToken(refreshToken.getRefreshToken());
@@ -145,31 +135,26 @@ public class AuthController extends AbstractController {
                 jwtService.generateRefreshToken(user, tenant), jwtService.getExpiration(), tenant);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Sends reset password email", nickname = "sendResetPasswordEmail", httpMethod = "POST")
     @PostMapping("/password/forgot")
+    @Override
     public void sendResetPasswordEmail(@Valid @RequestBody EmailDTO emailDTO) {
         resetPasswordService.sendResetPasswordEmail(emailDTO.getEmail());
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Checks whether token reset is possible", nickname = "getForgotPasswordType", httpMethod = "GET")
     @GetMapping("/password/forgot")
+    @Override
     public void checkIfTokenResetIsPossible(@RequestParam("token") String token) {
         userService.getUserByResetToken(token);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Reset password", nickname = "resetPassword", httpMethod = "PUT")
     @PutMapping("/password")
+    @Override
     public void resetPassword(@RequestHeader("Access-Token") String token, @Valid @RequestBody PasswordDTO passwordDTO) {
         resetPasswordService.resetPassword(token, passwordDTO.getPassword());
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Generates access token", nickname = "accessToken", httpMethod = "GET", response = AuthTokenDTO.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/access")
+    @Override
     public AccessTokenDTO accessToken() {
         String token = jwtService.generateAccessToken(userService.getNotNullUserById(getPrincipalId()), TenancyContext.getTenantName());
         return new AccessTokenDTO(token);

@@ -22,11 +22,7 @@ import com.qaprosoft.zafira.models.db.TestMetric;
 import com.qaprosoft.zafira.models.dto.TestCaseType;
 import com.qaprosoft.zafira.service.TestCaseService;
 import com.qaprosoft.zafira.service.TestMetricService;
-import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.qaprosoft.zafira.web.documented.TestCaseDocumentedController;
 import org.apache.commons.lang3.ArrayUtils;
 import org.dozer.Mapper;
 import org.springframework.http.MediaType;
@@ -44,10 +40,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-@Api("Test cases API")
 @RequestMapping(path = "api/tests/cases", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-public class TestCaseController extends AbstractController {
+public class TestCaseController extends AbstractController implements TestCaseDocumentedController {
 
     private final Mapper mapper;
     private final TestCaseService testCaseService;
@@ -59,26 +54,20 @@ public class TestCaseController extends AbstractController {
         this.testMetricService = testMetricService;
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Search test cases", nickname = "searchTestCases", httpMethod = "POST", response = SearchResult.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/search")
+    @Override
     public SearchResult<TestCase> searchTestCases(@Valid @RequestBody TestCaseSearchCriteria sc) {
         return testCaseService.searchTestCases(sc);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Get test metrics by test case id", nickname = "getTestMetricsByTestCaseId", httpMethod = "GET", response = Map.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/{id}/metrics")
+    @Override
     public Map<String, List<TestMetric>> getTestMetricsByTestCaseId(@PathVariable("id") Long id) {
         return testMetricService.getTestMetricsByTestCaseId(id);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Create test case", nickname = "createTestCase", httpMethod = "POST", response = TestCaseType.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping()
+    @Override
     public TestCaseType createTestCase(
             @RequestBody @Valid TestCaseType testCase,
             @RequestHeader(name = "Project", required = false) String projectName
@@ -87,10 +76,8 @@ public class TestCaseController extends AbstractController {
         return mapper.map(testCaseService.createOrUpdateCase(tc, projectName), TestCaseType.class);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Create multiple test cases", nickname = "createTestCases", httpMethod = "POST", response = TestCaseType[].class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/batch")
+    @Override
     public TestCaseType[] createTestCases(
             @RequestBody @Valid TestCaseType[] tcs,
             @RequestHeader(name = "Project", required = false) String projectName
