@@ -1554,6 +1554,19 @@ option = {
     ]
 };
 chart.setOption(option);', '{
+  "PERIOD": {
+    "values": [
+      "Last 24 Hours",
+      "Last 7 Days",
+      "Last 14 Days",
+      "Last 30 Days",
+      "Nightly",
+      "Weekly",
+      "Monthly",
+      "Total"
+      ],
+    "required": true
+  },
   "PERSONAL": {
     "values": [
       "false",
@@ -1566,9 +1579,18 @@ chart.setOption(option);', '{
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
   },
-  "PROJECT": {
+   "PROJECT": {
     "valuesQuery": "SELECT NAME FROM PROJECTS WHERE NAME <> '''' ORDER BY 1;",
     "multiple": true
+  },
+  "Separator": {
+    "value": "Below params are not applicable for Total period!",
+    "type": "title",
+    "required": false
+  },
+  "PARENT_JOB": {
+    "value": "",
+    "required": false
   }
 }', '', '2019-05-13 13:17:40.339082', '2019-04-09 13:04:34.054318', '{
   "PERIOD": "Last 24 Hours",
