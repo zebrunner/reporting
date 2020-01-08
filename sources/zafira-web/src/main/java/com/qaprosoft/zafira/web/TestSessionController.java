@@ -19,8 +19,8 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchCriteria
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.models.entity.TestSession;
 import com.qaprosoft.zafira.service.TestSessionService;
+import com.qaprosoft.zafira.web.documented.TestSessionDocumentedController;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -30,10 +30,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api("Test session API")
 @RequestMapping(path = "api/tests/sessions", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-public class TestSessionController extends AbstractController {
+public class TestSessionController extends AbstractController implements TestSessionDocumentedController {
 
     private final TestSessionService testSessionService;
 
@@ -45,6 +44,7 @@ public class TestSessionController extends AbstractController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Search test sessions", nickname = "search", httpMethod = "POST", response = SearchResult.class)
     @PostMapping("/search")
+    @Override
     public SearchResult<TestSession> search(@RequestBody SearchCriteria criteria) {
         return testSessionService.search(criteria);
     }

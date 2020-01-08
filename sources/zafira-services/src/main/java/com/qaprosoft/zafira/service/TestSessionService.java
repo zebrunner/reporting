@@ -51,15 +51,13 @@ public class TestSessionService {
     }
 
     private Pageable buildPageable(SearchCriteria criteria) {
-        Pageable pageable;
         if (!StringUtils.isEmpty(criteria.getOrderBy())) {
             Sort sortBy = Sort.by(criteria.getOrderBy());
             sortBy = criteria.getSortOrder().equals(SearchCriteria.SortOrder.ASC) ? sortBy.ascending() : sortBy.descending();
-            pageable = PageRequest.of(criteria.getPage(), criteria.getPageSize(), sortBy);
+            return PageRequest.of(criteria.getPage(), criteria.getPageSize(), sortBy);
         } else {
-            pageable = PageRequest.of(criteria.getPage(), criteria.getPageSize());
+            return PageRequest.of(criteria.getPage(), criteria.getPageSize());
         }
-        return pageable;
     }
 
 }

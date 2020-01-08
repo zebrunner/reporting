@@ -35,14 +35,16 @@ public class TestSession {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String moonSessionId;
+
+    @Column(name = "moon_session_id")
+    private String sessionId;
     private String version;
     private LocalDateTime startedAt;
     private LocalDateTime endedAt;
     private Long duration;
 
     @Column(name = "os_name")
-    private String operationSystemName;
+    private String osName;
     private String browserName;
 
 }
