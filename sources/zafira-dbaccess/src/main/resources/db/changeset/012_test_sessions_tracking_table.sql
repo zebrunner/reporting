@@ -1,6 +1,6 @@
 CREATE TABLE test_sessions (
     id SERIAL,
-    moon_session_id VARCHAR(255) NOT NULL,
+    session_id VARCHAR(255) NOT NULL,
     version VARCHAR(255) NOT NULL,
     started_at TIMESTAMP NOT NULL,
     ended_at TIMESTAMP NULL,
