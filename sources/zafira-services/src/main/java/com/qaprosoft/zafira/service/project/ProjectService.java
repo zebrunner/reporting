@@ -80,6 +80,12 @@ public class ProjectService {
         return !StringUtils.isEmpty(name) ? projectMapper.getProjectByName(name) : null;
     }
 
+    @Cacheable(value = "projects", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #name", condition = "#name != null")
+    @Transactional(readOnly = true)
+    public Project getProjectByNameOrDefault(String name) {
+        return !StringUtils.isEmpty(name) ? projectMapper.getProjectByName(name) : projectMapper.getProjectByName(DEFAULT_PROJECT);
+    }
+
     @CachePut(value = "projects", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #project.name", condition = "#project != null && #project.name != null")
     @Transactional(rollbackFor = Exception.class)
     public Project updateProject(Project project) {

@@ -86,7 +86,7 @@ public class TestCaseService implements ProjectReassignable {
 
     @Transactional(rollbackFor = Exception.class)
     public TestCase createOrUpdateCase(TestCase testCase, String projectName) throws ExecutionException {
-        Project project = projectService.getProjectByName(projectName);
+        Project project = projectService.getProjectByNameOrDefault(projectName);
         testCase.setProject(project);
         return createOrUpdateCase(testCase);
     }
