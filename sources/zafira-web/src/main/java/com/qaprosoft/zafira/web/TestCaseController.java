@@ -38,7 +38,6 @@ import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 @RequestMapping(path = "api/tests/cases", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
@@ -71,7 +70,7 @@ public class TestCaseController extends AbstractController implements TestCaseDo
     public TestCaseType createTestCase(
             @RequestBody @Valid TestCaseType testCase,
             @RequestHeader(name = "Project", required = false) String projectName
-    ) throws ExecutionException {
+    ) {
         TestCase tc = mapper.map(testCase, TestCase.class);
         return mapper.map(testCaseService.createOrUpdateCase(tc, projectName), TestCaseType.class);
     }
@@ -81,7 +80,7 @@ public class TestCaseController extends AbstractController implements TestCaseDo
     public TestCaseType[] createTestCases(
             @RequestBody @Valid TestCaseType[] tcs,
             @RequestHeader(name = "Project", required = false) String projectName
-    ) throws ExecutionException {
+    ) {
         if (ArrayUtils.isEmpty(tcs)) {
             return new TestCaseType[0];
         }
