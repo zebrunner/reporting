@@ -70,13 +70,13 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
       <#if result?length != 0>
        <#local result = result + " AND "/>
       </#if>
-      <#local result = result + "UPSTREAM_JOB_NAME = '" + PARENT_JOB + "' AND UPSTREAM_JOB_BUILD_NUMBER = '" + PARENT_BUILD + "'"/>
+      <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "'' AND UPSTREAM_JOB_BUILD_NUMBER = ''" + PARENT_BUILD + "''"/>
     <#elseif PARENT_JOB != "" && PARENT_BUILD == "">
       <#if result?length != 0>
        <#local result = result + " AND "/>
       </#if>
-      <#local result = result + "UPSTREAM_JOB_NAME = '" + PARENT_JOB +
-        "' AND UPSTREAM_JOB_BUILD_NUMBER = (
+      <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB +
+        "'' AND UPSTREAM_JOB_BUILD_NUMBER = (
             SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
             FROM TEST_RUNS INNER JOIN
               JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
