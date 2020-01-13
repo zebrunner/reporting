@@ -29,6 +29,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class MailIntegrationAdapter extends AbstractIntegrationAdapter implements MailServiceAdapter {
 
+    private static final int SMTP_NOT_SECURED_PORT = 25;
+
     private static final String ERR_MSG_SMTP_CONNECTION_IS_NOT_ESTABLISHED = "SMTP connection is not established";
 
     private final String host;
@@ -49,13 +51,15 @@ public class MailIntegrationAdapter extends AbstractIntegrationAdapter implement
         this.password = getAttributeValue(integration, EmailParam.EMAIL_PASSWORD);
         this.fromAddress = getAttributeValue(integration, EmailParam.EMAIL_FROM_ADDRESS);
 
+        boolean enableTls = this.port != SMTP_NOT_SECURED_PORT;
+
         this.javaMailSender = new JavaMailSenderImpl();
         ((JavaMailSenderImpl) this.javaMailSender).setDefaultEncoding("UTF-8");
         ((JavaMailSenderImpl) this.javaMailSender).setJavaMailProperties(new Properties() {
             private static final long serialVersionUID = -7384945982042097581L;
             {
                 setProperty("mail.smtp.auth", "true");
-                setProperty("mail.smtp.starttls.enable", "true");
+                setProperty("mail.smtp.starttls.enable", String.valueOf(enableTls));
 
                 setProperty("mail.smtp.connectiontimeout", "5000");
                 setProperty("mail.smtp.timeout", "3000");
