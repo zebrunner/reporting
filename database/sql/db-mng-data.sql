@@ -1397,7 +1397,7 @@ SELECT
       <#local result = "to_char(date_trunc(''week'', TEST_CASES.CREATED_AT), ''MM/DD'')" />
       <#break>
     <#case "Total">
-      <#local result = "to_char(date_trunc(''quarter'', TEST_CASES.CREATED_AT), ''YYYY-MM'')" />
+      <#local result = "to_char(date_trunc(''quarter'', TEST_CASES.CREATED_AT), ''YYYY-" + ''"Q"'' + "Q'')" />
       <#break>
   </#switch>
   <#return result>
