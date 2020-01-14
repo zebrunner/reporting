@@ -18,11 +18,7 @@ package com.qaprosoft.zafira.web;
 import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.dto.ProjectDTO;
 import com.qaprosoft.zafira.service.project.ProjectService;
-import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.qaprosoft.zafira.web.documented.ProjectDocumentedController;
 import org.dozer.Mapper;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,11 +37,10 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Api("Projects API")
 @CrossOrigin
 @RequestMapping(path = "api/projects", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-public class ProjectController extends AbstractController {
+public class ProjectController extends AbstractController implements ProjectDocumentedController {
 
     private final Mapper mapper;
 
@@ -56,39 +51,31 @@ public class ProjectController extends AbstractController {
         this.projectService = projectService;
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Create project", nickname = "createProject", httpMethod = "POST", response = ProjectDTO.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_PROJECTS')")
     @PostMapping()
+    @Override
     public ProjectDTO createProject(@RequestBody @Valid ProjectDTO project) {
         Project newProject = projectService.createProject(mapper.map(project, Project.class));
         return mapper.map(newProject, ProjectDTO.class);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Delete project", nickname = "deleteProject", httpMethod = "DELETE")
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_PROJECTS')")
     @DeleteMapping("/{id}")
+    @Override
     public void deleteProject(@PathVariable("id") long id, @RequestParam(name = "reassignTo", required = false) Long reassignToId) {
         projectService.deleteProjectById(id, reassignToId);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Update project", nickname = "updateProject", httpMethod = "PUT", response = ProjectDTO.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_PROJECTS')")
     @PutMapping()
+    @Override
     public ProjectDTO updateProject(@RequestBody @Valid ProjectDTO project) {
         Project updatedProject = projectService.updateProject(mapper.map(project, Project.class));
         return mapper.map(updatedProject, ProjectDTO.class);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Get all projects", nickname = "getAllProjects", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping()
+    @Override
     public List<ProjectDTO> getAllProjects() {
         List<Project> projects = projectService.getAllProjects();
         return projects.stream()
@@ -96,10 +83,8 @@ public class ProjectController extends AbstractController {
                        .collect(Collectors.toList());
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Get project by name", nickname = "getProjectByName", httpMethod = "GET", response = ProjectDTO.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/{name}")
+    @Override
     public ProjectDTO getProjectByName(@PathVariable("name") String name) {
         return mapper.map(projectService.getNotNullProjectByName(name), ProjectDTO.class);
     }

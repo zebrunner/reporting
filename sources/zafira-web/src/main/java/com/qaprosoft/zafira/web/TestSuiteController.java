@@ -18,11 +18,7 @@ package com.qaprosoft.zafira.web;
 import com.qaprosoft.zafira.models.db.TestSuite;
 import com.qaprosoft.zafira.models.dto.TestSuiteType;
 import com.qaprosoft.zafira.service.TestSuiteService;
-import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.qaprosoft.zafira.web.documented.TestSuiteDocumentedController;
 import org.dozer.Mapper;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,10 +28,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-@Api("Test suites operations")
 @RequestMapping(path = "api/tests/suites", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-public class TestSuiteController extends AbstractController {
+public class TestSuiteController extends AbstractController implements TestSuiteDocumentedController {
 
     private final Mapper mapper;
     private final TestSuiteService testSuiteService;
@@ -45,10 +40,8 @@ public class TestSuiteController extends AbstractController {
         this.testSuiteService = testSuiteService;
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Create test suite", nickname = "createTestSuite", httpMethod = "POST", notes = "Create a new test suite.", response = TestSuiteType.class, responseContainer = "TestSuiteType")
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping()
+    @Override
     public TestSuiteType createTestSuite(@RequestBody @Valid TestSuiteType testSuite) {
         return mapper.map(testSuiteService.createOrUpdateTestSuite(mapper.map(testSuite, TestSuite.class)), TestSuiteType.class);
     }

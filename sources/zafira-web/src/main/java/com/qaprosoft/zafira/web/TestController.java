@@ -36,11 +36,7 @@ import com.qaprosoft.zafira.service.TestService;
 import com.qaprosoft.zafira.service.WorkItemService;
 import com.qaprosoft.zafira.service.cache.StatisticsService;
 import com.qaprosoft.zafira.service.integration.tool.impl.TestCaseManagementService;
-import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.qaprosoft.zafira.web.documented.TestDocumentedController;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -54,15 +50,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
 
-@Api("Tests API")
 @RequestMapping(path = "api/tests", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-public class TestController extends AbstractController {
+public class TestController extends AbstractController implements TestDocumentedController {
 
     @Autowired
     private Mapper mapper;
@@ -88,10 +82,8 @@ public class TestController extends AbstractController {
     @Autowired
     private StatisticsService statisticsService;
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Start test", nickname = "startTest", httpMethod = "POST", response = TestType.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping()
+    @Override
     public TestType startTest(@Valid @RequestBody TestType t) {
         Test test = testService.startTest(mapper.map(t, Test.class), t.getWorkItems(), t.getConfigXML());
         TestRunStatistics testRunStatistic = statisticsService.getTestRunStatistic(test.getTestRunId());
@@ -100,10 +92,8 @@ public class TestController extends AbstractController {
         return mapper.map(test, TestType.class);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Finish test", nickname = "finishTest", httpMethod = "POST", response = TestType.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/{id}/finish")
+    @Override
     public TestType finishTest(@PathVariable("id") long id, @RequestBody TestType t) {
         Test test = mapper.map(t, Test.class);
         test.setId(id);
@@ -115,11 +105,9 @@ public class TestController extends AbstractController {
         return mapper.map(test, TestType.class);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Update test", nickname = "updateTest", httpMethod = "PUT", response = Test.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_TESTS')")
     @PutMapping()
+    @Override
     public Test updateTest(@RequestBody Test test) {
         Test updatedTest = testService.changeTestStatus(test.getId(), test.getStatus());
 
@@ -133,10 +121,8 @@ public class TestController extends AbstractController {
         return updatedTest;
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Create test work items", nickname = "createTestWorkItems", httpMethod = "POST", response = TestType.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/{id}/workitems")
+    @Override
     public TestType createTestWorkItems(
             @PathVariable("id") long id,
             @RequestBody List<String> workItems
@@ -145,26 +131,20 @@ public class TestController extends AbstractController {
         return mapper.map(test, TestType.class);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Delete test by id", nickname = "deleteTest", httpMethod = "DELETE")
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @DeleteMapping("/{id}")
+    @Override
     public void deleteTest(@PathVariable("id") long id) {
         testService.deleteTestById(id);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Search tests", nickname = "searchTests", httpMethod = "POST", response = SearchResult.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/search")
+    @Override
     public SearchResult<Test> searchTests(@RequestBody TestSearchCriteria sc) {
         return testService.searchTests(sc);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Get test case work items by type", nickname = "getTestCaseWorkItemsByType", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/{id}/workitem/{type}")
+    @Override
     public List<WorkItem> getTestCaseWorkItemsByType(
             @PathVariable("id") long id,
             @PathVariable("type") Type type
@@ -172,10 +152,8 @@ public class TestController extends AbstractController {
         return testService.getTestCaseWorkItems(id, type);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Link test work item", nickname = "linkWorkItem", httpMethod = "POST", response = WorkItem.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/{id}/workitem")
+    @Override
     public WorkItem linkWorkItem(@PathVariable("id") long id, @RequestBody WorkItem workItem) {
         if (getPrincipalId() > 0) {
             workItem.setUser(new User(getPrincipalId()));
@@ -194,10 +172,8 @@ public class TestController extends AbstractController {
         return workItem;
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Update test known issue", nickname = "updateTestKnownIssue", httpMethod = "PUT", response = WorkItem.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PutMapping("/{id}/issues")
+    @Override
     public WorkItem updateTestKnownIssue(
             @PathVariable("id") long id,
             @RequestBody WorkItem workItem
@@ -205,10 +181,8 @@ public class TestController extends AbstractController {
         return testService.updateTestWorkItem(id, workItem);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Delete test work item", nickname = "deleteTestWorkItem", httpMethod = "DELETE")
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @DeleteMapping("/{testId}/workitem/{workItemId}")
+    @Override
     public void deleteTestWorkItem(@PathVariable("workItemId") long workItemId, @PathVariable("testId") long testId) {
         Test test = testService.getTestById(testId);
         WorkItem workItem = workItemService.getWorkItemById(workItemId);
@@ -225,24 +199,20 @@ public class TestController extends AbstractController {
     }
 
     // // TODO: 11/1/19 get rid of jira endpoints
-    @ApiIgnore
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/jira/{issue}")
+    @Override
     public IssueDTO getJiraIssue(@PathVariable("issue") String issue) {
         return testCaseManagementService.getIssue(issue);
     }
 
-    @ApiIgnore
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/jira/connect")
+    @Override
     public boolean getConnectionToJira() {
         return testCaseManagementService.isEnabledAndConnected(null);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Add test artifact", nickname = "addTestArtifact", httpMethod = "POST")
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PostMapping("/{id}/artifacts")
+    @Override
     public void addTestArtifact(
             @PathVariable("id") long id,
             @RequestBody TestArtifactType artifact

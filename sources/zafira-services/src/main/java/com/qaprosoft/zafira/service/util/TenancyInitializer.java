@@ -120,7 +120,7 @@ public class TenancyInitializer {
                 LOGGER.error(errorMessage, e);
             } finally {
                 result.setSuccess(success);
-                eventPushService.convertAndSend(ZFR_CALLBACKS, result, "Event-Type", "ZFR_INIT_TENANCY");
+                eventPushService.convertAndSend(ZFR_CALLBACKS, result, "Type", "ZFR_INIT_TENANCY");
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

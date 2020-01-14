@@ -21,11 +21,7 @@ import com.qaprosoft.zafira.models.db.Invitation;
 import com.qaprosoft.zafira.models.dto.auth.InvitationListType;
 import com.qaprosoft.zafira.models.dto.auth.InvitationType;
 import com.qaprosoft.zafira.service.InvitationService;
-import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.qaprosoft.zafira.web.documented.InvitationDocumentedController;
 import org.dozer.Mapper;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -43,11 +39,10 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Api("Invites API")
 @CrossOrigin
 @RequestMapping(path = "api/invitations", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-public class InvitationController extends AbstractController {
+public class InvitationController extends AbstractController implements InvitationDocumentedController {
 
     private final InvitationService invitationService;
     private final Mapper mapper;
@@ -57,11 +52,9 @@ public class InvitationController extends AbstractController {
         this.mapper = mapper;
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Invite users", nickname = "inviteUsers", httpMethod = "POST", response = List.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('INVITE_USERS')")
     @PostMapping()
+    @Override
     public List<Invitation> inviteUsers(@Valid @RequestBody InvitationListType invitationList) {
         List<InvitationType> invitationTypes = invitationList.getInvitationTypes();
         List<Invitation> invitations = invitationTypes.stream()
@@ -70,37 +63,30 @@ public class InvitationController extends AbstractController {
         return invitationService.createInvitations(getPrincipalId(), invitations);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Retry invite user", nickname = "retryInviteUser", httpMethod = "POST", response = Invitation.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('INVITE_USERS')")
     @PostMapping("/retry")
+    @Override
     public Invitation retryInviteUser(@Valid @RequestBody InvitationType invitation) {
         return invitationService.retryInvitation(getPrincipalId(), invitation.getEmail());
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Get invitation", nickname = "getInvitation", httpMethod = "GET", response = InvitationType.class)
     @GetMapping("/info")
+    @Override
     public InvitationType getInvitation(@RequestParam("token") String token) {
         Invitation invitation = invitationService.getInvitationByToken(token);
         return mapper.map(invitation, InvitationType.class);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Get all invitations", nickname = "getAllInvitations", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasAnyPermission('INVITE_USERS', 'MODIFY_INVITATIONS')")
     @GetMapping("/all")
+    @Override
     public List<Invitation> getAllInvitations() {
         return invitationService.getAllInvitations();
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Search invitations", nickname = "searchInvitations", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasAnyPermission('INVITE_USERS', 'MODIFY_INVITATIONS')")
     @GetMapping(value = "/search")
+    @Override
     public SearchResult<Invitation> search(
             @RequestParam(value = "query", required = false) String query,
             @RequestParam(value = "page", required = false) String page,
@@ -112,11 +98,9 @@ public class InvitationController extends AbstractController {
         return invitationService.search(sc);
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Delete invitation", nickname = "deleteInvitationById", httpMethod = "DELETE")
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_INVITATIONS')")
     @DeleteMapping("/{idOrEmail}")
+    @Override
     public void deleteInvitation(@PathVariable("idOrEmail") String idOrEmail) {
         if (idOrEmail.matches("\\d+")) { // check if number
             invitationService.deleteInvitation(Long.valueOf(idOrEmail));

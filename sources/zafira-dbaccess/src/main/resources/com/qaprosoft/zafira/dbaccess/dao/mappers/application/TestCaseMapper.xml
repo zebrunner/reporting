@@ -159,8 +159,8 @@
 	               AND TC.ID = #{id}
 	            ]]>
 			</if>
-			<if test="null != ids">
-	            <![CDATA[
+            <if test="null != ids and ids.size > 0">
+                <![CDATA[
 	               AND TC.ID IN
 	            ]]>
 				<foreach item="id" index="index" collection="ids" open="("

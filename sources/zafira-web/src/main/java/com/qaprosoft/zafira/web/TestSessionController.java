@@ -15,27 +15,30 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.web;
 
-import com.qaprosoft.zafira.service.ApplicationHealthService;
-import com.qaprosoft.zafira.web.documented.ApplicationHealthDocumentedController;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
+import com.qaprosoft.zafira.models.entity.TestSession;
+import com.qaprosoft.zafira.service.TestSessionService;
+import com.qaprosoft.zafira.web.documented.TestSessionDocumentedController;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping(path = "api/status", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "api/tests/sessions", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-public class ApplicationHealthController extends AbstractController implements ApplicationHealthDocumentedController {
+public class TestSessionController extends AbstractController implements TestSessionDocumentedController {
 
-    private final ApplicationHealthService applicationHealthService;
+    private final TestSessionService testSessionService;
 
-    public ApplicationHealthController(ApplicationHealthService applicationHealthService) {
-        this.applicationHealthService = applicationHealthService;
+    public TestSessionController(TestSessionService testSessionService) {
+        this.testSessionService = testSessionService;
     }
 
-    @GetMapping()
+    @GetMapping("/search")
     @Override
-    public String getStatus() {
-        return applicationHealthService.getStatus();
+    public SearchResult<TestSession> search(SearchCriteria criteria) {
+        return testSessionService.search(criteria);
     }
 
 }

@@ -47,17 +47,7 @@ let option = {
         "type": "category",
         "boundaryGap": false
     },
-    "yAxis": {
-      axisLabel : {
-        formatter: (value) => {
-          if(value == 0) return value
-          if(value >= 1000000000) return `${(value/1000000000).toFixed(2)}B`
-          else if(value >= 1000000) return `${(value/1000000).toFixed(2)}M`
-          else if (value >= 1000) return `${(value/1000).toFixed(2)}K`
-          else return value
-        }
-      }
-    },
+    "yAxis": {},
     "series": series
 };
 
@@ -299,4 +289,4 @@ let lineRow = {
     
     chart.setOption(option);
     angular.element($window).on("resize", onResize);
-}, 1000)' WHERE NAME='MILESTONE DETAILS'
+}, 1000)' WHERE NAME='MILESTONE DETAILS';
