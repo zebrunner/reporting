@@ -106,10 +106,11 @@ The steps are pretty identical to the Linux or MacOS, it requires additional tun
 <p align="center">
   <img width="600px" src="./docs/img/docker-drive.png">
 </p>
-1.3 Create volumes
+1.3 Create Postgres volume
 ```
 $ docker volume create --name=pgdata
 ```
+1.4 Create Elasticsearch volume
 ```
 $ docker volume create --name=esdata
 ```
