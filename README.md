@@ -149,9 +149,6 @@ Alternatively, if you'd like to play around with Zafira codebase and/or contribu
     ```
     `--build` instruction will tell Docker Compose to force rebuild container rather than use the one residing on your filesystem (if this is not your first Zafira run).
     That's it, go ahead and give applicaion a try!
-### Signing in to the application
-1. Open in your browser IP address of deployed enviroment and navigate to http://localhost/app to sign in to application (Zafira app is binded to default port 80)
-2. Use folowing credentials to log in: username: `qpsdemo`, password: `qpsdemo`.
 
 ### Application configuration and sensitive parameters
 As you might have notice already, Zafira comes with a pre-defined configuration so you have all the features enabled out-of-the-box. However, if you'd like to use Zafira in production you'll definetely need to tweak a few things.
