@@ -61,12 +61,14 @@ This is **non-production deployment** that will suite for demo or development pu
 2. Configure **vm.max_map_count** kernel setting using official [ES guide](https://www.elastic.co/guide/en/elasticsearch/reference/6.1/docker.html#docker-cli-run-prod-mode)
 3. Clone this repo and navigate to the root folder
 4. Make sure that the followting ports are not binded by other applications: 
-* **80**    (NGINX for UI)
-* **8080**  (API gateway)
-* **5433**  (Postgres)
-* **5672**, **61613**, **15672** (RabbitMQ)
-* **6379**  (Redis)
-* **9200**  (Elasticsearch
+```
+80                 (NGINX for UI)
+8080               (API gateway)
+5433               (Postgres)
+5672, 61613, 15672 (RabbitMQ)
+6379               (Redis)
+9200               (Elasticsearch
+```
 5. If you are going to access application from remote host, get the IP of your machine and replace localhost in `zafira-properties.env` with actual IP address
 ```
 ZAFIRA_WEB_HOST=http://localhost:80
@@ -105,9 +107,9 @@ The steps are pretty identical to the Linux or MacOS, it requires additional tun
   <img width="600px" src="./docs/img/docker-drive.png">
 </p>
 1.3 Create volumes
+
 ```
 $ docker volume create --name=pgdata
-$ docker volume create --name=esdata
 ```
 
 6. Deploy application using `docker-compose`
