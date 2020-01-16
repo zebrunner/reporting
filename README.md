@@ -61,63 +61,64 @@ This is **non-production deployment** that will suite for demo or development pu
 2. Configure **vm.max_map_count** kernel setting using official [ES guide](https://www.elastic.co/guide/en/elasticsearch/reference/6.1/docker.html#docker-cli-run-prod-mode)
 3. Clone this repo and navigate to the root folder
 4. Make sure that the followting ports are not binded by other applications: 
-```
-80                 (NGINX for UI)
-8080               (API gateway)
-5433               (Postgres)
-5672, 61613, 15672 (RabbitMQ)
-6379               (Redis)
-9200               (Elasticsearch
-```
+
+  ```
+  80                 (NGINX for UI)
+  8080               (API gateway)
+  5433               (Postgres)
+  5672, 61613, 15672 (RabbitMQ)
+  6379               (Redis)
+  9200               (Elasticsearch
+  ```
 5. If you are going to access application from remote host, get the IP of your machine and replace localhost in `zafira-properties.env` with actual IP address
-```
-ZAFIRA_WEB_HOST=http://localhost:80
-ZAFIRA_API_HOST=http://localhost:8080
-ELASTICSEARCH_URL=http://localhost:9200
-```
+  ```
+  ZAFIRA_WEB_HOST=http://localhost:80
+  ZAFIRA_API_HOST=http://localhost:8080
+  ELASTICSEARCH_URL=http://localhost:9200
+  ```
 6. Deploy application using `docker-compose`
-```
-$ docker-compose up -d
-```
+  ```
+  $ docker-compose up -d
+  ```
 7. Open application in browser:
-```
-$ http://<HOST_IP>/app
-```
+  ```
+  $ http://<HOST_IP>/app
+  ```
 8. Login to the application with default credentials
-```
-qpsdemo/qpsdemo
-```
+  ```
+  qpsdemo/qpsdemo
+  ```
 9. Navigate to http://<HOST_IP>/app/integraions and enable RabbitMQ in Message Broker
-```
-HOST=<HOST_IP>
-PORT=5672
-USER=qpsdemo
-PASSWORD=qpsdemo
-```
+
+  ```
+  HOST=<HOST_IP>
+  PORT=5672
+  USER=qpsdemo
+  PASSWORD=qpsdemo
+  ```
 
 #### Windows
 The steps are pretty identical to the Linux or MacOS, it requires additional tunning of Docker
 
-1.1 Make sure you have allocated at least 2CPU and 4GB of RAM for Docker (via Docker settings)
+* Make sure you have allocated at least 2CPU and 4GB of RAM for Docker (via Docker settings)
 <p align="center">
   <img width="600px" src="./docs/img/docker-resources.png">
 </p>
-1.2 Make sure that you enabled drive sharing for Docker
+* Make sure that you enabled drive sharing for Docker
 <p align="center">
   <img width="600px" src="./docs/img/docker-drive.png">
 </p>
-1.3 Create Postgres volume
-```
-$ docker volume create --name=pgdata
-```
-1.4 Create Elasticsearch volume
-```
-$ docker volume create --name=esdata
-```
+* Create volumes
+
+  ```
+  $ docker volume create --name=pgdata
+  $ docker volume create --name=esdata
+  ```
 6. Deploy application using `docker-compose`
-```
-$ docker-compose -f docker-compose-win.yml up -d
-```
+
+  ```
+  $ docker-compose -f docker-compose-win.yml up -d
+  ```
 
 ### Production deployment
 If you are looking for production-ready solution to deploy in your own private cloud please see [QPS Infra](https://github.com/qaprosoft/qps-infra). Zafira is also offered as a managed Cloud service - see [zebrunner.com](https://zebrunner.com). For more info and help do not hesitate to contact us via support channels listed at the bottom of this document.
