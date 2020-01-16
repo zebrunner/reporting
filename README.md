@@ -107,11 +107,12 @@ The steps are pretty identical to the Linux or MacOS, it requires additional tun
   <img width="600px" src="./docs/img/docker-drive.png">
 </p>
 1.3 Create volumes
-
 ```
 $ docker volume create --name=pgdata
 ```
-
+```
+$ docker volume create --name=esdata
+```
 6. Deploy application using `docker-compose`
 ```
 $ docker-compose -f docker-compose-win.yml up -d
