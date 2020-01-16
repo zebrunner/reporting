@@ -100,20 +100,23 @@ This is **non-production deployment** that will suite for demo or development pu
 #### Windows
 The steps are pretty identical to the Linux or MacOS, it requires additional tunning of Docker
 
-* Make sure you have allocated at least 2CPU and 4GB of RAM for Docker (via Docker settings)
+1.1 Make sure you have allocated at least 2CPU and 4GB of RAM for Docker (via Docker settings)
 <p align="center">
   <img width="600px" src="./docs/img/docker-resources.png">
 </p>
-* Make sure that you enabled drive sharing for Docker
+
+1.2 Make sure that you enabled drive sharing for Docker
 <p align="center">
   <img width="600px" src="./docs/img/docker-drive.png">
 </p>
-* Create volumes
+
+1.3 Create volumes
 
   ```
   $ docker volume create --name=pgdata
   $ docker volume create --name=esdata
   ```
+  
 6. Deploy application using `docker-compose`
 
   ```
