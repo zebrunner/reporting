@@ -74,7 +74,7 @@ public class TestSessionService {
                             builder.lower(root.get("buildNumber")), "%" + query.toLowerCase() + "%")
                     );
         }
-        // TODO: 1/17/20 refactor on status criteria property was added
+        // TODO: 1/17/20 refactor when status criteria property will be added
         if (status != null && false) {
             specification = specification.and((root, q, builder) -> builder.equal(root.get("status"), status));
         }
