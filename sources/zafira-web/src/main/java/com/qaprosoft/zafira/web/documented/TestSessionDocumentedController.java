@@ -15,8 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.web.documented;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSessionSearchCriteria;
 import com.qaprosoft.zafira.models.entity.TestSession;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -37,11 +37,11 @@ public interface TestSessionDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "criteria", paramType = "body", dataType = "SearchCriteria", required = true, value = "Search criteria to search")
+            @ApiImplicitParam(name = "criteria", paramType = "body", dataType = "TestSessionSearchCriteria", required = true, value = "Search criteria to search")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns found test sessions", response = SearchResult.class)
     })
-    SearchResult<TestSession> search(SearchCriteria criteria);
+    SearchResult<TestSession> search(TestSessionSearchCriteria criteria);
 
 }
