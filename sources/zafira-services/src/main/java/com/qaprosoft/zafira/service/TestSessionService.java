@@ -18,7 +18,6 @@ package com.qaprosoft.zafira.service;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSessionSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.persistence.TestSessionRepository;
-import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.entity.TestSession;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -63,7 +62,7 @@ public class TestSessionService {
         }
     }
 
-    private Specification<TestSession> buildSpecification(String query, Status status, String platform, LocalDateTime startedAfter, LocalDateTime endedBefore) {
+    private Specification<TestSession> buildSpecification(String query, TestSession.Status status, String platform, LocalDateTime startedAfter, LocalDateTime endedBefore) {
         Specification<TestSession> specification = Specification.where(null);
         if (query != null) {
             specification = specification
@@ -74,8 +73,7 @@ public class TestSessionService {
                             builder.lower(root.get("buildNumber")), "%" + query.toLowerCase() + "%")
                     );
         }
-        // TODO: 1/17/20 refactor when status criteria property will be added
-        if (status != null && false) {
+        if (status != null) {
             specification = specification.and((root, q, builder) -> builder.equal(root.get("status"), status));
         }
         if (platform != null) {

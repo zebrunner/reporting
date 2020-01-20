@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application.search;
 
-import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.entity.TestSession;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +29,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class TestSessionSearchCriteria extends SearchCriteria {
 
-    private Status status;
+    private TestSession.Status status;
     private String platform;
     private LocalDateTime startedAfter;
     private LocalDateTime endedBefore;
