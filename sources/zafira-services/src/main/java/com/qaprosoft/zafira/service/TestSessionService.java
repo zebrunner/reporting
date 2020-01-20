@@ -15,9 +15,10 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.service;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSessionSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.persistence.TestSessionRepository;
+import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.entity.TestSession;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +28,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.time.LocalDateTime;
 
 @Service
 public class TestSessionService {
@@ -38,9 +41,9 @@ public class TestSessionService {
     }
 
     @Transactional(readOnly = true)
-    public SearchResult<TestSession> search(SearchCriteria criteria) {
+    public SearchResult<TestSession> search(TestSessionSearchCriteria criteria) {
         Pageable pageable = buildPageable(criteria);
-        Specification<TestSession> specification = Specification.where(null);
+        Specification<TestSession> specification = buildSpecification(criteria.getQuery(), criteria.getStatus(), criteria.getPlatform(), criteria.getStartedAfter(), criteria.getEndedBefore());
         Page<TestSession> page = testSessionRepository.findAll(specification, pageable);
         return SearchResult.<TestSession>builder()
                 .results(page.getContent())
@@ -50,14 +53,41 @@ public class TestSessionService {
                 .build();
     }
 
-    private Pageable buildPageable(SearchCriteria criteria) {
+    private Pageable buildPageable(TestSessionSearchCriteria criteria) {
         if (!StringUtils.isEmpty(criteria.getOrderBy())) {
             Sort sortBy = Sort.by(criteria.getOrderBy());
-            sortBy = criteria.getSortOrder().equals(SearchCriteria.SortOrder.ASC) ? sortBy.ascending() : sortBy.descending();
+            sortBy = criteria.getSortOrder().equals(TestSessionSearchCriteria.SortOrder.ASC) ? sortBy.ascending() : sortBy.descending();
             return PageRequest.of(criteria.getPage(), criteria.getPageSize(), sortBy);
         } else {
             return PageRequest.of(criteria.getPage(), criteria.getPageSize());
         }
+    }
+
+    private Specification<TestSession> buildSpecification(String query, Status status, String platform, LocalDateTime startedAfter, LocalDateTime endedBefore) {
+        Specification<TestSession> specification = Specification.where(null);
+        if (query != null) {
+            specification = specification
+                    .and((root, q, builder) -> builder.like(
+                            builder.lower(root.get("testName")), "%" + query.toLowerCase() + "%")
+                    )
+                    .or((root, q, builder) -> builder.like(
+                            builder.lower(root.get("buildNumber")), "%" + query.toLowerCase() + "%")
+                    );
+        }
+        // TODO: 1/17/20 refactor when status criteria property will be added
+        if (status != null && false) {
+            specification = specification.and((root, q, builder) -> builder.equal(root.get("status"), status));
+        }
+        if (platform != null) {
+            specification = specification.and((root, q, builder) -> builder.equal(root.get("browserName"), platform));
+        }
+        if (startedAfter != null) {
+            specification = specification.and((root, q, builder) -> builder.greaterThanOrEqualTo(root.get("startedAt"), startedAfter));
+        }
+        if (endedBefore != null) {
+            specification = specification.and((root, q, builder) -> builder.lessThanOrEqualTo(root.get("endedAt"), endedBefore));
+        }
+        return specification;
     }
 
 }
