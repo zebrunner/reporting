@@ -132,13 +132,13 @@ databaseChangeLog:
             relativeToChangelogFile: true
             splitStatements: false
   - changeSet:
-        id: 013_add_test_session_status_column
-        validCheckSum: ANY
-        labels: stable
-        author: brutskov
-        changes:
-          - sqlFile:
-              encoding: utf8
-              path: changeset/013_add_test_session_status_column.sql
-              relativeToChangelogFile: true
-              splitStatements: false
+      id: 013_add_test_session_status_column
+      validCheckSum: ANY
+      labels: stable
+      author: brutskov
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/013_add_test_session_status_column.sql
+            relativeToChangelogFile: true
+            splitStatements: false
