@@ -30,7 +30,8 @@ public interface SettingDocumentedController {
 
     @ApiOperation(
             value = "Retrieves default integration settings by integration type name",
-            notes = "Returns found integration settings and decrypts encrypted settings. Works with 'ELASTICSEARCH', 'RABBITMQ' and 'ZEBRUNNER' types only.",
+            notes = "Will be deprecated soon. Returns integration settings and decrypts encrypted settings. " +
+                    "Works with 'ELASTICSEARCH'(for zafira-ui), 'RABBITMQ'(for zafira-client) and 'ZEBRUNNER'(for zafira-ui) types only",
             nickname = "getSettingsByTool",
             httpMethod = "GET",
             response = List.class
