@@ -8,9 +8,9 @@ DO $$
         FOR test_session_row IN SELECT * FROM test_sessions
             LOOP
                 IF test_session_row.duration IS NULL THEN
-                    UPDATE test_sessions SET status = 'IN_PROGRESS';
+                    UPDATE test_sessions SET status = 'IN_PROGRESS' WHERE id = test_session_row.id;
                 ELSE
-                    UPDATE test_sessions SET status = 'COMPLETED';
+                    UPDATE test_sessions SET status = 'COMPLETED' WHERE id = test_session_row.id;
                 END IF;
             END LOOP;
     END$$;
