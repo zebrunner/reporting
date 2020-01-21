@@ -24,8 +24,8 @@ import com.qaprosoft.zafira.service.ElasticsearchService;
 import com.qaprosoft.zafira.service.SettingsService;
 import com.qaprosoft.zafira.service.integration.IntegrationService;
 import com.qaprosoft.zafira.service.integration.tool.impl.StorageProviderService;
+import com.qaprosoft.zafira.web.documented.SettingDocumentedController;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -42,11 +42,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Api("Settings API")
 @CrossOrigin
 @RestController
 @RequestMapping(path = "api/settings", produces = MediaType.APPLICATION_JSON_VALUE)
-public class SettingsController extends AbstractController {
+public class SettingsController extends AbstractController implements SettingDocumentedController {
 
     private final SettingsService settingsService;
     private final CryptoService cryptoService;
@@ -69,10 +68,8 @@ public class SettingsController extends AbstractController {
         this.storageProviderService = storageProviderService;
     }
 
-    @ApiResponseStatuses
-    @ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", httpMethod = "GET", response = List.class)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("tool/{tool}")
+    @Override
     public List<Setting> getSettingsByTool(@PathVariable("tool") String tool) {
         // TODO by nsidorevich on 2019-10-09: refactor and remove
         List<Setting> settings;
