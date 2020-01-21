@@ -75,27 +75,38 @@ public class SettingsController extends AbstractController {
     @GetMapping("tool/{tool}")
     public List<Setting> getSettingsByTool(@PathVariable("tool") String tool) {
         // TODO by nsidorevich on 2019-10-09: refactor and remove
-        if (tool.equalsIgnoreCase("ELASTICSEARCH")) {
-            return elasticsearchService.getSettings();
-        } else if (tool.equalsIgnoreCase("RABBITMQ")) {
-            Integration rabbit = integrationService.retrieveDefaultByIntegrationTypeName("RABBITMQ");
-            List<Setting> rabbitSettings =  rabbit.getSettings()
-                         .stream()
-                         .map(setting -> {
-                             if (setting.isEncrypted()) {
-                                 String decryptedValue = cryptoService.decrypt(setting.getValue());
-                                 setting.setValue(decryptedValue);
-                                 setting.setEncrypted(false);
-                             }
-                             return new Setting(setting.getParam().getName(), setting.getValue());
-                         })
-                         .collect(Collectors.toList());
-            rabbitSettings.add(new Setting("RABBITMQ_ENABLED", Boolean.toString(rabbit.isEnabled())));
-
-            return rabbitSettings;
-        } else {
-            throw new RuntimeException(String.format("Unsupported tool %s, this API should not be used for anything but ElasticSearch or Rabbit", tool));
+        List<Setting> settings;
+        switch (tool.toUpperCase()) {
+            case "ELASTICSEARCH":
+                settings = elasticsearchService.getSettings();
+                break;
+            case "RABBITMQ":
+                settings = collectDecryptedIntegrationSettings("RABBITMQ");
+                break;
+            case "ZEBRUNNER":
+                settings = collectDecryptedIntegrationSettings("ZEBRUNNER");
+                break;
+            default:
+                throw new RuntimeException(String.format("Unsupported tool %s, this API should not be used for anything but ElasticSearch or Rabbit", tool));
         }
+        return settings;
+    }
+
+    private List<Setting> collectDecryptedIntegrationSettings(String integrationTypeName) {
+        Integration integration = integrationService.retrieveDefaultByIntegrationTypeName(integrationTypeName);
+        List<Setting> settings =  integration.getSettings()
+                                              .stream()
+                                              .map(setting -> {
+                                                  if (setting.isEncrypted()) {
+                                                      String decryptedValue = cryptoService.decrypt(setting.getValue());
+                                                      setting.setValue(decryptedValue);
+                                                      setting.setEncrypted(false);
+                                                  }
+                                                  return new Setting(setting.getParam().getName(), setting.getValue());
+                                              })
+                                              .collect(Collectors.toList());
+        settings.add(new Setting(integrationTypeName + "_ENABLED", Boolean.toString(integration.isEnabled())));
+        return settings;
     }
 
     @ApiResponseStatuses
