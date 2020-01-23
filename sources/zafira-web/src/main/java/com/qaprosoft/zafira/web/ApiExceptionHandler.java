@@ -153,6 +153,14 @@ public class ApiExceptionHandler {
         return response;
     }
 
+    @ExceptionHandler(BindException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBindException(BindException e) {
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.INVALID_VALUE, ERR_MSG_METHOD_ARGUMENT_TYPE_MISMATCH));
+        return response;
+    }
+
     /**
      * This handler will only be invoked if certain application exception occures. It provides generic handling
      * to compensate lack of error context. Once such exception occurs it should be properly addressed ASAP.

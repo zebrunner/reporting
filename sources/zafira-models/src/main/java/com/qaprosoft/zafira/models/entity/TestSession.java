@@ -52,7 +52,9 @@ public class TestSession {
 
     public enum Status {
         IN_PROGRESS,
-        COMPLETED
+        COMPLETED,
+        FAILED,
+        TIMEOUT
     }
 
 }
