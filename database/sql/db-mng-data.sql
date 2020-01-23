@@ -1410,8 +1410,8 @@ SELECT
     <#case "Last 7 Days">
     <#case "Last 14 Days">
     <#case "Last 30 Days">
-      <#local result = "GROUP BY 1, to_char(date_trunc(''month'', TEST_CASES.CREATED_AT), ''YY/MM/DD'')
-        ORDER BY to_char(date_trunc(''month'', TEST_CASES.CREATED_AT), ''YY/MM/DD'');" />
+      <#local result = "GROUP BY 1, to_char(date_trunc(''week'', TEST_CASES.CREATED_AT), ''YY/MM/DD'')
+        ORDER BY to_char(date_trunc(''week'', TEST_CASES.CREATED_AT), ''YY/MM/DD'');" />
       <#break>
   </#switch>
   <#return result>

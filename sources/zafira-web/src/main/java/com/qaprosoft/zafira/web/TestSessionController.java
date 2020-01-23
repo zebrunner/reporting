@@ -15,8 +15,9 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.web;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSessionSearchCriteria;
+import com.qaprosoft.zafira.models.dto.testsession.SearchParameter;
 import com.qaprosoft.zafira.models.entity.TestSession;
 import com.qaprosoft.zafira.service.TestSessionService;
 import com.qaprosoft.zafira.web.documented.TestSessionDocumentedController;
@@ -37,8 +38,14 @@ public class TestSessionController extends AbstractController implements TestSes
 
     @GetMapping("/search")
     @Override
-    public SearchResult<TestSession> search(SearchCriteria criteria) {
+    public SearchResult<TestSession> search(TestSessionSearchCriteria criteria) {
         return testSessionService.search(criteria);
+    }
+
+    @GetMapping("/search/parameters")
+    @Override
+    public SearchParameter getSearchParameters() {
+        return testSessionService.collectSearchParameters();
     }
 
 }

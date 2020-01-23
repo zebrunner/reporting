@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.dbaccess.persistence;
+package com.qaprosoft.zafira.dbaccess.dao.mysql.application.search;
 
 import com.qaprosoft.zafira.models.entity.TestSession;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
-public interface TestSessionRepository extends CrudRepository<TestSession, Long> {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class TestSessionSearchCriteria extends SearchCriteria {
 
-    Page<TestSession> findAll(Specification<TestSession> specification, Pageable pageable);
-
-    @Query("Select Distinct ts.browserName From TestSession ts")
-    List<String> findDistinctByBrowserName();
-
-    @Query("Select Distinct ts.status From TestSession ts")
-    List<TestSession.Status> findDistinctByStatus();
+    private TestSession.Status status;
+    private String platform;
+    private LocalDateTime startedAfter;
+    private LocalDateTime endedBefore;
 
 }

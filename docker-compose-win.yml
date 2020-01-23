@@ -79,8 +79,8 @@ services:
     image: qaprosoft/zafira-ui:1.27
     ports:
       - 80:80
-    environment:
-      - ZAFIRA_WS_URL=http://localhost:8080/zafira-ws
+    env_file:
+      - zafira-properties.env
     depends_on:
       - "zafira"
 volumes:
