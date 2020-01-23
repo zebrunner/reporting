@@ -18,6 +18,7 @@ package com.qaprosoft.zafira.service;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSessionSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.persistence.TestSessionRepository;
+import com.qaprosoft.zafira.models.dto.testsession.SearchParameter;
 import com.qaprosoft.zafira.models.entity.TestSession;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class TestSessionService {
@@ -50,6 +52,13 @@ public class TestSessionService {
                 .pageSize(page.getSize())
                 .page(page.getNumber())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public SearchParameter collectSearchParameters() {
+        List<TestSession.Status> statuses = testSessionRepository.findDistinctByStatus();
+        List<String> platforms = testSessionRepository.findDistinctByBrowserName();
+        return new SearchParameter(statuses, platforms);
     }
 
     private Pageable buildPageable(TestSessionSearchCriteria criteria) {
