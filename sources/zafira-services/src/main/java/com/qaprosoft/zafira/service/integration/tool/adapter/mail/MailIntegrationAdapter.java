@@ -63,14 +63,14 @@ public class MailIntegrationAdapter extends AbstractIntegrationAdapter implement
 
                 if (enableTls) {
                     setProperty("mail.transport.protocol", "smtp");
-                    setProperty("mail.smtps.ssl.protocols", "TLSv1.2");
-                    setProperty("jdk.tls.client.protocols", "TLSv1.2");
-                    setProperty("https.protocols", "TLSv1.2");
-                    setProperty("javax.net.debug", "ssl:handshake:verbose");
+                    setProperty("mail.smtp.ssl.protocols", "TLSv1.2");
+                    //setProperty("jdk.tls.client.protocols", "TLSv1.2");
+                    //setProperty("https.protocols", "TLSv1.2");
+                    //setProperty("javax.net.debug", "ssl:handshake:verbose");
                 }
 
-                setProperty("mail.smtp.connectiontimeout", "5000");
-                setProperty("mail.smtp.timeout", "3000");
+                setProperty("mail.smtp.connectiontimeout", "10000");
+                setProperty("mail.smtp.timeout", "6000");
             }
         });
         ((JavaMailSenderImpl) this.javaMailSender).setHost(host);
