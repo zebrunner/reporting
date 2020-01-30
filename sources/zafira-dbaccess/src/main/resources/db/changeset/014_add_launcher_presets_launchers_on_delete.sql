@@ -1,0 +1,7 @@
+ALTER TABLE launcher_presets DROP CONSTRAINT fk_LAUNCHER_PRESET_LAUNCHERS1,
+                             ADD CONSTRAINT fk_LAUNCHER_PRESET_LAUNCHERS1 FOREIGN KEY (launcher_id) REFERENCES launchers(id)
+                             ON DELETE CASCADE ON UPDATE NO ACTION;
+
+ALTER TABLE launcher_callbacks DROP CONSTRAINT fk_LAUNCHER_CALLBACK_LAUNCHER_PRESETS1,
+                             ADD CONSTRAINT fk_LAUNCHER_CALLBACK_LAUNCHER_PRESETS1 FOREIGN KEY (launcher_preset_id) REFERENCES launcher_presets(id)
+                             ON DELETE CASCADE ON UPDATE NO ACTION;

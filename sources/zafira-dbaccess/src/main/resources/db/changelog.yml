@@ -142,3 +142,14 @@ databaseChangeLog:
             path: changeset/013_add_test_session_status_column.sql
             relativeToChangelogFile: true
             splitStatements: false
+  - changeSet:
+      id: 014_add_launcher_presets_launchers_on_delete
+      validCheckSum: ANY
+      labels: stable
+      author: brutskov
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/014_add_launcher_presets_launchers_on_delete.sql
+            relativeToChangelogFile: true
+            splitStatements: false
