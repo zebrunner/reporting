@@ -36,7 +36,7 @@ public interface IntegrationGroupDocumentedController {
             response = List.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns found integration groups", response = List.class)

@@ -60,7 +60,7 @@ public class ScmAccountController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Create SCM account", nickname = "createScmAccount", httpMethod = "POST", response = ScmAccountType.class)
+    @ApiOperation(value = "Creates an SCM account", nickname = "createScmAccount", httpMethod = "POST", response = ScmAccountType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS')")
     @PostMapping("/accounts")
@@ -71,7 +71,7 @@ public class ScmAccountController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get SCM account by id", nickname = "getScmAccountById", httpMethod = "GET", response = ScmAccountType.class)
+    @ApiOperation(value = "Retrieves an SCM account by its id", nickname = "getScmAccountById", httpMethod = "GET", response = ScmAccountType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping("/accounts/{id}")
@@ -81,7 +81,7 @@ public class ScmAccountController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get all SCM accounts", nickname = "getAllScmAccounts", httpMethod = "GET", response = List.class)
+    @ApiOperation(value = "Retrieves all SCM accounts", nickname = "getAllScmAccounts", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping("/accounts")
@@ -93,7 +93,7 @@ public class ScmAccountController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get default branch of SCM account by id", nickname = "getScmAccountDefaultBranch", httpMethod = "GET", response = String.class)
+    @ApiOperation(value = "Retrieves the default branch of an SCM account by its id", nickname = "getScmAccountDefaultBranch", httpMethod = "GET", response = String.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS', 'VIEW_LAUNCHERS')")
     @GetMapping(value = "/accounts/{id}/defaultBranch", produces = MediaType.TEXT_PLAIN_VALUE)
@@ -102,7 +102,7 @@ public class ScmAccountController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Update SCM account", nickname = "updateScmAccount", httpMethod = "PUT", response = ScmAccountType.class)
+    @ApiOperation(value = "Updates an SCM account", nickname = "updateScmAccount", httpMethod = "PUT", response = ScmAccountType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS')")
     @PutMapping("/accounts")
@@ -118,7 +118,7 @@ public class ScmAccountController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Delete SCM account by id", nickname = "deleteScmAccountById", httpMethod = "DELETE")
+    @ApiOperation(value = "Deletes an SCM account by its id", nickname = "deleteScmAccountById", httpMethod = "DELETE")
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS')")
     @DeleteMapping("/accounts/{id}")
@@ -127,7 +127,7 @@ public class ScmAccountController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get client id", nickname = "getScmClientId", httpMethod = "GET", response = String.class)
+    @ApiOperation(value = "Retrieves the Github client id", nickname = "getScmClientId", httpMethod = "GET", response = String.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS')")
     @GetMapping(path = "github/client", produces = MediaType.TEXT_PLAIN_VALUE)
@@ -146,7 +146,7 @@ public class ScmAccountController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get all organizations", nickname = "getOrganizations", httpMethod = "GET", response = List.class)
+    @ApiOperation(value = "Retrieves all organizations", nickname = "getOrganizations", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS')")
     @GetMapping("/github/organizations/{scmId}")
@@ -155,7 +155,7 @@ public class ScmAccountController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get all repositories", nickname = "getRepositories", httpMethod = "GET", response = List.class)
+    @ApiOperation(value = "Retrieves all repositories", nickname = "getRepositories", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('MODIFY_LAUNCHERS')")
     @GetMapping("/github/repositories/{scmId}")

@@ -37,12 +37,12 @@ public interface SettingDocumentedController {
             response = List.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "tool", paramType = "path", dataType = "string", required = true, value = "Integration type name")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "typeName", paramType = "path", dataType = "string", required = true, value = "Integration type name")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns found integration settings", response = List.class)
     })
-    List<Setting> getSettingsByTool(String tool);
+    List<Setting> getSettingsByTool(String typeName);
 
 }

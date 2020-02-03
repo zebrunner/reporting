@@ -28,20 +28,20 @@ import io.swagger.annotations.ApiResponses;
 public interface CertificationDocumentedController {
 
     @ApiOperation(
-            value = "Search certification info by upstream job details",
-            notes = "Returns certification info (screenshots, platforms, correlation id) or null if elasticsearch client is not initialized",
+            value = "Searches for certification info by upstream job details",
+            notes = "Returns certification information (screenshots, platforms, correlation id), or null if an elasticsearch client is not initialized",
             nickname = "getCertificationDetails",
             httpMethod = "GET",
             response = CertificationType.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "upstreamJobId", paramType = "query", dataType = "number", required = true, value = "Upstream job id"),
-            @ApiImplicitParam(name = "upstreamJobBuildNumber", paramType = "query", dataType = "number", required = true, value = "Upstream job build number")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "upstreamJobId", paramType = "query", dataType = "number", required = true, value = "The upstream job id"),
+            @ApiImplicitParam(name = "upstreamJobBuildNumber", paramType = "query", dataType = "number", required = true, value = "The build number of the upstream job")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns certification details", response = CertificationType.class),
-            @ApiResponse(code = 404, message = "Indicates that test run can not be found during details collecting process", response = ErrorResponse.class)
+            @ApiResponse(code = 404, message = "Indicates that the test run cannot be found during the details collection process", response = ErrorResponse.class)
     })
     CertificationType getCertificationDetails(Long upstreamJobId, Integer upstreamJobBuildNumber);
 

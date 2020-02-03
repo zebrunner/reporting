@@ -49,7 +49,7 @@ public class ConfigurationController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get version", nickname = "getVersion", httpMethod = "GET", response = Map.class)
+    @ApiOperation(value = "Retrieves the version value/number", nickname = "getVersion", httpMethod = "GET", response = Map.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/version")
     public Map<String, Object> getVersion() {
@@ -57,7 +57,7 @@ public class ConfigurationController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get all projects", nickname = "getAllProjects", httpMethod = "GET", response = List.class)
+    @ApiOperation(value = "Retrieves all projects", nickname = "getAllProjects", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/projects")
     public List<Project> getAllProjects() {
@@ -65,7 +65,7 @@ public class ConfigurationController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get jenkins config", nickname = "getJenkinsConfig", httpMethod = "GET", response = Map.class)
+    @ApiOperation(value = "Retrieves Jenkins configuration ", nickname = "getJenkinsConfig", httpMethod = "GET", response = Map.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/jenkins")
     public Map<String, Object> getJenkinsConfig() {
@@ -73,7 +73,7 @@ public class ConfigurationController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get jira config", nickname = "getJiraConfig", httpMethod = "GET", response = Map.class)
+    @ApiOperation(value = "Retrieves Jira configuration", nickname = "getJiraConfig", httpMethod = "GET", response = Map.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("/jira")
     public Map<String, Object> getJiraConfig() {
@@ -81,7 +81,7 @@ public class ConfigurationController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get slack config", nickname = "getSlackConfig", httpMethod = "GET", response = Map.class)
+    @ApiOperation(value = "Retrieves Slack configuration", nickname = "getSlackConfig", httpMethod = "GET", response = Map.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping({"/slack", "/slack/{id}"})
     public Map<String, Object> getSlackConfig(@PathVariable(value = "id", required = false) Optional<Long> testRunId) {

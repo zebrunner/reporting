@@ -44,7 +44,7 @@ public class PermissionController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get all permissions", nickname = "getAllPermissions", httpMethod = "GET", response = List.class)
+    @ApiOperation(value = "Retrieves all permissions", nickname = "getAllPermissions", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
     @GetMapping()

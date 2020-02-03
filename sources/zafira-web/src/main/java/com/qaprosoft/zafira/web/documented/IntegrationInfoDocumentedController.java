@@ -31,14 +31,14 @@ import java.util.Map;
 public interface IntegrationInfoDocumentedController {
 
     @ApiOperation(
-            value = "Get all integration connections info grouped by integration type",
+            value = "Retrieves all integration connections info grouped by integration types",
             notes = "Returns all core integration attributes and groups them by integration type names",
             nickname = "getIntegrationsInfo",
             httpMethod = "GET",
             response = Map.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns found integrations", response = Map.class)
@@ -46,20 +46,20 @@ public interface IntegrationInfoDocumentedController {
     Map<String, Map<String, List<IntegrationInfo>>> getIntegrationsInfo();
 
     @ApiOperation(
-            value = "Get integration connections info by id",
-            notes = "Returns core integration attributes by integration id and group it belongs",
+            value = "Retrieves integration connections info by id",
+            notes = "Returns the core attributes of the integration by its id and the group it belongs to",
             nickname = "getIntegrationsInfoById",
             httpMethod = "GET",
             response = IntegrationInfo.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Integration id"),
-            @ApiImplicitParam(name = "groupName", paramType = "query", dataType = "string", required = true, value = "Integration group name")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The integration id"),
+            @ApiImplicitParam(name = "groupName", paramType = "query", dataType = "string", required = true, value = "The integration group name")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found integration", response = IntegrationInfo.class),
-            @ApiResponse(code = 404, message = "Indicates that integration can not be found and it's information can not be supplied", response = ErrorResponse.class)
+            @ApiResponse(code = 200, message = "Returns the found integration", response = IntegrationInfo.class),
+            @ApiResponse(code = 404, message = "Indicates that the integration cannot be found, and its information cannot be obtained", response = ErrorResponse.class)
     })
     IntegrationInfo getIntegrationsInfoById(Long id, String groupName);
 
