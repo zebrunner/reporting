@@ -20,6 +20,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSessionSea
 import com.qaprosoft.zafira.dbaccess.persistence.TestSessionRepository;
 import com.qaprosoft.zafira.models.dto.testsession.SearchParameter;
 import com.qaprosoft.zafira.models.entity.TestSession;
+import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,13 +33,23 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_SESSION_NOT_FOUND;
+
 @Service
 public class TestSessionService {
+
+    private static final String ERR_MSG_TEST_SESSION_NOT_EXISTS_BY_ID = "Test session does not exist by id '%d'";
 
     private final TestSessionRepository testSessionRepository;
 
     public TestSessionService(TestSessionRepository testSessionRepository) {
         this.testSessionRepository = testSessionRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public TestSession retrieveById(Long id) {
+        return testSessionRepository.findById(id)
+                                    .orElseThrow(() -> new ResourceNotFoundException(TEST_SESSION_NOT_FOUND, String.format(ERR_MSG_TEST_SESSION_NOT_EXISTS_BY_ID, id)));
     }
 
     @Transactional(readOnly = true)

@@ -33,7 +33,8 @@ public class ResourceNotFoundException extends ApplicationException {
         LAUNCHER_NOT_FOUND(2034),
         LAUNCHER_CALLBACK_NOT_FOUND(2035),
         LAUNCHER_PRESET_NOT_FOUND(2036),
-        USER_NOT_FOUND(2037);
+        USER_NOT_FOUND(2037),
+        TEST_SESSION_NOT_FOUND(2038);
 
         private final Integer code;
         private String messageKey;

@@ -30,6 +30,22 @@ import io.swagger.annotations.ApiResponses;
 public interface TestSessionDocumentedController {
 
     @ApiOperation(
+            value = "Retrieves test session by its id",
+            notes = "Returns the found test session",
+            nickname = "getById",
+            httpMethod = "GET",
+            response = TestSession.class
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "integer", required = true, value = "The test session id")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the found test sessions", response = TestSession.class)
+    })
+    TestSession getById(Long id);
+
+    @ApiOperation(
             value = "Searches for test sessions by specified criteria",
             notes = "Returns the found test sessions",
             nickname = "search",
