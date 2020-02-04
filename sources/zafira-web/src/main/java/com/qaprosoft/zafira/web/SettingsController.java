@@ -70,10 +70,10 @@ public class SettingsController extends AbstractController implements SettingDoc
 
     @GetMapping("tool/{tool}")
     @Override
-    public List<Setting> getSettingsByTool(@PathVariable("tool") String tool) {
+    public List<Setting> getSettingsByTool(@PathVariable("tool") String typeName) {
         // TODO by nsidorevich on 2019-10-09: refactor and remove
         List<Setting> settings;
-        switch (tool.toUpperCase()) {
+        switch (typeName.toUpperCase()) {
             case "ELASTICSEARCH":
                 settings = elasticsearchService.getSettings();
                 break;
@@ -84,7 +84,7 @@ public class SettingsController extends AbstractController implements SettingDoc
                 settings = collectDecryptedIntegrationSettings("ZEBRUNNER");
                 break;
             default:
-                throw new RuntimeException(String.format("Unsupported tool %s, this API should not be used for anything but ElasticSearch or Rabbit", tool));
+                throw new RuntimeException(String.format("Unsupported tool %s, this API should not be used for anything but ElasticSearch or Rabbit", typeName));
         }
         return settings;
     }
@@ -107,7 +107,7 @@ public class SettingsController extends AbstractController implements SettingDoc
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Update setting", nickname = "setting", httpMethod = "PUT", response = Setting.class)
+    @ApiOperation(value = "Updates a setting", nickname = "setting", httpMethod = "PUT", response = Setting.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping
@@ -116,7 +116,7 @@ public class SettingsController extends AbstractController implements SettingDoc
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get company logo URL", nickname = "getSettingValue", httpMethod = "GET", response = Setting.class)
+    @ApiOperation(value = "Retrieves a company logo URL", nickname = "getSettingValue", httpMethod = "GET", response = Setting.class)
     @GetMapping("companyLogo")
     public Setting getCompanyLogoURL() {
         return settingsService.getSettingByName("COMPANY_LOGO_URL");
@@ -124,7 +124,7 @@ public class SettingsController extends AbstractController implements SettingDoc
 
     // TODO by nsidorevich on 2019-10-09: remove this crap
 
-    @ApiOperation(value = "Get amazon session credentials", nickname = "getSessionCredentials", httpMethod = "GET", response = SessionCredentials.class)
+    @ApiOperation(value = "Receives Amazon session credentials", nickname = "getSessionCredentials", httpMethod = "GET", response = SessionCredentials.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @GetMapping("amazon/creds")
     public SessionCredentials getSessionCredentials() {

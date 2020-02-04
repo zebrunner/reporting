@@ -30,18 +30,18 @@ import io.swagger.annotations.ApiResponses;
 public interface TestSessionDocumentedController {
 
     @ApiOperation(
-            value = "Search test sessions by criteria",
-            notes = "Returns found test sessions",
+            value = "Searches for test sessions by specified criteria",
+            notes = "Returns the found test sessions",
             nickname = "search",
             httpMethod = "GET",
             response = SearchResult.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "criteria", paramType = "body", dataType = "TestSessionSearchCriteria", required = true, value = "Search criteria to search")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found test sessions", response = SearchResult.class)
+            @ApiResponse(code = 200, message = "Returns the found test sessions", response = SearchResult.class)
     })
     SearchResult<TestSession> search(TestSessionSearchCriteria criteria);
 
@@ -53,7 +53,7 @@ public interface TestSessionDocumentedController {
             response = SearchParameter.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns collected parameters", response = SearchParameter.class)

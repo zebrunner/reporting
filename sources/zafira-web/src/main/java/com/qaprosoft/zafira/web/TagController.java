@@ -46,7 +46,7 @@ public class TagController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get integration info", nickname = "getTestIntegrationInfo", httpMethod = "GET", response = TagIntegrationDataDTO.class)
+    @ApiOperation(value = "Retrieves integration information", nickname = "getTestIntegrationInfo", httpMethod = "GET", response = TagIntegrationDataDTO.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping("/{ciRunId}/integration")
     public TagIntegrationDataDTO exportTagIntegrationData(@PathVariable("ciRunId") String ciRunId,

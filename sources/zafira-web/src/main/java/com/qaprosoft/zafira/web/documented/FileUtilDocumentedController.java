@@ -32,66 +32,66 @@ import java.io.IOException;
 public interface FileUtilDocumentedController {
 
     @ApiOperation(
-            value = "Uploads file to needed location using file type",
-            notes = "Returns url to uploaded file",
+            value = "Uploads a file to a needed location using the file type",
+            notes = "Returns the URL of an uploaded file",
             nickname = "uploadFile",
             httpMethod = "POST",
             response = String.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "type", paramType = "header", dataType = "string", required = true, value = "File type(USERS, COMMON, VIDEOS or SCREENSHOTS)"),
-            @ApiImplicitParam(name = "file", paramType = "path", dataType = "MultipartFile", required = true, value = "File to upload")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "type", paramType = "header", dataType = "string", required = true, value = "The file type (USERS, COMMON, VIDEOS or SCREENSHOTS)"),
+            @ApiImplicitParam(name = "file", paramType = "path", dataType = "MultipartFile", required = true, value = "The file to upload")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns url to uploaded file", response = String.class)
+            @ApiResponse(code = 200, message = "Returns the URL of the uploaded file", response = String.class)
     })
     String uploadFile(FileUploadType.Type type, MultipartFile file) throws IOException;
 
     @ApiOperation(
-            value = "Sends file by email",
-            notes = "Sends file using recipients and info from part named 'email'",
+            value = "Sends a file by email",
+            notes = "Sends a file using information about recipients from the part named ‘email’",
             nickname = "sendImageByEmail",
             httpMethod = "POST"
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "email", paramType = "path", dataType = "MultipartFile", required = true, value = "Multipart file part named 'email'"),
-            @ApiImplicitParam(name = "file", paramType = "path", dataType = "MultipartFile", required = true, value = "Multipart file part named 'file'")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "email", paramType = "path", dataType = "MultipartFile", required = true, value = "The multipart file part named 'email'"),
+            @ApiImplicitParam(name = "file", paramType = "path", dataType = "MultipartFile", required = true, value = "The multipart file part named 'file'")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns success if email was sent")
+            @ApiResponse(code = 200, message = "Indicates that the email was sent")
     })
     void sendImageByEmail(MultipartFile file, EmailType email) throws IOException;
 
     @ApiOperation(
-            value = "Downloads file from public server folder by name",
-            notes = "Common usage is apk downloading",
+            value = "Downloads a file from a/the public server folder by its name",
+            notes = "Commonly used to download APK files",
             nickname = "downloadFile",
             httpMethod = "GET"
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "filename", paramType = "path", dataType = "string", required = true, value = "Filename to download")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "filename", paramType = "path", dataType = "string", required = true, value = "The name of the file to download")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns success if file was downloaded successfully")
+            @ApiResponse(code = 200, message = "Indicates that the file was downloaded successfully")
     })
     void downloadFile(HttpServletResponse response, String filename) throws IOException;
 
     @ApiOperation(
-            value = "Checks that file is present in public server folder by name",
-            notes = "Common usage is apk files existing checking",
+            value = "Checks whether a file is present in a public server folder by its name",
+            notes = "Commonly used to check existing APK files",
             nickname = "checkFilePresence",
             httpMethod = "GET",
             response = Boolean.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "file", paramType = "filename", dataType = "string", required = true, value = "Filename to check")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "filename", paramType = "query", dataType = "string", required = true, value = "The name of the file to check")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns true if file exists by filename", response = Boolean.class)
+            @ApiResponse(code = 200, message = "Returns true if the file was found by its name", response = Boolean.class)
     })
     boolean checkFilePresence(String filename);
 

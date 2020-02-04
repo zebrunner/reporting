@@ -42,7 +42,7 @@ public class SlackController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Send notification on testrun review", nickname = "sendReviewNotification", httpMethod = "GET")
+    @ApiOperation(value = "Sends a notification after a test run was reviewed", nickname = "sendReviewNotification", httpMethod = "GET")
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping("/testrun/{id}/review")
     public void sendOnReviewNotification(@PathVariable("id") long testRunId) {
@@ -50,7 +50,7 @@ public class SlackController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Send notification on testrun finish", nickname = "sendOnFinishNotification", httpMethod = "GET")
+    @ApiOperation(value = "Sends a notification after a test run was finished", nickname = "sendOnFinishNotification", httpMethod = "GET")
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping("/testrun/{ciRunId}/finish")
     public void sendOnFinishNotification(@PathVariable("ciRunId") String ciRunId,

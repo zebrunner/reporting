@@ -25,13 +25,13 @@ public interface ApplicationHealthDocumentedController {
 
     @ApiOperation(
             value = "Checks application health",
-            notes = "Returns common application info",
+            notes = "Returns common information about the application",
             nickname = "getStatus",
             httpMethod = "GET",
             response = String.class
     )
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns common application info", response = String.class)
+            @ApiResponse(code = 200, message = "Returns common information about the application", response = String.class)
     })
     String getStatus();
 

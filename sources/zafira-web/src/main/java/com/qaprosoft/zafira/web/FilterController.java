@@ -40,7 +40,7 @@ public class FilterController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Create filter", nickname = "createFilter", httpMethod = "POST", response = FilterDTO.class)
+    @ApiOperation(value = "Creates a filter", nickname = "createFilter", httpMethod = "POST", response = FilterDTO.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PostMapping()
     public FilterDTO createFilter(@RequestBody @Valid FilterDTO filterDTO) {
@@ -53,7 +53,7 @@ public class FilterController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get all public filters", nickname = "getAllPublicFilters", httpMethod = "GET", response = List.class)
+    @ApiOperation(value = "Retrieves all public filters", nickname = "getAllPublicFilters", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping("/all/public")
     public List<FilterDTO> getAllPublicFilters() {
@@ -65,7 +65,7 @@ public class FilterController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Update filter", nickname = "updateFilter", httpMethod = "PUT", response = FilterDTO.class)
+    @ApiOperation(value = "Updates a filter", nickname = "updateFilter", httpMethod = "PUT", response = FilterDTO.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PutMapping()
     public FilterDTO updateFilter(@RequestBody @Valid FilterDTO filterDTO) {
@@ -78,7 +78,7 @@ public class FilterController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Delete filter", nickname = "deleteFilter", httpMethod = "DELETE")
+    @ApiOperation(value = "Deletes a filter", nickname = "deleteFilter", httpMethod = "DELETE")
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @DeleteMapping("/{id}")
     public void deleteFilter(@PathVariable("id") Long id) {
@@ -87,7 +87,7 @@ public class FilterController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get filter builder", nickname = "getBuilder", httpMethod = "GET", response = Subject.class)
+    @ApiOperation(value = "Retrieves a filter builder", nickname = "getBuilder", httpMethod = "GET", response = Subject.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @GetMapping("/{name}/builder")
     public Subject getBuilder(@PathVariable("name") Subject.Name name) {
