@@ -23,6 +23,7 @@ import com.qaprosoft.zafira.service.TestSessionService;
 import com.qaprosoft.zafira.web.documented.TestSessionDocumentedController;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,6 +35,12 @@ public class TestSessionController extends AbstractController implements TestSes
 
     public TestSessionController(TestSessionService testSessionService) {
         this.testSessionService = testSessionService;
+    }
+
+    @GetMapping("/{id}")
+    @Override
+    public TestSession getById(@PathVariable("id") Long id) {
+        return testSessionService.retrieveById(id);
     }
 
     @GetMapping("/search")
