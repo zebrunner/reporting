@@ -23,8 +23,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TestSessionRepository extends CrudRepository<TestSession, Long> {
+
+    Optional<TestSession> findBySessionId(String sessionId);
 
     Page<TestSession> findAll(Specification<TestSession> specification, Pageable pageable);
 

@@ -38,7 +38,7 @@ import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.R
 @Service
 public class TestSessionService {
 
-    private static final String ERR_MSG_TEST_SESSION_NOT_EXISTS_BY_ID = "Test session does not exist by id '%d'";
+    private static final String ERR_MSG_TEST_SESSION_NOT_EXISTS_BY_ID = "Test session does not exist by sessionId '%s'";
 
     private final TestSessionRepository testSessionRepository;
 
@@ -47,9 +47,9 @@ public class TestSessionService {
     }
 
     @Transactional(readOnly = true)
-    public TestSession retrieveById(Long id) {
-        return testSessionRepository.findById(id)
-                                    .orElseThrow(() -> new ResourceNotFoundException(TEST_SESSION_NOT_FOUND, String.format(ERR_MSG_TEST_SESSION_NOT_EXISTS_BY_ID, id)));
+    public TestSession retrieveBySessionId(String sessionId) {
+        return testSessionRepository.findBySessionId(sessionId)
+                                    .orElseThrow(() -> new ResourceNotFoundException(TEST_SESSION_NOT_FOUND, String.format(ERR_MSG_TEST_SESSION_NOT_EXISTS_BY_ID, sessionId)));
     }
 
     @Transactional(readOnly = true)

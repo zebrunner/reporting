@@ -37,10 +37,10 @@ public class TestSessionController extends AbstractController implements TestSes
         this.testSessionService = testSessionService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{sessionId}")
     @Override
-    public TestSession getById(@PathVariable("id") Long id) {
-        return testSessionService.retrieveById(id);
+    public TestSession getBySessionId(@PathVariable("sessionId") String sessionId) {
+        return testSessionService.retrieveBySessionId(sessionId);
     }
 
     @GetMapping("/search")
