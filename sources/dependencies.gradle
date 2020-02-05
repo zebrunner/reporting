@@ -39,9 +39,11 @@ ext {
 
         unirest_http_client : "com.konghq:unirest-java:3.1.00",
 
-        dozer: dependencies.create("net.sf.dozer:dozer:5.4.0") {
+        dozer: dependencies.create("net.sf.dozer:dozer") {
             exclude module: "slf4j-log4j12"
-            force = true
+            version {
+                strictly '5.4.0'
+            }
         },
 
         jackson_databind : "com.fasterxml.jackson.core:jackson-databind:2.9.9",
