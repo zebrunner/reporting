@@ -55,7 +55,7 @@ public class TestSessionService {
     @Transactional(readOnly = true)
     public SearchResult<TestSession> search(TestSessionSearchCriteria criteria) {
         Pageable pageable = buildPageable(criteria);
-        Specification<TestSession> specification = buildSpecification(criteria.getQuery(), criteria.getStatus(), criteria.getPlatform(), criteria.getStartedAfter(), criteria.getEndedBefore());
+        Specification<TestSession> specification = buildSpecification(criteria.getQuery(), criteria.getStatus(), criteria.getPlatform(), criteria.getFromDate(), criteria.getToDate());
         Page<TestSession> page = testSessionRepository.findAll(specification, pageable);
         return SearchResult.<TestSession>builder()
                 .results(page.getContent())
@@ -73,13 +73,12 @@ public class TestSessionService {
     }
 
     private Pageable buildPageable(TestSessionSearchCriteria criteria) {
-        if (!StringUtils.isEmpty(criteria.getOrderBy())) {
-            Sort sortBy = Sort.by(criteria.getOrderBy());
-            sortBy = criteria.getSortOrder().equals(TestSessionSearchCriteria.SortOrder.ASC) ? sortBy.ascending() : sortBy.descending();
-            return PageRequest.of(criteria.getPage(), criteria.getPageSize(), sortBy);
-        } else {
-            return PageRequest.of(criteria.getPage(), criteria.getPageSize());
+        if (StringUtils.isEmpty(criteria.getOrderBy())) {
+            criteria.setOrderBy("id");
         }
+        Sort sortBy = Sort.by(criteria.getOrderBy());
+        sortBy = criteria.getSortOrder().equals(TestSessionSearchCriteria.SortOrder.ASC) ? sortBy.ascending() : sortBy.descending();
+        return PageRequest.of(criteria.getPage(), criteria.getPageSize(), sortBy);
     }
 
     private Specification<TestSession> buildSpecification(String query, TestSession.Status status, String platform, LocalDateTime startedAfter, LocalDateTime endedBefore) {

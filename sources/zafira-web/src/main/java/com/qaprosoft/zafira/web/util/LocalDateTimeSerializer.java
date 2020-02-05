@@ -13,30 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.dbaccess.dao.mysql.application.search;
+package com.qaprosoft.zafira.web.util;
 
-import com.qaprosoft.zafira.models.entity.TestSession;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import org.springframework.boot.jackson.JsonComponent;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class TestSessionSearchCriteria extends SearchCriteria {
+@JsonComponent
+public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> {
 
-    private TestSession.Status status;
-    private String platform;
-
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime fromDate;
-
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime toDate;
-
+    @Override
+    public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        gen.writeNumber(value.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+    }
 }
