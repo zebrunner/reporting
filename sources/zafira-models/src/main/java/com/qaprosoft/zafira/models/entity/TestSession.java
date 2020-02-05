@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -40,11 +39,7 @@ public class TestSession {
 
     private String sessionId;
     private String version;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDateTime startedAt;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDateTime endedAt;
     private Long duration;
     private String osName;
