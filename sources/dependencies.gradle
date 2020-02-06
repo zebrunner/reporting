@@ -46,7 +46,7 @@ ext {
         logging: [
                 dependencies.create("org.slf4j:slf4j-api") {
                     version {
-                        strictly '1.7.30'
+                        strictly "1.7.30"
                     }
                 },
                 "ch.qos.logback:logback-classic:1.2.3"
