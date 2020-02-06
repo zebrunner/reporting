@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -46,12 +47,14 @@ public class Group extends AbstractEntity {
         ROLE_ADMIN
     }
 
+    @JsonIgnore
     public Set<String> getPermissionNames() {
         return this.permissions.stream()
                                .map(permission -> permission.getName().name())
                                .collect(Collectors.toSet());
     }
 
+    @JsonIgnore
     public boolean hasPermissions() {
         return this.permissions != null && this.permissions.size() > 0;
     }
