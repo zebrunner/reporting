@@ -281,7 +281,7 @@ public class UserService implements TenancyDbInitial {
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "users", condition = "#userId != null", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #userId"),
+            @CacheEvict(value = "users", condition = "#userId != 0", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #userId"),
             @CacheEvict(value = "groups", condition = "#groupId != 0", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #groupId")
     })
     @Transactional(rollbackFor = Exception.class)
