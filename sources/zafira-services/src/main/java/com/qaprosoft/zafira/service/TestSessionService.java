@@ -20,6 +20,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSessionSea
 import com.qaprosoft.zafira.dbaccess.persistence.TestSessionRepository;
 import com.qaprosoft.zafira.models.dto.testsession.SearchParameter;
 import com.qaprosoft.zafira.models.entity.TestSession;
+import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,8 +33,12 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_SESSION_NOT_FOUND;
+
 @Service
 public class TestSessionService {
+
+    private static final String ERR_MSG_TEST_SESSION_NOT_EXISTS_BY_SESSION_ID = "Test session does not exist by sessionId '%s'";
 
     private final TestSessionRepository testSessionRepository;
 
@@ -42,9 +47,15 @@ public class TestSessionService {
     }
 
     @Transactional(readOnly = true)
+    public TestSession retrieveBySessionId(String sessionId) {
+        return testSessionRepository.findBySessionId(sessionId)
+                                    .orElseThrow(() -> new ResourceNotFoundException(TEST_SESSION_NOT_FOUND, String.format(ERR_MSG_TEST_SESSION_NOT_EXISTS_BY_SESSION_ID, sessionId)));
+    }
+
+    @Transactional(readOnly = true)
     public SearchResult<TestSession> search(TestSessionSearchCriteria criteria) {
         Pageable pageable = buildPageable(criteria);
-        Specification<TestSession> specification = buildSpecification(criteria.getQuery(), criteria.getStatus(), criteria.getPlatform(), criteria.getStartedAfter(), criteria.getEndedBefore());
+        Specification<TestSession> specification = buildSpecification(criteria.getQuery(), criteria.getStatus(), criteria.getPlatform(), criteria.getFromDate(), criteria.getToDate());
         Page<TestSession> page = testSessionRepository.findAll(specification, pageable);
         return SearchResult.<TestSession>builder()
                 .results(page.getContent())
@@ -62,13 +73,12 @@ public class TestSessionService {
     }
 
     private Pageable buildPageable(TestSessionSearchCriteria criteria) {
-        if (!StringUtils.isEmpty(criteria.getOrderBy())) {
-            Sort sortBy = Sort.by(criteria.getOrderBy());
-            sortBy = criteria.getSortOrder().equals(TestSessionSearchCriteria.SortOrder.ASC) ? sortBy.ascending() : sortBy.descending();
-            return PageRequest.of(criteria.getPage(), criteria.getPageSize(), sortBy);
-        } else {
-            return PageRequest.of(criteria.getPage(), criteria.getPageSize());
+        if (StringUtils.isEmpty(criteria.getOrderBy())) {
+            criteria.setOrderBy("id");
         }
+        Sort sortBy = Sort.by(criteria.getOrderBy());
+        sortBy = criteria.getSortOrder().equals(TestSessionSearchCriteria.SortOrder.ASC) ? sortBy.ascending() : sortBy.descending();
+        return PageRequest.of(criteria.getPage(), criteria.getPageSize(), sortBy);
     }
 
     private Specification<TestSession> buildSpecification(String query, TestSession.Status status, String platform, LocalDateTime startedAfter, LocalDateTime endedBefore) {

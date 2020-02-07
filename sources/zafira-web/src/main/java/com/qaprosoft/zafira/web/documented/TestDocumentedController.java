@@ -36,116 +36,116 @@ import java.util.List;
 public interface TestDocumentedController {
 
     @ApiOperation(
-            value = "Starts test",
-            notes = "Creates new test or updates old test if there is any rerun logic",
+            value = "Starts a test",
+            notes = "Creates a new test or updates an old test if there is any rerun logic",
             nickname = "startTest",
             httpMethod = "POST",
             response = TestType.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "t", paramType = "body", dataType = "TestType", required = true, value = "Test to create or update")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "t", paramType = "body", dataType = "TestType", required = true, value = "The test to create or update")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns created or updated test", response = TestType.class),
-            @ApiResponse(code = 404, message = "Indicates that test run for test does not exist", response = ErrorResponse.class)
+            @ApiResponse(code = 200, message = "Returns the created or updated test", response = TestType.class),
+            @ApiResponse(code = 404, message = "Indicates that a test run for the test does not exist", response = ErrorResponse.class)
     })
     TestType startTest(TestType t);
 
     @ApiOperation(
-            value = "Finishes test",
-            notes = "Update test according test result like status, error message, work items etc.",
+            value = "Finishes a test",
+            notes = "Updates a test according to test results, such as status, error message, work items, etc.",
             nickname = "finishTest",
             httpMethod = "POST",
             response = TestType.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Test id to finish"),
-            @ApiImplicitParam(name = "t", paramType = "body", dataType = "TestType", required = true, value = "Test with result data to update")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The id of the test to finish"),
+            @ApiImplicitParam(name = "t", paramType = "body", dataType = "TestType", required = true, value = "The test with result data to update")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns updated test", response = TestType.class),
-            @ApiResponse(code = 404, message = "Indicates that test by id does not exist", response = ErrorResponse.class)
+            @ApiResponse(code = 200, message = "Returns the updated test", response = TestType.class),
+            @ApiResponse(code = 404, message = "Indicates that test with the specified id does not exist", response = ErrorResponse.class)
     })
     TestType finishTest(long id, TestType t);
 
     @ApiOperation(
-            value = "Updates test status",
-            notes = "Returns updated test",
+            value = "Updates a test status",
+            notes = "Returns the updated test",
             nickname = "updateTest",
             httpMethod = "PUT",
             response = Test.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "test", paramType = "body", dataType = "Test", required = true, value = "Test with status to update")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "test", paramType = "body", dataType = "Test", required = true, value = "The test with a status to update")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns updated test", response = Test.class),
-            @ApiResponse(code = 404, message = "Indicates that test does not exist", response = ErrorResponse.class)
+            @ApiResponse(code = 200, message = "Returns the updated test", response = Test.class),
+            @ApiResponse(code = 404, message = "Indicates that the test does not exist", response = ErrorResponse.class)
     })
     Test updateTest(Test test);
 
     @ApiOperation(
             value = "Creates test work items",
-            notes = "Returns test with with created work items inside",
+            notes = "Returns a test with created work items",
             nickname = "createTestWorkItems",
             httpMethod = "POST",
             response = TestType.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Test id"),
-            @ApiImplicitParam(name = "workItems", paramType = "body", dataType = "array", required = true, value = "Work items to attache")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test id"),
+            @ApiImplicitParam(name = "workItems", paramType = "body", dataType = "array", required = true, value = "The work items to attach")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns test with with created work items inside", response = TestType.class),
-            @ApiResponse(code = 404, message = "Indicates that test does not exist", response = ErrorResponse.class)
+            @ApiResponse(code = 200, message = "Returns a test with created work items", response = TestType.class),
+            @ApiResponse(code = 404, message = "Indicates that the test does not exist", response = ErrorResponse.class)
     })
     TestType createTestWorkItems(long id, List<String> workItems);
 
     @ApiOperation(
-            value = "Deletes test by id",
+            value = "Deletes a test by its id",
             nickname = "deleteTest",
             httpMethod = "DELETE"
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Test id")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test id")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Test was deleted successfully")
+            @ApiResponse(code = 200, message = "The test was deleted successfully")
     })
     void deleteTest(long id);
 
     @ApiOperation(
-            value = "Retrieve tests by search criteria",
-            notes = "Returns found tests",
+            value = "Retrieves tests by search criteria",
+            notes = "Criteria for test search",
             nickname = "searchTests",
             httpMethod = "POST",
             response = SearchResult.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "sc", paramType = "body", dataType = "TestSearchCriteria", required = true, value = "Test search criteria")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found tests", response = SearchResult.class)
+            @ApiResponse(code = 200, message = "Criteria for test search", response = SearchResult.class)
     })
     SearchResult<Test> searchTests(TestSearchCriteria sc);
 
     @ApiOperation(
             value = "Retrieves test work items",
-            notes = "Retrieves test work items by test id and work item type",
+            notes = "Retrieves test work items by the test id and work item type",
             nickname = "getTestCaseWorkItemsByType",
             httpMethod = "GET",
             response = List.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Test id"),
-            @ApiImplicitParam(name = "type", paramType = "path", dataType = "string", required = true, value = "Work item type")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test id"),
+            @ApiImplicitParam(name = "type", paramType = "path", dataType = "string", required = true, value = "The work item type")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns found work items", response = List.class)
@@ -153,100 +153,100 @@ public interface TestDocumentedController {
     List<WorkItem> getTestCaseWorkItemsByType(long id, WorkItem.Type type);
 
     @ApiOperation(
-            value = "Links work item to test",
-            notes = "Creates new work item or attache old work item to test",
+            value = "Links a work item to a test",
+            notes = "Creates a new work item or attaches an old work item to a test",
             nickname = "linkWorkItem",
             httpMethod = "POST",
             response = WorkItem.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Test id"),
-            @ApiImplicitParam(name = "workItem", paramType = "body", dataType = "WorkItem", required = true, value = "Work item to attache")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test id"),
+            @ApiImplicitParam(name = "workItem", paramType = "body", dataType = "WorkItem", required = true, value = "The work item to attach")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns registered test run", response = WorkItem.class),
-            @ApiResponse(code = 400, message = "Indicates that test status is not failed or skipped and work item type is BUG", response = ErrorResponse.class)
+            @ApiResponse(code = 200, message = "Returns the registered test run", response = WorkItem.class),
+            @ApiResponse(code = 400, message = "Indicates that the test status is not failed or skipped, and the work item type is a BUG", response = ErrorResponse.class)
     })
     WorkItem linkWorkItem(long id, WorkItem workItem);
 
     @ApiOperation(
-            value = "Updates test work item",
-            notes = "Updates error message hashcode of existing work item",
+            value = "Updates a test work item",
+            notes = "Updates an error message hashcode of an existing work item",
             nickname = "updateTestKnownIssue",
             httpMethod = "PUT",
             response = WorkItem.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Test id"),
-            @ApiImplicitParam(name = "workItem", paramType = "body", dataType = "WorkItem", required = true, value = "Work item to update")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test id"),
+            @ApiImplicitParam(name = "workItem", paramType = "body", dataType = "WorkItem", required = true, value = "The work item to update")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns updated test work item", response = WorkItem.class)
+            @ApiResponse(code = 200, message = "Returns the updated test work item", response = WorkItem.class)
     })
     WorkItem updateTestKnownIssue(long id, WorkItem workItem);
 
     @ApiOperation(
-            value = "Deletes test work item",
-            notes = "Unlinks test work item from tests and deletes it",
+            value = "Deletes a test work item",
+            notes = "Unlinks a test work item from tests and deletes it",
             nickname = "deleteTestWorkItem",
             httpMethod = "DELETE"
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "workItemId", paramType = "path", dataType = "number", required = true, value = "Work item id"),
-            @ApiImplicitParam(name = "testId", paramType = "path", dataType = "number", required = true, value = "Test id")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "workItemId", paramType = "path", dataType = "number", required = true, value = "The work item id"),
+            @ApiImplicitParam(name = "testId", paramType = "path", dataType = "number", required = true, value = "The test id")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Test work item was deleted successfully")
+            @ApiResponse(code = 200, message = "The test work item was deleted successfully")
     })
     void deleteTestWorkItem(long workItemId, long testId);
 
     @ApiOperation(
-            value = "Finds jira issue by id",
-            notes = "Returns found issue",
+            value = "Finds a Jira issue by its id",
+            notes = "Returns the found issue",
             nickname = "getJiraIssue",
             httpMethod = "GET",
             response = IssueDTO.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "issue", paramType = "path", dataType = "string", required = true, value = "Jira issue number")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "issue", paramType = "path", dataType = "string", required = true, value = "The Jira issue number")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found issue", response = IssueDTO.class),
+            @ApiResponse(code = 200, message = "Returns the found issue", response = IssueDTO.class),
             @ApiResponse(code = 400, message = "Indicates that Jira integration does not exist", response = ErrorResponse.class)
     })
     IssueDTO getJiraIssue(String issue);
 
     @ApiOperation(
-            value = "Checks that Jira integration exists and connected",
-            notes = "Returns connection status",
+            value = "Checks whether Jira integration exists and is connected",
+            notes = "Returns the connection status",
             nickname = "getConnectionToJira",
             httpMethod = "GET",
             response = Boolean.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns connection status", response = Boolean.class)
+            @ApiResponse(code = 200, message = "Returns the connection status", response = Boolean.class)
     })
     boolean getConnectionToJira();
 
     @ApiOperation(
-            value = "Creates test artifact and attaches it to test",
+            value = "Creates a test artifact and attaches it to a test",
             nickname = "addTestArtifact",
             httpMethod = "POST"
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Test id"),
-            @ApiImplicitParam(name = "artifact", paramType = "body", dataType = "TestArtifactType", required = true, value = "Test artifact to create and attache")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test id"),
+            @ApiImplicitParam(name = "artifact", paramType = "body", dataType = "TestArtifactType", required = true, value = "The test artifact to create and attach")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Test artifact was created and attached to test successfully")
+            @ApiResponse(code = 200, message = "The test artifact was created and attached to the test successfully")
     })
     void addTestArtifact(long id, TestArtifactType artifact);
 

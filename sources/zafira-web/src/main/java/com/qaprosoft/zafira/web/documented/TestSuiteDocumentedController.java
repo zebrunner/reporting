@@ -27,18 +27,18 @@ import io.swagger.annotations.ApiResponses;
 public interface TestSuiteDocumentedController {
 
     @ApiOperation(
-            value = "Creates test suite",
-            notes = "Returns created test suite",
+            value = "Creates a test suite",
+            notes = "Returns the created test suite",
             nickname = "createTestSuite",
             httpMethod = "POST",
             response = TestSuiteType.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "testSuite", paramType = "body", dataType = "TestSuiteType", required = true, value = "Test suite to create")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "testSuite", paramType = "body", dataType = "TestSuiteType", required = true, value = "The test suite to create")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns created test suite", response = TestSuiteType.class)
+            @ApiResponse(code = 200, message = "Returns the created test suite", response = TestSuiteType.class)
     })
     TestSuiteType createTestSuite(TestSuiteType testSuite);
 

@@ -30,51 +30,51 @@ import java.util.List;
 public interface ProjectDocumentedController {
 
     @ApiOperation(
-            value = "Creates project",
-            notes = "Returns created project",
+            value = "Creates a project",
+            notes = "Returns the created project",
             nickname = "createProject",
             httpMethod = "POST",
             response = ProjectDTO.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "project", paramType = "body", dataType = "ProjectDTO", required = true, value = "Project to create")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "project", paramType = "body", dataType = "ProjectDTO", required = true, value = "The project to create")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns created project", response = ProjectDTO.class)
+            @ApiResponse(code = 200, message = "Returns the created project", response = ProjectDTO.class)
     })
     ProjectDTO createProject(ProjectDTO project);
 
     @ApiOperation(
-            value = "Deletes project by id",
-            notes = "Reassign all artifacts to provided project id for reassign or to default project if project id for reassign id null",
+            value = "Deletes a project by its id",
+            notes = "Reassigns all artifacts to the specified project id for reassign or to default project if project id for reassign is null",
             nickname = "deleteProject",
             httpMethod = "DELETE"
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Project id"),
-            @ApiImplicitParam(name = "reassignToId", paramType = "query", dataType = "number", value = "Project id to reassign all artifacts on delete action")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The project id"),
+            @ApiImplicitParam(name = "reassignToId", paramType = "query", dataType = "number", value = "The id of the project to reassign all artifacts while deleting")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Project was deleted successfully"),
-            @ApiResponse(code = 404, message = "Indicates that default project does not exist", response = ErrorResponse.class)
+            @ApiResponse(code = 200, message = "The project was deleted successfully"),
+            @ApiResponse(code = 404, message = "Indicates that the default project does not exist", response = ErrorResponse.class)
     })
     void deleteProject(long id, Long reassignToId);
 
     @ApiOperation(
-            value = "Updates project",
-            notes = "Returns updated project",
+            value = "Updates a project",
+            notes = "Returns the updated project",
             nickname = "updateProject",
             httpMethod = "PUT",
             response = ProjectDTO.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "project", paramType = "body", dataType = "ProjectDTO", required = true, value = "Project to update")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "project", paramType = "body", dataType = "ProjectDTO", required = true, value = "The project to update")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns updated project", response = ProjectDTO.class)
+            @ApiResponse(code = 200, message = "Returns the updated project", response = ProjectDTO.class)
     })
     ProjectDTO updateProject(ProjectDTO project);
 
@@ -86,7 +86,7 @@ public interface ProjectDocumentedController {
             response = List.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns found projects", response = List.class)
@@ -94,19 +94,19 @@ public interface ProjectDocumentedController {
     List<ProjectDTO> getAllProjects();
 
     @ApiOperation(
-            value = "Retrieve project by name",
-            notes = "Returns found project",
+            value = "Retrieves a project by its name",
+            notes = "Returns the found project",
             nickname = "getProjectByName",
             httpMethod = "GET",
             response = ProjectDTO.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "name", paramType = "path", dataType = "string", required = true, value = "Project name")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "name", paramType = "path", dataType = "string", required = true, value = "The project name")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found project", response = ProjectDTO.class),
-            @ApiResponse(code = 404, message = "Indicates that project does not exist", response = ErrorResponse.class)
+            @ApiResponse(code = 200, message = "Returns the found project", response = ProjectDTO.class),
+            @ApiResponse(code = 404, message = "Indicates that the project does not exist", response = ErrorResponse.class)
     })
     ProjectDTO getProjectByName(String name);
 

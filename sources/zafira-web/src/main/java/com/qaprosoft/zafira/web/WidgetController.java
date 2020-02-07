@@ -25,6 +25,7 @@ import com.qaprosoft.zafira.models.dto.widget.WidgetDTO;
 import com.qaprosoft.zafira.service.WidgetService;
 import com.qaprosoft.zafira.service.WidgetTemplateService;
 import com.qaprosoft.zafira.web.util.swagger.ApiResponseStatuses;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -40,14 +41,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@ApiIgnore
+@Api("Widgets API")
 @RequestMapping(path = "api/widgets", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class WidgetController extends AbstractController {

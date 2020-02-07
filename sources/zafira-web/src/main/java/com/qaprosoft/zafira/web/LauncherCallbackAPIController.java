@@ -47,7 +47,7 @@ public class LauncherCallbackAPIController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get info", nickname = "getInfo", httpMethod = "GET", response = TestRunType.class)
+    @ApiOperation(value = "Retrieves test run by launcher callback reference token", nickname = "getInfo", httpMethod = "GET", response = TestRunType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_LAUNCHERS')")
     @GetMapping("/{ref}")

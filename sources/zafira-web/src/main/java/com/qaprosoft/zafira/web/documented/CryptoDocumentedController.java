@@ -26,16 +26,16 @@ import io.swagger.annotations.ApiResponses;
 public interface CryptoDocumentedController {
 
     @ApiOperation(
-            value = "Generates new crypto key",
-            notes = "Generates crypto key and re-encrypt all encrypted app values according new key",
+            value = "Generates a new crypto key",
+            notes = "Generates a crypto key and re-encrypts all encrypted app values according to this new key",
             nickname = "regenerateCryptoKey",
             httpMethod = "PUT"
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns success if crypto key was regenerated successfully and all settings were re-encrypted")
+            @ApiResponse(code = 200, message = "Indicates that the crypto key was regenerated successfully, and all settings were re-encrypted")
     })
     void regenerateCryptoKey();
 

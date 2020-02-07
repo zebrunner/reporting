@@ -35,14 +35,14 @@ import java.util.concurrent.ExecutionException;
 public interface TestCaseDocumentedController {
 
     @ApiOperation(
-            value = "Searches test cases by criteria",
+            value = "Searches for test cases by specified criteria",
             notes = "Returns found test cases",
             nickname = "searchTestCases",
             httpMethod = "POST",
             response = SearchResult.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "sc", paramType = "body", dataType = "TestCaseSearchCriteria", required = true, value = "Search criteria")
     })
     @ApiResponses({
@@ -51,15 +51,15 @@ public interface TestCaseDocumentedController {
     SearchResult<TestCase> searchTestCases(TestCaseSearchCriteria sc);
 
     @ApiOperation(
-            value = "Retrieve test metrics by test case id",
+            value = "Retrieves test metrics by the test case id",
             notes = "Returns found test metrics",
             nickname = "getTestMetricsByTestCaseId",
             httpMethod = "GET",
             response = Map.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Test case id")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test case id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns found test metrics", response = Map.class)
@@ -67,33 +67,33 @@ public interface TestCaseDocumentedController {
     Map<String, List<TestMetric>> getTestMetricsByTestCaseId(Long id);
 
     @ApiOperation(
-            value = "Creates or updates test cases",
-            notes = "Returns created or updated test case",
+            value = "Creates or updates test case",
+            notes = "Returns the created or updated test case",
             nickname = "createTestCase",
             httpMethod = "POST",
             response = TestCaseType.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "testCase", paramType = "body", dataType = "TestCaseType", required = true, value = "Test case to create or update"),
-            @ApiImplicitParam(name = "projectName", paramType = "header", dataType = "string", value = "Project name to attache to test case")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "testCase", paramType = "body", dataType = "TestCaseType", required = true, value = "The test case to create or update"),
+            @ApiImplicitParam(name = "projectName", paramType = "header", dataType = "string", value = "The name of the project to attach to a test case")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns created or updated test case", response = TestCaseType.class)
+            @ApiResponse(code = 200, message = "Returns the created or updated test case", response = TestCaseType.class)
     })
     TestCaseType createTestCase(TestCaseType testCase, String projectName) throws ExecutionException;
 
     @ApiOperation(
-            value = "Batch creates or updates test cases",
+            value = "Creates or updates a batch of test cases",
             notes = "Returns created or updated test cases",
             nickname = "createTestCases",
             httpMethod = "POST",
             response = TestCaseType[].class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "tcs", paramType = "body", dataType = "array", required = true, value = "Test cases to create or update"),
-            @ApiImplicitParam(name = "projectName", paramType = "header", dataType = "string", value = "Project name to attache to test cases")
+            @ApiImplicitParam(name = "projectName", paramType = "header", dataType = "string", value = "The project name to attach to test cases")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns created or updated test cases", response = TestCaseType[].class)

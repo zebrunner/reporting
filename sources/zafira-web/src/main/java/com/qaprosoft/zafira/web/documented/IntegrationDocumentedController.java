@@ -31,34 +31,34 @@ import java.util.List;
 public interface IntegrationDocumentedController {
 
     @ApiOperation(
-            value = "Creates integration and links it to provided type by id",
-            notes = "Returns created integration",
+            value = "Creates an integration and links it to a specified type by its id",
+            notes = "Returns the created integration",
             nickname = "create",
             httpMethod = "POST",
             response = IntegrationDTO.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "integrationDTO", paramType = "body", dataType = "IntegrationDTO", required = true, value = "Integration to create"),
-            @ApiImplicitParam(name = "integrationTypeId", paramType = "body", dataType = "number", required = true, value = "Integration type id")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "integrationDTO", paramType = "body", dataType = "IntegrationDTO", required = true, value = "The integration to create"),
+            @ApiImplicitParam(name = "integrationTypeId", paramType = "path", dataType = "number", required = true, value = "The integration type id")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns created group with created permissions inside", response = IntegrationDTO.class),
-            @ApiResponse(code = 400, message = "Indicates that integration mandatory fields have wrong values or integration is malformed", response = ResponseEntity.class)
+            @ApiResponse(code = 200, message = "Returns the created integration", response = IntegrationDTO.class),
+            @ApiResponse(code = 400, message = "Indicates that obligatory integration fields contain wrong values, or the integration is malformed", response = ResponseEntity.class)
     })
     IntegrationDTO create(IntegrationDTO integrationDTO, Long integrationTypeId);
 
     @ApiOperation(
-            value = "Retrieves all integrations",
-            notes = "Retrieves integrations by group id or group name. If no query params found, it retrieves all integrations",
+            value = "Retrieves integrations",
+            notes = "Retrieves integrations by their group id or group name. If no query parameters found, retrieves all existing integrations",
             nickname = "getAll",
             httpMethod = "GET",
             response = List.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "groupId", paramType = "query", dataType = "number", value = "Integration group id"),
-            @ApiImplicitParam(name = "groupName", paramType = "query", dataType = "string", value = "Integration group name")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "groupId", paramType = "query", dataType = "number", value = "The integration group id"),
+            @ApiImplicitParam(name = "groupName", paramType = "query", dataType = "string", value = "The integration group name")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns found integrations", response = List.class)
@@ -66,34 +66,34 @@ public interface IntegrationDocumentedController {
     List<IntegrationDTO> getAll(Long groupId, String groupName);
 
     @ApiOperation(
-            value = "Creates amazon temporary credentials",
+            value = "Creates Amazon temporary credentials",
             notes = "Returns created temporary credentials from Amazon integration",
             nickname = "getAmazonTemporaryCredentials",
             httpMethod = "GET",
             response = SessionCredentials.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns Amazon session credentials or null if operation is not possible", response = SessionCredentials.class)
+            @ApiResponse(code = 200, message = "Returns Amazon session credentials, or null if the operation is not possible", response = SessionCredentials.class)
     })
     SessionCredentials getAmazonTemporaryCredentials();
 
     @ApiOperation(
-            value = "Updates integration by id",
-            notes = "Returns updated integration",
+            value = "Updates an integration by its id",
+            notes = "Returns the updated integration",
             nickname = "update",
             httpMethod = "PUT",
             response = IntegrationDTO.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "integrationDTO", paramType = "body", dataType = "IntegrationDTO", required = true, value = "Integration to update"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Integration id")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "integrationDTO", paramType = "body", dataType = "IntegrationDTO", required = true, value = "The integration to update"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The integration id")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns updated integration", response = IntegrationDTO.class)
+            @ApiResponse(code = 200, message = "Returns the updated integration", response = IntegrationDTO.class)
     })
     IntegrationDTO update(IntegrationDTO integrationDTO, Long id);
 

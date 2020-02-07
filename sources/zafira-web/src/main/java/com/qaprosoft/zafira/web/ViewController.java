@@ -55,7 +55,7 @@ public class ViewController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get view", nickname = "getViewById", httpMethod = "GET", response = View.class)
+    @ApiOperation(value = "Retrieves a view by its id", nickname = "getViewById", httpMethod = "GET", response = View.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('VIEW_TEST_RUN_VIEWS', 'MODIFY_TEST_RUN_VIEWS')")
     @GetMapping("/{id}")
@@ -64,7 +64,7 @@ public class ViewController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Get all views", nickname = "getAllViews", httpMethod = "GET", response = List.class)
+    @ApiOperation(value = "Retrieves all views", nickname = "getAllViews", httpMethod = "GET", response = List.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasAnyPermission('VIEW_TEST_RUN_VIEWS', 'MODIFY_TEST_RUN_VIEWS')")
     @GetMapping()
@@ -73,7 +73,7 @@ public class ViewController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Create view", nickname = "createView", httpMethod = "POST", response = ViewType.class)
+    @ApiOperation(value = "Creates a view", nickname = "createView", httpMethod = "POST", response = ViewType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_TEST_RUN_VIEWS')")
     @PostMapping()
@@ -82,7 +82,7 @@ public class ViewController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Update view", nickname = "updateView", httpMethod = "PUT", response = ViewType.class)
+    @ApiOperation(value = "Updates a view", nickname = "updateView", httpMethod = "PUT", response = ViewType.class)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_TEST_RUN_VIEWS')")
     @PutMapping()
@@ -91,7 +91,7 @@ public class ViewController extends AbstractController {
     }
 
     @ApiResponseStatuses
-    @ApiOperation(value = "Delete view", nickname = "deleteViewById", httpMethod = "DELETE")
+    @ApiOperation(value = "Deletes a view", nickname = "deleteViewById", httpMethod = "DELETE")
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasPermission('MODIFY_TEST_RUN_VIEWS')")
     @DeleteMapping("/{id}")

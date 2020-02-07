@@ -36,31 +36,31 @@ import java.util.Map;
 public interface UserDocumentedController {
 
     @ApiOperation(
-            value = "Retrieves user profile",
-            notes = "Retrieves user profile by username or by auth token if username does not specified",
+            value = "Retrieves a user profile",
+            notes = "Retrieves a user profile by the username or auth token if the username is not specified",
             nickname = "getUserProfile",
             httpMethod = "GET",
             response = UserType.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "username", paramType = "query", dataType = "string", value = "User username")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "username", paramType = "query", dataType = "string", value = "The user name")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found user", response = UserType.class),
-            @ApiResponse(code = 404, message = "Indicates that user does not exist", response = ErrorResponse.class)
+            @ApiResponse(code = 200, message = "Returns the found user", response = UserType.class),
+            @ApiResponse(code = 404, message = "Indicates that the user does not exist", response = ErrorResponse.class)
     })
     UserType getUserProfile(String username);
 
     @ApiOperation(
-            value = "Retrieve extended user profile",
-            notes = "Extended user profile includes user info, user default dashboards ids",
+            value = "Retrieves an extended user profile",
+            notes = "An extended user profile includes user info, user default dashboards ids",
             nickname = "getExtendedUserProfile",
             httpMethod = "GET",
             response = Map.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns collected extended user profile", response = Map.class)
@@ -68,66 +68,66 @@ public interface UserDocumentedController {
     Map<String, Object> getExtendedUserProfile();
 
     @ApiOperation(
-            value = "Updates user profile",
-            notes = "Returns updated user profile",
+            value = "Updates a user profile",
+            notes = "Returns the updated user profile",
             nickname = "updateUserProfile",
             httpMethod = "PUT",
             response = UserType.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "userType", paramType = "body", dataType = "UserType", required = true, value = "User to update")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "userType", paramType = "body", dataType = "UserType", required = true, value = "The user to update")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns updated user profile", response = UserType.class),
+            @ApiResponse(code = 200, message = "Returns the updated user profile", response = UserType.class),
             @ApiResponse(code = 404, message = "Indicates that user does not exist", response = ErrorResponse.class)
     })
     UserType updateUserProfile(UserType userType);
 
     @ApiOperation(
-            value = "Deletes user profile photo",
-            notes = "Deletes user profile photo from storage",
+            value = "Deletes a user profile photo",
+            notes = "Deletes a user profile photo from the storage",
             nickname = "deleteUserProfilePhoto",
             httpMethod = "DELETE"
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "User profile photo was deleted successfully"),
-            @ApiResponse(code = 400, message = "Indicates that storage provider does not specified", response = ErrorResponse.class),
-            @ApiResponse(code = 404, message = "Indicates that user does not exist", response = ErrorResponse.class)
+            @ApiResponse(code = 200, message = "The user profile photo was deleted successfully"),
+            @ApiResponse(code = 400, message = "Indicates that the storage provider is not specified", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "Indicates that the user does not exist", response = ErrorResponse.class)
     })
     void deleteUserProfilePhoto();
 
     @ApiOperation(
-            value = "Updates user password",
-            notes = "Access to update user password have profile owner and admin",
+            value = "Updates a user password",
+            notes = "Only the profile owner and admin have access to update user password",
             nickname = "updateUserPassword",
             httpMethod = "PUT"
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "password", paramType = "body", dataType = "ChangePasswordDTO", required = true, value = "Reset password object")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "password", paramType = "body", dataType = "ChangePasswordDTO", required = true, value = "The reset password object")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "User password was updated successfully"),
-            @ApiResponse(code = 400, message = "Indicates that not profile owner or admin tries to update password", response = ErrorResponse.class),
+            @ApiResponse(code = 400, message = "Indicates that it’s not the profile owner or admin who tries to update the password", response = ErrorResponse.class),
             @ApiResponse(code = 404, message = "Indicates that user does not exist", response = ErrorResponse.class)
     })
     void updateUserPassword(ChangePasswordDTO password);
 
     @ApiOperation(
-            value = "Search users using criteria",
+            value = "Searches for users by specified criteria",
             notes = "Returns found users",
             nickname = "searchUsers",
             httpMethod = "POST",
             response = SearchResult.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "searchCriteria", paramType = "body", dataType = "UserSearchCriteria", required = true, value = "Search criteria"),
-            @ApiImplicitParam(name = "isPublic", paramType = "query", dataType = "boolean", value = "Indicates that need to search users public info only")
+            @ApiImplicitParam(name = "isPublic", paramType = "query", dataType = "boolean", value = "Indicates that the search will include only user public info")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns found users", response = SearchResult.class)
@@ -135,67 +135,67 @@ public interface UserDocumentedController {
     SearchResult<User> searchUsers(UserSearchCriteria searchCriteria, boolean isPublic);
 
     @ApiOperation(
-            value = "Creates or updates user",
-            notes = "Returns created or updated user",
+            value = "Creates or updates a user",
+            notes = "Returns the created or updated user",
             nickname = "createOrUpdateUser",
             httpMethod = "PUT",
             response = UserType.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "userType", paramType = "body", dataType = "UserType", required = true, value = "User to create or update")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "userType", paramType = "body", dataType = "UserType", required = true, value = "The user to create or update")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns created or updated user", response = UserType.class)
+            @ApiResponse(code = 200, message = "Returns the created or updated user", response = UserType.class)
     })
     UserType createOrUpdateUser(UserType userType);
 
     @ApiOperation(
-            value = "Updates user status",
-            notes = "Activates or deactivates user",
+            value = "Updates a user status",
+            notes = "Activates or deactivates a user",
             nickname = "updateStatus",
             httpMethod = "PUT",
             response = UserType.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "userType", paramType = "body", dataType = "UserType", required = true, value = "User to activate or deactivate")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "userType", paramType = "body", dataType = "UserType", required = true, value = "The user to activate or deactivate")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns user with updated status", response = UserType.class)
+            @ApiResponse(code = 200, message = "Returns the user with an updated status", response = UserType.class)
     })
     UserType updateStatus(UserType userType);
 
     @ApiOperation(
-            value = "Adds user to group",
-            notes = "Adds user to group by id",
+            value = "Adds a user to a group",
+            notes = "Adds a user to a group by its id",
             nickname = "addUserToGroup",
             httpMethod = "PUT",
             response = User.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "user", paramType = "body", dataType = "User", required = true, value = "User to add"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Group id to attache")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "user", paramType = "body", dataType = "User", required = true, value = "The user to add"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The id of a group to attach")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns user with added group", response = User.class)
+            @ApiResponse(code = 200, message = "Returns the user with the group they are added to", response = User.class)
     })
     User addUserToGroup(User user, long id);
 
     @ApiOperation(
-            value = "Deletes user from group",
-            notes = "Detaches user from group",
+            value = "Deletes a user from a group",
+            notes = "Detaches a user from a group",
             nickname = "deleteUserFromGroup",
             httpMethod = "DELETE"
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "groupId", paramType = "path", dataType = "number", required = true, value = "Group id"),
-            @ApiImplicitParam(name = "userId", paramType = "path", dataType = "number", required = true, value = "User id")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "groupId", paramType = "path", dataType = "number", required = true, value = "The group id"),
+            @ApiImplicitParam(name = "userId", paramType = "path", dataType = "number", required = true, value = "The user id")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "User was detached successfully")
+            @ApiResponse(code = 200, message = "The user was detached successfully")
     })
     void deleteUserFromGroup(long groupId, long userId);
 
@@ -207,7 +207,7 @@ public interface UserDocumentedController {
             response = List.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns found preferences", response = List.class)
@@ -222,9 +222,9 @@ public interface UserDocumentedController {
             response = List.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "userId", paramType = "path", dataType = "number", required = true, value = "User id"),
-            @ApiImplicitParam(name = "preferences", paramType = "body", dataType = "array", required = true, value = "Preferences to attache")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "userId", paramType = "path", dataType = "number", required = true, value = "The user id"),
+            @ApiImplicitParam(name = "preferences", paramType = "body", dataType = "array", required = true, value = "The preferences to attach")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns attached preferences", response = List.class)
@@ -239,7 +239,7 @@ public interface UserDocumentedController {
             response = List.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns default preferences", response = List.class)
@@ -248,16 +248,16 @@ public interface UserDocumentedController {
 
     @ApiOperation(
             value = "Deletes user preferences",
-            notes = "Deleted user preferences by user id",
+            notes = "Deletes user preferences by the user id",
             nickname = "deleteUserPreferences",
             httpMethod = "DELETE"
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "userId", paramType = "path", dataType = "number", required = true, value = "User id")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "userId", paramType = "path", dataType = "number", required = true, value = "The user id")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "User preferences was deleted successfully")
+            @ApiResponse(code = 200, message = "User preferences were deleted successfully")
     })
     void deleteUserPreferences(long userId);
 

@@ -15,94 +15,94 @@ import java.util.List;
 public interface GroupDocumentedController {
 
     @ApiOperation(
-            value = "Creates group and attaches provided permissions",
-            notes = "Returns created group with created permissions inside",
+            value = "Creates a group and grants it specified permissions",
+            notes = "Returns the created group with granted permissions",
             nickname = "createGroup",
             httpMethod = "POST",
             response = Group.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "group", paramType = "body", dataType = "Group", required = true, value = "Group to create")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "group", paramType = "body", dataType = "Group", required = true, value = "The group to create")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns created group with created permissions inside", response = Group.class)
+            @ApiResponse(code = 200, message = "Returns the created group with granted permissions", response = Group.class)
     })
     Group createGroup(Group group);
 
     @ApiOperation(
-            value = "Adds permissions to group",
-            notes = "Returns group with attached permissions inside",
+            value = "Adds permissions to a group",
+            notes = "Returns the group with granted permissions",
             nickname = "addPermissionsToGroup",
             httpMethod = "POST",
             response = Group.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "group", paramType = "body", dataType = "Group", required = true, value = "Group with permissions to add inside")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "group", paramType = "body", dataType = "Group", required = true, value = "The group with permissions to add")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns group with attached attributes inside", response = Group.class)
+            @ApiResponse(code = 200, message = "Returns the group with granted permissions", response = Group.class)
     })
     Group addPermissionsToGroup(Group group);
 
     @ApiOperation(
-            value = "Retrieves group by id",
-            notes = "Returns found group",
+            value = "Retrieves a group by its id",
+            notes = "Returns the found group",
             nickname = "getGroup",
             httpMethod = "GET",
             response = Group.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Group id")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The group id")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found group", response = Group.class),
-            @ApiResponse(code = 404, message = "Indicates that group does not exist", response = ResponseEntity.class)
+            @ApiResponse(code = 200, message = "Returns the found group", response = Group.class),
+            @ApiResponse(code = 404, message = "Indicates that the group does not exist", response = ResponseEntity.class)
     })
     Group getGroup(long id);
 
     @ApiOperation(
             value = "Retrieves all groups",
-            notes = "Returns found groups",
+            notes = "Returns all found groups",
             nickname = "getAllGroups",
             httpMethod = "GET",
             response = List.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "isPublic", paramType = "query", dataType = "boolean", value = "Flag to indicate to retrieve public groups only")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "isPublic", paramType = "query", dataType = "boolean", value = "A flag to retrieve public groups only")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns found groups", response = List.class)
+            @ApiResponse(code = 200, message = "Returns all found groups", response = List.class)
     })
     List<Group> getAllGroups(boolean isPublic);
 
     @ApiOperation(
-            value = "Gets groups count",
-            notes = "Returns count of available groups",
+            value = "Retrieves the count of groups",
+            notes = "Returns the count of available groups",
             nickname = "getGroupsCount",
             httpMethod = "GET",
             response = Integer.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns count of available groups", response = Integer.class)
+            @ApiResponse(code = 200, message = "Returns the count of available groups", response = Integer.class)
     })
     Integer getGroupsCount();
 
     @ApiOperation(
-            value = "Retrieves all roles which an application contains",
-            notes = "Returns all roles",
+            value = "Retrieves all roles in the application",
+            notes = "Returns all roles given to users in the application",
             nickname = "getRoles",
             httpMethod = "GET",
             response = List.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns all roles", response = List.class)
@@ -111,33 +111,33 @@ public interface GroupDocumentedController {
 
     @ApiOperation(
             value = "Updates group properties and group permissions",
-            notes = "Returns updated group and attached permissions inside",
+            notes = "Returns the updated group with granted permissions",
             nickname = "updateGroup",
             httpMethod = "PUT",
             response = Group.class
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "group", paramType = "body", dataType = "Group", required = true, value = "Group to update")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "group", paramType = "body", dataType = "Group", required = true, value = "The group to update")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns updated group and attached permissions inside", response = Group.class)
+            @ApiResponse(code = 200, message = "Returns the updated group with granted permissions", response = Group.class)
     })
     Group updateGroup(Group group);
 
     @ApiOperation(
-            value = "Deletes group",
-            notes = "Deletes group by id and detaches all permissions from group",
+            value = "Deletes a group",
+            notes = "Deletes a group by its id and removes all permissions from the group",
             nickname = "deleteGroup",
             httpMethod = "DELETE"
     )
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "Auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Group id to delete")
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The id of the group to delete")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns created dashboard"),
-            @ApiResponse(code = 400, message = "Indicates that group contains users. It required to delete each user before delete operation", response = ResponseEntity.class)
+            @ApiResponse(code = 200, message = "The dashboard was deleted successfully"),
+            @ApiResponse(code = 400, message = "Indicates that the group contains users. It is required to remove all users before the delete operation", response = ResponseEntity.class)
     })
     void deleteGroup(long id);
 

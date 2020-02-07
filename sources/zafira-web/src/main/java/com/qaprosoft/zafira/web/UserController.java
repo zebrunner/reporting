@@ -106,6 +106,7 @@ public class UserController extends AbstractController implements UserDocumented
     }
 
     @DeleteMapping("/profile/photo")
+    @Deprecated
     @Override
     public void deleteUserProfilePhoto() {
         userService.deleteProfilePhoto(getPrincipalId());

@@ -19,6 +19,7 @@ import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -26,7 +27,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import java.nio.charset.StandardCharsets;
 
 @Configuration
-@EnableCaching(proxyTargetClass = true)
+@EnableCaching(proxyTargetClass = true, mode = AdviceMode.ASPECTJ)
 public class ServiceConfig {
 
     private static final String BASENAME_LOCATION = "classpath:i18n/services/messages";

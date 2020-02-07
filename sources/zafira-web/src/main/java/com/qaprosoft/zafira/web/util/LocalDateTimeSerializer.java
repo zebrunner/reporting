@@ -13,26 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.web.documented;
+package com.qaprosoft.zafira.web.util;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import org.springframework.boot.jackson.JsonComponent;
 
-@Api("Health check API")
-public interface ApplicationHealthDocumentedController {
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
-    @ApiOperation(
-            value = "Checks application health",
-            notes = "Returns common information about the application",
-            nickname = "getStatus",
-            httpMethod = "GET",
-            response = String.class
-    )
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns common information about the application", response = String.class)
-    })
-    String getStatus();
+@JsonComponent
+public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> {
 
+    @Override
+    public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        gen.writeNumber(value.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+    }
 }
