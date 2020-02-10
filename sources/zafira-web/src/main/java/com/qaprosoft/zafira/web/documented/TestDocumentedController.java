@@ -29,6 +29,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -117,7 +118,7 @@ public interface TestDocumentedController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "The test was deleted successfully")
     })
-    void deleteTest(long id);
+    ResponseEntity<Void> deleteTest(long id);
 
     @ApiOperation(
             value = "Retrieves tests by search criteria",
