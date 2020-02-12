@@ -87,7 +87,8 @@ SELECT
         "top": -5
     },
     "tooltip": {
-        "trigger": "axis"
+        "trigger": "axis",
+        "extraCssText": "transform: translateZ(0)"
     },
     "dimensions": [
         "CREATED_AT",
@@ -177,7 +178,8 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     },
     "legend": {},
     "tooltip": {
-        "trigger": "axis"
+        "trigger": "axis",
+        "extraCssText": "transform: translateZ(0)"
     },
     "dimensions": [
         "TESTED_AT",
@@ -310,7 +312,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
 SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
       sum( PASSED ) AS "PASSED",
       sum( KNOWN_ISSUE ) AS "KNOWN ISSUE",
-      sum( QUEUED ) AS "QUEUED",
+      --sum( QUEUED ) AS "QUEUED",
       0 - sum( FAILED ) AS "FAILED",
       0 - sum( SKIPPED ) AS "SKIPPED",
       0 - sum( ABORTED ) AS "ABORTED"
@@ -419,7 +421,15 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
 </#function>', 'setTimeout( function() {
-  const dimensions = ["GROUP_FIELD", "PASSED", "FAILED", "SKIPPED", "KNOWN ISSUE", "QUEUED", "ABORTED"];
+  const dimensions = [
+    "GROUP_FIELD", 
+    "PASSED", 
+    "FAILED", 
+   // "SKIPPED", 
+    "KNOWN ISSUE", 
+    "QUEUED", 
+    "ABORTED"
+    ];
   let note = true;
 
   const createSource = () => {
@@ -470,7 +480,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
   };
   
   let series = [];
-  for (var i = 0; i < 6 ; i++) {
+  for (var i = 0; i < dimensions.length - 1 ; i++) {
     let index = i + 1;
     let seriesBar = {
       type: "bar",
@@ -502,7 +512,8 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
       trigger: "axis",
       axisPointer: {
         type: "shadow"
-      }
+      },
+      "extraCssText": "transform: translateZ(0)"
     },
     legend: {},
     grid: {
@@ -529,7 +540,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
       "#e76a77",
       "#fddb7a",
       "#9f5487",
-      "#6dbbe7",
+     // "#6dbbe7",
       "#b5b5b5"
     ],
     dataset: {
@@ -1754,7 +1765,8 @@ SELECT
         "axisPointer": {
             "type": "shadow"
         },
-        "formatter": "{b0}<br>{d0}%"
+        "formatter": "{b0}<br>{d0}%",
+        "extraCssText": "transform: translateZ(0)"
     },
     "color": [
         "#ffffff",
@@ -2275,7 +2287,8 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     },
     "legend": {},
     "tooltip": {
-        "trigger": "axis"
+        "trigger": "axis",
+        "extraCssText": "transform: translateZ(0)"
     },
     "dimensions": [
         "TESTED_AT",
@@ -2340,7 +2353,8 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
         "axisPointer": {
             "type": "shadow"
         },
-        "formatter": "{b0}<br>{d0}%"
+        "formatter": "{b0}<br>{d0}%",
+        "extraCssText": "transform: translateZ(0)"
     },
     "color": [
         "#61c8b3",
@@ -3477,7 +3491,8 @@ let lineRow = {
         legend: legend,
         tooltip: {
             trigger: "axis",
-            showDelay: 1
+            showDelay: 1,
+            extraCssText: "transform: translateZ(0)"
         },
         dataZoom: [
           {
