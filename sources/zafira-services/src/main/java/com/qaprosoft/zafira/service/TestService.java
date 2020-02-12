@@ -376,7 +376,7 @@ public class TestService {
 
     public List<WorkItem> getTestCaseWorkItems(Long testId, Type type) {
         List<WorkItem> workItems = new ArrayList<>();
-        Test test = getTestById(testId);
+        Test test = getNotNullTestById(testId);
         if (test != null) {
             workItems = workItemService.getWorkItemsByTestCaseIdAndType(test.getTestCaseId(), type);
         }
