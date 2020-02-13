@@ -86,17 +86,13 @@ public class UserPreferenceService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public UserPreference createOrUpdateUserPreference(UserPreference newUserPreference) {
+    public void createOrUpdateUserPreference(UserPreference newUserPreference) {
         UserPreference userPreference = getUserPreferenceByNameAndUserId(newUserPreference.getName().name(), newUserPreference.getUserId());
         if (userPreference == null) {
             createUserPreference(newUserPreference);
-        } else if (!userPreference.equals(newUserPreference)) {
-            newUserPreference.setId(userPreference.getId());
-            updateUserPreference(newUserPreference);
         } else {
-            newUserPreference = userPreference;
+            updateUserPreference(newUserPreference);
         }
-        return newUserPreference;
     }
 
     public void resetDefaultDashboardPreference(String fromTitle) {
