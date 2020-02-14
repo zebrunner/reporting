@@ -53,8 +53,8 @@ public interface ProjectDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The project id"),
-            @ApiImplicitParam(name = "reassignToId", paramType = "query", dataType = "number", value = "The id of the project to reassign all artifacts while deleting")
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The project id"),
+            @ApiImplicitParam(name = "reassignToId", paramType = "query", dataTypeClass = Long.class, value = "The id of the project to reassign all artifacts while deleting")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "The project was deleted successfully"),

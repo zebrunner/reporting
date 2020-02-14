@@ -241,7 +241,7 @@ public interface UserDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The path reference id"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The path reference id"),
             @ApiImplicitParam(name = "name", paramType = "query", dataType = "string", required = true, value = "User preference name"),
             @ApiImplicitParam(name = "value", paramType = "query", dataType = "string", required = true, value = "User preference value")
     })
@@ -273,7 +273,7 @@ public interface UserDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "userId", paramType = "path", dataType = "number", required = true, value = "The user id")
+            @ApiImplicitParam(name = "userId", paramType = "path", dataTypeClass = Long.class, required = true, value = "The user id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "User preferences were deleted successfully")

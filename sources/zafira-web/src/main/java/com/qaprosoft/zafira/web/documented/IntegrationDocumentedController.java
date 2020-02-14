@@ -40,7 +40,7 @@ public interface IntegrationDocumentedController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "integrationDTO", paramType = "body", dataType = "IntegrationDTO", required = true, value = "The integration to create"),
-            @ApiImplicitParam(name = "integrationTypeId", paramType = "path", dataType = "number", required = true, value = "The integration type id")
+            @ApiImplicitParam(name = "integrationTypeId", paramType = "path", dataTypeClass = Long.class, required = true, value = "The integration type id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the created integration", response = IntegrationDTO.class),
@@ -57,7 +57,7 @@ public interface IntegrationDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "groupId", paramType = "query", dataType = "number", value = "The integration group id"),
+            @ApiImplicitParam(name = "groupId", paramType = "query", dataTypeClass = Long.class, value = "The integration group id"),
             @ApiImplicitParam(name = "groupName", paramType = "query", dataType = "string", value = "The integration group name")
     })
     @ApiResponses({
@@ -90,7 +90,7 @@ public interface IntegrationDocumentedController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "integrationDTO", paramType = "body", dataType = "IntegrationDTO", required = true, value = "The integration to update"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The integration id")
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The integration id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the updated integration", response = IntegrationDTO.class)
