@@ -59,7 +59,7 @@ public interface TestCaseDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test case id")
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The test case id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns found test metrics", response = Map.class)

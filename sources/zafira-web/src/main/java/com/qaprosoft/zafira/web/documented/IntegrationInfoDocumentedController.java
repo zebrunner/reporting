@@ -54,7 +54,7 @@ public interface IntegrationInfoDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The integration id"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The integration id"),
             @ApiImplicitParam(name = "groupName", paramType = "query", dataType = "string", required = true, value = "The integration group name")
     })
     @ApiResponses({

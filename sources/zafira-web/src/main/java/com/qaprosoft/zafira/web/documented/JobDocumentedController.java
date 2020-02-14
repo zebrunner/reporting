@@ -123,7 +123,7 @@ public interface JobDocumentedController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "jobViewDTOs", paramType = "body", dataType = "List", required = true, value = "The job view to update"),
-            @ApiImplicitParam(name = "viewId", paramType = "path", dataType = "number", required = true, value = "The id of the job view to delete"),
+            @ApiImplicitParam(name = "viewId", paramType = "path", dataTypeClass = Long.class, required = true, value = "The id of the job view to delete"),
             @ApiImplicitParam(name = "env", paramType = "query", dataType = "string", required = true, value = "The environment of job views to delete")
     })
     @ApiResponses({
@@ -140,7 +140,7 @@ public interface JobDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The view id")
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The view id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns found job views grouped by environment", response = Map.class)
@@ -155,7 +155,7 @@ public interface JobDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "viewId", paramType = "path", dataType = "number", required = true, value = "The view id"),
+            @ApiImplicitParam(name = "viewId", paramType = "path", dataTypeClass = Long.class, required = true, value = "The view id"),
             @ApiImplicitParam(name = "env", paramType = "query", dataType = "string", required = true, value = "The environment")
     })
     @ApiResponses({

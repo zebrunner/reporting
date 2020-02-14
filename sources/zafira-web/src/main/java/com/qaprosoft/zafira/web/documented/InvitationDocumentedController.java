@@ -112,8 +112,8 @@ public interface InvitationDocumentedController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "query", paramType = "query", dataType = "string", value = "A search keyword. The search is made by the source, status or part of the email"),
-            @ApiImplicitParam(name = "page", paramType = "query", dataType = "number", value = "The page number"),
-            @ApiImplicitParam(name = "pageSize", paramType = "query", dataType = "number", value = "The number of invitations per page"),
+            @ApiImplicitParam(name = "page", paramType = "query", dataType = "string", value = "The page number"),
+            @ApiImplicitParam(name = "pageSize", paramType = "query", dataType = "string", value = "The number of invitations per page"),
             @ApiImplicitParam(name = "orderBy", paramType = "query", dataType = "string", value = "The order by id only"),
             @ApiImplicitParam(name = "sortOrder", paramType = "query", dataType = "string", value = "The sorting direction (ASC or DESC)"),
     })

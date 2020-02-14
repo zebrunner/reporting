@@ -55,7 +55,7 @@ public interface GroupDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The group id")
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The group id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the found group", response = Group.class),
@@ -133,7 +133,7 @@ public interface GroupDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The id of the group to delete")
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The id of the group to delete")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "The dashboard was deleted successfully"),

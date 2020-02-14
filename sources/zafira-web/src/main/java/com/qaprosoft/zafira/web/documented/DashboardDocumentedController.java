@@ -74,7 +74,7 @@ public interface DashboardDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The dashboard id")
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The dashboard id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the found dashboard", response = DashboardType.class),
@@ -106,7 +106,7 @@ public interface DashboardDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The dashboard id")
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The dashboard id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "The dashboard was deleted successfully"),
@@ -156,7 +156,7 @@ public interface DashboardDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "dashboardId", paramType = "path", dataType = "number", required = true, value = "The dashboard id"),
+            @ApiImplicitParam(name = "dashboardId", paramType = "path", dataTypeClass = Long.class, required = true, value = "The dashboard id"),
             @ApiImplicitParam(name = "widget", paramType = "body", dataType = "Widget", required = true, value = "The widget to attach")
     })
     @ApiResponses({
@@ -172,8 +172,8 @@ public interface DashboardDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "dashboardId", paramType = "path", dataType = "number", required = true, value = "The dashboard id"),
-            @ApiImplicitParam(name = "widgetId", paramType = "path", dataType = "number", required = true, value = "The widget id")
+            @ApiImplicitParam(name = "dashboardId", paramType = "path", dataTypeClass = Long.class, required = true, value = "The dashboard id"),
+            @ApiImplicitParam(name = "widgetId", paramType = "path", dataTypeClass = Long.class, required = true, value = "The widget id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "The widget was removed from the dashboard successfully")
@@ -189,8 +189,8 @@ public interface DashboardDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "dashboardId", paramType = "path", dataType = "number", required = true, value = "The dashboard id"),
-            @ApiImplicitParam(name = "widget", paramType = "body", dataType = "number", required = true, value = "The widget to update")
+            @ApiImplicitParam(name = "dashboardId", paramType = "path", dataTypeClass = Long.class, required = true, value = "The dashboard id"),
+            @ApiImplicitParam(name = "widget", paramType = "body", dataType = "Widget", required = true, value = "The widget to update")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the updated widget if it exists in the dashboard", response = Widget.class)
@@ -206,7 +206,7 @@ public interface DashboardDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "dashboardId", paramType = "path", dataType = "number", required = true, value = "The dashboard id"),
+            @ApiImplicitParam(name = "dashboardId", paramType = "path", dataTypeClass = Long.class, required = true, value = "The dashboard id"),
             @ApiImplicitParam(name = "widgets", paramType = "body", dataType = "array", required = true, value = "Widgets to update")
     })
     @ApiResponses({
@@ -223,7 +223,7 @@ public interface DashboardDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "dashboardId", paramType = "path", dataType = "number", required = true, value = "Dashboard id which has an attribute"),
+            @ApiImplicitParam(name = "dashboardId", paramType = "path", dataTypeClass = Long.class, required = true, value = "Dashboard id which has an attribute"),
             @ApiImplicitParam(name = "attribute", paramType = "body", dataType = "Attribute", required = true, value = "Attribute to create")
     })
     @ApiResponses({
@@ -240,7 +240,7 @@ public interface DashboardDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "dashboardId", paramType = "path", dataType = "number", required = true, value = "Dashboard id which has an attribute"),
+            @ApiImplicitParam(name = "dashboardId", paramType = "path", dataTypeClass = Long.class, required = true, value = "Dashboard id which has an attribute"),
             @ApiImplicitParam(name = "attribute", paramType = "body", dataType = "Attribute", required = true, value = "Attribute to update")
     })
     @ApiResponses({
@@ -257,8 +257,8 @@ public interface DashboardDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "dashboardId", paramType = "path", dataType = "number", required = true, value = "Dashboard id which has an attribute"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "Attribute id")
+            @ApiImplicitParam(name = "dashboardId", paramType = "path", dataTypeClass = Long.class, required = true, value = "Dashboard id which has an attribute"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "Attribute id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns all dashboard attributes excluding the deleted attribute", response = List.class)
