@@ -35,5 +35,9 @@
             <a>autoScan</a>
             <b>autoScan</b>
         </field>
+        <field>
+            <a>presets</a>
+            <b>presets</b>
+        </field>
     </mapping>
 </mappings>
