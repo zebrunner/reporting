@@ -74,7 +74,7 @@
                         ${configuration['mobile_platform_version']}
                     </#if>
 
-                    <#if ((! configuration['platform'] ??) && (configuration['platform']?lower_case != 'api'))>
+                    <#if ((!configuration['platform'] ??) || (configuration['platform'] ?? && configuration['platform']?lower_case != 'api'))>
                         <#if (configuration['browser']??) && (configuration['browser'] != 'NULL') && (configuration['browser'] != '')>
                             ${configuration['browser']}
                         </#if>
