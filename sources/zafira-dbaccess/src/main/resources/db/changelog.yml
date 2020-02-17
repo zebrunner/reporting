@@ -157,7 +157,7 @@ databaseChangeLog:
       id: 015_add_default_runs_view_preference
       validCheckSum: ANY
       labels: stable
-      author: brutskov
+      author: itsvirko
       changes:
         - sqlFile:
             encoding: utf8
