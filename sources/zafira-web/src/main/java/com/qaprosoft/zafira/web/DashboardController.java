@@ -57,7 +57,7 @@ public class DashboardController extends AbstractController implements Dashboard
         this.mapper = mapper;
     }
 
-    @PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
+    @PreAuthorize("hasPermission('MODIFY_DASHBOARDS') and ((hasPermission('VIEW_HIDDEN_DASHBOARDS') and #dashboardType.hidden) or !#dashboardType.hidden)")
     @PostMapping()
     @Override
     public DashboardType createDashboard(@RequestBody @Valid DashboardType dashboardType) {
