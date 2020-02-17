@@ -34,7 +34,7 @@ import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
 import com.qaprosoft.zafira.service.LauncherCallbackService;
 import com.qaprosoft.zafira.service.TestRunService;
 import com.qaprosoft.zafira.service.TestService;
-import com.qaprosoft.zafira.service.cache.StatisticsService;
+import com.qaprosoft.zafira.service.cache.TestRunStatisticsCacheableService;
 import com.qaprosoft.zafira.service.util.EmailUtils;
 import com.qaprosoft.zafira.web.documented.TestRunDocumentedController;
 import org.dozer.Mapper;
@@ -69,12 +69,12 @@ public class TestRunController extends AbstractController implements TestRunDocu
     private final TestRunService testRunService;
     private final TestService testService;
     private final SimpMessagingTemplate websocketTemplate;
-    private final StatisticsService statisticsService;
+    private final TestRunStatisticsCacheableService statisticsService;
     private final LauncherCallbackService launcherCallbackService;
     private final Mapper mapper;
 
     public TestRunController(TestRunService testRunService, TestService testService, SimpMessagingTemplate websocketTemplate,
-                             StatisticsService statisticsService, LauncherCallbackService launcherCallbackService, Mapper mapper) {
+                             TestRunStatisticsCacheableService statisticsService, LauncherCallbackService launcherCallbackService, Mapper mapper) {
         this.testRunService = testRunService;
         this.testService = testService;
         this.websocketTemplate = websocketTemplate;

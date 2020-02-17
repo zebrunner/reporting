@@ -20,7 +20,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
-import com.qaprosoft.zafira.service.cache.StatisticsService;
+import com.qaprosoft.zafira.service.cache.TestRunStatisticsCacheableService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -39,9 +39,9 @@ public class TestRunStatisticsService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestRunStatisticsService.class);
 
     private static final LoadingCache<Long, Lock> updateLocks;
-    private final StatisticsService statisticsService;
+    private final TestRunStatisticsCacheableService statisticsService;
 
-    public TestRunStatisticsService(StatisticsService statisticsService) {
+    public TestRunStatisticsService(TestRunStatisticsCacheableService statisticsService) {
         this.statisticsService = statisticsService;
     }
 

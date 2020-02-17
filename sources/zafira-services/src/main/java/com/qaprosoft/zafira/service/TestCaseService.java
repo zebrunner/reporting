@@ -21,10 +21,10 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestCaseSearch
 import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestCase;
+import com.qaprosoft.zafira.service.cache.TestCaseCacheableService;
 import com.qaprosoft.zafira.service.project.ProjectReassignable;
 import com.qaprosoft.zafira.service.project.ProjectService;
 import com.qaprosoft.zafira.service.util.DateTimeUtil;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,10 +36,12 @@ public class TestCaseService implements ProjectReassignable {
 
     private final TestCaseMapper testCaseMapper;
     private final ProjectService projectService;
+    private final TestCaseCacheableService testCaseCacheableService;
 
-    public TestCaseService(TestCaseMapper testCaseMapper, ProjectService projectService) {
+    public TestCaseService(TestCaseMapper testCaseMapper, ProjectService projectService, TestCaseCacheableService testCaseCacheableService) {
         this.testCaseMapper = testCaseMapper;
         this.projectService = projectService;
+        this.testCaseCacheableService = testCaseCacheableService;
     }
 
     @Transactional
@@ -56,9 +58,8 @@ public class TestCaseService implements ProjectReassignable {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "testCases", key = "{ new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #userId, new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #testClass,  new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #testMethod }")
     public TestCase getOwnedTestCase(Long userId, String testClass, String testMethod, Long projectId) {
-        return testCaseMapper.getOwnedTestCase(userId, testClass, testMethod, projectId);
+        return testCaseCacheableService.getOwnedTestCase(userId, testClass, testMethod, projectId);
     }
 
     @Transactional
