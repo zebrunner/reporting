@@ -34,7 +34,7 @@ import com.qaprosoft.zafira.service.TestArtifactService;
 import com.qaprosoft.zafira.service.TestRunService;
 import com.qaprosoft.zafira.service.TestService;
 import com.qaprosoft.zafira.service.WorkItemService;
-import com.qaprosoft.zafira.service.cache.StatisticsService;
+import com.qaprosoft.zafira.service.cache.TestRunStatisticsCacheableService;
 import com.qaprosoft.zafira.service.integration.tool.impl.TestCaseManagementService;
 import com.qaprosoft.zafira.web.documented.TestDocumentedController;
 import org.dozer.Mapper;
@@ -82,7 +82,7 @@ public class TestController extends AbstractController implements TestDocumented
     private SimpMessagingTemplate websocketTemplate;
 
     @Autowired
-    private StatisticsService statisticsService;
+    private TestRunStatisticsCacheableService statisticsService;
 
     @PostMapping()
     @Override

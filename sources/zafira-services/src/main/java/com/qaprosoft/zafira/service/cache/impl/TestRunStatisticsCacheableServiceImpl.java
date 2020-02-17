@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.service.cache;
+package com.qaprosoft.zafira.service.cache.impl;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestRunMapper;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.service.cache.TestRunStatisticsCacheableService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -29,14 +31,14 @@ import org.springframework.transaction.annotation.Transactional;
  * <h1>(isolation need for Spring target proxy objects)</h1>
  */
 @Component
-public class StatisticsService {
+public class TestRunStatisticsCacheableServiceImpl implements TestRunStatisticsCacheableService {
 
     private static final String TEST_RUN_STATISTICS_CACHE_NAME = "testRunStatistics";
 
-    private final ICacheableService<Long, TestRunStatistics> cacheableService;
+    private final TestRunMapper testRunMapper;
 
-    public StatisticsService(ICacheableService<Long, TestRunStatistics> cacheableService) {
-        this.cacheableService = cacheableService;
+    public TestRunStatisticsCacheableServiceImpl(TestRunMapper testRunMapper) {
+        this.testRunMapper = testRunMapper;
     }
 
     /**
@@ -47,11 +49,13 @@ public class StatisticsService {
      */
     @Cacheable(value = TEST_RUN_STATISTICS_CACHE_NAME, key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #testRunId")
     @Transactional(readOnly = true)
+    @Override
     public TestRunStatistics getTestRunStatistic(Long testRunId) {
-        return cacheableService.getValue().apply(testRunId);
+        return testRunMapper.getTestRunStatistics(testRunId);
     }
 
     @CachePut(value = TEST_RUN_STATISTICS_CACHE_NAME, key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #statistic.testRunId")
+    @Override
     public TestRunStatistics setTestRunStatistic(TestRunStatistics statistic) {
         return statistic;
     }
@@ -62,6 +66,7 @@ public class StatisticsService {
      */
     @CacheEvict(value = TEST_RUN_STATISTICS_CACHE_NAME, allEntries = true)
     @Scheduled(cron = "0 0 0/4 ? * * *")
+    @Override
     public void cacheEvict() {
     }
 }
