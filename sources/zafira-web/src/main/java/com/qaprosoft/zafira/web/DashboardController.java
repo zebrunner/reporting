@@ -50,7 +50,7 @@ import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.R
 @RestController
 public class DashboardController extends AbstractController implements DashboardDocumentedController {
 
-    private static final String ERR_MSG_ILLEGAL_DASHBOARD_ACCESS = "Cannot access to requested dashboard by id '%d'";
+    private static final String ERR_MSG_ILLEGAL_DASHBOARD_ACCESS = "Cannot access requested dashboard by id '%d'";
 
     private final DashboardService dashboardService;
     private final WidgetTemplateService widgetTemplateService;
