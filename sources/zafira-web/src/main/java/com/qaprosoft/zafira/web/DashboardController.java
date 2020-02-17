@@ -22,6 +22,7 @@ import com.qaprosoft.zafira.models.db.Widget;
 import com.qaprosoft.zafira.models.dto.DashboardType;
 import com.qaprosoft.zafira.service.DashboardService;
 import com.qaprosoft.zafira.service.WidgetTemplateService;
+import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import com.qaprosoft.zafira.web.documented.DashboardDocumentedController;
 import org.dozer.Mapper;
 import org.springframework.http.MediaType;
@@ -42,10 +43,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.DASHBOARD_NOT_FOUND;
+
 @CrossOrigin
 @RequestMapping(path = "api/dashboards", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class DashboardController extends AbstractController implements DashboardDocumentedController {
+
+    private static final String ERR_MSG_ILLEGAL_DASHBOARD_ACCESS = "Cannot access to requested dashboard by id '%d'";
 
     private final DashboardService dashboardService;
     private final WidgetTemplateService widgetTemplateService;
@@ -85,6 +90,9 @@ public class DashboardController extends AbstractController implements Dashboard
     @Override
     public DashboardType getDashboardById(@PathVariable("id") long id) {
         Dashboard dashboard = dashboardService.getDashboardById(id);
+        if (dashboard.isHidden() && !hasPermission(Permission.Name.VIEW_HIDDEN_DASHBOARDS)) {
+            throw new ResourceNotFoundException(DASHBOARD_NOT_FOUND, String.format(ERR_MSG_ILLEGAL_DASHBOARD_ACCESS, id));
+        }
         dashboard.getWidgets().forEach(widget -> widgetTemplateService.clearRedundantParamsValues(widget.getWidgetTemplate()));
         return mapper.map(dashboard, DashboardType.class);
     }
