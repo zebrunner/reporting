@@ -54,20 +54,12 @@ public class CertificationService {
         CertificationType certification = new CertificationType();
         List<TestRun> testRuns = testRunService.getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(upstreamJobId, upstreamJobBuildNumber);
         testRuns.forEach(testRun -> {
-            String platformName = buildPlatformName(testRun);
+            String platformName = testRun.getConfig().buildPlatformName();
             insertIntoCertification(certification, testRun.getId(), platformName);
         });
         return certification;
     }
 
-    private String buildPlatformName(TestRun testRun){
-        StringBuilder platform = new StringBuilder(testRun.getPlatform());
-        String browserVersion = testRun.getConfig().getBrowserVersion();
-        if(!"*".equals(browserVersion)) {
-            platform.append(" ").append(browserVersion);
-        }
-        return platform.toString();
-    }
 
     private void insertIntoCertification(CertificationType certification, Long testRunId, String platform) {
         TestRun testRun = testRunService.getTestRunById(testRunId);

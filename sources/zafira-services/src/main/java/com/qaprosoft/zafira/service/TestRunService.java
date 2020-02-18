@@ -370,7 +370,6 @@ public class TestRunService implements ProjectReassignable {
         testRun.setEnv(testRunParams.getEnv());
         testRun.setCiRunId(testRunParams.getCiRunId());
         testRun.setElapsed(null);
-        testRun.setPlatform(null);
         testRun.setConfigXML(null);
         testRun.setConfig(null);
         testRun.setComments(null);
@@ -474,7 +473,6 @@ public class TestRunService implements ProjectReassignable {
             testRun.setConfig(config);
             testRun.setEnv(config.getEnv());
             testRun.setAppVersion(config.getAppVersion());
-            testRun.setPlatform(config.getPlatform());
         }
     }
 

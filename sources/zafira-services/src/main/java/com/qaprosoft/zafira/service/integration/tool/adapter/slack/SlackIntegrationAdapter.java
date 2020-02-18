@@ -17,6 +17,7 @@ package com.qaprosoft.zafira.service.integration.tool.adapter.slack;
 
 import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.HttpStatusCodes;
+import com.qaprosoft.zafira.models.db.TestConfig;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.service.integration.tool.adapter.AbstractIntegrationAdapter;
@@ -32,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+
+import static org.springframework.util.StringUtils.isEmpty;
 
 public class SlackIntegrationAdapter extends AbstractIntegrationAdapter implements SlackAdapter {
 
@@ -84,7 +87,7 @@ public class SlackIntegrationAdapter extends AbstractIntegrationAdapter implemen
             LOGGER.error(ERR_MSG_SLACK_CONNECTION_IS_NOT_ESTABLISHED, e);
             result = e.getStatusCode() != HttpStatusCodes.STATUS_CODE_NOT_FOUND;
         } catch (Exception e) {
-            LOGGER.error(ERR_MSG_SLACK_CONNECTION_IS_NOT_ESTABLISHED ,e);
+            LOGGER.error(ERR_MSG_SLACK_CONNECTION_IS_NOT_ESTABLISHED, e);
             result = false;
         }
         return result;
@@ -126,26 +129,27 @@ public class SlackIntegrationAdapter extends AbstractIntegrationAdapter implemen
         return "warning";
     }
 
-    private String buildRunInfo(TestRun tr) {
-        StringBuilder sbInfo = new StringBuilder();
-        sbInfo.append(tr.getProject().getName());
-        Map<String, String> jenkinsParams = tr.getConfiguration();
+    private String buildRunInfo(TestRun testRun) {
+        StringBuilder testRunInfo = new StringBuilder();
+        Map<String, String> jenkinsParams = testRun.getConfiguration();
+        TestConfig config = testRun.getConfig();
+        testRunInfo.append(testRun.getProject().getName());
         if (jenkinsParams != null && jenkinsParams.get("groups") != null) {
-            sbInfo.append("(");
-            sbInfo.append(jenkinsParams.get("groups"));
-            sbInfo.append(")");
+            testRunInfo.append("(")
+                       .append(jenkinsParams.get("groups"))
+                       .append(")");
         }
-        sbInfo.append(" | ");
-        sbInfo.append(tr.getTestSuite().getName());
-        sbInfo.append(" | ");
-        sbInfo.append(tr.getEnv());
-        sbInfo.append(" | ");
-        sbInfo.append(tr.getPlatform() == null ? "no_platform" : tr.getPlatform());
-        if (tr.getAppVersion() != null) {
-            sbInfo.append(" | ");
-            sbInfo.append(tr.getAppVersion());
+        testRunInfo.append(" | ")
+                   .append(testRun.getTestSuite().getName())
+                   .append(" | ")
+                   .append(testRun.getEnv())
+                   .append(" | ")
+                   .append(isEmpty(config.buildPlatformName()) ? "no_platform" : config.buildPlatformName());
+        if (config.getAppVersion() != null) {
+            testRunInfo.append(" | ")
+                       .append(config.getAppVersion());
         }
-        return sbInfo.toString();
+        return testRunInfo.toString();
     }
 
     private SlackAttachment generateSlackAttachment(String mainMessage, String messageResults, String attachmentColor, String comments) {
