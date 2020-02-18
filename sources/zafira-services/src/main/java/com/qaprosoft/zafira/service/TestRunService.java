@@ -827,11 +827,6 @@ public class TestRunService implements ProjectReassignable {
         return testRunMapper.getEnvironments();
     }
 
-    @Transactional(readOnly = true)
-    public List<String> getPlatforms() {
-        return testRunMapper.getPlatforms();
-    }
-
     public void hideJobUrlsIfNeed(List<TestRun> testRuns) {
         testRuns.stream()
                 .filter(testRun -> !automationServerService.isJobUrlVisibilityEnabled(testRun.getJob().getAutomationServerId()))

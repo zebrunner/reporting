@@ -32,6 +32,7 @@ import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
 import com.qaprosoft.zafira.service.LauncherCallbackService;
+import com.qaprosoft.zafira.service.TestConfigService;
 import com.qaprosoft.zafira.service.TestRunService;
 import com.qaprosoft.zafira.service.TestService;
 import com.qaprosoft.zafira.service.cache.TestRunStatisticsCacheableService;
@@ -68,15 +69,17 @@ public class TestRunController extends AbstractController implements TestRunDocu
 
     private final TestRunService testRunService;
     private final TestService testService;
+    private final TestConfigService testConfigService;
     private final SimpMessagingTemplate websocketTemplate;
     private final TestRunStatisticsCacheableService statisticsService;
     private final LauncherCallbackService launcherCallbackService;
     private final Mapper mapper;
 
-    public TestRunController(TestRunService testRunService, TestService testService, SimpMessagingTemplate websocketTemplate,
+    public TestRunController(TestRunService testRunService, TestService testService, TestConfigService testConfigService, SimpMessagingTemplate websocketTemplate,
                              TestRunStatisticsCacheableService statisticsService, LauncherCallbackService launcherCallbackService, Mapper mapper) {
         this.testRunService = testRunService;
         this.testService = testService;
+        this.testConfigService = testConfigService;
         this.websocketTemplate = websocketTemplate;
         this.statisticsService = statisticsService;
         this.launcherCallbackService = launcherCallbackService;
@@ -314,7 +317,7 @@ public class TestRunController extends AbstractController implements TestRunDocu
     @GetMapping("/platforms")
     @Override
     public List<String> getPlatforms() {
-        return testRunService.getPlatforms();
+        return testConfigService.getPlatforms();
     }
 
     @GetMapping("/jobConsoleOutput/{count}/{fullCount}")
