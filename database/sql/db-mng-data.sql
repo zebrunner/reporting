@@ -11,7 +11,9 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "OWNER_USERNAME": join(USER),
   "ENV": join(ENV),
   "PRIORITY": join(PRIORITY),
-  "FEATURE": join(FEATURE)
+  "FEATURE": join(FEATURE),
+  "TASK": join(TASK),
+  "BUG": join(BUG)  
 }>
 <#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
 
@@ -146,6 +148,14 @@ SELECT
   },
   "FEATURE": {
     "valuesQuery": "SELECT VALUE FROM TAGS WHERE NAME=''feature'' ORDER BY 1;",
+    "multiple": true
+  },
+  "TASK": {
+    "valuesQuery": "SELECT DISTINCT JIRA_ID FROM WORK_ITEMS WHERE TYPE=''TASK'' ORDER BY 1;",
+    "multiple": true
+  },  
+  "BUG": {
+    "valuesQuery": "SELECT DISTINCT JIRA_ID FROM WORK_ITEMS WHERE TYPE=''BUG'' ORDER BY 1;",
     "multiple": true
   }
 }', '', '2019-05-13 10:28:17.881423', '2019-04-09 12:38:01.466911', '{
@@ -704,8 +714,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "LANGUAGE": join(LANGUAGE),
   "PRIORITY": join(PRIORITY),
   "FEATURE": join(FEATURE),
-  "TASK": join(TASK),
-  "BUG": join(BUG)
+  "TASK": join(TASK)
 }>
 <#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
 <#global VIEW = getView(PERIOD) />
@@ -868,10 +877,6 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     "valuesQuery": "SELECT DISTINCT JIRA_ID FROM WORK_ITEMS WHERE TYPE=''TASK'' ORDER BY 1;",
     "multiple": true
   },
-  "BUG": {
-    "valuesQuery": "SELECT DISTINCT JIRA_ID FROM WORK_ITEMS WHERE TYPE=''BUG'' ORDER BY 1;",
-    "multiple": true
-  },
   "DEVICE": {
     "valuesQuery": "SELECT DISTINCT DEVICE FROM TEST_CONFIGS WHERE DEVICE IS NOT NULL AND DEVICE <> '''' ORDER BY 1;",
     "multiple": true
@@ -915,7 +920,6 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "LANGUAGE": [],
   "PRIORITY": [],
   "FEATURE": [],
-  "TASK": [],
   "BUG": [],
   "PERIOD": "Monthly",
   "BLOCKER": "false",
@@ -1334,9 +1338,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
 
 <#global MULTIPLE_VALUES = {
   "PROJECTS.NAME": multiJoin(PROJECT, projects),
-  "USERS.USERNAME": join(USER),
-  "TASK": join(TASK),
-  "BUG": join(BUG)
+  "USERS.USERNAME": join(USER)
 }>
 <#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
 <#global CREATED_AT = getCreatedAt(PERIOD) />
@@ -1584,23 +1586,13 @@ chart.setOption(option);', '{
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
-  },
-  "TASK": {
-    "valuesQuery": "SELECT DISTINCT JIRA_ID FROM WORK_ITEMS WHERE TYPE=''TASK'' ORDER BY 1;",
-    "multiple": true
-  },  
-  "BUG": {
-    "valuesQuery": "SELECT DISTINCT JIRA_ID FROM WORK_ITEMS WHERE TYPE=''BUG'' ORDER BY 1;",
-    "multiple": true
   }
 }', '', '2019-05-13 13:17:40.339082', '2019-04-09 13:04:34.054318', '{
   "PERIOD": "Total",
   "PROJECT": ["UNKNOWN"],
   "PERSONAL": "false",
   "currentUserId": 1,
-  "USER": [],
-  "TASK": [],
-  "BUG": []
+  "USER": []
 }', false);
 
 
@@ -4172,7 +4164,7 @@ let option = {
 
 chart.setOption(option);', '{
   "PERIOD": {
-    "valuesQuery": "SELECT DISTINCT CASE WHEN  to_char(created_at, ''YYYY'') = to_char(CURRENT_DATE, ''YYYY'') THEN ''YEAR'' ELSE  to_char(created_at, ''YYYY'') END FROM total_view UNION SELECT DISTINCT CASE WHEN to_char(created_at, ''YYYY-Q'') = to_char(CURRENT_DATE, ''YYYY-Q'') THEN ''QUARTER'' ELSE  to_char(created_at, ''YYYY'') || ''-Q'' || to_char(created_at, ''Q'') END FROM total_view  UNION SELECT DISTINCT CASE WHEN  to_char(created_at, ''YYYY-MM'') = to_char(CURRENT_DATE, ''YYYY-MM'') THEN ''MONTH'' ELSE  to_char(created_at, ''YYYY-MM'') END FROM total_view ORDER BY 1 DESC;",
+    "valuesQuery": "SELECT ''YEAR'' UNION SELECT ''QUARTER'' UNION SELECT ''MONTH'' UNION SELECT DISTINCT to_char(created_at, ''YYYY'') FROM total_view UNION SELECT DISTINCT to_char(created_at, ''YYYY'') || ''-Q'' || to_char(created_at, ''Q'') FROM total_view UNION SELECT DISTINCT to_char(created_at, ''YYYY-MM'') FROM total_view ORDER BY 1 DESC;",
     "required": true
   },
   "PERSONAL": {
