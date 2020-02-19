@@ -663,7 +663,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -916,7 +916,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -1277,7 +1277,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -1981,7 +1981,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -2271,7 +2271,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -2838,7 +2838,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -3126,7 +3126,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -3392,7 +3392,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -3897,7 +3897,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -4164,7 +4164,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
