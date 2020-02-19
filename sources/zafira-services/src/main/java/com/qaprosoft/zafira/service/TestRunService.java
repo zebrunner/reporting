@@ -370,7 +370,6 @@ public class TestRunService implements ProjectReassignable {
         testRun.setEnv(testRunParams.getEnv());
         testRun.setCiRunId(testRunParams.getCiRunId());
         testRun.setElapsed(null);
-        testRun.setPlatform(null);
         testRun.setConfigXML(null);
         testRun.setConfig(null);
         testRun.setComments(null);
@@ -474,7 +473,6 @@ public class TestRunService implements ProjectReassignable {
             testRun.setConfig(config);
             testRun.setEnv(config.getEnv());
             testRun.setAppVersion(config.getAppVersion());
-            testRun.setPlatform(config.getPlatform());
         }
     }
 
@@ -827,11 +825,6 @@ public class TestRunService implements ProjectReassignable {
     @Cacheable(value = "environments", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #result", condition = "#result != null && #result.size() != 0")
     public List<String> getEnvironments() {
         return testRunMapper.getEnvironments();
-    }
-
-    @Transactional(readOnly = true)
-    public List<String> getPlatforms() {
-        return testRunMapper.getPlatforms();
     }
 
     public void hideJobUrlsIfNeed(List<TestRun> testRuns) {

@@ -419,8 +419,8 @@ public interface TestRunDocumentedController {
     List<String> getEnvironments();
 
     @ApiOperation(
-            value = "Retrieves all test run platforms",
-            notes = "Returns found test run platforms",
+            value = "Retrieves all test run config platforms",
+            notes = "Returns found test run config platforms",
             nickname = "getPlatforms",
             httpMethod = "GET",
             response = List.class
@@ -432,6 +432,21 @@ public interface TestRunDocumentedController {
             @ApiResponse(code = 200, message = "Returns found test run platforms", response = List.class)
     })
     List<String> getPlatforms();
+
+    @ApiOperation(
+            value = "Retrieves all test run config browsers",
+            notes = "Returns found test run config browsers",
+            nickname = "getBrowsers",
+            httpMethod = "GET",
+            response = List.class
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns found test run config browsers", response = List.class)
+    })
+    List<String> getBrowsers();
 
     @ApiOperation(
             value = "Retrieves test run job console lines",

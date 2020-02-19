@@ -35,7 +35,7 @@ public class TestCaseCacheableServiceImpl implements TestCaseCacheableService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = TEST_CASE_CACHE_NAME, key = "{ new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #userId, new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #testClass,  new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #testMethod }")
+    @Cacheable(value = TEST_CASE_CACHE_NAME, unless="#result == null", key = "{ new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #userId, new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #testClass,  new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #testMethod, new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #projectId }")
     public TestCase getOwnedTestCase(Long userId, String testClass, String testMethod, Long projectId) {
         return testCaseMapper.getOwnedTestCase(userId, testClass, testMethod, projectId);
     }

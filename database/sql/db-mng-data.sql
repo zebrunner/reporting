@@ -7,11 +7,14 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
 
 <#global MULTIPLE_VALUES = {
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "PROJECT": multiJoin(PROJECT, projects),
   "OWNER_USERNAME": join(USER),
   "ENV": join(ENV),
   "PRIORITY": join(PRIORITY),
-  "FEATURE": join(FEATURE)
+  "FEATURE": join(FEATURE),
+  "TASK": join(TASK),
+  "BUG": join(BUG)  
 }>
 <#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
 
@@ -132,6 +135,10 @@ SELECT
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -147,6 +154,14 @@ SELECT
   "FEATURE": {
     "valuesQuery": "SELECT VALUE FROM TAGS WHERE NAME=''feature'' ORDER BY 1;",
     "multiple": true
+  },
+  "TASK": {
+    "valuesQuery": "SELECT DISTINCT JIRA_ID FROM WORK_ITEMS WHERE TYPE=''TASK'' ORDER BY 1;",
+    "multiple": true
+  },  
+  "BUG": {
+    "valuesQuery": "SELECT DISTINCT JIRA_ID FROM WORK_ITEMS WHERE TYPE=''BUG'' ORDER BY 1;",
+    "multiple": true
   }
 }', '', '2019-05-13 10:28:17.881423', '2019-04-09 12:38:01.466911', '{
   "PERSONAL": "true",
@@ -157,6 +172,7 @@ SELECT
   "PRIORITY": [],
   "FEATURE": [],
   "PLATFORM": ["*"],
+  "BROWSER":[],
   "TASK": [],
   "BUG": []
 }', false);
@@ -296,6 +312,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
 
 <#global MULTIPLE_VALUES = {
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "OWNER_USERNAME": join(USER),
   "PROJECT": multiJoin(PROJECT, projects),
   "DEVICE": join(DEVICE),
@@ -590,6 +607,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
   "GROUP_BY": {
     "values": [
       "PLATFORM",
+      "BROWSER",
       "OWNER_USERNAME",
       "PROJECT",
       "DEVICE",
@@ -610,6 +628,10 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
   },
   "PLATFORM": {
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
+    "multiple": true
+  },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -676,6 +698,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
   "USER": [],
   "PLATFORM": [],
   "PLATFORM_VERSION": [],
+  "BROWSER": [],
   "BROWSER_VERSION": [],
   "DEVICE": [],
   "ENV": [],
@@ -694,7 +717,8 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
 
 
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('APPLICATION ISSUES (BLOCKERS) COUNT', 'A number of unique application bugs discovered and submitted by automation.', 'TABLE', '<#global MULTIPLE_VALUES = {
-  "PLATFORM": join(PLATFORM),
+  "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "OWNER_USERNAME": join(USER),
   "PROJECT": multiJoin(PROJECT, projects),
   "DEVICE": join(DEVICE),
@@ -704,8 +728,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "LANGUAGE": join(LANGUAGE),
   "PRIORITY": join(PRIORITY),
   "FEATURE": join(FEATURE),
-  "TASK": join(TASK),
-  "BUG": join(BUG)
+  "TASK": join(TASK)
 }>
 <#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
 <#global VIEW = getView(PERIOD) />
@@ -848,6 +871,10 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -866,10 +893,6 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   },
   "TASK": {
     "valuesQuery": "SELECT DISTINCT JIRA_ID FROM WORK_ITEMS WHERE TYPE=''TASK'' ORDER BY 1;",
-    "multiple": true
-  },
-  "BUG": {
-    "valuesQuery": "SELECT DISTINCT JIRA_ID FROM WORK_ITEMS WHERE TYPE=''BUG'' ORDER BY 1;",
     "multiple": true
   },
   "DEVICE": {
@@ -907,6 +930,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "USER": [],
   "PLATFORM": [],
   "PLATFORM_VERSION": [],
+  "BROWSER": [],
   "BROWSER_VERSION": [],
   "DEVICE": [],
   "ENV": [],
@@ -915,7 +939,6 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "LANGUAGE": [],
   "PRIORITY": [],
   "FEATURE": [],
-  "TASK": [],
   "BUG": [],
   "PERIOD": "Monthly",
   "BLOCKER": "false",
@@ -937,6 +960,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "TASK": join(TASK),
   "BUG": join(BUG),
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "DEVICE": join(DEVICE),
   "APP_VERSION": join(APP_VERSION),
   "LOCALE": join(LOCALE),
@@ -1191,6 +1215,10 @@ chart.setOption(option);', '{
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -1257,6 +1285,7 @@ chart.setOption(option);', '{
   "TASK": [],
   "BUG": [],
   "PLATFORM": [],
+  "BROWSER":[],
   "DEVICE": [],
   "APP_VERSION": [],
   "LOCALE": [],
@@ -1334,9 +1363,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
 
 <#global MULTIPLE_VALUES = {
   "PROJECTS.NAME": multiJoin(PROJECT, projects),
-  "USERS.USERNAME": join(USER),
-  "TASK": join(TASK),
-  "BUG": join(BUG)
+  "USERS.USERNAME": join(USER)
 }>
 <#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
 <#global CREATED_AT = getCreatedAt(PERIOD) />
@@ -1584,23 +1611,13 @@ chart.setOption(option);', '{
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
-  },
-  "TASK": {
-    "valuesQuery": "SELECT DISTINCT JIRA_ID FROM WORK_ITEMS WHERE TYPE=''TASK'' ORDER BY 1;",
-    "multiple": true
-  },  
-  "BUG": {
-    "valuesQuery": "SELECT DISTINCT JIRA_ID FROM WORK_ITEMS WHERE TYPE=''BUG'' ORDER BY 1;",
-    "multiple": true
   }
 }', '', '2019-05-13 13:17:40.339082', '2019-04-09 13:04:34.054318', '{
   "PERIOD": "Total",
   "PROJECT": ["UNKNOWN"],
   "PERSONAL": "false",
   "currentUserId": 1,
-  "USER": [],
-  "TASK": [],
-  "BUG": []
+  "USER": []
 }', false);
 
 
@@ -1615,6 +1632,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "TASK": join(TASK),
   "BUG": join(BUG),
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "DEVICE": join(DEVICE),
   "APP_VERSION": join(APP_VERSION),
   "LOCALE": join(LOCALE),
@@ -1866,6 +1884,10 @@ chart.setOption(option);', '{
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -1935,6 +1957,7 @@ chart.setOption(option);', '{
   "TASK": [],
   "BUG": [],
   "PLATFORM": [],
+  "BROWSER":[],
   "DEVICE": [],
   "APP_VERSION": [],
   "LOCALE": [],
@@ -1956,6 +1979,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "TASK": join(TASK),
   "BUG": join(BUG),
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "DEVICE": join(DEVICE),
   "APP_VERSION": join(APP_VERSION),
   "LOCALE": join(LOCALE),
@@ -2137,6 +2161,10 @@ SELECT count(*) AS "COUNT",
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -2207,6 +2235,7 @@ SELECT count(*) AS "COUNT",
   "TASK": [],
   "BUG": [],
   "PLATFORM": [],
+  "BROWSER":[],
   "DEVICE": [],
   "APP_VERSION": [],
   "LOCALE": [],
@@ -2451,6 +2480,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "TASK": join(TASK),
   "BUG": join(BUG),
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "DEVICE": join(DEVICE),
   "APP_VERSION": join(APP_VERSION),
   "LOCALE": join(LOCALE),
@@ -2642,6 +2672,10 @@ SELECT
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -2708,6 +2742,7 @@ SELECT
   "TASK": [],
   "BUG": [],
   "PLATFORM": [],
+  "BROWSER": [],
   "DEVICE": [],
   "APP_VERSION": [],
   "LOCALE": [],
@@ -2728,6 +2763,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "TASK": join(TASK),
   "BUG": join(BUG),
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "DEVICE": join(DEVICE),
   "APP_VERSION": join(APP_VERSION),
   "LOCALE": join(LOCALE),
@@ -2911,6 +2947,10 @@ SELECT
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -2975,6 +3015,7 @@ SELECT
   "TASK": [],
   "BUG": [],
   "PLATFORM": [],
+  "BROWSER": [],
   "DEVICE": [],
   "APP_VERSION": [],
   "LOCALE": [],
@@ -2993,6 +3034,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
 
 <#global MULTIPLE_VALUES = {
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "OWNER_USERNAME": join(USER),
   "PROJECT": multiJoin(PROJECT, projects),
   "DEVICE": join(DEVICE),
@@ -3159,6 +3201,10 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -3210,6 +3256,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "USER": [],
   "PLATFORM": ["chrome"],
   "PLATFORM_VERSION": [],
+  "BROWSER": [],
   "BROWSER_VERSION": [],
   "DEVICE": [],
   "ENV": [],
@@ -3236,6 +3283,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "TASK": join(TASK),
   "BUG": join(BUG),
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "DEVICE": join(DEVICE),
   "APP_VERSION": join(APP_VERSION),
   "LOCALE": join(LOCALE),
@@ -3646,6 +3694,10 @@ let lineRow = {
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -3706,6 +3758,7 @@ let lineRow = {
   "TASK": [],
   "BUG": [],
   "PLATFORM": [],
+  "BROWSER": [],
   "DEVICE": [],
   "APP_VERSION": [],
   "LOCALE": [],
@@ -3731,6 +3784,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "TASK": join(TASK),
   "BUG": join(BUG),
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "DEVICE": join(DEVICE),
   "APP_VERSION": join(APP_VERSION),
   "LOCALE": join(LOCALE),
@@ -3898,6 +3952,10 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -3962,6 +4020,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "PRIORITY": [],
   "FEATURE": [],
   "PLATFORM": [],
+  "BROWSER": [],
   "TASK": [],
   "BUG": [],
   "DEVICE": [],
@@ -3974,6 +4033,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
 }', false);
 
 
+
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (CALENDAR)', 'Calendar view of the pass rate per month, quarter or year.', 'OTHER', '
 <#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
 
@@ -3983,7 +4043,8 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "ENV": join(ENV),
   "PRIORITY": join(PRIORITY),
   "FEATURE": join(FEATURE),
-  "LOWER(PLATFORM)": join(PLATFORM)
+  "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER)
 }>
 <#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
 
@@ -3995,14 +4056,14 @@ SELECT
     ${WHERE_MULTIPLE_CLAUSE}
   GROUP BY 1
   ORDER BY 1
-  
-  
+
+
 <#--
     Generates WHERE clause for multiple choosen parameters
     @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
     @return - generated WHERE clause
   -->
-  
+
 <#function generateMultipleWhereClause map>
   <#local result = "" />
     <#if PERIOD?length = 4 || PERIOD = "YEAR">
@@ -4024,21 +4085,21 @@ SELECT
         <#local result = result + " to_char(created_at, ''YYYY-MM'') " + " LIKE ''${PERIOD}''"/>
       </#if>
     </#if>
-      
+
   <#list map?keys as key>
     <#if map[key] != "" >
       <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
         <#-- Ignore non supported filters for Personal chart: USER -->
         <#continue>
       </#if>
-      
+
       <#if result?length != 0>
         <#local result = result + " AND "/>
       </#if>
       <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
     </#if>
   </#list>
- 
+
   <#if result?length != 0 && PERSONAL == "true">
     <!-- add personal filter by currentUserId with AND -->
     <#local result = result + " AND OWNER_ID=${currentUserId} "/>
@@ -4046,7 +4107,14 @@ SELECT
     <!-- add personal filter by currentUserId without AND -->
     <#local result = " OWNER_ID=${currentUserId} "/>
   </#if>
- 
+
+  <#if PARENT_JOB != "">
+    <#if result?length != 0>
+      <#local result = result + " AND "/>
+    </#if>
+    <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
+  </#if>
+
   <#if result?length != 0>
     <#local result = " WHERE " + result/>
   </#if>
@@ -4074,19 +4142,19 @@ SELECT
 const data = [];
 const range = () => {
   let ranges = new Set();
-    
+
   dataset.forEach(({date, value}) => {
     const d = new Date(date);
     const range =  d.getFullYear() + "-" + (d.getMonth() + 1);
     const newDate = range + "-" +  d.getDate();
-    
+
     ranges.add(range);
     data.push(new Array(newDate, value));
   });
-  
+
   let temporary = [];
   for (let value of ranges) temporary.push(value);
-    
+
   return [temporary[0], data[data.length -1][0]]
 };
 
@@ -4097,19 +4165,19 @@ const color = () => {
     const colorArrLenght = 20;
     const greenValue = dataset[0].passed || 75;
     let colors = [];
-    
+
     const creatorColorArr = (color, count) => {
       for (var i = 0; i < Math.round(count); i++) colors.push(color);
     }
-  
+
     let passed = colorArrLenght - (colorArrLenght*greenValue/100);
     let aboard = (colorArrLenght - passed)/3;
     let failed = colorArrLenght - passed - aboard
-    
+
     creatorColorArr(green, passed);
     creatorColorArr(yellow, aboard);
     creatorColorArr(red, failed);
-  
+
     return colors.reverse()
 };
 
@@ -4172,7 +4240,7 @@ let option = {
 
 chart.setOption(option);', '{
   "PERIOD": {
-    "valuesQuery": "SELECT DISTINCT CASE WHEN  to_char(created_at, ''YYYY'') = to_char(CURRENT_DATE, ''YYYY'') THEN ''YEAR'' ELSE  to_char(created_at, ''YYYY'') END FROM total_view UNION SELECT DISTINCT CASE WHEN to_char(created_at, ''YYYY-Q'') = to_char(CURRENT_DATE, ''YYYY-Q'') THEN ''QUARTER'' ELSE  to_char(created_at, ''YYYY'') || ''-Q'' || to_char(created_at, ''Q'') END FROM total_view  UNION SELECT DISTINCT CASE WHEN  to_char(created_at, ''YYYY-MM'') = to_char(CURRENT_DATE, ''YYYY-MM'') THEN ''MONTH'' ELSE  to_char(created_at, ''YYYY-MM'') END FROM total_view ORDER BY 1 DESC;",
+    "valuesQuery": "SELECT ''YEAR'' UNION SELECT ''QUARTER'' UNION SELECT ''MONTH'' UNION SELECT DISTINCT to_char(created_at, ''YYYY'') FROM total_view UNION SELECT DISTINCT to_char(created_at, ''YYYY'') || ''-Q'' || to_char(created_at, ''Q'') FROM total_view UNION SELECT DISTINCT to_char(created_at, ''YYYY-MM'') FROM total_view ORDER BY 1 DESC;",
     "required": true
   },
   "PERSONAL": {
@@ -4199,6 +4267,10 @@ chart.setOption(option);', '{
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "ENV": {
     "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
     "multiple": true
@@ -4210,6 +4282,10 @@ chart.setOption(option);', '{
   "FEATURE": {
     "valuesQuery": "SELECT VALUE FROM TAGS WHERE NAME=''feature'' ORDER BY 1;",
     "multiple": true
+  },
+  "PARENT_JOB": {
+    "value": "",
+    "required": false
   }
 }', '{
   "PERIOD": "MONTH",
@@ -4219,7 +4295,9 @@ chart.setOption(option);', '{
   "PROJECT": [],
   "USER": ["anonymous"],
   "PLATFORM": [],
+  "BROWSER": [],
   "FEATURE": [],
   "ENV": [],
-  "PRIORITY": []
+  "PRIORITY": [],
+  "PARENT_JOB": ""
 }', false);
