@@ -300,12 +300,12 @@
             </if>
             <if test="null != platform">
                 <![CDATA[
-				   AND LOWER(TC.PLATFORM) = LOWER(#{platform})
+				   AND LOWER(C.PLATFORM) = LOWER(#{platform})
 				]]>
             </if>
             <if test="null != browser">
                 <![CDATA[
-				   AND LOWER(TC.BROWSER) = LOWER(#{platform})
+				   AND LOWER(C.BROWSER) = LOWER(#{platform})
 				]]>
             </if>
             <if test="null != date">
