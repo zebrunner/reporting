@@ -2296,7 +2296,7 @@ SELECT count(*) as "COUNT",
  </#switch>
  <#return result>
 </#function>
-', '{"columns": ["ENV", "REPORT", "BUG", "SUBJECT"]}', '{
+', '{"legend": ["ENV", "REPORT", "BUG", "SUBJECT"]}', '{
   "PERIOD": {
     "values": [
       "Last 24 Hours",
@@ -2728,7 +2728,7 @@ SELECT
     "value": "",
     "required": false
   }
-}', '{"columns": ["OWNER", "SUITE", "BUILD", "PASS", "FAIL", "DEFECT", "SKIP", "ABORT", "QUEUE", "TOTAL", "PASSED (%)", "FAILED (%)", "KNOWN ISSUE (%)", "SKIPPED (%)", "QUEUED (%)", "FAIL RATE (%)"], "defaultSize": {"height": 20, "width": 2}}
+}', '{"legend": ["OWNER", "SUITE", "BUILD", "PASS", "FAIL", "DEFECT", "SKIP", "ABORT", "QUEUE", "TOTAL", "PASSED (%)", "FAILED (%)", "KNOWN ISSUE (%)", "SKIPPED (%)", "QUEUED (%)", "FAIL RATE (%)"]}
 ', '2019-05-22 13:52:34.963878', '2019-04-09 17:06:51.739459', '{
   "PERIOD": "Monthly",
   "GROUP_BY": "TEST_SUITE_NAME",
