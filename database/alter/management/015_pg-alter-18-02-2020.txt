@@ -9,7 +9,8 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "ENV": join(ENV),
   "PRIORITY": join(PRIORITY),
   "FEATURE": join(FEATURE),
-  "LOWER(PLATFORM)": join(PLATFORM)
+  "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER)
 }>
 <#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
 
@@ -232,6 +233,10 @@ chart.setOption(option);', '{
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "ENV": {
     "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
     "multiple": true
@@ -256,6 +261,7 @@ chart.setOption(option);', '{
   "PROJECT": [],
   "USER": ["anonymous"],
   "PLATFORM": [],
+  "BROWSER": [],
   "FEATURE": [],
   "ENV": [],
   "PRIORITY": [],
