@@ -305,7 +305,7 @@
             </if>
             <if test="null != browser">
                 <![CDATA[
-				   AND LOWER(C.BROWSER) = LOWER(#{platform})
+				   AND LOWER(C.BROWSER) = LOWER(#{browser})
 				]]>
             </if>
             <if test="null != date">
