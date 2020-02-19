@@ -41,6 +41,7 @@ public class TestRunSearchCriteria extends SearchCriteria implements DateSearchC
     private Long testSuiteId;
     private String environment;
     private String platform;
+    private String browser;
     private Status status;
     private Boolean reviewed;
     private FilterSearchCriteria filterSearchCriteria;

@@ -69,5 +69,4 @@ public interface TestRunMapper {
 
     List<String> getEnvironments();
 
-    List<String> getPlatforms();
 }

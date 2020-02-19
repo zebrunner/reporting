@@ -15,9 +15,10 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
+import com.qaprosoft.zafira.models.db.TestConfig;
 import org.apache.ibatis.annotations.Param;
 
-import com.qaprosoft.zafira.models.db.TestConfig;
+import java.util.List;
 
 public interface TestConfigMapper {
     void createTestConfig(TestConfig testConfig);
@@ -29,4 +30,9 @@ public interface TestConfigMapper {
     void updateTestConfig(TestConfig testConfig);
 
     void deleteTestConfigById(long id);
+
+    List<String> getPlatforms();
+
+    List<String> getBrowsers();
+
 }
