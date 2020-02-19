@@ -298,6 +298,16 @@
 				   AND LOWER(TR.ENV) = LOWER(#{environment})
 				]]>
             </if>
+            <if test="null != platform">
+                <![CDATA[
+				   AND LOWER(TC.PLATFORM) = LOWER(#{platform})
+				]]>
+            </if>
+            <if test="null != browser">
+                <![CDATA[
+				   AND LOWER(TC.BROWSER) = LOWER(#{platform})
+				]]>
+            </if>
             <if test="null != date">
                 <![CDATA[
 				   AND TR.STARTED_AT BETWEEN #{date}::timestamp AND #{date}::timestamp + '24:00:00'::interval
