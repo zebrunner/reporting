@@ -98,8 +98,8 @@ public class JiraIntegrationAdapter extends AbstractIntegrationAdapter implement
 
     private IssueDTO buildIssue(JSONObject issue) {
         JSONObject fields = issue.getJSONObject("fields");
-        String assigneeName = getObjectValue(fields, "assignee", "name");
-        String reporterName =  getObjectValue(fields, "reporter", "name");
+        String assigneeName = getObjectValue(fields, "assignee", "displayName");
+        String reporterName =  getObjectValue(fields, "reporter", "displayName");
         String status = getObjectValue(fields, "status", "name");
         String summary = fields.optString("summary");
         return new IssueDTO(assigneeName, reporterName, summary, status);
