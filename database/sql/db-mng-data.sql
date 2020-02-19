@@ -631,7 +631,7 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -872,7 +872,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -1216,7 +1216,7 @@ chart.setOption(option);', '{
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -1885,7 +1885,7 @@ chart.setOption(option);', '{
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -2162,7 +2162,7 @@ SELECT count(*) AS "COUNT",
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -2673,7 +2673,7 @@ SELECT
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -2948,7 +2948,7 @@ SELECT
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -3202,7 +3202,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -3695,7 +3695,7 @@ let lineRow = {
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -3953,7 +3953,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -4268,7 +4268,7 @@ chart.setOption(option);', '{
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "ENV": {

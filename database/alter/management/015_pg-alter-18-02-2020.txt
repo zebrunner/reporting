@@ -234,7 +234,7 @@ chart.setOption(option);', '{
     "multiple": true
   },
   "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "ENV": {
