@@ -49,15 +49,54 @@
 		]]>
     </select>
 
+<!--    Artificially clear platform list for prod db's-->
+<!--    To be removed as soon as db content will valid-->
     <select id="getPlatforms" resultType="java.lang.String">
 		<![CDATA[
         SELECT DISTINCT LOWER(TC.PLATFORM)
         FROM TEST_CONFIGS TC
-        UNION
+        WHERE
+            TC.PLATFORM IS NOT NULL AND
+            TC.PLATFORM <> '' AND
+            TC.PLATFORM <> '*' AND
+                LOWER(TC.PLATFORM) NOT IN (
+                                           'null',
+                                           'chrome',
+                                           'edge',
+                                           'microsoftedge',
+                                           'firefox',
+                                           'ie',
+                                           'iexplore',
+                                           'internet explorer',
+                                           'safari',
+                                           'opera',
+                                           'operablink',
+                                           'opera_blink')
+        ORDER BY LOWER(TC.PLATFORM)
+        ]]>
+	</select>
+
+    <!--    Artificially clear browser list for prod db's-->
+    <!--    To be removed as soon as db content will valid-->
+    <select id="getBrowsers" resultType="java.lang.String">
+		<![CDATA[
         SELECT DISTINCT LOWER(TC.BROWSER)
         FROM TEST_CONFIGS TC
-        ORDER BY LOWER(TC.PLATFORM)
-        LIMIT 10000
+        WHERE
+            TC.BROWSER IS NOT NULL AND
+            TC.BROWSER <> '' AND
+            TC.BROWSER <> '*' AND
+                LOWER(TC.BROWSER) NOT IN (
+                                          'null',
+                                          'android',
+                                          'api',
+                                          'appletv',
+                                          'ios',
+                                          'iphone',
+                                          'mac',
+                                          'mobile',
+                                          'roku')
+        ORDER BY LOWER(TC.BROWSER)
         ]]>
 	</select>
 

@@ -92,6 +92,11 @@ public class TestConfigService {
     }
 
     @Transactional(readOnly = true)
+    public List<String> getBrowsers() {
+        return testConfigMapper.getBrowsers();
+    }
+
+    @Transactional(readOnly = true)
     public TestConfig searchTestConfig(TestConfig testConfig) {
         return testConfigMapper.searchTestConfig(testConfig);
     }

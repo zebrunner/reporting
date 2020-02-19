@@ -34,4 +34,6 @@ public interface TestConfigMapper {
 
     List<String> getPlatforms();
 
+    List<String> getBrowsers();
+
 }

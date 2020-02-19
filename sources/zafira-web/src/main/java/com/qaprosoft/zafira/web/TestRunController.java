@@ -320,6 +320,12 @@ public class TestRunController extends AbstractController implements TestRunDocu
         return testConfigService.getPlatforms();
     }
 
+    @GetMapping("/browsers")
+    @Override
+    public List<String> getBrowsers() {
+        return testConfigService.getBrowsers();
+    }
+
     @GetMapping("/jobConsoleOutput/{count}/{fullCount}")
     @Override
     public Map<Integer, String> getConsoleOutput(
