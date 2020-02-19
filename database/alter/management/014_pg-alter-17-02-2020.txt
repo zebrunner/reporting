@@ -12,6 +12,7 @@ UPDATE WIDGET_TEMPLATES SET SQL = '
 
 <#global MULTIPLE_VALUES = {
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "PROJECT": multiJoin(PROJECT, projects),
   "OWNER_USERNAME": join(USER),
   "ENV": join(ENV),
@@ -144,6 +145,10 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -179,6 +184,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "PRIORITY": [],
   "FEATURE": [],
   "PLATFORM": ["*"],
+  "BROWSER":[],
   "TASK": [],
   "BUG": []
 }' WHERE NAME = 'TESTS EXECUTION ROI (MAN-HOURS)';
@@ -334,6 +340,7 @@ UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_TOTAL_PARAMS = ["DEVICE", "AP
 
 <#global MULTIPLE_VALUES = {
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "OWNER_USERNAME": join(USER),
   "PROJECT": multiJoin(PROJECT, projects),
   "DEVICE": join(DEVICE),
@@ -632,6 +639,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
   "GROUP_BY": {
     "values": [
       "PLATFORM",
+      "BROWSER",
       "OWNER_USERNAME",
       "PROJECT",
       "DEVICE",
@@ -652,6 +660,10 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
   },
   "PLATFORM": {
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
+    "multiple": true
+  },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
     "multiple": true
   },
   "USER": {
@@ -719,6 +731,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "USER": [],
   "PLATFORM": [],
   "PLATFORM_VERSION": [],
+  "BROWSER": [],
   "BROWSER_VERSION": [],
   "DEVICE": [],
   "ENV": [],
@@ -745,7 +758,8 @@ UPDATE WIDGET_TEMPLATES SET DESCRIPTION = 'A number of unique application bugs d
 UPDATE WIDGET_TEMPLATES SET TYPE = 'TABLE' WHERE NAME = 'APPLICATION ISSUES (BLOCKERS) COUNT';
 
 UPDATE WIDGET_TEMPLATES SET SQL = '<#global MULTIPLE_VALUES = {
-  "PLATFORM": join(PLATFORM),
+  "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "OWNER_USERNAME": join(USER),
   "PROJECT": multiJoin(PROJECT, projects),
   "DEVICE": join(DEVICE),
@@ -901,6 +915,10 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -959,6 +977,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "USER": [],
   "PLATFORM": [],
   "PLATFORM_VERSION": [],
+  "BROWSER": [],
   "BROWSER_VERSION": [],
   "DEVICE": [],
   "ENV": [],
@@ -996,6 +1015,7 @@ UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_TOTAL_PARAMS = ["DEVICE", "AP
   "TASK": join(TASK),
   "BUG": join(BUG),
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "DEVICE": join(DEVICE),
   "APP_VERSION": join(APP_VERSION),
   "LOCALE": join(LOCALE),
@@ -1256,6 +1276,10 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -1323,6 +1347,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "TASK": [],
   "BUG": [],
   "PLATFORM": [],
+  "BROWSER":[],
   "DEVICE": [],
   "APP_VERSION": [],
   "LOCALE": [],
@@ -1701,6 +1726,7 @@ UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USE
   "TASK": join(TASK),
   "BUG": join(BUG),
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "DEVICE": join(DEVICE),
   "APP_VERSION": join(APP_VERSION),
   "LOCALE": join(LOCALE),
@@ -1954,6 +1980,10 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -2025,6 +2055,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "TASK": [],
   "BUG": [],
   "PLATFORM": [],
+  "BROWSER":[],
   "DEVICE": [],
   "APP_VERSION": [],
   "LOCALE": [],
@@ -2054,6 +2085,7 @@ UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USE
   "TASK": join(TASK),
   "BUG": join(BUG),
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "DEVICE": join(DEVICE),
   "APP_VERSION": join(APP_VERSION),
   "LOCALE": join(LOCALE),
@@ -2238,6 +2270,10 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -2310,6 +2346,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "TASK": [],
   "BUG": [],
   "PLATFORM": [],
+  "BROWSER":[],
   "DEVICE": [],
   "APP_VERSION": [],
   "LOCALE": [],
@@ -2606,6 +2643,7 @@ UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_TOTAL_PARAMS = ["DEVICE", "AP
   "TASK": join(TASK),
   "BUG": join(BUG),
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "DEVICE": join(DEVICE),
   "APP_VERSION": join(APP_VERSION),
   "LOCALE": join(LOCALE),
@@ -2799,6 +2837,10 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -2866,6 +2908,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "TASK": [],
   "BUG": [],
   "PLATFORM": [],
+  "BROWSER": [],
   "DEVICE": [],
   "APP_VERSION": [],
   "LOCALE": [],
@@ -2895,6 +2938,7 @@ UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USE
   "TASK": join(TASK),
   "BUG": join(BUG),
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "DEVICE": join(DEVICE),
   "APP_VERSION": join(APP_VERSION),
   "LOCALE": join(LOCALE),
@@ -3081,6 +3125,10 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -3147,6 +3195,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "TASK": [],
   "BUG": [],
   "PLATFORM": [],
+  "BROWSER": [],
   "DEVICE": [],
   "APP_VERSION": [],
   "LOCALE": [],
@@ -3172,6 +3221,7 @@ UPDATE WIDGET_TEMPLATES SET SQL = '<#-- TODO: remove PARENT_JOB from IGNORE_TOTA
 
 <#global MULTIPLE_VALUES = {
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "OWNER_USERNAME": join(USER),
   "PROJECT": multiJoin(PROJECT, projects),
   "DEVICE": join(DEVICE),
@@ -3341,6 +3391,10 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -3394,6 +3448,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "USER": [],
   "PLATFORM": ["chrome"],
   "PLATFORM_VERSION": [],
+  "BROWSER": [],
   "BROWSER_VERSION": [],
   "DEVICE": [],
   "ENV": [],
@@ -3428,6 +3483,7 @@ UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USE
   "TASK": join(TASK),
   "BUG": join(BUG),
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "DEVICE": join(DEVICE),
   "APP_VERSION": join(APP_VERSION),
   "LOCALE": join(LOCALE),
@@ -3840,6 +3896,10 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -3902,6 +3962,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "TASK": [],
   "BUG": [],
   "PLATFORM": [],
+  "BROWSER": [],
   "DEVICE": [],
   "APP_VERSION": [],
   "LOCALE": [],
@@ -3931,6 +3992,7 @@ UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_TOTAL_PARAMS = ["DEVICE", "AP
   "TASK": join(TASK),
   "BUG": join(BUG),
   "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
   "DEVICE": join(DEVICE),
   "APP_VERSION": join(APP_VERSION),
   "LOCALE": join(LOCALE),
@@ -4101,6 +4163,10 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '' ORDER BY 1;",
+    "multiple": true
+  },
   "USER": {
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
@@ -4167,6 +4233,7 @@ UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "PRIORITY": [],
   "FEATURE": [],
   "PLATFORM": [],
+  "BROWSER": [],
   "TASK": [],
   "BUG": [],
   "DEVICE": [],
