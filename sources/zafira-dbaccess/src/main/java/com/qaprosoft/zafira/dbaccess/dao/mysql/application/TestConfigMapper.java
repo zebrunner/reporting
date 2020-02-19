@@ -19,8 +19,6 @@ import org.apache.ibatis.annotations.Param;
 
 import com.qaprosoft.zafira.models.db.TestConfig;
 
-import java.util.List;
-
 public interface TestConfigMapper {
     void createTestConfig(TestConfig testConfig);
 
