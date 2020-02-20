@@ -39,4 +39,7 @@ public class TestSessionSearchCriteria extends SearchCriteria {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime toDate;
 
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime date;
+
 }

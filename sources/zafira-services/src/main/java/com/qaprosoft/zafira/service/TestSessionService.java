@@ -55,7 +55,7 @@ public class TestSessionService {
     @Transactional(readOnly = true)
     public SearchResult<TestSession> search(TestSessionSearchCriteria criteria) {
         Pageable pageable = buildPageable(criteria);
-        Specification<TestSession> specification = buildSpecification(criteria.getQuery(), criteria.getStatus(), criteria.getPlatform(), criteria.getFromDate(), criteria.getToDate());
+        Specification<TestSession> specification = buildSpecification(criteria.getQuery(), criteria.getStatus(), criteria.getPlatform(), criteria.getDate(), criteria.getFromDate(), criteria.getToDate());
         Page<TestSession> page = testSessionRepository.findAll(specification, pageable);
         return SearchResult.<TestSession>builder()
                 .results(page.getContent())
@@ -81,7 +81,7 @@ public class TestSessionService {
         return PageRequest.of(criteria.getPage(), criteria.getPageSize(), sortBy);
     }
 
-    private Specification<TestSession> buildSpecification(String query, TestSession.Status status, String platform, LocalDateTime startedAfter, LocalDateTime endedBefore) {
+    private Specification<TestSession> buildSpecification(String query, TestSession.Status status, String platform, LocalDateTime date, LocalDateTime startedAfter, LocalDateTime endedBefore) {
         Specification<TestSession> specification = Specification.where(null);
         if (query != null) {
             specification = specification
@@ -97,6 +97,10 @@ public class TestSessionService {
         }
         if (platform != null) {
             specification = specification.and((root, q, builder) -> builder.equal(root.get("browserName"), platform));
+        }
+        if (date != null) {
+            specification = specification.and((root, q, builder) -> builder.greaterThan(root.get("startedAt"), date.minusDays(1)))
+                                         .and((root, q, builder) -> builder.lessThanOrEqualTo(root.get("endedAt"), date));
         }
         if (startedAfter != null) {
             specification = specification.and((root, q, builder) -> builder.greaterThanOrEqualTo(root.get("startedAt"), startedAfter));
