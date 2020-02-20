@@ -97,8 +97,10 @@ public class TestConfig extends AbstractEntity {
     }
 
     private void getResultingPlatform(StringBuilder resultingPlatform, String name, String version) {
-        resultingPlatform.append(name)
-                         .append(" ")
-                         .append(version);
+        resultingPlatform.append(name);
+        if (!isEmpty(version)) {
+            resultingPlatform.append(" ")
+                             .append(version);
+        }
     }
 }

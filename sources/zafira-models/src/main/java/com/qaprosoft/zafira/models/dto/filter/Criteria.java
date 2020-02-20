@@ -54,6 +54,7 @@ public class Criteria {
         JOB_URL,
         ENV,
         PLATFORM,
+        BROWSER,
         DATE,
         PROJECT
     }
