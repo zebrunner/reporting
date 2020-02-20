@@ -81,7 +81,8 @@
     "TEST_SUITE": "TS.NAME",
     "JOB_URL": "J.JOB_URL",
     "ENV": "TR.ENV",
-    "PLATFORM": "TR.PLATFORM",
+    "PLATFORM": "C.PLATFORM",
+    "BROWSER": "C.BROWSER",
     "DATE": "TR.STARTED_AT",
     "PROJECT": "P.NAME"
 }/>
