@@ -61,6 +61,12 @@ public class StoredSubject {
                     });
                     add(new Criteria() {
                         {
+                            setName(Name.BROWSER);
+                            setOperators(Arrays.asList(Operator.EQUALS, Operator.NOT_EQUALS));
+                        }
+                    });
+                    add(new Criteria() {
+                        {
                             setName(Name.DATE);
                             setOperators(Arrays.asList(Operator.EQUALS, Operator.NOT_EQUALS, Operator.BEFORE,
                                     Operator.AFTER, Operator.LAST_24_HOURS, Operator.LAST_7_DAYS, Operator.LAST_14_DAYS,
