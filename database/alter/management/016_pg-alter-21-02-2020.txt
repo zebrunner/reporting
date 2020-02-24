@@ -1,5 +1,4 @@
 set schema 'management';
-SET SCHEMA 'zafira';
 
 UPDATE WIDGET_TEMPLATES SET NAME = 'PASS RATE (PIE)'  WHERE NAME = 'PASS RATE';
 UPDATE WIDGET_TEMPLATES SET NAME = 'PASS RATE (PIE + LINE)'  WHERE NAME = 'MILESTONE DETAILS';
@@ -7,28 +6,6 @@ UPDATE WIDGET_TEMPLATES SET NAME = 'PASS RATE (BAR)'  WHERE NAME = 'PASS RATE (%
 UPDATE WIDGET_TEMPLATES SET NAME = 'PASS RATE (LINE)'  WHERE NAME = 'PASS RATE TREND';
 
 
-UPDATE WIDGETS SET TITLE = '30 DAYS PASS RATE BY PROJECT (%)' WHERE NAME = 'PASS RATE (BAR)';
-UPDATE WIDGETS SET PARAMS_CONFIG = '{
-  "PERIOD": "Last 30 Days",
-  "GROUP_BY": "PROJECT",
-  "PROJECT": [],
-  "PLATFORM": [],
-  "USER": [],
-  "ENV": [],
-  "PRIORITY": [],
-  "FEATURE": [],
-  "TASK": [],
-  "Separator": "Below params are not applicable for Total period!",
-  "DEVICE": [],
-  "APP_VERSION": [],
-  "LOCALE": [],
-  "LANGUAGE": [],
-  "JOB_NAME": [],
-  "PARENT_JOB": "",
-  "PARENT_BUILD": "",
-  "hashcode": "1893229022",
-  "dashboardName": "General"
-}' WHERE NAME = 'PASS RATE (BAR)';
 
 
 
