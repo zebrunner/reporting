@@ -21,6 +21,14 @@ SELECT
     FROM total_view
     ${WHERE_MULTIPLE_CLAUSE}
   GROUP BY 1
+UNION ALL
+SELECT 
+    to_char(created_at, ''YYYY-MM-DD'') as "date",
+    ROUND(sum(passed)*100/sum(total)) AS "value",
+    ''${PASSED_VALUE}'' as "passed"
+    FROM nightly_view
+    ${WHERE_MULTIPLE_CLAUSE}
+  GROUP BY 1 
   ORDER BY 1
 
 
@@ -206,7 +214,7 @@ let option = {
 
 chart.setOption(option);', '{
   "PERIOD": {
-    "valuesQuery": "SELECT ''YEAR'' UNION SELECT ''QUARTER'' UNION SELECT ''MONTH'' UNION SELECT DISTINCT to_char(created_at, ''YYYY'') FROM total_view UNION SELECT DISTINCT to_char(created_at, ''YYYY'') || ''-Q'' || to_char(created_at, ''Q'') FROM total_view UNION SELECT DISTINCT to_char(created_at, ''YYYY-MM'') FROM total_view ORDER BY 1 DESC;",
+    "valuesQuery": "SELECT ''YEAR'' UNION ALL SELECT ''QUARTER'' UNION ALL SELECT ''MONTH'' UNION ALL SELECT DISTINCT to_char(created_at, ''YYYY'') FROM total_view UNION ALL SELECT DISTINCT to_char(created_at, ''YYYY'') || ''-Q'' || to_char(created_at, ''Q'') FROM total_view UNION ALL SELECT DISTINCT to_char(created_at, ''YYYY-MM'') FROM total_view UNION SELECT DISTINCT to_char(created_at, ''YYYY-MM'') FROM NIGHTLY_VIEW ORDER BY 1 DESC;",
     "required": true
   },
   "PERSONAL": {
