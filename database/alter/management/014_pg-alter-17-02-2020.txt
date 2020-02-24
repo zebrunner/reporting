@@ -1023,7 +1023,7 @@ UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_TOTAL_PARAMS = ["DEVICE", "AP
 }>
 <#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
 <#global VIEW = getView(PERIOD) />
-<#global GROUP_AND_ORDER_BY = getGroupBy(PERIOD, PARENT_JOB) />
+<#global GROUP_AND_ORDER_BY = getCreatedAt(PERIOD) />
 
 SELECT
     ${GROUP_AND_ORDER_BY} AS "CREATED_AT",
@@ -1079,21 +1079,6 @@ SELECT
  <#if result?length != 0>
   <#local result = " WHERE " + result/>
  </#if>
- <#return result>
-</#function>
-
-<#--
-    Retrieves actual view name by abstract view description
-    @value - abstract view description
-    @return - actual view name
-  -->
-<#function getGroupBy Period, parentJob>
-  <#local result = "" />
-  <#if parentJob != "">
-    <#local result = "UPSTREAM_JOB_BUILD_NUMBER" />
-  <#else>
-    <#local result = getCreatedAt(PERIOD) />
-  </#if>
  <#return result>
 </#function>
 
