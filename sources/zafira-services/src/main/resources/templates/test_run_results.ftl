@@ -55,31 +55,18 @@
             <tr style="font-size: 16px;
                        line-height: 1.63;
                        text-align: left;">
-            <#if configuration['mobile_platform_name']?? || configuration['mobile_device_name']?? || configuration['browser']?? || ((configuration['platform'] ??) && (configuration['platform']?lower_case == 'api'))>
+            <#if configuration['browser']?? || (configuration['platform'] ??)>
                 <td style="color: #808a93">Platform:</td>
                 <td style="font-weight: bold;color: #011627;">
-                    <#if configuration['platform']?? && (configuration['platform'] != 'NULL') && (configuration['platform'] != '') && (configuration['platform'] != '*')>
+                    <#if configuration['platform']??>
                         ${configuration['platform']}
-                    </#if>
-
-                    <#if configuration['mobile_device_name']?? && (configuration['mobile_device_name'] != 'NULL') && (configuration['mobile_device_name'] != '')>
-                        ${configuration['mobile_device_name']}
-                    </#if>
-
-                    <#if configuration['mobile_platform_name']?? && (configuration['mobile_platform_name'] != 'NULL') && (configuration['mobile_platform_name'] != '') >
-                         - ${configuration['mobile_platform_name']}
-                    </#if>
-
-                    <#if configuration['mobile_platform_version']?? && (configuration['mobile_platform_version'] != 'NULL') && (configuration['mobile_platform_version'] != '') >
-                        ${configuration['mobile_platform_version']}
-                    </#if>
-
-                    <#if ((!configuration['platform'] ??) || (configuration['platform'] ?? && configuration['platform']?lower_case != 'api'))>
-                        <#if (configuration['browser']??) && (configuration['browser'] != 'NULL') && (configuration['browser'] != '')>
-                            ${configuration['browser']}
+                        <#if configuration['platform_version']??>
+                            - ${configuration['platform_version']}
                         </#if>
-
-                        <#if (configuration['browser_version'])?? && (configuration['browser_version'] != "*") && (configuration['browser_version'] != 'NULL') && (configuration['browser_version'] != "")>
+                    </#if>
+                    <#if (configuration['browser']??)>
+                        ${configuration['browser']}
+                        <#if (configuration['browser_version'])??>
                             - ${configuration['browser_version']}
                         </#if>
                     </#if>
