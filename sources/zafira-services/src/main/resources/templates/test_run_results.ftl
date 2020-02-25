@@ -38,36 +38,36 @@
                 <td style="width: 120px;color: #808a93;">Environment:</td>
                 <td style="font-weight: bold;color: #011627;">
                     ${testRun.env}
-                    <#if configuration['url']?? && (configuration['url'] != 'NULL') && (configuration['url'] != '')>
-                         - <a href="${configuration['url']}">${configuration['url']}</a>
+                    <#if testRun.config.url ??>
+                         - <a href="${testRun.config.url}">${testRun.config.url}</a>
                     </#if>
                 </td>
             </tr>
             </#if>
-            <#if configuration['app_version'] ??>
+            <#if testRun.config.appVersion ??>
             <tr style="font-size: 16px;
                        line-height: 1.63;
                        text-align: left;">
                 <td style="color: #808a93" >Version:</td>
-                <td style="font-weight: bold;color: #011627;">${configuration['app_version']} </td>
+                <td style="font-weight: bold;color: #011627;">${testRun.config.appVersion} </td>
             </tr>
             </#if>
             <tr style="font-size: 16px;
                        line-height: 1.63;
                        text-align: left;">
-            <#if configuration['browser']?? || (configuration['platform'] ??)>
+            <#if testRun.config.platform ?? || testRun.config.browser ??>
                 <td style="color: #808a93">Platform:</td>
                 <td style="font-weight: bold;color: #011627;">
-                    <#if configuration['platform']??>
-                        ${configuration['platform']}
-                        <#if configuration['platform_version']??>
-                            - ${configuration['platform_version']}
+                    <#if testRun.config.platform ??>
+                        ${testRun.config.platform}
+                        <#if testRun.config.platformVersion ??>
+                            - ${testRun.config.platformVersion}
                         </#if>
                     </#if>
-                    <#if (configuration['browser']??)>
-                        ${configuration['browser']}
-                        <#if (configuration['browser_version'])??>
-                            - ${configuration['browser_version']}
+                    <#if testRun.config.browser ??>
+                        ${testRun.config.browser}
+                        <#if (testRun.config.browserVersion)??>
+                            - ${testRun.config.browserVersion}
                         </#if>
                     </#if>
                 </td>
@@ -92,8 +92,8 @@
                        text-align: left;">
                 <td style="color: #808a93">Test job URL:</td>
                 <td style="font-weight: bold;color: #011627;">
-                    <#if configuration['zafira_service_url']?? && (configuration['zafira_service_url'] != 'NULL') && (configuration['zafira_service_url'] != '')>
-                        <a href="${configuration['zafira_service_url']}/tests/runs/${testRun.id?c}">Zafira</a>
+                    <#if customValues['zafira_service_url']?? && (customValues['zafira_service_url'] != 'NULL') && (customValues['zafira_service_url'] != '')>
+                        <a href="${customValues['zafira_service_url']}/tests/runs/${testRun.id?c}">Zafira</a>
                     </#if>
                 </td>
             </tr>
@@ -155,23 +155,24 @@
                     </#if>
                 </td>
             </tr>
-            <#if configuration['language']?? && configuration['language'] != '' && configuration['language'] != 'en_US' && configuration['language'] != 'en' && configuration['language'] != 'US'>
+            <#if testRun.config.language ?? && testRun.config.language != 'en_US'>
             <tr style="font-size: 16px;
                        line-height: 1.63;
                        text-align: left;">
                 <td style="color: #808a93">Language: </td>
                 <td style="font-weight: bold;color: #011627;">
-                    ${configuration['language']}
+                    ${testRun.config.language}
                 </td>
             </tr>
             </#if>
-            <#if configuration['locale']?? && configuration['locale'] != '' && configuration['locale'] != 'en_US' && configuration['locale'] != 'en' && configuration['locale'] != 'US'>
+            <#if testRun.config.locale ?? && testRun.config.locale != 'en_US'
+            >
                 <tr style="font-size: 16px;
                            line-height: 1.63;
                            text-align: left;">
                     <td style="color: #808a93">Locale: </td>
                     <td style="font-weight: bold;color: #011627;">
-                        ${configuration['locale']}
+                        ${testRun.config.locale}
                     </td>
                 </tr>
             </#if>
@@ -370,13 +371,13 @@
                                    line-height: 1.38;
                                    text-align: center;
                                    color: #ffffff;">
-                            <#if configuration['zafira_service_url']?? && (configuration['zafira_service_url'] != 'NULL') && (configuration['zafira_service_url'] != '')>
+                            <#if customValues['zafira_service_url']?? && (customValues['zafira_service_url'] != 'NULL') && (customValues['zafira_service_url'] != '')>
                                 <a style="font-size: 13px;
                                           font-weight: bold;
                                           line-height: 1.38;
                                           text-align: center;
                                           color: #ffffff;"
-                                   href="${configuration['zafira_service_url']}/tests/runs/${testRun.id?c}/info/${test.id?c}">Logs</a>
+                                   href="${customValues['zafira_service_url']}/tests/runs/${testRun.id?c}/info/${test.id?c}">Logs</a>
                             </#if>
                         </td>
 	            	</tr>
