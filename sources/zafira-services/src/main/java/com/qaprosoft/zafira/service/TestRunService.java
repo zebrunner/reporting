@@ -797,14 +797,13 @@ public class TestRunService implements ProjectReassignable {
     }
 
     private TestRunResultsEmail buildTestRunResultEmail(TestRun testRun, List<Test> tests) {
-        Configuration configuration = readArguments(testRun.getConfigXML());
-        // Forward from API to Web
-        Argument zafiraServiceUrlArgument = new Argument("zafira_service_url", urlResolver.buildWebURL());
-        configuration.getArg().add(zafiraServiceUrlArgument);
 
         tests.forEach(test -> test.setArtifacts(new TreeSet<>(test.getArtifacts())));
 
-        return new TestRunResultsEmail(configuration, testRun, tests);
+        TestRunResultsEmail testRunResultsEmail = new TestRunResultsEmail(testRun, tests);
+        testRunResultsEmail.getCustomValues().put("zafira_service_url", urlResolver.buildWebURL());
+
+        return testRunResultsEmail;
     }
 
     private String getJiraUrl() {
