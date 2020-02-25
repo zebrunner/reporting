@@ -13,26 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
+package com.qaprosoft.zafira.service.cache;
 
-import com.qaprosoft.zafira.models.db.TestConfig;
-import org.apache.ibatis.annotations.Param;
+import com.qaprosoft.zafira.models.db.User;
 
-import java.util.List;
+public interface UserCacheableService {
 
-public interface TestConfigMapper {
-    void createTestConfig(TestConfig testConfig);
+    User getUserByIdTrusted(long id);
 
-    TestConfig getTestConfigById(long id);
+    User updateUser(User user);
 
-    TestConfig searchTestConfig(@Param("testConfig") TestConfig testConfig);
+    User updateStatus(User user);
 
-    void updateTestConfig(TestConfig testConfig);
+    User addUserToGroup(User user, long groupId);
 
-    void deleteTestConfigById(long id);
-
-    List<String> getPlatforms();
-
-    List<String> getBrowsers();
+    User deleteUserFromGroup(long groupId, long userId);
 
 }

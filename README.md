@@ -158,8 +158,8 @@ However there are a few things to pay attention to:
     `ZAFIRA_WEB_HOST=` should point to host machine, where front-end application is deployed
     `ZAFIRA_API_HOST=` should point to host machine, where back-end (or ELB sitting in front of it) application is deployed
 2. **Secrets: crypto salt and auth token**
-    `AUTH_TOKEN_SECRET=` value is a signature verification key that is used to validate any discovered JWS digital signatures and thus should not be set to default one
-    `CRYPTO_SALT=` value is by application for encryption of sensitive settings (such as passwords, integration settings, etc) and thus should not be set to default one
+    `AUTH_TOKEN_SECRET=` value is a signature verification key that is used to validate any discovered JWS digital signatures and thus should not be set to default one. Note: It should be **randomized base64 encoded** string
+    `CRYPTO_SALT=` value is by application for encryption of sensitive settings (such as passwords, integration settings, etc) and thus should not be set to default one. Note: It should be randomized alpha-numeric string.
 
 Please note, that we do not provide on-premise production deployment guide for Zafira. However, if that is something you might be interested in, go ahead and check out our own [QPS-Infra](https://www.qps-infra.io) at https://www.qps-infra.io.
 Wanna jump straight to testing with Zafira skipping all of the deployment and maintenance hassle? Check out [Zebrunner](https://zebrunner.com), Cloud-native version of Zafira at https://zebrunner.com.

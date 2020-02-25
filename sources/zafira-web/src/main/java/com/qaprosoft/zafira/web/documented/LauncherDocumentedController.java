@@ -44,7 +44,7 @@ public interface LauncherDocumentedController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "launcherDTO", paramType = "body", dataType = "LauncherDTO", required = true, value = "The launcher to create"),
-            @ApiImplicitParam(name = "automationServerId", paramType = "query", dataType = "number", value = "The automation server id with which the launcher will be connected")
+            @ApiImplicitParam(name = "automationServerId", paramType = "query", dataTypeClass = Long.class, value = "The automation server id with which the launcher will be connected")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the created launcher", response = LauncherDTO.class),
@@ -61,7 +61,7 @@ public interface LauncherDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The launcher id")
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The launcher id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the found launcher", response = LauncherDTO.class),
@@ -107,7 +107,7 @@ public interface LauncherDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The launcher id")
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The launcher id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "The launcher was deleted successfully")
@@ -123,7 +123,7 @@ public interface LauncherDocumentedController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "launcherDTO", paramType = "body", dataType = "LauncherDTO", required = true, value = "The launcher to build"),
-            @ApiImplicitParam(name = "providerId", paramType = "query", dataType = "number", value = "The test automation provider id")
+            @ApiImplicitParam(name = "providerId", paramType = "query", dataTypeClass = Long.class, value = "The test automation provider id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "The launcher job was built successfully"),
@@ -142,9 +142,9 @@ public interface LauncherDocumentedController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "payload", paramType = "body", dataType = "LauncherWebHookPayload", required = true, value = "The job to create or update"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The launcher id"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The launcher id"),
             @ApiImplicitParam(name = "ref", paramType = "path", dataType = "string", required = true, value = "Launcher preset reference key"),
-            @ApiImplicitParam(name = "providerId", paramType = "query", dataType = "number", value = "Test automation provider id")
+            @ApiImplicitParam(name = "providerId", paramType = "query", dataTypeClass = Long.class, value = "Test automation provider id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns a callback reference key", response = String.class),
@@ -163,7 +163,7 @@ public interface LauncherDocumentedController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "queueItemUrl", paramType = "query", dataType = "string", required = true, value = "The CI job queue URL"),
-            @ApiImplicitParam(name = "automationServerId", paramType = "query", dataType = "number", value = "The test automation provider id")
+            @ApiImplicitParam(name = "automationServerId", paramType = "query", dataTypeClass = Long.class, value = "The test automation provider id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the exchanged build number", response = Integer.class),
@@ -181,7 +181,7 @@ public interface LauncherDocumentedController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "launcherScannerType", paramType = "body", dataType = "LauncherScannerType", required = true, value = "Information about the SCM account"),
-            @ApiImplicitParam(name = "automationServerId", paramType = "query", dataType = "number", value = "The test automation provider id")
+            @ApiImplicitParam(name = "automationServerId", paramType = "query", dataTypeClass = Long.class, value = "The test automation provider id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns an object with the queue URL of a started job", response = JobResult.class),
@@ -196,10 +196,10 @@ public interface LauncherDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "buildNumber", paramType = "path", dataType = "number", required = true, value = " The CI job build number"),
-            @ApiImplicitParam(name = "scmAccountId", paramType = "query", dataType = "number", required = true, value = "The id of the SCM account. Is used to retrieve repository URL"),
+            @ApiImplicitParam(name = "buildNumber", paramType = "path", dataTypeClass = Integer.class, required = true, value = " The CI job build number"),
+            @ApiImplicitParam(name = "scmAccountId", paramType = "query", dataTypeClass = Long.class, required = true, value = "The id of the SCM account. Is used to retrieve repository URL"),
             @ApiImplicitParam(name = "rescan", paramType = "query", dataType = "boolean", required = true, value = "A flag indicating that the scanner job was built for rescanning"),
-            @ApiImplicitParam(name = "automationServerId", paramType = "query", dataType = "number", value = "The test automation provider id")
+            @ApiImplicitParam(name = "automationServerId", paramType = "query", dataTypeClass = Long.class, value = "The test automation provider id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the created or updated job"),

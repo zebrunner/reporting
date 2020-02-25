@@ -153,3 +153,14 @@ databaseChangeLog:
             path: changeset/014_add_launcher_presets_launchers_on_delete.sql
             relativeToChangelogFile: true
             splitStatements: false
+  - changeSet:
+      id: 015_add_default_runs_view_preference
+      validCheckSum: ANY
+      labels: stable
+      author: itsvirko
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changeset/015_add_default_runs_view_preference.sql
+            relativeToChangelogFile: true
+            splitStatements: false

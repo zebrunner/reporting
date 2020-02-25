@@ -37,7 +37,7 @@ public interface LauncherPresetDocumentedController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "launcherPresetDTO", paramType = "body", dataType = "LauncherPresetDTO", required = true, value = "The launcher preset to create"),
-            @ApiImplicitParam(name = "launcherId", paramType = "path", dataType = "number", required = true, value = "The launcher id")
+            @ApiImplicitParam(name = "launcherId", paramType = "path", dataTypeClass = Long.class, required = true, value = "The launcher id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the created launcher preset", response = LauncherPresetDTO.class),
@@ -54,9 +54,9 @@ public interface LauncherPresetDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The launcher preset id"),
-            @ApiImplicitParam(name = "launcherId", paramType = "path", dataType = "number", required = true, value = "The launcher id"),
-            @ApiImplicitParam(name = "providerId", paramType = "query", dataType = "number", value = "The test automation provider id")
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The launcher preset id"),
+            @ApiImplicitParam(name = "launcherId", paramType = "path", dataTypeClass = Long.class, required = true, value = "The launcher id"),
+            @ApiImplicitParam(name = "providerId", paramType = "query", dataTypeClass = Long.class, value = "The test automation provider id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the created launcher", response = String.class),
@@ -75,8 +75,8 @@ public interface LauncherPresetDocumentedController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "launcherPresetDTO", paramType = "body", dataType = "LauncherPresetDTO", required = true, value = "The launcher preset to update"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", value = "The launcher preset id"),
-            @ApiImplicitParam(name = "launcherId", paramType = "path", dataType = "number", value = "The launcher id")
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, value = "The launcher preset id"),
+            @ApiImplicitParam(name = "launcherId", paramType = "path", dataTypeClass = Long.class, value = "The launcher id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the updated launcher preset", response = LauncherPresetDTO.class),

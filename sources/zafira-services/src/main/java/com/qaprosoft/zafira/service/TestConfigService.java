@@ -41,12 +41,12 @@ public class TestConfigService {
     @Autowired
     private TestRunService testRunService;
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public void createTestConfig(TestConfig testConfig) {
         testConfigMapper.createTestConfig(testConfig);
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public TestConfig createTestConfigForTest(Test test, String testConfigXML) {
         Long testRunId = test.getTestRunId();
         TestRun testRun = testRunService.getTestRunById(testRunId);
@@ -59,8 +59,7 @@ public class TestConfigService {
 
         TestConfig config = new TestConfig()
                 .init(testRunConfig)
-                .init(testConfig)
-                .afterPropertiesSet();
+                .init(testConfig);
 
         TestConfig existingTestConfig = searchTestConfig(config);
         if (existingTestConfig != null) {
@@ -72,13 +71,11 @@ public class TestConfigService {
         return config;
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public TestConfig createTestConfigForTestRun(String configXML) {
         List<Argument> testRunConfig = readArguments(configXML).getArg();
 
-        TestConfig config = new TestConfig()
-                .init(testRunConfig)
-                .afterPropertiesSet();
+        TestConfig config = new TestConfig().init(testRunConfig);
 
         TestConfig existingTestConfig = searchTestConfig(config);
         if (existingTestConfig != null) {
@@ -87,6 +84,16 @@ public class TestConfigService {
             createTestConfig(config);
         }
         return config;
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> getPlatforms() {
+        return testConfigMapper.getPlatforms();
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> getBrowsers() {
+        return testConfigMapper.getBrowsers();
     }
 
     @Transactional(readOnly = true)

@@ -29,6 +29,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -61,7 +62,7 @@ public interface TestDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The id of the test to finish"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The id of the test to finish"),
             @ApiImplicitParam(name = "t", paramType = "body", dataType = "TestType", required = true, value = "The test with result data to update")
     })
     @ApiResponses({
@@ -96,7 +97,7 @@ public interface TestDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test id"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The test id"),
             @ApiImplicitParam(name = "workItems", paramType = "body", dataType = "array", required = true, value = "The work items to attach")
     })
     @ApiResponses({
@@ -112,12 +113,12 @@ public interface TestDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test id")
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The test id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "The test was deleted successfully")
     })
-    void deleteTest(long id);
+    ResponseEntity<Void> deleteTest(long id);
 
     @ApiOperation(
             value = "Retrieves tests by search criteria",
@@ -144,7 +145,7 @@ public interface TestDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test id"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The test id"),
             @ApiImplicitParam(name = "type", paramType = "path", dataType = "string", required = true, value = "The work item type")
     })
     @ApiResponses({
@@ -161,7 +162,7 @@ public interface TestDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test id"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The test id"),
             @ApiImplicitParam(name = "workItem", paramType = "body", dataType = "WorkItem", required = true, value = "The work item to attach")
     })
     @ApiResponses({
@@ -179,7 +180,7 @@ public interface TestDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test id"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The test id"),
             @ApiImplicitParam(name = "workItem", paramType = "body", dataType = "WorkItem", required = true, value = "The work item to update")
     })
     @ApiResponses({
@@ -195,8 +196,8 @@ public interface TestDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "workItemId", paramType = "path", dataType = "number", required = true, value = "The work item id"),
-            @ApiImplicitParam(name = "testId", paramType = "path", dataType = "number", required = true, value = "The test id")
+            @ApiImplicitParam(name = "workItemId", paramType = "path", dataTypeClass = Long.class, required = true, value = "The work item id"),
+            @ApiImplicitParam(name = "testId", paramType = "path", dataTypeClass = Long.class, required = true, value = "The test id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "The test work item was deleted successfully")
@@ -242,7 +243,7 @@ public interface TestDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test id"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The test id"),
             @ApiImplicitParam(name = "artifact", paramType = "body", dataType = "TestArtifactType", required = true, value = "The test artifact to create and attach")
     })
     @ApiResponses({

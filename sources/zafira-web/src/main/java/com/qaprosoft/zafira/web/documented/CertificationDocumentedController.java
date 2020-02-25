@@ -36,8 +36,8 @@ public interface CertificationDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "upstreamJobId", paramType = "query", dataType = "number", required = true, value = "The upstream job id"),
-            @ApiImplicitParam(name = "upstreamJobBuildNumber", paramType = "query", dataType = "number", required = true, value = "The build number of the upstream job")
+            @ApiImplicitParam(name = "upstreamJobId", paramType = "query", dataTypeClass = Long.class, required = true, value = "The upstream job id"),
+            @ApiImplicitParam(name = "upstreamJobBuildNumber", paramType = "query", dataTypeClass = Integer.class, required = true, value = "The build number of the upstream job")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns certification details", response = CertificationType.class),

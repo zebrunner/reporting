@@ -1,9 +1,14 @@
-SET SCHEMA 'management';
-
-INSERT INTO tenancies (name) VALUES ('zafira');
+set schema 'management';
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTS EXECUTION ROI (MAN-HOURS)', 'Monthly team/personal automation ROI by tests execution. 160+ hours per person for UI tests indicate that your execution ROI is very good.', 'BAR', '<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
+UPDATE WIDGET_TEMPLATES SET DESCRIPTION = 'Monthly team/personal automation ROI by tests execution. 160+ hours per person for UI tests indicate that your execution ROI is very good.' 
+WHERE NAME = 'TESTS EXECUTION ROI (MAN-HOURS)';
+
+UPDATE WIDGET_TEMPLATES SET TYPE = 'BAR' WHERE NAME = 'TESTS EXECUTION ROI (MAN-HOURS)';
+
+
+UPDATE WIDGET_TEMPLATES SET SQL = '
+<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
 
 <#global MULTIPLE_VALUES = {
   "LOWER(PLATFORM)": join(PLATFORM),
@@ -14,7 +19,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "PRIORITY": join(PRIORITY),
   "FEATURE": join(FEATURE),
   "TASK": join(TASK),
-  "BUG": join(BUG)  
+  "BUG": join(BUG)
 }>
 <#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
 
@@ -79,7 +84,10 @@ SELECT
   -->
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', '{
+</#function>' 
+WHERE NAME = 'TESTS EXECUTION ROI (MAN-HOURS)';
+
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = '{
     "grid": {
         "right": "4%",
         "left": "4%",
@@ -118,7 +126,9 @@ SELECT
         "#7fbae3",
         "#919e8b"
     ]
-}', '{
+}' WHERE NAME = 'TESTS EXECUTION ROI (MAN-HOURS)';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
   "PERSONAL": {
     "values": [
       "false",
@@ -163,7 +173,9 @@ SELECT
     "valuesQuery": "SELECT DISTINCT JIRA_ID FROM WORK_ITEMS WHERE TYPE=''BUG'' ORDER BY 1;",
     "multiple": true
   }
-}', '', '2019-05-13 10:28:17.881423', '2019-04-09 12:38:01.466911', '{
+}' WHERE NAME = 'TESTS EXECUTION ROI (MAN-HOURS)';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "PERSONAL": "true",
   "currentUserId": 1,
   "PROJECT": [],
@@ -175,19 +187,28 @@ SELECT
   "BROWSER":[],
   "TASK": [],
   "BUG": []
-}', false);
+}' WHERE NAME = 'TESTS EXECUTION ROI (MAN-HOURS)';
+UPDATE WIDGET_TEMPLATES SET HIDDEN=false  WHERE NAME='TESTS EXECUTION ROI (MAN-HOURS)';
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASE STABILITY TREND', 'Test case stability trend on a monthly basis.', 'LINE', 'SELECT
-      STABILITY as "STABILITY",
-      FAILURE as "FAILURE",
-      OMISSION as "OMISSION",
-      KNOWN_FAILURE as "KNOWN ISSUE",
-      INTERRUPT as "INTERRUPT",
-      to_char(date_trunc(''month'', TESTED_AT), ''YYYY-MM'') AS "TESTED_AT"
+
+
+
+UPDATE WIDGET_TEMPLATES SET DESCRIPTION = 'Test case stability trend on a monthly basis.' WHERE NAME = 'TEST CASE STABILITY TREND';
+UPDATE WIDGET_TEMPLATES SET TYPE = 'LINE' WHERE NAME = 'TEST CASE STABILITY TREND';
+
+UPDATE WIDGET_TEMPLATES SET SQL = 'SELECT
+    STABILITY as "STABILITY",
+    FAILURE as "FAILURE",
+    OMISSION as "OMISSION",
+    KNOWN_FAILURE as "KNOWN ISSUE",
+    INTERRUPT as "INTERRUPT",
+    to_char(date_trunc(''month'', TESTED_AT), ''YYYY-MM'') AS "TESTED_AT"
   FROM TEST_CASE_HEALTH_VIEW
   WHERE TEST_CASE_ID = ''${testCaseId}''
-  ORDER BY "TESTED_AT"', '{
+  ORDER BY "TESTED_AT"' WHERE NAME = 'TEST CASE STABILITY TREND';
+
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = '{
     "grid": {
         "right": "5%",
         "left": "5%",
@@ -301,14 +322,21 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
             }
         }
     ]
-}', '{
-}
-', '', '2019-05-13 10:25:55.164779', '2019-04-09 15:01:19.572092', '{
-  "testCaseId": "1"
-}', true);
+}' WHERE NAME = 'TEST CASE STABILITY TREND';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{}' WHERE NAME = 'TEST CASE STABILITY TREND';
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '"testCaseId": "1"' WHERE NAME = 'TEST CASE STABILITY TREND';
+UPDATE WIDGET_TEMPLATES SET HIDDEN = true  WHERE NAME='TEST CASE STABILITY TREND';
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (BAR)', 'Pass rate percent with an extra grouping by project, owner, etc.', 'BAR', '<#global IGNORE_TOTAL_PARAMS = ["DEVICE", "APP_VERSION", "LOCALE", "LANGUAGE", "JOB_NAME", "PARENT_JOB", "PARENT_BUILD"] >
+
+
+
+
+UPDATE WIDGET_TEMPLATES SET DESCRIPTION = 'Pass rate percent with an extra grouping by project, owner, etc.' WHERE NAME = 'PASS RATE (%)';
+UPDATE WIDGET_TEMPLATES SET TYPE = 'BAR' WHERE NAME = 'PASS RATE (%)';
+
+UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_TOTAL_PARAMS = ["DEVICE", "APP_VERSION", "LOCALE", "LANGUAGE", "JOB_NAME", "PARENT_JOB", "PARENT_BUILD"] >
 
 <#global MULTIPLE_VALUES = {
   "LOWER(PLATFORM)": join(PLATFORM),
@@ -443,7 +471,9 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
   -->
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', 'setTimeout(() => {
+</#function>' WHERE NAME = 'PASS RATE (%)';
+
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = 'setTimeout(() => {
   const dimensions = [
     "GROUP_FIELD",
     "PASSED",
@@ -590,7 +620,9 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
     if (!note) changeValue(text, numberDataSource, { min: null, max: null });
     else changeValue(text, percentDataSource, { min:-100, max:100 });
   });
-}, 1000)', '{
+}, 1000)' WHERE NAME = 'PASS RATE (%)';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
   "PERIOD": {
     "values": [
       "Last 24 Hours",
@@ -691,8 +723,9 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
     "value": "",
     "required": false
   }
-}
-', '', '2019-05-21 22:29:13.117356', '2019-03-27 08:38:47.112148', '{
+}' WHERE NAME = 'PASS RATE (%)';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "GROUP_BY": "PLATFORM",
   "PROJECT": [],
   "USER": [],
@@ -713,10 +746,18 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
   "JOB_NAME": "",
   "PARENT_JOB": "Carina-Demo-Regression-Pipeline",
   "PARENT_BUILD": "LATEST"
-}', false);
+}' WHERE NAME = 'PASS RATE (%)';
+UPDATE WIDGET_TEMPLATES SET HIDDEN=false  WHERE NAME='PASS RATE (%)';
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('APPLICATION ISSUES (BLOCKERS) COUNT', 'A number of unique application bugs discovered and submitted by automation.', 'TABLE', '<#global MULTIPLE_VALUES = {
+
+
+
+
+UPDATE WIDGET_TEMPLATES SET DESCRIPTION = 'A number of unique application bugs discovered and submitted by automation.' WHERE NAME = 'APPLICATION ISSUES (BLOCKERS) COUNT';
+UPDATE WIDGET_TEMPLATES SET TYPE = 'TABLE' WHERE NAME = 'APPLICATION ISSUES (BLOCKERS) COUNT';
+
+UPDATE WIDGET_TEMPLATES SET SQL = '<#global MULTIPLE_VALUES = {
   "LOWER(PLATFORM)": join(PLATFORM),
   "LOWER(BROWSER)": join(BROWSER),
   "OWNER_USERNAME": join(USER),
@@ -842,7 +883,10 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   -->
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', '{"columns": ["PROJECT", "COUNT"]}', '{
+</#function>' WHERE NAME = 'APPLICATION ISSUES (BLOCKERS) COUNT';
+
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = '{"columns": ["PROJECT", "COUNT"]}' WHERE NAME = 'APPLICATION ISSUES (BLOCKERS) COUNT';
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
   "PERIOD": {
     "values": [
       "Last 24 Hours",
@@ -923,8 +967,11 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     "value": "",
     "required": false
   }
-}
-', '', '2019-05-21 22:31:37.184335', '2019-04-09 15:54:48.757347', '{
+}' WHERE NAME = 'APPLICATION ISSUES (BLOCKERS) COUNT';
+
+UPDATE WIDGET_TEMPLATES SET LEGEND_CONFIG = '' WHERE NAME = 'APPLICATION ISSUES (BLOCKERS) COUNT';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "GROUP_BY": "PLATFORM",
   "PROJECT": [],
   "USER": [],
@@ -939,16 +986,24 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "LANGUAGE": [],
   "PRIORITY": [],
   "FEATURE": [],
-  "BUG": [],
+  "TASK": [],
   "PERIOD": "Monthly",
   "BLOCKER": "false",
   "JOB_NAME": "",
   "PARENT_JOB": "nightly_regression",
   "PARENT_BUILD": "LATEST"
-}', false);
+}' WHERE NAME = 'APPLICATION ISSUES (BLOCKERS) COUNT';
+UPDATE WIDGET_TEMPLATES SET HIDDEN = false  WHERE NAME='APPLICATION ISSUES (BLOCKERS) COUNT';
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (LINE)', 'Consolidated test status trend with the ability to specify 10+ extra filters and grouping by hours, days, month, etc.', 'LINE', '<#global IGNORE_TOTAL_PARAMS = ["DEVICE", "APP_VERSION", "LOCALE", "LANGUAGE", "JOB_NAME", "PARENT_JOB"] >
+
+
+
+
+UPDATE WIDGET_TEMPLATES SET DESCRIPTION = 'Consolidated test status trend with the ability to specify 10+ extra filters and grouping by hours, days, month, etc.' WHERE NAME = 'PASS RATE TREND';
+UPDATE WIDGET_TEMPLATES SET TYPE = 'LINE' WHERE NAME = 'PASS RATE TREND';
+
+UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_TOTAL_PARAMS = ["DEVICE", "APP_VERSION", "LOCALE", "LANGUAGE", "JOB_NAME", "PARENT_JOB"] >
 <#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
 
 <#global MULTIPLE_VALUES = {
@@ -1108,7 +1163,9 @@ SELECT
   -->
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', 'let lineRow = {
+</#function>' WHERE NAME = 'PASS RATE TREND';
+
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = 'let lineRow = {
     "type": "line",
     "smooth": false,
     "stack": "Status",
@@ -1170,7 +1227,11 @@ window.onresize = function(event) {
   chart.setOption(option);
 };
 
-chart.setOption(option);', '{
+chart.setOption(option);' WHERE NAME = 'PASS RATE TREND';
+
+UPDATE WIDGET_TEMPLATES SET LEGEND_CONFIG = '' WHERE NAME = 'PASS RATE TREND';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
   "PERIOD": {
     "values": [
       "Last 24 Hours",
@@ -1257,8 +1318,9 @@ chart.setOption(option);', '{
     "value": "",
     "required": false
   }
-}
-', '', '2019-05-21 22:32:29.254337', '2019-04-12 09:54:38.556068', '{
+}' WHERE NAME = 'PASS RATE TREND';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "PERIOD": "Total",
   "PERSONAL": "false",
   "currentUserId": 1,
@@ -1277,11 +1339,17 @@ chart.setOption(option);', '{
   "LANGUAGE": [],
   "JOB_NAME": "",
   "PARENT_JOB": ""
-}', false);
+}' WHERE NAME = 'PASS RATE TREND';
+UPDATE WIDGET_TEMPLATES SET HIDDEN = false  WHERE NAME = 'PASS RATE TREND';
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST FAILURE COUNT', 'High-level information about similar errors.', 'TABLE', '
-<#global VIEW = getView(PERIOD) />
+
+
+
+UPDATE WIDGET_TEMPLATES SET DESCRIPTION = 'High-level information about similar errors.' WHERE NAME = 'TEST FAILURE COUNT';
+UPDATE WIDGET_TEMPLATES SET TYPE = 'TABLE' WHERE NAME = 'TEST FAILURE COUNT';
+
+UPDATE WIDGET_TEMPLATES SET SQL = '<#global VIEW = getView(PERIOD) />
 
 SELECT ENV AS "ENV",
       count(*) as "COUNT",
@@ -1325,7 +1393,10 @@ SELECT ENV AS "ENV",
  <#return result>
 </#function>
 
-', '{"columns": ["ENV", "COUNT", "STABILITY", "Error Message"]}', '{
+' WHERE NAME = 'TEST FAILURE COUNT';
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = '{"columns": ["ENV", "COUNT", "STABILITY", "Error Message"]}' WHERE NAME = 'TEST FAILURE COUNT';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "PERIOD": {
     "values": [
       "Last 24 Hours",
@@ -1338,13 +1409,23 @@ SELECT ENV AS "ENV",
       ],
     "required": true
   }
-}', '', '2019-05-21 22:33:42.97516', '2019-04-12 18:54:44.519344', '{
+}' WHERE NAME = 'TEST FAILURE COUNT';
+UPDATE WIDGET_TEMPLATES SET LEGEND_CONFIG = '' WHERE NAME = 'TEST FAILURE COUNT';
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "PERIOD": "Last 24 Hours",
   "hashcode": "38758212"
-}', true);
+}' WHERE NAME = 'TEST FAILURE COUNT';
+UPDATE WIDGET_TEMPLATES SET HIDDEN = true  WHERE NAME= 'TEST FAILURE COUNT';
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTS IMPLEMENTATION PROGRESS', 'A number of new automated cases per month.', 'BAR', '<#global IGNORE_PERSONAL_PARAMS = ["USERS.USERNAME"] >
+
+
+
+
+UPDATE WIDGET_TEMPLATES SET DESCRIPTION = 'A number of new automated cases per month.' WHERE NAME = 'TESTS IMPLEMENTATION PROGRESS';
+UPDATE WIDGET_TEMPLATES SET TYPE = 'BAR' WHERE NAME = 'TESTS IMPLEMENTATION PROGRESS';
+
+UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_PERSONAL_PARAMS = ["USERS.USERNAME"] >
 
 <#global MULTIPLE_VALUES = {
   "PROJECTS.NAME": multiJoin(PROJECT, projects),
@@ -1476,8 +1557,9 @@ SELECT
   -->
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>
-', '
+</#function>' WHERE NAME = 'TESTS IMPLEMENTATION PROGRESS';
+
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = '
 let data = [], invisibleData = [], xAxisData = [], lineData = [];
 let invisibleDataStep = 0, lineDataStep = 0;
 
@@ -1567,7 +1649,9 @@ option = {
       }
     ]
 };
-chart.setOption(option);', '{
+chart.setOption(option);' WHERE NAME = 'TESTS IMPLEMENTATION PROGRESS';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
    "PERIOD": {
     "values": [
       "Last 24 Hours",
@@ -1597,16 +1681,26 @@ chart.setOption(option);', '{
     "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
     "multiple": true
   }
-}', '', '2019-05-13 13:17:40.339082', '2019-04-09 13:04:34.054318', '{
+}' WHERE NAME = 'TESTS IMPLEMENTATION PROGRESS';
+UPDATE WIDGET_TEMPLATES SET LEGEND_CONFIG = '' WHERE NAME = 'TESTS IMPLEMENTATION PROGRESS';
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "PERIOD": "Total",
   "PROJECT": ["UNKNOWN"],
   "PERSONAL": "false",
   "currentUserId": 1,
   "USER": []
-}', false);
+}' WHERE NAME = 'TESTS IMPLEMENTATION PROGRESS';
+UPDATE WIDGET_TEMPLATES SET HIDDEN = false  WHERE NAME = 'TESTS IMPLEMENTATION PROGRESS';
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (PIE)', 'Consolidated test status information with the ability to specify 10+ extra filters including daily, weekly, monthly, etc period.', 'PIE', '<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
+
+
+
+
+UPDATE WIDGET_TEMPLATES SET DESCRIPTION = 'Consolidated test status information with the ability to specify 10+ extra filters including daily, weekly, monthly, etc period.' WHERE NAME = 'PASS RATE';
+UPDATE WIDGET_TEMPLATES SET TYPE = 'PIE' WHERE NAME = 'PASS RATE';
+
+UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
 
 <#global MULTIPLE_VALUES = {
   "PROJECT": multiJoin(PROJECT, projects),
@@ -1777,9 +1871,9 @@ SELECT
   -->
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>
+</#function>' WHERE NAME = 'PASS RATE';
 
-', '
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = '
 option = {
     "legend": {
         "orient": "vertical",
@@ -1840,7 +1934,9 @@ option = {
         }
     ]
 }
-chart.setOption(option);', '{
+chart.setOption(option);' WHERE NAME = 'PASS RATE';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "PERIOD": {
     "values": [
       "Last 24 Hours",
@@ -1930,7 +2026,9 @@ chart.setOption(option);', '{
     "value": "",
     "required": false
   }
-}', '', '2019-05-21 22:34:53.751114', '2019-04-08 15:59:40.214693', '{
+}' WHERE NAME = 'PASS RATE';
+UPDATE WIDGET_TEMPLATES SET LEGEND_CONFIG = '' WHERE NAME = 'PASS RATE';
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "PERIOD": "Monthly",
   "PERSONAL": "false",
   "currentUserId": 2,
@@ -1950,10 +2048,18 @@ chart.setOption(option);', '{
   "JOB_NAME": "",
   "PARENT_JOB": "Carina-Demo-Regression-Pipeline",
   "PARENT_BUILD": "LATEST"
-}', false);
+}' WHERE NAME = 'PASS RATE';
+UPDATE WIDGET_TEMPLATES SET HIDDEN = false  WHERE NAME = 'PASS RATE';
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTS FAILURES BY REASON', 'Summarized information about tests failures grouped by reason.', 'TABLE', '<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
+
+
+
+
+UPDATE WIDGET_TEMPLATES SET DESCRIPTION = 'Summarized information about tests failures grouped by reason.' WHERE NAME = 'TESTS FAILURES BY REASON';
+UPDATE WIDGET_TEMPLATES SET TYPE = 'TABLE' WHERE NAME = 'TESTS FAILURES BY REASON';
+
+UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
 
 <#global MULTIPLE_VALUES = {
   "PROJECT": multiJoin(PROJECT, projects),
@@ -2101,7 +2207,10 @@ SELECT count(*) AS "COUNT",
   -->
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', '{"columns": ["COUNT", "ENV", "REPORT", "MESSAGE", "BUG", "SUBJECT"]}', '{
+</#function>' WHERE NAME = 'TESTS FAILURES BY REASON';
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = '{"columns": ["COUNT", "ENV", "REPORT", "MESSAGE", "BUG", "SUBJECT"]}' WHERE NAME = 'TESTS FAILURES BY REASON';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
   "PERIOD": {
     "values": [
       "Last 24 Hours",
@@ -2207,7 +2316,9 @@ SELECT count(*) AS "COUNT",
     "value": "",
     "required": false
   }
-}', '{"legend": ["COUNT", "ENV", "BUG", "SUBJECT", "REPORT", "MESSAGE"]}', '2019-05-22 12:41:41.952258', '2019-04-12 15:12:14.804581', '{
+}' WHERE NAME = 'TESTS FAILURES BY REASON';
+UPDATE WIDGET_TEMPLATES SET LEGEND_CONFIG = '{"legend": ["COUNT", "ENV", "REPORT", "MESSAGE", "BUG", "SUBJECT"]}' WHERE NAME = 'TESTS FAILURES BY REASON';
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "PERIOD": "Last 7 Days",
   "PERSONAL": "false",
   "ERROR_COUNT": 0,
@@ -2230,11 +2341,20 @@ SELECT count(*) AS "COUNT",
   "PARENT_JOB": "Carina-Demo-Regression-Pipeline",
   "PARENT_BUILD": "",
   "JIRA_URL": "https://mycompany.atlassian.net/browse"
-}', false);
+}' WHERE NAME = 'TESTS FAILURES BY REASON';
+UPDATE WIDGET_TEMPLATES SET HIDDEN = false  WHERE NAME = 'TESTS FAILURES BY REASON';
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST FAILURE DETAILS', 'All tests/jobs with a similar failure.', 'TABLE', '
-<#global VIEW = getView(PERIOD) />
+
+
+
+
+
+
+UPDATE WIDGET_TEMPLATES SET DESCRIPTION = 'All tests/jobs with a similar failure.' WHERE NAME = 'TEST FAILURE DETAILS';
+UPDATE WIDGET_TEMPLATES SET TYPE = 'TABLE' WHERE NAME = 'TEST FAILURE DETAILS';
+
+UPDATE WIDGET_TEMPLATES SET SQL = '<#global VIEW = getView(PERIOD) />
 
 SELECT count(*) as "COUNT",
       ENV AS "ENV",
@@ -2280,8 +2400,10 @@ SELECT count(*) as "COUNT",
     <#break>
  </#switch>
  <#return result>
-</#function>
-', '{"legend": ["ENV", "REPORT", "BUG", "SUBJECT"]}', '{
+</#function>' WHERE NAME = 'TEST FAILURE DETAILS';
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = '{"columns": ["ENV", "REPORT", "BUG", "SUBJECT"]}' WHERE NAME = 'TEST FAILURE DETAILS';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
   "PERIOD": {
     "values": [
       "Last 24 Hours",
@@ -2298,14 +2420,24 @@ SELECT count(*) as "COUNT",
     "value": "https://mycompany.atlassian.net/browse",
     "required": true
   }   
-}', '', '2019-05-15 17:29:04.476357', '2019-04-12 19:20:37.515495', '{
+}' WHERE NAME = 'TEST FAILURE DETAILS';
+UPDATE WIDGET_TEMPLATES SET LEGEND_CONFIG = '' WHERE NAME = 'TEST FAILURE DETAILS';
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "PERIOD": "Last 24 Hours",
   "hashcode": "-1996341284",
   "JIRA_URL": "https://mycompany.atlassian.net/browse"
-}', true);
+}' WHERE NAME = 'TEST FAILURE DETAILS';
+UPDATE WIDGET_TEMPLATES SET HIDDEN = true  WHERE NAME = 'TEST FAILURE DETAILS';
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTCASE INFO', 'Detailed test case information.', 'TABLE', 'SELECT
+
+
+
+
+UPDATE WIDGET_TEMPLATES SET DESCRIPTION = 'Detailed test case information.' WHERE NAME = 'TESTCASE INFO';
+UPDATE WIDGET_TEMPLATES SET TYPE = 'TABLE' WHERE NAME = 'TESTCASE INFO';
+
+UPDATE WIDGET_TEMPLATES SET SQL = 'SELECT
          TEST_CASES.TEST_CLASS || ''.'' || TEST_CASES.TEST_METHOD AS "TEST METHOD",
          TEST_SUITES.FILE_NAME AS "TEST SUITE",
          USERS.USERNAME AS "OWNER",
@@ -2316,21 +2448,31 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
          INNER JOIN USERS ON TEST_CASES.PRIMARY_OWNER_ID = USERS.ID
          INNER JOIN PROJECTS ON TEST_CASES.PROJECT_ID = PROJECTS.ID
      WHERE TEST_CASES.ID = ''${testCaseId}''
-', '{"columns": ["OWNER", "PROJECT", "TEST METHOD", "TEST SUITE", "CREATED AT"]}', '{
+' WHERE NAME = 'TESTCASE INFO';
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = '{"columns": ["OWNER", "PROJECT", "TEST METHOD", "TEST SUITE", "CREATED AT"]}' WHERE NAME = 'TESTCASE INFO';
 
-}', '', '2019-04-18 20:36:00.045515', '2019-04-12 21:37:29.411124', '{
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{}' WHERE NAME = 'TESTCASE INFO';
+UPDATE WIDGET_TEMPLATES SET LEGEND_CONFIG = '' WHERE NAME = 'TESTCASE INFO';
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "testCaseId": "1"
-}', true);
+}' WHERE NAME = 'TESTCASE INFO';
+UPDATE WIDGET_TEMPLATES SET HIDDEN = true  WHERE NAME = 'TESTCASE INFO';
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASE DURATION TREND', 'All kind of duration metrics per test case.', 'LINE', 'SELECT
+
+
+UPDATE WIDGET_TEMPLATES SET DESCRIPTION = 'All kind of duration metrics per test case.' WHERE NAME = 'TEST CASE DURATION TREND';
+UPDATE WIDGET_TEMPLATES SET TYPE = 'LINE' WHERE NAME = 'TEST CASE DURATION TREND';
+
+UPDATE WIDGET_TEMPLATES SET SQL = 'SELECT
       ROUND(AVG_TIME::numeric, 2) as "AVG TIME",
       ROUND(MAX_TIME::numeric, 2) as "MAX TIME",
       ROUND(MIN_TIME::numeric, 2) as "MIN TIME",
       to_char(date_trunc(''month'', TESTED_AT), ''YYYY-MM'') AS "TESTED_AT"
   FROM TEST_CASE_HEALTH_VIEW
   WHERE TEST_CASE_ID = ''${testCaseId}''
-  ORDER BY "TESTED_AT"', '{
+  ORDER BY "TESTED_AT" ' WHERE NAME = 'TEST CASE DURATION TREND';
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = '{
     "grid": {
         "right": "2%",
         "left": "2%",
@@ -2369,13 +2511,23 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
             "type": "line"
         }
     ]
-}', '{
-}', '', '2019-05-01 14:09:14.130991', '2019-04-09 15:09:23.010109', '{
+}' WHERE NAME = 'TEST CASE DURATION TREND';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{}' WHERE NAME = 'TEST CASE DURATION TREND';
+UPDATE WIDGET_TEMPLATES SET LEGEND_CONFIG = '' WHERE NAME = 'TEST CASE DURATION TREND';
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "testCaseId": "1"
-}', true);
+}' WHERE NAME = 'TEST CASE DURATION TREND';
+UPDATE WIDGET_TEMPLATES SET HIDDEN = true  WHERE NAME = 'TEST CASE DURATION TREND';
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASE STABILITY', 'Aggregated stability metric for a test case.', 'PIE', 'SELECT
+
+
+
+UPDATE WIDGET_TEMPLATES SET DESCRIPTION = 'Aggregated stability metric for a test case.' WHERE NAME = 'TEST CASE STABILITY';
+UPDATE WIDGET_TEMPLATES SET TYPE = 'PIE' WHERE NAME = 'TEST CASE STABILITY';
+
+UPDATE WIDGET_TEMPLATES SET SQL = 'SELECT
   unnest(array[''STABILITY'',
                   ''FAILURE'',
                   ''OMISSION'',
@@ -2389,7 +2541,8 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   FROM TEST_CASE_HEALTH_VIEW
   WHERE
       TEST_CASE_ID = ''${testCaseId}''
-  GROUP BY TEST_METHOD_NAME', '{
+  GROUP BY TEST_METHOD_NAME ' WHERE NAME = 'TEST CASE STABILITY';
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = '{
     "legend": {
         "orient": "vertical",
         "x": "left",
@@ -2447,13 +2600,23 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
             ]
         }
     ]
-}', '{
-}', '', '2019-05-13 10:26:34.718292', '2019-04-09 14:52:48.600982', '{
+}' WHERE NAME = 'TEST CASE STABILITY';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{}' WHERE NAME = 'TEST CASE STABILITY';
+UPDATE WIDGET_TEMPLATES SET LEGEND_CONFIG = '' WHERE NAME = 'TEST CASE STABILITY';
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "testCaseId": "1"
-}', true);
+}' WHERE NAME = 'TEST CASE STABILITY';
+UPDATE WIDGET_TEMPLATES SET HIDDEN = true  WHERE NAME = 'TEST CASE STABILITY';
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTS SUMMARY', 'Detailed information about passed, failed, skipped, etc tests.', 'TABLE', '<#global IGNORE_TOTAL_PARAMS = ["DEVICE", "APP_VERSION", "LOCALE", "LANGUAGE", "JOB_NAME", "PARENT_BUILD"] >
+
+
+
+UPDATE WIDGET_TEMPLATES SET DESCRIPTION = 'Detailed information about passed, failed, skipped, etc tests.' WHERE NAME = 'TESTS SUMMARY';
+UPDATE WIDGET_TEMPLATES SET TYPE = 'TABLE' WHERE NAME = 'TESTS SUMMARY';
+
+UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_TOTAL_PARAMS = ["DEVICE", "APP_VERSION", "LOCALE", "LANGUAGE", "JOB_NAME", "PARENT_BUILD"] >
 <#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
 
 <#global MULTIPLE_VALUES = {
@@ -2619,8 +2782,10 @@ SELECT
   -->
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', '{"columns": ["OWNER", "SUITE", "BUILD", "PASS", "FAIL", "DEFECT", "SKIP", "ABORT", "QUEUE", "TOTAL", "PASSED (%)", "FAILED (%)", "KNOWN ISSUE (%)", "SKIPPED (%)", "QUEUED (%)", "FAIL RATE (%)"], "defaultSize": {"height": 20, "width": 2}}
-', '{
+</#function>' WHERE NAME = 'TESTS SUMMARY';
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = '{"columns": ["OWNER", "SUITE", "PASS", "FAIL", "DEFECT", "SKIP", "ABORT", "QUEUE", "TOTAL", "PASSED (%)", "FAILED (%)", "KNOWN ISSUE (%)", "SKIPPED (%)", "QUEUED (%)", "FAIL RATE (%)"]}' WHERE NAME = 'TESTS SUMMARY';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "PERIOD": {
     "values": [
       "Last 24 Hours",
@@ -2713,8 +2878,9 @@ SELECT
     "value": "",
     "required": false
   }
-}', '{"legend": ["OWNER", "SUITE", "BUILD", "PASS", "FAIL", "DEFECT", "SKIP", "ABORT", "QUEUE", "TOTAL", "PASSED (%)", "FAILED (%)", "KNOWN ISSUE (%)", "SKIPPED (%)", "QUEUED (%)", "FAIL RATE (%)"]}
-', '2019-05-22 13:52:34.963878', '2019-04-09 17:06:51.739459', '{
+}' WHERE NAME = 'TESTS SUMMARY';
+UPDATE WIDGET_TEMPLATES SET LEGEND_CONFIG = '{"legend": ["OWNER", "SUITE", "BUILD", "PASS", "FAIL", "DEFECT", "SKIP", "ABORT", "QUEUE", "TOTAL", "PASSED (%)", "FAILED (%)", "KNOWN ISSUE (%)", "SKIPPED (%)", "QUEUED (%)", "FAIL RATE (%)"]}' WHERE NAME = 'TESTS SUMMARY';
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "PERIOD": "Monthly",
   "GROUP_BY": "TEST_SUITE_NAME",
   "PERSONAL": "false",
@@ -2735,9 +2901,18 @@ SELECT
   "JOB_NAME": "",
   "PARENT_JOB": "",
   "PARENT_BUILD": ""
-}', false);
+}' WHERE NAME = 'TESTS SUMMARY';
+UPDATE WIDGET_TEMPLATES SET HIDDEN = false  WHERE NAME = 'TESTS SUMMARY';
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('APPLICATION ISSUES (BLOCKERS) DETAILS', 'Detailed information about known issues and blockers.', 'TABLE', '<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
+
+
+
+
+
+UPDATE WIDGET_TEMPLATES SET DESCRIPTION = 'Detailed information about known issues and blockers.' WHERE NAME = 'APPLICATION ISSUES (BLOCKERS) DETAILS';
+UPDATE WIDGET_TEMPLATES SET TYPE = 'TABLE' WHERE NAME = 'APPLICATION ISSUES (BLOCKERS) DETAILS';
+
+UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
 
 <#global MULTIPLE_VALUES = {
   "PROJECT": multiJoin(PROJECT, projects),
@@ -2891,8 +3066,11 @@ SELECT
   -->
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', '{"columns": ["BUG", "SUBJECT", "TASK", "PROJECT", "ENV", "OWNER", "PLATFORM", "PLATFORM_VERSION", "BROWSER", "BROWSER_VERSION", "APP_VERSION", "DEVICE", "LOCALE", "LANGUAGE", "SUITE NAME", "TEST_INFO_URL", "Error Message"]}', '{
-  "PERIOD": {
+</#function>' WHERE NAME = 'APPLICATION ISSUES (BLOCKERS) DETAILS';
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = '{"columns": ["BUG", "SUBJECT", "TASK", "PROJECT", "ENV", "OWNER", "PLATFORM", "PLATFORM_VERSION", "BROWSER", "BROWSER_VERSION", "APP_VERSION", "DEVICE", "LOCALE", "LANGUAGE", "SUITE NAME", "TEST_INFO_URL", "Error Message"]}' WHERE NAME = 'APPLICATION ISSUES (BLOCKERS) DETAILS';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
+    "PERIOD": {
     "values": [
       "Last 24 Hours",
       "Last 7 Days",
@@ -2988,7 +3166,9 @@ SELECT
     "value": "",
     "required": false
   }
-}', '{"legend": ["BUG", "SUBJECT", "TASK", "PROJECT", "ENV", "OWNER", "PLATFORM", "PLATFORM_VERSION", "BROWSER", "BROWSER_VERSION", "APP_VERSION", "DEVICE", "LOCALE", "LANGUAGE", "SUITE NAME", "TEST_INFO_URL", "Error Message"]}', '2019-05-21 22:38:51.220713', '2019-04-18 15:12:31.727154', '{
+}' WHERE NAME = 'APPLICATION ISSUES (BLOCKERS) DETAILS';
+UPDATE WIDGET_TEMPLATES SET LEGEND_CONFIG = '{"legend": ["BUG", "SUBJECT", "TASK", "PROJECT", "ENV", "OWNER", "PLATFORM", "PLATFORM_VERSION", "BROWSER", "BROWSER_VERSION", "APP_VERSION", "DEVICE", "LOCALE", "LANGUAGE", "SUITE NAME", "TEST_INFO_URL", "Error Message"]}' WHERE NAME = 'APPLICATION ISSUES (BLOCKERS) DETAILS';
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "PERIOD": "Last 30 Days",
   "PERSONAL": "false",
   "currentUserId": 1,
@@ -3010,11 +3190,18 @@ SELECT
   "PARENT_JOB": "",
   "PARENT_BUILD": "",
   "JIRA_URL": "https://mycompany.atlassian.net/browse"
-}', false);
+}' WHERE NAME = 'APPLICATION ISSUES (BLOCKERS) DETAILS';
+UPDATE WIDGET_TEMPLATES SET HIDDEN = false  WHERE NAME = 'APPLICATION ISSUES (BLOCKERS) DETAILS';
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASES BY STABILITY', 'Shows all test cases with low stability percent rate per appropriate period (default - less than 10%).', 'TABLE', '
-<#-- TODO: remove PARENT_JOB from IGNORE_TOTAL_PARAMS as only TEST_CASE_HEALTH_VIEW could have PARENT_JOB/UPSTREAM_JOB_NAME argument-->
+
+
+
+
+UPDATE WIDGET_TEMPLATES SET DESCRIPTION = 'Shows all test cases with low stability percent rate per appropriate period (default - less than 10%).' WHERE NAME = 'TEST CASES BY STABILITY';
+UPDATE WIDGET_TEMPLATES SET TYPE = 'TABLE' WHERE NAME = 'TEST CASES BY STABILITY';
+
+UPDATE WIDGET_TEMPLATES SET SQL = '<#-- TODO: remove PARENT_JOB from IGNORE_TOTAL_PARAMS as only TEST_CASE_HEALTH_VIEW could have PARENT_JOB/UPSTREAM_JOB_NAME argument-->
 <#global IGNORE_TOTAL_PARAMS = ["LOWER(PLATFORM)", "OWNER_USERNAME", "ENV", "PRIORITY", "FEATURE", "TASK", "DEVICE", "APP_VERSION", "LOCALE", "LANGUAGE", "PARENT_JOB", "JOB_NAME"] >
 
 <#global MULTIPLE_VALUES = {
@@ -3152,7 +3339,10 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   -->
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', '{"columns": ["PROJECT", "TEST METHOD", "STABILITY"]}', '{
+</#function>' WHERE NAME = 'TEST CASES BY STABILITY';
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = '{"columns": ["PROJECT", "TEST METHOD", "STABILITY"]}' WHERE NAME = 'TEST CASES BY STABILITY';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "PERIOD": {
     "values": [
       "Last 24 Hours",
@@ -3234,7 +3424,9 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     "value": "",
     "required": false
   }
-}', '', '2019-05-21 22:39:53.577361', '2019-05-02 08:40:40.991813', '{
+}' WHERE NAME = 'TEST CASES BY STABILITY';
+UPDATE WIDGET_TEMPLATES SET LEGEND_CONFIG = '' WHERE NAME = 'TEST CASES BY STABILITY';
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "PERIOD": "Total",
   "PROJECT": [],
   "PERCENT": 50,
@@ -3254,10 +3446,18 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "FEATURE": [],
   "TASK": [],
   "BUG": []
-}', false);
+}' WHERE NAME = 'TEST CASES BY STABILITY';
+UPDATE WIDGET_TEMPLATES SET HIDDEN = false  WHERE NAME = 'TEST CASES BY STABILITY';
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (PIE + LINE)', 'Consolidated test status trend with the ability to specify 10+ extra filters and grouping by hours, days, month, etc.', 'OTHER','
-<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
+
+
+
+
+
+UPDATE WIDGET_TEMPLATES SET DESCRIPTION = 'Consolidated test status trend with the ability to specify 10+ extra filters and grouping by hours, days, month, etc.' WHERE NAME = 'MILESTONE DETAILS';
+UPDATE WIDGET_TEMPLATES SET TYPE = 'OTHER' WHERE NAME = 'MILESTONE DETAILS';
+
+UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
 
 <#global MULTIPLE_VALUES = {
   "PROJECT": multiJoin(PROJECT, projects),
@@ -3417,8 +3617,8 @@ SELECT
   -->
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>' , '
-setTimeout(function() {
+</#function>' WHERE NAME = 'MILESTONE DETAILS';
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = 'setTimeout(function() {
   const created = dataset[0].CREATED_AT.toString();
   const lastCount = dataset.length - 1;
   const lastValue = dataset[lastCount].CREATED_AT.toString();
@@ -3650,7 +3850,9 @@ let lineRow = {
     
     chart.setOption(option);
     angular.element($window).on("resize", onResize);
-}, 1000)' , '{
+}, 1000)' WHERE NAME = 'MILESTONE DETAILS';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
   "PERIOD": {
     "values": [
       "Last 24 Hours",
@@ -3731,7 +3933,9 @@ let lineRow = {
     "valuesQuery": "SELECT DISTINCT LANGUAGE FROM TEST_CONFIGS WHERE LANGUAGE IS NOT NULL AND LANGUAGE <> '''';",
     "multiple": true
   }
-}', '{
+}' WHERE NAME = 'MILESTONE DETAILS';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "PERIOD": "Monthly",
   "PERSONAL": "false",
   "currentUserId": 2,
@@ -3751,12 +3955,16 @@ let lineRow = {
   "JOB_NAME": "",
   "PARENT_JOB": "Carina-Demo-Regression-Pipeline",
   "PARENT_BUILD": ""
-}', false);
+}' WHERE NAME = 'MILESTONE DETAILS';
+UPDATE WIDGET_TEMPLATES SET HIDDEN = false  WHERE NAME = 'MILESTONE DETAILS';
 
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTS FAILURES BY SUITE', 'Shows all test cases with failures count per appropriate period and possibility to view detailed information for each suite/test.', 'TABLE', '
-<#global IGNORE_TOTAL_PARAMS = ["DEVICE", "APP_VERSION", "LOCALE", "LANGUAGE", "JOB_NAME", "PARENT_BUILD"] >
+
+UPDATE WIDGET_TEMPLATES SET DESCRIPTION = 'Shows all test cases with failures count per appropriate period and possibility to view detailed information for each suite/test.' WHERE NAME = 'TESTS FAILURES BY SUITE';
+UPDATE WIDGET_TEMPLATES SET TYPE = 'TABLE' WHERE NAME = 'TESTS FAILURES BY SUITE';
+
+UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_TOTAL_PARAMS = ["DEVICE", "APP_VERSION", "LOCALE", "LANGUAGE", "JOB_NAME", "PARENT_BUILD"] >
 <#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
 
 <#global MULTIPLE_VALUES = {
@@ -3903,7 +4111,10 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   -->
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', '{"columns": ["SUITE", "NAME", "FAILURES COUNT", "TOTAL COUNT", "FAILURE %"]}', '{
+</#function>' WHERE NAME = 'TESTS FAILURES BY SUITE';
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = '{"columns": ["SUITE", "NAME", "FAILURES COUNT", "TOTAL COUNT", "FAILURE %"]}' WHERE NAME = 'TESTS FAILURES BY SUITE';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
     "PERIOD": {
     "values": [
       "Last 24 Hours",
@@ -3993,7 +4204,9 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     "value": "",
     "required": false
   }
-}', '{
+}' WHERE NAME = 'TESTS FAILURES BY SUITE';
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG_SAMPLE = '{
   "PERIOD": "Monthly",
   "PERSONAL": "false",
   "GROUP_BY": "TEST_SUITE_NAME",
@@ -4015,282 +4228,5 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "JOB_NAME": "",
   "PARENT_JOB": "",
   "PARENT_BUILD": ""
-}', false);
-
-
-
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (CALENDAR)', 'Calendar view of the pass rate per month, quarter or year.', 'OTHER', '
-<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
-
-<#global MULTIPLE_VALUES = {
-  "PROJECT": multiJoin(PROJECT, projects),
-  "OWNER_USERNAME": join(USER),
-  "ENV": join(ENV),
-  "PRIORITY": join(PRIORITY),
-  "FEATURE": join(FEATURE),
-  "LOWER(PLATFORM)": join(PLATFORM),
-  "LOWER(BROWSER)": join(BROWSER)
-}>
-<#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
-
-SELECT 
-    to_char(created_at, ''YYYY-MM-DD'') as "date",
-    ROUND(sum(passed)*100/sum(total)) AS "value",
-    ''${PASSED_VALUE}'' as "passed"
-    FROM total_view
-    ${WHERE_MULTIPLE_CLAUSE}
-  GROUP BY 1
-UNION ALL
-SELECT 
-    to_char(created_at, ''YYYY-MM-DD'') as "date",
-    ROUND(sum(passed)*100/sum(total)) AS "value",
-    ''${PASSED_VALUE}'' as "passed"
-    FROM nightly_view
-    ${WHERE_MULTIPLE_CLAUSE}
-  GROUP BY 1 
-  ORDER BY 1
-
-
-<#--
-    Generates WHERE clause for multiple choosen parameters
-    @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
-    @return - generated WHERE clause
-  -->
-
-<#function generateMultipleWhereClause map>
-  <#local result = "" />
-    <#if PERIOD?length = 4 || PERIOD = "YEAR">
-      <#if PERIOD = "YEAR">
-        <#local result = result + " to_char(created_at, ''YYYY'') " + " LIKE to_char(CURRENT_DATE, ''YYYY'')"/>
-      <#else>
-        <#local result = result + " to_char(created_at, ''YYYY'') " + " LIKE ''${PERIOD}''"/>
-      </#if>
-    <#elseif PERIOD != "MONTH" && PERIOD?substring(5, 6) == "Q" || PERIOD = "QUARTER" >
-      <#if PERIOD = "QUARTER">
-        <#local result = result + " to_char(created_at, ''YYYY-Q'') " + " LIKE to_char(CURRENT_DATE, ''YYYY-Q'')"/>
-      <#else>
-        <#local result = result + " to_char(created_at, ''YYYY'') || ''-Q'' || to_char(created_at, ''Q'') " + " LIKE ''${PERIOD}''"/>
-      </#if>
-    <#else>
-      <#if PERIOD = "MONTH">
-        <#local result = result + " to_char(created_at, ''YYYY-MM'') " + " LIKE to_char(CURRENT_DATE, ''YYYY-MM'')"/>
-      <#else>
-        <#local result = result + " to_char(created_at, ''YYYY-MM'') " + " LIKE ''${PERIOD}''"/>
-      </#if>
-    </#if>
-
-  <#list map?keys as key>
-    <#if map[key] != "" >
-      <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
-        <#-- Ignore non supported filters for Personal chart: USER -->
-        <#continue>
-      </#if>
-
-      <#if result?length != 0>
-        <#local result = result + " AND "/>
-      </#if>
-      <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
-    </#if>
-  </#list>
-
-  <#if result?length != 0 && PERSONAL == "true">
-    <!-- add personal filter by currentUserId with AND -->
-    <#local result = result + " AND OWNER_ID=${currentUserId} "/>
-  <#elseif result?length == 0 && PERSONAL == "true">
-    <!-- add personal filter by currentUserId without AND -->
-    <#local result = " OWNER_ID=${currentUserId} "/>
-  </#if>
-
-  <#if PARENT_JOB != "">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
-  </#if>
-
-  <#if result?length != 0>
-    <#local result = " WHERE " + result/>
-  </#if>
-  <#return result>
-</#function>
-
-<#--
-    Joins array values using '', '' separator
-    @array - to join
-    @return - joined array as string
-  -->
-<#function join array=[]>
-  <#return array?join('', '') />
-</#function>
-
-<#--
-    Joins array values using '', '' separator
-    @array1 - to join, has higher priority that array2
-    @array2 - alternative to join if array1 does not exist or is empty
-    @return - joined array as string
-  -->
-<#function multiJoin array1=[] array2=[]>
-  <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', '
-const data = [];
-const range = () => {
-  let ranges = new Set();
-
-  dataset.forEach(({date, value}) => {
-    const d = new Date(date);
-    const range =  d.getFullYear() + "-" + (d.getMonth() + 1);
-    const newDate = range + "-" +  d.getDate();
-
-    ranges.add(range);
-    data.push(new Array(newDate, value));
-  });
-
-  let temporary = [];
-  for (let value of ranges) temporary.push(value);
-
-  return [temporary[0], data[data.length -1][0]]
-};
-
-const color = () => {
-    const red = "#e76a77";
-    const yellow = "#fddb7a";
-    const green = "#61c8b3";
-    const colorArrLenght = 20;
-    const greenValue = dataset[0].passed || 75;
-    let colors = [];
-
-    const creatorColorArr = (color, count) => {
-      for (var i = 0; i < Math.round(count); i++) colors.push(color);
-    }
-
-    let passed = colorArrLenght - (colorArrLenght*greenValue/100);
-    let aboard = (colorArrLenght - passed)/3;
-    let failed = colorArrLenght - passed - aboard
-
-    creatorColorArr(green, passed);
-    creatorColorArr(yellow, aboard);
-    creatorColorArr(red, failed);
-
-    return colors.reverse()
-};
-
-
-let option = {
-    tooltip: {
-      position: "top",
-      formatter: (p) => p.data[1] + "%",
-      "extraCssText": "transform: translateZ(0);"
-    },
-    visualMap: {
-      min: 0,
-      max: 100,
-      calculable: true,
-      orient: "vertical",
-      bottom: 20,
-      right:20,
-      inRange: {
-        color: color(),
-        symbolSize: [10, 100]
-      } 
-    },
-    calendar: {
-      left: 40,
-      right: 80,
-      top: 50,
-      bottom:20,
-      orient: "horizontal",
-      range: range(),
-      cellSize: 30,
-      dayLabel: {
-        nameMap: "en",
-        firstDay: 1, // start on Monday
-        margin: 5
-      },
-      yearLabel:{
-        position: "top"
-      },
-      itemStyle: {
-        color: ["white"],
-        borderWidth: 1,
-        borderColor: "#ccc"
-      }
-    },
-    series: [{
-      type: "heatmap",
-      coordinateSystem: "calendar",
-      calendarIndex: 0,
-      label: {
-        show: true,
-        formatter: function (params) {
-            let d = echarts.number.parseDate(params.value[0]);
-            return d.getDate();
-        },
-        color: "#000"
-      },
-      data: data
-    }]
-};
-
-chart.setOption(option);', '{
-  "PERIOD": {
-    "valuesQuery": "SELECT ''YEAR'' UNION ALL SELECT ''QUARTER'' UNION ALL SELECT ''MONTH'' UNION ALL SELECT DISTINCT to_char(created_at, ''YYYY'') FROM total_view UNION ALL SELECT DISTINCT to_char(created_at, ''YYYY'') || ''-Q'' || to_char(created_at, ''Q'') FROM total_view UNION ALL SELECT DISTINCT to_char(created_at, ''YYYY-MM'') FROM total_view UNION SELECT DISTINCT to_char(created_at, ''YYYY-MM'') FROM NIGHTLY_VIEW ORDER BY 1 DESC;",
-    "required": true
-  },
-  "PERSONAL": {
-    "values": [ 
-      "false",
-      "true" 
-    ],
-    "required": true,
-    "type": "radio"
-  },
-  "PASSED_VALUE":{
-    "value": 75,
-    "required": false
-  },
-  "PROJECT": {
-    "valuesQuery": "SELECT NAME FROM PROJECTS WHERE NAME <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "USER": {
-    "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
-    "multiple": true
-  },
-  "PLATFORM": {
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "BROWSER": {
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "ENV": {
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "PRIORITY": {
-    "valuesQuery": "SELECT VALUE FROM TAGS WHERE NAME=''priority'' ORDER BY 1;",
-    "multiple": true
-  },
-  "FEATURE": {
-    "valuesQuery": "SELECT VALUE FROM TAGS WHERE NAME=''feature'' ORDER BY 1;",
-    "multiple": true
-  },
-  "PARENT_JOB": {
-    "value": "",
-    "required": false
-  }
-}', '{
-  "PERIOD": "MONTH",
-  "PASSED_VALUE": "75",
-  "PERSONAL": "false",
-  "currentUserId": 1,
-  "PROJECT": [],
-  "USER": ["anonymous"],
-  "PLATFORM": [],
-  "BROWSER": [],
-  "FEATURE": [],
-  "ENV": [],
-  "PRIORITY": [],
-  "PARENT_JOB": ""
-}', false);
+}' WHERE NAME = 'TESTS FAILURES BY SUITE';
+UPDATE WIDGET_TEMPLATES SET HIDDEN = false  WHERE NAME = 'TESTS FAILURES BY SUITE';

@@ -19,6 +19,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.UserSearchCriteria;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.UserPreference;
+import com.qaprosoft.zafira.models.dto.UserPreferenceDTO;
 import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
 import com.qaprosoft.zafira.models.dto.user.ChangePasswordDTO;
 import com.qaprosoft.zafira.models.dto.user.UserType;
@@ -232,6 +233,24 @@ public interface UserDocumentedController {
     List<UserPreference> createUserPreference(long userId, List<UserPreference> preferences);
 
     @ApiOperation(
+            value = "Updates single user preference",
+            notes = "Returns updated integration",
+            nickname = "createUserPreference",
+            httpMethod = "PUT",
+            response = UserPreferenceDTO.class
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The path reference id"),
+            @ApiImplicitParam(name = "name", paramType = "query", dataType = "string", required = true, value = "User preference name"),
+            @ApiImplicitParam(name = "value", paramType = "query", dataType = "string", required = true, value = "User preference value")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the updated user preference", response = UserPreferenceDTO.class)
+    })
+    UserPreferenceDTO createUserPreference(long userId, UserPreference.Name name, String value);
+
+    @ApiOperation(
             value = "Resets current user preferences to default",
             notes = "Returns default preferences",
             nickname = "resetUserPreferencesToDefault",
@@ -254,7 +273,7 @@ public interface UserDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "userId", paramType = "path", dataType = "number", required = true, value = "The user id")
+            @ApiImplicitParam(name = "userId", paramType = "path", dataTypeClass = Long.class, required = true, value = "The user id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "User preferences were deleted successfully")

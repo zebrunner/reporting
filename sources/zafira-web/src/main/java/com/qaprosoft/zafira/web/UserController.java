@@ -19,6 +19,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.UserSearchCriteria;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.UserPreference;
+import com.qaprosoft.zafira.models.dto.UserPreferenceDTO;
 import com.qaprosoft.zafira.models.dto.user.ChangePasswordDTO;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.service.DashboardService;
@@ -174,6 +175,16 @@ public class UserController extends AbstractController implements UserDocumented
     public List<UserPreference> createUserPreference(@PathVariable("userId") long userId, @RequestBody List<UserPreference> preferences) {
         preferences.forEach(userPreferenceService::createOrUpdateUserPreference);
         return userPreferenceService.getAllUserPreferences(userId);
+    }
+
+    @PutMapping(value = "{userId}/preference")
+    @Override
+    public UserPreferenceDTO createUserPreference(@PathVariable("userId") long userId,
+                                                  @RequestParam UserPreference.Name name,
+                                                  @RequestParam String value) {
+        userPreferenceService.createOrUpdateUserPreference(new UserPreference(name, value, userId));
+        UserPreference userPreference = userPreferenceService.getUserPreferenceByNameAndUserId(name.name(), userId);
+        return mapper.map(userPreference, UserPreferenceDTO.class);
     }
 
     @PutMapping("/preferences/default")

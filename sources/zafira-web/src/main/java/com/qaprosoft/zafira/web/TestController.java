@@ -34,12 +34,14 @@ import com.qaprosoft.zafira.service.TestArtifactService;
 import com.qaprosoft.zafira.service.TestRunService;
 import com.qaprosoft.zafira.service.TestService;
 import com.qaprosoft.zafira.service.WorkItemService;
-import com.qaprosoft.zafira.service.cache.StatisticsService;
+import com.qaprosoft.zafira.service.cache.TestRunStatisticsCacheableService;
 import com.qaprosoft.zafira.service.integration.tool.impl.TestCaseManagementService;
 import com.qaprosoft.zafira.web.documented.TestDocumentedController;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -80,7 +82,7 @@ public class TestController extends AbstractController implements TestDocumented
     private SimpMessagingTemplate websocketTemplate;
 
     @Autowired
-    private StatisticsService statisticsService;
+    private TestRunStatisticsCacheableService statisticsService;
 
     @PostMapping()
     @Override
@@ -133,8 +135,9 @@ public class TestController extends AbstractController implements TestDocumented
 
     @DeleteMapping("/{id}")
     @Override
-    public void deleteTest(@PathVariable("id") long id) {
+    public ResponseEntity<Void> deleteTest(@PathVariable("id") long id) {
         testService.deleteTestById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/search")

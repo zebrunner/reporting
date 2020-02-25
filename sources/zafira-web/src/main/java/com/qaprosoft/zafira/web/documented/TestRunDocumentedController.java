@@ -85,7 +85,7 @@ public interface TestRunDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test run id")
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The test run id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the finished test run", response = TestRunType.class),
@@ -102,7 +102,7 @@ public interface TestRunDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "query", dataType = "number", value = "The test run id"),
+            @ApiImplicitParam(name = "id", paramType = "query", dataTypeClass = Long.class, value = "The test run id"),
             @ApiImplicitParam(name = "ciRunId", paramType = "query", dataType = "string", value = "The test run ciRun id"),
             @ApiImplicitParam(name = "abortCause", paramType = "body", dataType = "CommentType", value = "A comment about the abort cause")
     })
@@ -137,7 +137,7 @@ public interface TestRunDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test run id")
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The test run id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the found test run", response = TestRunType.class),
@@ -156,7 +156,7 @@ public interface TestRunDocumentedController {
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "sc", paramType = "body", dataType = "TestRunSearchCriteria", required = true, value = "Search criteria"),
             @ApiImplicitParam(name = "projectNames", paramType = "query", dataType = "array", value = "The names of the projects to search"),
-            @ApiImplicitParam(name = "filterId", paramType = "query", dataType = "number", value = "The filter id to search")
+            @ApiImplicitParam(name = "filterId", paramType = "query", dataTypeClass = Long.class, value = "The filter id to search")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns found test runs", response = SearchResult.class)
@@ -208,7 +208,7 @@ public interface TestRunDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test run id")
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The test run id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns found tests", response = List.class)
@@ -238,7 +238,7 @@ public interface TestRunDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test run id")
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The test run id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "The test run was deleted successfully")
@@ -254,7 +254,7 @@ public interface TestRunDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test run id"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "string", required = true, value = "The test run id"),
             @ApiImplicitParam(name = "email", paramType = "body", dataType = "EmailType", required = true, value = "The email to send the report to"),
             @ApiImplicitParam(name = "filter", paramType = "query", dataType = "string", value = "The test run result filter (failures)"),
             @ApiImplicitParam(name = "showStacktrace", paramType = "query", dataType = "boolean", value = "Indicates test logs visibility")
@@ -274,7 +274,7 @@ public interface TestRunDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test run id"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "string", required = true, value = "The test run id"),
             @ApiImplicitParam(name = "email", paramType = "body", dataType = "EmailType", required = true, value = "The email to send the report to"),
             @ApiImplicitParam(name = "suiteOwner", paramType = "query", dataType = "boolean", value = "Indicates that the email will be sent to the suite owner"),
             @ApiImplicitParam(name = "suiteRunner", paramType = "query", dataType = "boolean", value = "Indicates that the email will be sent to a suite runner")
@@ -294,7 +294,7 @@ public interface TestRunDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test run id")
+            @ApiImplicitParam(name = "id", paramType = "path", dataType = "string", required = true, value = "The test run id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns built test run results in HTML format", response = String.class)
@@ -309,7 +309,7 @@ public interface TestRunDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test run id"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The test run id"),
             @ApiImplicitParam(name = "comment", paramType = "body", dataType = "CommentType", required = true, value = "A test run comment")
     })
     @ApiResponses({
@@ -326,7 +326,7 @@ public interface TestRunDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test run id"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The test run id"),
             @ApiImplicitParam(name = "rerunFailures", paramType = "query", dataType = "boolean", value = "Indicates that only failed tests will be rerun")
     })
     @ApiResponses({
@@ -344,7 +344,7 @@ public interface TestRunDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test run id")
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The test run id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns found test cases"),
@@ -359,7 +359,7 @@ public interface TestRunDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "query", dataType = "number", value = "The test run id"),
+            @ApiImplicitParam(name = "id", paramType = "query", dataTypeClass = Long.class, value = "The test run id"),
             @ApiImplicitParam(name = "ciRunId", paramType = "query", dataType = "string", value = "The test run ciRun id")
     })
     @ApiResponses({
@@ -376,7 +376,7 @@ public interface TestRunDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test run id"),
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The test run id"),
             @ApiImplicitParam(name = "jobParameters", paramType = "body", dataType = "Map", required = true, value = "The job parameters")
     })
     @ApiResponses({
@@ -394,7 +394,7 @@ public interface TestRunDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "id", paramType = "path", dataType = "number", required = true, value = "The test run id")
+            @ApiImplicitParam(name = "id", paramType = "path", dataTypeClass = Long.class, required = true, value = "The test run id")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns found test cases", response = List.class),
@@ -419,8 +419,8 @@ public interface TestRunDocumentedController {
     List<String> getEnvironments();
 
     @ApiOperation(
-            value = "Retrieves all test run platforms",
-            notes = "Returns found test run platforms",
+            value = "Retrieves all test run config platforms",
+            notes = "Returns found test run config platforms",
             nickname = "getPlatforms",
             httpMethod = "GET",
             response = List.class
@@ -434,6 +434,21 @@ public interface TestRunDocumentedController {
     List<String> getPlatforms();
 
     @ApiOperation(
+            value = "Retrieves all test run config browsers",
+            notes = "Returns found test run config browsers",
+            nickname = "getBrowsers",
+            httpMethod = "GET",
+            response = List.class
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns found test run config browsers", response = List.class)
+    })
+    List<String> getBrowsers();
+
+    @ApiOperation(
             value = "Retrieves test run job console lines",
             notes = "Returns found lines",
             nickname = "getConsoleOutput",
@@ -442,9 +457,9 @@ public interface TestRunDocumentedController {
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
-            @ApiImplicitParam(name = "count", paramType = "path", dataType = "number", required = true, value = "The count of test run job console lines "),
-            @ApiImplicitParam(name = "fullCount", paramType = "path", dataType = "number", required = true, value = "The offset where the search starts"),
-            @ApiImplicitParam(name = "id", paramType = "query", dataType = "number", value = "The test run id"),
+            @ApiImplicitParam(name = "count", paramType = "path", dataTypeClass = Integer.class, required = true, value = "The count of test run job console lines "),
+            @ApiImplicitParam(name = "fullCount", paramType = "path", dataTypeClass = Integer.class, required = true, value = "The offset where the search starts"),
+            @ApiImplicitParam(name = "id", paramType = "query", dataTypeClass = Long.class, value = "The test run id"),
             @ApiImplicitParam(name = "ciRunId", paramType = "query", dataType = "string", value = "The test run ciRun id")
     })
     @ApiResponses({

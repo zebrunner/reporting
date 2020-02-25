@@ -21,9 +21,10 @@ import com.qaprosoft.zafira.models.db.config.Argument;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
+
+import static org.springframework.util.StringUtils.isEmpty;
 
 @Getter
 @Setter
@@ -78,10 +79,28 @@ public class TestConfig extends AbstractEntity {
         return this;
     }
 
-    public TestConfig afterPropertiesSet() {
-        boolean isBrowserExists = !StringUtils.isEmpty(browser) && !"*".equals(browser);
-        platform = isBrowserExists ? browser : platform;
-        return this;
+    public String buildPlatformName() {
+        StringBuilder resultingPlatform = new StringBuilder();
+
+        // Check if both platform and browser are present which means mobile browser
+        if (!isEmpty(platform) && !isEmpty(browser)) {
+            getResultingPlatform(resultingPlatform.append(platform)
+                                                  .append("_"), browser, browserVersion);
+            // The other way it's platform takes precedence
+        } else if (!isEmpty(platform)) {
+            getResultingPlatform(resultingPlatform, platform, platformVersion);
+        } else {
+            getResultingPlatform(resultingPlatform, browser, browserVersion);
+        }
+
+        return resultingPlatform.toString();
     }
 
+    private void getResultingPlatform(StringBuilder resultingPlatform, String name, String version) {
+        resultingPlatform.append(name);
+        if (!isEmpty(version)) {
+            resultingPlatform.append(" ")
+                             .append(version);
+        }
+    }
 }

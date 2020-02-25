@@ -13,7 +13,7 @@
             PROJECT_ID,
         </if>
         <![CDATA[
-			STARTED_BY, KNOWN_ISSUE, BLOCKER, PLATFORM, APP_VERSION, ENV, STARTED_AT, ELAPSED, ETA, COMMENTS, SLACK_CHANNELS)
+			STARTED_BY, KNOWN_ISSUE, BLOCKER, APP_VERSION, ENV, STARTED_AT, ELAPSED, ETA, COMMENTS, SLACK_CHANNELS)
 			VALUES (
 				#{ciRunId},
 				#{user.id},
@@ -39,7 +39,6 @@
 				#{startedBy},
 				#{knownIssue},
 				#{blocker},
-				#{platform},
 				#{appVersion},
 				#{env},
 				#{startedAt},
@@ -71,7 +70,6 @@
                TR.STARTED_BY                AS TEST_RUN_STARTED_BY,
                TR.KNOWN_ISSUE               AS TEST_RUN_KNOWN_ISSUE,
                TR.BLOCKER                   AS TEST_RUN_BLOCKER,
-               TR.PLATFORM                  AS TEST_RUN_PLATFORM,
                TR.APP_VERSION               AS TEST_RUN_APP_VERSION,
                TR.ENV                       AS TEST_RUN_ENV,
                TR.STARTED_AT                AS TEST_RUN_STARTED_AT,
@@ -83,14 +81,31 @@
                TR.MODIFIED_AT               AS TEST_RUN_MODIFIED_AT,
                TR.CREATED_AT                AS TEST_RUN_CREATED_AT,
 
+               C.ID                         AS TEST_RUN_CONFIG_ID,
+               C.URL                        AS TEST_RUN_CONFIG_URL,
+               C.ENV                        AS TEST_RUN_CONFIG_ENV,
+               C.PLATFORM                   AS TEST_RUN_CONFIG_PLATFORM,
+               C.PLATFORM_VERSION           AS TEST_RUN_CONFIG_PLATFORM_VERSION,
+               C.BROWSER                    AS TEST_RUN_CONFIG_BROWSER,
+               C.BROWSER_VERSION            AS TEST_RUN_CONFIG_BROWSER_VERSION,
+               C.APP_VERSION                AS TEST_RUN_CONFIG_APP_VERSION,
+               C.LOCALE                     AS TEST_RUN_CONFIG_LOCALE,
+               C.LANGUAGE                   AS TEST_RUN_CONFIG_LANGUAGE,
+               C.DEVICE                     AS TEST_RUN_CONFIG_DEVICE,
+               C.MODIFIED_AT                AS TEST_RUN_CONFIG_MODIFIED_AT,
+               C.CREATED_AT                 AS TEST_RUN_CONFIG_CREATED_AT,
+
                P.ID                         AS TEST_RUN_PROJECT_ID,
                P.NAME                       AS TEST_RUN_PROJECT_NAME,
                P.DESCRIPTION                AS TEST_RUN_PROJECT_DESCRIPTION,
                P.MODIFIED_AT                AS TEST_RUN_PROJECT_MODIFIED_AT,
                P.CREATED_AT                 AS TEST_RUN_PROJECT_CREATED_AT
+
         FROM TEST_RUNS TR
-                 LEFT JOIN
-             PROJECTS P ON TR.PROJECT_ID = P.ID
+                 LEFT JOIN PROJECTS P
+                           ON TR.PROJECT_ID = P.ID
+                 LEFT JOIN TEST_CONFIGS C
+                           ON TR.CONFIG_ID = C.ID
         ]]>
 	</sql>
 
@@ -111,7 +126,6 @@
 				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
 				TR.KNOWN_ISSUE AS TEST_RUN_KNOWN_ISSUE,
 				TR.BLOCKER AS TEST_RUN_BLOCKER,
-				TR.PLATFORM AS TEST_RUN_PLATFORM,
 				TR.APP_VERSION AS TEST_RUN_APP_VERSION,
 				TR.ENV AS TEST_RUN_ENV,
 				TR.STARTED_AT AS TEST_RUN_STARTED_AT,
@@ -286,7 +300,12 @@
             </if>
             <if test="null != platform">
                 <![CDATA[
-				   AND LOWER(TR.PLATFORM) = LOWER(#{platform})
+				   AND LOWER(C.PLATFORM) = LOWER(#{platform})
+				]]>
+            </if>
+            <if test="null != browser">
+                <![CDATA[
+				   AND LOWER(C.BROWSER) = LOWER(#{browser})
 				]]>
             </if>
             <if test="null != date">
@@ -499,7 +518,6 @@
 				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
 				TR.KNOWN_ISSUE AS TEST_RUN_KNOWN_ISSUE,
 				TR.BLOCKER AS TEST_RUN_BLOCKER,
-				TR.PLATFORM AS TEST_RUN_PLATFORM,
 				TR.APP_VERSION AS TEST_RUN_APP_VERSION,
 				TR.ENV AS TEST_RUN_ENV,
 				TR.STARTED_AT AS TEST_RUN_STARTED_AT,
@@ -560,16 +578,6 @@
         ]]>
 	</select>
 
-    <select id="getPlatforms" resultType="java.lang.String">
-		<![CDATA[
-        SELECT DISTINCT LOWER(TR.PLATFORM)
-        FROM TEST_RUNS TR
-        ORDER BY LOWER(TR.PLATFORM)
-            ASC
-        LIMIT 10000
-        ]]>
-	</select>
-
     <update id="updateTestRun">
         <![CDATA[
 			UPDATE
@@ -599,7 +607,6 @@
 			    STARTED_BY = #{startedBy},
 			    KNOWN_ISSUE = #{knownIssue},
 			    BLOCKER = #{blocker},
-			    PLATFORM = #{platform},
 			    APP_VERSION = #{appVersion},
 			    ENV = #{env},
 			    STARTED_AT = #{startedAt},
@@ -615,7 +622,9 @@
 
     <update id="reassignToProject">
 		<![CDATA[
-        UPDATE TEST_RUNS SET PROJECT_ID = #{toProjectId} WHERE PROJECT_ID = #{fromProjectId}
+        UPDATE TEST_RUNS
+        SET PROJECT_ID = #{toProjectId}
+        WHERE PROJECT_ID = #{fromProjectId}
         ]]>
 	</update>
 
@@ -718,7 +727,6 @@
         <result column="TEST_RUN_STARTED_BY" property="startedBy"/>
         <result column="TEST_RUN_KNOWN_ISSUE" property="knownIssue"/>
         <result column="TEST_RUN_BLOCKER" property="blocker"/>
-        <result column="TEST_RUN_PLATFORM" property="platform"/>
         <result column="TEST_RUN_APP_VERSION" property="appVersion"/>
         <result column="TEST_RUN_ENV" property="env"/>
         <result column="TEST_RUN_STARTED_AT" property="startedAt"/>
