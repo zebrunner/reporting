@@ -2292,7 +2292,7 @@ SELECT count(*) as "COUNT",
  </#switch>
  <#return result>
 </#function>
-', '{"legend": ["ENV", "REPORT", "BUG", "SUBJECT"]}', '{
+', '{"columns": ["ENV", "REPORT", "BUG", "SUBJECT"]}', '{
   "PERIOD": {
     "values": [
       "Last 24 Hours",

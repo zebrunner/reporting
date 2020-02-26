@@ -246,7 +246,7 @@ INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL, REFRESHABLE, DESCRIPTION, PARAMS_C
 }', NULL, (SELECT id FROM management.widget_templates WHERE name = 'PASS RATE (BAR)'));
 INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL, REFRESHABLE, DESCRIPTION, PARAMS_CONFIG, LEGEND_CONFIG, WIDGET_TEMPLATE_ID) VALUES ('30 DAYS TEST DETAILS', 'TABLE', NULL, NULL, false, 'Detailed information about passed, failed, skipped, etc tests for last 30 days.', '{
   "PERIOD": "Last 30 Days",
-  "GROUP_BY": "TEST_SUITE_NAME",
+  "GROUP_BY": "OWNER_USERNAME",
   "PERSONAL": "false",
   "PROJECT": [],
   "USER": [],
@@ -270,6 +270,7 @@ INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL, REFRESHABLE, DESCRIPTION, PARAMS_C
 }', '{
   "OWNER": true,
   "SUITE": false,
+  "BUILD": false,
   "PASS": true,
   "FAIL": true,
   "DEFECT": false,

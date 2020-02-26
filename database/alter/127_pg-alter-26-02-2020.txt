@@ -221,7 +221,7 @@ UPDATE WIDGETS SET PARAMS_CONFIG = '{
 
 UPDATE WIDGETS SET PARAMS_CONFIG = '{
   "PERIOD": "Last 30 Days",
-  "GROUP_BY": "TEST_SUITE_NAME",
+  "GROUP_BY": "OWNER_USERNAME",
   "PERSONAL": "false",
   "PROJECT": [],
   "USER": [],
@@ -244,6 +244,24 @@ UPDATE WIDGETS SET PARAMS_CONFIG = '{
   "currentUserId": "1"
 }' WHERE TITLE = '30 DAYS TEST DETAILS';
 
+UPDATE WIDGETS SET LEGEND_CONFIG = '{
+  "OWNER": true,
+  "SUITE": false,
+  "BUILD": false,
+  "PASS": true,
+  "FAIL": true,
+  "DEFECT": false,
+  "SKIP": true,
+  "ABORT": false,
+  "QUEUE": false,
+  "TOTAL": true,
+  "PASSED (%)": true,
+  "FAILED (%)": false,
+  "KNOWN ISSUE (%)": false,
+  "SKIPPED (%)": false,
+  "QUEUED (%)": false,
+  "FAIL RATE (%)": false
+}' WHERE TITLE = '30 DAYS TEST DETAILS';
 
 
 UPDATE WIDGETS SET PARAMS_CONFIG = '{
