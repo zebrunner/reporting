@@ -90,7 +90,7 @@ public class TestRun extends AbstractEntity {
     private String buildPlatformInfo() {
         StringBuilder platformInfoBuilder = new StringBuilder();
         platformInfoBuilder.append(config.buildPlatformName());
-        if ("en_US".equals(config.getLocale())) {
+        if (!"en_US".equals(config.getLocale())) {
             platformInfoBuilder.append(" ")
                                .append(config.getLocale());
         }
