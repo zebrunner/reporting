@@ -21,6 +21,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface TestConfigMapper {
+
     void createTestConfig(TestConfig testConfig);
 
     TestConfig getTestConfigById(long id);
@@ -34,5 +35,7 @@ public interface TestConfigMapper {
     List<String> getPlatforms();
 
     List<String> getBrowsers();
+
+    List<String> getEnvironments();
 
 }

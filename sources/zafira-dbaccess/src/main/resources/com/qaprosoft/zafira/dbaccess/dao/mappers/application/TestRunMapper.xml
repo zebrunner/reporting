@@ -13,7 +13,7 @@
             PROJECT_ID,
         </if>
         <![CDATA[
-			STARTED_BY, KNOWN_ISSUE, BLOCKER, APP_VERSION, ENV, STARTED_AT, ELAPSED, ETA, COMMENTS, SLACK_CHANNELS)
+			STARTED_BY, KNOWN_ISSUE, BLOCKER, APP_VERSION, STARTED_AT, ELAPSED, ETA, COMMENTS, SLACK_CHANNELS)
 			VALUES (
 				#{ciRunId},
 				#{user.id},
@@ -40,7 +40,6 @@
 				#{knownIssue},
 				#{blocker},
 				#{appVersion},
-				#{env},
 				#{startedAt},
 				#{elapsed},
 				#{eta},
@@ -71,7 +70,6 @@
                TR.KNOWN_ISSUE               AS TEST_RUN_KNOWN_ISSUE,
                TR.BLOCKER                   AS TEST_RUN_BLOCKER,
                TR.APP_VERSION               AS TEST_RUN_APP_VERSION,
-               TR.ENV                       AS TEST_RUN_ENV,
                TR.STARTED_AT                AS TEST_RUN_STARTED_AT,
                TR.ELAPSED                   AS TEST_RUN_ELAPSED,
                TR.ETA                       AS TEST_RUN_ETA,
@@ -127,7 +125,6 @@
 				TR.KNOWN_ISSUE AS TEST_RUN_KNOWN_ISSUE,
 				TR.BLOCKER AS TEST_RUN_BLOCKER,
 				TR.APP_VERSION AS TEST_RUN_APP_VERSION,
-				TR.ENV AS TEST_RUN_ENV,
 				TR.STARTED_AT AS TEST_RUN_STARTED_AT,
 				TR.ELAPSED AS TEST_RUN_ELAPSED,
 				TR.ETA AS TEST_RUN_ETA,
@@ -295,7 +292,7 @@
             </if>
             <if test="null != environment">
                 <![CDATA[
-				   AND LOWER(TR.ENV) = LOWER(#{environment})
+				   AND LOWER(C.ENV) = LOWER(#{environment})
 				]]>
             </if>
             <if test="null != platform">
@@ -500,56 +497,75 @@
 
     <select id="getLatestJobTestRuns" resultMap="TestRunResultMap">
         <![CDATA[
-			SELECT
-				TR.ID AS TEST_RUN_ID,
-				TR.CI_RUN_ID AS TEST_RUN_CI_RUN_ID,
-				TR.USER_ID AS TEST_RUN_USER_ID,
-				TR.TEST_SUITE_ID AS TEST_RUN_TEST_SUITE_ID,
-				TR.STATUS AS TEST_RUN_STATUS,
-				TR.SCM_URL AS TEST_RUN_SCM_URL,
-				TR.SCM_BRANCH AS TEST_RUN_SCM_BRANCH,
-				TR.SCM_COMMIT AS TEST_RUN_SCM_COMMIT,
-				TR.CONFIG_XML AS TEST_RUN_CONFIG_XML,
-				TR.WORK_ITEM_ID AS TEST_RUN_WORK_ITEM_ID,
-				TR.JOB_ID AS TEST_RUN_JOB_ID,
-				TR.UPSTREAM_JOB_ID AS TEST_RUN_UPSTREAM_JOB_ID,
-				TR.UPSTREAM_JOB_BUILD_NUMBER AS TEST_RUN_UPSTREAM_JOB_BUILD_NUMBER,
-				TR.BUILD_NUMBER AS TEST_RUN_BUILD_NUMBER,
-				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
-				TR.KNOWN_ISSUE AS TEST_RUN_KNOWN_ISSUE,
-				TR.BLOCKER AS TEST_RUN_BLOCKER,
-				TR.APP_VERSION AS TEST_RUN_APP_VERSION,
-				TR.ENV AS TEST_RUN_ENV,
-				TR.STARTED_AT AS TEST_RUN_STARTED_AT,
-				TR.ELAPSED AS TEST_RUN_ELAPSED,
-				TR.ETA AS TEST_RUN_ETA,
-				TR.COMMENTS AS TEST_RUN_COMMENTS,
-				TR.SLACK_CHANNELS AS TEST_RUN_SLACK_CHANNELS,
-				TR.REVIEWED AS TEST_RUN_REVIEWED,
-				TR.MODIFIED_AT AS TEST_RUN_MODIFIED_AT,
-				TR.CREATED_AT AS TEST_RUN_CREATED_AT,
-				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'PASSED') AS TEST_RUN_PASSED,
-				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED') AS TEST_RUN_FAILED,
-				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'SKIPPED') AS TEST_RUN_SKIPPED
-			FROM
-				TEST_RUNS TR
-			INNER JOIN
-				(SELECT
-					JOB_ID, MAX(STARTED_AT) AS STARTED_AT
-			     FROM
-			    	TEST_RUNS
-			     WHERE
-			     	STARTED_AT >= current_date - interval '2 week'
-			     GROUP BY JOB_ID, ENV) AS MAX
-			USING
-				(JOB_ID, STARTED_AT)
-			WHERE
-				TR.ENV = #{env} AND TR.JOB_ID IN
-		]]>
-        <foreach item="jobId" index="index" collection="jobIds"
-                 open="(" separator="," close=")">
-            #{jobId}
-        </foreach>
+        SELECT TR.ID                                                 AS TEST_RUN_ID,
+               TR.CI_RUN_ID                                          AS TEST_RUN_CI_RUN_ID,
+               TR.USER_ID                                            AS TEST_RUN_USER_ID,
+               TR.TEST_SUITE_ID                                      AS TEST_RUN_TEST_SUITE_ID,
+               TR.STATUS                                             AS TEST_RUN_STATUS,
+               TR.SCM_URL                                            AS TEST_RUN_SCM_URL,
+               TR.SCM_BRANCH                                         AS TEST_RUN_SCM_BRANCH,
+               TR.SCM_COMMIT                                         AS TEST_RUN_SCM_COMMIT,
+               TR.CONFIG_XML                                         AS TEST_RUN_CONFIG_XML,
+               TR.WORK_ITEM_ID                                       AS TEST_RUN_WORK_ITEM_ID,
+               TR.JOB_ID                                             AS TEST_RUN_JOB_ID,
+               TR.UPSTREAM_JOB_ID                                    AS TEST_RUN_UPSTREAM_JOB_ID,
+               TR.UPSTREAM_JOB_BUILD_NUMBER                          AS TEST_RUN_UPSTREAM_JOB_BUILD_NUMBER,
+               TR.BUILD_NUMBER                                       AS TEST_RUN_BUILD_NUMBER,
+               TR.STARTED_BY                                         AS TEST_RUN_STARTED_BY,
+               TR.KNOWN_ISSUE                                        AS TEST_RUN_KNOWN_ISSUE,
+               TR.BLOCKER                                            AS TEST_RUN_BLOCKER,
+               TR.APP_VERSION                                        AS TEST_RUN_APP_VERSION,
+               TR.STARTED_AT                                         AS TEST_RUN_STARTED_AT,
+               TR.ELAPSED                                            AS TEST_RUN_ELAPSED,
+               TR.ETA                                                AS TEST_RUN_ETA,
+               TR.COMMENTS                                           AS TEST_RUN_COMMENTS,
+               TR.SLACK_CHANNELS                                     AS TEST_RUN_SLACK_CHANNELS,
+               TR.REVIEWED                                           AS TEST_RUN_REVIEWED,
+               TR.MODIFIED_AT                                        AS TEST_RUN_MODIFIED_AT,
+               TR.CREATED_AT                                         AS TEST_RUN_CREATED_AT,
+               (SELECT COUNT(*) FROM TESTS T
+               WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'PASSED')  AS TEST_RUN_PASSED,
+               (SELECT COUNT(*) FROM TESTS T
+               WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED')  AS TEST_RUN_FAILED,
+               (SELECT COUNT(*) FROM TESTS T
+               WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'SKIPPED') AS TEST_RUN_SKIPPED,
+
+               TC.ID                                                 AS TEST_RUN_CONFIG_ID,
+               TC.URL                                                AS TEST_RUN_CONFIG_URL,
+               TC.ENV                                                AS TEST_RUN_CONFIG_ENV,
+               TC.PLATFORM                                           AS TEST_RUN_CONFIG_PLATFORM,
+               TC.PLATFORM_VERSION                                   AS TEST_RUN_CONFIG_PLATFORM_VERSION,
+               TC.BROWSER                                            AS TEST_RUN_CONFIG_BROWSER,
+               TC.BROWSER_VERSION                                    AS TEST_RUN_CONFIG_BROWSER_VERSION,
+               TC.APP_VERSION                                        AS TEST_RUN_CONFIG_APP_VERSION,
+               TC.LOCALE                                             AS TEST_RUN_CONFIG_LOCALE,
+               TC.LANGUAGE                                           AS TEST_RUN_CONFIG_LANGUAGE,
+               TC.DEVICE                                             AS TEST_RUN_CONFIG_DEVICE,
+               TC.MODIFIED_AT                                        AS TEST_RUN_CONFIG_MODIFIED_AT,
+               TC.CREATED_AT                                         AS TEST_RUN_CONFIG_CREATED_AT
+
+        FROM TEST_RUNS TR
+                 JOIN
+             TEST_CONFIGS TC
+             ON TR.CONFIG_ID = TC.ID
+                 INNER JOIN
+             (SELECT JOB_ID,
+                     MAX(STARTED_AT) AS STARTED_AT
+              FROM TEST_RUNS TR
+                       JOIN TEST_CONFIGS TC
+                            ON TR.CONFIG_ID = TC.ID
+              WHERE TR.STARTED_AT >= current_date - interval '2 week'
+              GROUP BY TR.JOB_ID, TC.ENV)
+                 AS MAX
+              USING
+                 (JOB_ID, STARTED_AT)
+        			WHERE
+        				TC.ENV = #{env} AND TR.JOB_ID IN
+        		]]>
+                <foreach item="jobId" index="index" collection="jobIds"
+                         open="(" separator="," close=")">
+                    #{jobId}
+                </foreach>
     </select>
 
     <select id="getLatestJobTestRunByBranch"
@@ -567,16 +583,6 @@
 			LIMIT 1
 		]]>
     </select>
-
-    <select id="getEnvironments" resultType="java.lang.String">
-		<![CDATA[
-        SELECT DISTINCT UPPER(TR.ENV)
-        FROM TEST_RUNS TR
-        ORDER BY UPPER(TR.ENV)
-            ASC
-        LIMIT 10000
-        ]]>
-	</select>
 
     <update id="updateTestRun">
         <![CDATA[
@@ -608,7 +614,6 @@
 			    KNOWN_ISSUE = #{knownIssue},
 			    BLOCKER = #{blocker},
 			    APP_VERSION = #{appVersion},
-			    ENV = #{env},
 			    STARTED_AT = #{startedAt},
 				ELAPSED = #{elapsed},
 				ETA = #{eta},
@@ -657,7 +662,7 @@
         <result column="UPSTREAM_JOB_BUILD_NUMBER"
                 property="upstreamJobBuildNumber"/>
         <result column="BUILD_NUMBER" property="buildNumber"/>
-        <result column="ENV" property="env"/>
+        <result column="ENV" property="config.env"/>
         <result column="STARTED" property="startedAt"/>
         <result column="ELAPSED" property="elapsed"/>
         <result column="JOB_URL" property="job.jobURL"/>
@@ -728,7 +733,6 @@
         <result column="TEST_RUN_KNOWN_ISSUE" property="knownIssue"/>
         <result column="TEST_RUN_BLOCKER" property="blocker"/>
         <result column="TEST_RUN_APP_VERSION" property="appVersion"/>
-        <result column="TEST_RUN_ENV" property="env"/>
         <result column="TEST_RUN_STARTED_AT" property="startedAt"/>
         <result column="TEST_RUN_ELAPSED" property="elapsed"/>
         <result column="TEST_RUN_ETA" property="eta"/>

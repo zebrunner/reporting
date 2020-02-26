@@ -31,13 +31,13 @@
         <br/>
         <hr/>
         <table>
-           	<#if testRun.env??>
+           	<#if testRun.config.env??>
             <tr style="font-size: 16px;
                        line-height: 1.63;
                        text-align: left;">
                 <td style="width: 120px;color: #808a93;">Environment:</td>
                 <td style="font-weight: bold;color: #011627;">
-                    ${testRun.env}
+                    ${testRun.config.env}
                     <#if testRun.config.url ??>
                          - <a href="${testRun.config.url}">${testRun.config.url}</a>
                     </#if>

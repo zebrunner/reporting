@@ -80,7 +80,7 @@
     "STATUS": "TR.STATUS",
     "TEST_SUITE": "TS.NAME",
     "JOB_URL": "J.JOB_URL",
-    "ENV": "TR.ENV",
+    "ENV": "C.ENV",
     "PLATFORM": "C.PLATFORM",
     "BROWSER": "C.BROWSER",
     "DATE": "TR.STARTED_AT",

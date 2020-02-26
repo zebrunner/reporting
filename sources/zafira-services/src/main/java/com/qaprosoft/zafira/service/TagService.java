@@ -92,7 +92,7 @@ public class TagService {
                                  .finishedAt(getFinishedAt(testRun))
                                  .startedAt(testRun.getStartedAt())
                                  .createdAfter(testRun.getCreatedAt())
-                                 .env(testRun.getEnv())
+                                 .env(testRun.getConfig().getEnv())
                                  .testRunId(testRun.getId().toString())
                                  .zafiraServiceUrl(urlResolver.buildWebURL())
                                  .customParams(getCustomParams(tagName, configuration))
