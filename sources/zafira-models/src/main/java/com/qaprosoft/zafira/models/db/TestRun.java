@@ -81,6 +81,11 @@ public class TestRun extends AbstractEntity {
     }
 
     public String getName() {
+        // For most cases config is present, but for a small amount of
+        // invalid data we should process this case
+        if (config == null) {
+            return "";
+        }
         String name = "%s %s (%s) on %s %s";
         String appVersion = isEmpty(config.getAppVersion()) ? config.getAppVersion() + " - " : "";
         String platformInfo = buildPlatformInfo();
