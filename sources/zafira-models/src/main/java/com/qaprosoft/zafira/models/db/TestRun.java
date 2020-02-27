@@ -55,7 +55,6 @@ public class TestRun extends AbstractEntity {
     private Project project;
     private boolean knownIssue;
     private boolean blocker;
-    private String appVersion;
     private Date startedAt;
     private Integer elapsed;
     private Integer eta;

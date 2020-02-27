@@ -372,7 +372,6 @@ public class TestRunService implements ProjectReassignable {
         testRun.setConfigXML(null);
         testRun.setConfig(null);
         testRun.setComments(null);
-        testRun.setAppVersion(null);
         testRun.setReviewed(false);
         testRun.setKnownIssue(false);
         testRun.setBlocker(false);
@@ -468,9 +467,7 @@ public class TestRunService implements ProjectReassignable {
     public void initTestRunWithXml(TestRun testRun) {
         if (StringUtils.isNotBlank(testRun.getConfigXML())) {
             TestConfig config = testConfigService.createTestConfigForTestRun(testRun.getConfigXML());
-
             testRun.setConfig(config);
-            testRun.setAppVersion(config.getAppVersion());
         }
     }
 

@@ -13,7 +13,7 @@
             PROJECT_ID,
         </if>
         <![CDATA[
-			STARTED_BY, KNOWN_ISSUE, BLOCKER, APP_VERSION, STARTED_AT, ELAPSED, ETA, COMMENTS, SLACK_CHANNELS)
+			STARTED_BY, KNOWN_ISSUE, BLOCKER, STARTED_AT, ELAPSED, ETA, COMMENTS, SLACK_CHANNELS)
 			VALUES (
 				#{ciRunId},
 				#{user.id},
@@ -39,7 +39,6 @@
 				#{startedBy},
 				#{knownIssue},
 				#{blocker},
-				#{appVersion},
 				#{startedAt},
 				#{elapsed},
 				#{eta},
@@ -613,7 +612,6 @@
 			    STARTED_BY = #{startedBy},
 			    KNOWN_ISSUE = #{knownIssue},
 			    BLOCKER = #{blocker},
-			    APP_VERSION = #{appVersion},
 			    STARTED_AT = #{startedAt},
 				ELAPSED = #{elapsed},
 				ETA = #{eta},
@@ -732,7 +730,6 @@
         <result column="TEST_RUN_STARTED_BY" property="startedBy"/>
         <result column="TEST_RUN_KNOWN_ISSUE" property="knownIssue"/>
         <result column="TEST_RUN_BLOCKER" property="blocker"/>
-        <result column="TEST_RUN_APP_VERSION" property="appVersion"/>
         <result column="TEST_RUN_STARTED_AT" property="startedAt"/>
         <result column="TEST_RUN_ELAPSED" property="elapsed"/>
         <result column="TEST_RUN_ETA" property="eta"/>
