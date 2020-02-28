@@ -9,8 +9,10 @@ ENV ZAFIRA_VERSION=${SERVICE_VER} \
 
 RUN mkdir /opt/assets
 
-COPY ./sources/zafira-web/build/libs/zafira-web-${version}.jar /app/zafira-service.jar
+COPY startup.sh /
 
-CMD ["java", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8002", "-jar", "/app/zafira-service.jar"]
+RUN chmod +x /startup.sh
+
+COPY ./sources/zafira-web/build/libs/zafira-web-${version}.jar /app/zafira-service.jar
 
 EXPOSE 8080
