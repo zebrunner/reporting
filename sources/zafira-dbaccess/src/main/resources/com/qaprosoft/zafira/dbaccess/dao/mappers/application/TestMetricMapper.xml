@@ -39,20 +39,24 @@
 
 	<select id="getEnvsByTestCaseId" resultType="java.lang.String">
 		<![CDATA[
-			SELECT
-				DISTINCT(TR.ENV)
-			FROM
-			  TEST_RUNS TR
-			INNER JOIN
-			  TESTS T
-			ON
-			  T.TEST_RUN_ID = TR.ID
-			INNER JOIN
-			  TEST_METRICS TM
-			ON
-			  T.TEST_RUN_ID = TR.ID
+            SELECT
+                DISTINCT(TR.ENV)
+            FROM
+            TEST_RUNS TR
+                INNER JOIN
+            TESTS T
+            ON
+                T.TEST_RUN_ID = TR.ID
+                INNER JOIN
+            TEST_METRICS TM
+            ON
+                T.TEST_RUN_ID = TR.ID
+                JOIN
+            TEST_CONFIGS TC
+            ON
+                T.TEST_CONFIG_ID = TC.ID
 			WHERE
-			  T.TEST_CASE_ID = #{testCaseId};
+			    T.TEST_CASE_ID = #{testCaseId};
 		]]>
 	</select>
 

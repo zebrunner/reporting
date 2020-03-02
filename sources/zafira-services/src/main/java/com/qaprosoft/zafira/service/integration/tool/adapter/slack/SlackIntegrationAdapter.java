@@ -142,7 +142,7 @@ public class SlackIntegrationAdapter extends AbstractIntegrationAdapter implemen
         testRunInfo.append(" | ")
                    .append(testRun.getTestSuite().getName())
                    .append(" | ")
-                   .append(testRun.getEnv())
+                   .append(testRun.getConfig().getEnv())
                    .append(" | ")
                    .append(isEmpty(config.buildPlatformName()) ? "no_platform" : config.buildPlatformName());
         if (config.getAppVersion() != null) {

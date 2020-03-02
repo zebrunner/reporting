@@ -311,7 +311,7 @@ public class TestRunController extends AbstractController implements TestRunDocu
     @GetMapping("/environments")
     @Override
     public List<String> getEnvironments() {
-        return testRunService.getEnvironments();
+        return testConfigService.getEnvironments();
     }
 
     @GetMapping("/platforms")
