@@ -21,6 +21,7 @@ import com.qaprosoft.zafira.service.UploadService;
 import com.qaprosoft.zafira.service.exception.IllegalOperationException;
 import com.qaprosoft.zafira.web.documented.FileUtilDocumentedController;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.FileCopyUtils;
@@ -44,8 +45,7 @@ import java.util.UUID;
 import static com.qaprosoft.zafira.models.dto.aws.FileUploadType.Type;
 import static com.qaprosoft.zafira.models.dto.aws.FileUploadType.Type.COMMON;
 import static com.qaprosoft.zafira.models.dto.aws.FileUploadType.Type.USERS;
-import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.INVALID_FILE_FORMAT;
-import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.INVALID_FILE_SIZE;
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.INVALID_IMAGE_FILE;
 
 @CrossOrigin
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -53,6 +53,7 @@ import static com.qaprosoft.zafira.service.exception.IllegalOperationException.I
 public class FileUtilController extends AbstractController implements FileUtilDocumentedController {
 
     private static final String DATA_FOLDER = "/opt/apk/%s";
+    private static final String[] ALLOWED_CONTENT_TYPES = {"image/png", "image/jpeg"};
 
     private final EmailService emailService;
     private final UploadService uploadService;
@@ -72,22 +73,11 @@ public class FileUtilController extends AbstractController implements FileUtilDo
     @Override
     public String uploadFile(@RequestHeader("FileType") Type type, @RequestParam("file") MultipartFile file) throws IOException {
         String resourceURL;
-
-        // Performing size (less than 2 MB) and file type (JPG/PNG only) validation for images
         if (COMMON.equals(type) || USERS.equals(type)) {
-
-            boolean isSizeLessThan2Mb = file.getSize() <= 2_000_000;
-            if (!isSizeLessThan2Mb) {
-                throw new IllegalOperationException(INVALID_FILE_SIZE, "File exceeds permitted size");
+            // Performing size (less than 2 MB) and file type (JPG/PNG only) validation for images
+            if (file.getSize() > 2_097_152 || !ArrayUtils.contains(ALLOWED_CONTENT_TYPES, file.getContentType())) {
+                throw new IllegalOperationException(INVALID_IMAGE_FILE, "File size should be less than 2MB and have format JPEG or PNG");
             }
-
-            String contentType = file.getContentType();
-            boolean isFormatImage =  contentType!= null &&
-                    (contentType.equals("image/jpeg") || contentType.equals("image/png"));
-            if (!isFormatImage) {
-                throw new IllegalOperationException(INVALID_FILE_FORMAT, "File format " + contentType + " is not permitted, try JPEG or PNG");
-            }
-
             resourceURL = uploadService.uploadImages(type, file.getInputStream(), file.getOriginalFilename(), file.getSize());
         } else {
             resourceURL = uploadService.uploadArtifacts(type, file.getInputStream(), file.getOriginalFilename(), file.getSize());
