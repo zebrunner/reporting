@@ -49,7 +49,9 @@ public class IllegalOperationException extends ApplicationException {
         GROUP_CAN_NOT_BE_DELETED(2074),
         ATTACHMENT_RESOURCE_NOT_NULL(2075),
         TEST_RUN_RERUN_CAN_NOT_BE_STARTED(2076),
-        WORK_ITEM_CAN_NOT_BE_ATTACHED(2077);
+        WORK_ITEM_CAN_NOT_BE_ATTACHED(2077),
+        INVALID_FILE_FORMAT(2078),
+        INVALID_FILE_SIZE(2079);
 
         private final Integer code;
         private String messageKey;

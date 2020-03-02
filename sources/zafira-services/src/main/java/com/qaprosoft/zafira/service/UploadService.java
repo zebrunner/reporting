@@ -35,24 +35,38 @@ public class UploadService {
     }
 
     /**
-     * Uploads given document to underlying storage. Exact storage type currently depends on external app configuration
-     * and is not controller by service client
-     * @param type document type
+     * Uploads artifacts like screenshots or video to to S3 bucket.
+     * @param type artifact type
      * @return url single-attribute JSON containing document url to be returned to REST API client invoking this API
      */
-    public String upload(FileUploadType.Type type, InputStream inputStream, String filename, long fileSize) {
-        String resourceUrl;
+    public String uploadArtifacts(FileUploadType.Type type, InputStream inputStream, String filename, long fileSize) {
+        String resourceUrl = storageProviderService.saveFile(new FileUploadType(inputStream, type, filename, fileSize));
+        return String.format("{\"url\": \"%s\"}", resourceUrl);
+    }
 
-        // this is only required for single host deployment and only for users/common assets such as avatar and company logo
-        // the rest of the artifacts still should be uploaded to S3 bucket
-        if (!multitenant && (FileUploadType.Type.USERS.equals(type) || FileUploadType.Type.COMMON.equals(type))) {
+    /**
+     * Uploads users/common assets such as avatar and company logo to underlying storage.
+     * Exact storage type currently depends on external app configuration
+     * and is not controlled by service client
+     * @return url single-attribute JSON containing document url to be returned to REST API client invoking this API
+     */
+    public String uploadImages(FileUploadType.Type type, InputStream inputStream, String filename, long fileSize) {
+        if (!multitenant) {
             filename = storeToLocalFilesystem(filename, inputStream);
-            // resource url is a concatenation or API root endpoint and relative path to document
-            resourceUrl = urlResolver.buildWebserviceUrl() + ASSETS_DIRECTORY + filename;
+            return getLocalFilesystemResourceURL(filename);
         } else {
-            resourceUrl = storageProviderService.saveFile(new FileUploadType(inputStream, type, filename, fileSize));
+            return uploadArtifacts(type, inputStream, filename, fileSize);
         }
+    }
 
+    /**
+     * Provides resource url via
+     * concatenation or API root endpoint and relative path to document
+     * @param filename name of the file stored on the local system
+     * @return url single-attribute JSON containing document url to be returned to REST API client invoking this API
+     */
+    private String getLocalFilesystemResourceURL(String filename) {
+        String resourceUrl = urlResolver.buildWebserviceUrl() + ASSETS_DIRECTORY + filename;
         return String.format("{\"url\": \"%s\"}", resourceUrl);
     }
 

@@ -18,6 +18,7 @@ package com.qaprosoft.zafira.web;
 import com.qaprosoft.zafira.models.dto.EmailType;
 import com.qaprosoft.zafira.service.EmailService;
 import com.qaprosoft.zafira.service.UploadService;
+import com.qaprosoft.zafira.service.exception.IllegalOperationException;
 import com.qaprosoft.zafira.web.documented.FileUtilDocumentedController;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpHeaders;
@@ -41,6 +42,10 @@ import java.io.IOException;
 import java.util.UUID;
 
 import static com.qaprosoft.zafira.models.dto.aws.FileUploadType.Type;
+import static com.qaprosoft.zafira.models.dto.aws.FileUploadType.Type.COMMON;
+import static com.qaprosoft.zafira.models.dto.aws.FileUploadType.Type.USERS;
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.INVALID_FILE_FORMAT;
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.INVALID_FILE_SIZE;
 
 @CrossOrigin
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -66,7 +71,28 @@ public class FileUtilController extends AbstractController implements FileUtilDo
     @PostMapping("api/upload")
     @Override
     public String uploadFile(@RequestHeader("FileType") Type type, @RequestParam("file") MultipartFile file) throws IOException {
-        return uploadService.upload(type, file.getInputStream(), file.getOriginalFilename(), file.getSize());
+        String resourceURL;
+
+        // Performing size (less than 2 MB) and file type (JPG/PNG only) validation for images
+        if (COMMON.equals(type) || USERS.equals(type)) {
+
+            boolean isSizeLessThan2Mb = file.getSize() <= 2_000_000;
+            if (!isSizeLessThan2Mb) {
+                throw new IllegalOperationException(INVALID_FILE_SIZE, "File exceeds permitted size");
+            }
+
+            String contentType = file.getContentType();
+            boolean isFormatImage =  contentType!= null &&
+                    (contentType.equals("image/jpeg") || contentType.equals("image/png"));
+            if (!isFormatImage) {
+                throw new IllegalOperationException(INVALID_FILE_FORMAT, "File format " + contentType + " is not permitted, try JPEG or PNG");
+            }
+
+            resourceURL = uploadService.uploadImages(type, file.getInputStream(), file.getOriginalFilename(), file.getSize());
+        } else {
+            resourceURL = uploadService.uploadArtifacts(type, file.getInputStream(), file.getOriginalFilename(), file.getSize());
+        }
+        return resourceURL;
     }
 
     @PostMapping("api/upload/email")
