@@ -76,7 +76,7 @@ public interface AuthDocumentedController {
             @ApiImplicitParam(name = "credentialsDTO", paramType = "body", dataType = "CredentialsDTO", required = true, value = "Credentials for user authentication")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns the auth token", response = AuthTokenDTO.class),
+            @ApiResponse(code = 200, message = "Returns the auth token. If it is a first login, header with name `First-Login` will appear in response.", response = AuthTokenDTO.class),
             @ApiResponse(code = 401, message = "Indicates that the user credentials are invalid", response = ResponseEntity.class)
     })
     AuthTokenDTO login(CredentialsDTO credentialsDTO, HttpServletResponse response);
