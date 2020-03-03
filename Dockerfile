@@ -16,3 +16,4 @@ RUN chmod +x /startup.sh
 COPY ./sources/zafira-web/build/libs/zafira-web-${version}.jar /app/zafira-service.jar
 
 EXPOSE 8080
+EXPOSE 5005

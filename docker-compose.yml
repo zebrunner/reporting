@@ -68,7 +68,6 @@ services:
       - ./assets:/opt/assets
     ports:
       - 8080:8080
-      - 5005:5005
     env_file:
       - zafira-properties.env
     depends_on:
