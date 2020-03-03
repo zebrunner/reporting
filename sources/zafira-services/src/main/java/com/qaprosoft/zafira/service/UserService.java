@@ -225,11 +225,7 @@ public class UserService implements TenancyDbInitial {
 
     @Transactional(readOnly = true)
     public User getUserByResetToken(String token) {
-        User user = userMapper.getUserByResetToken(token);
-        if (user == null || !user.getSource().equals(User.Source.INTERNAL)) {
-            throw new IllegalOperationException(RESET_TOKEN_IS_NOT_POSSIBLE, ERR_MSG_UNABLE_TO_RESET_TOKEN);
-        }
-        return user;
+        return userMapper.getUserByResetToken(token);
     }
 
     @Transactional(rollbackFor = Exception.class)

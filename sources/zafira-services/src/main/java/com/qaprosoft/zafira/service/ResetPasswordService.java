@@ -47,7 +47,10 @@ public class ResetPasswordService {
 
     @Transactional(rollbackFor = Exception.class)
     public void sendResetPasswordEmail(String email) {
-        User user = userService.getNotNullUserByEmail(email);
+        User user = userService.getUserByEmail(email);
+        if (user == null) {
+            return;
+        }
         AbstractEmail emailMessage;
         if (User.Source.INTERNAL.equals(user.getSource())) {
             String token = RandomStringUtils.randomAlphanumeric(50);
@@ -62,6 +65,9 @@ public class ResetPasswordService {
     @Transactional(rollbackFor = Exception.class)
     public void resetPassword(String token, String password) {
         User user = userService.getUserByResetToken(token);
+        if (user == null || !user.getSource().equals(User.Source.INTERNAL)) {
+            return;
+        }
         userService.updateUserPassword(user, password);
         userService.updateResetToken(null, user.getId());
     }
