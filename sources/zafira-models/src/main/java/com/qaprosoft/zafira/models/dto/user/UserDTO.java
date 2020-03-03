@@ -42,7 +42,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
-public class UserType extends AbstractType {
+public class UserDTO extends AbstractType {
     private static final long serialVersionUID = -6663692781158665080L;
 
     @NotEmpty(message = "Username required")
@@ -68,7 +68,7 @@ public class UserType extends AbstractType {
     private User.Source source;
     private User.Status status;
 
-    public UserType(String username, String email, String firstName, String lastName) {
+    public UserDTO(String username, String email, String firstName, String lastName) {
         this.username = username;
         this.email = email;
         this.firstName = firstName;

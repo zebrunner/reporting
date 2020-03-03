@@ -23,7 +23,7 @@ import com.qaprosoft.zafira.models.dto.auth.RefreshTokenDTO;
 import com.qaprosoft.zafira.models.dto.auth.TenancyInfoDTO;
 import com.qaprosoft.zafira.models.dto.auth.TenantAuth;
 import com.qaprosoft.zafira.models.dto.user.PasswordDTO;
-import com.qaprosoft.zafira.models.dto.user.UserType;
+import com.qaprosoft.zafira.models.dto.user.UserDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -95,7 +95,7 @@ public interface AuthDocumentedController {
             @ApiResponse(code = 200, message = "Creates a user in the application"),
             @ApiResponse(code = 400, message = "Indicates that the user already exists")
     })
-    void signup(String token, UserType userType);
+    void signup(String token, UserDTO userDTO);
 
     @ApiOperation(
             value = "Refreshes an auth token",
