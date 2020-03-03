@@ -367,13 +367,11 @@ public class TestRunService implements ProjectReassignable {
             }
             testRun.setProject(project);
         }
-        testRun.setEnv(testRunParams.getEnv());
         testRun.setCiRunId(testRunParams.getCiRunId());
         testRun.setElapsed(null);
         testRun.setConfigXML(null);
         testRun.setConfig(null);
         testRun.setComments(null);
-        testRun.setAppVersion(null);
         testRun.setReviewed(false);
         testRun.setKnownIssue(false);
         testRun.setBlocker(false);
@@ -469,10 +467,7 @@ public class TestRunService implements ProjectReassignable {
     public void initTestRunWithXml(TestRun testRun) {
         if (StringUtils.isNotBlank(testRun.getConfigXML())) {
             TestConfig config = testConfigService.createTestConfigForTestRun(testRun.getConfigXML());
-
             testRun.setConfig(config);
-            testRun.setEnv(config.getEnv());
-            testRun.setAppVersion(config.getAppVersion());
         }
     }
 
@@ -797,14 +792,13 @@ public class TestRunService implements ProjectReassignable {
     }
 
     private TestRunResultsEmail buildTestRunResultEmail(TestRun testRun, List<Test> tests) {
-        Configuration configuration = readArguments(testRun.getConfigXML());
-        // Forward from API to Web
-        Argument zafiraServiceUrlArgument = new Argument("zafira_service_url", urlResolver.buildWebURL());
-        configuration.getArg().add(zafiraServiceUrlArgument);
 
         tests.forEach(test -> test.setArtifacts(new TreeSet<>(test.getArtifacts())));
 
-        return new TestRunResultsEmail(configuration, testRun, tests);
+        TestRunResultsEmail testRunResultsEmail = new TestRunResultsEmail(testRun, tests);
+        testRunResultsEmail.getCustomValues().put("zafira_service_url", urlResolver.buildWebURL());
+
+        return testRunResultsEmail;
     }
 
     private String getJiraUrl() {
@@ -819,12 +813,6 @@ public class TestRunService implements ProjectReassignable {
         int total = testRun.getPassed() + testRun.getFailed() + testRun.getSkipped();
         double rate = (double) testRun.getPassed() / (double) total;
         return total > 0 ? (new BigDecimal(rate).setScale(2, RoundingMode.HALF_UP).multiply(new BigDecimal(100))).intValue() : 0;
-    }
-
-    @Transactional(readOnly = true)
-    @Cacheable(value = "environments", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #result", condition = "#result != null && #result.size() != 0")
-    public List<String> getEnvironments() {
-        return testRunMapper.getEnvironments();
     }
 
     public void hideJobUrlsIfNeed(List<TestRun> testRuns) {

@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.qaprosoft.zafira.service.util.XmlConfigurationUtil.parseConfigToMap;
 import static com.qaprosoft.zafira.service.util.XmlConfigurationUtil.readArguments;
 
 @Service
@@ -87,14 +86,13 @@ public class TagService {
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
         // ConfigXML parsing for TestRunName generation
         Configuration configuration = readArguments(testRun.getConfigXML());
-        Map<String, String> configMap = parseConfigToMap(configuration);
         return TagIntegrationData.builder()
-                                 .testRunName(testRun.getName(configMap))
+                                 .testRunName(testRun.getName())
                                  .testInfo(getTestInfoByTagNameAndTestRunCiRunId(tagName, ciRunId))
                                  .finishedAt(getFinishedAt(testRun))
                                  .startedAt(testRun.getStartedAt())
                                  .createdAfter(testRun.getCreatedAt())
-                                 .env(testRun.getEnv())
+                                 .env(testRun.getConfig().getEnv())
                                  .testRunId(testRun.getId().toString())
                                  .zafiraServiceUrl(urlResolver.buildWebURL())
                                  .customParams(getCustomParams(tagName, configuration))

@@ -22,6 +22,7 @@ import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,6 +95,12 @@ public class TestConfigService {
     @Transactional(readOnly = true)
     public List<String> getBrowsers() {
         return testConfigMapper.getBrowsers();
+    }
+
+    @Transactional(readOnly = true)
+    @Cacheable(value = "environments", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #result", condition = "#result != null && #result.size() != 0")
+    public List<String> getEnvironments() {
+        return testConfigMapper.getEnvironments();
     }
 
     @Transactional(readOnly = true)

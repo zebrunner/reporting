@@ -100,6 +100,17 @@
         ]]>
 	</select>
 
+    <select id="getEnvironments" resultType="java.lang.String">
+		<![CDATA[
+        SELECT DISTINCT UPPER(TC.ENV)
+        FROM TEST_CONFIGS TC
+        WHERE
+            TC.ENV IS NOT NULL AND
+            TC.ENV <> ''
+        ORDER BY UPPER(TC.ENV)
+        ]]>
+	</select>
+
     <select id="searchTestConfig" resultMap="TestConfigResultMap">
         <include refid="getTestConfig"/>
         <trim prefix="WHERE" prefixOverrides="AND |OR ">
