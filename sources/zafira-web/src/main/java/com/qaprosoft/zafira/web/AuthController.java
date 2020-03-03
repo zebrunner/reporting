@@ -59,6 +59,8 @@ import javax.validation.Valid;
 @RestController
 public class AuthController extends AbstractController implements AuthDocumentedController {
 
+    private static final String FIRST_LOGIN_HEADER_NAME = "First-Login";
+
     private final AuthService authService;
 
     private final JWTService jwtService;
@@ -115,7 +117,8 @@ public class AuthController extends AbstractController implements AuthDocumented
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         if (user.getLastLogin() == null) {
-            response.addHeader("First-Login", Boolean.toString(true));
+            response.addHeader("Access-Control-Expose-Headers", FIRST_LOGIN_HEADER_NAME);
+            response.setHeader(FIRST_LOGIN_HEADER_NAME, Boolean.toString(true));
         }
 
         final String tenant = TenancyContext.getTenantName();
