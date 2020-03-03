@@ -9,11 +9,13 @@ ENV ZAFIRA_VERSION=${SERVICE_VER} \
 
 RUN mkdir /opt/assets
 
-COPY startup.sh /
+COPY startup.sh /usr/local/bin/
 
-RUN chmod +x /startup.sh
+RUN chmod +x /usr/local/bin/startup.sh
 
 COPY ./sources/zafira-web/build/libs/zafira-web-${version}.jar /app/zafira-service.jar
+
+ENTRYPOINT ["startup.sh"]
 
 EXPOSE 8080
 EXPOSE 5005
