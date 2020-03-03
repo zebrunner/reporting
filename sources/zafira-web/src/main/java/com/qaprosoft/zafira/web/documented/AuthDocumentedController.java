@@ -32,6 +32,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.http.ResponseEntity;
 
+import javax.servlet.http.HttpServletResponse;
+
 @Api("Auth API")
 public interface AuthDocumentedController {
 
@@ -77,7 +79,7 @@ public interface AuthDocumentedController {
             @ApiResponse(code = 200, message = "Returns the auth token", response = AuthTokenDTO.class),
             @ApiResponse(code = 401, message = "Indicates that the user credentials are invalid", response = ResponseEntity.class)
     })
-    AuthTokenDTO login(CredentialsDTO credentialsDTO);
+    AuthTokenDTO login(CredentialsDTO credentialsDTO, HttpServletResponse response);
 
     @ApiOperation(
             value = "Registers a new user in the application",

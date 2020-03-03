@@ -51,6 +51,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @CrossOrigin
@@ -108,10 +109,15 @@ public class AuthController extends AbstractController implements AuthDocumented
 
     @PostMapping("/login")
     @Override
-    public AuthTokenDTO login(@Valid @RequestBody CredentialsDTO credentialsDTO) {
+    public AuthTokenDTO login(@Valid @RequestBody CredentialsDTO credentialsDTO, HttpServletResponse response) {
         User user = userService.getUserByUsernameOrEmail(credentialsDTO.getUsername());
         Authentication authentication = authService.getAuthentication(credentialsDTO.getUsername(), credentialsDTO.getPassword(), user);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        if (user.getLastLogin() == null) {
+            response.addHeader("First-Login", Boolean.toString(true));
+        }
+
         final String tenant = TenancyContext.getTenantName();
         return new AuthTokenDTO("Bearer", jwtService.generateAuthToken(user, tenant),
                 jwtService.generateRefreshToken(user, tenant), jwtService.getExpiration(), tenant);
