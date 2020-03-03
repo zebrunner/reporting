@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Startup script execution is strated"
+
 DEBUG_SUSPEND_OPTION="n"
 if [ -n "${DEBUG_SUSPEND_STARTUP}" ] && [ "${DEBUG_SUSPEND_STARTUP}" = true ]; then
   DEBUG_SUSPEND_OPTION="y"
