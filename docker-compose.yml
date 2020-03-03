@@ -63,7 +63,7 @@ services:
     container_name: zfr_zafira_back_end
     image: qaprosoft/zafira:4.1.89
 #    build: .
-    command: ["./startup.sh"]
+    command: ["/bin/bash","./startup.sh"]
     volumes:
       - ./assets:/opt/assets
     ports:
