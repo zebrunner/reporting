@@ -20,4 +20,6 @@ fi
 
 JAVA_EXEC_COMMAND="$JAVA_DEBUG_OPTS -jar /app/zafira-service.jar"
 
+echo $JAVA_EXEC_COMMAND
+
 java $JAVA_EXEC_COMMAND
