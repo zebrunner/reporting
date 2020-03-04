@@ -21,7 +21,7 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.UserPreference;
 import com.qaprosoft.zafira.models.dto.UserPreferenceDTO;
 import com.qaprosoft.zafira.models.dto.user.ChangePasswordDTO;
-import com.qaprosoft.zafira.models.dto.user.UserType;
+import com.qaprosoft.zafira.models.dto.user.UserDTO;
 import com.qaprosoft.zafira.service.DashboardService;
 import com.qaprosoft.zafira.service.UserPreferenceService;
 import com.qaprosoft.zafira.service.UserService;
@@ -66,14 +66,14 @@ public class UserController extends AbstractController implements UserDocumented
 
     @GetMapping("/profile")
     @Override
-    public UserType getUserProfile(@RequestParam(value = "username", required = false) String username) {
+    public UserDTO getUserProfile(@RequestParam(value = "username", required = false) String username) {
         User user = StringUtils.isEmpty(username) ? userService.getNotNullUserById(getPrincipalId())
                                                   : userService.getNotNullUserByUsername(username);
-        UserType userType = mapper.map(user, UserType.class);
-        userType.setRoles(user.getRoles());
-        userType.setPreferences(user.getPreferences());
-        userType.setPermissions(user.getPermissions());
-        return userType;
+        UserDTO userDTO = mapper.map(user, UserDTO.class);
+        userDTO.setRoles(user.getRoles());
+        userDTO.setPreferences(user.getPreferences());
+        userDTO.setPermissions(user.getPermissions());
+        return userDTO;
     }
 
     @GetMapping("/profile/extended")
@@ -81,11 +81,11 @@ public class UserController extends AbstractController implements UserDocumented
     public Map<String, Object> getExtendedUserProfile() {
         Map<String, Object> extendedUserProfile = new HashMap<>();
         User user = userService.getUserById(getPrincipalId());
-        UserType userType = mapper.map(user, UserType.class);
-        userType.setRoles(user.getRoles());
-        userType.setPreferences(user.getPreferences());
-        userType.setPermissions(user.getPermissions());
-        extendedUserProfile.put("user", userType);
+        UserDTO userDTO = mapper.map(user, UserDTO.class);
+        userDTO.setRoles(user.getRoles());
+        userDTO.setPreferences(user.getPreferences());
+        userDTO.setPermissions(user.getPermissions());
+        extendedUserProfile.put("user", userDTO);
         dashboardService.setDefaultDashboard(extendedUserProfile, "", "defaultDashboardId");
         dashboardService.setDefaultDashboard(extendedUserProfile, "User Performance", "performanceDashboardId");
         dashboardService.setDefaultDashboard(extendedUserProfile, "Personal", "personalDashboardId");
@@ -95,15 +95,15 @@ public class UserController extends AbstractController implements UserDocumented
 
     @PutMapping("/profile")
     @Override
-    public UserType updateUserProfile(@Valid @RequestBody UserType userType) {
-        checkCurrentUserAccess(userType.getId());
-        User user = mapper.map(userType, User.class);
+    public UserDTO updateUserProfile(@Valid @RequestBody UserDTO userDTO) {
+        checkCurrentUserAccess(userDTO.getId());
+        User user = mapper.map(userDTO, User.class);
         user = userService.updateUserProfile(user);
-        userType = mapper.map(user, UserType.class);
-        userType.setRoles(userType.getRoles());
-        userType.setPreferences(userType.getPreferences());
-        userType.setPhotoURL(userType.getPhotoURL());
-        return userType;
+        userDTO = mapper.map(user, UserDTO.class);
+        userDTO.setRoles(userDTO.getRoles());
+        userDTO.setPreferences(userDTO.getPreferences());
+        userDTO.setPhotoURL(userDTO.getPhotoURL());
+        return userDTO;
     }
 
     @DeleteMapping("/profile/photo")
@@ -134,19 +134,19 @@ public class UserController extends AbstractController implements UserDocumented
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USERS')")
     @PutMapping()
     @Override
-    public UserType createOrUpdateUser(@RequestBody @Valid UserType userType) {
-        User user = mapper.map(userType, User.class);
+    public UserDTO createOrUpdateUser(@RequestBody @Valid UserDTO userDTO) {
+        User user = mapper.map(userDTO, User.class);
         user = userService.createOrUpdateUser(user);
-        return mapper.map(user, UserType.class);
+        return mapper.map(user, UserDTO.class);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USERS')")
     @PutMapping("/status")
     @Override
-    public UserType updateStatus(@RequestBody @Valid UserType userType) {
-        User user = mapper.map(userType, User.class);
+    public UserDTO updateStatus(@RequestBody @Valid UserDTO userDTO) {
+        User user = mapper.map(userDTO, User.class);
         user = userService.updateStatus(user);
-        return mapper.map(user, UserType.class);
+        return mapper.map(user, UserDTO.class);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")

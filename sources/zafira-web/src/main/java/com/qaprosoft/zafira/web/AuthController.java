@@ -26,7 +26,7 @@ import com.qaprosoft.zafira.models.dto.auth.RefreshTokenDTO;
 import com.qaprosoft.zafira.models.dto.auth.TenancyInfoDTO;
 import com.qaprosoft.zafira.models.dto.auth.TenantAuth;
 import com.qaprosoft.zafira.models.dto.user.PasswordDTO;
-import com.qaprosoft.zafira.models.dto.user.UserType;
+import com.qaprosoft.zafira.models.dto.user.UserDTO;
 import com.qaprosoft.zafira.service.AuthService;
 import com.qaprosoft.zafira.service.InvitationService;
 import com.qaprosoft.zafira.service.JWTService;
@@ -128,10 +128,10 @@ public class AuthController extends AbstractController implements AuthDocumented
 
     @PostMapping("/signup")
     @Override
-    public void signup(@RequestHeader("Access-Token") String token, @Valid @RequestBody UserType userType) {
-        Invitation invitation = invitationService.acceptInvitation(token, userType.getUsername());
-        userType.setSource(invitation.getSource());
-        userService.createOrUpdateUser(mapper.map(userType, User.class), invitation.getGroupId());
+    public void signup(@RequestHeader("Access-Token") String token, @Valid @RequestBody UserDTO userDTO) {
+        Invitation invitation = invitationService.acceptInvitation(token, userDTO.getUsername());
+        userDTO.setSource(invitation.getSource());
+        userService.createOrUpdateUser(mapper.map(userDTO, User.class), invitation.getGroupId());
     }
 
     @PostMapping("/refresh")
