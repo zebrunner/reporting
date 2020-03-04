@@ -51,7 +51,6 @@ import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.R
 public class UserService implements TenancyDbInitial {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
-    private static final String ERR_MSG_UNABLE_TO_RESET_TOKEN = "Unable to reset token, user is null or not internal";
     private static final String ERR_MSG_USER_WITH_THIS_ID_DOES_NOT_EXIST = "User with id %d doesn't exist";
     private static final String ERR_MSG_USER_WITH_THIS_USERNAME_DOES_NOT_EXIST = "User with username %s doesn't exist";
     private static final String ERR_MSG_USER_WITH_THIS_EMAIL_DOES_NOT_EXIST = "User with email %s doesn't exist";
@@ -62,12 +61,6 @@ public class UserService implements TenancyDbInitial {
 
     @Value("${zafira.admin.password}")
     private String adminPassword;
-
-    @Value("${zafira.admin.group}")
-    private String adminGroup;
-
-    @Value("${zafira.multitenant}")
-    private String isMultitenant;
 
     @Autowired
     private UserMapper userMapper;

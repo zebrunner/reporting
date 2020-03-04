@@ -21,12 +21,16 @@ import com.qaprosoft.zafira.service.email.ResetPasswordEmail;
 import com.qaprosoft.zafira.service.email.ResetPasswordLdapEmail;
 import com.qaprosoft.zafira.service.util.URLResolver;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ResetPasswordService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResetPasswordService.class);
 
     private final String zafiraLogoURL;
     private final URLResolver urlResolver;
@@ -49,6 +53,7 @@ public class ResetPasswordService {
     public void sendResetPasswordEmail(String email) {
         User user = userService.getUserByEmail(email);
         if (user == null) {
+            LOGGER.error("Unable to reset password, user with such email doesn't exist");
             return;
         }
         AbstractEmail emailMessage;
@@ -66,6 +71,7 @@ public class ResetPasswordService {
     public void resetPassword(String token, String password) {
         User user = userService.getUserByResetToken(token);
         if (user == null || !user.getSource().equals(User.Source.INTERNAL)) {
+            LOGGER.error("Unable to reset token, user doesn't exist or not internal");
             return;
         }
         userService.updateUserPassword(user, password);
