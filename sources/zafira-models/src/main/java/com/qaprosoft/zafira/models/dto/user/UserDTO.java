@@ -52,11 +52,11 @@ public class UserDTO extends AbstractType {
     private String email;
 
     @Size(min = 1, max = 100, message = "“First name should be 1 to 100 characters long")
-    @Pattern(regexp = "^[A-Za-z0-9-.]+$", message = "First name should contain only letters, numbers, dashes and dots.")
+    @Pattern(regexp = "^[A-Za-z0-9-.]+$", message = "First name should contain only letters, numbers, dashes and dots")
     private String firstName;
 
     @Size(min = 1, max = 100, message = "Last name should be 1 to 100 characters long")
-    @Pattern(regexp = "^[A-Za-z0-9-.]+$", message = "Last name should contain only letters, numbers, dashes and dots.")
+    @Pattern(regexp = "^[A-Za-z0-9-.]+$", message = "Last name should contain only letters, numbers, dashes and dots")
     private String lastName;
 
     private String password;
