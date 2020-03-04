@@ -19,7 +19,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.DashboardMapper;
 import com.qaprosoft.zafira.models.db.Attribute;
 import com.qaprosoft.zafira.models.db.Dashboard;
 import com.qaprosoft.zafira.models.db.Widget;
-import com.qaprosoft.zafira.models.dto.user.UserType;
+import com.qaprosoft.zafira.models.dto.user.UserDTO;
 import com.qaprosoft.zafira.service.exception.IllegalOperationException;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -176,7 +176,7 @@ public class DashboardService {
     public void setDefaultDashboard(Map<String, Object> extendedUserProfile, String title, String key) {
         Dashboard dashboard;
         if ("defaultDashboardId".equals(key)) {
-            dashboard = retrieveDefaultForUser(((UserType) extendedUserProfile.get("user")).getId());
+            dashboard = retrieveDefaultForUser(((UserDTO) extendedUserProfile.get("user")).getId());
         } else {
             dashboard = retrieveByTitle(title);
         }

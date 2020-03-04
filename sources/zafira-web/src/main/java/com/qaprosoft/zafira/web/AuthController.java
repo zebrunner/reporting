@@ -26,7 +26,7 @@ import com.qaprosoft.zafira.models.dto.auth.RefreshTokenDTO;
 import com.qaprosoft.zafira.models.dto.auth.TenancyInfoDTO;
 import com.qaprosoft.zafira.models.dto.auth.TenantAuth;
 import com.qaprosoft.zafira.models.dto.user.PasswordDTO;
-import com.qaprosoft.zafira.models.dto.user.UserType;
+import com.qaprosoft.zafira.models.dto.user.UserDTO;
 import com.qaprosoft.zafira.service.AuthService;
 import com.qaprosoft.zafira.service.InvitationService;
 import com.qaprosoft.zafira.service.JWTService;
@@ -58,6 +58,8 @@ import javax.validation.Valid;
 @RequestMapping(path = "api/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class AuthController extends AbstractController implements AuthDocumentedController {
+
+    private static final String FIRST_LOGIN_HEADER_NAME = "First-Login";
 
     private final AuthService authService;
 
@@ -115,7 +117,8 @@ public class AuthController extends AbstractController implements AuthDocumented
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         if (user.getLastLogin() == null) {
-            response.addHeader("First-Login", Boolean.toString(true));
+            response.addHeader("Access-Control-Expose-Headers", FIRST_LOGIN_HEADER_NAME);
+            response.setHeader(FIRST_LOGIN_HEADER_NAME, Boolean.toString(true));
         }
 
         final String tenant = TenancyContext.getTenantName();
@@ -125,10 +128,10 @@ public class AuthController extends AbstractController implements AuthDocumented
 
     @PostMapping("/signup")
     @Override
-    public void signup(@RequestHeader("Access-Token") String token, @Valid @RequestBody UserType userType) {
-        Invitation invitation = invitationService.acceptInvitation(token, userType.getUsername());
-        userType.setSource(invitation.getSource());
-        userService.createOrUpdateUser(mapper.map(userType, User.class), invitation.getGroupId());
+    public void signup(@RequestHeader("Access-Token") String token, @Valid @RequestBody UserDTO userDTO) {
+        Invitation invitation = invitationService.acceptInvitation(token, userDTO.getUsername());
+        userDTO.setSource(invitation.getSource());
+        userService.createOrUpdateUser(mapper.map(userDTO, User.class), invitation.getGroupId());
     }
 
     @PostMapping("/refresh")
