@@ -1385,9 +1385,7 @@ SELECT
   <#elseif PERIOD == "Last 30 Days">
     <#local result = result + "TEST_CASES.CREATED_AT >= date_trunc(''day'', current_date - interval ''30'' day)"/>
   <#elseif PERIOD == "Monthly" >
-    <#local result = result + "TEST_CASES.CREATED_AT >= date_trunc(''week'', current_date)"/>
-  <#elseif PERIOD == "Total" >
-    <#local result = result + "TEST_CASES.CREATED_AT >= date_trunc(''month'', current_date)"/>    
+    <#local result = result + "TEST_CASES.CREATED_AT >= date_trunc(''week'', current_date)"/>  
   </#if>
 
   <#list map?keys as key>
@@ -1606,7 +1604,8 @@ chart.setOption(option);', '{
 }', false);
 
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (PIE)', 'Consolidated test status information with the ability to specify 10+ extra filters including daily, weekly, monthly, etc period.', 'PIE', '<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (PIE)', 'Consolidated test status information with the ability to specify 10+ extra filters including daily, weekly, monthly, etc period.', 'PIE', '<#global IGNORE_TOTAL_PARAMS = ["DEVICE", "APP_VERSION", "LOCALE", "LANGUAGE", "JOB_NAME", "PARENT_JOB", "PARENT_BUILD"] > 
+<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
 
 <#global MULTIPLE_VALUES = {
   "PROJECT": multiJoin(PROJECT, projects),
@@ -1678,6 +1677,10 @@ SELECT
  <#local result = "" />
  <#list map?keys as key>
     <#if map[key] != "" >
+      <#if PERIOD == "Total" && IGNORE_TOTAL_PARAMS?seq_contains(key)>
+        <#-- Ignore non supported filters for Total View: PLATFORM, DEVICE, APP_VERSION, LOCALE, LANGUAGE, JOB_NAME-->
+        <#continue>
+      </#if>
       <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
         <#-- Ignore non supported filters for Personal chart: USER -->
         <#continue>
@@ -1689,6 +1692,7 @@ SELECT
     </#if>
  </#list>
 
+<#if PERIOD != "Total">
  <#if PARENT_JOB != "">
     <#if result?length != 0>
       <#local result = result + " AND "/>
@@ -1711,6 +1715,7 @@ SELECT
     </#if>
     <#local result = result + "UPSTREAM_JOB_BUILD_NUMBER = ''" + PARENT_BUILD + "''"/>  
   </#if>
+</#if>
 
  <#if result?length != 0 && PERSONAL == "true">
    <!-- add personal filter by currentUserId with AND -->
@@ -1755,6 +1760,9 @@ SELECT
     <#break>
   <#case "Monthly">
     <#local result = "MONTHLY_VIEW" />
+    <#break>
+  <#case "Total">
+    <#local result = "TOTAL_VIEW" />
     <#break>
  </#switch>
  <#return result>
@@ -1849,7 +1857,8 @@ chart.setOption(option);', '{
       "Last 30 Days",
       "Nightly",
       "Weekly",
-      "Monthly"
+      "Monthly",
+      "Total"
       ],
     "required": true
   },
@@ -2281,7 +2290,7 @@ SELECT count(*) as "COUNT",
  </#switch>
  <#return result>
 </#function>
-', '{"legend": ["ENV", "REPORT", "BUG", "SUBJECT"]}', '{
+', '{"columns": ["ENV", "REPORT", "BUG", "SUBJECT"]}', '{
   "PERIOD": {
     "values": [
       "Last 24 Hours",
@@ -3015,7 +3024,8 @@ SELECT
 
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, MODIFIED_AT, CREATED_AT, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASES BY STABILITY', 'Shows all test cases with low stability percent rate per appropriate period (default - less than 10%).', 'TABLE', '
 <#-- TODO: remove PARENT_JOB from IGNORE_TOTAL_PARAMS as only TEST_CASE_HEALTH_VIEW could have PARENT_JOB/UPSTREAM_JOB_NAME argument-->
-<#global IGNORE_TOTAL_PARAMS = ["LOWER(PLATFORM)", "OWNER_USERNAME", "ENV", "PRIORITY", "FEATURE", "TASK", "DEVICE", "APP_VERSION", "LOCALE", "LANGUAGE", "PARENT_JOB", "JOB_NAME"] >
+<#-- ZEB-703 Widgets:For widget TEST CASES BY STABILITY with param BUG appears sql error -->
+<#global IGNORE_TOTAL_PARAMS = ["LOWER(PLATFORM)", "OWNER_USERNAME", "ENV", "PRIORITY", "FEATURE", "TASK", "BUG", "BROWSER", "DEVICE", "APP_VERSION", "LOCALE", "LANGUAGE", "PARENT_JOB", "JOB_NAME"] >
 
 <#global MULTIPLE_VALUES = {
   "LOWER(PLATFORM)": join(PLATFORM),
@@ -3079,20 +3089,21 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
       <#-- Ignore non supported filters for Total View: PLATFORM, DEVICE, APP_VERSION, LOCALE, LANGUAGE, JOB_NAME-->
         <#continue>
       </#if>
+
       <#if result?length != 0>
        <#local result = result + " AND "/>
       </#if>
-
-      <#if PARENT_JOB != "">
-        <#if result?length != 0>
-          <#local result = result + " AND "/>
-        </#if>
-        <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
-      </#if>   
-
       <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
     </#if>
   </#list>
+
+
+  <#if PARENT_JOB != "" && PERIOD != "Total" && PERIOD != "Monthly">
+    <#if result?length != 0>
+      <#local result = result + " AND "/>
+    </#if>
+    <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
+  </#if>  
 
  <#if result?length != 0>
   <#local result = " WHERE " + result/>
