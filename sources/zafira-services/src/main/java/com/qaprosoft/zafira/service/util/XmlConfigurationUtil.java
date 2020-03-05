@@ -1,6 +1,5 @@
 package com.qaprosoft.zafira.service.util;
 
-import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.service.exception.ProcessingException;
 import org.apache.commons.io.IOUtils;
@@ -9,8 +8,6 @@ import org.apache.commons.lang.StringUtils;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import java.io.ByteArrayInputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.qaprosoft.zafira.service.exception.ProcessingException.ProcessingErrorDetail.UNPROCESSABLE_XML_ENTITY;
 
