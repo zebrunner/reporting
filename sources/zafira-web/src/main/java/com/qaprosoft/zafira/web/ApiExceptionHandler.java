@@ -9,6 +9,7 @@ import com.qaprosoft.zafira.service.exception.AuthException;
 import com.qaprosoft.zafira.service.exception.ForbiddenOperationException;
 import com.qaprosoft.zafira.service.exception.IllegalOperationException;
 import com.qaprosoft.zafira.service.exception.IntegrationException;
+import com.qaprosoft.zafira.service.exception.ProcessingException;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,6 +114,14 @@ public class ApiExceptionHandler {
     public ErrorResponse handleForbiddenOperationException(ForbiddenOperationException e) {
         ErrorResponse response = new ErrorResponse();
         response.setError(new Error(ErrorCode.FORBIDDEN, null, e.isShowMessage() ? e.getMessage() : null));
+        return response;
+    }
+
+    @ExceptionHandler(ProcessingException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIllegalOperationException(ProcessingException e) {
+        ErrorResponse response = new ErrorResponse();
+        response.setError(new Error(ErrorCode.VALIDATION_ERROR, e.getMessage()));
         return response;
     }
 
