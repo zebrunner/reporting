@@ -18,4 +18,3 @@ COPY ./sources/zafira-web/build/libs/zafira-web-${version}.jar /app/zafira-servi
 ENTRYPOINT ["startup.sh"]
 
 EXPOSE 8080
-EXPOSE 5005
