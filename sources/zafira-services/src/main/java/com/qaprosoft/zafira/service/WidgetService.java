@@ -24,7 +24,6 @@ import com.qaprosoft.zafira.service.exception.ProcessingException;
 import com.qaprosoft.zafira.service.util.FreemarkerUtil;
 import com.qaprosoft.zafira.service.util.SQLExecutor;
 import com.qaprosoft.zafira.service.util.URLResolver;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +42,7 @@ import static com.qaprosoft.zafira.service.exception.ProcessingException.Process
 public class WidgetService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WidgetService.class);
+    private static final String ERR_MSG_INVALID_CHART_QUERY = "Invalid chart query";
 
     private final WidgetMapper widgetMapper;
     private final FreemarkerUtil freemarkerUtil;
@@ -118,7 +117,7 @@ public class WidgetService {
     }
 
     @Transactional(readOnly = true)
-    public List<Map<String, Object>> getQueryResults(boolean stackTraceRequired, Map<String, Object> params, Long templateId, Long userId, String userName) {
+    public List<Map<String, Object>> getQueryResults(Map<String, Object> params, Long templateId, Long userId, String userName) {
         WidgetTemplate widgetTemplate = widgetTemplateService.getNotNullWidgetTemplateById(templateId);
         List<Map<String, Object>> resultList;
         try {
@@ -127,25 +126,15 @@ public class WidgetService {
             additionalParams.put(WidgetService.DefaultParam.CURRENT_USER_ID, userId);
             resultList = executeSQL(widgetTemplate.getSql(), params, additionalParams, true);
         } catch (Exception e) {
-            resultList = handleExecuteSQLException(stackTraceRequired, e);
-        }
-        return resultList;
-    }
-
-    private List<Map<String, Object>> handleExecuteSQLException(boolean stackTraceRequired, Exception e) {
-        List<Map<String, Object>> resultList;
-        if (stackTraceRequired) {
-            resultList = Collections.singletonList(Collections.singletonMap("Check your query", ExceptionUtils.getFullStackTrace(e)));
-        } else {
-            // wrap whatever error is thrown
-            throw new ProcessingException(WIDGET_QUERY_EXECUTION_ERROR, e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
+            throw new ProcessingException(WIDGET_QUERY_EXECUTION_ERROR, ERR_MSG_INVALID_CHART_QUERY);
         }
         return resultList;
     }
 
     /**
-        Used for old widget versions and table widgets.
-        Someday we'll remove echarts library completely and refactor this method.
+     * Used for old widget versions and table widgets.
+     * Someday we'll remove echarts library completely and refactor this method.
      */
 
     @Transactional(readOnly = true)
@@ -153,7 +142,6 @@ public class WidgetService {
             List<String> projects,
             String currentUserId,
             String dashboardName,
-            boolean stackTraceRequired,
             String query,
             List<Attribute> attributes,
             Long userId,
@@ -165,7 +153,8 @@ public class WidgetService {
             query = replacePlaceholders(projects, currentUserId, dashboardName, query, userId, userName);
             resultList = executeSQL(query);
         } catch (Exception e) {
-            resultList = handleExecuteSQLException(stackTraceRequired, e);
+            LOGGER.error(e.getMessage(), e);
+            throw new ProcessingException(WIDGET_QUERY_EXECUTION_ERROR, ERR_MSG_INVALID_CHART_QUERY);
         }
         return resultList;
     }
@@ -202,7 +191,7 @@ public class WidgetService {
 
     @Transactional(readOnly = true)
     public List<Map<String, Object>> executeSQL(String sql, Map<String, Object> params, Map<DefaultParam, Object> additionalParams,
-            boolean isSqlFreemarkerTemplate) {
+                                                boolean isSqlFreemarkerTemplate) {
         if (isSqlFreemarkerTemplate) {
             sql = freemarkerUtil.getFreeMarkerTemplateContent(sql, processDefaultParameters(params, additionalParams), false);
         }
@@ -222,21 +211,17 @@ public class WidgetService {
         Object result = null;
         try {
             switch (param) {
-            case SERVICE_URL:
-                result = urlResolver.getServiceURL();
-                break;
-            case CURRENT_USER_ID:
-                result = additionalParams.get(DefaultParam.CURRENT_USER_ID);
-                break;
-            case CURRENT_USER_NAME:
-                result = additionalParams.get(DefaultParam.CURRENT_USER_NAME);
-                break;
-            case HASHCODE:
-                result = 0;
-                break;
-            case TEST_CASE_ID:
-                result = 0;
-                break;
+                case SERVICE_URL:
+                    result = urlResolver.getServiceURL();
+                    break;
+                case CURRENT_USER_ID:
+                case CURRENT_USER_NAME:
+                    result = additionalParams.get(param);
+                    break;
+                case HASHCODE:
+                case TEST_CASE_ID:
+                    result = 0;
+                    break;
             }
         } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
