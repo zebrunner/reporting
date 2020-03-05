@@ -5,6 +5,7 @@ import com.qaprosoft.zafira.models.dto.errors.Error;
 import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
 import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
 import com.qaprosoft.zafira.service.exception.ApplicationException;
+import com.qaprosoft.zafira.service.exception.ApplicationException.ErrorDetail;
 import com.qaprosoft.zafira.service.exception.AuthException;
 import com.qaprosoft.zafira.service.exception.ForbiddenOperationException;
 import com.qaprosoft.zafira.service.exception.IllegalOperationException;
@@ -65,8 +66,8 @@ public class ApiExceptionHandler {
         ErrorResponse response = new ErrorResponse();
         // We need to return code 200 for all auth-related operations
         // to avoid bruteforce obtaining of user data
-        if (e.getErrorDetail().equals(TOKEN_RESET_IS_NOT_POSSIBLE) ||
-                e.getErrorDetail().equals(CREDENTIALS_RESET_IS_NOT_POSSIBLE)) {
+        ErrorDetail errorDetail = e.getErrorDetail();
+        if (errorDetail.equals(TOKEN_RESET_IS_NOT_POSSIBLE) || errorDetail.equals(CREDENTIALS_RESET_IS_NOT_POSSIBLE)) {
             responseEntity = new ResponseEntity<>(HttpStatus.OK);
         } else {
             response.setError(new Error(ErrorCode.VALIDATION_ERROR, e.getMessage()));
