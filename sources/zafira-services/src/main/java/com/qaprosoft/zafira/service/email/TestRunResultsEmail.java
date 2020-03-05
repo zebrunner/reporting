@@ -19,8 +19,6 @@ import com.qaprosoft.zafira.models.db.Attachment;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.config.Argument;
-import com.qaprosoft.zafira.models.db.config.Configuration;
 import lombok.Getter;
 import lombok.Setter;
 

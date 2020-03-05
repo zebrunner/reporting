@@ -29,7 +29,6 @@ import io.swagger.annotations.ApiResponses;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 @Api("Test cases API")
 public interface TestCaseDocumentedController {
@@ -81,7 +80,7 @@ public interface TestCaseDocumentedController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the created or updated test case", response = TestCaseType.class)
     })
-    TestCaseType createTestCase(TestCaseType testCase, String projectName) throws ExecutionException;
+    TestCaseType createTestCase(TestCaseType testCase, String projectName);
 
     @ApiOperation(
             value = "Creates or updates a batch of test cases",
@@ -98,6 +97,6 @@ public interface TestCaseDocumentedController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns created or updated test cases", response = TestCaseType[].class)
     })
-    TestCaseType[] createTestCases(TestCaseType[] tcs, String projectName) throws ExecutionException;
+    TestCaseType[] createTestCases(TestCaseType[] tcs, String projectName);
 
 }

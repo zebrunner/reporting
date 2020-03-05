@@ -49,7 +49,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-@SuppressWarnings("rawtypes")
 @Component
 public class ElasticsearchService {
 
