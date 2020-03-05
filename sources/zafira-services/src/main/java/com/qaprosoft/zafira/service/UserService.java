@@ -44,14 +44,14 @@ import java.util.List;
 
 import static com.qaprosoft.zafira.models.db.User.Source.INTERNAL;
 import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.CHANGE_PASSWORD_IS_NOT_POSSIBLE;
-import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.RESET_TOKEN_IS_NOT_POSSIBLE;
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.TOKEN_RESET_IS_NOT_POSSIBLE;
 import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.USER_NOT_FOUND;
 
 @Service
 public class UserService implements TenancyDbInitial {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
-    private static final String ERR_MSG_UNABLE_TO_RESET_TOKEN = "Unable to reset token, user is null or not internal";
+    private static final String ERR_MSG_USER_NOT_FOUND_BY_RESET_TOKEN = "User with such token doesn't exist or is not internal";
     private static final String ERR_MSG_USER_WITH_THIS_ID_DOES_NOT_EXIST = "User with id %d doesn't exist";
     private static final String ERR_MSG_USER_WITH_THIS_USERNAME_DOES_NOT_EXIST = "User with username %s doesn't exist";
     private static final String ERR_MSG_USER_WITH_THIS_EMAIL_DOES_NOT_EXIST = "User with email %s doesn't exist";
@@ -227,7 +227,7 @@ public class UserService implements TenancyDbInitial {
     public User getUserByResetToken(String token) {
         User user = userMapper.getUserByResetToken(token);
         if (user == null || !user.getSource().equals(User.Source.INTERNAL)) {
-            throw new IllegalOperationException(RESET_TOKEN_IS_NOT_POSSIBLE, ERR_MSG_UNABLE_TO_RESET_TOKEN);
+            throw new IllegalOperationException(TOKEN_RESET_IS_NOT_POSSIBLE, ERR_MSG_USER_NOT_FOUND_BY_RESET_TOKEN);
         }
         return user;
     }

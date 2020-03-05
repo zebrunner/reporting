@@ -5,6 +5,7 @@ import com.qaprosoft.zafira.models.dto.errors.Error;
 import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
 import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
 import com.qaprosoft.zafira.service.exception.ApplicationException;
+import com.qaprosoft.zafira.service.exception.ApplicationException.ErrorDetail;
 import com.qaprosoft.zafira.service.exception.AuthException;
 import com.qaprosoft.zafira.service.exception.ForbiddenOperationException;
 import com.qaprosoft.zafira.service.exception.IllegalOperationException;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.MimeType;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -32,6 +34,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.qaprosoft.zafira.models.dto.errors.ErrorCode.INTEGRATION_UNAVAILABLE;
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.CREDENTIALS_RESET_IS_NOT_POSSIBLE;
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.TOKEN_RESET_IS_NOT_POSSIBLE;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -58,11 +62,19 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(IllegalOperationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleIllegalOperationException(IllegalOperationException e) {
+    public ResponseEntity<ErrorResponse> handleIllegalOperationException(IllegalOperationException e) {
+        ResponseEntity<ErrorResponse> responseEntity;
         ErrorResponse response = new ErrorResponse();
-        response.setError(new Error(ErrorCode.VALIDATION_ERROR, e.getMessage()));
-        return response;
+        // We need to return code 200 for all auth-related operations
+        // to avoid bruteforce obtaining of user data
+        ErrorDetail errorDetail = e.getErrorDetail();
+        if (errorDetail.equals(TOKEN_RESET_IS_NOT_POSSIBLE) || errorDetail.equals(CREDENTIALS_RESET_IS_NOT_POSSIBLE)) {
+            responseEntity = new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            response.setError(new Error(ErrorCode.VALIDATION_ERROR, e.getMessage()));
+            responseEntity = new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        return responseEntity;
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
