@@ -119,7 +119,7 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(ProcessingException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleIllegalOperationException(ProcessingException e) {
+    public ErrorResponse handleProcessingException(ProcessingException e) {
         ErrorResponse response = new ErrorResponse();
         response.setError(new Error(ErrorCode.VALIDATION_ERROR, e.getMessage()));
         return response;

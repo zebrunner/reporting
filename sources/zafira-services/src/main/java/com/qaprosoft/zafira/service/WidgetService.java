@@ -126,6 +126,7 @@ public class WidgetService {
             additionalParams.put(WidgetService.DefaultParam.CURRENT_USER_ID, userId);
             resultList = executeSQL(widgetTemplate.getSql(), params, additionalParams, true);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             throw new ProcessingException(WIDGET_QUERY_EXECUTION_ERROR, ERR_MSG_INVALID_CHART_QUERY);
         }
         return resultList;
@@ -152,6 +153,7 @@ public class WidgetService {
             query = replacePlaceholders(projects, currentUserId, dashboardName, query, userId, userName);
             resultList = executeSQL(query);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             throw new ProcessingException(WIDGET_QUERY_EXECUTION_ERROR, ERR_MSG_INVALID_CHART_QUERY);
         }
         return resultList;
