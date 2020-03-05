@@ -2,6 +2,7 @@ package com.qaprosoft.zafira.service;
 
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.service.exception.AuthException;
+import com.qaprosoft.zafira.service.exception.IntegrationException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -48,7 +49,7 @@ public class AuthService {
         Authentication authentication;
         try {
             authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch (AuthenticationException e) {
+        } catch (AuthenticationException | IntegrationException e) {
             throw new AuthException(INVALID_USER_CREDENTIALS, e, ERR_MSG_INVALID_CREDENTIALS, username);
         }
 
