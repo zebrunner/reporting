@@ -76,4 +76,21 @@ public interface TestSessionDocumentedController {
     })
     SearchParameter getSearchParameters();
 
+    @ApiOperation(
+            value = "Generates new Zebrunner Hub token",
+            notes = "Returns new token",
+            nickname = "updateZbrHubToken",
+            httpMethod = "GET",
+            response = String.class
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
+            @ApiImplicitParam(name = "integrationId", paramType = "query", dataTypeClass = Long.class, required = true, value = "Integration id for which token must be regenerated")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns generated token", response = String.class)
+
+    })
+    String resetToken(Long integrationId);
+
 }
