@@ -18,6 +18,7 @@ package com.qaprosoft.zafira.web;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSessionSearchCriteria;
 import com.qaprosoft.zafira.models.dto.testsession.SearchParameter;
+import com.qaprosoft.zafira.models.dto.testsession.TokenDTO;
 import com.qaprosoft.zafira.models.entity.TestSession;
 import com.qaprosoft.zafira.service.TestSessionService;
 import com.qaprosoft.zafira.web.documented.TestSessionDocumentedController;
@@ -60,8 +61,9 @@ public class TestSessionController extends AbstractController implements TestSes
     @PreAuthorize("hasPermission('REFRESH_TOKEN')")
     @GetMapping("/token/refresh")
     @Override
-    public String refreshToken(@RequestParam("integrationId") Long integrationId) {
-        return testSessionService.refreshToken(integrationId);
+    public TokenDTO refreshToken(@RequestParam("integrationId") Long integrationId) {
+        String token = testSessionService.refreshToken(integrationId);
+        return new TokenDTO(token);
     }
 
 }

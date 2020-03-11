@@ -18,6 +18,7 @@ package com.qaprosoft.zafira.web.documented;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSessionSearchCriteria;
 import com.qaprosoft.zafira.models.dto.testsession.SearchParameter;
+import com.qaprosoft.zafira.models.dto.testsession.TokenDTO;
 import com.qaprosoft.zafira.models.entity.TestSession;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -91,6 +92,6 @@ public interface TestSessionDocumentedController {
             @ApiResponse(code = 200, message = "Returns generated token", response = String.class)
 
     })
-    String refreshToken(Long integrationId);
+    TokenDTO refreshToken(Long integrationId);
 
 }
