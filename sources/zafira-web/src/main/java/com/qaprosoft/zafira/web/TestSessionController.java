@@ -22,6 +22,7 @@ import com.qaprosoft.zafira.models.entity.TestSession;
 import com.qaprosoft.zafira.service.TestSessionService;
 import com.qaprosoft.zafira.web.documented.TestSessionDocumentedController;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,6 +57,7 @@ public class TestSessionController extends AbstractController implements TestSes
         return testSessionService.collectSearchParameters();
     }
 
+    @PreAuthorize("hasPermission('REFRESH_TOKEN')")
     @GetMapping("/token/reset")
     @Override
     public String resetToken(@RequestParam("integrationId") Long integrationId) {

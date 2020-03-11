@@ -38,6 +38,7 @@ public class Permission extends AbstractEntity implements Comparable<Permission>
         DASHBOARDS,
         TEST_RUNS,
         TEST_RUN_VIEWS,
+        TEST_SESSIONS,
         INVITATIONS,
         USERS,
         PROJECTS,
@@ -66,7 +67,8 @@ public class Permission extends AbstractEntity implements Comparable<Permission>
         MODIFY_LAUNCHERS,
         VIEW_LAUNCHERS,
         PAYMENT_METHODS,
-        INVOICES
+        INVOICES,
+        REFRESH_TOKEN
     }
 
     @Override
