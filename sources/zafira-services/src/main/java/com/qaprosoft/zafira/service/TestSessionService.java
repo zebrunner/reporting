@@ -116,13 +116,12 @@ public class TestSessionService {
                                                        .filter(integrationParam -> isParamPresent("ZEBRUNNER_PASSWORD", integrationParam))
                                                        .findFirst()
                                                        .orElse(new IntegrationParam());
-        List<IntegrationSetting> integrationSettings = integration.getSettings();
-        updateIntegrationSetting(token, integrationSettings, password);
-        integrationSettingService.batchUpdate(integrationSettings, integration.getType().getId());
+        updateIntegrationSetting(token, integration, password);
+        integrationService.update(integration);
     }
 
-    private void updateIntegrationSetting(String value, List<IntegrationSetting> integrationSettings, IntegrationParam integrationParam) {
-        integrationSettings.forEach(integrationSetting -> {
+    private void updateIntegrationSetting(String value, Integration integration, IntegrationParam integrationParam) {
+        integration.getSettings().forEach(integrationSetting -> {
             if (integrationSetting.getParam().getId().equals(integrationParam.getId())) {
                 integrationSetting.setValue(value);
                 integrationSetting.setEncrypted(false);
