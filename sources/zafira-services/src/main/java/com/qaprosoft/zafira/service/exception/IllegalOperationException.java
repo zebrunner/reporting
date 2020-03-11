@@ -52,7 +52,7 @@ public class IllegalOperationException extends ApplicationException {
         TEST_RUN_RERUN_CAN_NOT_BE_STARTED(2077),
         WORK_ITEM_CAN_NOT_BE_ATTACHED(2078),
         INVALID_IMAGE_FILE(2079),
-        TOKEN_RESET_IS_NOT_SUPPORTED(2080);
+        TOKEN_REFRESH_IS_NOT_SUPPORTED(2080);
 
         private final Integer code;
         private String messageKey;

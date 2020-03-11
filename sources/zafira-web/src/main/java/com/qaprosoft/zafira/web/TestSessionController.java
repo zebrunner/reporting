@@ -58,10 +58,10 @@ public class TestSessionController extends AbstractController implements TestSes
     }
 
     @PreAuthorize("hasPermission('REFRESH_TOKEN')")
-    @GetMapping("/token/reset")
+    @GetMapping("/token/refresh")
     @Override
-    public String resetToken(@RequestParam("integrationId") Long integrationId) {
-        return testSessionService.resetToken(integrationId);
+    public String refreshToken(@RequestParam("integrationId") Long integrationId) {
+        return testSessionService.refreshToken(integrationId);
     }
 
 }

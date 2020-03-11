@@ -91,6 +91,6 @@ public interface TestSessionDocumentedController {
             @ApiResponse(code = 200, message = "Returns generated token", response = String.class)
 
     })
-    String resetToken(Long integrationId);
+    String refreshToken(Long integrationId);
 
 }

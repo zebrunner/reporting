@@ -23,13 +23,11 @@ import com.qaprosoft.zafira.models.dto.testsession.SearchParameter;
 import com.qaprosoft.zafira.models.entity.TestSession;
 import com.qaprosoft.zafira.models.entity.integration.Integration;
 import com.qaprosoft.zafira.models.entity.integration.IntegrationParam;
-import com.qaprosoft.zafira.models.entity.integration.IntegrationSetting;
 import com.qaprosoft.zafira.models.push.events.EventMessage;
-import com.qaprosoft.zafira.models.push.events.ZbrHubTokenUpdateMessage;
+import com.qaprosoft.zafira.models.push.events.ZbrHubTokenRefreshMessage;
 import com.qaprosoft.zafira.service.exception.IllegalOperationException;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
 import com.qaprosoft.zafira.service.integration.IntegrationService;
-import com.qaprosoft.zafira.service.integration.IntegrationSettingService;
 import com.qaprosoft.zafira.service.util.EventPushService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.domain.Page;
@@ -44,7 +42,7 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.TOKEN_RESET_IS_NOT_SUPPORTED;
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.TOKEN_REFRESH_IS_NOT_SUPPORTED;
 import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_SESSION_NOT_FOUND;
 import static com.qaprosoft.zafira.service.util.EventPushService.Type.ZBR_EVENTS;
 
@@ -52,16 +50,14 @@ import static com.qaprosoft.zafira.service.util.EventPushService.Type.ZBR_EVENTS
 public class TestSessionService {
 
     private static final String ERR_MSG_TEST_SESSION_NOT_EXISTS_BY_SESSION_ID = "Test session does not exist by sessionId '%s'";
-    private static final String ERR_MSG_FOR_INTEGRATION_TOKEN_RESET_IS_NOT_SUPPORTED = "For integration of type %s token reset is not supported";
+    private static final String ERR_MSG_FOR_INTEGRATION_TOKEN_REFRESH_IS_NOT_SUPPORTED = "For integration of type %s token refresh is not supported";
 
     private final TestSessionRepository testSessionRepository;
-    private final IntegrationSettingService integrationSettingService;
     private final IntegrationService integrationService;
     private EventPushService<EventMessage> eventPushService;
 
-    public TestSessionService(TestSessionRepository testSessionRepository, IntegrationSettingService integrationSettingService, IntegrationService integrationService, EventPushService<EventMessage> eventPushService) {
+    public TestSessionService(TestSessionRepository testSessionRepository, IntegrationService integrationService, EventPushService<EventMessage> eventPushService) {
         this.testSessionRepository = testSessionRepository;
-        this.integrationSettingService = integrationSettingService;
         this.integrationService = integrationService;
         this.eventPushService = eventPushService;
     }
@@ -92,20 +88,20 @@ public class TestSessionService {
         return new SearchParameter(statuses, platforms);
     }
 
-    public String resetToken(Long integrationId) {
+    public String refreshToken(Long integrationId) {
         Integration integration = integrationService.retrieveById(integrationId);
 
         if (!"ZEBRUNNER".equals(integration.getType().getName())) {
-            throw new IllegalOperationException(TOKEN_RESET_IS_NOT_SUPPORTED, String.format(ERR_MSG_FOR_INTEGRATION_TOKEN_RESET_IS_NOT_SUPPORTED, integration.getType()));
+            throw new IllegalOperationException(TOKEN_REFRESH_IS_NOT_SUPPORTED, String.format(ERR_MSG_FOR_INTEGRATION_TOKEN_REFRESH_IS_NOT_SUPPORTED, integration.getType()));
         }
 
         String token = RandomStringUtils.randomAlphanumeric(16);
         updateZbrHubPassword(integration, token);
 
         String tenantName = TenancyContext.getTenantName();
-        ZbrHubTokenUpdateMessage message = new ZbrHubTokenUpdateMessage(tenantName, token);
+        ZbrHubTokenRefreshMessage message = new ZbrHubTokenRefreshMessage(tenantName, token);
 
-        eventPushService.convertAndSend(ZBR_EVENTS, message, "Type", "ZBR_HUB_TOKEN_UPDATE");
+        eventPushService.convertAndSend(ZBR_EVENTS, message, "Type", "ZBR_HUB_TOKEN_REFRESH");
         return token;
     }
 

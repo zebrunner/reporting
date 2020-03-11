@@ -5,9 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ZbrHubTokenUpdateMessage extends EventMessage {
+public class ZbrHubTokenRefreshMessage extends EventMessage {
 
-    public ZbrHubTokenUpdateMessage(String tenantName, String token) {
+    public ZbrHubTokenRefreshMessage(String tenantName, String token) {
         super(tenantName);
         this.token = token;
     }
