@@ -68,7 +68,6 @@
                TR.STARTED_BY                AS TEST_RUN_STARTED_BY,
                TR.KNOWN_ISSUE               AS TEST_RUN_KNOWN_ISSUE,
                TR.BLOCKER                   AS TEST_RUN_BLOCKER,
-               TR.APP_VERSION               AS TEST_RUN_APP_VERSION,
                TR.STARTED_AT                AS TEST_RUN_STARTED_AT,
                TR.ELAPSED                   AS TEST_RUN_ELAPSED,
                TR.ETA                       AS TEST_RUN_ETA,
@@ -123,7 +122,6 @@
 				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
 				TR.KNOWN_ISSUE AS TEST_RUN_KNOWN_ISSUE,
 				TR.BLOCKER AS TEST_RUN_BLOCKER,
-				TR.APP_VERSION AS TEST_RUN_APP_VERSION,
 				TR.STARTED_AT AS TEST_RUN_STARTED_AT,
 				TR.ELAPSED AS TEST_RUN_ELAPSED,
 				TR.ETA AS TEST_RUN_ETA,
@@ -280,7 +278,7 @@
 					AND (
 				   		LOWER(TS.NAME) LIKE LOWER(CONCAT('%', #{query}, '%'))
 				   		OR LOWER(CONCAT(J.JOB_URL, '/', TR.BUILD_NUMBER)) LIKE LOWER(CONCAT('%', #{query}, '%'))
-				   		OR LOWER(TR.APP_VERSION) LIKE LOWER(CONCAT('%', #{query}, '%'))
+				   		OR LOWER(C.APP_VERSION) LIKE LOWER(CONCAT('%', #{query}, '%'))
 			   		)
 				]]>
             </if>
@@ -513,7 +511,6 @@
                TR.STARTED_BY                                         AS TEST_RUN_STARTED_BY,
                TR.KNOWN_ISSUE                                        AS TEST_RUN_KNOWN_ISSUE,
                TR.BLOCKER                                            AS TEST_RUN_BLOCKER,
-               TR.APP_VERSION                                        AS TEST_RUN_APP_VERSION,
                TR.STARTED_AT                                         AS TEST_RUN_STARTED_AT,
                TR.ELAPSED                                            AS TEST_RUN_ELAPSED,
                TR.ETA                                                AS TEST_RUN_ETA,
