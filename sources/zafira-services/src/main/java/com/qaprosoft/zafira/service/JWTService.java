@@ -76,7 +76,6 @@ public class JWTService {
      *            - to parse
      * @return retrieved user details
      */
-    @SuppressWarnings("unchecked")
     public User parseAuthToken(String token) {
         Claims jwtBody = getTokenBody(token);
         User user = new User();

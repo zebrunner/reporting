@@ -19,14 +19,19 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.service.email.AbstractEmail;
 import com.qaprosoft.zafira.service.email.ResetPasswordEmail;
 import com.qaprosoft.zafira.service.email.ResetPasswordLdapEmail;
+import com.qaprosoft.zafira.service.exception.IllegalOperationException;
 import com.qaprosoft.zafira.service.util.URLResolver;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.CREDENTIALS_RESET_IS_NOT_POSSIBLE;
+
 @Service
 public class ResetPasswordService {
+
+    private static final String USER_FOR_PASSWORD_RESET_IS_NOT_FOUND = "User for password reset is not found";
 
     private final String zafiraLogoURL;
     private final URLResolver urlResolver;
@@ -47,7 +52,10 @@ public class ResetPasswordService {
 
     @Transactional(rollbackFor = Exception.class)
     public void sendResetPasswordEmail(String email) {
-        User user = userService.getNotNullUserByEmail(email);
+        User user = userService.getUserByEmail(email);
+        if (user == null) {
+            throw new IllegalOperationException(CREDENTIALS_RESET_IS_NOT_POSSIBLE, USER_FOR_PASSWORD_RESET_IS_NOT_FOUND);
+        }
         AbstractEmail emailMessage;
         if (User.Source.INTERNAL.equals(user.getSource())) {
             String token = RandomStringUtils.randomAlphanumeric(50);

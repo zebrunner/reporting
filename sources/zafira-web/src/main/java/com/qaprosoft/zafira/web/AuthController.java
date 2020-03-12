@@ -26,7 +26,7 @@ import com.qaprosoft.zafira.models.dto.auth.RefreshTokenDTO;
 import com.qaprosoft.zafira.models.dto.auth.TenancyInfoDTO;
 import com.qaprosoft.zafira.models.dto.auth.TenantAuth;
 import com.qaprosoft.zafira.models.dto.user.PasswordDTO;
-import com.qaprosoft.zafira.models.dto.user.UserType;
+import com.qaprosoft.zafira.models.dto.user.UserDTO;
 import com.qaprosoft.zafira.service.AuthService;
 import com.qaprosoft.zafira.service.InvitationService;
 import com.qaprosoft.zafira.service.JWTService;
@@ -51,12 +51,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @CrossOrigin
 @RequestMapping(path = "api/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class AuthController extends AbstractController implements AuthDocumentedController {
+
+    private static final String FIRST_LOGIN_HEADER_NAME = "First-Login";
 
     private final AuthService authService;
 
@@ -108,10 +111,16 @@ public class AuthController extends AbstractController implements AuthDocumented
 
     @PostMapping("/login")
     @Override
-    public AuthTokenDTO login(@Valid @RequestBody CredentialsDTO credentialsDTO) {
+    public AuthTokenDTO login(@Valid @RequestBody CredentialsDTO credentialsDTO, HttpServletResponse response) {
         User user = userService.getUserByUsernameOrEmail(credentialsDTO.getUsername());
         Authentication authentication = authService.getAuthentication(credentialsDTO.getUsername(), credentialsDTO.getPassword(), user);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        if (user.getLastLogin() == null) {
+            response.addHeader("Access-Control-Expose-Headers", FIRST_LOGIN_HEADER_NAME);
+            response.setHeader(FIRST_LOGIN_HEADER_NAME, Boolean.toString(true));
+        }
+
         final String tenant = TenancyContext.getTenantName();
         return new AuthTokenDTO("Bearer", jwtService.generateAuthToken(user, tenant),
                 jwtService.generateRefreshToken(user, tenant), jwtService.getExpiration(), tenant);
@@ -119,10 +128,10 @@ public class AuthController extends AbstractController implements AuthDocumented
 
     @PostMapping("/signup")
     @Override
-    public void signup(@RequestHeader("Access-Token") String token, @Valid @RequestBody UserType userType) {
-        Invitation invitation = invitationService.acceptInvitation(token, userType.getUsername());
-        userType.setSource(invitation.getSource());
-        userService.createOrUpdateUser(mapper.map(userType, User.class), invitation.getGroupId());
+    public void signup(@RequestHeader("Access-Token") String token, @Valid @RequestBody UserDTO userDTO) {
+        Invitation invitation = invitationService.acceptInvitation(token, userDTO.getUsername());
+        userDTO.setSource(invitation.getSource());
+        userService.createOrUpdateUser(mapper.map(userDTO, User.class), invitation.getGroupId());
     }
 
     @PostMapping("/refresh")

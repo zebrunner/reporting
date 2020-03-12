@@ -84,7 +84,6 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests {
             setCiRunId(UUID.randomUUID().toString());
             setKnownIssue(true);
             setBlocker(true);
-            setEnv("e1");
         }
     };
 
@@ -125,7 +124,6 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests {
         TEST_RUN.setStartedBy(Initiator.SCHEDULER);
         TEST_RUN.setKnownIssue(false);
         TEST_RUN.setBlocker(false);
-        TEST_RUN.setEnv("e1");
 
         testRunMapper.updateTestRun(TEST_RUN);
 
@@ -183,6 +181,5 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests {
         assertEquals(testRun.getProject().getId(), TEST_RUN.getProject().getId(), "Project must match");
         assertEquals(testRun.isKnownIssue(), TEST_RUN.isKnownIssue(), "Known issue must match");
         assertEquals(testRun.isBlocker(), TEST_RUN.isBlocker(), "Blocker must match");
-        assertEquals(testRun.getEnv(), TEST_RUN.getEnv(), "Env must match");
     }
 }

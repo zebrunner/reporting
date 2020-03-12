@@ -18,9 +18,18 @@ package com.qaprosoft.zafira.service;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSessionSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.persistence.TestSessionRepository;
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.dto.testsession.SearchParameter;
 import com.qaprosoft.zafira.models.entity.TestSession;
+import com.qaprosoft.zafira.models.entity.integration.Integration;
+import com.qaprosoft.zafira.models.entity.integration.IntegrationParam;
+import com.qaprosoft.zafira.models.push.events.EventMessage;
+import com.qaprosoft.zafira.models.push.events.ZbrHubTokenRefreshMessage;
+import com.qaprosoft.zafira.service.exception.IllegalOperationException;
 import com.qaprosoft.zafira.service.exception.ResourceNotFoundException;
+import com.qaprosoft.zafira.service.integration.IntegrationService;
+import com.qaprosoft.zafira.service.util.EventPushService;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,17 +42,24 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.TOKEN_REFRESH_IS_NOT_SUPPORTED;
 import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_SESSION_NOT_FOUND;
+import static com.qaprosoft.zafira.service.util.EventPushService.Type.ZBR_EVENTS;
 
 @Service
 public class TestSessionService {
 
     private static final String ERR_MSG_TEST_SESSION_NOT_EXISTS_BY_SESSION_ID = "Test session does not exist by sessionId '%s'";
+    private static final String ERR_MSG_FOR_INTEGRATION_TOKEN_REFRESH_IS_NOT_SUPPORTED = "For integration of type %s token refresh is not supported";
 
     private final TestSessionRepository testSessionRepository;
+    private final IntegrationService integrationService;
+    private EventPushService<EventMessage> eventPushService;
 
-    public TestSessionService(TestSessionRepository testSessionRepository) {
+    public TestSessionService(TestSessionRepository testSessionRepository, IntegrationService integrationService, EventPushService<EventMessage> eventPushService) {
         this.testSessionRepository = testSessionRepository;
+        this.integrationService = integrationService;
+        this.eventPushService = eventPushService;
     }
 
     @Transactional(readOnly = true)
@@ -70,6 +86,47 @@ public class TestSessionService {
         List<TestSession.Status> statuses = testSessionRepository.findDistinctByStatus();
         List<String> platforms = testSessionRepository.findDistinctByBrowserName();
         return new SearchParameter(statuses, platforms);
+    }
+
+    public String refreshToken(Long integrationId) {
+        Integration integration = integrationService.retrieveById(integrationId);
+
+        if (!"ZEBRUNNER".equals(integration.getType().getName())) {
+            throw new IllegalOperationException(TOKEN_REFRESH_IS_NOT_SUPPORTED, String.format(ERR_MSG_FOR_INTEGRATION_TOKEN_REFRESH_IS_NOT_SUPPORTED, integration.getType()));
+        }
+
+        String token = RandomStringUtils.randomAlphanumeric(16);
+        updateZbrHubPassword(integration, token);
+
+        String tenantName = TenancyContext.getTenantName();
+        ZbrHubTokenRefreshMessage message = new ZbrHubTokenRefreshMessage(tenantName, token);
+
+        eventPushService.convertAndSend(ZBR_EVENTS, message, "Type", "ZBR_HUB_TOKEN_REFRESH");
+        return token;
+    }
+
+    private void updateZbrHubPassword(Integration integration, String token) {
+        IntegrationParam password = integration.getType()
+                                                       .getParams()
+                                                       .stream()
+                                                       .filter(integrationParam -> isParamPresent("ZEBRUNNER_PASSWORD", integrationParam))
+                                                       .findFirst()
+                                                       .orElse(new IntegrationParam());
+        updateIntegrationSetting(token, integration, password);
+        integrationService.update(integration);
+    }
+
+    private void updateIntegrationSetting(String value, Integration integration, IntegrationParam integrationParam) {
+        integration.getSettings().forEach(integrationSetting -> {
+            if (integrationSetting.getParam().getId().equals(integrationParam.getId())) {
+                integrationSetting.setValue(value);
+                integrationSetting.setEncrypted(false);
+            }
+        });
+    }
+
+    private boolean isParamPresent(String paramName, IntegrationParam integrationParam) {
+        return paramName.equals(integrationParam.getName());
     }
 
     private Pageable buildPageable(TestSessionSearchCriteria criteria) {

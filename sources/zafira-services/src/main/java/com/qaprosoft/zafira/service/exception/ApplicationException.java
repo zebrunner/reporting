@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
  * of the application. It should not be explicitly thrown - appropriate instance of one of its
  * subclasses should be thrown instead.
  */
+@Getter
 public abstract class ApplicationException extends RuntimeException {
 
     public interface ErrorDetail {

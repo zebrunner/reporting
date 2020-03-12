@@ -16,22 +16,23 @@
 package com.qaprosoft.zafira.service.email;
 
 import com.qaprosoft.zafira.models.db.Attachment;
-import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.config.Argument;
-import com.qaprosoft.zafira.models.db.config.Configuration;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Getter
+@Setter
 public class TestRunResultsEmail implements IEmailMessage {
     private static final String SUBJECT = "%s: %s";
 
-    private Map<String, String> configuration = new HashMap<>();
+    private Map<String, String> customValues = new HashMap<>();
     private TestRun testRun;
     private List<Test> tests;
     private String jiraURL;
@@ -40,83 +41,16 @@ public class TestRunResultsEmail implements IEmailMessage {
     private int successRate;
     private String elapsed;
 
-    public TestRunResultsEmail(Configuration config, TestRun testRun, List<Test> tests) {
-        for (Argument arg : config.getArg()) {
-            configuration.put(arg.getKey(), arg.getValue());
-        }
+    public TestRunResultsEmail(TestRun testRun, List<Test> tests) {
         this.testRun = testRun;
         this.tests = tests;
         this.elapsed = testRun.getElapsed() != null ? LocalTime.ofSecondOfDay(testRun.getElapsed()).toString() : null;
     }
 
-    public Map<String, String> getConfiguration() {
-        return configuration;
-    }
-
-    public void setConfiguration(Map<String, String> configuration) {
-        this.configuration = configuration;
-    }
-
-    public TestRun getTestRun() {
-        return testRun;
-    }
-
-    public void setTestRun(TestRun testRun) {
-        this.testRun = testRun;
-    }
-
-    public List<Test> getTests() {
-        return tests;
-    }
-
-    public void setTests(List<Test> tests) {
-        this.tests = tests;
-    }
-
-    public String getJiraURL() {
-        return jiraURL;
-    }
-
-    public void setJiraURL(String jiraURL) {
-        this.jiraURL = jiraURL;
-    }
-
-    public void setJiraURL(Setting setting) {
-        this.jiraURL = setting != null ? setting.getValue() : "";
-    }
-
-    public boolean isShowOnlyFailures() {
-        return showOnlyFailures;
-    }
-
-    public void setShowOnlyFailures(boolean showOnlyFailures) {
-        this.showOnlyFailures = showOnlyFailures;
-    }
-
-    public boolean isShowStacktrace() {
-        return showStacktrace;
-    }
-
-    public void setShowStacktrace(boolean showStacktrace) {
-        this.showStacktrace = showStacktrace;
-    }
-
-    public int getSuccessRate() {
-        return successRate;
-    }
-
-    public void setSuccessRate(int successRate) {
-        this.successRate = successRate;
-    }
-
-    public String getElapsed() {
-        return elapsed;
-    }
-
     @Override
     public String getSubject() {
         String status = buildStatusText(testRun);
-        return String.format(SUBJECT, status, testRun.getName(configuration));
+        return String.format(SUBJECT, status, testRun.getName());
     }
 
     public static String buildStatusText(TestRun testRun) {

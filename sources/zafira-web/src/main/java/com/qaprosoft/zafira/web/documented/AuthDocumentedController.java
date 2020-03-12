@@ -23,7 +23,7 @@ import com.qaprosoft.zafira.models.dto.auth.RefreshTokenDTO;
 import com.qaprosoft.zafira.models.dto.auth.TenancyInfoDTO;
 import com.qaprosoft.zafira.models.dto.auth.TenantAuth;
 import com.qaprosoft.zafira.models.dto.user.PasswordDTO;
-import com.qaprosoft.zafira.models.dto.user.UserType;
+import com.qaprosoft.zafira.models.dto.user.UserDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -31,6 +31,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.http.ResponseEntity;
+
+import javax.servlet.http.HttpServletResponse;
 
 @Api("Auth API")
 public interface AuthDocumentedController {
@@ -74,10 +76,10 @@ public interface AuthDocumentedController {
             @ApiImplicitParam(name = "credentialsDTO", paramType = "body", dataType = "CredentialsDTO", required = true, value = "Credentials for user authentication")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns the auth token", response = AuthTokenDTO.class),
+            @ApiResponse(code = 200, message = "Returns the auth token. If it is a first login, header with name `First-Login` will appear in response.", response = AuthTokenDTO.class),
             @ApiResponse(code = 401, message = "Indicates that the user credentials are invalid", response = ResponseEntity.class)
     })
-    AuthTokenDTO login(CredentialsDTO credentialsDTO);
+    AuthTokenDTO login(CredentialsDTO credentialsDTO, HttpServletResponse response);
 
     @ApiOperation(
             value = "Registers a new user in the application",
@@ -93,7 +95,7 @@ public interface AuthDocumentedController {
             @ApiResponse(code = 200, message = "Creates a user in the application"),
             @ApiResponse(code = 400, message = "Indicates that the user already exists")
     })
-    void signup(String token, UserType userType);
+    void signup(String token, UserDTO userDTO);
 
     @ApiOperation(
             value = "Refreshes an auth token",

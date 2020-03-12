@@ -21,8 +21,6 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.FilterSearchCr
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
-import com.qaprosoft.zafira.models.db.filter.FilterAdapter;
-import com.qaprosoft.zafira.models.db.filter.Filter;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.db.Status;
@@ -30,8 +28,8 @@ import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestConfig;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.WorkItem;
-import com.qaprosoft.zafira.models.db.config.Argument;
-import com.qaprosoft.zafira.models.db.config.Configuration;
+import com.qaprosoft.zafira.models.db.filter.Filter;
+import com.qaprosoft.zafira.models.db.filter.FilterAdapter;
 import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.models.dto.CommentType;
 import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
@@ -56,7 +54,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,7 +83,6 @@ import static com.qaprosoft.zafira.service.FilterService.Template.TEST_RUN_TEMPL
 import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.TEST_RUN_CAN_NOT_BE_STARTED;
 import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.TEST_RUN_RERUN_CAN_NOT_BE_STARTED;
 import static com.qaprosoft.zafira.service.exception.ResourceNotFoundException.ResourceNotFoundErrorDetail.TEST_RUN_NOT_FOUND;
-import static com.qaprosoft.zafira.service.util.XmlConfigurationUtil.readArguments;
 
 @Service
 public class TestRunService implements ProjectReassignable {
@@ -367,13 +363,11 @@ public class TestRunService implements ProjectReassignable {
             }
             testRun.setProject(project);
         }
-        testRun.setEnv(testRunParams.getEnv());
         testRun.setCiRunId(testRunParams.getCiRunId());
         testRun.setElapsed(null);
         testRun.setConfigXML(null);
         testRun.setConfig(null);
         testRun.setComments(null);
-        testRun.setAppVersion(null);
         testRun.setReviewed(false);
         testRun.setKnownIssue(false);
         testRun.setBlocker(false);
@@ -469,10 +463,7 @@ public class TestRunService implements ProjectReassignable {
     public void initTestRunWithXml(TestRun testRun) {
         if (StringUtils.isNotBlank(testRun.getConfigXML())) {
             TestConfig config = testConfigService.createTestConfigForTestRun(testRun.getConfigXML());
-
             testRun.setConfig(config);
-            testRun.setEnv(config.getEnv());
-            testRun.setAppVersion(config.getAppVersion());
         }
     }
 
@@ -797,14 +788,13 @@ public class TestRunService implements ProjectReassignable {
     }
 
     private TestRunResultsEmail buildTestRunResultEmail(TestRun testRun, List<Test> tests) {
-        Configuration configuration = readArguments(testRun.getConfigXML());
-        // Forward from API to Web
-        Argument zafiraServiceUrlArgument = new Argument("zafira_service_url", urlResolver.buildWebURL());
-        configuration.getArg().add(zafiraServiceUrlArgument);
 
         tests.forEach(test -> test.setArtifacts(new TreeSet<>(test.getArtifacts())));
 
-        return new TestRunResultsEmail(configuration, testRun, tests);
+        TestRunResultsEmail testRunResultsEmail = new TestRunResultsEmail(testRun, tests);
+        testRunResultsEmail.getCustomValues().put("zafira_service_url", urlResolver.buildWebURL());
+
+        return testRunResultsEmail;
     }
 
     private String getJiraUrl() {
@@ -819,12 +809,6 @@ public class TestRunService implements ProjectReassignable {
         int total = testRun.getPassed() + testRun.getFailed() + testRun.getSkipped();
         double rate = (double) testRun.getPassed() / (double) total;
         return total > 0 ? (new BigDecimal(rate).setScale(2, RoundingMode.HALF_UP).multiply(new BigDecimal(100))).intValue() : 0;
-    }
-
-    @Transactional(readOnly = true)
-    @Cacheable(value = "environments", key = "new com.qaprosoft.zafira.dbaccess.utils.TenancyContext().getTenantName() + ':' + #result", condition = "#result != null && #result.size() != 0")
-    public List<String> getEnvironments() {
-        return testRunMapper.getEnvironments();
     }
 
     public void hideJobUrlsIfNeed(List<TestRun> testRuns) {

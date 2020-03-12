@@ -31,6 +31,7 @@ import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -41,15 +42,23 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
-public class UserType extends AbstractType {
+public class UserDTO extends AbstractType {
     private static final long serialVersionUID = -6663692781158665080L;
 
     @NotEmpty(message = "Username required")
     @Pattern(regexp = "[\\w-]+", message = "Invalid format")
     private String username;
+
     private String email;
+
+    @Size(min = 1, max = 100, message = "“First name should be 1 to 100 characters long")
+    @Pattern(regexp = "^[A-Za-z0-9-.]+$", message = "First name should contain only letters, numbers, dashes and dots")
     private String firstName;
+
+    @Size(min = 1, max = 100, message = "Last name should be 1 to 100 characters long")
+    @Pattern(regexp = "^[A-Za-z0-9-.]+$", message = "Last name should contain only letters, numbers, dashes and dots")
     private String lastName;
+
     private String password;
     private String photoURL;
     private List<Role> roles = new ArrayList<>();
@@ -59,7 +68,7 @@ public class UserType extends AbstractType {
     private User.Source source;
     private User.Status status;
 
-    public UserType(String username, String email, String firstName, String lastName) {
+    public UserDTO(String username, String email, String firstName, String lastName) {
         this.username = username;
         this.email = email;
         this.firstName = firstName;

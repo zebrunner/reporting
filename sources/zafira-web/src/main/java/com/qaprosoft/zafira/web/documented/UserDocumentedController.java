@@ -22,7 +22,7 @@ import com.qaprosoft.zafira.models.db.UserPreference;
 import com.qaprosoft.zafira.models.dto.UserPreferenceDTO;
 import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
 import com.qaprosoft.zafira.models.dto.user.ChangePasswordDTO;
-import com.qaprosoft.zafira.models.dto.user.UserType;
+import com.qaprosoft.zafira.models.dto.user.UserDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -41,17 +41,17 @@ public interface UserDocumentedController {
             notes = "Retrieves a user profile by the username or auth token if the username is not specified",
             nickname = "getUserProfile",
             httpMethod = "GET",
-            response = UserType.class
+            response = UserDTO.class
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "username", paramType = "query", dataType = "string", value = "The user name")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns the found user", response = UserType.class),
+            @ApiResponse(code = 200, message = "Returns the found user", response = UserDTO.class),
             @ApiResponse(code = 404, message = "Indicates that the user does not exist", response = ErrorResponse.class)
     })
-    UserType getUserProfile(String username);
+    UserDTO getUserProfile(String username);
 
     @ApiOperation(
             value = "Retrieves an extended user profile",
@@ -73,17 +73,17 @@ public interface UserDocumentedController {
             notes = "Returns the updated user profile",
             nickname = "updateUserProfile",
             httpMethod = "PUT",
-            response = UserType.class
+            response = UserDTO.class
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "userType", paramType = "body", dataType = "UserType", required = true, value = "The user to update")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns the updated user profile", response = UserType.class),
+            @ApiResponse(code = 200, message = "Returns the updated user profile", response = UserDTO.class),
             @ApiResponse(code = 404, message = "Indicates that user does not exist", response = ErrorResponse.class)
     })
-    UserType updateUserProfile(UserType userType);
+    UserDTO updateUserProfile(UserDTO userDTO);
 
     @ApiOperation(
             value = "Deletes a user profile photo",
@@ -140,32 +140,32 @@ public interface UserDocumentedController {
             notes = "Returns the created or updated user",
             nickname = "createOrUpdateUser",
             httpMethod = "PUT",
-            response = UserType.class
+            response = UserDTO.class
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "userType", paramType = "body", dataType = "UserType", required = true, value = "The user to create or update")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns the created or updated user", response = UserType.class)
+            @ApiResponse(code = 200, message = "Returns the created or updated user", response = UserDTO.class)
     })
-    UserType createOrUpdateUser(UserType userType);
+    UserDTO createOrUpdateUser(UserDTO userDTO);
 
     @ApiOperation(
             value = "Updates a user status",
             notes = "Activates or deactivates a user",
             nickname = "updateStatus",
             httpMethod = "PUT",
-            response = UserType.class
+            response = UserDTO.class
     )
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header", required = true, value = "The auth token (Bearer)"),
             @ApiImplicitParam(name = "userType", paramType = "body", dataType = "UserType", required = true, value = "The user to activate or deactivate")
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Returns the user with an updated status", response = UserType.class)
+            @ApiResponse(code = 200, message = "Returns the user with an updated status", response = UserDTO.class)
     })
-    UserType updateStatus(UserType userType);
+    UserDTO updateStatus(UserDTO userDTO);
 
     @ApiOperation(
             value = "Adds a user to a group",

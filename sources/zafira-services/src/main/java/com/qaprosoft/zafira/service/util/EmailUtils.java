@@ -24,8 +24,6 @@ import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.internet.ContentDisposition;
 
-import java.io.IOException;
-
 import static com.qaprosoft.zafira.service.exception.IllegalOperationException.IllegalOperationErrorDetail.ATTACHMENT_RESOURCE_NOT_NULL;
 
 public class EmailUtils {
@@ -54,7 +52,7 @@ public class EmailUtils {
      * @param attachment - an attachment to add
      * @throws MessagingException on some exception during message ransformation and initialization
      */
-    public static void addNamedInline(MimeMessageHelper msg, Attachment attachment) throws MessagingException, IOException {
+    public static void addNamedInline(MimeMessageHelper msg, Attachment attachment) throws MessagingException {
         if (attachment.getFile() == null || StringUtils.isEmpty(attachment.getFilename())) {
             throw new IllegalOperationException(ATTACHMENT_RESOURCE_NOT_NULL, ERR_MSG_ATTACHMENT_RESOURCE_IS_NULL);
         }

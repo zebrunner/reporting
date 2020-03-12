@@ -18,13 +18,16 @@ package com.qaprosoft.zafira.web;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSessionSearchCriteria;
 import com.qaprosoft.zafira.models.dto.testsession.SearchParameter;
+import com.qaprosoft.zafira.models.dto.testsession.TokenDTO;
 import com.qaprosoft.zafira.models.entity.TestSession;
 import com.qaprosoft.zafira.service.TestSessionService;
 import com.qaprosoft.zafira.web.documented.TestSessionDocumentedController;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping(path = "api/tests/sessions", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -53,6 +56,14 @@ public class TestSessionController extends AbstractController implements TestSes
     @Override
     public SearchParameter getSearchParameters() {
         return testSessionService.collectSearchParameters();
+    }
+
+    @PreAuthorize("hasPermission('REFRESH_TOKEN')")
+    @GetMapping("/token/refresh")
+    @Override
+    public TokenDTO refreshToken(@RequestParam("integrationId") Long integrationId) {
+        String token = testSessionService.refreshToken(integrationId);
+        return new TokenDTO(token);
     }
 
 }

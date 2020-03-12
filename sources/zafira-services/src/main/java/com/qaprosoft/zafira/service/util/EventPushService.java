@@ -43,6 +43,7 @@ public class EventPushService<T extends EventMessage> {
 
         SETTINGS("settings"),
         ZFR_CALLBACKS("zfr_callbacks"),
+        ZBR_EVENTS("zbr_events"),
         TENANCIES("tenancies");
 
         private final String routingKey;

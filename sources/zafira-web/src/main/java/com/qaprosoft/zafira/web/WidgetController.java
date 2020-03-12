@@ -109,11 +109,10 @@ public class WidgetController extends AbstractController {
     public List<Map<String, Object>> executeSQL(@RequestBody @Valid SQLAdapter sql,
                                                 @RequestParam(name = "projects", defaultValue = "", required = false) List<String> projects,
                                                 @RequestParam(name = "currentUserId", required = false) String currentUserId,
-                                                @RequestParam(name = "dashboardName", required = false) String dashboardName,
-                                                @RequestParam(name = "stackTraceRequired", required = false) boolean stackTraceRequired) {
+                                                @RequestParam(name = "dashboardName", required = false) String dashboardName) {
         String query = sql.getSql();
         List<Attribute> attributes = sql.getAttributes();
-        return widgetService.getQueryResultObsolete(projects, currentUserId, dashboardName, stackTraceRequired, query, attributes, getPrincipalId(), getPrincipalName());
+        return widgetService.getQueryResultObsolete(projects, currentUserId, dashboardName, query, attributes, getPrincipalId(), getPrincipalName());
     }
 
     @ApiResponseStatuses
@@ -152,11 +151,10 @@ public class WidgetController extends AbstractController {
     @ApiOperation(value = "Execute SQL template", nickname = "executeSQLTemplate", httpMethod = "POST", response = List.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @PostMapping("/templates/sql")
-    public List<Map<String, Object>> executeSQL(@RequestBody @Valid QueryParametersDTO queryParametersDTO,
-                                                @RequestParam(value = "stackTraceRequired", required = false) boolean stackTraceRequired) {
+    public List<Map<String, Object>> executeSQL(@RequestBody @Valid QueryParametersDTO queryParametersDTO) {
         Long templateId = queryParametersDTO.getTemplateId();
-        Map<String, Object> params = queryParametersDTO.getParamsConfig();
-        return widgetService.getQueryResults(stackTraceRequired, params, templateId, getPrincipalId(), getPrincipalName());
+        Map<String, Object> queryParams = queryParametersDTO.getParamsConfig();
+        return widgetService.getQueryResults(queryParams, templateId, getPrincipalId(), getPrincipalName());
     }
 
 }
