@@ -69,8 +69,8 @@ This is **non-production deployment** that will suite for demo or development pu
   ```
 5. If you are going to access application from remote host, get the IP of your machine and replace localhost in `Zebrunner-properties.env` with actual IP address
   ```
-  Zebrunner_WEB_HOST=http://localhost:80
-  Zebrunner_API_HOST=http://localhost:8080
+  ZAFIRA_WEB_HOST=http://localhost:80
+  ZAFIRA_API_HOST=http://localhost:8080
   ELASTICSEARCH_URL=http://localhost:9200
   ```
 6. Deploy application using `docker-compose`
@@ -131,12 +131,12 @@ Alternatively, if you'd like to play around with Zebrunner codebase and/or contr
     ```
     ./gradlew clean build
     ```
-    Bundled archive can be found inside `/sources/Zebrunner-ws/build/libs` directory.
+    Bundled archive can be found inside `/sources/zafira-ws/build/libs` directory.
 2. Go to `docker-compose.yml` and make sure that instead of image reference target service you want to build from sources contains a `build` instruction:
     ```yml
     Zebrunner:
-      container_name: zfr_Zebrunner_back_end
-      # image: qaprosoft/Zebrunner:4.1.69
+      container_name: zfr_zafira_back_end
+      # image: qaprosoft/zafira:4.1.69
       build: .
     ```
     It will tell Docker Compose to look for Dokerfile in current directory and delegate image contruction process to Docker vs pulling the image from Registry.
