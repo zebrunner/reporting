@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zebrunner.reporting.persistence.dao.mysql.application.LauncherPresetMapper">
+
+	<insert id="create" useGeneratedKeys="true" keyProperty="preset.id">
+        <![CDATA[
+			INSERT INTO LAUNCHER_PRESETS (NAME, REFERENCE, PARAMS, LAUNCHER_ID)
+			VALUES (
+				#{preset.name},
+				#{preset.ref},
+				#{preset.params},
+				#{launcherId}
+			)
+        ]]>
+	</insert>
+
+	<sql id="body">
+		<![CDATA[
+			LP.ID AS LAUNCHER_PRESET_ID,
+			LP.NAME AS LAUNCHER_PRESET_NAME,
+			LP.REFERENCE AS LAUNCHER_PRESET_REFERENCE,
+			LP.PARAMS AS LAUNCHER_PRESET_PARAMS,
+			LP.CREATED_AT AS LAUNCHER_PRESET_CREATED_AT,
+			LP.MODIFIED_AT AS LAUNCHER_PRESET_MODIFIED_AT
+        ]]>
+	</sql>
+
+	<sql id="get">
+        <![CDATA[
+			SELECT
+		]]>
+	<include refid="body"/>
+		<![CDATA[
+			FROM
+				LAUNCHER_PRESETS LP
+        ]]>
+	</sql>
+
+	<select id="findById" resultMap="LauncherPresetResultMap">
+		<include refid="get" />
+        <![CDATA[
+			WHERE LP.ID = #{id};
+		]]>
+	</select>
+
+	<select id="findByRef" resultMap="LauncherPresetResultMap">
+		<include refid="get" />
+		<![CDATA[
+			WHERE LP.REFERENCE = #{ref};
+		]]>
+	</select>
+
+	<select id="existsByNameAndLauncherId" resultType="java.lang.Boolean">
+		<![CDATA[
+			SELECT EXISTS (
+				SELECT * FROM LAUNCHER_PRESETS LP
+					INNER JOIN
+						LAUNCHERS L
+					ON
+						LP.LAUNCHER_ID = L.ID
+					WHERE
+						L.ID = #{launcherId} AND LP.NAME = #{name}
+			)
+		]]>
+	</select>
+
+	<update id="update">
+        <![CDATA[
+			UPDATE LAUNCHER_PRESETS
+        ]]>
+		<set>
+			<if test="null != name">
+                <![CDATA[
+                   NAME = #{name},
+                ]]>
+			</if>
+			<if test="null != params">
+				<![CDATA[
+                   PARAMS = #{params},
+                ]]>
+			</if>
+		</set>
+        <![CDATA[
+			WHERE ID = #{id}
+        ]]>
+	</update>
+
+	<sql id="delete">
+        <![CDATA[
+			DELETE FROM LAUNCHER_PRESETS
+        ]]>
+	</sql>
+
+	<delete id="deleteById">
+		<include refid="delete" />
+		<![CDATA[
+			WHERE ID = #{id}
+        ]]>
+	</delete>
+
+	<resultMap type="com.zebrunner.reporting.domain.db.LauncherPreset" id="LauncherPresetResultMap" autoMapping="false">
+		<id column="LAUNCHER_PRESET_ID" property="id" />
+		<result column="LAUNCHER_PRESET_NAME" property="name" />
+		<result column="LAUNCHER_PRESET_REFERENCE" property="ref" />
+		<result column="LAUNCHER_PRESET_PARAMS" property="params" />
+		<result column="LAUNCHER_PRESET_MODIFIED_AT" property="modifiedAt" />
+		<result column="LAUNCHER_PRESET_CREATED_AT" property="createdAt" />
+	</resultMap>
+
+</mapper>

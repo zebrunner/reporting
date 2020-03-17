@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.zebrunner.reporting.persistence.dao.mysql.application.TagMapper">
+
+	<insert id="createTag" useGeneratedKeys="true" keyProperty="id">
+        <![CDATA[
+          INSERT INTO TAGS (NAME, VALUE) VALUES
+            (
+            #{name},
+            #{value}
+            )
+ 		      ON CONFLICT DO NOTHING
+        ]]>
+	</insert>
+
+	<insert id="createTags">
+        <![CDATA[
+          INSERT INTO TAGS (NAME, VALUE) VALUES
+        ]]>
+		<foreach item="tag" index="index" collection="tags" open=""
+			separator="," close="">
+            <![CDATA[
+                (
+ 		          #{name},
+ 		          #{value}
+ 		        )
+ 		    ]]>
+		</foreach>
+        <![CDATA[
+ 		  ON CONFLICT DO NOTHING
+        ]]>
+	</insert>
+
+	<sql id="getTags">
+        <![CDATA[
+			SELECT
+				T.ID AS TAG_ID,
+				T.NAME AS TAG_NAME,
+				T.VALUE AS TAG_VALUE,
+				T.CREATED_AT AS TAG_CREATED_AT,
+				T.MODIFIED_AT AS TAG_MODIFIED_AT
+			FROM
+				TAGS T
+        ]]>
+	</sql>
+
+	<select id="getTagById" resultMap="TagResultMap">
+		<include refid="getTags" />
+        <![CDATA[
+			WHERE
+			  ID = #{id}
+        ]]>
+	</select>
+
+	<select id="getTagByNameAndTestId" resultMap="TagResultMap">
+		<include refid="getTags" />
+        <![CDATA[
+			LEFT JOIN
+              TEST_TAGS TT
+            ON
+              T.ID = TT.TAG_ID
+			WHERE
+			  TT.TEST_ID = #{testId} AND T.NAME = #{name}
+        ]]>
+	</select>
+
+	<select id="getTestInfoByTagNameAndTestRunCiRunId"
+		resultMap="TestInfo">
+        <![CDATA[
+        SELECT TG.VALUE, T.ID, T.STATUS, T.MESSAGE, WI.JIRA_ID
+        FROM TAGS TG
+        LEFT JOIN TEST_TAGS TT
+            ON TG.ID = TT.TAG_ID
+        LEFT JOIN TESTS T
+            ON TT.TEST_ID = T.ID
+        LEFT JOIN TEST_RUNS TR
+            ON T.TEST_RUN_ID = TR.ID
+        LEFT JOIN TEST_WORK_ITEMS TWI
+            ON TWI.TEST_ID = T.ID
+        LEFT JOIN WORK_ITEMS WI
+            ON TWI.WORK_ITEM_ID = WI.ID
+        WHERE
+            TG.NAME = #{tagName} AND TR.CI_RUN_ID = #{testRunCiRunId}
+        GROUP BY TG.VALUE, T.ID, T.STATUS, T.MESSAGE, WI.JIRA_ID
+        ]]>
+	</select>
+
+	<select id="getTagByNameAndValue" resultMap="TagResultMap">
+		<include refid="getTags" />
+        <![CDATA[
+			WHERE
+			  T.VALUE = #{value} AND T.NAME = #{name}
+        ]]>
+	</select>
+
+	<select id="getAllTags" resultMap="TagResultMap">
+		<include refid="getTags" />
+	</select>
+
+	<select id="getTagsByTestId" resultMap="TagResultMap">
+		<include refid="getTags" />
+        <![CDATA[
+            LEFT JOIN
+              TEST_TAGS TT
+            ON
+              T.ID = TT.TAG_ID
+			WHERE
+			  TT.TEST_ID = #{testId}
+        ]]>
+	</select>
+
+	<select id="isExists" resultType="java.lang.Boolean">
+        <![CDATA[
+            SELECT EXISTS
+              (
+                SELECT 1 FROM
+                  TAGS
+                WHERE
+                  NAME = #{name}
+              )
+        ]]>
+	</select>
+
+	<update id="updateTag">
+        <![CDATA[
+			UPDATE
+			    TAGS
+			SET
+                NAME = #{name},
+                VALUE = #{value}
+			WHERE
+			    ID = #{id}
+        ]]>
+	</update>
+
+	<sql id="deleteTag">
+        <![CDATA[
+			DELETE FROM TAGS
+        ]]>
+	</sql>
+
+	<delete id="deleteTagById">
+		<include refid="deleteTag" />
+        <![CDATA[
+			WHERE
+			  ID = #{id}
+        ]]>
+	</delete>
+
+	<resultMap type="com.zebrunner.reporting.domain.db.Tag"
+		id="TagResultMap" autoMapping="false">
+		<id column="TAG_ID" property="id" />
+		<result column="TAG_NAME" property="name" />
+		<result column="TAG_VALUE" property="value" />
+		<result column="TAG_MODIFIED_AT" property="modifiedAt" />
+		<result column="TAG_CREATED_AT" property="createdAt" />
+	</resultMap>
+
+	<resultMap type="com.zebrunner.reporting.domain.db.TestInfo"
+		id="TestInfo" autoMapping="false">
+		<result column="VALUE" property="tagValue" />
+		<result column="ID" property="id" />
+		<result column="STATUS" property="status" />
+		<result column="MESSAGE" property="message" />
+		<result column="JIRA_ID" property="defectId" />
+	</resultMap>
+</mapper>

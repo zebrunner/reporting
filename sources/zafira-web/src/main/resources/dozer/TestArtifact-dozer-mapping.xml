@@ -4,8 +4,8 @@
 	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
 
 	<mapping type="bi-directional" wildcard="false">
-		<class-a>com.qaprosoft.zafira.models.dto.TestArtifactType</class-a>
-		<class-b>com.qaprosoft.zafira.models.db.TestArtifact</class-b>
+		<class-a>com.zebrunner.reporting.domain.dto.TestArtifactType</class-a>
+		<class-b>com.zebrunner.reporting.domain.db.TestArtifact</class-b>
 
 		<field>
 			<a>id</a>
@@ -20,7 +20,7 @@
 			<b>link</b>
 		</field>
 		<field
-			custom-converter="com.qaprosoft.zafira.web.util.dozer.ExpirationDateConverter">
+			custom-converter="com.zebrunner.reporting.web.util.dozer.ExpirationDateConverter">
 			<a>expiresIn</a>
 			<b>expiresAt</b>
 		</field>

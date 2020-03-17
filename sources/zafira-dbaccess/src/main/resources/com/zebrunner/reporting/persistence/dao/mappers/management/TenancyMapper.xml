@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.zebrunner.reporting.persistence.dao.mysql.management.TenancyMapper">
+
+	<sql id="getTenancy">
+		<![CDATA[
+			SELECT
+				T.NAME AS TENANCY_NAME
+			FROM
+				TENANCIES T
+		]]>
+	</sql>
+
+	<select id="getAllTenancies" resultMap="TenancyResultMap">
+		<include refid="getTenancy" />
+	</select>
+
+	<select id="getTenancyByName" resultMap="TenancyResultMap">
+		<include refid="getTenancy" />
+		<![CDATA[
+			WHERE NAME = #{name}
+		]]>
+	</select>
+
+	<resultMap type="com.zebrunner.reporting.domain.db.Tenancy"
+		id="TenancyResultMap" autoMapping="false">
+		<result column="TENANCY_NAME" property="name" />
+	</resultMap>
+
+</mapper>

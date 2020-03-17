@@ -1,0 +1,69 @@
+/*******************************************************************************
+ * Copyright 2013-2019 Qaprosoft (http://www.qaprosoft.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
+package com.zebrunner.reporting.service.management;
+
+import com.zebrunner.reporting.persistence.dao.mysql.management.TenancyMapper;
+import com.zebrunner.reporting.persistence.utils.TenancyContext;
+import com.zebrunner.reporting.domain.db.Tenancy;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.function.Consumer;
+
+@Service
+public class TenancyService {
+
+    @Autowired
+    private TenancyMapper tenancyMapper;
+
+    @Getter
+    @Value("#{new Boolean('${zafira.multitenant}')}")
+    private Boolean isMultitenant;
+
+    @Getter
+    @Value("${zafira.use-artifact-proxy:false}")
+    private boolean useArtifactsProxy;
+
+    @Transactional(readOnly = true)
+    public List<Tenancy> getAllTenancies() {
+        return tenancyMapper.getAllTenancies();
+    }
+
+    @Transactional(readOnly = true)
+    public Tenancy getTenancyByName(String name) {
+        return tenancyMapper.getTenancyByName(name);
+    }
+
+    public void iterateItems(Runnable runnable) {
+        if (isMultitenant) {
+            iterateItems(tenancy -> runnable.run());
+        } else {
+            runnable.run();
+        }
+    }
+
+    private void iterateItems(Consumer<Tenancy> tenancyConsumer) {
+        getAllTenancies().forEach(tenancy -> {
+            TenancyContext.setTenantName(tenancy.getName());
+            tenancyConsumer.accept(tenancy);
+            TenancyContext.setTenantName(null);
+        });
+    }
+}

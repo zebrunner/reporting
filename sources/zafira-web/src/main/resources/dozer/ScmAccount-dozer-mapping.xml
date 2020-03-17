@@ -4,8 +4,8 @@
           xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
 
     <mapping type="one-way" wildcard="false">
-        <class-a>com.qaprosoft.zafira.models.dto.ScmAccountType</class-a>
-        <class-b>com.qaprosoft.zafira.models.db.ScmAccount</class-b>
+        <class-a>com.zebrunner.reporting.domain.dto.ScmAccountType</class-a>
+        <class-b>com.zebrunner.reporting.domain.db.ScmAccount</class-b>
 
         <field>
             <a>id</a>
@@ -33,8 +33,8 @@
         </field>
     </mapping>
     <mapping type="one-way" wildcard="false">
-        <class-a>com.qaprosoft.zafira.models.db.ScmAccount</class-a>
-        <class-b>com.qaprosoft.zafira.models.dto.ScmAccountType</class-b>
+        <class-a>com.zebrunner.reporting.domain.db.ScmAccount</class-a>
+        <class-b>com.zebrunner.reporting.domain.dto.ScmAccountType</class-b>
 
         <field>
             <a>id</a>

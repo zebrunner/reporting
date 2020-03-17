@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zebrunner.reporting.persistence.dao.mysql.application.LauncherCallbackMapper">
+
+	<insert id="create" useGeneratedKeys="true" keyProperty="id">
+        <![CDATA[
+			INSERT INTO LAUNCHER_CALLBACKS (CI_RUN_ID, URL, REFERENCE, LAUNCHER_PRESET_ID)
+			VALUES (
+				#{ciRunId},
+				#{url},
+				#{ref},
+				#{preset.id}
+			)
+        ]]>
+	</insert>
+
+	<sql id="body">
+		<![CDATA[
+			LC.ID AS LAUNCHER_CALLBACK_ID,
+			LC.CI_RUN_ID AS LAUNCHER_CALLBACK_CI_RUN_ID,
+			LC.URL AS LAUNCHER_CALLBACK_URL,
+			LC.REFERENCE AS LAUNCHER_CALLBACK_REFERENCE,
+			LC.LAUNCHER_PRESET_ID AS LAUNCHER_CALLBACK_LAUNCHER_PRESET_ID,
+			LC.CREATED_AT AS LAUNCHER_CALLBACK_CREATED_AT,
+			LC.MODIFIED_AT AS LAUNCHER_CALLBACK_MODIFIED_AT
+        ]]>
+	</sql>
+
+	<sql id="get">
+        <![CDATA[
+			SELECT
+		]]>
+	<include refid="body"/>
+	<![CDATA[
+		,
+	]]>
+	<include refid="com.zebrunner.reporting.persistence.dao.mysql.application.LauncherPresetMapper.body"/>
+		<![CDATA[
+			FROM
+				LAUNCHER_CALLBACKS LC
+			LEFT JOIN
+				LAUNCHER_PRESETS LP
+			ON
+				LC.LAUNCHER_PRESET_ID = LP.ID
+        ]]>
+	</sql>
+
+	<select id="findByCiRunId" resultMap="LauncherCallbackResultMap">
+		<include refid="get" />
+        <![CDATA[
+			WHERE LC.CI_RUN_ID = #{ciRunId};
+		]]>
+	</select>
+
+	<select id="findByRef" resultMap="LauncherCallbackResultMap">
+		<include refid="get" />
+		<![CDATA[
+			WHERE LC.REFERENCE = #{reference};
+		]]>
+	</select>
+
+	<select id="existsByCiRunId" resultType="java.lang.Boolean">
+		<![CDATA[
+			SELECT EXISTS (
+				SELECT * FROM LAUNCHER_CALLBACKS LC
+					WHERE
+						LC.CI_RUN_ID = #{ciRunId}
+			)
+		]]>
+	</select>
+
+	<sql id="delete">
+        <![CDATA[
+			DELETE FROM LAUNCHER_CALLBACKS
+        ]]>
+	</sql>
+
+	<delete id="deleteById">
+		<include refid="delete" />
+		<![CDATA[
+			WHERE ID = #{id}
+        ]]>
+	</delete>
+
+	<resultMap type="com.zebrunner.reporting.domain.db.LauncherCallback" id="LauncherCallbackResultMap" autoMapping="false">
+		<id column="LAUNCHER_CALLBACK_ID" property="id" />
+		<result column="LAUNCHER_CALLBACK_CI_RUN_ID" property="ciRunId" />
+		<result column="LAUNCHER_CALLBACK_URL" property="url" />
+		<result column="LAUNCHER_CALLBACK_REFERENCE" property="ref" />
+		<result column="LAUNCHER_CALLBACK_MODIFIED_AT" property="modifiedAt" />
+		<result column="LAUNCHER_CALLBACK_CREATED_AT" property="createdAt" />
+		<association property="preset" javaType="com.zebrunner.reporting.domain.db.LauncherPreset"
+					 resultMap="com.zebrunner.reporting.persistence.dao.mysql.application.LauncherPresetMapper.LauncherPresetResultMap"/>
+	</resultMap>
+
+</mapper>

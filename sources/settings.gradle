@@ -1,4 +1,4 @@
-rootProject.name = 'zafira'
+rootProject.name = 'reporting-service'
 
 include(':zafira-models')
 include(':zafira-dbaccess')
