@@ -1,6 +1,0 @@
-rootProject.name = 'zafira'
-
-include(':zafira-models')
-include(':zafira-dbaccess')
-include(':zafira-services')
-include(':zafira-web')
