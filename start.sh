@@ -17,4 +17,4 @@ if [ ! -d esdata ]; then
   mkdir -p esdata;
 fi
 
-docker-compose up -d
+docker-compose pull && docker-compose up -d

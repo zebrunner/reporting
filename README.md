@@ -75,7 +75,7 @@ This is **non-production deployment** that will suite for demo or development pu
   ```
 6. Deploy application using `docker-compose`
   ```
-  $ docker-compose up -d
+  $ docker-compose pull && docker-compose up -d
   ```
 7. Open application in browser:
   ```

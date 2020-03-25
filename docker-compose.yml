@@ -1,9 +1,8 @@
 version: '3'
 
 services:
-  db:
-    container_name: zfr_postgres
-    image: qaprosoft/postgres:9.6
+  postgres:
+    image: "qaprosoft/postgres:${TAG_POSTGRES}"
     volumes:
       - ./pgdata:/var/lib/postgresql/data
       - ./database/:/docker-entrypoint-initdb.d
@@ -14,8 +13,7 @@ services:
       - POSTGRES_PASSWORD=postgres
     restart: always
   rabbitmq:
-    container_name: zfr_rabbitmq
-    image: qaprosoft/rabbitmq:latest
+    image: "qaprosoft/rabbitmq:${TAG_RABBITMQ}"
     ports:
       - 15672:15672
       - 61613:61613
@@ -27,8 +25,7 @@ services:
       - RABBITMQ_DEFAULT_PASS=qpsdemo
     restart: always
   redis:
-    container_name: zfr_redis
-    image: redis:5.0.5
+    image: "redis:${TAG_REDIS}"
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     volumes:
       - ./config/redis.conf:/usr/local/etc/redis/redis.conf:ro
@@ -36,8 +33,7 @@ services:
       - 6379:6379
     restart: always
   elasticsearch:
-    container_name: zfr_elasticsearch
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.1
+    image: "docker.elastic.co/elasticsearch/elasticsearch:${TAG_ELASTICSEARCH}"
     volumes:
       - ./esdata:/usr/share/elasticsearch/data
       - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
@@ -51,35 +47,31 @@ services:
       - 9200:9200
     restart: always
   logstash:
-    container_name: zfr_logstash
-    image: docker.elastic.co/logstash/logstash:6.3.1
+    image: "docker.elastic.co/logstash/logstash:${TAG_LOGSTASH}"
     volumes:
       - ./config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
       - ./config/mapping.json:/mapping.json:ro
     restart: always
     depends_on:
       - elasticsearch
-  zafira:
-    container_name: zfr_zafira_back_end
-    image: qaprosoft/zafira:4.1.89
-#    build: .
+  reporting-service:
+    image: "zebrunner/reporting-service:${TAG_REPORTING_SERVICE}"
     volumes:
       - ./assets:/opt/assets
     ports:
       - 8080:8080
     env_file:
-      - zafira-properties.env
+      - properties.env
     depends_on:
-      - "db"
-      - "rabbitmq"
-      - "redis"
+      - postgres
+      - rabbitmq
+      - redis
     restart: always
-  zafira-ui:
-    container_name: zfr_zafira_ui
-    image: qaprosoft/zafira-ui:1.35
+  reporting-ui:
+    image: "zebrunner/reporting-ui:${TAG_REPORTING_UI}"
     ports:
       - 80:80
     env_file:
-      - zafira-properties.env
+      - properties.env
     depends_on:
-      - "zafira"
+      - reporting-service
