@@ -1,11 +1,20 @@
 <p style="padding: 10px;" align="left">
   <img src="./docs/img/zebrunner_logo.png">
 </p>
-Zebrunner is a central automation reporting system that is built on the top of Java Spring Framework. It dramatically increases the transparency of test automation results and provides better understanding of product quality. Qaprosoft team is developing Zebrunner based on more than 10-years expertise in quality assurance and we strongly believe that your QA/Dev engineers and managers will love it!
+Zebrunner is a test automation management tool that provides full transparency of your test results within multiple environments and platforms.
 
 <p align="center">
   <img src="./docs/img/zebrunner_intro.png">
 </p>
+
+To adjust Zebrunner to all your needs, we focus on its three main components:
+
+**Zebrunner Insights** - premium reporting features for your tests. See test results in real time - Zebrunner records interactive video sessions, publishes logs and screenshots. Track your pass rate, infrastructure usage, and automation team performance in one application.
+
+**Zebrunner Engine** - cloud-based Selenium hub lets you run up to 1000 web, mobile, and API tests and reduce execution time and costs - you pay only for the period you test. We support popular platforms like Google Chrome, Firefox, Opera, Microsoft Edge, Internet Explorer, Android, iOS, and provide stability and quality of your execution.
+
+**Zebrunner Guard** - your data and users will be safe with our enterprise-grade security and centralized administration. Due to the flexible permission management, you can limit access to certain information and keep the workflow steady.
+
 
 Zebrunner was initially designed to track automation progress of the tests written using [Carina automation framework](https://github.com/qaprosoft/carina/) but you are capable to integrate Zebrunner client into your own automation tool. We are actively developing clients for different languages and frameworks but still looking for active community to provide better support.
 
