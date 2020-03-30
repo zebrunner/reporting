@@ -1,5 +1,9 @@
-### Container mounts ###
-/esdata/
-/pgdata/
-/database/*.bak
-/assets/
+### Zebrunner runtime mounts ###
+/runtime/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+/out/
