@@ -15,6 +15,9 @@ To adjust Zebrunner to all your needs, we focus on its three main components:
 
 **Zebrunner Guard** - your data and users will be safe with our enterprise-grade security and centralized administration. Due to the flexible permission management, you can limit access to certain information and keep the workflow steady.
 
+<p align="center">
+  <img src="./docs/img/zebrunner_layers.png">
+</p>
 
 Zebrunner was initially designed to track automation progress of the tests written using [Carina automation framework](https://github.com/qaprosoft/carina/) but you are capable to integrate Zebrunner client into your own automation tool. We are actively developing clients for different languages and frameworks but still looking for active community to provide better support.
 
