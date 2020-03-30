@@ -26,12 +26,6 @@ Zebrunner **client side** repositories:
 - [`java-agent-junit`](https://github.com/zebrunner/java-agent-junit) official JUnit agent
 - [`java-agent-junit5`](https://github.com/zebrunner/java-agent-junit5) official JUnit 5 agent
 
-#### Languages and frameworks supported
-* [Java - TestNG guide](https://github.com/qaprosoft/Zebrunner-testng)
-* [Ruby - Cucumber](https://github.com/qaprosoft/Zebrunner-ruby#cucumber-usage)
-* [Ruby - RSpec](https://github.com/qaprosoft/Zebrunner-ruby#rspec-usage)
-* [C# - NUnit](https://github.com/qaprosoft/Zebrunner-nunit)
-
 ## Community and support
 * [Telegram channel](https://t.me/zebrunner)
 * [User manual](https://zebrunner.github.io/documentation)
