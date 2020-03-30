@@ -1,4 +1,4 @@
-<p align="left">
+<p style="padding: 10px;" align="left">
   <img src="./docs/img/zebrunner_logo.png">
 </p>
 Zebrunner is a central automation reporting system that is built on the top of Java Spring Framework. It dramatically increases the transparency of test automation results and provides better understanding of product quality. Qaprosoft team is developing Zebrunner based on more than 10-years expertise in quality assurance and we strongly believe that your QA/Dev engineers and managers will love it!
