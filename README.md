@@ -7,8 +7,6 @@ Zebrunner is a test automation management tool that accumulates and repseresents
   <img src="./docs/img/zebrunner_intro.png">
 </p>
 
-To adjust Zebrunner to all your needs, we focus on its three main components:
-
 **Zebrunner Insights** - premium reporting features for your tests. See test results in real time - Zebrunner records interactive video sessions, publishes logs and screenshots. Track your pass rate, infrastructure usage, and automation team performance in one application.
 
 **Zebrunner Engine** - cloud-based Selenium hub lets you run up to 1000 web, mobile, and API tests and reduce execution time and costs - you pay only for the period you test. We support popular platforms like Google Chrome, Firefox, Opera, Microsoft Edge, Internet Explorer, Android, iOS, and provide stability and quality of your execution.
@@ -18,6 +16,20 @@ To adjust Zebrunner to all your needs, we focus on its three main components:
 <p align="center">
   <img src="./docs/img/zebrunner_layers.png">
 </p>
+
+## Repositories structure
+
+Zebrunner **server side** consists of the following modules:
+- [`reporting-service`](https://github.com/zebrunner/reporting-service) Zebrunner Insights backend
+- [`reporting-ui`](https://github.com/zebrunner/reporting-ui) Zebrunner Insights frontend
+
+
+Zebrunner **client side** repositories:
+- [`java-agent-core`](https://github.com/zebrunner/java-agent-core) Zebrunner agent library core (Java)
+- [`java-agent-testng`](https://github.com/zebrunner/java-agent-testng) Zebrunner official TestNG agent
+- [`java-agent-junit`](https://github.com/zebrunner/java-agent-junit) Zebrunner official JUnit agent
+- [`java-agent-junit5`](https://github.com/zebrunner/java-agent-junit5) Zebrunner official JUnit 5 agent
+
 
 Zebrunner was initially designed to track automation progress of the tests written using [Carina automation framework](https://github.com/qaprosoft/carina/) but you are capable to integrate Zebrunner client into your own automation tool. We are actively developing clients for different languages and frameworks but still looking for active community to provide better support.
 
