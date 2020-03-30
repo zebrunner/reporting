@@ -13,10 +13,6 @@ Zebrunner is a test automation management tool that accumulates and repseresents
 
 **Zebrunner Guard** - your data and users will be safe with our enterprise-grade security and centralized administration. Due to the flexible permission management, you can limit access to certain information and keep the workflow steady.
 
-<p align="center">
-  <img src="./docs/img/zebrunner_layers.png">
-</p>
-
 ## Repositories structure
 
 Zebrunner **server side** consists of the following modules:
