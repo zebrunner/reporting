@@ -26,6 +26,23 @@ Zebrunner **client side** repositories:
 - [`java-agent-junit`](https://github.com/zebrunner/java-agent-junit) official JUnit agent
 - [`java-agent-junit5`](https://github.com/zebrunner/java-agent-junit5) official JUnit 5 agent
 
+## Installation steps
+1. Install [Docker Engine](https://docs.docker.com/engine/installation) and [Docker Compose](https://docs.docker.com/compose/install)
+2. Configure **vm.max_map_count** kernel setting using official [ES guide](https://www.elastic.co/guide/en/elasticsearch/reference/6.1/docker.html#docker-cli-run-prod-mode)
+3. Clone this repo and navigate to the root folder
+4. Deploy application using `docker-compose`
+  ```
+  $ docker-compose pull && docker-compose up -d
+  ```
+5. Open application in browser:
+  ```
+  $ http://<HOST_IP>/app
+  ```
+6. Login to the application with default credentials
+  ```
+  qpsdemo/qpsdemo
+  ```
+
 ## Community and support
 * [Telegram channel](https://t.me/zebrunner)
 * [User manual](https://zebrunner.github.io/documentation)
