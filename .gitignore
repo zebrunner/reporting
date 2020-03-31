@@ -1,5 +1,7 @@
 ### Zebrunner runtime mounts ###
 /runtime/
+/esdata/
+/pgdata/
 
 ### IntelliJ IDEA ###
 .idea
