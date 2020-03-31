@@ -268,55 +268,6 @@ CREATE TRIGGER update_timestamp_jobs
 EXECUTE PROCEDURE update_timestamp();
 
 
-DROP TABLE IF EXISTS views;
-CREATE TABLE IF NOT EXISTS views (
-  id SERIAL,
-  project_id INT NULL,
-  name VARCHAR(255) NOT NULL,
-  modified_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
-  created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
-  PRIMARY KEY (id),
-  FOREIGN KEY (project_id) REFERENCES projects (id)
-    ON DELETE CASCADE
-    ON UPDATE NO ACTION
-);
-CREATE INDEX fk_views_projects1_idx ON views (project_id);
-CREATE UNIQUE INDEX view_name_unique ON views (name);
-CREATE TRIGGER update_timestamp_views
-  BEFORE INSERT OR UPDATE
-  ON views
-  FOR EACH ROW
-EXECUTE PROCEDURE update_timestamp();
-
-
-DROP TABLE IF EXISTS job_views;
-CREATE TABLE IF NOT EXISTS job_views (
-  id SERIAL,
-  job_id INT NOT NULL,
-  view_id INT NOT NULL,
-  env VARCHAR(255) NOT NULL,
-  position INT NOT NULL DEFAULT 0,
-  size INT NOT NULL DEFAULT 1,
-  modified_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
-  created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
-  PRIMARY KEY (id),
-  FOREIGN KEY (job_id) REFERENCES jobs (id)
-    ON DELETE CASCADE
-    ON UPDATE NO ACTION,
-  FOREIGN KEY (view_id) REFERENCES views (id)
-    ON DELETE CASCADE
-    ON UPDATE NO ACTION
-);
-CREATE INDEX fk_job_views_jobs1_idx ON job_views (job_id);
-CREATE INDEX fk_job_views_views1_idx ON job_views (view_id);
-CREATE UNIQUE INDEX job_id_env_unique ON job_views (job_id, env);
-CREATE TRIGGER update_timestamp_job_views
-  BEFORE INSERT OR UPDATE
-  ON job_views
-  FOR EACH ROW
-EXECUTE PROCEDURE update_timestamp();
-
-
 DROP TABLE IF EXISTS test_configs;
 CREATE TABLE IF NOT EXISTS test_configs (
   id SERIAL,
