@@ -72,7 +72,7 @@ Zebrunner **client side** repositories:
 1. Install [Docker Engine](https://docs.docker.com/engine/installation) and [Docker Compose](https://docs.docker.com/compose/install)
 2. Configure **vm.max_map_count** kernel setting using official [ES guide](https://www.elastic.co/guide/en/elasticsearch/reference/6.1/docker.html#docker-cli-run-prod-mode)
 3. Clone this repo and navigate to the root folder
-   ```
+  ```
   git clone git@github.com:zebrunner/zebrunner.git && cd zebrunner
   ```
 4. Run the application
