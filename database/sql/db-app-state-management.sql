@@ -185,4 +185,12 @@ INSERT INTO databasechangelog(
      current_timestamp,
      1,
      'EXECUTED'
+ ),
+ (
+     '020_add_system_column_dashboards_table',
+     'brutskov',
+     'classpath:db/changelog.yml',
+     current_timestamp,
+     1,
+     'EXECUTED'
  );
