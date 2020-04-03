@@ -585,6 +585,7 @@ CREATE TABLE IF NOT EXISTS dashboards (
   hidden BOOLEAN NOT NULL DEFAULT FALSE,
   position INT NOT NULL DEFAULT 0,
   editable BOOLEAN NOT NULL DEFAULT TRUE,
+  system BOOLEAN NOT NULL DEFAULT FALSE,
   modified_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
   created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
   PRIMARY KEY (id)
