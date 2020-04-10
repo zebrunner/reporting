@@ -68,11 +68,6 @@ ALTER TABLE invitations SET (autovacuum_vacuum_threshold = 100);
 ALTER TABLE invitations SET (autovacuum_analyze_scale_factor = 0.0);
 ALTER TABLE invitations SET (autovacuum_analyze_threshold = 100);
 
-ALTER TABLE job_views SET (autovacuum_vacuum_scale_factor = 0.0);
-ALTER TABLE job_views SET (autovacuum_vacuum_threshold = 100);
-ALTER TABLE job_views SET (autovacuum_analyze_scale_factor = 0.0);
-ALTER TABLE job_views SET (autovacuum_analyze_threshold = 100);
-
 ALTER TABLE jobs SET (autovacuum_vacuum_scale_factor = 0.0);
 ALTER TABLE jobs SET (autovacuum_vacuum_threshold = 100);
 ALTER TABLE jobs SET (autovacuum_analyze_scale_factor = 0.0);
@@ -92,6 +87,11 @@ ALTER TABLE launchers SET (autovacuum_vacuum_scale_factor = 0.0);
 ALTER TABLE launchers SET (autovacuum_vacuum_threshold = 100);
 ALTER TABLE launchers SET (autovacuum_analyze_scale_factor = 0.0);
 ALTER TABLE launchers SET (autovacuum_analyze_threshold = 100);
+
+ALTER TABLE user_launcher_preferences SET (autovacuum_vacuum_scale_factor = 0.0);
+ALTER TABLE user_launcher_preferences SET (autovacuum_vacuum_threshold = 1000);
+ALTER TABLE user_launcher_preferences SET (autovacuum_analyze_scale_factor = 0.0);
+ALTER TABLE user_launcher_preferences SET (autovacuum_analyze_threshold = 1000);
 
 ALTER TABLE permissions SET (autovacuum_vacuum_scale_factor = 0.0);
 ALTER TABLE permissions SET (autovacuum_vacuum_threshold = 100);
@@ -177,11 +177,6 @@ ALTER TABLE users SET (autovacuum_vacuum_scale_factor = 0.0);
 ALTER TABLE users SET (autovacuum_vacuum_threshold = 100);
 ALTER TABLE users SET (autovacuum_analyze_scale_factor = 0.0);
 ALTER TABLE users SET (autovacuum_analyze_threshold = 100);
-
-ALTER TABLE views SET (autovacuum_vacuum_scale_factor = 0.0);
-ALTER TABLE views SET (autovacuum_vacuum_threshold = 100);
-ALTER TABLE views SET (autovacuum_analyze_scale_factor = 0.0);
-ALTER TABLE views SET (autovacuum_analyze_threshold = 100);
 
 ALTER TABLE widgets SET (autovacuum_vacuum_scale_factor = 0.0);
 ALTER TABLE widgets SET (autovacuum_vacuum_threshold = 100);
