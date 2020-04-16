@@ -842,12 +842,18 @@ CREATE TABLE IF NOT EXISTS launcher_presets (
     reference VARCHAR(20) NOT NULL,
     params TEXT NULL,
     launcher_id INT NOT NULL,
+    provider_id INT NOT NULL,
     modified_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
     created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
     PRIMARY KEY (id),
     CONSTRAINT fk_LAUNCHER_PRESET_LAUNCHERS1
         FOREIGN KEY (launcher_id)
             REFERENCES LAUNCHERS (id)
+            ON DELETE CASCADE
+            ON UPDATE NO ACTION,
+    CONSTRAINT fk_LAUNCHER_PRESET_INTEGRATIONS1
+        FOREIGN KEY (provider_id)
+            REFERENCES INTEGRATIONS (id)
             ON DELETE CASCADE
             ON UPDATE NO ACTION);
 CREATE UNIQUE INDEX LAUNCHER_PRESET_LAUNCHER_ID_NAME_UNIQUE ON launcher_presets (name, launcher_id);
