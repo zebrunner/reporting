@@ -319,7 +319,7 @@ CREATE TABLE IF NOT EXISTS test_runs (
   elapsed INT NULL,
   eta INT NULL,
   comments TEXT NULL,
-  slack_channels VARCHAR(255) NULL,
+  channels VARCHAR(255) NULL,
   reviewed BOOLEAN NOT NULL DEFAULT FALSE,
   modified_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
   created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
