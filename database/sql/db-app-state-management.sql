@@ -203,6 +203,14 @@ INSERT INTO databasechangelog(
      'EXECUTED'
  ),
  (
+     '021_add_test_environment_provider_column',
+     'brutskov',
+     'classpath:db/changelog.yml',
+     current_timestamp,
+     1,
+     'EXECUTED'
+ ),
+ (
      '022_add_microsoft_teams_integration',
      'itsvirko',
      'classpath:db/changelog.yml',
