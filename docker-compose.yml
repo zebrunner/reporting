@@ -8,13 +8,16 @@ services:
     image: "nginx:${TAG_NGINX}"
     container_name: zebrunner-proxy
     volumes:
-    - "./configuration/reverse-proxy/nginx.conf:/etc/nginx/nginx.conf:ro"
+    - "./configuration/zebrunner-proxy/nginx.conf:/etc/nginx/nginx.conf:ro"
     ports:
     - "80:80"     # primary HTTP port
     - "5672:5672" # log collection port
     #- "8081:8081" # RabbitMQ administration, optional
     #- "5432:5432" # database administration, optional
     #- "6379:6379" # Redis administration, optional
+    depends_on:
+      - reporting-ui
+      - reporting-service
     restart: always
   postgres:
     image: "qaprosoft/postgres:${TAG_POSTGRES}"
@@ -80,8 +83,8 @@ services:
     image: "zebrunner/reporting-ui:${TAG_REPORTING_UI}"
     container_name: reporting-ui
     environment:
-#TODO: declare INFRA_HOST in .env of zebrunner/zebrunner
-      - ZAFIRA_API_HOST=http://${INFRA_HOST}:80
+# https://github.com/zebrunner/zebrunner/issues/2127
+      - ZAFIRA_API_HOST=http://localhost:80
       - ZAFIRA_API_CONTEXT_PATH=reporting-service
     depends_on:
       - reporting-service
