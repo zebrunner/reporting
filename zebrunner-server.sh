@@ -14,8 +14,7 @@ case "$1" in
         ;;
     shutdown)
         echo "Shutting down Zebrunner and performing cleanup..."
-        docker-compose down
-        rm -rf runtime
+        docker-compose down -v
         ;;
     *)
         echo "Usage: ./zebrunner-server start|stop|shutdown"
