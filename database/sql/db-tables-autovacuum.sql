@@ -88,6 +88,11 @@ ALTER TABLE launchers SET (autovacuum_vacuum_threshold = 100);
 ALTER TABLE launchers SET (autovacuum_analyze_scale_factor = 0.0);
 ALTER TABLE launchers SET (autovacuum_analyze_threshold = 100);
 
+ALTER TABLE launcher_artifacts SET (autovacuum_vacuum_scale_factor = 0.0);
+ALTER TABLE launcher_artifacts SET (autovacuum_vacuum_threshold = 100000);
+ALTER TABLE launcher_artifacts SET (autovacuum_analyze_scale_factor = 0.0);
+ALTER TABLE launcher_artifacts SET (autovacuum_analyze_threshold = 100000);
+
 ALTER TABLE user_launcher_preferences SET (autovacuum_vacuum_scale_factor = 0.0);
 ALTER TABLE user_launcher_preferences SET (autovacuum_vacuum_threshold = 1000);
 ALTER TABLE user_launcher_preferences SET (autovacuum_analyze_scale_factor = 0.0);
