@@ -6,6 +6,7 @@ cd ${BASEDIR}
 case "$1" in
     start)
         echo "Starting Zebrunner..."
+        docker network inspect infra >/dev/null 2>&1 || docker network create infra
         docker-compose pull && docker-compose up -d
         ;;
     stop)
