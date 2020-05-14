@@ -203,7 +203,23 @@ INSERT INTO databasechangelog(
      'EXECUTED'
  ),
  (
-     '021_add_test_environment_provider_column',
+     '022_add_microsoft_teams_integration',
+     'itsvirko',
+     'classpath:db/changelog.yml',
+     current_timestamp,
+     1,
+     'EXECUTED'
+ ),
+ (
+     '023_adjust_work_items_indices',
+     'brutskov',
+     'classpath:db/changelog.yml',
+     current_timestamp,
+     1,
+     'EXECUTED'
+ ),
+(
+     '024_system_dashboards_update',
      'brutskov',
      'classpath:db/changelog.yml',
      current_timestamp,
@@ -211,8 +227,8 @@ INSERT INTO databasechangelog(
      'EXECUTED'
  ),
  (
-     '022_add_microsoft_teams_integration',
-     'itsvirko',
+     '025_add_registration_additional_info',
+     'brutskov',
      'classpath:db/changelog.yml',
      current_timestamp,
      1,
