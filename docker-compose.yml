@@ -83,9 +83,7 @@ services:
     image: "zebrunner/reporting-ui:${TAG_REPORTING_UI}"
     container_name: reporting-ui
     environment:
-# https://github.com/zebrunner/zebrunner/issues/2127
-      - ZAFIRA_API_HOST=http://localhost:80
-      - ZAFIRA_API_CONTEXT_PATH=reporting-service
+      - SERVER_URL=http://localhost:80/reporting-service
     depends_on:
       - reporting-service
     restart: always
