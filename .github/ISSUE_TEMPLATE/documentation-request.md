@@ -11,7 +11,7 @@ assignees: ''
 A clear and concise description of what functionality you want to be documented.
 
 **Value**
-Explain how it's gonna be valuable for Zafira users.
+Explain how it's gonna be valuable for Zebrunner users.
 
 **Additional context**
 Add any other context or artifacts (screenshots/sketches/project references with similar functionality) about the feature request here.

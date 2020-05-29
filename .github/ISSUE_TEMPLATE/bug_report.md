@@ -11,7 +11,7 @@ assignees: ''
 A clear and concise description of what the bug is.
 
 **Steps to reproduce**
-[Make sure to specify user role used to log in to Zafira]
+[Make sure to specify user role used to log in to Zebrunner]
 Below are the steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
@@ -24,7 +24,7 @@ Below are the steps to reproduce the behavior:
 [A clear and concise description of what you expected to happen.]
 
 **Environment**
-[Make sure to specify Zafira versions you see at login page]
+[Make sure to specify Zebrunner versions you see at login page]
 UI version:
 API (back-end) version:
 
