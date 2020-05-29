@@ -235,7 +235,7 @@ INSERT INTO databasechangelog(
      'EXECUTED'
  ),
  (
-     '021_add_test_environment_provider_column',
+     '026_adjust_smtp_integration_parameters',
      'brutskov',
      'classpath:db/changelog.yml',
      current_timestamp,
