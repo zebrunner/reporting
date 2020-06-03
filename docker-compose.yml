@@ -79,6 +79,12 @@ services:
       - rabbitmq
       - redis
     restart: always
+  artifacts-proxy-service:
+#    image: "zebrunner/artifacts-proxy-service:${TAG_ARTIFACTS_PROXY_SERVICE}"
+    build: ../artifacts-proxy-service/
+    container_name: artifacts-proxy-service
+    env_file:
+      - configuration/artifacts-proxy-service/variables.env
   reporting-ui:
     image: "zebrunner/reporting-ui:${TAG_REPORTING_UI}"
     container_name: reporting-ui
