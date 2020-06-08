@@ -64,6 +64,7 @@ services:
     volumes:
       - "./configuration/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro"
       - "./configuration/logstash/mapping.json:/mapping.json:ro"
+      - "./configuration/logstash/test-run-data-template.json:/test-run-data-template.json:ro"
     depends_on:
       - elasticsearch
     restart: always
@@ -80,11 +81,35 @@ services:
       - redis
     restart: always
   artifacts-proxy-service:
-#    image: "zebrunner/artifacts-proxy-service:${TAG_ARTIFACTS_PROXY_SERVICE}"
-    build: ../artifacts-proxy-service/
+    image: "zebrunner/artifacts-proxy-service:${TAG_ARTIFACTS_PROXY_SERVICE}"
     container_name: artifacts-proxy-service
     env_file:
       - configuration/artifacts-proxy-service/variables.env
+    depends_on:
+      - rabbitmq
+    restart: always
+  minio:
+    image: "minio/minio:${TAG_MINIO}"
+    container_name: minio
+    volumes:
+      - "miniodata-volume:/data"
+    command: server /data
+    environment:
+      - MINIO_ACCESS_KEY=changeit
+      - MINIO_SECRET_KEY=changeit
+    restart: always
+  minio-mc:
+    image: "minio/mc:${TAG_MINIO_MC}"
+    container_name: minio-mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host add minio-host http://minio:9000 changeit changeit --api s3v4;
+      /usr/bin/mc mb --ignore-existing minio-host/screenshots;
+      /usr/bin/mc policy set download minio-host/screenshots;
+      exit 0;
+      "
   reporting-ui:
     image: "zebrunner/reporting-ui:${TAG_REPORTING_UI}"
     container_name: reporting-ui
@@ -97,3 +122,4 @@ volumes:
   pgdata-volume:
   esdata-volume:
   assets-data:
+  miniodata-volume:
