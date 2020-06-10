@@ -79,6 +79,7 @@ services:
       - postgres
       - rabbitmq
       - redis
+      - minio
     restart: always
   artifacts-proxy-service:
     image: "zebrunner/artifacts-proxy-service:${TAG_ARTIFACTS_PROXY_SERVICE}"
