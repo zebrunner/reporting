@@ -107,8 +107,8 @@ services:
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc config host add minio-host http://minio:9000 changeit changeit --api s3v4;
-      /usr/bin/mc mb --ignore-existing minio-host/screenshots;
-      /usr/bin/mc policy set download minio-host/screenshots;
+      /usr/bin/mc mb --ignore-existing minio-host/artifacts;
+      /usr/bin/mc policy set download minio-host/artifacts;
       exit 0;
       "
   reporting-ui:
