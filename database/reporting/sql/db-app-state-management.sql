@@ -267,7 +267,7 @@ INSERT INTO databasechangelog(
      'EXECUTED'
  ),
  (
-     '028_remove_event_work_ite',
+     '028_remove_event_work_item',
      'itsvirko',
      'classpath:db/changelog.yml',
      current_timestamp,
