@@ -77,8 +77,8 @@
                         <span>Queued: </span>
                         <span style="color: #A7AEB3">${testRun.queued}</span>
                     </#if>
-                    <#if customValues['zafira_service_url']?? && (customValues['zafira_service_url'] != 'NULL') && (customValues['zafira_service_url'] != '')>
-                        <a href="${customValues['zafira_service_url']}/tests/runs/${testRun.id?c}">Insights</a>
+                    <#if workspaceURL?? && (workspaceURL != 'NULL') && (workspaceURL != '')>
+                        <a href="${workspaceURL}/tests/runs/${testRun.id?c}">Insights</a>
                     </#if>
                     <#if showJenkinsUrl && successRate?number != 100>
                         <span>
@@ -383,13 +383,13 @@
                                    line-height: 1.38;
                                    text-align: center;
                                    color: #ffffff;">
-                            <#if customValues['zafira_service_url']?? && (customValues['zafira_service_url'] != 'NULL') && (customValues['zafira_service_url'] != '')>
+                            <#if workspaceURL?? && (workspaceURL != 'NULL') && (workspaceURL != '')>
                                 <a style="font-size: 13px;
                                           font-weight: bold;
                                           line-height: 1.38;
                                           text-align: center;
                                           color: #ffffff;"
-                                   href="${customValues['zafira_service_url']}/tests/runs/${testRun.id?c}/info/${test.id?c}">Logs</a>
+                                   href="${workspaceURL}/tests/runs/${testRun.id?c}/info/${test.id?c}">Logs</a>
                             </#if>
                         </td>
                     </tr>
