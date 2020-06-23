@@ -1,0 +1,1020 @@
+SET SCHEMA 'management';
+UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
+
+<#global MULTIPLE_VALUES = {
+  "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
+  "PROJECT": multiJoin(PROJECT, projects),
+  "OWNER_USERNAME": join(USER),
+  "ENV": join(ENV),
+  "PRIORITY": join(PRIORITY),
+  "FEATURE": join(FEATURE),
+  "TASK": join(TASK),
+  "BUG": join(BUG)  
+}>
+<#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
+
+SELECT
+      ROUND(SUM(TOTAL_SECONDS)/3600) AS "ACTUAL",
+      ROUND(SUM(TOTAL_ETA_SECONDS)/3600) AS "ETA",
+      to_char(STARTED_AT, ''YYYY-MM'') AS "STARTED_AT"
+  FROM TOTAL_VIEW
+  ${WHERE_MULTIPLE_CLAUSE}
+  GROUP BY "STARTED_AT"
+  ORDER BY "STARTED_AT";
+
+
+  <#--
+    Generates WHERE clause for multiple choosen parameters
+    @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
+    @return - generated WHERE clause
+  -->
+<#function generateMultipleWhereClause map>
+ <#local result = "" />
+ <#list map?keys as key>
+     <#if map[key] != "" >
+      <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
+        <#-- Ignore non supported filters for Personal chart: USER -->
+        <#continue>
+      </#if>
+      <#if result?length != 0>
+       <#local result = result + " AND "/>
+      </#if>
+      <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
+     </#if>
+ </#list>
+
+ <#if result?length != 0 && PERSONAL == "true">
+   <!-- add personal filter by currentUserId with AND -->
+   <#local result = result + " AND OWNER_ID=${currentUserId} "/>
+ <#elseif result?length == 0 && PERSONAL == "true">
+ <!-- add personal filter by currentUserId without AND -->
+   <#local result = " OWNER_ID=${currentUserId} "/>
+ </#if>
+
+ <#if result?length != 0>
+  <#local result = " WHERE " + result/>
+ </#if>
+ <#return result>
+</#function>
+
+<#--
+    Joins array values using '', '' separator
+    @array - to join
+    @return - joined array as string
+  -->
+<#function join array=[]>
+  <#return array?join('', '') />
+</#function>
+
+<#--
+    Joins array values using '', '' separator
+    @array1 - to join, has higher priority that array2
+    @array2 - alternative to join if array1 does not exist or is empty
+    @return - joined array as string
+  -->
+<#function multiJoin array1=[] array2=[]>
+  <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
+</#function>' WHERE NAME = 'TESTS EXECUTION ROI (MAN-HOURS)';
+
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = '{
+    "grid": {
+        "right": "4%",
+        "left": "4%",
+        "top": "8%",
+        "bottom": "8%"
+    },
+    "legend": {
+        "top": -5
+    },
+    "tooltip": {
+        "trigger": "axis",
+        "extraCssText": "transform: translateZ(0);"
+    },
+    "dimensions": [
+        "STARTED_AT",
+        "ACTUAL",
+        "ETA"
+    ],
+    "xAxis": {
+        "type": "category"
+    },
+    "yAxis": {},
+    "series": [
+        {
+            "type": "bar"
+        },
+        {
+            "type": "line",
+            "smooth": true,
+            "lineStyle": {
+                "type": "dashed"
+            }
+        }
+    ],
+    "color": [
+        "#7fbae3",
+        "#919e8b"
+    ]
+}' WHERE NAME = 'TESTS EXECUTION ROI (MAN-HOURS)';
+
+
+
+UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_TOTAL_PARAMS = ["DEVICE", "APP_VERSION", "LOCALE", "LANGUAGE", "JOB_NAME", "PARENT_JOB"] >
+<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
+
+<#global MULTIPLE_VALUES = {
+  "PROJECT": multiJoin(PROJECT, projects),
+  "OWNER_USERNAME": join(USER),
+  "ENV": join(ENV),
+  "PRIORITY": join(PRIORITY),
+  "FEATURE": join(FEATURE),
+  "TASK": join(TASK),
+  "BUG": join(BUG),
+  "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
+  "DEVICE": join(DEVICE),
+  "APP_VERSION": join(APP_VERSION),
+  "LOCALE": join(LOCALE),
+  "LANGUAGE": join(LANGUAGE)
+}>
+<#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
+<#global VIEW = getView(PERIOD) />
+<#global GROUP_AND_ORDER_BY = getStartedAt(PERIOD) />
+
+SELECT
+    ${GROUP_AND_ORDER_BY} AS "STARTED_AT",
+    sum( PASSED ) AS "PASSED",
+    sum( FAILED ) AS "FAILED",
+    sum( SKIPPED ) AS "SKIPPED",
+    sum( KNOWN_ISSUE ) AS "KNOWN ISSUE",
+    sum( ABORTED ) AS "ABORTED",
+    sum( QUEUED ) AS "QUEUED"
+  FROM ${VIEW}
+  ${WHERE_MULTIPLE_CLAUSE}
+  GROUP BY ${GROUP_AND_ORDER_BY}
+  ORDER BY ${GROUP_AND_ORDER_BY};
+
+  <#--
+    Generates WHERE clause for multiple choosen parameters
+    @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
+    @return - generated WHERE clause
+  -->
+<#function generateMultipleWhereClause map>
+ <#local result = "" />
+ <#list map?keys as key>
+     <#if map[key] != "" >
+      <#if PERIOD == "Total" && IGNORE_TOTAL_PARAMS?seq_contains(key)>
+        <#continue>
+      </#if>
+      <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
+        <#-- Ignore non supported filters for Personal chart: USER -->
+        <#continue>
+      </#if>
+      <#if result?length != 0>
+       <#local result = result + " AND "/>
+      </#if>
+      <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
+     </#if>
+ </#list>
+
+ <#if result?length != 0 && PERSONAL == "true">
+   <!-- add personal filter by currentUserId with AND -->
+   <#local result = result + " AND OWNER_ID=${currentUserId} "/>
+ <#elseif result?length == 0 && PERSONAL == "true">
+   <!-- add personal filter by currentUserId without AND -->
+   <#local result = " OWNER_ID=${currentUserId} "/>
+ </#if>
+
+  <#if PARENT_JOB != "">
+    <#if result?length != 0>
+      <#local result = result + " AND "/>
+    </#if>
+    <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
+  </#if>
+ 
+ <#if result?length != 0>
+  <#local result = " WHERE " + result/>
+ </#if>
+ <#return result>
+</#function>
+
+<#--
+    Retrieves actual CREATED_BY grouping  by abstract view description
+    @value - abstract view description
+    @return - actual view name
+  -->
+<#function getStartedAt value>
+  <#local result = "to_char(date_trunc(''day'', STARTED_AT), ''YYYY-MM-DD'')" />
+  <#switch value>
+    <#case "Last 24 Hours">
+      <#local result = "to_char(date_trunc(''hour'', STARTED_AT), ''MM-DD HH24:MI'')" />
+      <#break>
+    <#case "Nightly">
+      <#local result = "to_char(date_trunc(''hour'', STARTED_AT), ''HH24:MI'')" />
+      <#break>
+    <#case "Last 7 Days">
+    <#case "Last 14 Days">
+    <#case "Last 30 Days">
+    <#case "Weekly">
+    <#case "Monthly">
+      <#local result = "to_char(date_trunc(''day'', STARTED_AT), ''YYYY-MM-DD'')" />
+      <#break>
+    <#case "Total">
+      <#local result = "to_char(date_trunc(''month'', STARTED_AT), ''YYYY-MM'')" />
+      <#break>
+  </#switch>
+  <#return result>
+</#function>
+
+<#--
+    Retrieves actual view name by abstract view description
+    @value - abstract view description
+    @return - actual view name
+  -->
+<#function getView value>
+ <#local result = "LAST24HOURS_VIEW" />
+ <#switch value>
+  <#case "Last 24 Hours">
+    <#local result = "LAST24HOURS_VIEW" />
+    <#break>
+  <#case "Last 7 Days">
+    <#local result = "LAST7DAYS_VIEW" />
+    <#break>
+  <#case "Last 14 Days">
+    <#local result = "LAST14DAYS_VIEW" />
+    <#break>
+  <#case "Last 30 Days">
+    <#local result = "LAST30DAYS_VIEW" />
+    <#break>
+  <#case "Nightly">
+    <#local result = "NIGHTLY_VIEW" />
+    <#break>
+  <#case "Weekly">
+    <#local result = "WEEKLY_VIEW" />
+    <#break>
+  <#case "Monthly">
+    <#local result = "MONTHLY_VIEW" />
+    <#break>
+  <#case "Total">
+    <#local result = "TOTAL_VIEW" />
+    <#break>
+ </#switch>
+ <#return result>
+</#function>
+
+<#--
+    Joins array values using '', '' separator
+    @array - to join
+    @return - joined array as string
+  -->
+<#function join array=[]>
+  <#return array?join('', '') />
+</#function>
+
+<#--
+    Joins array values using '', '' separator
+    @array1 - to join, has higher priority that array2
+    @array2 - alternative to join if array1 does not exist or is empty
+    @return - joined array as string
+  -->
+<#function multiJoin array1=[] array2=[]>
+  <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
+</#function>' WHERE NAME = 'PASS RATE (LINE)';
+
+
+
+
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = 'let lineRow = {
+    "type": "line",
+    "smooth": false,
+    "stack": "Status",
+    "itemStyle": {
+      "normal": {
+        "areaStyle": {
+            "opacity": 0.8,
+            "type": "default"
+        }
+      }
+    },
+    "lineStyle": {
+      "width": 1
+    }
+}
+
+let series = [];
+  for (var i = 0; i < 6 ; i++) {
+    series.push(lineRow);
+  };
+
+let option = {
+    "grid": {
+        "right": "8%",
+        "left": "10%",
+        "top": "8%",
+        "bottom": "8%"
+    },
+    "legend": {
+      "icon": "roundRect"
+    },
+    "tooltip": {
+        "trigger": "axis",
+        "extraCssText": "transform: translateZ(0);"
+    },
+    "color": [
+        "#e76a77",
+        "#6dbbe7",
+        "#fddb7a",
+        "#b5b5b5",
+        "#61c8b3",
+        "#9f5487"
+    ],
+    "xAxis": {
+        "type": "category",
+        "boundaryGap": false
+    },
+    "yAxis": {},
+    "series": series,
+    "defaultSize": {
+      "height": 8,
+      "width": 11
+    }
+}
+
+window.onresize = function(event) {
+  const leftCorner = chart.getWidth() < 700 ? "10%" : "8%";
+  option.grid.left = leftCorner;
+  chart.setOption(option);
+};
+
+chart.setOption(option);' WHERE NAME = 'PASS RATE (LINE)';
+
+
+
+UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
+
+<#global MULTIPLE_VALUES = {
+  "PROJECT": multiJoin(PROJECT, projects),
+  "OWNER_USERNAME": join(USER),
+  "ENV": join(ENV),
+  "PRIORITY": join(PRIORITY),
+  "FEATURE": join(FEATURE),
+  "TASK": join(TASK),
+  "BUG": join(BUG),
+  "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
+  "DEVICE": join(DEVICE),
+  "APP_VERSION": join(APP_VERSION),
+  "LOCALE": join(LOCALE),
+  "LANGUAGE": join(LANGUAGE)
+}>
+<#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
+<#global VIEW = getView(PERIOD) />
+<#global GROUP_AND_ORDER_BY = getGroupBy(PERIOD, PARENT_JOB) />
+
+SELECT
+      ${GROUP_AND_ORDER_BY} AS "STARTED_AT",
+      sum( PASSED ) AS "PASSED",
+      sum( FAILED ) AS "FAILED",
+      sum( SKIPPED ) AS "SKIPPED",
+      sum( KNOWN_ISSUE ) AS "KNOWN ISSUE",
+      sum( ABORTED ) AS "ABORTED",
+      sum( QUEUED ) AS "QUEUED"
+  FROM ${VIEW}
+  ${WHERE_MULTIPLE_CLAUSE}
+  GROUP BY ${GROUP_AND_ORDER_BY}
+  ORDER BY ${GROUP_AND_ORDER_BY};
+
+  <#--
+    Generates WHERE clause for multiple choosen parameters
+    @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
+    @return - generated WHERE clause
+  -->
+<#function generateMultipleWhereClause map>
+ <#local result = "" />
+ <#list map?keys as key>
+     <#if map[key] != "" >
+      <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
+        <#-- Ignore non supported filters for Personal chart: USER -->
+        <#continue>
+      </#if>
+      <#if result?length != 0>
+       <#local result = result + " AND "/>
+      </#if>
+      <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
+     </#if>
+ </#list>
+
+ <#if result?length != 0 && PERSONAL == "true">
+   <!-- add personal filter by currentUserId with AND -->
+   <#local result = result + " AND OWNER_ID=${currentUserId} "/>
+ <#elseif result?length == 0 && PERSONAL == "true">
+   <!-- add personal filter by currentUserId without AND -->
+   <#local result = " OWNER_ID=${currentUserId} "/>
+ </#if>
+
+ <#if PARENT_JOB != "">
+    <#if result?length != 0>
+      <#local result = result + " AND "/>
+    </#if>
+    <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
+ </#if>
+
+ <#if result?length != 0>
+  <#local result = " WHERE " + result/>
+ </#if>
+ <#return result>
+</#function>
+<#--
+    Retrieves actual view name by abstract view description
+    @value - abstract view description
+    @return - actual view name
+  -->
+<#function getGroupBy Period, parentJob>
+  <#local result = "" />
+  <#if parentJob != "">
+    <#local result = "UPSTREAM_JOB_BUILD_NUMBER" />
+  <#else>
+    <#local result = getStartedAt(PERIOD) />
+  </#if>
+ <#return result>
+</#function>
+<#--
+    Retrieves actual CREATED_BY grouping  by abstract view description
+    @value - abstract view description
+    @return - actual view name
+  -->
+<#function getStartedAt value>
+  <#local result = "to_char(date_trunc(''day'', STARTED_AT), ''YYYY-MM-DD'')" />
+  <#switch value>
+    <#case "Last 24 Hours">
+      <#local result = "to_char(date_trunc(''hour'', STARTED_AT), ''MM-DD HH24:MI'')" />
+      <#break>
+    <#case "Nightly">
+      <#local result = "to_char(date_trunc(''hour'', STARTED_AT), ''HH24:MI'')" />
+      <#break>
+    <#case "Last 7 Days">
+    <#case "Last 14 Days">
+    <#case "Last 30 Days">
+    <#case "Weekly">
+    <#case "Monthly">
+      <#local result = "to_char(date_trunc(''day'', STARTED_AT), ''YYYY-MM-DD'')" />
+      <#break>
+  </#switch>
+  <#return result>
+</#function>
+<#--
+    Retrieves actual view name by abstract view description
+    @value - abstract view description
+    @return - actual view name
+  -->
+<#function getView value>
+ <#local result = "LAST24HOURS_VIEW" />
+ <#switch value>
+  <#case "Last 24 Hours">
+    <#local result = "LAST24HOURS_VIEW" />
+    <#break>
+  <#case "Last 7 Days">
+    <#local result = "LAST7DAYS_VIEW" />
+    <#break>
+  <#case "Last 14 Days">
+    <#local result = "LAST14DAYS_VIEW" />
+    <#break>
+  <#case "Last 30 Days">
+    <#local result = "LAST30DAYS_VIEW" />
+    <#break>
+  <#case "Nightly">
+    <#local result = "NIGHTLY_VIEW" />
+    <#break>
+  <#case "Weekly">
+    <#local result = "WEEKLY_VIEW" />
+    <#break>
+  <#case "Monthly">
+    <#local result = "MONTHLY_VIEW" />
+    <#break>
+ </#switch>
+ <#return result>
+</#function>
+<#--
+    Joins array values using '', '' separator
+    @array - to join
+    @return - joined array as string
+  -->
+<#function join array=[]>
+  <#return array?join('', '') />
+</#function>
+<#--
+    Joins array values using '', '' separator
+    @array1 - to join, has higher priority that array2
+    @array2 - alternative to join if array1 does not exist or is empty
+    @return - joined array as string
+  -->
+<#function multiJoin array1=[] array2=[]>
+  <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
+</#function>' WHERE NAME = 'PASS RATE (PIE + LINE)';
+
+
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = '
+setTimeout(function() {
+  const created = dataset[0].STARTED_AT.toString();
+  const lastCount = dataset.length - 1;
+  const lastValue = dataset[lastCount].STARTED_AT.toString();
+  
+  let dataSource = [["STARTED_AT"], ["PASSED"], ["FAILED"], ["SKIPPED"], ["QUEUED"], ["ABORTED"], ["KNOWN ISSUE"]];
+  
+  const createDatasetSource = () => {
+    let amount = dataset.length;
+    for (let i = 0; i < amount; i++) {
+      dataSource.forEach((value, index) => {
+        let valueName = value[0];
+        let pushValue = dataset[i][valueName];
+        if (valueName === "STARTED_AT") value.push(pushValue.toString());
+        else value.push(pushValue);
+      })
+    }
+    return dataSource;
+  };
+
+  let grid, legend, pieStyle, title;
+  
+  customStyle = () => {
+    const screenWidth = window.innerWidth;
+    const rich = (fontSize, padding, fontWeight) => {
+      return {
+        PASSED:{ color: "#61c8b3", fontSize, fontWeight },
+        FAILED:{ color: "#e76a77", fontSize, fontWeight },
+        SKIPPED:{ color: "#fddb7a", fontSize, fontWeight},
+        QUEUED:{ color: "#6dbbe7", fontSize, fontWeight },
+        ABORTED:{ color: "#b5b5b5", fontSize, fontWeight },
+        KNOWN_ISSUE:{ color: "#9f5487", fontSize, fontWeight },
+        BUILD:{ color: "#0a0a0a", fontSize, padding, fontWeight: 700 }
+      }
+    };
+    
+    grid = {
+      top: "8%",
+      left: "27%",
+      right: "3%",
+      bottom: "17%"
+    };
+    legend = {
+      orient: "vertical",
+      x: "left",
+      y: "center",
+      left: "1%",
+      icon: "roundRect",
+      textStyle: {
+        fontSize: 12
+      }
+    };
+    title = {
+      show: true,
+      right: "3%",
+      top: 0,
+      textStyle: {
+        rich: rich(12, [0, 0, 0, 50], 500)
+      }
+    };
+    pieStyle = {
+      radius: "70%",
+      center: ["15%", "47%"]
+    };
+    if (screenWidth > 1250) grid.left = "30%";
+    else grid.left = "35%";
+    if (chart._dom.clientWidth === 280 || screenWidth < 481) {
+      grid.top = "50%";
+      grid.left = 30;
+      grid.right = 15;
+      grid.bottom = "15%";
+      legend.x = "left";
+      legend.y = "top";
+      legend.top = 10;
+      legend.itemGap = 2;
+      legend.itemWidth = 10;
+      legend.itemHeight = 7;
+      legend.textStyle.fontSize = 7;
+      title.right = "3%",
+      title.top = "40%";
+      title.textStyle.rich = rich(6);
+      pieStyle.radius = "40%";
+      pieStyle.center = ["60%", "23%"];
+      if (screenWidth < 481) {
+        legend.itemGap = 5;
+        legend.textStyle.fontSize = 10;
+        pieStyle.center = ["60%", "23%"];
+        title.right = "3%",
+        title.right = "2.5%";
+        title.top = "43%";
+        title.textStyle.rich = rich(8, [0, 0, 0, 20], 400);
+      }
+    }
+  }
+  customStyle();
+  
+  const changeTitle = (value = lastCount) => {
+    let titleValue = "";
+    let name = "";
+    let total = 0;
+    let newDataObj = {};
+    
+    for (const testName in dataset[value]){
+      if (testName === "STARTED_AT") continue;
+      total +=  dataset[value][testName];
+    }
+    
+    for (let i = 0; i < dataSource.length; i++){
+      newDataObj[dataSource[i][0]] = dataset[value][dataSource[i][0]]
+    }
+    
+    Object.entries(newDataObj).forEach(([key, value]) => {
+      if (value === 0) return;
+      if (key === "STARTED_AT") return name = typeof value == "number"? `{BUILD|Build: ${value}}` : `{BUILD|Date: ${value}}`;
+
+      let parameter = key === "KNOWN ISSUE" ? "KNOWN_ISSUE" : key;
+      persentValue = (value * 100 / total).toFixed(2);
+      titleValue += ` {${parameter}|${key}: ${persentValue}%;}`;
+    });
+    
+    titleValue += name;
+    
+    chart.setOption({
+      title:{
+        text: titleValue
+      }
+    })
+  };
+  changeTitle();
+  
+let colors = ["#61c8b3", "#e76a77", "#fddb7a", "#6dbbe7", "#b5b5b5", "#9f5487"];
+let lineRow = {
+    type: "line",
+    smooth: false,
+    seriesLayoutBy: "row",
+    stack: "Status",
+    itemStyle: {
+      normal: {
+        areaStyle: {
+          opacity: 0.8,
+          type: "default"
+        }
+      }
+    }
+  };
+  
+  let pie = {
+    type: "pie",
+    id: "pie",
+    radius: pieStyle.radius,
+    center:  pieStyle.center,
+    label: { show: false },
+    encode: {
+      itemName: "STARTED_AT",
+      value: lastValue,
+      tooltip: lastValue
+    },
+    selectedMode : true,
+      label: {
+        show: true,
+        position: "inside",
+        formatter: (params) => {
+          if(params.percent <= 2) return "";
+          return `${params.value[params.encode.value[0]]} \n (${params.percent}%)`
+        }
+      }
+  }
+  
+  let series = [];
+  for (var i = 0; i < dataSource.length - 1 ; i++) {
+    series.push(lineRow);
+  };
+  series.push(pie);
+
+  let option = {
+        title: title,
+        grid: grid,
+        color: colors,
+        legend: legend,
+        tooltip: {
+            trigger: "axis",
+            showDelay: 1,
+            "extraCssText": "transform: translateZ(0);"
+        },
+        dataZoom: [
+          {
+            startValue: created,
+            bottom: "0",
+            height : "25px"
+          },
+          {
+            type: "inside"
+          }
+        ],
+        dataset: {
+          source: createDatasetSource()
+        },
+        xAxis: {
+          type: "category",
+          boundaryGap: false
+        },
+        yAxis: {
+          gridIndex: 0
+        },
+        series: series
+    };
+  
+    chart.on("updateAxisPointer", (event) => {
+        let xAxisInfo = event.axesInfo[0];
+        if (xAxisInfo) {
+            let dimension = xAxisInfo.value + 1;
+            chart.setOption({
+                series: {
+                  id: "pie",
+                  label: {
+                     formatter: (params) => {
+                    if(params.percent <= 2) return "";
+                    return `${params.value[params.encode.value[0]]} \n (${params.percent}%)`
+                    }
+                  },
+                  encode: {
+                    value: dimension,
+                    tooltip: dimension
+                  }
+                }
+            });
+            changeTitle(dimension - 1);
+        }
+    });
+    
+    chart.setOption(option);
+    angular.element($window).on("resize", onResize);
+}, 1000)' WHERE NAME = 'PASS RATE (PIE + LINE)';
+
+
+UPDATE WIDGET_TEMPLATES SET SQL = '<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
+
+<#global MULTIPLE_VALUES = {
+  "PROJECT": multiJoin(PROJECT, projects),
+  "OWNER_USERNAME": join(USER),
+  "ENV": join(ENV),
+  "PRIORITY": join(PRIORITY),
+  "FEATURE": join(FEATURE),
+  "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER)
+}>
+<#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
+
+SELECT 
+    to_char(STARTED_AT, ''YYYY-MM-DD'') as "date",
+    ROUND(sum(passed)*100/sum(total)) AS "value",
+    ''${PASSED_VALUE}'' as "passed"
+    FROM total_view
+    ${WHERE_MULTIPLE_CLAUSE}
+  GROUP BY 1
+UNION ALL
+SELECT 
+    to_char(STARTED_AT, ''YYYY-MM-DD'') as "date",
+    ROUND(sum(passed)*100/sum(total)) AS "value",
+    ''${PASSED_VALUE}'' as "passed"
+    FROM nightly_view
+    ${WHERE_MULTIPLE_CLAUSE}
+  GROUP BY 1 
+  ORDER BY 1
+
+
+<#--
+    Generates WHERE clause for multiple choosen parameters
+    @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
+    @return - generated WHERE clause
+  -->
+
+<#function generateMultipleWhereClause map>
+  <#local result = "" />
+    <#if PERIOD?length = 4 || PERIOD = "YEAR">
+      <#if PERIOD = "YEAR">
+        <#local result = result + " to_char(STARTED_AT, ''YYYY'') " + " LIKE to_char(CURRENT_DATE, ''YYYY'')"/>
+      <#else>
+        <#local result = result + " to_char(STARTED_AT, ''YYYY'') " + " LIKE ''${PERIOD}''"/>
+      </#if>
+    <#elseif PERIOD != "MONTH" && PERIOD?substring(5, 6) == "Q" || PERIOD = "QUARTER" >
+      <#if PERIOD = "QUARTER">
+        <#local result = result + " to_char(STARTED_AT, ''YYYY-Q'') " + " LIKE to_char(CURRENT_DATE, ''YYYY-Q'')"/>
+      <#else>
+        <#local result = result + " to_char(STARTED_AT, ''YYYY'') || ''-Q'' || to_char(STARTED_AT, ''Q'') " + " LIKE ''${PERIOD}''"/>
+      </#if>
+    <#else>
+      <#if PERIOD = "MONTH">
+        <#local result = result + " to_char(STARTED_AT, ''YYYY-MM'') " + " LIKE to_char(CURRENT_DATE, ''YYYY-MM'')"/>
+      <#else>
+        <#local result = result + " to_char(STARTED_AT, ''YYYY-MM'') " + " LIKE ''${PERIOD}''"/>
+      </#if>
+    </#if>
+
+  <#list map?keys as key>
+    <#if map[key] != "" >
+      <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
+        <#-- Ignore non supported filters for Personal chart: USER -->
+        <#continue>
+      </#if>
+
+      <#if result?length != 0>
+        <#local result = result + " AND "/>
+      </#if>
+      <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
+    </#if>
+  </#list>
+
+  <#if result?length != 0 && PERSONAL == "true">
+    <!-- add personal filter by currentUserId with AND -->
+    <#local result = result + " AND OWNER_ID=${currentUserId} "/>
+  <#elseif result?length == 0 && PERSONAL == "true">
+    <!-- add personal filter by currentUserId without AND -->
+    <#local result = " OWNER_ID=${currentUserId} "/>
+  </#if>
+
+  <#if PARENT_JOB != "">
+    <#if result?length != 0>
+      <#local result = result + " AND "/>
+    </#if>
+    <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
+  </#if>
+
+  <#if result?length != 0>
+    <#local result = " WHERE " + result/>
+  </#if>
+  <#return result>
+</#function>
+
+<#--
+    Joins array values using '', '' separator
+    @array - to join
+    @return - joined array as string
+  -->
+<#function join array=[]>
+  <#return array?join('', '') />
+</#function>
+
+<#--
+    Joins array values using '', '' separator
+    @array1 - to join, has higher priority that array2
+    @array2 - alternative to join if array1 does not exist or is empty
+    @return - joined array as string
+  -->
+<#function multiJoin array1=[] array2=[]>
+  <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
+</#function>' WHERE NAME = 'PASS RATE (CALENDAR)';
+
+
+UPDATE WIDGET_TEMPLATES SET CHART_CONFIG = '
+const data = [];
+const range = () => {
+  let ranges = new Set();
+
+  dataset.forEach(({date, value}) => {
+    const d = new Date(date);
+    const range =  d.getFullYear() + "-" + (d.getMonth() + 1);
+    const newDate = range + "-" +  d.getDate();
+
+    ranges.add(range);
+    data.push(new Array(newDate, value));
+  });
+
+  let temporary = [];
+  for (let value of ranges) temporary.push(value);
+
+  return [temporary[0], data[data.length -1][0]]
+};
+
+const color = () => {
+    const red = "#e76a77";
+    const yellow = "#fddb7a";
+    const green = "#61c8b3";
+    const colorArrLenght = 20;
+    const greenValue = dataset[0].passed || 75;
+    let colors = [];
+
+    const creatorColorArr = (color, count) => {
+      for (var i = 0; i < Math.round(count); i++) colors.push(color);
+    }
+
+    let passed = colorArrLenght - (colorArrLenght*greenValue/100);
+    let aboard = (colorArrLenght - passed)/3;
+    let failed = colorArrLenght - passed - aboard
+
+    creatorColorArr(green, passed);
+    creatorColorArr(yellow, aboard);
+    creatorColorArr(red, failed);
+
+    return colors.reverse()
+};
+
+
+let option = {
+    tooltip: {
+      position: "top",
+      formatter: (p) => p.data[1] + "%",
+      "extraCssText": "transform: translateZ(0);"
+    },
+    visualMap: {
+      min: 0,
+      max: 100,
+      calculable: true,
+      orient: "vertical",
+      bottom: 20,
+      right:20,
+      inRange: {
+        color: color(),
+        symbolSize: [10, 100]
+      } 
+    },
+    calendar: {
+      left: 40,
+      right: 80,
+      top: 50,
+      bottom:20,
+      orient: "horizontal",
+      range: range(),
+      cellSize: 30,
+      dayLabel: {
+        nameMap: "en",
+        firstDay: 1, // start on Monday
+        margin: 5
+      },
+      yearLabel:{
+        position: "top"
+      },
+      itemStyle: {
+        color: ["white"],
+        borderWidth: 1,
+        borderColor: "#ccc"
+      }
+    },
+    series: [{
+      type: "heatmap",
+      coordinateSystem: "calendar",
+      calendarIndex: 0,
+      label: {
+        show: true,
+        formatter: function (params) {
+            let d = echarts.number.parseDate(params.value[0]);
+            return d.getDate();
+        },
+        color: "#000"
+      },
+      data: data
+    }]
+};
+
+chart.setOption(option);' WHERE NAME = 'PASS RATE (CALENDAR)';
+
+
+
+UPDATE WIDGET_TEMPLATES SET PARAMS_CONFIG = '{
+  "PERIOD": {
+    "valuesQuery": "SELECT ''YEAR'' UNION ALL SELECT ''QUARTER'' UNION ALL SELECT ''MONTH'' UNION ALL SELECT DISTINCT to_char(STARTED_AT, ''YYYY'') FROM total_view UNION ALL SELECT DISTINCT to_char(STARTED_AT, ''YYYY'') || ''-Q'' || to_char(STARTED_AT, ''Q'') FROM total_view UNION ALL SELECT DISTINCT to_char(STARTED_AT, ''YYYY-MM'') FROM total_view UNION SELECT DISTINCT to_char(STARTED_AT, ''YYYY-MM'') FROM NIGHTLY_VIEW ORDER BY 1 DESC;",
+    "required": true
+  },
+  "PERSONAL": {
+    "values": [ 
+      "false",
+      "true" 
+    ],
+    "required": true,
+    "type": "radio"
+  },
+  "PASSED_VALUE":{
+    "value": 75,
+    "required": false
+  },
+  "PROJECT": {
+    "valuesQuery": "SELECT NAME FROM PROJECTS WHERE NAME <> '''' ORDER BY 1;",
+    "multiple": true
+  },
+  "USER": {
+    "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
+    "multiple": true
+  },
+  "PLATFORM": {
+    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
+    "multiple": true
+  },
+  "BROWSER": {
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "multiple": true
+  },
+  "ENV": {
+    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
+    "multiple": true
+  },
+  "PRIORITY": {
+    "valuesQuery": "SELECT VALUE FROM TAGS WHERE NAME=''priority'' ORDER BY 1;",
+    "multiple": true
+  },
+  "FEATURE": {
+    "valuesQuery": "SELECT VALUE FROM TAGS WHERE NAME=''feature'' ORDER BY 1;",
+    "multiple": true
+  },
+  "PARENT_JOB": {
+    "value": "",
+    "required": false
+  }
+}' WHERE NAME = 'PASS RATE (CALENDAR)';
