@@ -89,6 +89,16 @@ services:
     depends_on:
       - rabbitmq
     restart: always
+  mail-service:
+    image: "zebrunner/mail-service:${TAG_MAIL_SERVICE}"
+    container_name: mail-service
+    env_file:
+      - configuration/mail-service/variables.env
+    depends_on:
+      - postgres
+      - rabbitmq
+      - minio
+    restart: always
   minio:
     image: "minio/minio:${TAG_MINIO}"
     container_name: minio
@@ -104,11 +114,14 @@ services:
     container_name: minio-mc
     depends_on:
       - minio
+    volumes:
+      - "./configuration/minio/data:/artifacts:ro"
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc config host add minio-host http://minio:9000 changeit changeit --api s3v4;
       /usr/bin/mc mb --ignore-existing minio-host/artifacts;
       /usr/bin/mc policy set download minio-host/artifacts;
+      /usr/bin/mc mirror -w --overwrite artifacts minio-host/artifacts;
       exit 0;
       "
   reporting-ui:
