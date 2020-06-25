@@ -1,0 +1,22 @@
+{
+  "index_patterns" : ["test-run-data-*"],
+  "settings": {
+    "number_of_shards" :   1,
+    "number_of_replicas" : 1
+  },
+  "mappings" : {
+    "doc" : {
+      "properties" : {
+        "@timestamp" : { "type" : "date" },
+        "@version" : { "type" : "keyword" },
+        "tenant" : { "type" : "keyword" },
+        "kind" : { "type" : "keyword" },
+        "timestamp" : { "type" : "long" },
+        "testRunId" : { "type" : "keyword" },
+        "testId" : { "type" : "keyword" },
+        "level" : { "type" : "text" },
+        "message" : { "type" : "text" }
+      }
+    }
+  }
+}

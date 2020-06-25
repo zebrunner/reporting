@@ -241,4 +241,28 @@ INSERT INTO databasechangelog(
      current_timestamp,
      1,
      'EXECUTED'
+ ),
+ (
+     '027_remove_amazon_integration',
+     'brutskov',
+     'classpath:db/changelog.yml',
+     current_timestamp,
+     1,
+     'EXECUTED'
+ ),
+ (
+     '028_remove_event_work_item',
+     'itsvirko',
+     'classpath:db/changelog.yml',
+     current_timestamp,
+     1,
+     'EXECUTED'
+ ),
+ (
+     '029_remove_mail_integration',
+     'brutskov',
+     'classpath:db/changelog.yml',
+     current_timestamp,
+     1,
+     'EXECUTED'
  );
