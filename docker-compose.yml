@@ -1,20 +1,19 @@
 version: "3.7"
 networks:
   default:
-    external:
-      name: infra
+    name: infra
 services:
   zebrunner-proxy:
     image: "nginx:${TAG_NGINX}"
     container_name: zebrunner-proxy
     volumes:
-    - "./configuration/zebrunner-proxy/nginx.conf:/etc/nginx/nginx.conf:ro"
+      - "./configuration/zebrunner-proxy/nginx.conf:/etc/nginx/nginx.conf:ro"
     ports:
-    - "80:80"     # primary HTTP port
-    - "5672:5672" # log collection port
-    #- "8081:8081" # RabbitMQ administration, optional
-    #- "5432:5432" # database administration, optional
-    #- "6379:6379" # Redis administration, optional
+      - "80:80"     # primary HTTP port
+      - "5672:5672" # log collection port
+    #  - "15672:15672" # RabbitMQ administration, optional
+    #  - "5432:5432" # database administration, optional
+    #  - "6379:6379" # Redis administration, optional
     depends_on:
       - reporting-ui
       - reporting-service
@@ -24,7 +23,17 @@ services:
     container_name: postgres
     volumes:
       - "pgdata-volume:/var/lib/postgresql/data"
-      - "./database/:/docker-entrypoint-initdb.d"
+      - "./database/reporting/:/docker-entrypoint-initdb.d"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    restart: always
+  iam-db:
+    image: "qaprosoft/postgres:${TAG_POSTGRES}"
+    container_name: iam-db
+    volumes:
+      - "iam-db-volume:/var/lib/postgresql/data"
+      - "./database/iam/:/docker-entrypoint-initdb.d"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -81,6 +90,24 @@ services:
       - redis
       - minio
     restart: always
+  iam-service:
+    image: "zebrunner/iam-service:${TAG_IAM_SERVICE}"
+    container_name: iam-service
+    env_file:
+      - configuration/iam-service/variables.env
+    depends_on:
+      - iam-db
+    restart: always
+  db-migration-tool:
+    image: "siarheibranko/data-migration-tool"
+    container_name: db-migration-tool
+    volumes:
+      - "./configuration/migration/:/var/migration"
+      - "migration-state-volume:/var/migration-state"
+    depends_on:
+      - postgres
+      - iam-db
+    restart: "no"
   artifacts-proxy-service:
     image: "zebrunner/artifacts-proxy-service:${TAG_ARTIFACTS_PROXY_SERVICE}"
     container_name: artifacts-proxy-service
@@ -134,6 +161,8 @@ services:
     restart: always
 volumes:
   pgdata-volume:
+  iam-db-volume:
   esdata-volume:
   assets-data:
   miniodata-volume:
+  migration-state-volume:
