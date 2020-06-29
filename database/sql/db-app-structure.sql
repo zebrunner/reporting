@@ -304,7 +304,7 @@ CREATE TABLE IF NOT EXISTS test_runs (
   scm_commit VARCHAR(100) NULL,
   config_xml TEXT NULL,
   work_item_id INT NULL,
-  job_id INT NOT NULL,
+  job_id INT NULL,
   build_number INT NOT NULL,
   started_by VARCHAR(45) NULL,
   upstream_job_id INT NULL,
