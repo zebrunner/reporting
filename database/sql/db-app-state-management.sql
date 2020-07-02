@@ -267,7 +267,15 @@ INSERT INTO databasechangelog(
      'EXECUTED'
  ),
  (
-     '030_remove_rabbitmq_integration',
+     '030_nullable_job_id_for_test_run',
+     'sbrenko',
+     'classpath:db/changelog.yml',
+     current_timestamp,
+     1,
+     'EXECUTED'
+ ),
+ (
+     '031_remove_rabbitmq_integration',
      'brutskov',
      'classpath:db/changelog.yml',
      current_timestamp,
