@@ -38,17 +38,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     restart: always
-  iam-db:
-    container_name: iam-db
-    image: postgres:12
-    restart: always
-    volumes:
-      - ./pgdata-iam-volume:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=iam
-    ports:
-      - 5433:5432
   rabbitmq:
     image: "qaprosoft/rabbitmq:${TAG_RABBITMQ}"
     container_name: rabbitmq
