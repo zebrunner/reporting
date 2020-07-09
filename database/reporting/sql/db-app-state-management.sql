@@ -267,8 +267,8 @@ INSERT INTO databasechangelog(
      'EXECUTED'
  ),
  (
-     '028_remove_event_work_item',
-     'itsvirko',
+     '030_nullable_job_id_for_test_run',
+     'sbrenko',
      'classpath:db/changelog.yml',
      current_timestamp,
      1,
