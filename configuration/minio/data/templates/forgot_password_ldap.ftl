@@ -92,7 +92,7 @@ a[x-apple-data-detectors] {
                       <td align="center" height="15" bgcolor="#ffffff" style="padding:0;Margin:0;"> </td> 
                      </tr> 
                      <tr style="border-collapse:collapse;"> 
-                      <td align="center" class="es-m-txt-c" style="padding:0;Margin:0;"> <a style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:14px;text-decoration:underline;color:#1376C8;"><img src="${logoUrl}" alt="" width="124" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;"></a> </td>
+                      <td align="center" class="es-m-txt-c" style="padding:0;Margin:0;"> <a style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:14px;text-decoration:underline;color:#1376C8;"><img src="https://s3-us-west-1.amazonaws.com/zebrunner/common/zbr-email.png" alt="" width="124" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;"></a> </td>
                      </tr> 
                    </table> </td> 
                  </tr> 
