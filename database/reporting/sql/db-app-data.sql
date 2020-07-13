@@ -290,6 +290,7 @@ DO $$
     INSERT INTO USER_PREFERENCES (NAME, VALUE, USER_ID) VALUES
         ('REFRESH_INTERVAL', '0', USER_ID),
         ('DEFAULT_DASHBOARD', 'General', USER_ID),
-        ('THEME', '32', USER_ID);
+        ('THEME', '32', USER_ID),
+        ('DEFAULT_TEST_VIEW', 'runs', USER_ID);
 
 END$$;
