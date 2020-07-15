@@ -75,6 +75,7 @@ services:
       - "./configuration/logstash/mapping.json:/mapping.json:ro"
       - "./configuration/logstash/test-run-data-template.json:/test-run-data-template.json:ro"
     depends_on:
+      - rabbitmq
       - elasticsearch
     restart: always
   reporting-service:
