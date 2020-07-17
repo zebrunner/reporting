@@ -2,7 +2,9 @@ version: "3.7"
 networks:
   default:
     name: infra
+
 services:
+
   zebrunner-proxy:
     image: "nginx:${TAG_NGINX}"
     container_name: zebrunner-proxy
@@ -18,6 +20,7 @@ services:
       - reporting-ui
       - reporting-service
     restart: always
+
   postgres:
     image: "qaprosoft/postgres:${TAG_POSTGRES}"
     container_name: postgres
@@ -28,6 +31,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     restart: always
+
   iam-db:
     image: "qaprosoft/postgres:${TAG_POSTGRES}"
     container_name: iam-db
@@ -38,6 +42,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     restart: always
+
   rabbitmq:
     image: "qaprosoft/rabbitmq:${TAG_RABBITMQ}"
     container_name: rabbitmq
@@ -47,6 +52,7 @@ services:
       - RABBITMQ_DEFAULT_USER=qpsdemo
       - RABBITMQ_DEFAULT_PASS=qpsdemo
     restart: always
+
   redis:
     image: "redis:${TAG_REDIS}"
     container_name: redis
@@ -54,6 +60,7 @@ services:
     volumes:
       - "./configuration/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro"
     restart: always
+
   elasticsearch:
     image: "docker.elastic.co/elasticsearch/elasticsearch:${TAG_ELASTICSEARCH}"
     container_name: elasticsearch
@@ -67,6 +74,7 @@ services:
         soft: -1
         hard: -1
     restart: always
+
   logstash:
     image: "docker.elastic.co/logstash/logstash:${TAG_LOGSTASH}"
     container_name: logstash
@@ -75,8 +83,10 @@ services:
       - "./configuration/logstash/mapping.json:/mapping.json:ro"
       - "./configuration/logstash/test-run-data-template.json:/test-run-data-template.json:ro"
     depends_on:
+      - rabbitmq
       - elasticsearch
     restart: always
+
   reporting-service:
     image: "zebrunner/reporting-service:${TAG_REPORTING_SERVICE}"
     container_name: reporting-service
@@ -84,20 +94,27 @@ services:
       - "assets-data:/opt/assets"
     env_file:
       - configuration/reporting-service/variables.env
+      - configuration/_common/rabbitmq.env
+      - configuration/_common/s3.env
+      - configuration/_common/secrets.env
     depends_on:
       - postgres
       - rabbitmq
       - redis
       - minio
     restart: always
+
   iam-service:
     image: "zebrunner/iam-service:${TAG_IAM_SERVICE}"
     container_name: iam-service
     env_file:
       - configuration/iam-service/variables.env
+      - configuration/_common/secrets.env
+      - configuration/_common/rabbitmq.env
     depends_on:
       - iam-db
     restart: always
+
   db-migration-tool:
     image: "siarheibranko/data-migration-tool"
     container_name: db-migration-tool
@@ -108,24 +125,31 @@ services:
       - postgres
       - iam-db
     restart: "no"
+
   artifacts-proxy-service:
     image: "zebrunner/artifacts-proxy-service:${TAG_ARTIFACTS_PROXY_SERVICE}"
     container_name: artifacts-proxy-service
     env_file:
       - configuration/artifacts-proxy-service/variables.env
+      - configuration/_common/rabbitmq.env
+      - configuration/_common/s3.env
     depends_on:
       - rabbitmq
     restart: always
+
   mail-service:
     image: "zebrunner/mail-service:${TAG_MAIL_SERVICE}"
     container_name: mail-service
     env_file:
       - configuration/mail-service/variables.env
+      - configuration/_common/rabbitmq.env
+      - configuration/_common/s3.env
     depends_on:
       - postgres
       - rabbitmq
       - minio
     restart: always
+
   minio:
     image: "minio/minio:${TAG_MINIO}"
     container_name: minio
@@ -136,6 +160,7 @@ services:
       - MINIO_ACCESS_KEY=changeit
       - MINIO_SECRET_KEY=changeit
     restart: always
+
   minio-mc:
     image: "minio/mc:${TAG_MINIO_MC}"
     container_name: minio-mc
@@ -151,6 +176,7 @@ services:
       /usr/bin/mc mirror -w --overwrite zebrunner minio-host/zebrunner;
       exit 0;
       "
+
   reporting-ui:
     image: "zebrunner/reporting-ui:${TAG_REPORTING_UI}"
     container_name: reporting-ui
@@ -159,6 +185,7 @@ services:
     depends_on:
       - reporting-service
     restart: always
+
 volumes:
   pgdata-volume:
   iam-db-volume:
