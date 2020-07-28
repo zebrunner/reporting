@@ -111,6 +111,7 @@ services:
       - configuration/iam-service/variables.env
       - configuration/_common/secrets.env
       - configuration/_common/rabbitmq.env
+      - configuration/_common/hosts.env
     depends_on:
       - iam-db
     restart: always
