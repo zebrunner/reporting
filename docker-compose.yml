@@ -120,8 +120,8 @@ services:
     image: "siarheibranko/data-migration-tool"
     container_name: db-migration-tool
     volumes:
-      - "./configuration/migration/:/var/migration"
-      - "migration-state-volume:/var/migration-state"
+      - "./configuration/data-migration-scripts/:/var/migration"
+      - "migration-tool-volume:/var/migration-state"
     depends_on:
       - postgres
       - iam-db
@@ -193,4 +193,4 @@ volumes:
   esdata-volume:
   assets-data:
   miniodata-volume:
-  migration-state-volume:
+  migration-tool-volume:
