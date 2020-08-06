@@ -1,5 +1,28 @@
 #!/bin/bash
 
+  setup() {
+    # PREREQUISITES: valid values inside ZBR_PROTOCOL, ZBR_HOSTNAME and ZBR_PORT env vars!
+
+    # docker-compose.yml, configuration/_common/hosts.env and configuration/reporting-service/variables.env 
+    if [[ ! -f docker-compose.yml.original ]]; then
+      #make a backup of the original file
+      cp docker-compose.yml docker-compose.yml.original
+    fi
+    sed -i 's#http://localhost:80#$ZBR_PROTOCOL://$ZBR_HOSTNAME:$ZBR_PORT#g' docker-compose.yml
+
+    if [[ ! -f configuration/_common/hosts.env.original ]]; then
+      #make a backup of the original file
+      cp configuration/_common/hosts.env configuration/_common/hosts.env.original
+    fi
+    sed -i 's#http://localhost:80#$ZBR_PROTOCOL://$ZBR_HOSTNAME:$ZBR_PORT#g' configuration/_common/hosts.env
+
+    if [[ ! -f configuration/reporting-service/variables.env.original ]]; then
+      #make a backup of the original file
+      cp configuration/reporting-service/variables.env configuration/reporting-service/variables.env.original
+    fi
+    sed -i 's#http://localhost:80#$ZBR_PROTOCOL://$ZBR_HOSTNAME:$ZBR_PORT#g' configuration/reporting-service/variables.env
+  }
+
   start() {
     # create infra network only if not exist
     docker network inspect infra >/dev/null 2>&1 || docker network create infra
@@ -120,6 +143,8 @@ case "$1" in
         if [[ -z $ZBR_PROTOCOL || -z $ZBR_HOSTNAME || -z $ZBR_PORT ]]; then
          set_global_settings
         fi
+
+	setup
 
 	# update yml, properties etc using valid ZBR_* values
 
