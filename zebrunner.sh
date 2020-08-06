@@ -4,19 +4,27 @@
     # create infra network only if not exist
     docker network inspect infra >/dev/null 2>&1 || docker network create infra
 
-    docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml up -d
+    if [[ ! -f ${BASEDIR}/.disabled ]]; then
+      docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml up -d
+    fi
   }
 
   stop() {
-    docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml stop
+    if [[ ! -f ${BASEDIR}/.disabled ]]; then
+      docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml stop
+    fi
   }
 
   down() {
-    docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml down
+    if [[ ! -f ${BASEDIR}/.disabled ]]; then
+      docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml down
+    fi
   }
 
   shutdown() {
-    docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml down -v
+    if [[ ! -f ${BASEDIR}/.disabled ]]; then
+      docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml down -v
+    fi
     echo "TODO: think about backup generation during shutdown."
   }
 
@@ -26,42 +34,6 @@
 
   restore() {
     echo "TODO: implement logic"
-  }
-
-
-  set_host() {
-    echo "Specify fully qualified domain name or ip address"
-    HOST_NAME=""
-    local IS_CONFIRMED=0
-    while [[ -z $HOST_NAME || $HOST_NAME == "localhost" || $HOST_NAME == "127.0.0.1" || $IS_CONFIRMED -eq 0 ]]; do
-      read -p "HOST_NAME: " HOST_NAME
-      if [[ -z $HOST_NAME || $HOST_NAME == "localhost" || $HOST_NAME == "127.0.0.1" ]]; then
-        echo "Unable to proceed with HOST_NAME=\"${HOST_NAME}\"!"
-      else
-        confirm "Continue?"
-        IS_CONFIRMED=$?
-      fi
-    done
-
-  }
-
-  confirm() {
-    while true; do
-      read -p "$1 [y/n]" yn
-      case $yn in
-      [y]*)
-        return 1
-        ;;
-      [n]*)
-        return 0
-        ;;
-      *)
-        echo
-        echo "Please answer y (yes) or n (no)."
-        echo
-        ;;
-      esac
-    done
   }
 
   echo_help() {
@@ -82,6 +54,62 @@
   }
 
 
+  # That's a full copy of set_global_settings method from qps-infra/zebrunner.sh. Make sure to sync code in case of any change in all places
+  set_global_settings() {
+    # Setup global settings: protocol, hostname and port. 
+
+    local is_confirmed=0
+    ZBR_PROTOCOL=http
+    ZBR_HOSTNAME=$HOSTNAME
+    ZBR_PORT=80
+
+    while [[ $is_confirmed -eq 0 ]]; do
+      read -p "PROTOCOL [$ZBR_PROTOCOL]: " local_protocol
+      if [[ ! -z $local_protocol ]]; then
+        ZBR_PROTOCOL=$local_protocol
+      fi
+
+      read -p "HOSTNAME [$ZBR_HOSTNAME]: " local_hostname
+      if [[ ! -z $local_hostname ]]; then
+        ZBR_HOSTNAME=$local_hostname
+      fi
+
+      read -p "PORT [$ZBR_PORT]: " local_port
+      if [[ ! -z $local_port ]]; then
+        ZBR_PORT=$local_port
+      fi
+
+      confirm "URL: $ZBR_PROTOCOL://$ZBR_HOSTNAME:$ZBR_PORT" "Continue?"
+      is_confirmed=$?
+    done
+
+    export ZBR_PROTOCOL=$ZBR_PROTOCOL
+    export ZBR_HOSTNAME=$ZBR_HOSTNAME
+    export ZBR_PORT=$ZBR_PORT
+
+  }
+
+  confirm() {
+    while true; do
+      echo "$1"
+      read -p "$2 [y/n]" yn
+      case $yn in
+      [y]*)
+        return 1
+        ;;
+      [n]*)
+        return 0
+        ;;
+      *)
+        echo
+        echo "Please answer y (yes) or n (no)."
+        echo
+        ;;
+      esac
+    done
+  }
+
+
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd ${BASEDIR}
 
@@ -89,8 +117,11 @@ case "$1" in
     setup)
         docker network inspect infra >/dev/null 2>&1 || docker network create infra
 
-        set_host
-	echo
+        if [[ -z $ZBR_PROTOCOL || -z $ZBR_HOSTNAME || -z $ZBR_PORT ]]; then
+         set_global_settings
+        fi
+
+	# update yml, properties etc using valid ZBR_* values
 
 #        echo WARNING! Increase vm.max_map_count=262144 appending it to /etc/sysctl.conf on Linux Ubuntu
 #        echo your current value is `sysctl vm.max_map_count`
