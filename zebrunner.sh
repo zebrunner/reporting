@@ -2,25 +2,27 @@
 
   setup() {
     # PREREQUISITES: valid values inside ZBR_PROTOCOL, ZBR_HOSTNAME and ZBR_PORT env vars!
+    local url="$ZBR_PROTOCOL://$ZBR_HOSTNAME:$ZBR_PORT"
+    echo url: $url
 
     # docker-compose.yml, configuration/_common/hosts.env and configuration/reporting-service/variables.env 
-    if [[ ! -f docker-compose.yml.original ]]; then
+    if [[ ! -f ${BASEDIR}/docker-compose.yml.original ]]; then
       #make a backup of the original file
-      cp docker-compose.yml docker-compose.yml.original
+      cp ${BASEDIR}/docker-compose.yml ${BASEDIR}/docker-compose.yml.original
     fi
-    sed -i 's#http://localhost:80#$ZBR_PROTOCOL://$ZBR_HOSTNAME:$ZBR_PORT#g' docker-compose.yml
+    sed -i "s#http://localhost:80#${url}#g" docker-compose.yml
 
-    if [[ ! -f configuration/_common/hosts.env.original ]]; then
+    if [[ ! -f ${BASEDIR}/configuration/_common/hosts.env.original ]]; then
       #make a backup of the original file
-      cp configuration/_common/hosts.env configuration/_common/hosts.env.original
+      cp ${BASEDIR}/configuration/_common/hosts.env ${BASEDIR}/configuration/_common/hosts.env.original
     fi
-    sed -i 's#http://localhost:80#$ZBR_PROTOCOL://$ZBR_HOSTNAME:$ZBR_PORT#g' configuration/_common/hosts.env
+    sed -i "s#http://localhost:80#${url}#g" configuration/_common/hosts.env
 
-    if [[ ! -f configuration/reporting-service/variables.env.original ]]; then
+    if [[ ! -f ${BASEDIR}/configuration/reporting-service/variables.env.original ]]; then
       #make a backup of the original file
-      cp configuration/reporting-service/variables.env configuration/reporting-service/variables.env.original
+      cp ${BASEDIR}/configuration/reporting-service/variables.env ${BASEDIR}/configuration/reporting-service/variables.env.original
     fi
-    sed -i 's#http://localhost:80#$ZBR_PROTOCOL://$ZBR_HOSTNAME:$ZBR_PORT#g' configuration/reporting-service/variables.env
+    sed -i "s#http://localhost:80#${url}#g" configuration/reporting-service/variables.env
   }
 
   start() {
@@ -48,6 +50,19 @@
     if [[ ! -f ${BASEDIR}/.disabled ]]; then
       docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml down -v
     fi
+
+    if [[ -f ${BASEDIR}/docker-compose.yml.original ]]; then
+      mv ${BASEDIR}/docker-compose.yml.original ${BASEDIR}/docker-compose.yml
+    fi
+
+    if [[ -f ${BASEDIR}/configuration/_common/hosts.env.original ]]; then
+      mv ${BASEDIR}/configuration/_common/hosts.env.original ${BASEDIR}/configuration/_common/hosts.env
+    fi
+
+    if [[ -f ${BASEDIR}/configuration/reporting-service/variables.env.original ]]; then
+      mv ${BASEDIR}/configuration/reporting-service/variables.env.original ${BASEDIR}/configuration/reporting-service/variables.env
+    fi
+
     echo "TODO: think about backup generation during shutdown."
   }
 
@@ -141,7 +156,10 @@ case "$1" in
         docker network inspect infra >/dev/null 2>&1 || docker network create infra
 
         if [[ -z $ZBR_PROTOCOL || -z $ZBR_HOSTNAME || -z $ZBR_PORT ]]; then
-         set_global_settings
+          set_global_settings
+        else 
+          # use-case when reporting is configured from zebrunner server (community edition).
+          echo "TODO: we have to disable 80 port sharing for zebrunner-proxy!"
         fi
 
 	setup
