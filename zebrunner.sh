@@ -10,19 +10,19 @@
       #make a backup of the original file
       cp ${BASEDIR}/docker-compose.yml ${BASEDIR}/docker-compose.yml.original
     fi
-    sed -i "s#http://localhost:8080#${url}#g" ${BASEDIR}/docker-compose.yml
+    sed -i "s#http://localhost:8081#${url}#g" ${BASEDIR}/docker-compose.yml
 
     if [[ ! -f ${BASEDIR}/configuration/_common/hosts.env.original ]]; then
       #make a backup of the original file
       cp ${BASEDIR}/configuration/_common/hosts.env ${BASEDIR}/configuration/_common/hosts.env.original
     fi
-    sed -i "s#http://localhost:8080#${url}#g" ${BASEDIR}/configuration/_common/hosts.env
+    sed -i "s#http://localhost:8081#${url}#g" ${BASEDIR}/configuration/_common/hosts.env
 
     if [[ ! -f ${BASEDIR}/configuration/reporting-service/variables.env.original ]]; then
       #make a backup of the original file
       cp ${BASEDIR}/configuration/reporting-service/variables.env ${BASEDIR}/configuration/reporting-service/variables.env.original
     fi
-    sed -i "s#http://localhost:8080#${url}#g" ${BASEDIR}/configuration/reporting-service/variables.env
+    sed -i "s#http://localhost:8081#${url}#g" ${BASEDIR}/configuration/reporting-service/variables.env
   }
 
   start() {
