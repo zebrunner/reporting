@@ -107,7 +107,7 @@
         ZBR_PROTOCOL=$local_protocol
       fi
 
-      read -p "HOSTNAME [$ZBR_HOSTNAME]: " local_hostname
+      read -p "FQDN HOSTNAME [$ZBR_HOSTNAME]: " local_hostname
       if [[ ! -z $local_hostname ]]; then
         ZBR_HOSTNAME=$local_hostname
       fi
