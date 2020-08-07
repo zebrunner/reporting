@@ -10,19 +10,19 @@
       #make a backup of the original file
       cp ${BASEDIR}/docker-compose.yml ${BASEDIR}/docker-compose.yml.original
     fi
-    sed -i "s#http://localhost:80#${url}#g" ${BASEDIR}/docker-compose.yml
+    sed -i "s#http://localhost:8080#${url}#g" ${BASEDIR}/docker-compose.yml
 
     if [[ ! -f ${BASEDIR}/configuration/_common/hosts.env.original ]]; then
       #make a backup of the original file
       cp ${BASEDIR}/configuration/_common/hosts.env ${BASEDIR}/configuration/_common/hosts.env.original
     fi
-    sed -i "s#http://localhost:80#${url}#g" ${BASEDIR}/configuration/_common/hosts.env
+    sed -i "s#http://localhost:8080#${url}#g" ${BASEDIR}/configuration/_common/hosts.env
 
     if [[ ! -f ${BASEDIR}/configuration/reporting-service/variables.env.original ]]; then
       #make a backup of the original file
       cp ${BASEDIR}/configuration/reporting-service/variables.env ${BASEDIR}/configuration/reporting-service/variables.env.original
     fi
-    sed -i "s#http://localhost:80#${url}#g" ${BASEDIR}/configuration/reporting-service/variables.env
+    sed -i "s#http://localhost:8080#${url}#g" ${BASEDIR}/configuration/reporting-service/variables.env
   }
 
   start() {
@@ -99,7 +99,7 @@
     local is_confirmed=0
     ZBR_PROTOCOL=http
     ZBR_HOSTNAME=$HOSTNAME
-    ZBR_PORT=80
+    ZBR_PORT=8080
 
     while [[ $is_confirmed -eq 0 ]]; do
       read -p "PROTOCOL [$ZBR_PROTOCOL]: " local_protocol
@@ -157,10 +157,6 @@ case "$1" in
 
         if [[ -z $ZBR_PROTOCOL || -z $ZBR_HOSTNAME || -z $ZBR_PORT ]]; then
           set_global_settings
-        else 
-          # use-case when reporting is configured from zebrunner server (community edition).
-          echo "TODO: we have to disable 80 port sharing for zebrunner-proxy!"
-          sed -i 's/- "80:80"/#- "80:80"/g' ${BASEDIR}/docker-compose.yml
         fi
 
 	setup

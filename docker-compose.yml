@@ -11,7 +11,7 @@ services:
     volumes:
       - "./configuration/zebrunner-proxy/nginx.conf:/etc/nginx/nginx.conf:ro"
     ports:
-      - "80:80"     # primary HTTP port
+      - "8080:80"     # primary HTTP port
       - "5672:5672" # log collection port
     #  - "15672:15672" # RabbitMQ administration, optional
     #  - "5432:5432" # database administration, optional
@@ -182,7 +182,7 @@ services:
     image: "zebrunner/reporting-ui:${TAG_REPORTING_UI}"
     container_name: reporting-ui
     environment:
-      - SERVER_URL=http://localhost:80/reporting-service
+      - SERVER_URL=http://localhost:8080/reporting-service
     depends_on:
       - reporting-service
     restart: always
