@@ -99,7 +99,7 @@
     local is_confirmed=0
     ZBR_PROTOCOL=http
     ZBR_HOSTNAME=$HOSTNAME
-    ZBR_PORT=8080
+    ZBR_PORT=80
 
     while [[ $is_confirmed -eq 0 ]]; do
       read -p "PROTOCOL [$ZBR_PROTOCOL]: " local_protocol
