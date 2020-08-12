@@ -35,6 +35,7 @@
     rm ${BASEDIR}/configuration/iam-db/variables.env
     rm ${BASEDIR}/configuration/rabbitmq/variables.env
 
+    minio-storage/zebrunner.sh shutdown
   }
 
   start() {
@@ -70,6 +71,7 @@
     fi
 
 
+    minio-storage/zebrunner.sh start
     docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml up -d
   }
 
@@ -78,6 +80,7 @@
       exit 0
     fi
 
+    minio-storage/zebrunner.sh stop
     docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml stop
   }
 
@@ -86,6 +89,7 @@
       exit 0
     fi
 
+    minio-storage/zebrunner.sh down
     docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml down
   }
 
@@ -93,6 +97,8 @@
     if [[ -f ${BASEDIR}/.disabled ]]; then
       exit 0
     fi
+
+    minio-storage/zebrunner.sh backup
 
     cp ${BASEDIR}/configuration/_common/hosts.env ${BASEDIR}/configuration/_common/hosts.env.bak
     cp ${BASEDIR}/configuration/reporting-service/variables.env ${BASEDIR}/configuration/reporting-service/variables.env.bak
@@ -108,6 +114,8 @@
     if [[ -f ${BASEDIR}/.disabled ]]; then
       exit 0
     fi
+
+    minio-storage/zebrunner.sh restore
 
     cp ${BASEDIR}/configuration/_common/hosts.env.bak ${BASEDIR}/configuration/_common/hosts.env
     cp ${BASEDIR}/configuration/reporting-service/variables.env.bak ${BASEDIR}/configuration/reporting-service/variables.env
