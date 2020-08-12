@@ -79,7 +79,7 @@ Zebrunner **client side** repositories:
   ```
   ./zebrunner-server.sh start
   ```
-5. Login to the application with default credentials **qpsdemo**/**qpsdemo**:
+5. Login to the application with default credentials **admin**/**changeit**:
   ```
   $ http://localhost/app
   ```
