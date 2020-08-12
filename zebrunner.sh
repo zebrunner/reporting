@@ -3,7 +3,6 @@
   setup() {
     # PREREQUISITES: valid values inside ZBR_PROTOCOL, ZBR_HOSTNAME and ZBR_PORT env vars!
     local url="$ZBR_PROTOCOL://$ZBR_HOSTNAME:$ZBR_PORT"
-    echo url: $url
 
     cp ${BASEDIR}/configuration/_common/hosts.env.original ${BASEDIR}/configuration/_common/hosts.env
     sed -i "s#http://localhost:8081#${url}#g" ${BASEDIR}/configuration/_common/hosts.env
