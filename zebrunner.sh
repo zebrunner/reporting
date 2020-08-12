@@ -29,19 +29,25 @@
   }
 
   start() {
-
-    if [[ ! -f ${BASEDIR}/configuration/_common/hosts.env || ! -f ${BASEDIR}/configuration/reporting-service/variables.env || ! -f ${BASEDIR}/configuration/reporting-ui/variables.env ]]; then
-      echo "WARNING! unable to proceed without setup procedure! Please, execute:"
-      echo "./zebrunner.sh setup"
-      exit 0
+    if [[ -f ${BASEDIR}/.disabled ]]; then
+      exiit 0
     fi
-
     # create infra network only if not exist
     docker network inspect infra >/dev/null 2>&1 || docker network create infra
 
-    if [[ ! -f ${BASEDIR}/.disabled ]]; then
-      docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml up -d
+    if [[ ! -f ${BASEDIR}/configuration/_common/hosts.env ]]; then
+      cp ${BASEDIR}/configuration/_common/hosts.env.original ${BASEDIR}/configuration/_common/hosts.env
     fi
+
+    if [[ ! -f ${BASEDIR}/configuration/reporting-service/variables.env ]]; then
+      cp ${BASEDIR}/configuration/reporting-service/variables.env.original ${BASEDIR}/configuration/reporting-service/variables.env
+    fi
+
+    if [[ ! -f ${BASEDIR}/configuration/reporting-ui/variables.env ]]; then
+      cp ${BASEDIR}/configuration/reporting-ui/variables.env.original ${BASEDIR}/configuration/reporting-ui/variables.env
+    fi
+
+    docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml up -d
   }
 
   stop() {
@@ -71,6 +77,17 @@
     echo "TODO: implement restore for postgres DB content"
   }
 
+  echo_warning() {
+    echo "
+      WARNING! $1"
+
+  }
+  echo_telegram() {
+    echo "
+      For more help join telegram channel: https://t.me/zebrunner
+      "
+  }
+
   echo_help() {
     echo "
       Usage: ./zebrunner.sh [option]
@@ -83,11 +100,10 @@
       	  down           Stop and remove container
       	  shutdown       Stop and remove container, clear volumes
       	  backup         Backup container
-      	  restore        Restore container
-      For more help join telegram channel https://t.me/qps_infra"
+      	  restore        Restore container"
+      echo_telegram
       exit 0
   }
-
 
   # That's a full copy of set_global_settings method from qps-infra/zebrunner.sh. Make sure to sync code in case of any change in all places
   set_global_settings() {
@@ -150,20 +166,16 @@ cd ${BASEDIR}
 
 case "$1" in
     setup)
-        docker network inspect infra >/dev/null 2>&1 || docker network create infra
-
-        if [[ -z $ZBR_PROTOCOL || -z $ZBR_HOSTNAME || -z $ZBR_PORT ]]; then
-          set_global_settings
+        if [[ ! -z $ZBR_PROTOCOL || ! -z $ZBR_HOSTNAME || ! -z $ZBR_PORT ]]; then
+          setup
+        else
+          echo_warning "Setup procedure is supported only as part of Zebrunner Server (Community Edition)!"
+          echo_telegram
         fi
-
-	setup
-
-	# update yml, properties etc using valid ZBR_* values
 
 #        echo WARNING! Increase vm.max_map_count=262144 appending it to /etc/sysctl.conf on Linux Ubuntu
 #        echo your current value is `sysctl vm.max_map_count`
 
-#        echo Setup finished successfully using $HOST_NAME hostname.
         ;;
     start)
 	start

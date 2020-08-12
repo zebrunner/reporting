@@ -81,7 +81,7 @@ Zebrunner **client side** repositories:
   ```
 5. Login to the application with default credentials **admin**/**changeit**:
   ```
-  $ http://localhost/app
+  $ http://localhost:8081/
   ```
 
 ## Community and support
