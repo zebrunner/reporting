@@ -28,9 +28,8 @@ services:
     volumes:
       - "pgdata-volume:/var/lib/postgresql/data"
       - "./database/reporting/:/docker-entrypoint-initdb.d"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+    env_file:
+      - configuration/postgres/variables.env
     restart: always
 
   iam-db:
@@ -39,9 +38,8 @@ services:
     volumes:
       - "iam-db-volume:/var/lib/postgresql/data"
       - "./database/iam/:/docker-entrypoint-initdb.d"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+    env_file:
+      - configuration/iam-db/variables.env
     restart: always
 
   rabbitmq:

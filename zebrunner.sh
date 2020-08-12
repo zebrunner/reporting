@@ -13,25 +13,33 @@
     cp ${BASEDIR}/configuration/reporting-ui/variables.env.original ${BASEDIR}/configuration/reporting-ui/variables.env
     sed -i "s#http://localhost:8081#${url}#g" ${BASEDIR}/configuration/reporting-ui/variables.env
 
+    #TODO: parametrize postgres credentials later
+    #configuration/postgres/variables.env.original
+    #configuration/iam-db/variables.env
+
     echo "setup finished"
   }
 
   shutdown() {
-    if [[ ! -f ${BASEDIR}/.disabled ]]; then
-      docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml down -v
+    if [[ -f ${BASEDIR}/.disabled ]]; then
+      exit 0
     fi
+
+    docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml down -v
 
     rm ${BASEDIR}/configuration/_common/hosts.env
     rm ${BASEDIR}/configuration/reporting-service/variables.env
     rm ${BASEDIR}/configuration/reporting-ui/variables.env
+    rm ${BASEDIR}/configuration/postgres/variables.env
+    rm ${BASEDIR}/configuration/iam-db/variables.env
 
-    # TODO: think about backup generation during shutdown.
   }
 
   start() {
     if [[ -f ${BASEDIR}/.disabled ]]; then
-      exiit 0
+      exit 0
     fi
+
     # create infra network only if not exist
     docker network inspect infra >/dev/null 2>&1 || docker network create infra
 
@@ -47,32 +55,59 @@
       cp ${BASEDIR}/configuration/reporting-ui/variables.env.original ${BASEDIR}/configuration/reporting-ui/variables.env
     fi
 
+    if [[ ! -f ${BASEDIR}/configuration/postgres/variables.env ]]; then
+      cp ${BASEDIR}/configuration/postgres/variables.env.original ${BASEDIR}/configuration/postgres/variables.env
+    fi
+
+    if [[ ! -f ${BASEDIR}/configuration/iam-db/variables.env ]]; then
+      cp ${BASEDIR}/configuration/iam-db/variables.env.original ${BASEDIR}/configuration/iam-db/variables.env
+    fi
+
+
     docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml up -d
   }
 
   stop() {
-    if [[ ! -f ${BASEDIR}/.disabled ]]; then
-      docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml stop
+    if [[ -f ${BASEDIR}/.disabled ]]; then
+      exit 0
     fi
+
+    docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml stop
   }
 
   down() {
-    if [[ ! -f ${BASEDIR}/.disabled ]]; then
-      docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml down
+    if [[ -f ${BASEDIR}/.disabled ]]; then
+      exit 0
     fi
+
+    docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml down
   }
 
   backup() {
+    if [[ -f ${BASEDIR}/.disabled ]]; then
+      exit 0
+    fi
+
     cp ${BASEDIR}/configuration/_common/hosts.env ${BASEDIR}/configuration/_common/hosts.env.bak
     cp ${BASEDIR}/configuration/reporting-service/variables.env ${BASEDIR}/configuration/reporting-service/variables.env.bak
     cp ${BASEDIR}/configuration/reporting-ui/variables.env ${BASEDIR}/configuration/reporting-ui/variables.env.bak
+    cp ${BASEDIR}/configuration/postgres/variables.env ${BASEDIR}/configuration/postgres/variables.env.bak
+    cp ${BASEDIR}/configuration/iam-db/variables.env ${BASEDIR}/configuration/iam-db/variables.env.bak
 
     echo "TODO: implement backup for postgres DB content"
   }
 
   restore() {
+    if [[ -f ${BASEDIR}/.disabled ]]; then
+      exit 0
+    fi
+
     cp ${BASEDIR}/configuration/_common/hosts.env.bak ${BASEDIR}/configuration/_common/hosts.env
     cp ${BASEDIR}/configuration/reporting-service/variables.env.bak ${BASEDIR}/configuration/reporting-service/variables.env
+    cp ${BASEDIR}/configuration/reporting-ui/variables.env.bak ${BASEDIR}/configuration/reporting-ui/variables.env
+    cp ${BASEDIR}/configuration/postgres/variables.env.bak ${BASEDIR}/configuration/postgres/variables.env
+    cp ${BASEDIR}/configuration/iam-db/variables.env.bak ${BASEDIR}/configuration/iam-db/variables.env
+
 
     echo "TODO: implement restore for postgres DB content"
   }
