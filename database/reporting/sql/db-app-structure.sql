@@ -920,6 +920,19 @@ CREATE TABLE test_sessions (
 CREATE TRIGGER update_timestamp_test_sessions BEFORE INSERT OR UPDATE ON test_sessions FOR EACH ROW EXECUTE PROCEDURE update_timestamp();
 
 
+DROP TABLE IF EXISTS stacktrace_labels;
+CREATE TABLE IF NOT EXISTS stacktrace_labels (
+    id SERIAL,
+    test_id INT NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (test_id) REFERENCES tests (id)
+        ON DELETE CASCADE
+        ON UPDATE NO ACTION
+);
+CREATE UNIQUE INDEX idx_stacktrace_labels_test_id_unique ON stacktrace_labels (test_id);
+
+
 CREATE OR REPLACE FUNCTION check_version(INTEGER) RETURNS VOID AS
 $$
 DECLARE
