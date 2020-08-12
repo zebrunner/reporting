@@ -16,6 +16,7 @@
     #TODO: parametrize postgres credentials later
     #configuration/postgres/variables.env.original
     #configuration/iam-db/variables.env
+    #configuration/rabbitmq/variables
 
     echo "setup finished"
   }
@@ -32,6 +33,7 @@
     rm ${BASEDIR}/configuration/reporting-ui/variables.env
     rm ${BASEDIR}/configuration/postgres/variables.env
     rm ${BASEDIR}/configuration/iam-db/variables.env
+    rm ${BASEDIR}/configuration/rabbitmq/variables.env
 
   }
 
@@ -61,6 +63,10 @@
 
     if [[ ! -f ${BASEDIR}/configuration/iam-db/variables.env ]]; then
       cp ${BASEDIR}/configuration/iam-db/variables.env.original ${BASEDIR}/configuration/iam-db/variables.env
+    fi
+
+    if [[ ! -f ${BASEDIR}/configuration/rabbitmq/variables.env ]]; then
+      cp ${BASEDIR}/configuration/rabbitmq/variables.env.original ${BASEDIR}/configuration/rabbitmq/variables.env
     fi
 
 
@@ -93,6 +99,7 @@
     cp ${BASEDIR}/configuration/reporting-ui/variables.env ${BASEDIR}/configuration/reporting-ui/variables.env.bak
     cp ${BASEDIR}/configuration/postgres/variables.env ${BASEDIR}/configuration/postgres/variables.env.bak
     cp ${BASEDIR}/configuration/iam-db/variables.env ${BASEDIR}/configuration/iam-db/variables.env.bak
+    cp ${BASEDIR}/configuration/rabbitmq/variables.env ${BASEDIR}/configuration/rabbitmq/variables.env.bak
 
     echo "TODO: implement backup for postgres DB content"
   }
@@ -107,7 +114,7 @@
     cp ${BASEDIR}/configuration/reporting-ui/variables.env.bak ${BASEDIR}/configuration/reporting-ui/variables.env
     cp ${BASEDIR}/configuration/postgres/variables.env.bak ${BASEDIR}/configuration/postgres/variables.env
     cp ${BASEDIR}/configuration/iam-db/variables.env.bak ${BASEDIR}/configuration/iam-db/variables.env
-
+    cp ${BASEDIR}/configuration/rabbitmq/variables.env.bak ${BASEDIR}/configuration/rabbitmq/variables.env
 
     echo "TODO: implement restore for postgres DB content"
   }

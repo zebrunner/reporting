@@ -20,3 +20,5 @@ configuration/postgres/variables.env
 configuration/postgres/variables.env.bak
 configuration/iam-db/variables.env
 configuration/iam-db/variables.env.bak
+configuration/rabbitmq/variables.env
+configuration/rabbitmq/variables.env.bak

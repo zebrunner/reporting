@@ -47,9 +47,8 @@ services:
     container_name: rabbitmq
     volumes:
       - "./configuration/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro"
-    environment:
-      - RABBITMQ_DEFAULT_USER=qpsdemo
-      - RABBITMQ_DEFAULT_PASS=qpsdemo
+    env_file:
+      - configuration/rabbitmq/variables.env
     restart: always
 
   redis:
