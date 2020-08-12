@@ -13,6 +13,8 @@
 
     cp ${BASEDIR}/configuration/reporting-ui/variables.env.original ${BASEDIR}/configuration/reporting-ui/variables.env
     sed -i "s#http://localhost:8081#${url}#g" ${BASEDIR}/configuration/reporting-ui/variables.env
+
+    echo "setup finished"
   }
 
   shutdown() {
@@ -28,6 +30,13 @@
   }
 
   start() {
+
+    if [[ ! -f ${BASEDIR}/configuration/_common/hosts.env || ! -f ${BASEDIR}/configuration/reporting-service/variables.env || ! -f ${BASEDIR}/configuration/reporting-ui/variables.env ]]; then
+      echo "WARNING! unable to proceed without setup procedure! Please, execute:"
+      echo "./zebrunner.sh setup"
+      exit 0
+    fi
+
     # create infra network only if not exist
     docker network inspect infra >/dev/null 2>&1 || docker network create infra
 
