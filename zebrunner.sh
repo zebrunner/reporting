@@ -5,27 +5,38 @@
     local url="$ZBR_PROTOCOL://$ZBR_HOSTNAME:$ZBR_PORT"
     echo url: $url
 
-    # docker-compose.yml, configuration/_common/hosts.env and configuration/reporting-service/variables.env 
-    if [[ ! -f ${BASEDIR}/docker-compose.yml.original ]]; then
-      #make a backup of the original file
-      cp ${BASEDIR}/docker-compose.yml ${BASEDIR}/docker-compose.yml.original
-    fi
-    sed -i "s#http://localhost:8081#${url}#g" ${BASEDIR}/docker-compose.yml
-
-    if [[ ! -f ${BASEDIR}/configuration/_common/hosts.env.original ]]; then
-      #make a backup of the original file
-      cp ${BASEDIR}/configuration/_common/hosts.env ${BASEDIR}/configuration/_common/hosts.env.original
-    fi
+    cp ${BASEDIR}/configuration/_common/hosts.env.original ${BASEDIR}/configuration/_common/hosts.env
     sed -i "s#http://localhost:8081#${url}#g" ${BASEDIR}/configuration/_common/hosts.env
 
-    if [[ ! -f ${BASEDIR}/configuration/reporting-service/variables.env.original ]]; then
-      #make a backup of the original file
-      cp ${BASEDIR}/configuration/reporting-service/variables.env ${BASEDIR}/configuration/reporting-service/variables.env.original
-    fi
+    cp ${BASEDIR}/configuration/reporting-service/variables.env.original ${BASEDIR}/configuration/reporting-service/variables.env
     sed -i "s#http://localhost:8081#${url}#g" ${BASEDIR}/configuration/reporting-service/variables.env
+
+    cp ${BASEDIR}/configuration/reporting-ui/variables.env.original ${BASEDIR}/configuration/reporting-ui/variables.env
+    sed -i "s#http://localhost:8081#${url}#g" ${BASEDIR}/configuration/reporting-ui/variables.env
+
+    echo "setup finished"
+  }
+
+  shutdown() {
+    if [[ ! -f ${BASEDIR}/.disabled ]]; then
+      docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml down -v
+    fi
+
+    rm ${BASEDIR}/configuration/_common/hosts.env
+    rm ${BASEDIR}/configuration/reporting-service/variables.env
+    rm ${BASEDIR}/configuration/reporting-ui/variables.env
+
+    # TODO: think about backup generation during shutdown.
   }
 
   start() {
+
+    if [[ ! -f ${BASEDIR}/configuration/_common/hosts.env || ! -f ${BASEDIR}/configuration/reporting-service/variables.env || ! -f ${BASEDIR}/configuration/reporting-ui/variables.env ]]; then
+      echo "WARNING! unable to proceed without setup procedure! Please, execute:"
+      echo "./zebrunner.sh setup"
+      exit 0
+    fi
+
     # create infra network only if not exist
     docker network inspect infra >/dev/null 2>&1 || docker network create infra
 
@@ -46,32 +57,19 @@
     fi
   }
 
-  shutdown() {
-    if [[ ! -f ${BASEDIR}/.disabled ]]; then
-      docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml down -v
-    fi
-
-    if [[ -f ${BASEDIR}/docker-compose.yml.original ]]; then
-      mv ${BASEDIR}/docker-compose.yml.original ${BASEDIR}/docker-compose.yml
-    fi
-
-    if [[ -f ${BASEDIR}/configuration/_common/hosts.env.original ]]; then
-      mv ${BASEDIR}/configuration/_common/hosts.env.original ${BASEDIR}/configuration/_common/hosts.env
-    fi
-
-    if [[ -f ${BASEDIR}/configuration/reporting-service/variables.env.original ]]; then
-      mv ${BASEDIR}/configuration/reporting-service/variables.env.original ${BASEDIR}/configuration/reporting-service/variables.env
-    fi
-
-    echo "TODO: think about backup generation during shutdown."
-  }
-
   backup() {
-    echo "TODO: implement logic"
+    cp ${BASEDIR}/configuration/_common/hosts.env ${BASEDIR}/configuration/_common/hosts.env.bak
+    cp ${BASEDIR}/configuration/reporting-service/variables.env ${BASEDIR}/configuration/reporting-service/variables.env.bak
+    cp ${BASEDIR}/configuration/reporting-ui/variables.env ${BASEDIR}/configuration/reporting-ui/variables.env.bak
+
+    echo "TODO: implement backup for postgres DB content"
   }
 
   restore() {
-    echo "TODO: implement logic"
+    cp ${BASEDIR}/configuration/_common/hosts.env.bak ${BASEDIR}/configuration/_common/hosts.env
+    cp ${BASEDIR}/configuration/reporting-service/variables.env.bak ${BASEDIR}/configuration/reporting-service/variables.env
+
+    echo "TODO: implement restore for postgres DB content"
   }
 
   echo_help() {

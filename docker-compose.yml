@@ -182,8 +182,8 @@ services:
   reporting-ui:
     image: "zebrunner/reporting-ui:${TAG_REPORTING_UI}"
     container_name: reporting-ui
-    environment:
-      - SERVER_URL=http://localhost:8081/reporting-service
+    env_file:
+      - configuration/reporting-ui/variables.env
     depends_on:
       - reporting-service
     restart: always
