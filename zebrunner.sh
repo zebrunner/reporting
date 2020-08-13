@@ -4,14 +4,14 @@
     # PREREQUISITES: valid values inside ZBR_PROTOCOL, ZBR_HOSTNAME and ZBR_PORT env vars!
     local url="$ZBR_PROTOCOL://$ZBR_HOSTNAME:$ZBR_PORT"
 
-    cp ${BASEDIR}/configuration/_common/hosts.env.original ${BASEDIR}/configuration/_common/hosts.env
-    sed -i "s#http://localhost:8081#${url}#g" ${BASEDIR}/configuration/_common/hosts.env
+    cp configuration/_common/hosts.env.original configuration/_common/hosts.env
+    sed -i "s#http://localhost:8081#${url}#g" configuration/_common/hosts.env
 
-    cp ${BASEDIR}/configuration/reporting-service/variables.env.original ${BASEDIR}/configuration/reporting-service/variables.env
-    sed -i "s#http://localhost:8081#${url}#g" ${BASEDIR}/configuration/reporting-service/variables.env
+    cp configuration/reporting-service/variables.env.original configuration/reporting-service/variables.env
+    sed -i "s#http://localhost:8081#${url}#g" configuration/reporting-service/variables.env
 
-    cp ${BASEDIR}/configuration/reporting-ui/variables.env.original ${BASEDIR}/configuration/reporting-ui/variables.env
-    sed -i "s#http://localhost:8081#${url}#g" ${BASEDIR}/configuration/reporting-ui/variables.env
+    cp configuration/reporting-ui/variables.env.original configuration/reporting-ui/variables.env
+    sed -i "s#http://localhost:8081#${url}#g" configuration/reporting-ui/variables.env
 
     #TODO: parametrize postgres credentials later
     #configuration/postgres/variables.env.original
@@ -22,99 +22,107 @@
   }
 
   shutdown() {
-    if [[ -f ${BASEDIR}/.disabled ]]; then
+    if [[ -f .disabled ]]; then
       exit 0
     fi
 
-    docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml down -v
+    docker-compose --env-file .env -f docker-compose.yml down -v
 
-    rm ${BASEDIR}/configuration/_common/hosts.env
-    rm ${BASEDIR}/configuration/reporting-service/variables.env
-    rm ${BASEDIR}/configuration/reporting-ui/variables.env
-    rm ${BASEDIR}/configuration/postgres/variables.env
-    rm ${BASEDIR}/configuration/iam-db/variables.env
-    rm ${BASEDIR}/configuration/rabbitmq/variables.env
+    rm configuration/_common/hosts.env
+    rm configuration/reporting-service/variables.env
+    rm configuration/reporting-ui/variables.env
+    rm configuration/postgres/variables.env
+    rm configuration/iam-db/variables.env
+    rm configuration/rabbitmq/variables.env
 
+    minio-storage/zebrunner.sh shutdown
   }
 
   start() {
-    if [[ -f ${BASEDIR}/.disabled ]]; then
+    if [[ -f .disabled ]]; then
       exit 0
     fi
 
     # create infra network only if not exist
     docker network inspect infra >/dev/null 2>&1 || docker network create infra
 
-    if [[ ! -f ${BASEDIR}/configuration/_common/hosts.env ]]; then
-      cp ${BASEDIR}/configuration/_common/hosts.env.original ${BASEDIR}/configuration/_common/hosts.env
+    if [[ ! -f configuration/_common/hosts.env ]]; then
+      cp configuration/_common/hosts.env.original configuration/_common/hosts.env
     fi
 
-    if [[ ! -f ${BASEDIR}/configuration/reporting-service/variables.env ]]; then
-      cp ${BASEDIR}/configuration/reporting-service/variables.env.original ${BASEDIR}/configuration/reporting-service/variables.env
+    if [[ ! -f configuration/reporting-service/variables.env ]]; then
+      cp configuration/reporting-service/variables.env.original configuration/reporting-service/variables.env
     fi
 
-    if [[ ! -f ${BASEDIR}/configuration/reporting-ui/variables.env ]]; then
-      cp ${BASEDIR}/configuration/reporting-ui/variables.env.original ${BASEDIR}/configuration/reporting-ui/variables.env
+    if [[ ! -f configuration/reporting-ui/variables.env ]]; then
+      cp configuration/reporting-ui/variables.env.original configuration/reporting-ui/variables.env
     fi
 
-    if [[ ! -f ${BASEDIR}/configuration/postgres/variables.env ]]; then
-      cp ${BASEDIR}/configuration/postgres/variables.env.original ${BASEDIR}/configuration/postgres/variables.env
+    if [[ ! -f configuration/postgres/variables.env ]]; then
+      cp configuration/postgres/variables.env.original configuration/postgres/variables.env
     fi
 
-    if [[ ! -f ${BASEDIR}/configuration/iam-db/variables.env ]]; then
-      cp ${BASEDIR}/configuration/iam-db/variables.env.original ${BASEDIR}/configuration/iam-db/variables.env
+    if [[ ! -f configuration/iam-db/variables.env ]]; then
+      cp configuration/iam-db/variables.env.original configuration/iam-db/variables.env
     fi
 
-    if [[ ! -f ${BASEDIR}/configuration/rabbitmq/variables.env ]]; then
-      cp ${BASEDIR}/configuration/rabbitmq/variables.env.original ${BASEDIR}/configuration/rabbitmq/variables.env
+    if [[ ! -f configuration/rabbitmq/variables.env ]]; then
+      cp configuration/rabbitmq/variables.env.original configuration/rabbitmq/variables.env
     fi
 
 
-    docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml up -d
+    minio-storage/zebrunner.sh start
+    docker-compose --env-file .env -f docker-compose.yml up -d
   }
 
   stop() {
-    if [[ -f ${BASEDIR}/.disabled ]]; then
+    if [[ -f .disabled ]]; then
       exit 0
     fi
 
-    docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml stop
+    minio-storage/zebrunner.sh stop
+    docker-compose --env-file .env -f docker-compose.yml stop
   }
 
   down() {
-    if [[ -f ${BASEDIR}/.disabled ]]; then
+    if [[ -f .disabled ]]; then
       exit 0
     fi
 
-    docker-compose --env-file ${BASEDIR}/.env -f ${BASEDIR}/docker-compose.yml down
+    minio-storage/zebrunner.sh down
+    docker-compose --env-file .env -f docker-compose.yml down
   }
 
   backup() {
-    if [[ -f ${BASEDIR}/.disabled ]]; then
+    if [[ -f .disabled ]]; then
       exit 0
     fi
 
-    cp ${BASEDIR}/configuration/_common/hosts.env ${BASEDIR}/configuration/_common/hosts.env.bak
-    cp ${BASEDIR}/configuration/reporting-service/variables.env ${BASEDIR}/configuration/reporting-service/variables.env.bak
-    cp ${BASEDIR}/configuration/reporting-ui/variables.env ${BASEDIR}/configuration/reporting-ui/variables.env.bak
-    cp ${BASEDIR}/configuration/postgres/variables.env ${BASEDIR}/configuration/postgres/variables.env.bak
-    cp ${BASEDIR}/configuration/iam-db/variables.env ${BASEDIR}/configuration/iam-db/variables.env.bak
-    cp ${BASEDIR}/configuration/rabbitmq/variables.env ${BASEDIR}/configuration/rabbitmq/variables.env.bak
+    minio-storage/zebrunner.sh backup
+
+    cp configuration/_common/hosts.env configuration/_common/hosts.env.bak
+    cp configuration/reporting-service/variables.env configuration/reporting-service/variables.env.bak
+    cp configuration/reporting-ui/variables.env configuration/reporting-ui/variables.env.bak
+    cp configuration/postgres/variables.env configuration/postgres/variables.env.bak
+    cp configuration/iam-db/variables.env configuration/iam-db/variables.env.bak
+    cp configuration/rabbitmq/variables.env configuration/rabbitmq/variables.env.bak
 
     echo "TODO: implement backup for postgres DB content"
   }
 
   restore() {
-    if [[ -f ${BASEDIR}/.disabled ]]; then
+    if [[ -f .disabled ]]; then
       exit 0
     fi
 
-    cp ${BASEDIR}/configuration/_common/hosts.env.bak ${BASEDIR}/configuration/_common/hosts.env
-    cp ${BASEDIR}/configuration/reporting-service/variables.env.bak ${BASEDIR}/configuration/reporting-service/variables.env
-    cp ${BASEDIR}/configuration/reporting-ui/variables.env.bak ${BASEDIR}/configuration/reporting-ui/variables.env
-    cp ${BASEDIR}/configuration/postgres/variables.env.bak ${BASEDIR}/configuration/postgres/variables.env
-    cp ${BASEDIR}/configuration/iam-db/variables.env.bak ${BASEDIR}/configuration/iam-db/variables.env
-    cp ${BASEDIR}/configuration/rabbitmq/variables.env.bak ${BASEDIR}/configuration/rabbitmq/variables.env
+    minio-storage/zebrunner.sh restore
+
+    cp configuration/_common/hosts.env.bak configuration/_common/hosts.env
+    cp configuration/reporting-service/variables.env.bak configuration/reporting-service/variables.env
+    cp configuration/reporting-ui/variables.env.bak configuration/reporting-ui/variables.env
+    cp configuration/postgres/variables.env.bak configuration/postgres/variables.env
+    cp configuration/iam-db/variables.env.bak configuration/iam-db/variables.env
+    cp configuration/rabbitmq/variables.env.bak configuration/rabbitmq/variables.env
 
     echo "TODO: implement restore for postgres DB content"
   }

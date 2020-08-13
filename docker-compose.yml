@@ -102,7 +102,6 @@ services:
       - postgres
       - rabbitmq
       - redis
-      - minio
     restart: always
 
   iam-service:
@@ -149,35 +148,7 @@ services:
     depends_on:
       - postgres
       - rabbitmq
-      - minio
     restart: always
-
-  minio:
-    image: "minio/minio:${TAG_MINIO}"
-    container_name: minio
-    volumes:
-      - "miniodata-volume:/data"
-    command: server /data
-    environment:
-      - MINIO_ACCESS_KEY=changeit
-      - MINIO_SECRET_KEY=changeit
-    restart: always
-
-  minio-mc:
-    image: "minio/mc:${TAG_MINIO_MC}"
-    container_name: minio-mc
-    depends_on:
-      - minio
-    volumes:
-      - "./configuration/minio/data:/zebrunner:ro"
-    entrypoint: >
-      /bin/sh -c "
-      /usr/bin/mc config host add minio-host http://minio:9000 changeit changeit --api s3v4;
-      /usr/bin/mc mb --ignore-existing minio-host/zebrunner;
-      /usr/bin/mc policy set download minio-host/zebrunner;
-      /usr/bin/mc mirror -w --overwrite zebrunner minio-host/zebrunner;
-      exit 0;
-      "
 
   reporting-ui:
     image: "zebrunner/reporting-ui:${TAG_REPORTING_UI}"
@@ -193,5 +164,4 @@ volumes:
   iam-db-volume:
   esdata-volume:
   assets-data:
-  miniodata-volume:
   migration-tool-volume:
