@@ -922,7 +922,7 @@ CREATE TRIGGER update_timestamp_test_sessions BEFORE INSERT OR UPDATE ON test_se
 
 DROP TABLE IF EXISTS stacktrace_labels;
 CREATE TABLE IF NOT EXISTS stacktrace_labels (
-    id SERIAL,
+    id BIGSERIAL,
     test_id INT NOT NULL,
     name VARCHAR(50) NOT NULL,
     PRIMARY KEY (id),
