@@ -117,7 +117,7 @@ services:
     restart: always
 
   db-migration-tool:
-    image: "siarheibranko/data-migration-tool"
+    image: "zebrunner/data-migration-tool"
     container_name: db-migration-tool
     volumes:
       - "./configuration/data-migration-scripts/:/var/migration"
