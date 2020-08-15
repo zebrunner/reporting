@@ -73,7 +73,7 @@ Zebrunner Reporting **client side** repositories:
 2. Configure **vm.max_map_count** kernel setting using official [ES guide](https://www.elastic.co/guide/en/elasticsearch/reference/6.1/docker.html#docker-cli-run-prod-mode)
 3. Clone this repo recursively and navigate to the root folder
   ```
-  git clone --recurse-submodule https://github.com/zebrunner/reporting.git && cd zebrunner
+  git clone --recurse-submodule https://github.com/zebrunner/reporting.git && cd reporting
   ```
 4. Run the application
   ```

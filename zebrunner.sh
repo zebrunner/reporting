@@ -107,12 +107,11 @@
     cp configuration/iam-db/variables.env configuration/iam-db/variables.env.bak
     cp configuration/rabbitmq/variables.env configuration/rabbitmq/variables.env.bak
 
-    source .env
-    docker run --rm --volumes-from postgres -v $(pwd)/backup:/var/lib/postgresql/backup "qaprosoft/postgres:${TAG_POSTGRES}" tar -czvf /var/lib/postgresql/backup/postgres.tar.gz /var/lib/postgresql/data
-    docker run --rm --volumes-from iam-db -v $(pwd)/backup:/var/lib/postgresql/backup "qaprosoft/postgres:${TAG_POSTGRES}" tar -czvf /var/lib/postgresql/backup/iam-db.tar.gz /var/lib/postgresql/data
-    docker run --rm --volumes-from elasticsearch -v $(pwd)/backup:/usr/share/elasticsearch/backup "docker.elastic.co/elasticsearch/elasticsearch:${TAG_ELASTICSEARCH}" tar -czvf /usr/share/elasticsearch/backup/elasticsearch.tar.gz /usr/share/elasticsearch/data
-    docker run --rm --volumes-from reporting-service -v $(pwd)/backup:/opt/backup "ubuntu" tar -czvf /opt/backup/reporting-service.tar.gz /opt/assets
-    docker run --rm --volumes-from db-migration-tool -v $(pwd)/backup:/var/backup "zebrunner/data-migration-tool" tar -czvf /var/backup/db-migration-tool.tar.gz /var/migration-state
+    docker run --rm --volumes-from postgres -v $(pwd)/backup:/var/backup "ubuntu" tar -czvf /var/backup/postgres.tar.gz /var/lib/postgresql/data
+    docker run --rm --volumes-from iam-db -v $(pwd)/backup:/var/backup "ubuntu" tar -czvf /var/backup/iam-db.tar.gz /var/lib/postgresql/data
+    docker run --rm --volumes-from elasticsearch -v $(pwd)/backup:/var/backup "ubuntu" tar -czvf /var/backup/elasticsearch.tar.gz /usr/share/elasticsearch/data
+    docker run --rm --volumes-from reporting-service -v $(pwd)/backup:/var/backup "ubuntu" tar -czvf /var/backup/reporting-service.tar.gz /opt/assets
+    docker run --rm --volumes-from db-migration-tool -v $(pwd)/backup:/var/backup "ubuntu" tar -czvf /var/backup/db-migration-tool.tar.gz /var/migration-state
   }
 
   restore() {
@@ -130,21 +129,19 @@
     cp configuration/iam-db/variables.env.bak configuration/iam-db/variables.env
     cp configuration/rabbitmq/variables.env.bak configuration/rabbitmq/variables.env
 
-    source .env
-    docker run --rm --volumes-from postgres -v $(pwd)/backup:/var/lib/postgresql/backup "qaprosoft/postgres:${TAG_POSTGRES}" bash -c "cd / && tar -xzvf /var/lib/postgresql/backup/postgres.tar.gz"
-    docker run --rm --volumes-from iam-db -v $(pwd)/backup:/var/lib/postgresql/backup "qaprosoft/postgres:${TAG_POSTGRES}" bash -c "cd / && tar -xzvf /var/lib/postgresql/backup/iam-db.tar.gz"
-    docker run --rm --volumes-from elasticsearch -v $(pwd)/backup:/usr/share/elasticsearch/backup "docker.elastic.co/elasticsearch/elasticsearch:${TAG_ELASTICSEARCH}" bash -c "cd / && tar -xzvf /usr/share/elasticsearch/backup/elasticsearch.tar.gz"
-    docker run --rm --volumes-from reporting-service -v $(pwd)/backup:/opt/backup "ubuntu" bash -c "cd / && tar -xzvf /opt/backup/reporting-service.tar.gz"
-    docker run --rm --volumes-from db-migration-tool -v $(pwd)/backup:/var/backup "zebrunner/data-migration-tool" bash -c "cd / && tar -xzvf /var/backup/db-migration-tool.tar.gz"
-
+    docker run --rm --volumes-from postgres -v $(pwd)/backup:/var/backup "ubuntu" bash -c "cd / && tar -xzvf /var/backup/postgres.tar.gz"
+    docker run --rm --volumes-from iam-db -v $(pwd)/backup:/var/backup "ubuntu" bash -c "cd / && tar -xzvf /var/backup/iam-db.tar.gz"
+    docker run --rm --volumes-from elasticsearch -v $(pwd)/backup:/var/backup "ubuntu" bash -c "cd / && tar -xzvf /var/backup/elasticsearch.tar.gz"
+    docker run --rm --volumes-from reporting-service -v $(pwd)/backup:/var/backup "ubuntu" bash -c "cd / && tar -xzvf /var/backup/reporting-service.tar.gz"
+    docker run --rm --volumes-from db-migration-tool -v $(pwd)/backup:/var/backup "ubuntu" bash -c "cd / && tar -xzvf /var/backup/db-migration-tool.tar.gz"
     down
   }
 
   echo_warning() {
     echo "
       WARNING! $1"
-
   }
+
   echo_telegram() {
     echo "
       For more help join telegram channel: https://t.me/zebrunner
@@ -167,62 +164,6 @@
       echo_telegram
       exit 0
   }
-
-  # That's a full copy of set_global_settings method from qps-infra/zebrunner.sh. Make sure to sync code in case of any change in all places
-  set_global_settings() {
-    # Setup global settings: protocol, hostname and port. 
-
-    local is_confirmed=0
-    ZBR_PROTOCOL=http
-    ZBR_HOSTNAME=$HOSTNAME
-    ZBR_PORT=80
-
-    while [[ $is_confirmed -eq 0 ]]; do
-      read -p "PROTOCOL [$ZBR_PROTOCOL]: " local_protocol
-      if [[ ! -z $local_protocol ]]; then
-        ZBR_PROTOCOL=$local_protocol
-      fi
-
-      read -p "FQDN HOSTNAME [$ZBR_HOSTNAME]: " local_hostname
-      if [[ ! -z $local_hostname ]]; then
-        ZBR_HOSTNAME=$local_hostname
-      fi
-
-      read -p "PORT [$ZBR_PORT]: " local_port
-      if [[ ! -z $local_port ]]; then
-        ZBR_PORT=$local_port
-      fi
-
-      confirm "URL: $ZBR_PROTOCOL://$ZBR_HOSTNAME:$ZBR_PORT" "Continue?"
-      is_confirmed=$?
-    done
-
-    export ZBR_PROTOCOL=$ZBR_PROTOCOL
-    export ZBR_HOSTNAME=$ZBR_HOSTNAME
-    export ZBR_PORT=$ZBR_PORT
-
-  }
-
-  confirm() {
-    while true; do
-      echo "$1"
-      read -p "$2 [y/n]" yn
-      case $yn in
-      [y]*)
-        return 1
-        ;;
-      [n]*)
-        return 0
-        ;;
-      *)
-        echo
-        echo "Please answer y (yes) or n (no)."
-        echo
-        ;;
-      esac
-    done
-  }
-
 
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd ${BASEDIR}
