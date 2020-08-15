@@ -14,7 +14,7 @@
     sed -i "s#http://localhost:8081#${url}#g" configuration/reporting-ui/variables.env
 
     #TODO: parametrize postgres credentials later
-    #configuration/postgres/variables.env.original
+    #configuration/postgres/variables.env
     #configuration/iam-db/variables.env
     #configuration/rabbitmq/variables
 
@@ -107,7 +107,12 @@
     cp configuration/iam-db/variables.env configuration/iam-db/variables.env.bak
     cp configuration/rabbitmq/variables.env configuration/rabbitmq/variables.env.bak
 
-    echo "TODO: implement backup for postgres DB content"
+    source .env
+    docker run --rm --volumes-from postgres -v $(pwd)/backup:/var/lib/postgresql/backup "qaprosoft/postgres:${TAG_POSTGRES}" tar -czvf /var/lib/postgresql/backup/postgres.tar.gz /var/lib/postgresql/data
+    docker run --rm --volumes-from iam-db -v $(pwd)/backup:/var/lib/postgresql/backup "qaprosoft/postgres:${TAG_POSTGRES}" tar -czvf /var/lib/postgresql/backup/iam-db.tar.gz /var/lib/postgresql/data
+    docker run --rm --volumes-from elasticsearch -v $(pwd)/backup:/usr/share/elasticsearch/backup "docker.elastic.co/elasticsearch/elasticsearch:${TAG_ELASTICSEARCH}" tar -czvf /usr/share/elasticsearch/backup/elasticsearch.tar.gz /usr/share/elasticsearch/data
+    docker run --rm --volumes-from reporting-service -v $(pwd)/backup:/opt/backup "ubuntu" tar -czvf /opt/backup/reporting-service.tar.gz /opt/assets
+    docker run --rm --volumes-from db-migration-tool -v $(pwd)/backup:/var/backup "zebrunner/data-migration-tool" tar -czvf /var/backup/db-migration-tool.tar.gz /var/migration-state
   }
 
   restore() {
@@ -115,6 +120,7 @@
       exit 0
     fi
 
+    stop
     minio-storage/zebrunner.sh restore
 
     cp configuration/_common/hosts.env.bak configuration/_common/hosts.env
@@ -124,7 +130,14 @@
     cp configuration/iam-db/variables.env.bak configuration/iam-db/variables.env
     cp configuration/rabbitmq/variables.env.bak configuration/rabbitmq/variables.env
 
-    echo "TODO: implement restore for postgres DB content"
+    source .env
+    docker run --rm --volumes-from postgres -v $(pwd)/backup:/var/lib/postgresql/backup "qaprosoft/postgres:${TAG_POSTGRES}" bash -c "cd / && tar -xzvf /var/lib/postgresql/backup/postgres.tar.gz"
+    docker run --rm --volumes-from iam-db -v $(pwd)/backup:/var/lib/postgresql/backup "qaprosoft/postgres:${TAG_POSTGRES}" bash -c "cd / && tar -xzvf /var/lib/postgresql/backup/iam-db.tar.gz"
+    docker run --rm --volumes-from elasticsearch -v $(pwd)/backup:/usr/share/elasticsearch/backup "docker.elastic.co/elasticsearch/elasticsearch:${TAG_ELASTICSEARCH}" bash -c "cd / && tar -xzvf /usr/share/elasticsearch/backup/elasticsearch.tar.gz"
+    docker run --rm --volumes-from reporting-service -v $(pwd)/backup:/opt/backup "ubuntu" bash -c "cd / && tar -xzvf /opt/backup/reporting-service.tar.gz"
+    docker run --rm --volumes-from db-migration-tool -v $(pwd)/backup:/var/backup "zebrunner/data-migration-tool" bash -c "cd / && tar -xzvf /var/backup/db-migration-tool.tar.gz"
+
+    down
   }
 
   echo_warning() {
