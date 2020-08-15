@@ -28,9 +28,8 @@ services:
     volumes:
       - "pgdata-volume:/var/lib/postgresql/data"
       - "./database/reporting/:/docker-entrypoint-initdb.d"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+    env_file:
+      - configuration/postgres/variables.env
     restart: always
 
   iam-db:
@@ -39,9 +38,8 @@ services:
     volumes:
       - "iam-db-volume:/var/lib/postgresql/data"
       - "./database/iam/:/docker-entrypoint-initdb.d"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+    env_file:
+      - configuration/iam-db/variables.env
     restart: always
 
   rabbitmq:
@@ -49,9 +47,8 @@ services:
     container_name: rabbitmq
     volumes:
       - "./configuration/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro"
-    environment:
-      - RABBITMQ_DEFAULT_USER=qpsdemo
-      - RABBITMQ_DEFAULT_PASS=qpsdemo
+    env_file:
+      - configuration/rabbitmq/variables.env
     restart: always
 
   redis:
@@ -74,6 +71,9 @@ services:
       memlock:
         soft: -1
         hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
     restart: always
 
   logstash:
@@ -102,7 +102,6 @@ services:
       - postgres
       - rabbitmq
       - redis
-      - minio
     restart: always
 
   iam-service:
@@ -118,7 +117,7 @@ services:
     restart: always
 
   db-migration-tool:
-    image: "siarheibranko/data-migration-tool"
+    image: "zebrunner/data-migration-tool"
     container_name: db-migration-tool
     volumes:
       - "./configuration/data-migration-scripts/:/var/migration"
@@ -149,41 +148,13 @@ services:
     depends_on:
       - postgres
       - rabbitmq
-      - minio
     restart: always
-
-  minio:
-    image: "minio/minio:${TAG_MINIO}"
-    container_name: minio
-    volumes:
-      - "miniodata-volume:/data"
-    command: server /data
-    environment:
-      - MINIO_ACCESS_KEY=changeit
-      - MINIO_SECRET_KEY=changeit
-    restart: always
-
-  minio-mc:
-    image: "minio/mc:${TAG_MINIO_MC}"
-    container_name: minio-mc
-    depends_on:
-      - minio
-    volumes:
-      - "./configuration/minio/data:/zebrunner:ro"
-    entrypoint: >
-      /bin/sh -c "
-      /usr/bin/mc config host add minio-host http://minio:9000 changeit changeit --api s3v4;
-      /usr/bin/mc mb --ignore-existing minio-host/zebrunner;
-      /usr/bin/mc policy set download minio-host/zebrunner;
-      /usr/bin/mc mirror -w --overwrite zebrunner minio-host/zebrunner;
-      exit 0;
-      "
 
   reporting-ui:
     image: "zebrunner/reporting-ui:${TAG_REPORTING_UI}"
     container_name: reporting-ui
-    environment:
-      - SERVER_URL=http://localhost:8081/reporting-service
+    env_file:
+      - configuration/reporting-ui/variables.env
     depends_on:
       - reporting-service
     restart: always
@@ -193,5 +164,4 @@ volumes:
   iam-db-volume:
   esdata-volume:
   assets-data:
-  miniodata-volume:
   migration-tool-volume:

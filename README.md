@@ -1,7 +1,7 @@
 <p style="padding: 10px;" align="left">
   <img src="./docs/img/zebrunner_logo.png">
 </p>
-Zebrunner is a test automation management tool that accumulates and repseresents test results. It is designed to increase the transparency of automation, providing detailed reports with test logs, screenshots and video recordings of test sessions. Detailed reporting functionality reduces maintenance work for automation teams, allowing to identify application bugs and test implementation problems.
+Zebrunner Reporting is a test automation management tool that accumulates and repseresents test results. It is designed to increase the transparency of automation, providing detailed reports with test logs, screenshots and video recordings of test sessions. Detailed reporting functionality reduces maintenance work for automation teams, allowing to identify application bugs and test implementation problems.
 
 <p align="center">
   <img src="./docs/img/zebrunner_intro.png">
@@ -57,12 +57,12 @@ Zebrunner is a test automation management tool that accumulates and repseresents
 
 ## Repositories structure
 
-Zebrunner **server side** consists of the following modules:
+Zebrunner Reporting **server side** consists of the following modules:
 - [`reporting-service`](https://github.com/zebrunner/reporting-service) application backend
 - [`reporting-ui`](https://github.com/zebrunner/reporting-ui) application frontend
 
 
-Zebrunner **client side** repositories:
+Zebrunner Reporting **client side** repositories:
 - [`java-agent-core`](https://github.com/zebrunner/java-agent-core) agent library core (Java)
 - [`java-agent-testng`](https://github.com/zebrunner/java-agent-testng) official TestNG agent
 - [`java-agent-junit`](https://github.com/zebrunner/java-agent-junit) official JUnit agent
@@ -71,17 +71,17 @@ Zebrunner **client side** repositories:
 ## Installation steps
 1. Install [Docker Engine](https://docs.docker.com/engine/installation) and [Docker Compose](https://docs.docker.com/compose/install)
 2. Configure **vm.max_map_count** kernel setting using official [ES guide](https://www.elastic.co/guide/en/elasticsearch/reference/6.1/docker.html#docker-cli-run-prod-mode)
-3. Clone this repo and navigate to the root folder
+3. Clone this repo recursively and navigate to the root folder
   ```
-  git clone git@github.com:zebrunner/zebrunner.git && cd zebrunner
+  git clone --recurse-submodule https://github.com/zebrunner/reporting.git && cd zebrunner
   ```
 4. Run the application
   ```
-  ./zebrunner-server.sh start
+  ./zebrunner.sh start
   ```
-5. Login to the application with default credentials **qpsdemo**/**qpsdemo**:
+5. Login to the application with default credentials **admin**/**changeit**:
   ```
-  $ http://localhost/app
+  $ http://localhost:8081/
   ```
 
 ## Community and support

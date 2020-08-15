@@ -9,9 +9,12 @@
 /out/
 
 ### Zebrunner Server (Community Edition) ###
-docker-compose.yml.original
-docker-compose.yml.bak
-configuration/_common/hosts.env.original
-configuration/_common/hosts.env.bak
+configuration/_common/hosts.env
 configuration/reporting-service/variables.env
-configuration/reporting-service/variables.env.bak
+configuration/reporting-ui/variables.env
+configuration/postgres/variables.env
+configuration/iam-db/variables.env
+configuration/rabbitmq/variables.env
+*.bak
+*.tar.gz
+

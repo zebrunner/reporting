@@ -1,0 +1,4 @@
+[submodule "minio-storage"]
+	path = minio-storage
+	url = https://github.com/zebrunner/minio-storage.git
+	branch = master
