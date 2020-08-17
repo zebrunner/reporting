@@ -42,8 +42,9 @@
     sed -i "s#RABBITMQ_DEFAULT_USER=qpsdemo#RABBITMQ_DEFAULT_USER=${ZBR_RABBITMQ_USER}#g" configuration/rabbitmq/variables.env
     sed -i "s#RABBITMQ_DEFAULT_PASS=qpsdemo#RABBITMQ_DEFAULT_PASS=${ZBR_RABBITMQ_PASSWORD}#g" configuration/rabbitmq/variables.env
     cp configuration/logstash/logstash.conf.original configuration/logstash/logstash.conf
-    sed -i "s#user => ""qpsdemo""#user => ""${ZBR_RABBITMQ_USER}""#g" configuration/logstash/logstash.conf
-    sed -i "s#password => ""qpsdemo""#password => ""${ZBR_RABBITMQ_PASSWORD}""#g" configuration/logstash/logstash.conf
+    sed -i "s#rabbitmq-user#${ZBR_RABBITMQ_USER}#g" configuration/logstash/logstash.conf
+    sed -i "s#rabbitmq-password#${ZBR_RABBITMQ_PASSWORD}#g" configuration/logstash/logstash.conf
+
 
 #    export ZBR_RABBITMQ_USER=$ZBR_RABBITMQ_USER
 #    export ZBR_RABBITMQ_PASSWORD=$ZBR_RABBITMQ_PASSWORD
