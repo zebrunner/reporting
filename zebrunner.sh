@@ -29,6 +29,12 @@
     sed -i "s#POSTGRES_USER=postgres#POSTGRES_USER=${ZBR_POSTGRES_USER}#g" configuration/postgres/variables.env
     sed -i "s#POSTGRES_PASSWORD=postgres#POSTGRES_PASSWORD=${ZBR_POSTGRES_PASSWORD}#g" configuration/postgres/variables.env
 
+    cp configuration/mail-service/variables.env.original configuration/mail-service/variables.env
+    sed -i "s#MAILING_HOST=smtp.gmail.com#MAILING_HOST=${ZBR_SMTP_HOST}#g" configuration/mail-service/variables.env
+    sed -i "s#MAILING_PORT=587#MAILING_PORT=${ZBR_SMTP_PORT}#g" configuration/mail-service/variables.env
+    sed -i "s#MAILING_SENDER_EMAIL=changeit#MAILING_SENDER_EMAIL=${ZBR_SMTP_EMAIL}#g" configuration/mail-service/variables.env
+    sed -i "s#MAILING_USERNAME=changeit#MAILING_USERNAME=${ZBR_SMTP_USER}#g" configuration/mail-service/variables.env
+    sed -i "s#MAILING_PASSWORD=changeit#MAILING_PASSWORD=${ZBR_SMTP_PASSWORD}#g" configuration/mail-service/variables.env
 
     #TODO: parametrize postgres credentials later
     #configuration/rabbitmq/variables
@@ -48,6 +54,7 @@
     rm configuration/iam-service/variables.env
     rm configuration/iam-db/variables.env
     rm configuration/postgres/variables.env
+    rm configuration/mail-service/variables.env
     rm configuration/reporting-service/variables.env
     rm configuration/reporting-ui/variables.env
     rm configuration/rabbitmq/variables.env
@@ -81,6 +88,10 @@
 
     if [[ ! -f configuration/postgres/variables.env ]]; then
       cp configuration/postgres/variables.env.original configuration/postgres/variables.env
+    fi
+
+    if [[ ! -f configuration/mail-service/variables.env ]]; then
+      cp configuration/mail-service/variables.env.original configuration/mail-service/variables.env
     fi
 
     if [[ ! -f configuration/reporting-service/variables.env ]]; then
@@ -130,6 +141,7 @@
     cp configuration/iam-service/variables.env configuration/iam-service/variables.env.bak
     cp configuration/iam-db/variables.env configuration/iam-db/variables.env.bak
     cp configuration/postgres/variables.env configuration/postgres/variables.env.bak
+    cp configuration/mail-service/variables.env configuration/mail-service/variables.env.bak
     cp configuration/reporting-service/variables.env configuration/reporting-service/variables.env.bak
     cp configuration/reporting-ui/variables.env configuration/reporting-ui/variables.env.bak
     cp configuration/rabbitmq/variables.env configuration/rabbitmq/variables.env.bak
@@ -154,6 +166,7 @@
     cp configuration/iam-service/variables.env.bak configuration/iam-service/variables.env
     cp configuration/iam-db/variables.env.bak configuration/iam-db/variables.env
     cp configuration/postgres/variables.env.bak configuration/postgres/variables.env
+    cp configuration/mail-service/variables.env.bak configuration/mail-service/variables.env
     cp configuration/reporting-service/variables.env.bak configuration/reporting-service/variables.env
     cp configuration/reporting-ui/variables.env.bak configuration/reporting-ui/variables.env
     cp configuration/rabbitmq/variables.env.bak configuration/rabbitmq/variables.env
