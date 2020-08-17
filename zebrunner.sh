@@ -24,17 +24,13 @@
     sed -i "s#S3_BUCKET=zebrunner#S3_BUCKET=${ZBR_BUCKET}#g" configuration/_common/s3.env
 
     cp configuration/iam-service/variables.env.original configuration/iam-service/variables.env
-    sed -i "s#DATABASE_USERNAME=postgres#DATABASE_USERNAME=${ZBR_IAM_POSTGRES_USER}#g" configuration/iam-service/variables.env
     sed -i "s#DATABASE_PASSWORD=postgres#DATABASE_PASSWORD=${ZBR_IAM_POSTGRES_PASSWORD}#g" configuration/iam-service/variables.env
 
     cp configuration/iam-db/variables.env.original configuration/iam-db/variables.env
-    sed -i "s#POSTGRES_USER=postgres#POSTGRES_USER=${ZBR_IAM_POSTGRES_USER}#g" configuration/iam-db/variables.env
     sed -i "s#POSTGRES_PASSWORD=postgres#POSTGRES_PASSWORD=${ZBR_IAM_POSTGRES_PASSWORD}#g" configuration/iam-db/variables.env
 
     cp configuration/postgres/variables.env.original configuration/postgres/variables.env
-    sed -i "s#POSTGRES_USER=postgres#POSTGRES_USER=${ZBR_POSTGRES_USER}#g" configuration/postgres/variables.env
     sed -i "s#POSTGRES_PASSWORD=postgres#POSTGRES_PASSWORD=${ZBR_POSTGRES_PASSWORD}#g" configuration/postgres/variables.env
-    sed -i "s#DATABASE_USERNAME=postgres#DATABASE_USERNAME=${ZBR_POSTGRES_USER}#g" configuration/reporting-service/variables.env
     sed -i "s#DATABASE_PASSWORD=postgres#DATABASE_PASSWORD=${ZBR_POSTGRES_PASSWORD}#g" configuration/reporting-service/variables.env
 
     cp configuration/mail-service/variables.env.original configuration/mail-service/variables.env
