@@ -8,7 +8,8 @@
 *.ipr
 /out/
 
-### Zebrunner Server (Community Edition) ###
+### Zebrunner Reporting ###
+.disabled
 configuration/_common/hosts.env
 configuration/reporting-service/variables.env
 configuration/reporting-ui/variables.env
