@@ -36,6 +36,10 @@
     sed -i "s#MAILING_USERNAME=changeit#MAILING_USERNAME=${ZBR_SMTP_USER}#g" configuration/mail-service/variables.env
     sed -i "s#MAILING_PASSWORD=changeit#MAILING_PASSWORD=${ZBR_SMTP_PASSWORD}#g" configuration/mail-service/variables.env
 
+    cp configuration/redis/redis.conf.original configuration/redis/redis.conf
+    sed -i "s#requirepass MdXVvJgDdz9Hnau7#requirepass ${ZBR_REDIS_PASSWORD}#g" configuration/redis/redis.conf
+    sed -i "s#REDIS_PASSWORD=MdXVvJgDdz9Hnau7#REDIS_PASSWORD=${ZBR_REDIS_PASSWORD}#g" configuration/reporting-service/variables.env
+
     #TODO: parametrize postgres credentials later
     #configuration/rabbitmq/variables
 
@@ -55,6 +59,7 @@
     rm configuration/iam-db/variables.env
     rm configuration/postgres/variables.env
     rm configuration/mail-service/variables.env
+    rm configuration/redis/redis.conf
     rm configuration/reporting-service/variables.env
     rm configuration/reporting-ui/variables.env
     rm configuration/rabbitmq/variables.env
@@ -92,6 +97,10 @@
 
     if [[ ! -f configuration/mail-service/variables.env ]]; then
       cp configuration/mail-service/variables.env.original configuration/mail-service/variables.env
+    fi
+
+    if [[ ! -f configuration/redis/redis.conf ]]; then
+      cp configuration/redis/redis.conf.original configuration/redis/redis.conf
     fi
 
     if [[ ! -f configuration/reporting-service/variables.env ]]; then
@@ -142,6 +151,7 @@
     cp configuration/iam-db/variables.env configuration/iam-db/variables.env.bak
     cp configuration/postgres/variables.env configuration/postgres/variables.env.bak
     cp configuration/mail-service/variables.env configuration/mail-service/variables.env.bak
+    cp configuration/redis/redis.conf configuration/redis/redis.conf.bak
     cp configuration/reporting-service/variables.env configuration/reporting-service/variables.env.bak
     cp configuration/reporting-ui/variables.env configuration/reporting-ui/variables.env.bak
     cp configuration/rabbitmq/variables.env configuration/rabbitmq/variables.env.bak
@@ -167,6 +177,7 @@
     cp configuration/iam-db/variables.env.bak configuration/iam-db/variables.env
     cp configuration/postgres/variables.env.bak configuration/postgres/variables.env
     cp configuration/mail-service/variables.env.bak configuration/mail-service/variables.env
+    cp configuration/redis/redis.conf.bak configuration/redis/redis.conf
     cp configuration/reporting-service/variables.env.bak configuration/reporting-service/variables.env
     cp configuration/reporting-ui/variables.env.bak configuration/reporting-ui/variables.env
     cp configuration/rabbitmq/variables.env.bak configuration/rabbitmq/variables.env

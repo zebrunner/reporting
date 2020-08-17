@@ -16,6 +16,7 @@ configuration/iam-service/variables.env
 configuration/iam-db/variables.env
 configuration/postgres/variables.env
 configuration/mail-service/variables.env
+configuration/redis/redis.conf
 configuration/reporting-service/variables.env
 configuration/reporting-ui/variables.env
 configuration/rabbitmq/variables.env
