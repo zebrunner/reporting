@@ -11,6 +11,7 @@
 ### Zebrunner Reporting ###
 .disabled
 configuration/_common/hosts.env
+configuration/_common/secrets.env
 configuration/reporting-service/variables.env
 configuration/reporting-ui/variables.env
 configuration/postgres/variables.env
