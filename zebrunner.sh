@@ -17,13 +17,20 @@
     sed -i "s#TOKEN_SIGNING_SECRET=AUwMLdWFBtUHVgvjFfMmAEadXqZ6HA4dKCiCmjgCXxaZ4ZO8od#TOKEN_SIGNING_SECRET=${ZBR_TOKEN_SIGNING_SECRET}#g" configuration/_common/secrets.env
     sed -i "s#CRYPTO_SALT=TDkxalR4T3EySGI0T0YyMitScmkxWDlsUXlPV2R4OEZ1b2kyL1VJeFVHST0=#CRYPTO_SALT=${ZBR_CRYPTO_SALT}#g" configuration/_common/secrets.env
 
+    cp configuration/iam-service/variables.env.original configuration/iam-service/variables.env
+    sed -i "s#DATABASE_USERNAME=postgres#DATABASE_USERNAME=${ZBR_IAM_POSTGRES_USER}#g" configuration/iam-service/variables.env
+    sed -i "s#DATABASE_PASSWORD=postgres#DATABASE_PASSWORD=${ZBR_IAM_POSTGRES_PASSWORD}#g" configuration/iam-service/variables.env
+
+    cp configuration/iam-db/variables.env.original configuration/iam-db/variables.env
+    sed -i "s#DATABASE_USERNAME=postgres#DATABASE_USERNAME=${ZBR_IAM_POSTGRES_USER}#g" configuration/iam-db/variables.env
+    sed -i "s#DATABASE_PASSWORD=postgres#DATABASE_PASSWORD=${ZBR_IAM_POSTGRES_PASSWORD}#g" configuration/iam-db/variables.env
+
 
     #TODO: parametrize postgres credentials later
     #configuration/postgres/variables.env
-    #configuration/iam-db/variables.env
     #configuration/rabbitmq/variables
 
-    echo "setup finished"
+    echo "reporting setup finished"
   }
 
   shutdown() {
@@ -35,10 +42,11 @@
 
     rm configuration/_common/hosts.env
     rm configuration/_common/secrets.env
+    rm configuration/iam-service/variables.env
+    rm configuration/iam-db/variables.env
     rm configuration/reporting-service/variables.env
     rm configuration/reporting-ui/variables.env
     rm configuration/postgres/variables.env
-    rm configuration/iam-db/variables.env
     rm configuration/rabbitmq/variables.env
 
     minio-storage/zebrunner.sh shutdown
@@ -60,6 +68,14 @@
       cp configuration/_common/secrets.env.original configuration/_common/secrets.env
     fi
 
+    if [[ ! -f configuration/iam-service/variables.env ]]; then
+      cp configuration/iam-service/variables.env.original configuration/iam-service/variables.env
+    fi
+
+    if [[ ! -f configuration/iam-db/variables.env ]]; then
+      cp configuration/iam-db/variables.env.original configuration/iam-db/variables.env
+    fi
+
     if [[ ! -f configuration/reporting-service/variables.env ]]; then
       cp configuration/reporting-service/variables.env.original configuration/reporting-service/variables.env
     fi
@@ -70,10 +86,6 @@
 
     if [[ ! -f configuration/postgres/variables.env ]]; then
       cp configuration/postgres/variables.env.original configuration/postgres/variables.env
-    fi
-
-    if [[ ! -f configuration/iam-db/variables.env ]]; then
-      cp configuration/iam-db/variables.env.original configuration/iam-db/variables.env
     fi
 
     if [[ ! -f configuration/rabbitmq/variables.env ]]; then
@@ -112,10 +124,11 @@
 
     cp configuration/_common/hosts.env configuration/_common/hosts.env.bak
     cp configuration/_common/secrets.env configuration/_common/secrets.env.bak
+    cp configuration/iam-service/variables.env configuration/iam-service/variables.env.bak
+    cp configuration/iam-db/variables.env configuration/iam-db/variables.env.bak
     cp configuration/reporting-service/variables.env configuration/reporting-service/variables.env.bak
     cp configuration/reporting-ui/variables.env configuration/reporting-ui/variables.env.bak
     cp configuration/postgres/variables.env configuration/postgres/variables.env.bak
-    cp configuration/iam-db/variables.env configuration/iam-db/variables.env.bak
     cp configuration/rabbitmq/variables.env configuration/rabbitmq/variables.env.bak
 
     docker run --rm --volumes-from postgres -v $(pwd)/backup:/var/backup "ubuntu" tar -czvf /var/backup/postgres.tar.gz /var/lib/postgresql/data
@@ -135,10 +148,11 @@
 
     cp configuration/_common/hosts.env.bak configuration/_common/hosts.env
     cp configuration/_common/secrets.env.bak configuration/_common/secrets.env
+    cp configuration/iam-service/variables.env.bak configuration/iam-service/variables.env
+    cp configuration/iam-db/variables.env.bak configuration/iam-db/variables.env
     cp configuration/reporting-service/variables.env.bak configuration/reporting-service/variables.env
     cp configuration/reporting-ui/variables.env.bak configuration/reporting-ui/variables.env
     cp configuration/postgres/variables.env.bak configuration/postgres/variables.env
-    cp configuration/iam-db/variables.env.bak configuration/iam-db/variables.env
     cp configuration/rabbitmq/variables.env.bak configuration/rabbitmq/variables.env
 
     docker run --rm --volumes-from postgres -v $(pwd)/backup:/var/backup "ubuntu" bash -c "cd / && tar -xzvf /var/backup/postgres.tar.gz"
