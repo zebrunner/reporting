@@ -28,6 +28,8 @@
     cp configuration/postgres/variables.env.original configuration/postgres/variables.env
     sed -i "s#POSTGRES_USER=postgres#POSTGRES_USER=${ZBR_POSTGRES_USER}#g" configuration/postgres/variables.env
     sed -i "s#POSTGRES_PASSWORD=postgres#POSTGRES_PASSWORD=${ZBR_POSTGRES_PASSWORD}#g" configuration/postgres/variables.env
+    sed -i "s#DATABASE_USERNAME=postgres#DATABASE_USERNAME=${ZBR_POSTGRES_USER}#g" configuration/reporting-service/variables.env
+    sed -i "s#DATABASE_PASSWORD=postgres#DATABASE_PASSWORD=${ZBR_POSTGRES_PASSWORD}#g" configuration/reporting-service/variables.env
 
     cp configuration/mail-service/variables.env.original configuration/mail-service/variables.env
     sed -i "s#MAILING_HOST=smtp.gmail.com#MAILING_HOST=${ZBR_SMTP_HOST}#g" configuration/mail-service/variables.env
