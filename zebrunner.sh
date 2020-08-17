@@ -84,7 +84,6 @@
     rm configuration/redis/redis.conf
     rm configuration/reporting-service/variables.env
     rm configuration/reporting-ui/variables.env
-    rm configuration/rabbitmq/variables.env
 
     minio-storage/zebrunner.sh shutdown
   }
