@@ -1,7 +1,7 @@
 #!/bin/bash
 
   setup() {
-    # PREREQUISITES: valid values inside ZBR_PROTOCOL, ZBR_HOSTNAME and ZBR_PORT env vars!
+    # PREREQUISITES: valid values inside ZBR_* env vars!
     local url="$ZBR_PROTOCOL://$ZBR_HOSTNAME:$ZBR_PORT"
 
     cp configuration/_common/hosts.env.original configuration/_common/hosts.env
@@ -16,6 +16,12 @@
     cp configuration/_common/secrets.env.original configuration/_common/secrets.env
     sed -i "s#TOKEN_SIGNING_SECRET=AUwMLdWFBtUHVgvjFfMmAEadXqZ6HA4dKCiCmjgCXxaZ4ZO8od#TOKEN_SIGNING_SECRET=${ZBR_TOKEN_SIGNING_SECRET}#g" configuration/_common/secrets.env
     sed -i "s#CRYPTO_SALT=TDkxalR4T3EySGI0T0YyMitScmkxWDlsUXlPV2R4OEZ1b2kyL1VJeFVHST0=#CRYPTO_SALT=${ZBR_CRYPTO_SALT}#g" configuration/_common/secrets.env
+
+    cp configuration/_common/s3.env.original configuration/_common/s3.env
+    sed -i "s#S3_ACCESS_KEY_ID=changeit#S3_ACCESS_KEY_ID=${ZBR_ACCESS_KEY}#g" configuration/_common/s3.env
+    sed -i "s#S3_SECRET=changeit#S3_SECRET=${ZBR_SECRET_KEY}#g" configuration/_common/s3.env
+    sed -i "s#S3_REGION=us-west-1#S3_REGION=${ZBR_REGION}#g" configuration/_common/s3.env
+    sed -i "s#S3_BUCKET=zebrunner#S3_BUCKET=${ZBR_BUCKET}#g" configuration/_common/s3.env
 
     cp configuration/iam-service/variables.env.original configuration/iam-service/variables.env
     sed -i "s#DATABASE_USERNAME=postgres#DATABASE_USERNAME=${ZBR_IAM_POSTGRES_USER}#g" configuration/iam-service/variables.env
@@ -66,6 +72,7 @@
 
     rm configuration/_common/hosts.env
     rm configuration/_common/secrets.env
+    rm configuration/_common/s3.env
     rm configuration/iam-service/variables.env
     rm configuration/iam-db/variables.env
     rm configuration/postgres/variables.env
@@ -96,6 +103,10 @@
 
     if [[ ! -f configuration/_common/secrets.env ]]; then
       cp configuration/_common/secrets.env.original configuration/_common/secrets.env
+    fi
+
+    if [[ ! -f configuration/_common/s3.env ]]; then
+      cp configuration/_common/s3.env.original configuration/_common/s3.env
     fi
 
     if [[ ! -f configuration/iam-service/variables.env ]]; then
@@ -173,6 +184,7 @@
 
     cp configuration/_common/hosts.env configuration/_common/hosts.env.bak
     cp configuration/_common/secrets.env configuration/_common/secrets.env.bak
+    cp configuration/_common/s3.env configuration/_common/s3.env.bak
     cp configuration/iam-service/variables.env configuration/iam-service/variables.env.bak
     cp configuration/iam-db/variables.env configuration/iam-db/variables.env.bak
     cp configuration/postgres/variables.env configuration/postgres/variables.env.bak
@@ -202,6 +214,7 @@
 
     cp configuration/_common/hosts.env.bak configuration/_common/hosts.env
     cp configuration/_common/secrets.env.bak configuration/_common/secrets.env
+    cp configuration/_common/s3.env.bak configuration/_common/s3.env
     cp configuration/iam-service/variables.env.bak configuration/iam-service/variables.env
     cp configuration/iam-db/variables.env.bak configuration/iam-db/variables.env
     cp configuration/postgres/variables.env.bak configuration/postgres/variables.env
@@ -261,10 +274,6 @@ case "$1" in
           echo_warning "Setup procedure is supported only as part of Zebrunner Server (Community Edition)!"
           echo_telegram
         fi
-
-#        echo WARNING! Increase vm.max_map_count=262144 appending it to /etc/sysctl.conf on Linux Ubuntu
-#        echo your current value is `sysctl vm.max_map_count`
-
         ;;
     start)
 	start

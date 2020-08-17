@@ -12,6 +12,7 @@
 .disabled
 configuration/_common/hosts.env
 configuration/_common/secrets.env
+configuration/_common/s3.env
 configuration/iam-service/variables.env
 configuration/iam-db/variables.env
 configuration/postgres/variables.env
