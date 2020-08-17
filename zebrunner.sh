@@ -13,6 +13,11 @@
     cp configuration/reporting-ui/variables.env.original configuration/reporting-ui/variables.env
     sed -i "s#http://localhost:8081#${url}#g" configuration/reporting-ui/variables.env
 
+    cp configuration/_common/secrets.env.original configuration/_common/secrets.env
+    sed -i "s#TOKEN_SIGNING_SECRET=AUwMLdWFBtUHVgvjFfMmAEadXqZ6HA4dKCiCmjgCXxaZ4ZO8od#TOKEN_SIGNING_SECRET=${ZBR_TOKEN_SIGNING_SECRET}#g" configuration/_common/secrets.env
+    sed -i "s#CRYPTO_SALT=TDkxalR4T3EySGI0T0YyMitScmkxWDlsUXlPV2R4OEZ1b2kyL1VJeFVHST0=#CRYPTO_SALT=${ZBR_CRYPTO_SALT}#g" configuration/_common/secrets.env
+
+
     #TODO: parametrize postgres credentials later
     #configuration/postgres/variables.env
     #configuration/iam-db/variables.env
@@ -29,6 +34,7 @@
     docker-compose --env-file .env -f docker-compose.yml down -v
 
     rm configuration/_common/hosts.env
+    rm configuration/_common/secrets.env
     rm configuration/reporting-service/variables.env
     rm configuration/reporting-ui/variables.env
     rm configuration/postgres/variables.env
@@ -48,6 +54,10 @@
 
     if [[ ! -f configuration/_common/hosts.env ]]; then
       cp configuration/_common/hosts.env.original configuration/_common/hosts.env
+    fi
+
+    if [[ ! -f configuration/_common/secrets.env ]]; then
+      cp configuration/_common/secrets.env.original configuration/_common/secrets.env
     fi
 
     if [[ ! -f configuration/reporting-service/variables.env ]]; then
@@ -101,6 +111,7 @@
     minio-storage/zebrunner.sh backup
 
     cp configuration/_common/hosts.env configuration/_common/hosts.env.bak
+    cp configuration/_common/secrets.env configuration/_common/secrets.env.bak
     cp configuration/reporting-service/variables.env configuration/reporting-service/variables.env.bak
     cp configuration/reporting-ui/variables.env configuration/reporting-ui/variables.env.bak
     cp configuration/postgres/variables.env configuration/postgres/variables.env.bak
@@ -123,6 +134,7 @@
     minio-storage/zebrunner.sh restore
 
     cp configuration/_common/hosts.env.bak configuration/_common/hosts.env
+    cp configuration/_common/secrets.env.bak configuration/_common/secrets.env
     cp configuration/reporting-service/variables.env.bak configuration/reporting-service/variables.env
     cp configuration/reporting-ui/variables.env.bak configuration/reporting-ui/variables.env
     cp configuration/postgres/variables.env.bak configuration/postgres/variables.env
