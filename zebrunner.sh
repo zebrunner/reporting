@@ -255,7 +255,7 @@ cd ${BASEDIR}
 
 case "$1" in
     setup)
-        if [[ ! -z $ZBR_PROTOCOL || ! -z $ZBR_HOSTNAME || ! -z $ZBR_PORT ]]; then
+        if [[ $ZBR_PROTOCOL -eq 1 ]]; then
           setup
         else
           echo_warning "Setup procedure is supported only as part of Zebrunner Server (Community Edition)!"
