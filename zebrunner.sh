@@ -38,6 +38,17 @@
     sed -i "s#MAILING_USERNAME=changeit#MAILING_USERNAME=${ZBR_SMTP_USER}#g" configuration/mail-service/variables.env
     sed -i "s#MAILING_PASSWORD=changeit#MAILING_PASSWORD=${ZBR_SMTP_PASSWORD}#g" configuration/mail-service/variables.env
 
+    cp configuration/rabbitmq/variables.env.original configuration/rabbitmq/variables.env
+    sed -i "s#RABBITMQ_DEFAULT_USER=qpsdemo#RABBITMQ_DEFAULT_USER=${ZBR_RABBITMQ_USER}#g" configuration/rabbitmq/variables.env
+    sed -i "s#RABBITMQ_DEFAULT_PASS=qpsdemo#RABBITMQ_DEFAULT_PASS=${ZBR_RABBITMQ_PASSWORD}#g" configuration/rabbitmq/variables.env
+    cp configuration/logstash/logstash.conf.original configuration/logstash/logstash.conf
+    sed -i "s#user => ""qpsdemo""#user => ""${ZBR_RABBITMQ_USER}""#g" configuration/logstash/logstash.conf
+    sed -i "s#password => ""qpsdemo""#password => ""${ZBR_RABBITMQ_PASSWORD}""#g" configuration/logstash/logstash.conf
+
+#    export ZBR_RABBITMQ_USER=$ZBR_RABBITMQ_USER
+#    export ZBR_RABBITMQ_PASSWORD=$ZBR_RABBITMQ_PASSWORD
+
+
     cp configuration/redis/redis.conf.original configuration/redis/redis.conf
     sed -i "s#requirepass MdXVvJgDdz9Hnau7#requirepass ${ZBR_REDIS_PASSWORD}#g" configuration/redis/redis.conf
     sed -i "s#REDIS_PASSWORD=MdXVvJgDdz9Hnau7#REDIS_PASSWORD=${ZBR_REDIS_PASSWORD}#g" configuration/reporting-service/variables.env
@@ -61,6 +72,8 @@
     rm configuration/iam-db/variables.env
     rm configuration/postgres/variables.env
     rm configuration/mail-service/variables.env
+    rm configuration/rabbitmq/variables.env
+    rm configuration/logstash/logstash.conf
     rm configuration/redis/redis.conf
     rm configuration/reporting-service/variables.env
     rm configuration/reporting-ui/variables.env
@@ -101,6 +114,14 @@
       cp configuration/mail-service/variables.env.original configuration/mail-service/variables.env
     fi
 
+    if [[ ! -f configuration/rabbitmq/variables.env ]]; then
+      cp configuration/rabbitmq/variables.env.original configuration/rabbitmq/variables.env
+    fi
+
+    if [[ ! -f configuration/logstash/logstash.conf ]]; then
+      cp configuration/logstash/logstash.conf.original configuration/logstash/logstash.conf
+    fi
+
     if [[ ! -f configuration/redis/redis.conf ]]; then
       cp configuration/redis/redis.conf.original configuration/redis/redis.conf
     fi
@@ -112,11 +133,6 @@
     if [[ ! -f configuration/reporting-ui/variables.env ]]; then
       cp configuration/reporting-ui/variables.env.original configuration/reporting-ui/variables.env
     fi
-
-    if [[ ! -f configuration/rabbitmq/variables.env ]]; then
-      cp configuration/rabbitmq/variables.env.original configuration/rabbitmq/variables.env
-    fi
-
 
     minio-storage/zebrunner.sh start
     docker-compose --env-file .env -f docker-compose.yml up -d
@@ -153,10 +169,11 @@
     cp configuration/iam-db/variables.env configuration/iam-db/variables.env.bak
     cp configuration/postgres/variables.env configuration/postgres/variables.env.bak
     cp configuration/mail-service/variables.env configuration/mail-service/variables.env.bak
+    cp configuration/rabbitmq/variables.env configuration/rabbitmq/variables.env.bak
+    cp configuration/logstash/logstash.conf configuration/logstash/logstash.conf.bak
     cp configuration/redis/redis.conf configuration/redis/redis.conf.bak
     cp configuration/reporting-service/variables.env configuration/reporting-service/variables.env.bak
     cp configuration/reporting-ui/variables.env configuration/reporting-ui/variables.env.bak
-    cp configuration/rabbitmq/variables.env configuration/rabbitmq/variables.env.bak
 
     docker run --rm --volumes-from postgres -v $(pwd)/backup:/var/backup "ubuntu" tar -czvf /var/backup/postgres.tar.gz /var/lib/postgresql/data
     docker run --rm --volumes-from iam-db -v $(pwd)/backup:/var/backup "ubuntu" tar -czvf /var/backup/iam-db.tar.gz /var/lib/postgresql/data
@@ -179,10 +196,11 @@
     cp configuration/iam-db/variables.env.bak configuration/iam-db/variables.env
     cp configuration/postgres/variables.env.bak configuration/postgres/variables.env
     cp configuration/mail-service/variables.env.bak configuration/mail-service/variables.env
+    cp configuration/rabbitmq/variables.env.bak configuration/rabbitmq/variables.env
+    cp configuration/logstash/logstash.conf.bak configuration/logstash/logstash.conf
     cp configuration/redis/redis.conf.bak configuration/redis/redis.conf
     cp configuration/reporting-service/variables.env.bak configuration/reporting-service/variables.env
     cp configuration/reporting-ui/variables.env.bak configuration/reporting-ui/variables.env
-    cp configuration/rabbitmq/variables.env.bak configuration/rabbitmq/variables.env
 
     docker run --rm --volumes-from postgres -v $(pwd)/backup:/var/backup "ubuntu" bash -c "cd / && tar -xzvf /var/backup/postgres.tar.gz"
     docker run --rm --volumes-from iam-db -v $(pwd)/backup:/var/backup "ubuntu" bash -c "cd / && tar -xzvf /var/backup/iam-db.tar.gz"

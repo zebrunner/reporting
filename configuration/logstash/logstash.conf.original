@@ -1,0 +1,83 @@
+input {
+  rabbitmq {
+    host => "rabbitmq"
+    port => "5672"
+    exchange => "logs"
+    metadata_enabled => true
+    user => "qpsdemo"
+    password => "qpsdemo"
+    durable => true
+    subscription_retry_interval_seconds => 5
+    tags => ["old-logs"]
+  }
+
+  rabbitmq {
+    host => "rabbitmq"
+    port => "5672"
+    queue => "test-run-logs-queue"
+    auto_delete => false
+    durable => false
+    user => "qpsdemo"
+    password => "qpsdemo"
+    subscription_retry_interval_seconds => 5
+    tags => ["test-run-data", "log"]
+  }
+
+  rabbitmq {
+    host => "rabbitmq"
+    port => "5672"
+    queue => "test-run-screenshots-queue"
+    auto_delete => false
+    durable => false
+    user => "qpsdemo"
+    password => "qpsdemo"
+    subscription_retry_interval_seconds => 5
+    tags => ["test-run-data", "screenshot"]
+  }
+}
+
+output {
+  if "old-logs" in [tags] {
+    elasticsearch {
+      hosts => ["elasticsearch:9200"]
+      index => 'logs-%{+YYYY.MM.dd}'
+      template => '/mapping.json'
+      template_overwrite =>  true
+      template_name => 'doc'
+    }
+  }
+
+  if "test-run-data" in [tags] {
+    elasticsearch {
+      hosts => ["elasticsearch:9200"]
+      index => 'test-run-data-%{+YYYY.MM.dd}'
+      template => '/test-run-data-template.json'
+      template_overwrite => true
+      template_name => 'test-run-data'
+    }
+  }
+}
+
+filter {
+  if "old-logs" in [tags] {
+    mutate {
+      add_field => {
+        "correlation-id" => "%{[@metadata][rabbitmq_properties][correlation-id]}"
+      }
+    }
+  }
+
+  if "test-run-data" in [tags] {
+    if "log" in [tags] {
+      mutate { add_field => { "kind" => "log" } }
+    } else if "screenshot" in [tags] {
+      mutate {
+        add_field => { "kind" => "screenshot" }
+        rename => {
+          "objectKey" => "message"
+          "capturedAt" => "timestamp"
+        }
+      }
+    }
+  }
+}
