@@ -22,9 +22,8 @@
     sed -i "s#DATABASE_PASSWORD=postgres#DATABASE_PASSWORD=${ZBR_IAM_POSTGRES_PASSWORD}#g" configuration/iam-service/variables.env
 
     cp configuration/iam-db/variables.env.original configuration/iam-db/variables.env
-    sed -i "s#DATABASE_USERNAME=postgres#DATABASE_USERNAME=${ZBR_IAM_POSTGRES_USER}#g" configuration/iam-db/variables.env
-    sed -i "s#DATABASE_PASSWORD=postgres#DATABASE_PASSWORD=${ZBR_IAM_POSTGRES_PASSWORD}#g" configuration/iam-db/variables.env
-
+    sed -i "s#POSTGRES_USER=postgres#POSTGRES_USER=${ZBR_IAM_POSTGRES_USER}#g" configuration/iam-db/variables.env
+    sed -i "s#POSTGRES_PASSWORD=postgres#POSTGRES_PASSWORD=${ZBR_IAM_POSTGRES_PASSWORD}#g" configuration/iam-db/variables.env
 
     #TODO: parametrize postgres credentials later
     #configuration/postgres/variables.env
