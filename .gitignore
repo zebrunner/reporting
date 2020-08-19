@@ -27,3 +27,5 @@ configuration/reporting-ui/variables.env
 *.bak
 *.tar.gz
 
+### Zebrunner Jenkins Integration ###
+database/reporting/sql/db-jenkins-integration.sql
