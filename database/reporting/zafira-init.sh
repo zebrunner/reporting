@@ -19,6 +19,12 @@ then
   psql -v ON_ERROR_STOP=1 --username $POSTGRES_USER -f /docker-entrypoint-initdb.d/sql/db-jenkins-integration.sql
 fi
 
+if [[ -f /docker-entrypoint-initdb.d/sql/db-mcloud-integration.sql ]];
+then
+  psql -v ON_ERROR_STOP=1 --username $POSTGRES_USER -f /docker-entrypoint-initdb.d/sql/db-mcloud-integration.sql
+fi
+
+
 if [ "$ZEBRUNNER_ENABLED" == true ];
 then
     psql --username $POSTGRES_USER -c "update zafira.integrations set enabled='true' where zafira.integrations.name='ZEBRUNNER';"
@@ -33,14 +39,6 @@ then
     psql --username $POSTGRES_USER -c "update zafira.integration_settings set value='$SELENIUM_URL' from zafira.integration_params where integration_settings.integration_param_id=integration_params.id and integration_params.name='SELENIUM_URL';"
     psql --username $POSTGRES_USER -c "update zafira.integration_settings set value='$SELENIUM_USER' from zafira.integration_params where integration_settings.integration_param_id=integration_params.id and integration_params.name='SELENIUM_USER';"
     psql --username $POSTGRES_USER -c "update zafira.integration_settings set value='$SELENIUM_PASSWORD' from zafira.integration_params where integration_settings.integration_param_id=integration_params.id and integration_params.name='SELENIUM_PASSWORD';"
-fi
-
-if [ "$MCLOUD_ENABLED" == true ];
-then
-    psql --username $POSTGRES_USER -c "update zafira.integrations set enabled='true' where zafira.integrations.name='MCLOUD';"
-    psql --username $POSTGRES_USER -c "update zafira.integration_settings set value='$MCLOUD_URL' from zafira.integration_params where integration_settings.integration_param_id=integration_params.id and integration_params.name='MCLOUD_URL';"
-    psql --username $POSTGRES_USER -c "update zafira.integration_settings set value='$MCLOUD_USER' from zafira.integration_params where integration_settings.integration_param_id=integration_params.id and integration_params.name='MCLOUD_USER';"
-    psql --username $POSTGRES_USER -c "update zafira.integration_settings set value='$MCLOUD_PASSWORD' from zafira.integration_params where integration_settings.integration_param_id=integration_params.id and integration_params.name='MCLOUD_PASSWORD';"
 fi
 
 if [ "$AEROKUBE_ENABLED" == true ];

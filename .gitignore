@@ -29,3 +29,4 @@ configuration/reporting-ui/variables.env
 
 ### Zebrunner Jenkins Integration ###
 database/reporting/sql/db-jenkins-integration.sql
+database/reporting/sql/db-mcloud-integration.sql
