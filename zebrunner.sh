@@ -22,6 +22,7 @@
     sed -i "s#CRYPTO_SALT=TDkxalR4T3EySGI0T0YyMitScmkxWDlsUXlPV2R4OEZ1b2kyL1VJeFVHST0=#CRYPTO_SALT=${ZBR_CRYPTO_SALT}#g" configuration/_common/secrets.env
 
     cp configuration/_common/s3.env.original configuration/_common/s3.env
+    sed -i "s#S3_ENDPOINT=http://minio:9000#S3_ENDPOINT=${ZBR_S3_ENDPOINT}#g" configuration/_common/s3.env
     sed -i "s#S3_ACCESS_KEY_ID=changeit#S3_ACCESS_KEY_ID=${ZBR_ACCESS_KEY}#g" configuration/_common/s3.env
     sed -i "s#S3_SECRET=changeit#S3_SECRET=${ZBR_SECRET_KEY}#g" configuration/_common/s3.env
     sed -i "s#S3_REGION=us-west-1#S3_REGION=${ZBR_REGION}#g" configuration/_common/s3.env
