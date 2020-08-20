@@ -1,0 +1,6 @@
+SET SCHEMA 'zafira';
+
+UPDATE INTEGRATIONS SET ENABLED='true' WHERE INTEGRATIONS.NAME='SELENIUM';
+update integration_settings set value='URL_VALUE' from integration_params where integration_settings.integration_param_id=integration_params.id and integration_params.name='SELENIUM_URL';
+update integration_settings set value='USER_VALUE' from integration_params where integration_settings.integration_param_id=integration_params.id and integration_params.name='SELENIUM_USER';
+update integration_settings set value='PASSWORD_VALUE' from integration_params where integration_settings.integration_param_id=integration_params.id and integration_params.name='SELENIUM_PASSWORD';

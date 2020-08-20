@@ -4,8 +4,8 @@ input {
     port => "5672"
     exchange => "logs"
     metadata_enabled => true
-    user => "qpsdemo"
-    password => "qpsdemo"
+    user => "rabbitmq-user"
+    password => "rabbitmq-password"
     durable => true
     subscription_retry_interval_seconds => 5
     tags => ["old-logs"]
@@ -17,8 +17,8 @@ input {
     queue => "test-run-logs-queue"
     auto_delete => false
     durable => false
-    user => "qpsdemo"
-    password => "qpsdemo"
+    user => "rabbitmq-user"
+    password => "rabbitmq-password"
     subscription_retry_interval_seconds => 5
     tags => ["test-run-data", "log"]
   }
@@ -29,8 +29,8 @@ input {
     queue => "test-run-screenshots-queue"
     auto_delete => false
     durable => false
-    user => "qpsdemo"
-    password => "qpsdemo"
+    user => "rabbitmq-user"
+    password => "rabbitmq-password"
     subscription_retry_interval_seconds => 5
     tags => ["test-run-data", "screenshot"]
   }

@@ -8,13 +8,26 @@
 *.ipr
 /out/
 
-### Zebrunner Server (Community Edition) ###
+### Zebrunner Reporting ###
+.disabled
 configuration/_common/hosts.env
+configuration/_common/secrets.env
+configuration/_common/s3.env
+configuration/iam-service/variables.env
+configuration/iam-db/variables.env
+configuration/postgres/variables.env
+configuration/mail-service/variables.env
+configuration/rabbitmq/variables.env
+configuration/logstash/logstash.conf
+configuration/_common/rabbitmq.env
+configuration/rabbitmq/definitions.json
+configuration/redis/redis.conf
 configuration/reporting-service/variables.env
 configuration/reporting-ui/variables.env
-configuration/postgres/variables.env
-configuration/iam-db/variables.env
-configuration/rabbitmq/variables.env
 *.bak
 *.tar.gz
 
+### Zebrunner Jenkins Integration ###
+database/reporting/sql/db-jenkins-integration.sql
+database/reporting/sql/db-mcloud-integration.sql
+database/reporting/sql/db-selenium-integration.sql
