@@ -30,7 +30,7 @@
 
     cp configuration/zebrunner-proxy/nginx.conf.original configuration/zebrunner-proxy/nginx.conf
     sed -i "s#custom_secret_value#${ZBR_STORAGE_AGENT_KEY}#g" configuration/zebrunner-proxy/nginx.conf
-    sed -i "s#/zebrunner/#$/{ZBR_STORAGE_BUCKET}/#g" configuration/zebrunner-proxy/nginx.conf
+    sed -i "s#/zebrunner/#/${ZBR_STORAGE_BUCKET}/#g" configuration/zebrunner-proxy/nginx.conf
     sed -i "s#http://minio:9000#${ZBR_STORAGE_ENDPOINT_PROTOCOL}://${ZBR_STORAGE_ENDPOINT_HOST}#g" configuration/zebrunner-proxy/nginx.conf
 
     cp configuration/iam-service/variables.env.original configuration/iam-service/variables.env
