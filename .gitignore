@@ -24,6 +24,7 @@ configuration/rabbitmq/definitions.json
 configuration/redis/redis.conf
 configuration/reporting-service/variables.env
 configuration/reporting-ui/variables.env
+configuration/zebrunner-proxy/nginx.conf
 *.bak
 *.tar.gz
 
