@@ -67,6 +67,7 @@
     sed -i "s#requirepass MdXVvJgDdz9Hnau7#requirepass ${ZBR_REDIS_PASSWORD}#g" configuration/redis/redis.conf
     sed -i "s#REDIS_PASSWORD=MdXVvJgDdz9Hnau7#REDIS_PASSWORD=${ZBR_REDIS_PASSWORD}#g" configuration/reporting-service/variables.env
 
+    minio-storage/zebrunner.sh setup
   }
 
   shutdown() {
