@@ -22,11 +22,14 @@
     sed -i "s#CRYPTO_SALT=TDkxalR4T3EySGI0T0YyMitScmkxWDlsUXlPV2R4OEZ1b2kyL1VJeFVHST0=#CRYPTO_SALT=${ZBR_CRYPTO_SALT}#g" configuration/_common/secrets.env
 
     cp configuration/_common/s3.env.original configuration/_common/s3.env
-    sed -i "s#S3_REGION=us-west-1#S3_REGION=${ZBR_STORAGE_REGION}#g" configuration/_common/s3.env
-    sed -i "s#S3_ENDPOINT=http://minio:9000#S3_ENDPOINT=${ZBR_STORAGE_ENDPOINT_PROTOCOL}://${ZBR_STORAGE_ENDPOINT_HOST}#g" configuration/_common/s3.env
-    sed -i "s#S3_BUCKET=zebrunner#S3_BUCKET=${ZBR_STORAGE_BUCKET}#g" configuration/_common/s3.env
-    sed -i "s#S3_ACCESS_KEY_ID=changeit#S3_ACCESS_KEY_ID=${ZBR_STORAGE_ACCESS_KEY}#g" configuration/_common/s3.env
-    sed -i "s#S3_SECRET=changeit#S3_SECRET=${ZBR_STORAGE_SECRET_KEY}#g" configuration/_common/s3.env
+    if [[ $ZBR_MINIO_ENABLED -eq 0 ]]; then
+      # use case with AWS S3
+      sed -i "s#S3_REGION=us-west-1#S3_REGION=${ZBR_STORAGE_REGION}#g" configuration/_common/s3.env
+      sed -i "s#S3_ENDPOINT=http://minio:9000#S3_ENDPOINT=${ZBR_STORAGE_ENDPOINT_PROTOCOL}://${ZBR_STORAGE_ENDPOINT_HOST}#g" configuration/_common/s3.env
+      sed -i "s#S3_BUCKET=zebrunner#S3_BUCKET=${ZBR_STORAGE_BUCKET}#g" configuration/_common/s3.env
+      sed -i "s#S3_ACCESS_KEY_ID=zebrunner#S3_ACCESS_KEY_ID=${ZBR_STORAGE_ACCESS_KEY}#g" configuration/_common/s3.env
+      sed -i "s#S3_SECRET=J33dNyeTDj#S3_SECRET=${ZBR_STORAGE_SECRET_KEY}#g" configuration/_common/s3.env
+    fi
 
     cp configuration/zebrunner-proxy/nginx.conf.original configuration/zebrunner-proxy/nginx.conf
     sed -i "s#custom_secret_value#${ZBR_STORAGE_AGENT_KEY}#g" configuration/zebrunner-proxy/nginx.conf
