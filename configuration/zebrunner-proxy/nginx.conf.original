@@ -98,13 +98,10 @@ http {
             deny all;
           }
 
-          set $bucket "zebrunner";
-          set $endpoint "minio:9000";
-          set $custom_secret "custom_secret_value";
-          proxy_set_header User-Agent $custom_secret;
-          rewrite ^/(.*)$ /$bucket/$1 break;
+          proxy_set_header User-Agent "custom_secret_value";
+          rewrite ^/(.*)$ /zebrunner/$1 break;
           proxy_buffering off;
-          proxy_pass http://$endpoint;
+          proxy_pass http://minio:9000;
         }
 
         location ~ ^/elasticsearch/(.*)$ {
