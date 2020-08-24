@@ -19,12 +19,12 @@ then
   psql -v ON_ERROR_STOP=1 --username $POSTGRES_USER -f /docker-entrypoint-initdb.d/sql/db-jenkins-integration.sql
 fi
 
-if [[ -f /docker-entrypoint-initdb.d/sql/db-mcloud-integration.sql ]];
-then
-  psql -v ON_ERROR_STOP=1 --username $POSTGRES_USER -f /docker-entrypoint-initdb.d/sql/db-mcloud-integration.sql
-fi
-
 if [[ -f /docker-entrypoint-initdb.d/sql/db-selenium-integration.sql ]];
 then
   psql -v ON_ERROR_STOP=1 --username $POSTGRES_USER -f /docker-entrypoint-initdb.d/sql/db-selenium-integration.sql
+fi
+
+if [[ -f /docker-entrypoint-initdb.d/sql/db-mcloud-integration.sql ]];
+then
+  psql -v ON_ERROR_STOP=1 --username $POSTGRES_USER -f /docker-entrypoint-initdb.d/sql/db-mcloud-integration.sql
 fi
