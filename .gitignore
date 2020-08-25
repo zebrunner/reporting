@@ -17,6 +17,7 @@ configuration/iam-service/variables.env
 configuration/iam-db/variables.env
 configuration/postgres/variables.env
 configuration/db-migration-tool/001_iam.json
+configuration/db-migration-tool/002_iam_user_preferences.json
 configuration/mail-service/variables.env
 configuration/rabbitmq/variables.env
 configuration/logstash/logstash.conf
