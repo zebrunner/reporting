@@ -3,13 +3,13 @@
     "driverClassName": "org.postgresql.Driver",
     "url": "jdbc:postgresql://postgres:5432/postgres",
     "username": "postgres",
-    "password": "postgres"
+    "password": "db-changeit"
   },
   "outputDataSource": {
     "driverClassName": "org.postgresql.Driver",
     "url": "jdbc:postgresql://iam-db:5432/postgres",
     "username": "postgres",
-    "password": "postgres"
+    "password": "iam-changeit"
   },
   "readiness": {
     "probes": {
