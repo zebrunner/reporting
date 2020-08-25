@@ -52,11 +52,15 @@
     cp configuration/db-migration-tool/001_iam.json.original configuration/db-migration-tool/001_iam.json
     sed -i "s#db-changeit#${ZBR_POSTGRES_PASSWORD}#g" configuration/db-migration-tool/001_iam.json
     sed -i "s#iam-changeit#${ZBR_IAM_POSTGRES_PASSWORD}#g" configuration/db-migration-tool/001_iam.json
+    cp configuration/db-migration-tool/002_iam_user_preferences.json.original configuration/db-migration-tool/002_iam_user_preferences.json
+    sed -i "s#db-changeit#${ZBR_POSTGRES_PASSWORD}#g" configuration/db-migration-tool/002_iam_user_preferences.json
+    sed -i "s#iam-changeit#${ZBR_IAM_POSTGRES_PASSWORD}#g" configuration/db-migration-tool/002_iam_user_preferences.json
 
     cp configuration/mail-service/variables.env.original configuration/mail-service/variables.env
     sed -i "s#MAILING_HOST=smtp.gmail.com#MAILING_HOST=${ZBR_SMTP_HOST}#g" configuration/mail-service/variables.env
     sed -i "s#MAILING_PORT=587#MAILING_PORT=${ZBR_SMTP_PORT}#g" configuration/mail-service/variables.env
     sed -i "s#MAILING_SENDER_EMAIL=changeit#MAILING_SENDER_EMAIL=${ZBR_SMTP_EMAIL}#g" configuration/mail-service/variables.env
+    sed -i "s#MAILING_SENDER_NAME=changeit#MAILING_SENDER_NAME=${ZBR_SMTP_USER}#g" configuration/mail-service/variables.env
     sed -i "s#MAILING_USERNAME=changeit#MAILING_USERNAME=${ZBR_SMTP_USER}#g" configuration/mail-service/variables.env
     sed -i "s#MAILING_PASSWORD=changeit#MAILING_PASSWORD=${ZBR_SMTP_PASSWORD}#g" configuration/mail-service/variables.env
 
@@ -95,6 +99,7 @@
     rm -f configuration/iam-db/variables.env
     rm -f configuration/postgres/variables.env
     rm -f configuration/db-migration-tool/001_iam.json
+    rm -f configuration/db-migration-tool/002_iam_user_preferences.json
     rm -f configuration/mail-service/variables.env
     rm -f configuration/rabbitmq/variables.env
     rm -f configuration/logstash/logstash.conf
@@ -145,6 +150,10 @@
 
     if [[ ! -f configuration/db-migration-tool/001_iam.json ]]; then
       cp configuration/db-migration-tool/001_iam.json.original configuration/db-migration-tool/001_iam.json
+    fi
+
+    if [[ ! -f configuration/db-migration-tool/002_iam_user_preferences.json ]]; then
+      cp configuration/db-migration-tool/002_iam_user_preferences.json.original configuration/db-migration-tool/002_iam_user_preferences.json
     fi
 
     if [[ ! -f configuration/mail-service/variables.env ]]; then
@@ -216,6 +225,7 @@
     cp configuration/iam-db/variables.env configuration/iam-db/variables.env.bak
     cp configuration/postgres/variables.env configuration/postgres/variables.env.bak
     cp configuration/db-migration-tool/001_iam.json configuration/db-migration-tool/001_iam.json.bak
+    cp configuration/db-migration-tool/002_iam_user_preferences.json configuration/db-migration-tool/002_iam_user_preferences.json.bak
     cp configuration/mail-service/variables.env configuration/mail-service/variables.env.bak
     cp configuration/rabbitmq/variables.env configuration/rabbitmq/variables.env.bak
     cp configuration/logstash/logstash.conf configuration/logstash/logstash.conf.bak
@@ -248,6 +258,7 @@
     cp configuration/iam-db/variables.env.bak configuration/iam-db/variables.env
     cp configuration/postgres/variables.env.bak configuration/postgres/variables.env
     cp configuration/db-migration-tool/001_iam.json.bak configuration/db-migration-tool/001_iam.json
+    cp configuration/db-migration-tool/002_iam_user_preferences.json.bak configuration/db-migration-tool/002_iam_user_preferences.json
     cp configuration/mail-service/variables.env.bak configuration/mail-service/variables.env
     cp configuration/rabbitmq/variables.env.bak configuration/rabbitmq/variables.env
     cp configuration/logstash/logstash.conf.bak configuration/logstash/logstash.conf
