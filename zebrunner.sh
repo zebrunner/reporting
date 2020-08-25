@@ -57,6 +57,7 @@
     sed -i "s#MAILING_HOST=smtp.gmail.com#MAILING_HOST=${ZBR_SMTP_HOST}#g" configuration/mail-service/variables.env
     sed -i "s#MAILING_PORT=587#MAILING_PORT=${ZBR_SMTP_PORT}#g" configuration/mail-service/variables.env
     sed -i "s#MAILING_SENDER_EMAIL=changeit#MAILING_SENDER_EMAIL=${ZBR_SMTP_EMAIL}#g" configuration/mail-service/variables.env
+    sed -i "s#MAILING_SENDER_NAME=changeit#MAILING_SENDER_NAME=${ZBR_SMTP_USER}#g" configuration/mail-service/variables.env
     sed -i "s#MAILING_USERNAME=changeit#MAILING_USERNAME=${ZBR_SMTP_USER}#g" configuration/mail-service/variables.env
     sed -i "s#MAILING_PASSWORD=changeit#MAILING_PASSWORD=${ZBR_SMTP_PASSWORD}#g" configuration/mail-service/variables.env
 
