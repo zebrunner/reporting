@@ -954,3 +954,15 @@ BEGIN
   UPDATE settings SET value = current_version WHERE name = 'LAST_ALTER_VERSION';
 END;
 $$ LANGUAGE plpgsql;
+
+
+DROP TABLE IF EXISTS tenant_state;
+CREATE TABLE IF NOT EXISTS tenant_state (
+  id SERIAL,
+  status VARCHAR(255) NOT NULL DEFAULT 'ACTIVE',
+  plan VARCHAR(255) NOT NULL,
+  modified_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (id)
+);
+CREATE TRIGGER update_timestamp_tenant_state BEFORE INSERT OR UPDATE ON tenant_state FOR EACH ROW EXECUTE PROCEDURE update_timestamp();

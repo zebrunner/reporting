@@ -294,3 +294,5 @@ DO $$
         ('DEFAULT_TEST_VIEW', 'runs', USER_ID);
 
 END$$;
+
+INSERT INTO tenant_state (status, plan) VALUES ('ACTIVE', 'TRIAL');
