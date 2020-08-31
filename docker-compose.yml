@@ -120,7 +120,7 @@ services:
     image: "zebrunner/data-migration-tool"
     container_name: db-migration-tool
     volumes:
-      - "./configuration/data-migration-scripts/:/var/migration"
+      - "./configuration/db-migration-tool/:/var/migration"
       - "migration-tool-volume:/var/migration-state"
     depends_on:
       - postgres

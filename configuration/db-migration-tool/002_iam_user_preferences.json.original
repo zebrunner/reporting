@@ -3,7 +3,7 @@
     "driverClassName": "org.postgresql.Driver",
     "url": "jdbc:postgresql://postgres:5432/postgres",
     "username": "postgres",
-    "password": "db-changeit"
+    "password": "postgres"
   },
   "outputDataSource": {
     "driverClassName": "org.postgresql.Driver",
