@@ -3,7 +3,7 @@
     "driverClassName": "org.postgresql.Driver",
     "url": "jdbc:postgresql://postgres:5432/postgres",
     "username": "postgres",
-    "password": "db-changeit"
+    "password": "postgres"
   },
   "outputDataSource": {
     "driverClassName": "org.postgresql.Driver",
@@ -28,6 +28,14 @@
     ]
   },
   "scenarios": [
+    {
+      "selectQuery": "SELECT NAME, INVITABLE, CREATED_AT FROM GROUPS; ",
+      "insertQuery": "INSERT INTO GROUPS(NAME, INVITABLE, CREATED_AT) VALUES (:NAME, :INVITABLE, :CREATED_AT) ON CONFLICT (NAME) DO NOTHING; ",
+      "postExecutionQueries": [
+        "SELECT SETVAL('GROUPS_ID_SEQ', (SELECT MAX(ID) + 1 FROM GROUPS));",
+        "UPDATE GROUPS SET IS_DEFAULT = TRUE WHERE NOT EXISTS (SELECT ID FROM GROUPS WHERE IS_DEFAULT = TRUE) AND NAME = 'Users';"
+      ]
+    },
     {
       "selectQuery": "SELECT ID, USERNAME, PASSWORD, EMAIL, FIRST_NAME, LAST_NAME, COVER_PHOTO_URL AS PHOTO_URL, LAST_LOGIN, SOURCE, STATUS, RESET_TOKEN, CREATED_AT FROM USERS; ",
       "insertQuery": "INSERT INTO USERS(ID, USERNAME, PASSWORD, EMAIL, FIRST_NAME, LAST_NAME, PHOTO_URL, LAST_LOGIN, SOURCE, STATUS, RESET_TOKEN, CREATED_AT) VALUES (:ID, :USERNAME, :PASSWORD, :EMAIL, :FIRST_NAME, :LAST_NAME, :PHOTO_URL, :LAST_LOGIN, :SOURCE, :STATUS, :RESET_TOKEN, :CREATED_AT) ON CONFLICT (USERNAME) DO NOTHING; ",
