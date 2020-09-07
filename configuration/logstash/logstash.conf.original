@@ -16,7 +16,7 @@ input {
     port => "5672"
     queue => "test-run-logs-queue"
     auto_delete => false
-    durable => false
+    durable => true
     user => "rabbitmq-user"
     password => "rabbitmq-password"
     subscription_retry_interval_seconds => 5
@@ -28,7 +28,7 @@ input {
     port => "5672"
     queue => "test-run-screenshots-queue"
     auto_delete => false
-    durable => false
+    durable => true
     user => "rabbitmq-user"
     password => "rabbitmq-password"
     subscription_retry_interval_seconds => 5
