@@ -22,7 +22,6 @@ configuration/mail-service/variables.env
 configuration/rabbitmq/variables.env
 configuration/logstash/logstash.conf
 configuration/_common/rabbitmq.env
-configuration/rabbitmq/definitions.json
 configuration/redis/redis.conf
 configuration/reporting-service/variables.env
 configuration/reporting-ui/variables.env

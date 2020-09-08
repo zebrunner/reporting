@@ -43,10 +43,11 @@ services:
     restart: always
 
   rabbitmq:
-    image: "qaprosoft/rabbitmq:${TAG_RABBITMQ}"
+    image: "rabbitmq:${TAG_RABBITMQ}"
     container_name: rabbitmq
     volumes:
-      - "./configuration/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro"
+      - "./configuration/rabbitmq/definitions:/rabbit-definitions:ro"
+      - "./configuration/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro"
     env_file:
       - configuration/rabbitmq/variables.env
     restart: always
