@@ -1,0 +1,32 @@
+{
+  "exchanges": [
+    {
+      "vhost": "/",
+      "name": "user.saved",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "vhost": "/",
+      "name": "user.saved.reporting",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "vhost": "/",
+      "source": "user.saved",
+      "destination": "user.saved.reporting",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {}
+    }
+  ]
+}

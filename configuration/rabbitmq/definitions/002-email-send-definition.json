@@ -1,0 +1,32 @@
+{
+  "exchanges": [
+    {
+      "vhost": "/",
+      "name": "email",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "vhost": "/",
+      "name": "email.send",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "vhost": "/",
+      "source": "email",
+      "destination": "email.send.ms",
+      "destination_type": "queue",
+      "routing_key": "send",
+      "arguments": {}
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "exchanges": [
+    {
+      "vhost": "/",
+      "name": "reporting.test-run-log",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "vhost": "/",
+      "name": "reporting.test-run-log.save",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "vhost": "/",
+      "source": "reporting.test-run-log",
+      "destination": "reporting.test-run-log.save",
+      "destination_type": "queue",
+      "routing_key": "save",
+      "arguments": {}
+    }
+  ]
+}

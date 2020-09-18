@@ -1,0 +1,32 @@
+{
+  "exchanges": [
+    {
+      "vhost": "/",
+      "name": "reporting.test-run-artifact",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "vhost": "/",
+      "name": "reporting.test-run-artifact.save-reference.reporting",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "vhost": "/",
+      "source": "reporting.test-run-artifact",
+      "destination": "reporting.test-run-artifact.save-reference.reporting",
+      "destination_type": "queue",
+      "routing_key": "save-reference",
+      "arguments": {}
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "exchanges": [
+    {
+      "vhost": "/",
+      "name": "integration.reinit",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ]
+}
