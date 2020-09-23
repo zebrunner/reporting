@@ -277,8 +277,12 @@
   }
 
   version() {
-      source .env
-      echo "${TAG_REPORTING_SERVICE}"
+    if [[ -f .disabled ]]; then
+      exit 0
+    fi
+
+    source .env
+    echo "${TAG_REPORTING_SERVICE}"
   }
 
   echo_warning() {
