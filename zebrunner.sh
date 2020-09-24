@@ -282,7 +282,7 @@
     fi
 
     source .env
-    echo "reporting - ${TAG_REPORTING_SERVICE}"
+    echo "reporting: ${TAG_REPORTING_SERVICE}"
   }
 
   echo_warning() {
