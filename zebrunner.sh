@@ -73,9 +73,9 @@
     cp configuration/_common/rabbitmq.env.original configuration/_common/rabbitmq.env
     sed -i "s#rabbitmq-user#${ZBR_RABBITMQ_USER}#g" configuration/_common/rabbitmq.env
     sed -i "s#rabbitmq-password#${ZBR_RABBITMQ_PASSWORD}#g" configuration/_common/rabbitmq.env
-    cp configuration/rabbitmq/definitions.json.original configuration/rabbitmq/definitions.json
-    sed -i "s#rabbitmq-user#${ZBR_RABBITMQ_USER}#g" configuration/rabbitmq/definitions.json
-    sed -i "s#rabbitmq-password#${ZBR_RABBITMQ_PASSWORD}#g" configuration/rabbitmq/definitions.json
+    cp configuration/rabbitmq/definitions/001-general-definition.json.original configuration/rabbitmq/definitions/001-general-definition.json
+    sed -i "s#rabbitmq-user#${ZBR_RABBITMQ_USER}#g" configuration/rabbitmq/definitions/001-general-definition.json
+    sed -i "s#rabbitmq-password#${ZBR_RABBITMQ_PASSWORD}#g" configuration/rabbitmq/definitions/001-general-definition.json
 
     cp configuration/redis/redis.conf.original configuration/redis/redis.conf
     sed -i "s#requirepass MdXVvJgDdz9Hnau7#requirepass ${ZBR_REDIS_PASSWORD}#g" configuration/redis/redis.conf
@@ -104,7 +104,7 @@
     rm -f configuration/rabbitmq/variables.env
     rm -f configuration/logstash/logstash.conf
     rm -f configuration/_common/rabbitmq.env
-    rm -f configuration/rabbitmq/definitions.json
+    rm -f configuration/rabbitmq/definitions/001-general-definition.json
     rm -f configuration/redis/redis.conf
     rm -f configuration/reporting-service/variables.env
     rm -f configuration/reporting-ui/variables.env
@@ -172,8 +172,8 @@
       cp configuration/_common/rabbitmq.env.original configuration/_common/rabbitmq.env
     fi
 
-    if [[ ! -f configuration/rabbitmq/definitions.json ]]; then
-      cp configuration/rabbitmq/definitions.json.original configuration/rabbitmq/definitions.json
+    if [[ ! -f configuration/rabbitmq/definitions/001-general-definition.json ]]; then
+      cp configuration/rabbitmq/definitions/001-general-definition.json.original configuration/rabbitmq/definitions/001-general-definition.json
     fi
 
     if [[ ! -f configuration/redis/redis.conf ]]; then
@@ -230,7 +230,7 @@
     cp configuration/rabbitmq/variables.env configuration/rabbitmq/variables.env.bak
     cp configuration/logstash/logstash.conf configuration/logstash/logstash.conf.bak
     cp configuration/_common/rabbitmq.env configuration/_common/rabbitmq.env.bak
-    cp configuration/rabbitmq/definitions.json configuration/rabbitmq/definitions.json.bak
+    cp configuration/rabbitmq/definitions/001-general-definition.json configuration/rabbitmq/definitions/001-general-definition.json.bak
     cp configuration/redis/redis.conf configuration/redis/redis.conf.bak
     cp configuration/reporting-service/variables.env configuration/reporting-service/variables.env.bak
     cp configuration/reporting-ui/variables.env configuration/reporting-ui/variables.env.bak
@@ -263,7 +263,7 @@
     cp configuration/rabbitmq/variables.env.bak configuration/rabbitmq/variables.env
     cp configuration/logstash/logstash.conf.bak configuration/logstash/logstash.conf
     cp configuration/_common/rabbitmq.env.bak configuration/_common/rabbitmq.env
-    cp configuration/rabbitmq/definitions.json.bak configuration/rabbitmq/definitions.json
+    cp configuration/rabbitmq/definitions/001-general-definition.json.bak configuration/rabbitmq/definitions/001-general-definition.json
     cp configuration/redis/redis.conf.bak configuration/redis/redis.conf
     cp configuration/reporting-service/variables.env.bak configuration/reporting-service/variables.env
     cp configuration/reporting-ui/variables.env.bak configuration/reporting-ui/variables.env
