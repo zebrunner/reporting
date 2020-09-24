@@ -20,6 +20,7 @@ configuration/db-migration-tool/001_iam.json
 configuration/db-migration-tool/002_iam_user_preferences.json
 configuration/mail-service/variables.env
 configuration/rabbitmq/variables.env
+configuration/rabbitmq/definitions/001-general-definition.json
 configuration/logstash/logstash.conf
 configuration/_common/rabbitmq.env
 configuration/redis/redis.conf
