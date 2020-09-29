@@ -1,7 +1,4 @@
-CREATE SCHEMA management;
-
 SET SCHEMA 'management';
-
 
 CREATE TABLE TENANCIES (
  ID SERIAL,
