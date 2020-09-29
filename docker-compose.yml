@@ -48,6 +48,7 @@ services:
     container_name: rabbitmq
     volumes:
       - "./configuration/rabbitmq/definitions:/rabbit-definitions:ro"
+      - "/dev/null:/rabbit-definitions/001-general-definition.json.original"
       - "./configuration/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro"
     env_file:
       - configuration/rabbitmq/variables.env
