@@ -109,7 +109,7 @@ http {
           }
 
           proxy_set_header User-Agent "custom_secret_value";
-          rewrite ^/(.*)$ /zebrunner/$1 break;
+          rewrite ^/(.*)$ /zebrunner/zafira/$1 break;
           proxy_buffering off;
           proxy_pass http://minio:9000;
         }
