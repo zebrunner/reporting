@@ -25,6 +25,7 @@ services:
   postgres:
     image: "qaprosoft/postgres:${TAG_POSTGRES}"
     container_name: postgres
+    command: postgres -c 'max_connections=200'
     volumes:
       - "pgdata-volume:/var/lib/postgresql/data"
       - "./database/reporting/:/docker-entrypoint-initdb.d"
@@ -47,6 +48,7 @@ services:
     container_name: rabbitmq
     volumes:
       - "./configuration/rabbitmq/definitions:/rabbit-definitions:ro"
+      - "/dev/null:/rabbit-definitions/001-general-definition.json.original"
       - "./configuration/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro"
     env_file:
       - configuration/rabbitmq/variables.env
