@@ -69,12 +69,22 @@ http {
         }
 
         location ~ "^/(reporting-service/|reporting/|api/reporting/)v1/test-runs/(?<test_run_id>.+)/logs" {
+            if ($request_method = GET) {
+               rewrite ^/reporting-service/(.*)$ /$1 break;
+               proxy_pass http://reporting-service-server;
+            }
+
             rewrite ^/(.*)$ /v1/test-runs/$test_run_id/logs break;
             proxy_pass http://artifacts-proxy-service-server;
         }
 
         location ~ "^/(reporting-service/|reporting/|api/reporting/)v1/test-runs/(?<test_run_id>.+)/tests/(?<test_id>.+)/screenshots" {
             client_max_body_size 5M;
+
+            if ($request_method = GET) {
+               rewrite ^/reporting-service/(.*)$ /$1 break;
+               proxy_pass http://reporting-service-server;
+            }
 
             set $captured_at_timestamp $http_x_zbr_screenshot_captured_at;
             if ($msec ~ "(.*)\.(.*)") {
@@ -109,7 +119,7 @@ http {
           }
 
           proxy_set_header User-Agent "custom_secret_value";
-          rewrite ^/(.*)$ /zebrunner/zafira/$1 break;
+          rewrite ^/(.*)$ /zebrunner/$1 break;
           proxy_buffering off;
           proxy_pass http://minio:9000;
         }
