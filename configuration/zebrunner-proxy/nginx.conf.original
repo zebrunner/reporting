@@ -124,10 +124,6 @@ http {
           proxy_pass http://minio:9000;
         }
 
-        location ~ ^/elasticsearch/(.*)$ {
-            set $upstream_elasticsearch "elasticsearch:9200";
-            proxy_pass http://$upstream_elasticsearch/$1;
-        }
     }
 
     server {
