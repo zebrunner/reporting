@@ -14,5 +14,5 @@ pages:
     - Release notes: releases.md
 theme:
   name: 'material'
-repo_url: https://github.com/qaprosoft/zafira
+repo_url: https://github.com/zebrunner/reporting
 repo_name: Github
