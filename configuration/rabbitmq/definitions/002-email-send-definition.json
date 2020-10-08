@@ -13,7 +13,7 @@
   "queues": [
     {
       "vhost": "/",
-      "name": "email.send",
+      "name": "email.send.ms",
       "durable": true,
       "auto_delete": false,
       "arguments": {}
