@@ -73,13 +73,12 @@ Zebrunner Reporting **client side** repositories:
 
 ## Hardware requirements
 
-|                         	| Requirements                                                     	|
-|:-----------------------:	|------------------------------------------------------------------	|
-| <b>Operating System</b> 	| Linux Ubuntu 16.04, 18.04<br> Linux CentOS 7+<br> Amazon Linux 2  |
-|                           | OS X                                                              | 
-| <b>       CPU      </b> 	| 6+ Cores                                                         	|
-| <b>      Memory    </b> 	| 8+ Gb RAM                                                        	|
-| <b>    Swap        </b> 	| 2+ Gb                                         	|
+|                         	| Requirements                                                     	       |
+|:-----------------------:	|------------------------------------------------------------------	       |
+| <b>Operating System</b> 	| Linux Ubuntu 16.04, 18.04<br> Linux CentOS 7+<br> Amazon Linux 2<br> OS X| 
+| <b>       CPU      </b> 	| 6+ Cores                                                         	       |
+| <b>      Memory    </b> 	| 8+ Gb RAM                                                        	       |
+| <b>    Swap        </b> 	| 2+ Gb                                         	                         |
 
 ## Installation steps
 
