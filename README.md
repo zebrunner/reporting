@@ -75,16 +75,15 @@ Zebrunner Reporting **client side** repositories:
 
 |                         	| Requirements                                                     	                |
 |:-----------------------:	|------------------------------------------------------------------	                |
-| <b>Operating System</b> 	| Linux Ubuntu 16.04, 18.04<br> Linux CentOS 7+<br> Amazon Linux 2<br> Ubuntu 20.4 	|
+| <b>Operating System</b> 	| Ubuntu 20.4<br> Linux Ubuntu 16.04, 18.04<br> Linux CentOS 7+<br> Amazon Linux 2  |
 | <b>       CPU      </b> 	| 4+ Cores                                                         	                |
-| <b>      Memory    </b> 	| 16 Gb RAM                                                             	          |
+| <b>      Memory    </b> 	| 16Gb RAM                                                             	            |
 | <b>    Free space  </b> 	| SSD 64Gb+ of free space                                         	                |
 
 ## Installation steps
 
 1. Install [Docker Engine](https://docs.docker.com/engine/installation) and [Docker Compose](https://docs.docker.com/compose/install)
-2. Configure **vm.max_map_count** kernel setting using official [ES guide](https://www.elastic.co/guide/en/elasticsearch/reference/6.1/docker.html#docker-cli-run-prod-mode)(Linux only)
-3. Clone this repo recursively and navigate to the root folder
+2. Clone this repo recursively and navigate to the root folder
   ```
   git clone --recurse-submodule https://github.com/zebrunner/reporting.git && cd reporting
   ```
