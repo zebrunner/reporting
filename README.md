@@ -73,12 +73,12 @@ Zebrunner Reporting **client side** repositories:
 
 ## Hardware requirements
 
-|                         	| Requirements                                                     	                |
-|:-----------------------:	|------------------------------------------------------------------	                |
-| <b>Operating System</b> 	| Ubuntu 20.4<br> Linux Ubuntu 16.04, 18.04<br> Linux CentOS 7+<br> Amazon Linux 2  |
-| <b>       CPU      </b> 	| 4+ Cores                                                         	                |
-| <b>      Memory    </b> 	| 16Gb RAM                                                             	            |
-| <b>    Free space  </b> 	| SSD 64Gb+ of free space                                         	                |
+|                         | Requirements                                                     	                |
+|:-----------------------:| ----------------------------------------------------------------------------------|
+| <b>Operating System</b> | Ubuntu 20.4<br> Linux Ubuntu 16.04, 18.04<br> Linux CentOS 7+<br> Amazon Linux 2  |
+| <b>       CPU      </b> | 4+ Cores                                                         	                |
+| <b>      Memory    </b> | 16Gb RAM                                                             	            |
+| <b>    Free space  </b> | SSD 64Gb+ of free space                                         	                |
 
 ## Installation steps
 
