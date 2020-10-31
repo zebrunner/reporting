@@ -78,7 +78,7 @@
     replace configuration/rabbitmq/definitions/001-general-definition.json "rabbitmq-password" "${ZBR_RABBITMQ_PASSWORD}"
 
     cp configuration/redis/redis.conf.original configuration/redis/redis.conf
-    replace configuration/redis/redis.conf "MdXVvJgDdz9Hnau7" "${ZBR_REDIS_PASSWORD}"
+    replace configuration/redis/redis.conf "requirepass MdXVvJgDdz9Hnau7" "requirepass ${ZBR_REDIS_PASSWORD}"
     replace configuration/reporting-service/variables.env "REDIS_PASSWORD=MdXVvJgDdz9Hnau7" "REDIS_PASSWORD=${ZBR_REDIS_PASSWORD}"
 
     minio-storage/zebrunner.sh setup
