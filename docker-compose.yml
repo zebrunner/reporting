@@ -118,17 +118,6 @@ services:
       - iam-db
     restart: always
 
-  db-migration-tool:
-    image: "zebrunner/data-migration-tool"
-    container_name: db-migration-tool
-    volumes:
-      - "./configuration/db-migration-tool/:/var/migration"
-      - "migration-tool-volume:/var/migration-state"
-    depends_on:
-      - postgres
-      - iam-db
-    restart: "no"
-
   artifacts-proxy-service:
     image: "zebrunner/artifacts-proxy-service:${TAG_ARTIFACTS_PROXY_SERVICE}"
     container_name: artifacts-proxy-service
@@ -166,4 +155,3 @@ volumes:
   iam-db-volume:
   esdata-volume:
   assets-data:
-  migration-tool-volume:
