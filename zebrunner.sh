@@ -49,13 +49,6 @@
     replace configuration/postgres/variables.env "POSTGRES_PASSWORD=db-changeit" "POSTGRES_PASSWORD=${ZBR_POSTGRES_PASSWORD}"
     replace configuration/reporting-service/variables.env "DATABASE_PASSWORD=db-changeit" "DATABASE_PASSWORD=${ZBR_POSTGRES_PASSWORD}"
 
-    cp configuration/db-migration-tool/001_iam.json.original configuration/db-migration-tool/001_iam.json
-    replace configuration/db-migration-tool/001_iam.json "db-changeit" "${ZBR_POSTGRES_PASSWORD}"
-    replace configuration/db-migration-tool/001_iam.json "iam-changeit" "${ZBR_IAM_POSTGRES_PASSWORD}"
-    cp configuration/db-migration-tool/002_iam_user_preferences.json.original configuration/db-migration-tool/002_iam_user_preferences.json
-    replace configuration/db-migration-tool/002_iam_user_preferences.json "db-changeit" "${ZBR_POSTGRES_PASSWORD}"
-    replace configuration/db-migration-tool/002_iam_user_preferences.json "iam-changeit" "${ZBR_IAM_POSTGRES_PASSWORD}"
-
     cp configuration/mail-service/variables.env.original configuration/mail-service/variables.env
     sed -i "s#MAILING_HOST=smtp.gmail.com#MAILING_HOST=${ZBR_SMTP_HOST}#g" configuration/mail-service/variables.env
     sed -i "s#MAILING_PORT=587#MAILING_PORT=${ZBR_SMTP_PORT}#g" configuration/mail-service/variables.env
@@ -98,8 +91,6 @@
     rm -f configuration/iam-service/variables.env
     rm -f configuration/iam-db/variables.env
     rm -f configuration/postgres/variables.env
-    rm -f configuration/db-migration-tool/001_iam.json
-    rm -f configuration/db-migration-tool/002_iam_user_preferences.json
     rm -f configuration/mail-service/variables.env
     rm -f configuration/rabbitmq/variables.env
     rm -f configuration/logstash/logstash.conf
@@ -146,14 +137,6 @@
 
     if [[ ! -f configuration/postgres/variables.env ]]; then
       cp configuration/postgres/variables.env.original configuration/postgres/variables.env
-    fi
-
-    if [[ ! -f configuration/db-migration-tool/001_iam.json ]]; then
-      cp configuration/db-migration-tool/001_iam.json.original configuration/db-migration-tool/001_iam.json
-    fi
-
-    if [[ ! -f configuration/db-migration-tool/002_iam_user_preferences.json ]]; then
-      cp configuration/db-migration-tool/002_iam_user_preferences.json.original configuration/db-migration-tool/002_iam_user_preferences.json
     fi
 
     if [[ ! -f configuration/mail-service/variables.env ]]; then
@@ -224,8 +207,6 @@
     cp configuration/iam-service/variables.env configuration/iam-service/variables.env.bak
     cp configuration/iam-db/variables.env configuration/iam-db/variables.env.bak
     cp configuration/postgres/variables.env configuration/postgres/variables.env.bak
-    cp configuration/db-migration-tool/001_iam.json configuration/db-migration-tool/001_iam.json.bak
-    cp configuration/db-migration-tool/002_iam_user_preferences.json configuration/db-migration-tool/002_iam_user_preferences.json.bak
     cp configuration/mail-service/variables.env configuration/mail-service/variables.env.bak
     cp configuration/rabbitmq/variables.env configuration/rabbitmq/variables.env.bak
     cp configuration/logstash/logstash.conf configuration/logstash/logstash.conf.bak
@@ -239,7 +220,6 @@
     docker run --rm --volumes-from iam-db -v $(pwd)/backup:/var/backup "ubuntu" tar -czvf /var/backup/iam-db.tar.gz /var/lib/postgresql/data
     docker run --rm --volumes-from elasticsearch -v $(pwd)/backup:/var/backup "ubuntu" tar -czvf /var/backup/elasticsearch.tar.gz /usr/share/elasticsearch/data
     docker run --rm --volumes-from reporting-service -v $(pwd)/backup:/var/backup "ubuntu" tar -czvf /var/backup/reporting-service.tar.gz /opt/assets
-    docker run --rm --volumes-from db-migration-tool -v $(pwd)/backup:/var/backup "ubuntu" tar -czvf /var/backup/db-migration-tool.tar.gz /var/migration-state
   }
 
   restore() {
@@ -257,8 +237,6 @@
     cp configuration/iam-service/variables.env.bak configuration/iam-service/variables.env
     cp configuration/iam-db/variables.env.bak configuration/iam-db/variables.env
     cp configuration/postgres/variables.env.bak configuration/postgres/variables.env
-    cp configuration/db-migration-tool/001_iam.json.bak configuration/db-migration-tool/001_iam.json
-    cp configuration/db-migration-tool/002_iam_user_preferences.json.bak configuration/db-migration-tool/002_iam_user_preferences.json
     cp configuration/mail-service/variables.env.bak configuration/mail-service/variables.env
     cp configuration/rabbitmq/variables.env.bak configuration/rabbitmq/variables.env
     cp configuration/logstash/logstash.conf.bak configuration/logstash/logstash.conf
@@ -272,7 +250,6 @@
     docker run --rm --volumes-from iam-db -v $(pwd)/backup:/var/backup "ubuntu" bash -c "cd / && tar -xzvf /var/backup/iam-db.tar.gz"
     docker run --rm --volumes-from elasticsearch -v $(pwd)/backup:/var/backup "ubuntu" bash -c "cd / && tar -xzvf /var/backup/elasticsearch.tar.gz"
     docker run --rm --volumes-from reporting-service -v $(pwd)/backup:/var/backup "ubuntu" bash -c "cd / && tar -xzvf /var/backup/reporting-service.tar.gz"
-    docker run --rm --volumes-from db-migration-tool -v $(pwd)/backup:/var/backup "ubuntu" bash -c "cd / && tar -xzvf /var/backup/db-migration-tool.tar.gz"
     down
   }
 
