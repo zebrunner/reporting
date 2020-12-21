@@ -113,6 +113,15 @@ http {
             proxy_pass http://artifacts-proxy-service-server;
         }
 
+        location ~ "^/(reporting-service/|reporting/|api/reporting/)v1/test-runs/(?<test_run_id>.+)/artifacts" {
+            client_max_body_size 1G;
+
+            proxy_set_header x-zbr-test-run-id $test_run_id;
+
+            rewrite ^/(.*)$ /v1/artifacts break;
+            proxy_pass http://artifacts-proxy-service-server;
+        }
+
         location ~ ^/(artifacts|assets|common|users)/ {
           limit_except GET {
             deny all;
