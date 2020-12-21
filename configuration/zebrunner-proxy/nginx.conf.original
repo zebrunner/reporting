@@ -113,6 +113,8 @@ http {
             proxy_pass http://artifacts-proxy-service-server;
         }
 
+        # in nginx.conf file, this mapping should placed after mapping for test artifacts (previous one)
+        # otherwise, nginx will route by this mapping for both test and test run artifacts
         location ~ "^/(reporting-service/|reporting/|api/reporting/)v1/test-runs/(?<test_run_id>.+)/artifacts" {
             client_max_body_size 1G;
 
