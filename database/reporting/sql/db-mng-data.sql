@@ -765,7 +765,8 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
 <#function multiJoin array1=[] array2=[]>
   <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
 </#function>', 
-'{"columns": ["PROJECT", "COUNT"]}","{
+'{"columns": ["PROJECT", "COUNT"]}',
+'{
   "PERIOD": {
     "values": [
       "Last 24 Hours",
