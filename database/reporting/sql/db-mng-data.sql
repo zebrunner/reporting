@@ -1785,7 +1785,7 @@ SELECT count(*) AS "COUNT",
       substring(MESSAGE from 1 for 210) as "MESSAGE"
   FROM ${VIEW}
   ${WHERE_MULTIPLE_CLAUSE}
-  GROUP BY "ENV", "BUG", "SUBJECT", substring(MESSAGE from 1 for 210)
+  GROUP BY "ENV", "BUG", "SUBJECT", MESSAGE
   HAVING count(*) >= ${ERROR_COUNT}
   ORDER BY "COUNT" DESC
 
