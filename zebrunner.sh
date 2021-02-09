@@ -79,7 +79,8 @@
 
   shutdown() {
     if [[ -f .disabled ]]; then
-      exit 0
+      rm -f .disabled
+      exit 0 #no need to proceed as nothing was configured
     fi
 
     docker-compose --env-file .env -f docker-compose.yml down -v
