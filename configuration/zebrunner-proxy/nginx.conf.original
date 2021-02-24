@@ -79,7 +79,7 @@ http {
         }
 
         location ~ "^/(reporting-service/|reporting/|api/reporting/)v1/test-runs/(?<test_run_id>.+)/tests/(?<test_id>.+)/screenshots" {
-            client_max_body_size 5M;
+            client_max_body_size 10M;
 
             if ($request_method = GET) {
                rewrite ^/reporting-service/(.*)$ /$1 break;
