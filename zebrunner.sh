@@ -10,10 +10,6 @@
     cp configuration/reporting-service/variables.env.original configuration/reporting-service/variables.env
     sed -i "s#http://localhost:8081#${url}#g" configuration/reporting-service/variables.env
 
-    sed -i "s#GITHUB_HOST=github.com#GITHUB_HOST=${ZBR_GITHUB_HOST}#g" configuration/reporting-service/variables.env
-    sed -i "s#GITHUB_CLIENT_ID=#GITHUB_CLIENT_ID=${ZBR_GITHUB_CLIENT_ID}#g" configuration/reporting-service/variables.env
-    replace configuration/reporting-service/variables.env "GITHUB_CLIENT_SECRET=" "GITHUB_CLIENT_SECRET=${ZBR_GITHUB_CLIENT_SECRET}"
-
     cp configuration/reporting-ui/variables.env.original configuration/reporting-ui/variables.env
     sed -i "s#http://localhost:8081#${url}#g" configuration/reporting-ui/variables.env
 
