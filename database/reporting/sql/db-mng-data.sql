@@ -1,63 +1,68 @@
 SET SCHEMA 'management';
 
-INSERT INTO TENANCIES (NAME) VALUES ('zafira');
-
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTS EXECUTION ROI (MAN-HOURS)', 'Monthly team/personal automation ROI by tests execution. 160+ hours per person for UI tests indicate that your execution ROI is very good.', 'BAR', '
-<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
-
-<#global MULTIPLE_VALUES = {
+--APPLICATION ISSUES (BLOCKERS) COUNT
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('DEFECTS COUNT', 
+	'A number of unique application bugs discovered and submitted by automation.', 'TABLE', '<#global WHERE_VALUES = {
+  "ENV": join(ENV),
   "LOWER(PLATFORM)": join(PLATFORM),
   "LOWER(BROWSER)": join(BROWSER),
-  "PROJECT": multiJoin(PROJECT, projects),
-  "OWNER_USERNAME": join(USER),
-  "ENV": join(ENV),
+  "LOCALE": join(LOCALE),
   "PRIORITY": join(PRIORITY),
-  "FEATURE": join(FEATURE)
+  "BUILD": correct(BUILDS!""),    
+  "RUN_NAME": correct(RUNS!""),
+  "OWNER": correct(USERS!"")
 }>
-<#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
 
-SELECT
-      ROUND(SUM(TOTAL_SECONDS)/3600) AS "ACTUAL",
-      ROUND(SUM(TOTAL_ETA_SECONDS)/3600) AS "ETA",
-      to_char(STARTED_AT, ''YYYY-MM'') AS "STARTED_AT"
-  FROM TOTAL_VIEW
-  ${WHERE_MULTIPLE_CLAUSE}
-  GROUP BY "STARTED_AT"
-  ORDER BY "STARTED_AT";
+<#global VIEW = PERIOD?replace(" ", "_") />
+<#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
 
+  SELECT PLATFORM AS "PLATFORM",
+    BROWSER AS "BROWSER",
+    COUNT(DISTINCT KNOWN_ISSUE) AS "COUNT"
+  FROM ${VIEW}
+  ${WHERE_CLAUSE}
+  GROUP BY PLATFORM, BROWSER
 
-  <#--
-    Generates WHERE clause for multiple choosen parameters
-    @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
-    @return - generated WHERE clause
-  -->
-<#function generateMultipleWhereClause map>
- <#local result = "" />
- <#list map?keys as key>
-     <#if map[key] != "" >
-      <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
-        <#-- Ignore non supported filters for Personal chart: USER -->
-        <#continue>
+<#--
+  Generates WHERE clause 
+  @map - collected multiple choosen data (key - DB column name : value - expected DB value)
+  @return - generated WHERE clause
+-->
+<#function generateWhereClause map>
+  <#local result = "WHERE KNOWN_ISSUE > 0"/>
+  
+  <#list map?keys as key>
+    <#if map[key]?has_content>
+      <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
+    </#if>
+  </#list>
+  
+  <#if isPersonal() && !USERS?has_content>
+    <!-- USERS filter has higher priority and if provided we should ignore personal board -->
+    <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
+  </#if>    
+
+  <#if activeProjectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
+  </#if>
+  
+  <#if MILESTONE?has_content>
+    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
+    
+    <#if MILESTONE_VERSION?has_content>
+      <#if MILESTONE_VERSION?lower_case == "latest">
+        <#local result = result + addCondition("AND", "MILESTONE_VERSION = (
+                SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
+                FROM TEST_RUNS INNER JOIN
+                  JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
+                WHERE JOBS.NAME=''${MILESTONE}'')", result) />
+      <#elseif isDecimal(MILESTONE_VERSION)>
+        <#local result = result + addCondition("AND", "MILESTONE_VERSION = ''" + MILESTONE_VERSION + "''", result) />
       </#if>
-      <#if result?length != 0>
-       <#local result = result + " AND "/>
-      </#if>
-      <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
-     </#if>
- </#list>
+    </#if>
+  </#if>  
 
- <#if result?length != 0 && PERSONAL == "true">
-   <!-- add personal filter by currentUserId with AND -->
-   <#local result = result + " AND OWNER_ID=${currentUserId} "/>
- <#elseif result?length == 0 && PERSONAL == "true">
- <!-- add personal filter by currentUserId without AND -->
-   <#local result = " OWNER_ID=${currentUserId} "/>
- </#if>
-
- <#if result?length != 0>
-  <#local result = " WHERE " + result/>
- </#if>
- <#return result>
+  <#return result>
 </#function>
 
 <#--
@@ -70,84 +75,97 @@ SELECT
 </#function>
 
 <#--
-    Joins array values using '', '' separator
-    @array1 - to join, has higher priority that array2
-    @array2 - alternative to join if array1 does not exist or is empty
-    @return - joined array as string
+    Correct string value removing ending comma if any
+    @line - to analyze and correct
+    @return - corrected line
   -->
-<#function multiJoin array1=[] array2=[]>
-  <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', '{
-    "grid": {
-        "right": "4%",
-        "left": "4%",
-        "top": "8%",
-        "bottom": "8%"
-    },
-    "legend": {
-        "top": -5
-    },
-    "tooltip": {
-        "trigger": "axis",
-        "extraCssText": "transform: translateZ(0);"
-    },
-    "dimensions": [
-        "STARTED_AT",
-        "ACTUAL",
-        "ETA"
-    ],
-    "xAxis": {
-        "type": "category"
-    },
-    "yAxis": {},
-    "series": [
-        {
-            "type": "bar"
-        },
-        {
-            "type": "line",
-            "smooth": true,
-            "lineStyle": {
-                "type": "dashed"
-            }
-        }
-    ],
-    "color": [
-        "#7fbae3",
-        "#919e8b"
-    ]
-}', '{
-  "PERSONAL": {
+<#function correct line>
+  <#if line?has_content>
+    <!-- trim line and remove ending comma if present -->
+    <#return line?trim?remove_ending(",") />
+  <#else>
+    <!-- return empty line if line is null or empty-->
+    <#return "" />
+  </#if>
+</#function>
+
+<#--
+    Add valid SQL clause using condition and operator
+    @operator - AND/OR/BETWEEN etc
+    @condition - field(s) condition
+    @query - existing where conditions
+    @return - concatenated where clause conditions
+  -->
+<#function addCondition operator, condition, query>
+  <#if query?length != 0>
+    <#return " " + operator + " " + condition>
+  <#else>
+    <#return condition>
+  </#if>
+</#function>
+
+<#--
+    retrun true if dashboard name is ''Personal'' or ''User Performance''
+    @return - boolean
+  -->
+<#function isPersonal>
+  <#local result = false />
+  <#if dashboardName?has_content>
+    <#if dashboardName == "Personal" || dashboardName == "User Performance">
+      <#local result = true />  
+    </#if>
+  </#if>
+  <#return result />
+</#function>
+
+<#-- 
+  verify that value is number
+  @return - boolean
+  -->
+<#function isDecimal value>
+  <#attempt>
+    <#assign num = value?number>
+    <#local result = true />
+  <#recover>
+    <#local result = false />
+  </#attempt>
+  <#return result />
+</#function>', '{"columns": ["PLATFORM", "BROWSER", "COUNT"]}', '{
+  "PERIOD": {
     "values": [
-      "false",
-      "true"
+      "Last 24 Hours",
+      "Last 7 Days",
+      "Last 14 Days",
+      "Last 30 Days",
+      "Last 90 Days",
+      "Last 365 Days",
+      "Today",
+      "Week",
+      "Month",
+      "Quarter",
+      "Year",
+      "Total"
     ],
-    "type": "radio",
     "required": true
-  },
-  "PROJECT": {
-    "values": [],
-    "valuesQuery": "SELECT NAME FROM PROJECTS WHERE NAME <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "PLATFORM": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "BROWSER": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "USER": {
-    "values": [],
-    "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
-    "multiple": true
   },
   "ENV": {
     "values": [],
     "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
+    "multiple": true
+  },
+  "PLATFORM": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' AND PLATFORM IS NOT NULL ORDER BY 1;",
+    "multiple": true
+  },
+  "LOCALE": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
+    "multiple": true
+  },  
+  "BROWSER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
   },
   "PRIORITY": {
@@ -155,241 +173,118 @@ SELECT
     "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
     "multiple": true
   },
-  "FEATURE": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''feature'' ORDER BY 1;",
-    "multiple": true
+  "USERS": {
+    "value": "",
+    "required": false
+  },  
+  "BUILDS": {
+    "value": "",
+    "required": false
+  },
+  "RUNS": {
+    "value": "",
+    "required": false
+  },  
+  "MILESTONE": {
+    "value": "",
+    "required": false
+  },
+  "MILESTONE_VERSION": {
+    "value": "",
+    "required": false
   }
 }', '', '{
-  "PERSONAL": "true",
-  "currentUserId": 1,
-  "PROJECT": [],
-  "USER": [],
-  "ENV": ["DEMO", "PROD"],
+  "PERIOD": "Total",
+  "currentUserId": 2,
+  "dashboardName": "",  
+  "ENV": [],
+  "PLATFORM": [],
+  "BROWSER": [],
+  "LOCALE": [],
   "PRIORITY": [],
-  "FEATURE": [],
-  "PLATFORM": ["*"],
-  "BROWSER":[],
-  "TASK": [],
-  "BUG": []
+  "BUILDS": "",  
+  "RUNS": "",
+  "MILESTONE": "",
+  "MILESTONE_VERSION": "l",
+  "USERS": ""
 }', false);
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASE STABILITY TREND', 'Test case stability trend on a monthly basis.', 'LINE', 
-'SELECT
-    ROUND(SUM(CASE WHEN TESTS.STATUS = ''PASSED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "STABILITY",
-    ROUND(SUM(CASE WHEN TESTS.STATUS = ''FAILED'' AND TESTS.KNOWN_ISSUE = FALSE THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "FAILURE",
-    ROUND(SUM(CASE WHEN TESTS.STATUS = ''SKIPPED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "OMISSION",
-    ROUND(SUM(CASE WHEN TESTS.STATUS = ''FAILED'' AND TESTS.KNOWN_ISSUE = TRUE THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "KNOWN ISSUE",
-    ROUND(SUM(CASE WHEN TESTS.STATUS = ''ABORTED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "INTERRUPT",
-    to_char(date_trunc(''month'', TESTS.START_TIME), ''YYYY-MM'') AS "TESTED_AT"
-FROM TESTS
-WHERE TEST_CASE_ID = ''${testCaseId}''
-  AND TESTS.FINISH_TIME IS NOT NULL
-  AND TESTS.START_TIME IS NOT NULL
-  AND TESTS.STATUS <> ''IN_PROGRESS''
-GROUP BY date_trunc(''month'', TESTS.START_TIME)
-ORDER BY "TESTED_AT"
-', 
-'{
-    "grid": {
-        "right": "5%",
-        "left": "5%",
-        "top": "8%",
-        "bottom": "8%"
-    },
-    "legend": {},
-    "tooltip": {
-        "trigger": "axis",
-        "extraCssText": "transform: translateZ(0);"
-    },
-    "dimensions": [
-        "TESTED_AT",
-        "STABILITY",
-        "FAILURE",
-        "OMISSION",
-        "KNOWN ISSUE",
-        "INTERRUPT"
-    ],
-    "color": [
-        "#61c8b3",
-        "#e76a77",
-        "#fddb7a",
-        "#9f5487",
-        "#6dbbe7"
-    ],
-    "xAxis": {
-        "type": "category",
-        "boundaryGap": false
-    },
-    "yAxis": {},
-    "series": [
-        {
-            "type": "line",
-            "z": 5,
-            "stack": "Stack",
-            "itemStyle": {
-                "normal": {
-                    "areaStyle": {
-                        "opacity": 0.8,
-                        "type": "default"
-                    }
-                }
-            },
-            "lineStyle": {
-                "width": 1
-            }
-        },
-        {
-            "type": "line",
-            "z": 4,
-            "stack": "Stack",
-            "itemStyle": {
-                "normal": {
-                    "areaStyle": {
-                        "opacity": 0.8,
-                        "type": "default"
-                    }
-                }
-            },
-            "lineStyle": {
-                "width": 1
-            }
-        },
-        {
-            "type": "line",
-            "z": 3,
-            "stack": "Stack",
-            "itemStyle": {
-                "normal": {
-                    "areaStyle": {
-                        "opacity": 0.8,
-                        "type": "default"
-                    }
-                }
-            },
-            "lineStyle": {
-                "width": 1
-            }
-        },
-        {
-            "type": "line",
-            "z": 2,
-            "stack": "Stack",
-            "itemStyle": {
-                "normal": {
-                    "areaStyle": {
-                        "opacity": 0.8,
-                        "type": "default"
-                    }
-                }
-            },
-            "lineStyle": {
-                "width": 1
-            }
-        },
-        {
-            "type": "line",
-            "z": 1,
-            "stack": "Stack",
-            "itemStyle": {
-                "normal": {
-                    "areaStyle": {
-                        "opacity": 0.8,
-                        "type": "default"
-                    }
-                }
-            },
-            "lineStyle": {
-                "width": 1
-            }
-        }
-    ]
-}', '{}', '', '{"testCaseId": "1"}', true);
-
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (BAR)', 'Pass rate percent with an extra grouping by project, owner, etc.', 'BAR', 
-'<#global IGNORE_TOTAL_PARAMS = ["LOCALE", "JOB_NAME", "PARENT_BUILD"] >
-
-<#global MULTIPLE_VALUES = {
-  "LOWER(PLATFORM)": join(PLATFORM),
-  "LOWER(BROWSER)": join(BROWSER),
-  "OWNER_USERNAME": join(USER),
-  "PROJECT": multiJoin(PROJECT, projects),
+--APPLICATION ISSUES (BLOCKERS) DETAILS
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('DEFECTS DETAILS', 
+	'Detailed information about known issues.', 'TABLE', '<#global WHERE_VALUES = {
+  "OWNER": join(USER),
   "ENV": join(ENV),
   "LOCALE": join(LOCALE),
   "PRIORITY": join(PRIORITY),
-  "FEATURE": join(FEATURE)
+  "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
+  "RUN_NAME": correct(RUNS!"")
 }>
+<#global VIEW = PERIOD?replace(" ", "_") />
+<#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
 
-<#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES, PARENT_JOB, PARENT_BUILD) />
-<#global VIEW = getView(PERIOD) />
-
-SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
-      sum( PASSED ) AS "PASSED",
-      sum( KNOWN_ISSUE ) AS "KNOWN ISSUE",
-      0 - sum( FAILED ) AS "FAILED",
-      0 - sum( SKIPPED ) AS "SKIPPED",
-      0 - sum( ABORTED ) AS "ABORTED"
-  FROM ${VIEW}
-  ${WHERE_MULTIPLE_CLAUSE}
-  GROUP BY "GROUP_FIELD"
-  ORDER BY "GROUP_FIELD" DESC
-
-  <#--
-    Generates WHERE clause for multiple choosen parameters
-    @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
-    @return - generated WHERE clause
-  -->
-<#function generateMultipleWhereClause map, PARENT_JOB, PARENT_BUILD>
- <#local result = "" />
- <#list map?keys as key>
-     <#if map[key] != "" >
-      <#if PERIOD == "Total" && IGNORE_TOTAL_PARAMS?seq_contains(key)>
-       <#-- Ignore non supported filters for Total View: PLATFORM, DEVICE, APP_VERSION, LOCALE, JOB_NAME-->
-       <#continue>
+SELECT
+    distinct(BUG) as BUG,
+    ''<a href=${JIRA_URL}'' || ''/'' || BUG || '' target="_blank">'' || BUG || ''</a>'' AS "ISSUE",
+      ENV AS "ENV",
+      OWNER AS "OWNER",
+      PLATFORM AS "PLATFORM",
+      PLATFORM_VERSION AS "PLATFORM_VERSION",
+      BROWSER AS "BROWSER",
+      BROWSER_VERSION AS "BROWSER_VERSION",
+      BUILD AS "BUILD",
+      LOCALE AS "LOCALE",
+      <#if activeProjectId?has_content>
+        ''<a href="projects/'' || PROJECT_ID || ''/test-runs/'' || TESTS.TEST_RUN_ID || ''/tests/'' || TESTS.ID || ''">'' || TESTS.NAME || ''</a>'' AS "TEST_INFO_URL",
+      <#else>
+        ''<a href="test-runs/'' || TESTS.TEST_RUN_ID || ''/tests/'' || TESTS.ID || ''">'' || TESTS.NAME || ''</a>'' AS "TEST_INFO_URL",
       </#if>
-      <#if result?length != 0>
-       <#local result = result + " AND "/>
-      </#if>
-      <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
-     </#if>
- </#list>
+      MESSAGE AS "Error Message"
+    FROM ${VIEW}
+      INNER JOIN TESTS on ${VIEW}.TEST_RUN_ID = TESTS.TEST_RUN_ID
+    ${WHERE_CLAUSE}
 
-<#if PARENT_JOB != "">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
- </#if>
-
- <#if PERIOD != "Total" && PARENT_JOB != "" && PARENT_BUILD == "LATEST">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_BUILD_NUMBER = (
-            SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
-            FROM TEST_RUNS INNER JOIN
-              JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
-            WHERE JOBS.NAME=''${PARENT_JOB}'')"/>
-  <#elseif PERIOD != "Total" && PARENT_JOB != "" && PARENT_BUILD != "">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_BUILD_NUMBER = ''" + PARENT_BUILD + "''"/>  
-  </#if>
-
- <#if result?length != 0>
-  <#local result = " WHERE " + result/>
- </#if>
- <#return result>
-</#function>
 
 <#--
-    Retrieves actual view name by abstract view description
-    @value - abstract view description
-    @return - actual view name
-  -->
-<#function getView value>
- <#return value?replace(" ", "_") + "_view">
+  Generates WHERE clause 
+  @map - collected multiple choosen data (key - DB column name : value - expected DB value)
+  @return - generated WHERE clause
+-->
+<#function generateWhereClause map>
+  <#local result = "WHERE TESTS.KNOWN_ISSUE = TRUE AND BUG IS NOT NULL"/>
+
+  <#list map?keys as key>
+    <#if map[key]?has_content>
+      <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
+    </#if>
+  </#list>
+  
+  <#if activeProjectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
+  </#if>  
+  
+  <#if isPersonal() && !USERS?has_content>
+    <!-- USERS filter has higher priority and if provided we should ignore personal board -->
+    <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
+  </#if>    
+  
+  <#if MILESTONE?has_content>
+    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
+    
+    <#if MILESTONE_VERSION?has_content>
+      <#if MILESTONE_VERSION?lower_case == "latest">
+        <#local result = result + addCondition("AND", "MILESTONE_VERSION = (
+                SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
+                FROM TEST_RUNS INNER JOIN
+                  JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
+                WHERE JOBS.NAME=''${MILESTONE}'')", result) />
+      <#elseif isDecimal(MILESTONE_VERSION)>
+        <#local result = result + addCondition("AND", "MILESTONE_VERSION = ''" + MILESTONE_VERSION + "''", result) />
+      </#if>
+    </#if>
+  </#if>
+ 
+  <#return result>
 </#function>
 
 <#--
@@ -402,15 +297,870 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
 </#function>
 
 <#--
+    Correct string value removing ending comma if any
+    @line - to analyze and correct
+    @return - corrected line
+  -->
+<#function correct line>
+  <#if line?has_content>
+    <!-- trim line and remove ending comma if present -->
+    <#return line?trim?remove_ending(",") />
+  <#else>
+    <!-- return empty line if line is null or empty-->
+    <#return "" />
+  </#if>
+</#function>
+
+<#--
+    Add valid SQL clause using condition and operator
+    @operator - AND/OR/BETWEEN etc
+    @condition - field(s) condition
+    @query - existing where conditions
+    @return - concatenated where clause conditions
+  -->
+<#function addCondition operator, condition, query>
+  <#if query?length != 0>
+    <#return " " + operator + " " + condition>
+  <#else>
+    <#return condition>
+  </#if>
+</#function>
+
+<#--
+    retrun true if dashboard name is ''Personal'' or ''User Performance''
+    @return - boolean
+  -->
+<#function isPersonal>
+  <#local result = false />
+  <#if dashboardName?has_content>
+    <#if dashboardName == "Personal" || dashboardName == "User Performance">
+      <#local result = true />  
+    </#if>
+  </#if>
+  <#return result />
+</#function>
+
+<#-- 
+  verify that value is number
+  @return - boolean
+  -->
+<#function isDecimal value>
+  <#attempt>
+    <#assign num = value?number>
+    <#local result = true />
+  <#recover>
+    <#local result = false />
+  </#attempt>
+  <#return result />
+</#function>', '{"columns": ["ISSUE", "ENV", "OWNER", "PLATFORM", "PLATFORM_VERSION", "BROWSER", "BROWSER_VERSION", "BUILD", "LOCALE", "TEST_INFO_URL", "Error Message"]}', '{
+  "PERIOD": {
+    "values": [
+      "Last 24 Hours",
+      "Last 7 Days",
+      "Last 14 Days",
+      "Last 30 Days",
+      "Last 90 Days",
+      "Last 365 Days",
+      "Today",
+      "Week",
+      "Month",
+      "Quarter",
+      "Year",
+      "Total"
+    ],
+    "required": true
+  },
+  "JIRA_URL": {
+    "value": "https://mycompany.atlassian.net/browse",
+    "required": true
+  },
+  "ENV": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
+    "multiple": true
+  },
+  "PLATFORM": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
+    "multiple": true
+  },    
+  "LOCALE": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
+    "multiple": true
+  },  
+  "BROWSER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "multiple": true
+  },  
+  "PRIORITY": {
+    "values": [],
+    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
+    "multiple": true
+  },
+  "USERS": {
+    "value": "",
+    "required": false
+  },  
+  "BUILDS": {
+    "value": "",
+    "required": false
+  },  
+  "RUNS": {
+    "value": "",
+    "required": false
+  },  
+  "MILESTONE": {
+    "value": "",
+    "required": false
+  },
+  "MILESTONE_VERSION": {
+    "value": "",
+    "required": false
+  }
+}', '{"legend": ["ISSUE", "ENV", "OWNER", "PLATFORM", "PLATFORM_VERSION", "BROWSER", "BROWSER_VERSION", "BUILD", "LOCALE", "TEST_INFO_URL", "Error Message"]}', '{
+  "PERIOD": "Total",
+  "JIRA_URL": "https://mycompany.atlassian.net/browse",
+  "currentUserId": 2,
+  "dashboardName": "",
+  "ENV": [],
+  "PLATFORM": [],
+  "BROWSER": [],
+  "LOCALE": [],
+  "PRIORITY": [],
+  "BUILDS": "",  
+  "RUNS": "",
+  "MILESTONE": "",
+  "MILESTONE_VERSION": "250",
+  "USERS": ""
+}', false);
+
+--TESTS FAILURES BY SUITE
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('FAILURES BY RUN', 
+	'Show failures per run.', 'TABLE', '<#global WHERE_VALUES = {
+  "ENV": join(ENV),
+  "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
+  "LOCALE": join(LOCALE),
+  "PRIORITY": join(PRIORITY),
+  "BUILD": correct(BUILDS!""),    
+  "RUN_NAME": correct(RUNS!""),
+  "OWNER": correct(USERS!"")
+}>
+
+<#global VIEW = PERIOD?replace(" ", "_") />
+<#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
+
+  SELECT 
+      RUN_NAME AS "RUN",
+      TEST_METHOD AS "TESTCASE",
+      SUM(FAILED) AS "FAILURES COUNT",
+      SUM(TOTAL) AS "TOTAL COUNT",
+      ROUND(SUM(FAILED)*100/COUNT(*)) AS "FAILURE %"
+    FROM ${VIEW}
+      INNER JOIN TESTS on ${VIEW}.TEST_RUN_ID = TESTS.TEST_RUN_ID
+      INNER JOIN TEST_CASES ON TESTS.TEST_CASE_ID = TEST_CASES.ID
+    ${WHERE_CLAUSE}
+    GROUP BY 1, 2
+    HAVING SUM(FAILED) > 0
+    ORDER BY 1
+
+    
+<#--
+  Generates WHERE clause 
+  @map - collected multiple choosen data (key - DB column name : value - expected DB value)
+  @return - generated WHERE clause
+-->
+<#function generateWhereClause map>
+  <#local result = "" />
+  
+  <#list map?keys as key>
+    <#if map[key]?has_content>
+      <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
+    </#if>
+  </#list>
+  
+  <#if isPersonal() && !USERS?has_content>
+    <!-- USERS filter has higher priority and if provided we should ignore personal board -->
+    <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
+  </#if>    
+  
+  <#if activeProjectId?has_content>
+    <#local result = result + addCondition("AND", "${VIEW}.PROJECT_ID=${activeProjectId}", result) />
+  </#if>  
+  
+  <#if MILESTONE?has_content>
+    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
+    
+    <#if MILESTONE_VERSION?has_content>
+      <#if MILESTONE_VERSION?lower_case == "latest">
+        <#local result = result + addCondition("AND", "MILESTONE_VERSION = (
+                SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
+                FROM TEST_RUNS INNER JOIN
+                  JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
+                WHERE JOBS.NAME=''${MILESTONE}'')", result) />
+      <#elseif isDecimal(MILESTONE_VERSION)>
+        <#local result = result + addCondition("AND", "MILESTONE_VERSION = ''" + MILESTONE_VERSION + "''", result) />
+      </#if>
+    </#if>
+  </#if>
+
+  <#if result?length != 0>
+    <#local result = " WHERE " + result/>
+ </#if>
+ <#return result>
+</#function>
+
+<#--
     Joins array values using '', '' separator
-    @array1 - to join, has higher priority that array2
-    @array2 - alternative to join if array1 does not exist or is empty
+    @array - to join
     @return - joined array as string
   -->
-<#function multiJoin array1=[] array2=[]>
-  <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', 
-'setTimeout(() => {
+<#function join array=[]>
+  <#return array?join('', '') />
+</#function>
+
+<#--
+    Correct string value removing ending comma if any
+    @line - to analyze and correct
+    @return - corrected line
+  -->
+<#function correct line>
+  <#if line?has_content>
+    <!-- trim line and remove ending comma if present -->
+    <#return line?trim?remove_ending(",") />
+  <#else>
+    <!-- return empty line if line is null or empty-->
+    <#return "" />
+  </#if>
+</#function>
+
+<#--
+    Add valid SQL clause using condition and operator
+    @operator - AND/OR/BETWEEN etc
+    @condition - field(s) condition
+    @query - existing where conditions
+    @return - concatenated where clause conditions
+  -->
+<#function addCondition operator, condition, query>
+  <#if query?length != 0>
+    <#return " " + operator + " " + condition>
+  <#else>
+    <#return condition>
+  </#if>
+</#function>
+
+<#--
+    retrun true if dashboard name is ''Personal'' or ''User Performance''
+    @return - boolean
+  -->
+<#function isPersonal>
+  <#local result = false />
+  <#if dashboardName?has_content>
+    <#if dashboardName == "Personal" || dashboardName == "User Performance">
+      <#local result = true />  
+    </#if>
+  </#if>
+  <#return result />
+</#function>
+
+<#-- 
+  verify that value is number
+  @return - boolean
+  -->
+<#function isDecimal value>
+  <#attempt>
+    <#assign num = value?number>
+    <#local result = true />
+  <#recover>
+    <#local result = false />
+  </#attempt>
+  <#return result />
+</#function>', '{"columns": ["RUN", "TESTCASE", "FAILURES COUNT", "TOTAL COUNT", "FAILURE %"]}', '{
+  "PERIOD": {
+    "values": [
+      "Last 24 Hours",
+      "Last 7 Days",
+      "Last 14 Days",
+      "Last 30 Days",
+      "Last 90 Days",
+      "Last 365 Days",
+      "Today",
+      "Week",
+      "Month",
+      "Quarter",
+      "Year",
+      "Total"
+    ],
+    "required": true
+  },
+  "ENV": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
+    "multiple": true
+  },
+  "PLATFORM": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
+    "multiple": true
+  },    
+  "LOCALE": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
+    "multiple": true
+  },  
+  "BROWSER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "multiple": true
+  },  
+  "PRIORITY": {
+    "values": [],
+    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
+    "multiple": true
+  },
+  "USERS": {
+    "value": "",
+    "required": false
+  },  
+  "BUILDS": {
+    "value": "",
+    "required": false
+  },  
+  "RUNS": {
+    "value": "",
+    "required": false
+  },  
+  "MILESTONE": {
+    "value": "",
+    "required": false
+  },
+  "MILESTONE_VERSION": {
+    "value": "",
+    "required": false
+  }
+}', '{
+  "PERIOD": "Total",
+  "currentUserId": 2,
+  "dashboardName": "",
+  "ENV": [],
+  "PLATFORM": [],
+  "BROWSER": [],
+  "LOCALE": [],
+  "PRIORITY": [],
+  "BUILDS": "",  
+  "RUNS": "",
+  "MILESTONE": "",
+  "MILESTONE_VERSION": "250",
+  "USERS": ""
+}', false);
+
+--TESTS FAILURES BY REASON
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('FAILURES BY REASON',
+	'Summarized information about failures grouped by reason.', 'TABLE', '<#global WHERE_VALUES = {
+  "ENVIRONMENT": join(ENV),
+  "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
+  "LOCALE": join(LOCALE),
+  "PRIORITY_LABELS.VALUE": join(PRIORITY),
+  "BUILD": correct(BUILDS!""),    
+  "TEST_RUNS.NAME": correct(RUNS!""),
+  "USERS.USERNAME": correct(USERS!"")  
+}>
+<#global VIEW = PERIOD?replace(" ", "_") />
+<#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
+
+SELECT 
+  substring(MIN(TESTS.MESSAGE) from 1 for 200) as "ERROR",
+  count(*) as "#",
+  <#if activeProjectId?has_content>
+    ''<a href="projects/'' || ${activeProjectId} || ''/dashboards/'' || 
+      (select ID from dashboards where title=''Failures analysis'') ||
+        ''?PERIOD=${VIEW}&hashcode='' || TESTS.MESSAGE_HASH_CODE || ''">View</a>'' AS "REPORT",
+  <#else>
+    ''<a href="dashboards/'' || (select ID from dashboards where title=''Failures analysis'') || 
+      ''?PERIOD=${VIEW}&hashcode='' || TESTS.MESSAGE_HASH_CODE  || ''">View</a>'' AS "REPORT",
+  </#if>
+  to_char(date_trunc(''day'', MIN(TESTS.START_TIME)), ''YYYY-MM-DD'') AS "SINCE",
+  to_char(date_trunc(''day'', MAX(TESTS.START_TIME)), ''YYYY-MM-DD'') AS "REPRO"
+  FROM TESTS
+    INNER JOIN TEST_RUNS ON TESTS.TEST_RUN_ID = TEST_RUNS.ID
+    INNER JOIN USERS ON TESTS.MAINTAINER_ID = USERS.ID
+    LEFT JOIN jobs upstream_jobs ON test_runs.upstream_job_id = upstream_jobs.id    
+    LEFT JOIN tests_labels priority_test_labels ON tests.id = priority_test_labels.test_id
+    AND priority_test_labels.label_id IN (SELECT id FROM labels WHERE key = ''priority'')
+    LEFT JOIN labels priority_labels ON priority_test_labels.label_id = priority_labels.id
+    AND priority_labels.key = ''priority''
+  ${WHERE_CLAUSE}
+  GROUP BY MESSAGE_HASH_CODE
+  HAVING COUNT(*) >= ${ERROR_COUNT}
+  ORDER BY 1
+
+<#--
+  Generates WHERE clause 
+  @map - collected multiple choosen data (key - DB column name : value - expected DB value)
+  @return - generated WHERE clause
+-->
+<#function generateWhereClause map>
+  <#local result = "WHERE MESSAGE IS NOT NULL AND MESSAGE_HASH_CODE IS NOT NULL" />
+
+  <#list map?keys as key>
+    <#if map[key]?has_content>
+      <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
+    </#if>
+  </#list>
+  
+  <#if isPersonal() && !USERS?has_content>
+    <!-- USERS filter has higher priority and if provided we should ignore personal board -->
+    <#local result = result + addCondition("AND", "MAINTAINER_ID=${currentUserId}", result) />
+  </#if>
+  
+  <#if MILESTONE?has_content>
+    <#local result = result + addCondition("AND", "upstream_jobs.name = ''" + MILESTONE + "''", result) />
+    
+    <#if MILESTONE_VERSION?has_content>
+      <#if MILESTONE_VERSION?lower_case == "latest">
+        <#local result = result + addCondition("AND", "test_runs.upstream_job_build_number = (
+                SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
+                FROM TEST_RUNS INNER JOIN
+                  JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
+                WHERE JOBS.NAME=''${MILESTONE}'')", result) />
+      <#elseif isDecimal(MILESTONE_VERSION)>
+        <#local result = result + addCondition("AND", "test_runs.upstream_job_build_number = ''" + MILESTONE_VERSION + "''", result) />
+      </#if>
+    </#if>
+  </#if>
+  
+ <#return result>
+</#function>
+
+<#--
+    Joins array values using '', '' separator
+    @array - to join
+    @return - joined array as string
+  -->
+<#function join array=[]>
+  <#return array?join('', '') />
+</#function>
+
+<#--
+    Correct string value removing ending comma if any
+    @line - to analyze and correct
+    @return - corrected line
+  -->
+<#function correct line>
+  <#if line?has_content>
+    <!-- trim line and remove ending comma if present -->
+    <#return line?trim?remove_ending(",") />
+  <#else>
+    <!-- return empty line if line is null or empty-->
+    <#return "" />
+  </#if>
+</#function>
+
+<#--
+    Add valid SQL clause using condition and operator
+    @operator - AND/OR/BETWEEN etc
+    @condition - field(s) condition
+    @query - existing where conditions
+    @return - concatenated where clause conditions
+  -->
+<#function addCondition operator, condition, query>
+  <#if query?length != 0>
+    <#return " " + operator + " " + condition>
+  <#else>
+    <#return condition>
+  </#if>
+</#function>
+
+<#--
+    retrun true if dashboard name is ''Personal'' or ''User Performance''
+    @return - boolean
+  -->
+<#function isPersonal>
+  <#local result = false />
+  <#if dashboardName?has_content>
+    <#if dashboardName == "Personal" || dashboardName == "User Performance">
+      <#local result = true />  
+    </#if>
+  </#if>
+  <#return result />
+</#function>
+
+<#-- 
+  verify that value is number
+  @return - boolean
+  -->
+<#function isDecimal value>
+  <#attempt>
+    <#assign num = value?number>
+    <#local result = true />
+  <#recover>
+    <#local result = false />
+  </#attempt>
+  <#return result />
+</#function>', '{"columns": ["ERROR","#", "REPORT", "SINCE", "REPRO"]}', '{
+  "PERIOD": {
+    "values": [
+      "Last 24 Hours",
+      "Last 7 Days",
+      "Last 14 Days",
+      "Last 30 Days",
+      "Last 90 Days",
+      "Last 365 Days",
+      "Today",
+      "Week",
+      "Month",
+      "Quarter",
+      "Year",
+      "Total"
+    ],
+    "required": true
+  },
+  "ERROR_COUNT": {
+    "value": "0",
+    "required": true
+  },
+  "ENV": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
+    "multiple": true
+  },
+  "PLATFORM": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
+    "multiple": true
+  },    
+  "LOCALE": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
+    "multiple": true
+  },  
+  "BROWSER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "multiple": true
+  },  
+  "PRIORITY": {
+    "values": [],
+    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
+    "multiple": true
+  },
+  "USERS": {
+    "value": "",
+    "required": false
+  },  
+  "BUILDS": {
+    "value": "",
+    "required": false
+  },  
+  "RUNS": {
+    "value": "",
+    "required": false
+  },  
+  "MILESTONE": {
+    "value": "",
+    "required": false
+  },
+  "MILESTONE_VERSION": {
+    "value": "",
+    "required": false
+  }
+}', '{"legend": ["ERROR","#", "REPORT", "SINCE", "REPRO"]}', '{
+  "PERIOD": "Month",
+  "currentUserId": 1,
+  "activeProjectId": 1,
+  "dashboardName": "",
+  "ERROR_COUNT": 0,
+  "ENV": [],
+  "PLATFORM": [],
+  "BROWSER": [],
+  "LOCALE": [],
+  "PRIORITY": [],
+  "BUILDS": "",  
+  "RUNS": "",
+  "MILESTONE": "",
+  "MILESTONE_VERSION": "",
+  "USERS": ""
+}', false);
+
+--TEST FAILURE DETAILS
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('FAILURES DETAILS', 
+	'Detailed information about same/similar errors.', 'TABLE', '<#global VIEW = PERIOD?replace(" ", "_") />
+<#global WHERE_CLAUSE = generateWhereClause() />
+
+SELECT DISTINCT RUN_NAME AS "RUN",
+  <#if activeProjectId?has_content>
+    ''<a href="projects/'' || PROJECT_ID || ''/test-runs/'' || TESTS.TEST_RUN_ID || ''/tests/'' || TESTS.ID || ''">'' || TESTS.NAME || ''</a>'' AS "TEST",
+  <#else>
+    ''<a href="test-runs/'' || TESTS.TEST_RUN_ID || ''/tests/'' || TESTS.ID || ''">'' || TESTS.NAME || ''</a>'' AS "TEST",
+  </#if>
+    ''<a href=${JIRA_URL}'' || ''/'' || BUG || '' target="_blank">'' || BUG || ''</a>'' AS "ISSUE"
+  FROM ${VIEW}
+    INNER JOIN TESTS on ${VIEW}.TEST_RUN_ID = TESTS.TEST_RUN_ID
+  ${WHERE_CLAUSE}
+  ORDER BY "RUN", "TEST" DESC
+
+<#--
+  Generates WHERE clause 
+  @return - generated WHERE clause
+-->
+<#function generateWhereClause>
+  <#local result = "WHERE MESSAGE_HASHCODE<>0 AND TESTS.MESSAGE_HASH_CODE<>0 
+                      AND TESTS.MESSAGE_HASH_CODE IN(${hashcode})
+                      AND MESSAGE_HASHCODE IN(${hashcode})"/>
+
+  <#if activeProjectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
+  </#if>
+ 
+  <#return result>
+</#function>
+
+<#--
+    Add valid SQL clause using condition and operator
+    @operator - AND/OR/BETWEEN etc
+    @condition - field(s) condition
+    @query - existing where conditions
+    @return - concatenated where clause conditions
+  -->
+<#function addCondition operator, condition, query>
+  <#if query?length != 0>
+    <#return " " + operator + " " + condition>
+  <#else>
+    <#return condition>
+  </#if>
+</#function>', '{"columns": ["RUN", "TEST", "ISSUE"]}', '{
+  "PERIOD": {
+    "values": [
+      "Last 24 Hours",
+      "Last 7 Days",
+      "Last 14 Days",
+      "Last 30 Days",
+      "Last 90 Days",
+      "Last 365 Days",
+      "Today",
+      "Week",
+      "Month",
+      "Quarter",
+      "Year",
+      "Total"
+    ],
+    "required": true
+  },
+  "JIRA_URL": {
+    "value": "https://mycompany.atlassian.net/browse",
+    "required": true
+  }
+}', '', '{
+  "PERIOD": "Total",
+  "hashcode": -1,
+  "JIRA_URL": "https://mycompany.atlassian.net/browse"
+}', true);
+
+--TEST FAILURE COUNT
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('FAILURES INFO', 
+	'Information about same/similar errors.', 'TABLE', '<#global WHERE_CLAUSE = generateWhereClause() />
+<#global VIEW = PERIOD?replace(" ", "_") />
+
+SELECT SUM(TOTAL)::text AS "#",
+  substring((SELECT TESTS.MESSAGE FROM TESTS WHERE TESTS.MESSAGE_HASH_CODE=MIN(MESSAGE_HASHCODE) LIMIT 1) from 1 for 512) as "ERROR/STABILITY",
+	to_char(date_trunc(''day'', MIN(STARTED_AT)), ''YYYY-MM-DD'') AS "SINCE",
+	to_char(date_trunc(''day'', MAX(STARTED_AT)), ''YYYY-MM-DD'') AS "REPRO"
+FROM ${VIEW}
+  ${WHERE_CLAUSE}
+
+
+<#--
+  Generates WHERE clause 
+  @return - generated WHERE clause
+-->
+<#function generateWhereClause>
+  <#local result = "WHERE MESSAGE_HASHCODE<>0 AND MESSAGE_HASHCODE IN (${hashcode})"/>
+
+  <#if activeProjectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
+  </#if>
+ 
+  <#return result>
+</#function>
+
+<#--
+    Add valid SQL clause using condition and operator
+    @operator - AND/OR/BETWEEN etc
+    @condition - field(s) condition
+    @query - existing where conditions
+    @return - concatenated where clause conditions
+  -->
+<#function addCondition operator, condition, query>
+  <#if query?length != 0>
+    <#return " " + operator + " " + condition>
+  <#else>
+    <#return condition>
+  </#if>
+</#function>', '{"columns": ["#", "ERROR/STABILITY", "SINCE", "REPRO"]}', '{
+  "PERIOD": {
+    "values": [
+      "Last 24 Hours",
+      "Last 7 Days",
+      "Last 14 Days",
+      "Last 30 Days",
+      "Last 90 Days",
+      "Last 365 Days",
+      "Today",
+      "Week",
+      "Month",
+      "Quarter",
+      "Year",
+      "Total"
+    ],
+    "required": true
+  }
+}', '', '{
+  "PERIOD": "Month",
+  "hashcode": -1,
+  "activeProjectId": 1
+}', true);
+
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES (
+	'PASS RATE (BAR)', 'Pass rate bar chart with an extra grouping by owner, env, locale etc.', 'BAR', '<#global WHERE_VALUES = {
+  "ENV": join(ENV),
+  "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
+  "LOCALE": join(LOCALE),
+  "PRIORITY": join(PRIORITY),
+  "BUILD": correct(BUILDS!""),    
+  "RUN_NAME": correct(RUNS!""),
+  "OWNER": correct(USERS!"")
+}>
+<#global VIEW = PERIOD?replace(" ", "_") />
+<#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
+
+
+SELECT ${GROUP_BY} AS "GROUP_FIELD",
+  sum( PASSED ) AS "PASSED",
+  sum( KNOWN_ISSUE ) AS "KNOWN ISSUE",
+  0 - sum( FAILED ) AS "FAILED",
+  0 - sum( SKIPPED ) AS "SKIPPED",
+  0 - sum( ABORTED ) AS "ABORTED"
+FROM ${VIEW}
+${WHERE_CLAUSE}
+GROUP BY 1
+ORDER BY 1 DESC
+
+
+<#--
+  Generates WHERE clause 
+  @map - collected multiple choosen data (key - DB column name : value - expected DB value)
+  @return - generated WHERE clause
+-->
+<#function generateWhereClause map>
+  <#local result = "" />
+  
+  <#list map?keys as key>
+    <#if map[key]?has_content>
+      <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
+    </#if>
+  </#list>
+  
+  <#if isPersonal() && !USERS?has_content>
+    <!-- USERS filter has higher priority and if provided we should ignore personal board -->
+    <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
+  </#if>  
+  
+  <#if activeProjectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
+  </#if>
+  
+  <#if MILESTONE?has_content>
+    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
+    
+    <#if MILESTONE_VERSION?has_content>
+      <#if MILESTONE_VERSION?lower_case == "latest">
+        <#local result = result + addCondition("AND", "MILESTONE_VERSION = (
+                SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
+                FROM TEST_RUNS INNER JOIN
+                  JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
+                WHERE JOBS.NAME=''${MILESTONE}'')", result) />
+      <#elseif isDecimal(MILESTONE_VERSION)>
+        <#local result = result + addCondition("AND", "MILESTONE_VERSION = ''" + MILESTONE_VERSION + "''", result) />
+      </#if>
+    </#if>
+  </#if>
+  
+  <#if result?length != 0>
+    <#local result = "WHERE " + result/>
+  </#if>
+  <#return result>
+</#function>
+
+<#--
+    Joins array values using '', '' separator
+    @array - to join
+    @return - joined array as string
+  -->
+<#function join array=[]>
+  <#return array?join('', '') />
+</#function>
+
+<#--
+    Correct string value removing ending comma if any
+    @line - to analyze and correct
+    @return - corrected line
+  -->
+<#function correct line>
+  <#if line?has_content>
+    <!-- trim line and remove ending comma if present -->
+    <#return line?trim?remove_ending(",") />
+  <#else>
+    <!-- return empty line if line is null or empty-->
+    <#return "" />
+  </#if>
+</#function>
+
+<#--
+    Add valid SQL clause using condition and operator
+    @operator - AND/OR/BETWEEN etc
+    @condition - field(s) condition
+    @query - existing where conditions
+    @return - concatenated where clause conditions
+  -->
+<#function addCondition operator, condition, query>
+  <#if query?length != 0>
+    <#return " " + operator + " " + condition>
+  <#else>
+    <#return condition>
+  </#if>
+</#function>
+
+<#--
+    retrun true if dashboard name is ''Personal'' or ''User Performance''
+    @return - boolean
+  -->
+<#function isPersonal>
+  <#local result = false />
+  <#if dashboardName?has_content>
+    <#if dashboardName == "Personal" || dashboardName == "User Performance">
+      <#local result = true />  
+    </#if>
+  </#if>
+  <#return result />
+</#function>
+
+<#-- 
+  verify that value is number
+  @return - boolean
+  -->
+<#function isDecimal value>
+  <#attempt>
+    <#assign num = value?number>
+    <#local result = true />
+  <#recover>
+    <#local result = false />
+  </#attempt>
+  <#return result />
+</#function>', 'setTimeout(() => {
   const dimensions = [
     "GROUP_FIELD",
     "PASSED",
@@ -555,196 +1305,173 @@ SELECT lower(${GROUP_BY}) AS "GROUP_FIELD",
     if (!note) changeValue(text, numberDataSource, { min: null, max: null });
     else changeValue(text, percentDataSource, { min:-100, max:100 });
   });
-}, 1000)', 
-'{
+}, 1000)', '{
   "PERIOD": {
     "values": [
       "Last 24 Hours",
       "Last 7 Days",
       "Last 14 Days",
       "Last 30 Days",
-      "Nightly",
-      "Weekly",
-      "Monthly",
-      "Quarterly",
+      "Last 90 Days",
+      "Last 365 Days",
+      "Today",
+      "Week",
+      "Month",
+      "Quarter",
+      "Year",
       "Total"
     ],
     "required": true
   },
   "GROUP_BY": {
     "values": [
+      "OWNER",
+      "ENV",
+      "LOCALE",
+      "BUILD",
+      "RUN_NAME",
       "PLATFORM",
       "BROWSER",
-      "OWNER_USERNAME",
-      "PROJECT",
-      "DEVICE",
-      "ENV",
-      "APP_VERSION",
-      "LOCALE",
-      "JOB_NAME",
       "PRIORITY",
-      "FEATURE",
-      "TASK"
+      "BUG"
     ],
     "required": true
-  },
-  "PROJECT": {
+  },  
+  "ENV": {
     "values": [],
-    "valuesQuery": "SELECT NAME FROM PROJECTS WHERE NAME <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
     "multiple": true
   },
   "PLATFORM": {
     "values": [],
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
-  },
+  },    
+  "LOCALE": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
+    "multiple": true
+  },  
   "BROWSER": {
     "values": [],
     "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
-  },
-  "USER": {
-    "values": [],
-    "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
-    "multiple": true
-  },
-  "ENV": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
-    "multiple": true
-  },
+  },  
   "PRIORITY": {
     "values": [],
     "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
     "multiple": true
   },
-  "FEATURE": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''feature'' ORDER BY 1;",
-    "multiple": true
-  },
-  "PARENT_JOB": {
+  "USERS": {
+    "value": "",
+    "required": false
+  },  
+  "BUILDS": {
+    "value": "",
+    "required": false
+  },  
+  "RUNS": {
+    "value": "",
+    "required": false
+  },  
+  "MILESTONE": {
     "value": "",
     "required": false
   },
-  "Separator": {
-    "value": "Below params are not applicable for Total period!",
-    "type": "title",
-    "required": false
-  },
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },
-  "JOB_NAME": {
-    "value": "",
-    "required": false
-  },
-  "PARENT_BUILD": {
+  "MILESTONE_VERSION": {
     "value": "",
     "required": false
   }
-}', '', 
-'{
-  "PERIOD": "Monthly",
-  "GROUP_BY": "PLATFORM",
-  "PROJECT": [],
-  "USER": [],
-  "PLATFORM": [],
-  "PLATFORM_VERSION": [],
-  "BROWSER": [],
-  "BROWSER_VERSION": [],
+}', '', '{
+  "PERIOD": "Today",
+  "GROUP_BY": "PLATFORM",  
+  "currentUserId": 2,
+  "dashboardName": "",  
   "ENV": [],
+  "PLATFORM": [],
+  "BROWSER": [],
   "LOCALE": [],
   "PRIORITY": [],
-  "FEATURE": [],
-  "JOB_NAME": "",
-  "PARENT_JOB": "",
-  "PARENT_BUILD": ""
+  "BUILDS": "",  
+  "RUNS": "",
+  "MILESTONE": "",
+  "MILESTONE_VERSION": "250",
+  "USERS": ""
 }', false);
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('APPLICATION ISSUES (BLOCKERS) COUNT', 'A number of unique application bugs discovered and submitted by automation.', 'TABLE', 
-'<#global MULTIPLE_VALUES = {
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (CALENDAR)', 
+	'Calendar view of the pass rate per month, quarter or year.', 'OTHER', '<#global WHERE_VALUES = {
+  "ENV": join(ENV),
   "LOWER(PLATFORM)": join(PLATFORM),
   "LOWER(BROWSER)": join(BROWSER),
-  "OWNER_USERNAME": join(USER),
-  "PROJECT": multiJoin(PROJECT, projects),
-  "ENV": join(ENV),
-  "APP_VERSION": join(APP_VERSION),
   "LOCALE": join(LOCALE),
   "PRIORITY": join(PRIORITY),
-  "FEATURE": join(FEATURE)
+  "BUILD": correct(BUILDS!""),    
+  "RUN_NAME": correct(RUNS!""),
+  "OWNER": correct(USERS!"")
 }>
-<#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
-<#global VIEW = getView(PERIOD) />
 
-  SELECT PROJECT AS "PROJECT",
-      COUNT(DISTINCT BUG) AS "COUNT"
-  FROM ${VIEW}
-  ${WHERE_MULTIPLE_CLAUSE}
-  GROUP BY PROJECT
+<#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
 
+SELECT 
+    to_char(STARTED_AT, ''YYYY-MM-DD'') as "date",
+    ROUND(sum(passed)*100/sum(total)) AS "value",
+    ''${PASSED_VALUE}'' as "passed"
+    FROM TOTAL
+    ${WHERE_CLAUSE}
+  GROUP BY 1
 
-  <#--
-    Generates WHERE clause for multiple choosen parameters
-    @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
-    @return - generated WHERE clause
-  -->
-<#function generateMultipleWhereClause map>
+<#--
+  Generates WHERE clause 
+  @map - collected multiple choosen data (key - DB column name : value - expected DB value)
+  @return - generated WHERE clause
+-->
+<#function generateWhereClause map>
   <#local result = "" />
 
-  <#if BLOCKER="true">
-   <#local result = " (KNOWN_ISSUE > 0) AND (TEST_BLOCKER=TRUE) "/>
+  <#if PERIOD?length = 4 || PERIOD = "YEAR">
+    <#if PERIOD = "YEAR">
+      <#local result = result + addCondition("AND", "to_char(STARTED_AT, ''YYYY'') LIKE to_char(CURRENT_DATE, ''YYYY'')", result) />
+    <#else>
+      <#local result = result + addCondition("AND", "to_char(STARTED_AT, ''YYYY'') LIKE ''${PERIOD}''", result) />
+    </#if>
+  <#elseif PERIOD != "MONTH" && PERIOD?substring(5, 6) == "Q" || PERIOD = "QUARTER" >
+    <#if PERIOD = "QUARTER">
+      <#local result = result + addCondition("AND", "to_char(STARTED_AT, ''YYYY-Q'') LIKE to_char(CURRENT_DATE, ''YYYY-Q'')", result) />
+    <#else>
+      <#local result = result + addCondition("AND", "to_char(STARTED_AT, ''YYYY'') || ''-Q'' || to_char(STARTED_AT, ''Q'') LIKE ''${PERIOD}''", result) />
+    </#if>
   <#else>
-   <#local result = " (KNOWN_ISSUE > 0)" />
+    <#if PERIOD = "MONTH">
+      <#local result = result + addCondition("AND", "to_char(STARTED_AT, ''YYYY-MM'') LIKE to_char(CURRENT_DATE, ''YYYY-MM'')", result) />
+    <#else>
+      <#local result = result + addCondition("AND", "to_char(STARTED_AT, ''YYYY-MM'') LIKE ''${PERIOD}''", result) />
+    </#if>
   </#if>
 
   <#list map?keys as key>
-    <#if map[key] != "" >
-      <#if result?length != 0>
-       <#local result = result + " AND "/>
-      </#if>
-      <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
+    <#if map[key]?has_content>
+      <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
     </#if>
   </#list>
 
- <#if PARENT_JOB != "">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
- </#if>
- 
- <#if PERIOD != "Total" && PARENT_JOB != "" && PARENT_BUILD?lower_case == "latest">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_BUILD_NUMBER = (
-            SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
-            FROM TEST_RUNS INNER JOIN
-              JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
-            WHERE JOBS.NAME=''${PARENT_JOB}'')"/>
-  <#elseif PERIOD != "Total" && PARENT_JOB != "" && PARENT_BUILD != "">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_BUILD_NUMBER = ''" + PARENT_BUILD + "''"/>  
+  <#if isPersonal() && !USERS?has_content>
+    <!-- USERS filter has higher priority and if provided we should ignore personal board -->
+    <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
   </#if>
+  
+  <#if activeProjectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
+  </#if>  
+
+  <#if MILESTONE?has_content>
+    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
+  </#if>  
 
   <#if result?length != 0>
-    <#local result = " WHERE " + result/>
+    <#local result = "WHERE " + result/>
   </#if>
   <#return result>
-</#function>
-
-<#--
-    Retrieves actual view name by abstract view description
-    @value - abstract view description
-    @return - actual view name
-  -->
-<#function getView value>
- <#return value?replace(" ", "_") + "_view">
 </#function>
 
 <#--
@@ -757,187 +1484,277 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
 </#function>
 
 <#--
-    Joins array values using '', '' separator
-    @array1 - to join, has higher priority that array2
-    @array2 - alternative to join if array1 does not exist or is empty
-    @return - joined array as string
+    Correct string value removing ending comma if any
+    @line - to analyze and correct
+    @return - corrected line
   -->
-<#function multiJoin array1=[] array2=[]>
-  <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', 
-'{"columns": ["PROJECT", "COUNT"]}',
-'{
+<#function correct line>
+  <#if line?has_content>
+    <!-- trim line and remove ending comma if present -->
+    <#return line?trim?remove_ending(",") />
+  <#else>
+    <!-- return empty line if line is null or empty-->
+    <#return "" />
+  </#if>
+</#function>
+
+<#--
+    Add valid SQL clause using condition and operator
+    @operator - AND/OR/BETWEEN etc
+    @condition - field(s) condition
+    @query - existing where conditions
+    @return - concatenated where clause conditions
+  -->
+<#function addCondition operator, condition, query>
+  <#if query?length != 0>
+    <#return " " + operator + " " + condition>
+  <#else>
+    <#return condition>
+  </#if>
+</#function>
+
+<#--
+    retrun true if dashboard name is ''Personal'' or ''User Performance''
+    @return - boolean
+  -->
+<#function isPersonal>
+  <#local result = false />
+  <#if dashboardName?has_content>
+    <#if dashboardName == "Personal" || dashboardName == "User Performance">
+      <#local result = true />  
+    </#if>
+  </#if>
+  <#return result />
+</#function>', '
+const data = [];
+const range = () => {
+  let ranges = new Set();
+
+  dataset.forEach(({date, value}) => {
+    const d = new Date(date);
+    const range =  d.getFullYear() + "-" + (d.getMonth() + 1);
+    const newDate = range + "-" +  d.getDate();
+
+    ranges.add(range);
+    data.push(new Array(newDate, value));
+  });
+
+  let temporary = [];
+  for (let value of ranges) temporary.push(value);
+
+  return [temporary[0], data[data.length -1][0]]
+};
+
+const color = () => {
+    const red = "#e76a77";
+    const yellow = "#fddb7a";
+    const green = "#61c8b3";
+    const colorArrLenght = 20;
+    const greenValue = dataset[0].passed || 75;
+    let colors = [];
+
+    const creatorColorArr = (color, count) => {
+      for (var i = 0; i < Math.round(count); i++) colors.push(color);
+    }
+
+    let passed = colorArrLenght - (colorArrLenght*greenValue/100);
+    let aboard = (colorArrLenght - passed)/3;
+    let failed = colorArrLenght - passed - aboard
+
+    creatorColorArr(green, passed);
+    creatorColorArr(yellow, aboard);
+    creatorColorArr(red, failed);
+
+    return colors.reverse()
+};
+
+
+let option = {
+    tooltip: {
+      position: "top",
+      formatter: (p) => p.data[1] + "%",
+      "extraCssText": "transform: translateZ(0);"
+    },
+    visualMap: {
+      min: 0,
+      max: 100,
+      calculable: true,
+      orient: "vertical",
+      bottom: 20,
+      right:20,
+      inRange: {
+        color: color(),
+        symbolSize: [10, 100]
+      } 
+    },
+    calendar: {
+      left: 40,
+      right: 80,
+      top: 50,
+      bottom:20,
+      orient: "horizontal",
+      range: range(),
+      cellSize: 30,
+      dayLabel: {
+        nameMap: "en",
+        firstDay: 1, // start on Monday
+        margin: 5
+      },
+      yearLabel:{
+        position: "top"
+      },
+      itemStyle: {
+        color: ["white"],
+        borderWidth: 1,
+        borderColor: "#ccc"
+      }
+    },
+    series: [{
+      type: "heatmap",
+      coordinateSystem: "calendar",
+      calendarIndex: 0,
+      label: {
+        show: true,
+        formatter: function (params) {
+            let d = echarts.number.parseDate(params.value[0]);
+            return d.getDate();
+        },
+        color: "#000"
+      },
+      data: data
+    }]
+};
+
+chart.setOption(option);', '{
   "PERIOD": {
-    "values": [
-      "Last 24 Hours",
-      "Last 7 Days",
-      "Last 14 Days",
-      "Last 30 Days",
-      "Nightly",
-      "Weekly",
-      "Monthly",
-      "Quarterly"
-    ],
+    "values": [],
+    "valuesQuery": "SELECT ''YEAR'' UNION ALL SELECT ''QUARTER'' UNION ALL SELECT ''MONTH'' UNION ALL SELECT DISTINCT to_char(STARTED_AT, ''YYYY'') FROM TOTAL UNION ALL SELECT DISTINCT to_char(STARTED_AT, ''YYYY'') || ''-Q'' || to_char(STARTED_AT, ''Q'') FROM TOTAL UNION ALL SELECT DISTINCT to_char(STARTED_AT, ''YYYY-MM'') FROM TOTAL ORDER BY 1 DESC;",
     "required": true
   },
-  "BLOCKER": {
-    "values": [
-      "false",
-      "true"
-    ],
-    "type": "radio",
+  "PASSED_VALUE": {
+    "value": 75,
     "required": true
-  },
-  "PROJECT": {
-    "values": [],
-    "valuesQuery": "SELECT NAME FROM PROJECTS WHERE NAME <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "PLATFORM": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' AND PLATFORM IS NOT NULL ORDER BY 1;",
-    "multiple": true
-  },
-  "BROWSER": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "USER": {
-    "values": [],
-    "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
-    "multiple": true
   },
   "ENV": {
     "values": [],
     "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "PLATFORM": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
+    "multiple": true
+  },    
+  "LOCALE": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
+    "multiple": true
+  },  
+  "BROWSER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "multiple": true
+  },  
   "PRIORITY": {
     "values": [],
     "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
     "multiple": true
   },
-  "FEATURE": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''feature'' ORDER BY 1;",
-    "multiple": true
-  },
-  "APP_VERSION": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT APP_VERSION FROM TEST_CONFIGS WHERE APP_VERSION IS NOT NULL AND APP_VERSION <> '''';",
-    "multiple": true
-  },
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },
-  "JOB_NAME": {
+  "USERS": {
+    "value": "",
+    "required": false
+  },  
+  "BUILDS": {
+    "value": "",
+    "required": false
+  },  
+  "RUNS": {
+    "value": "",
+    "required": false
+  },  
+  "MILESTONE": {
     "value": "",
     "required": false
   },
-  "PARENT_JOB": {
-    "value": "",
-    "required": false
-  },
-  "PARENT_BUILD": {
+  "MILESTONE_VERSION": {
     "value": "",
     "required": false
   }
-}', '', 
-'{
-  "GROUP_BY": "PLATFORM",
-  "PROJECT": [],
-  "USER": [],
-  "PLATFORM": [],
-  "PLATFORM_VERSION": [],
-  "BROWSER": [],
-  "BROWSER_VERSION": [],
+}', '{
+  "PERIOD": "MONTH",
+  "PASSED_VALUE": "75",
+  "currentUserId": 2,
+  "dashboardName": "",
   "ENV": [],
-  "APP_VERSION": [],
+  "PLATFORM": [],
+  "BROWSER": [],
   "LOCALE": [],
   "PRIORITY": [],
-  "FEATURE": [],
-  "PERIOD": "Monthly",
-  "BLOCKER": "false",
-  "JOB_NAME": "",
-  "PARENT_JOB": "",
-  "PARENT_BUILD": "LATEST"
+  "BUILDS": "",  
+  "RUNS": "",
+  "MILESTONE": "",
+  "MILESTONE_VERSION": "250",
+  "USERS": ""
 }', false);
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (LINE)', 'Consolidated test status trend with the ability to specify 10+ extra filters and grouping by hours, days, month etc.', 'LINE', 
-'<#global IGNORE_TOTAL_PARAMS = ["LOCALE", "JOB_NAME", "PARENT_JOB"] >
-<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
-
-<#global MULTIPLE_VALUES = {
-  "PROJECT": multiJoin(PROJECT, projects),
-  "OWNER_USERNAME": join(USER),
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (LINE)', 
+	'Consolidated tests status data supporting 10+ extra filters.', 'LINE', '<#global WHERE_VALUES = {
   "ENV": join(ENV),
-  "PRIORITY": join(PRIORITY),
-  "FEATURE": join(FEATURE),
   "LOWER(PLATFORM)": join(PLATFORM),
   "LOWER(BROWSER)": join(BROWSER),
-  "LOCALE": join(LOCALE)
+  "LOCALE": join(LOCALE),
+  "PRIORITY": join(PRIORITY),
+  "BUILD": correct(BUILDS!""),    
+  "RUN_NAME": correct(RUNS!""),
+  "OWNER": correct(USERS!"")
 }>
-<#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
-<#global VIEW = getView(PERIOD) />
+<#global VIEW = PERIOD?replace(" ", "_") />
+<#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
 <#global GROUP_AND_ORDER_BY = getStartedAt(PERIOD) />
 
 SELECT
-    ${GROUP_AND_ORDER_BY} AS "STARTED_AT",
-    sum( PASSED ) AS "PASSED",
-    sum( FAILED ) AS "FAILED",
-    sum( SKIPPED ) AS "SKIPPED",
-    sum( KNOWN_ISSUE ) AS "KNOWN ISSUE",
-    sum( ABORTED ) AS "ABORTED"
-  FROM ${VIEW}
-  ${WHERE_MULTIPLE_CLAUSE}
-  GROUP BY ${GROUP_AND_ORDER_BY}
-  ORDER BY ${GROUP_AND_ORDER_BY};
+  ${GROUP_AND_ORDER_BY} AS "STARTED_AT",
+  SUM( PASSED ) AS "PASSED",
+  SUM( FAILED ) AS "FAILED",
+  SUM( SKIPPED ) AS "SKIPPED",
+  SUM( KNOWN_ISSUE ) AS "KNOWN ISSUE",
+  SUM( ABORTED ) AS "ABORTED"
+FROM ${VIEW}
+${WHERE_CLAUSE}
+GROUP BY ${GROUP_AND_ORDER_BY}
+ORDER BY ${GROUP_AND_ORDER_BY};
 
-  <#--
-    Generates WHERE clause for multiple choosen parameters
-    @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
-    @return - generated WHERE clause
-  -->
-<#function generateMultipleWhereClause map>
- <#local result = "" />
- <#list map?keys as key>
-     <#if map[key] != "" >
-      <#if PERIOD == "Total" && IGNORE_TOTAL_PARAMS?seq_contains(key)>
-        <#continue>
-      </#if>
-      <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
-        <#-- Ignore non supported filters for Personal chart: USER -->
-        <#continue>
-      </#if>
-      <#if result?length != 0>
-       <#local result = result + " AND "/>
-      </#if>
-      <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
-     </#if>
- </#list>
+<#--
+  Generates WHERE clause 
+  @map - collected multiple choosen data (key - DB column name : value - expected DB value)
+  @return - generated WHERE clause
+-->
+<#function generateWhereClause map>
+  <#local result = "" />
 
- <#if result?length != 0 && PERSONAL == "true">
-   <!-- add personal filter by currentUserId with AND -->
-   <#local result = result + " AND OWNER_ID=${currentUserId} "/>
- <#elseif result?length == 0 && PERSONAL == "true">
-   <!-- add personal filter by currentUserId without AND -->
-   <#local result = " OWNER_ID=${currentUserId} "/>
- </#if>
-
-  <#if PARENT_JOB != "">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
+  <#list map?keys as key>
+    <#if map[key]?has_content>
+      <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
     </#if>
-    <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
+  </#list>
+  
+  <#if isPersonal() && !USERS?has_content>
+    <!-- USERS filter has higher priority and if provided we should ignore personal board -->
+    <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
+  </#if>    
+  
+  <#if activeProjectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
   </#if>
- 
- <#if result?length != 0>
-  <#local result = " WHERE " + result/>
- </#if>
- <#return result>
+
+  <#if MILESTONE?has_content>
+    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
+  </#if>
+  
+  <#if result?length != 0>
+    <#local result = "WHERE " + result/>
+  </#if>
+  <#return result>
 </#function>
 
 <#--
@@ -949,32 +1766,20 @@ SELECT
   <#local result = "to_char(date_trunc(''day'', STARTED_AT), ''YYYY-MM-DD'')" />
   <#switch value>
     <#case "Last 24 Hours">
-      <#local result = "to_char(date_trunc(''hour'', STARTED_AT), ''MM-DD HH24:MI'')" />
-      <#break>
-    <#case "Nightly">
+    <#case "Today">
       <#local result = "to_char(date_trunc(''hour'', STARTED_AT), ''HH24:MI'')" />
       <#break>
-    <#case "Last 7 Days">
-    <#case "Last 14 Days">
-    <#case "Last 30 Days">
-    <#case "Weekly">
-    <#case "Monthly">
-      <#local result = "to_char(date_trunc(''day'', STARTED_AT), ''YYYY-MM-DD'')" />
-      <#break>
-    <#case "Total">
+    <#case "Last 90 Days">
+    <#case "Quarter">    
       <#local result = "to_char(date_trunc(''month'', STARTED_AT), ''YYYY-MM'')" />
       <#break>
+    <#case "Last 365 Days">
+    <#case "Year">
+    <#case "Total">
+      <#local result = "to_char(date_trunc(''quarter'', STARTED_AT), ''YYYY-" + ''"Q"'' + "Q'')" />
+      <#break>      
   </#switch>
   <#return result>
-</#function>
-
-<#--
-    Retrieves actual view name by abstract view description
-    @value - abstract view description
-    @return - actual view name
-  -->
-<#function getView value>
- <#return value?replace(" ", "_") + "_view">
 </#function>
 
 <#--
@@ -987,15 +1792,48 @@ SELECT
 </#function>
 
 <#--
-    Joins array values using '', '' separator
-    @array1 - to join, has higher priority that array2
-    @array2 - alternative to join if array1 does not exist or is empty
-    @return - joined array as string
+    Correct string value removing ending comma if any
+    @line - to analyze and correct
+    @return - corrected line
   -->
-<#function multiJoin array1=[] array2=[]>
-  <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', 
-'let lineRow = {
+<#function correct line>
+  <#if line?has_content>
+    <!-- trim line and remove ending comma if present -->
+    <#return line?trim?remove_ending(",") />
+  <#else>
+    <!-- return empty line if line is null or empty-->
+    <#return "" />
+  </#if>
+</#function>
+
+<#--
+    Add valid SQL clause using condition and operator
+    @operator - AND/OR/BETWEEN etc
+    @condition - field(s) condition
+    @query - existing where conditions
+    @return - concatenated where clause conditions
+  -->
+<#function addCondition operator, condition, query>
+  <#if query?length != 0>
+    <#return " " + operator + " " + condition>
+  <#else>
+    <#return condition>
+  </#if>
+</#function>
+
+<#--
+    retrun true if dashboard name is ''Personal'' or ''User Performance''
+    @return - boolean
+  -->
+<#function isPersonal>
+  <#local result = false />
+  <#if dashboardName?has_content>
+    <#if dashboardName == "Personal" || dashboardName == "User Performance">
+      <#local result = true />  
+    </#if>
+  </#if>
+  <#return result />
+</#function>', 'let lineRow = {
     "type": "line",
     "smooth": false,
     "stack": "Status",
@@ -1013,7 +1851,7 @@ SELECT
 }
 
 let series = [];
-  for (var i = 0; i < 5 ; i++) {
+  for (var i = 0; i < 6 ; i++) {
     series.push(lineRow);
   };
 
@@ -1032,11 +1870,12 @@ let option = {
         "extraCssText": "transform: translateZ(0);"
     },
     "color": [
-        "#61c8b3",
         "#e76a77",
+        "#6dbbe7",
         "#fddb7a",
-        "#9f5487",
-        "#b5b5b5"
+        "#b5b5b5",
+        "#61c8b3",
+        "#9f5487"
     ],
     "xAxis": {
         "type": "category",
@@ -1056,426 +1895,97 @@ window.onresize = function(event) {
   chart.setOption(option);
 };
 
-chart.setOption(option);', 
-'{
+chart.setOption(option);', '{
   "PERIOD": {
     "values": [
       "Last 24 Hours",
       "Last 7 Days",
       "Last 14 Days",
       "Last 30 Days",
-      "Nightly",
-      "Weekly",
-      "Monthly",
-      "Quarterly",
+      "Last 90 Days",
+      "Last 365 Days",
+      "Today",
+      "Week",
+      "Month",
+      "Quarter",
+      "Year",
       "Total"
     ],
     "required": true
-  },
-  "PERSONAL": {
-    "values": [
-      "false",
-      "true"
-    ],
-    "type": "radio",
-    "required": true
-  },
-  "PROJECT": {
-    "values": [],
-    "valuesQuery": "SELECT NAME FROM PROJECTS WHERE NAME <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "PLATFORM": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "BROWSER": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "USER": {
-    "values": [],
-    "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
-    "multiple": true
   },
   "ENV": {
     "values": [],
     "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "PLATFORM": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
+    "multiple": true
+  },    
+  "LOCALE": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
+    "multiple": true
+  },  
+  "BROWSER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "multiple": true
+  },  
   "PRIORITY": {
     "values": [],
     "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
     "multiple": true
   },
-  "FEATURE": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''feature'' ORDER BY 1;",
-    "multiple": true
-  },
-  "PARENT_JOB": {
+  "USERS": {
     "value": "",
     "required": false
-  },
-  "Separator": {
-    "value": "Below params are not applicable for Total period!",
-    "type": "title",
+  },  
+  "BUILDS": {
+    "value": "",
     "required": false
-  },
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },
-  "JOB_NAME": {
+  },  
+  "RUNS": {
+    "value": "",
+    "required": false
+  },  
+  "MILESTONE": {
     "value": "",
     "required": false
   }
-}', '', 
-'{
-  "PERIOD": "Total",
-  "PERSONAL": "false",
-  "currentUserId": 1,
-  "PROJECT": [],
-  "USER": [],
+}', '', '{
+  "PERIOD": "Quarter",
+  "currentUserId": 2,
+  "dashboardName": "",
   "ENV": [],
-  "PRIORITY": [],
-  "FEATURE": [],
   "PLATFORM": [],
-  "BROWSER":[],
+  "BROWSER": [],
   "LOCALE": [],
-  "JOB_NAME": "",
-  "PARENT_JOB": ""
+  "PRIORITY": [],
+  "BUILDS": "",  
+  "RUNS": "",
+  "MILESTONE": "",
+  "USERS": ""
 }', false);
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST FAILURE COUNT', 'High-level information about similar errors.', 'TABLE', 
-'<#global VIEW = getView(PERIOD) />
-
-SELECT COUNT(*) AS "COUNT",
-    STABILITY_URL AS "STABILITY",
-    MESSAGE AS "STACKTRACE"
-  FROM ${VIEW}
-  WHERE MESSAGE_HASHCODE=''${hashcode}''
-  GROUP BY MESSAGE, STABILITY_URL
-  LIMIT 1
-  
-<#--
-    Retrieves actual view name by abstract view description
-    @value - abstract view description
-    @return - actual view name
-  -->
-<#function getView value>
- <#return value?replace(" ", "_") + "_view">
-</#function>
-', 
-'{"columns": ["COUNT", "STABILITY", "STACKTRACE"]}', 
-'{
-  "PERIOD": {
-    "values": [
-      "Last 24 Hours",
-      "Last 7 Days",
-      "Last 14 Days",
-      "Last 30 Days",
-      "Nightly",
-      "Weekly",
-      "Monthly",
-      "Quarterly"
-    ],
-    "required": true
-  }
-}', '', 
-'{
-  "PERIOD": "Last 24 Hours",
-  "hashcode": "38758212"
-}', true);
-
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTS IMPLEMENTATION PROGRESS', 'A number of new automated cases per period.', 'BAR', 
-'<#global IGNORE_PERSONAL_PARAMS = ["USERS.USERNAME"] >
-
-<#global MULTIPLE_VALUES = {
-  "PROJECTS.NAME": multiJoin(PROJECT, projects),
-  "USERS.USERNAME": join(USER)
-}>
-<#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
-<#global CREATED_AT = getCreatedAt(PERIOD) />
-<#global GROUP_AND_ORDER_BY = getGroupAndOrder(PERIOD) />
-
-SELECT
-      ${CREATED_AT} AS "CREATED_AT",
-      count(*) AS "AMOUNT"
-    FROM TEST_CASES
-    INNER JOIN PROJECTS ON TEST_CASES.PROJECT_ID = PROJECTS.ID
-    INNER JOIN USERS ON TEST_CASES.PRIMARY_OWNER_ID = USERS.ID
-    ${WHERE_MULTIPLE_CLAUSE}
-    ${GROUP_AND_ORDER_BY}
-
-
-  <#--
-    Generates WHERE clause for multiple choosen parameters
-    @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
-    @return - generated WHERE clause
-  -->
-<#function generateMultipleWhereClause map>
-  <#local result = "" />
-
-   <#if PERIOD == "Nightly">
-    <#local result = result + "TEST_CASES.CREATED_AT >= current_date"/>
-  <#elseif PERIOD == "Last 24 Hours">
-    <#local result = result + "TEST_CASES.CREATED_AT >= date_trunc(''hour'', current_date - interval ''24'' hour)"/>
-  <#elseif PERIOD == "Weekly">
-    <#local result = result + "TEST_CASES.CREATED_AT >= date_trunc(''week'', current_date)  - interval ''2'' day"/>
-  <#elseif PERIOD == "Last 7 Days">
-    <#local result = result + "TEST_CASES.CREATED_AT >= date_trunc(''day'', current_date - interval ''7'' day)"/>
-  <#elseif PERIOD == "Last 14 Days">
-    <#local result = result + "TEST_CASES.CREATED_AT >= date_trunc(''day'', current_date - interval ''14'' day)"/>
-  <#elseif PERIOD == "Last 30 Days">
-    <#local result = result + "TEST_CASES.CREATED_AT >= date_trunc(''day'', current_date - interval ''30'' day)"/>
-  <#elseif PERIOD == "Monthly" >
-    <#local result = result + "TEST_CASES.CREATED_AT >= date_trunc(''week'', current_date)"/>  
-  </#if>
-
-  <#list map?keys as key>
-      <#if map[key] != "" >
-        <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
-          <#-- Ignore non supported filters for Personal chart: USER -->
-          <#continue>
-        </#if>
-        <#if result?length != 0>
-        <#local result = result + " AND "/>
-        </#if>
-        <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
-      </#if>
-</#list>
-
-  <#if result?length != 0 && PERSONAL == "true">
-    <!-- add personal filter by currentUserId with AND -->
-    <#local result = result + " AND USERS.ID=${currentUserId} "/>
-  <#elseif result?length == 0 && PERSONAL == "true">
-    <!-- add personal filter by currentUserId without AND -->
-    <#local result = " USERS.ID=${currentUserId} "/>
-  </#if>
-
-
-  <#if result?length != 0>
-    <#local result = " WHERE " + result/>
-  </#if>
-  <#return result>
-</#function>
-
-<#--
-    Retrieves actual CREATED_BY grouping  by abstract view description
-    @value - abstract view description
-    @return - actual view name
-  -->
-<#function getCreatedAt value>
-  <#local result = "to_char(date_trunc(''day'', TEST_CASES.CREATED_AT), ''MM/DD'')" />
-  <#switch value>
-    <#case "Last 24 Hours">
-    <#case "Nightly">
-      <#local result = "to_char(date_trunc(''hour'', TEST_CASES.CREATED_AT), ''HH24:MI'')" />
-      <#break>
-    <#case "Last 7 Days">
-    <#case "Weekly">
-    <#case "Last 14 Days">
-      <#local result = "to_char(date_trunc(''day'', TEST_CASES.CREATED_AT), ''MM/DD'')" />
-      <#break>
-    <#case "Last 30 Days">
-    <#case "Monthly">
-      <#local result = "to_char(date_trunc(''week'', TEST_CASES.CREATED_AT), ''MM/DD'')" />
-      <#break>
-    <#case "Total">
-      <#local result = "to_char(date_trunc(''quarter'', TEST_CASES.CREATED_AT), ''YYYY-" + ''"Q"'' + "Q'')" />
-      <#break>
-  </#switch>
-  <#return result>
-</#function>
-
-<#function getGroupAndOrder value>
-  <#local result = "GROUP BY 1 ORDER BY 1;" />
-  <#switch value>
-    <#case "Last 24 Hours">
-    <#case "Last 7 Days">
-    <#case "Last 14 Days">
-    <#case "Last 30 Days">
-      <#local result = "GROUP BY 1, to_char(date_trunc(''week'', TEST_CASES.CREATED_AT), ''YY/MM/DD'')
-        ORDER BY to_char(date_trunc(''week'', TEST_CASES.CREATED_AT), ''YY/MM/DD'');" />
-      <#break>
-  </#switch>
-  <#return result>
-</#function>
-<#--
-    Joins array values using '', '' separator
-    @array - to join
-    @return - joined array as string
-  -->
-<#function join array=[]>
-  <#return array?join('', '') />
-</#function>
-
-<#--
-    Joins array values using '', '' separator
-    @array1 - to join, has higher priority that array2
-    @array2 - alternative to join if array1 does not exist or is empty
-    @return - joined array as string
-  -->
-<#function multiJoin array1=[] array2=[]>
-  <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', 
-'let data = [], invisibleData = [], xAxisData = [], lineData = [];
-let invisibleDataStep = 0, lineDataStep = 0;
-
-dataset.map(({CREATED_AT, AMOUNT}) => {
-  xAxisData.push(CREATED_AT);
-  data.push(AMOUNT);  //used in second bar series for building
-  invisibleData.push(invisibleDataStep);  //used in first bar series for creating step-effect
-  lineDataStep += AMOUNT;
-  lineData.push(lineDataStep); //used in line series for creating dashed-line
-  invisibleDataStep += AMOUNT; //the first element must be 0
-});
-  
-option = {
-  grid: {
-    right: "2%",
-    left: "4%",
-    top: "8%",
-    bottom: "8%"
-    },
-  tooltip : {
-    trigger: "axis",
-    axisPointer : {            
-      type : "shadow"        
-    },
-    formatter: function (params) {
-      let total = params[2]; // pick params.total
-      return total.name + "<br/>" + "Total" + " : " + total.value;
-    },
-    extraCssText: "transform: translateZ(0);"
-  },
-  color: ["#7fbae3", "#7fbae3"],
-  xAxis: {
-    type : "category",
-    splitLine: {
-      show: false
-    },
-    data : xAxisData
-  },
-  yAxis: {
-    type : "value"
-  },
-  series: [
-    {
-      type: "bar",
-      stack: "line",
-      itemStyle: {
-        normal: {
-          barBorderColor: "rgba(0,0,0,0)",
-          color: "rgba(127, 186, 227, 0.1)"
-        },
-        emphasis: {
-          barBorderColor: "rgba(0,0,0,0)",
-          color: "rgba(127, 186, 227, 0.1)"
-        }
-      },
-      data: invisibleData
-      },
-      {
-        type: "bar",
-        stack: "line",
-        label: {
-          normal: {
-            show: true,
-            distance: -15,
-            position: "top",
-            color: "black",
-             formatter: (params) => {
-              if (params.dataIndex === 0) return "";
-              return params.value;
-            }
-          }
-        },
-        data: data
-      },
-      {
-        type: "line",
-        smooth: true,
-        label: {
-          normal: {
-            show: true
-          }
-        },
-        lineStyle: {
-          color: "rgba(0,0,0,0)" // default invisible
-        },
-        data: lineData
-      }
-    ]
-};
-chart.setOption(option);', 
-'{
-  "PERIOD": {
-    "values": [
-      "Last 24 Hours",
-      "Last 7 Days",
-      "Last 14 Days",
-      "Last 30 Days",
-      "Nightly",
-      "Weekly",
-      "Monthly",
-      "Total",
-      "2020",
-      "2020-Q2"
-    ],
-    "required": true
-  },
-  "PERSONAL": {
-    "values": [
-      "false",
-      "true"
-    ],
-    "type": "radio",
-    "required": true
-  },
-  "PROJECT": {
-    "values": [],
-    "valuesQuery": "SELECT NAME FROM PROJECTS WHERE NAME <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "USER": {
-    "values": [],
-    "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
-    "multiple": true
-  }
-}', '', 
-'{
-  "PERIOD": "Total",
-  "PROJECT": ["UNKNOWN"],
-  "PERSONAL": "false",
-  "currentUserId": 1,
-  "USER": []
-}', false);
-
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (PIE)', 'Consolidated test status information with the ability to specify 10+ extra filters including daily, weekly, monthly etc period.', 'PIE', 
-'<#global IGNORE_TOTAL_PARAMS = ["LOCALE", "JOB_NAME", "PARENT_BUILD"] > 
-<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
-
-<#global MULTIPLE_VALUES = {
-  "PROJECT": multiJoin(PROJECT, projects),
-  "OWNER_USERNAME": join(USER),
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (PIE)',
+	'Consolidated tests status data supporting 10+ extra filters.', 'PIE', '<#global WHERE_VALUES = {
   "ENV": join(ENV),
-  "PRIORITY": join(PRIORITY),
-  "FEATURE": join(FEATURE),
   "LOWER(PLATFORM)": join(PLATFORM),
   "LOWER(BROWSER)": join(BROWSER),
-  "LOCALE": join(LOCALE)
+  "LOCALE": join(LOCALE),
+  "PRIORITY": join(PRIORITY),
+  "BUILD": correct(BUILDS!""),    
+  "RUN_NAME": correct(RUNS!""),
+  "OWNER": correct(USERS!"")
 }>
-<#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
-<#global VIEW = getView(PERIOD) />
+<#global VIEW = PERIOD?replace(" ", "_") />
+<#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
 
-<#if PERSONAL == "true" >
+<#if isPersonal() >
 SELECT
-  unnest(array[OWNER_USERNAME,
+  unnest(array[OWNER,
               ''PASSED'',
               ''FAILED'',
               ''SKIPPED'',
@@ -1488,9 +1998,9 @@ SELECT
           sum(SKIPPED),
           sum(KNOWN_ISSUE),
           sum(ABORTED)]) AS "value"
-  FROM ${VIEW}
-  ${WHERE_MULTIPLE_CLAUSE}
-  GROUP BY OWNER_USERNAME
+FROM ${VIEW}
+${WHERE_CLAUSE}
+GROUP BY OWNER
 
 <#else>
 
@@ -1508,81 +2018,53 @@ SELECT
           sum(SKIPPED),
           sum(KNOWN_ISSUE),
           sum(ABORTED)]) AS "value"
-  FROM ${VIEW}
-  ${WHERE_MULTIPLE_CLAUSE}
+FROM ${VIEW}
+${WHERE_CLAUSE}
 </#if>
 
 <#--
-    Generates WHERE clause for multiple choosen parameters
-    @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
-    @return - generated WHERE clause
-  -->
-<#function generateMultipleWhereClause map>
- <#local result = "" />
- <#list map?keys as key>
-    <#if map[key] != "" >
-      <#if PERIOD == "Total" && IGNORE_TOTAL_PARAMS?seq_contains(key)>
-        <#-- Ignore non supported filters for Total View: PLATFORM, DEVICE, APP_VERSION, LOCALE, JOB_NAME-->
-        <#continue>
-      </#if>
-      <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
-        <#-- Ignore non supported filters for Personal chart: USER -->
-        <#continue>
-      </#if>
-      <#if result?length != 0>
-       <#local result = result + " AND "/>
-      </#if>
-      <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
+  Generates WHERE clause 
+  @map - collected multiple choosen data (key - DB column name : value - expected DB value)
+  @return - generated WHERE clause
+-->
+<#function generateWhereClause map>
+  <#local result = "" />
+  
+  <#list map?keys as key>
+    <#if map[key]?has_content>
+      <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
     </#if>
- </#list>
-
-<#if PERIOD != "Total">
- <#if PARENT_JOB != "">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
- </#if>
- 
-  <#if PARENT_JOB != "" && PARENT_BUILD?lower_case == "latest">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_BUILD_NUMBER = (
-            SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
-            FROM TEST_RUNS INNER JOIN
-              JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
-            WHERE JOBS.NAME=''${PARENT_JOB}'')"/>
-  <#elseif PARENT_JOB != "" && PARENT_BUILD != "">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_BUILD_NUMBER = ''" + PARENT_BUILD + "''"/>  
+  </#list>  
+  
+  <#if activeProjectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
   </#if>
-</#if>
 
- <#if result?length != 0 && PERSONAL == "true">
-   <!-- add personal filter by currentUserId with AND -->
-   <#local result = result + " AND OWNER_ID=${currentUserId} "/>
- <#elseif result?length == 0 && PERSONAL == "true">
- <!-- add personal filter by currentUserId without AND -->
-   <#local result = " OWNER_ID=${currentUserId} "/>
- </#if>
+  <#if isPersonal() && !USERS?has_content>
+    <!-- USERS filter has higher priority and if provided we should ignore personal board -->
+    <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
+  </#if>  
+  
+  <#if MILESTONE?has_content>
+    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
+    
+    <#if MILESTONE_VERSION?has_content>
+      <#if MILESTONE_VERSION?lower_case == "latest">
+        <#local result = result + addCondition("AND", "MILESTONE_VERSION = (
+                SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
+                FROM TEST_RUNS INNER JOIN
+                  JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
+                WHERE JOBS.NAME=''${MILESTONE}'')", result) />
+      <#elseif isDecimal(MILESTONE_VERSION)>
+        <#local result = result + addCondition("AND", "MILESTONE_VERSION = ''" + MILESTONE_VERSION + "''", result) />
+      </#if>
+    </#if>
+  </#if>  
 
-
- <#if result?length != 0>
-  <#local result = " WHERE " + result/>
- </#if>
- <#return result>
-</#function>
-
-<#--
-    Retrieves actual view name by abstract view description
-    @value - abstract view description
-    @return - actual view name
-  -->
-<#function getView value>
- <#return value?replace(" ", "_") + "_view">
+  <#if result?length != 0>
+    <#local result = "WHERE " + result/>
+  </#if>
+  <#return result>
 </#function>
 
 <#--
@@ -1595,15 +2077,63 @@ SELECT
 </#function>
 
 <#--
-    Joins array values using '', '' separator
-    @array1 - to join, has higher priority that array2
-    @array2 - alternative to join if array1 does not exist or is empty
-    @return - joined array as string
+    Correct string value removing ending comma if any
+    @line - to analyze and correct
+    @return - corrected line
   -->
-<#function multiJoin array1=[] array2=[]>
-  <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', 
-'option = {
+<#function correct line>
+  <#if line?has_content>
+    <!-- trim line and remove ending comma if present -->
+    <#return line?trim?remove_ending(",") />
+  <#else>
+    <!-- return empty line if line is null or empty-->
+    <#return "" />
+  </#if>
+</#function>
+
+<#--
+    Add valid SQL clause using condition and operator
+    @operator - AND/OR/BETWEEN etc
+    @condition - field(s) condition
+    @query - existing where conditions
+    @return - concatenated where clause conditions
+  -->
+<#function addCondition operator, condition, query>
+  <#if query?length != 0>
+    <#return " " + operator + " " + condition>
+  <#else>
+    <#return condition>
+  </#if>
+</#function>
+
+<#--
+    retrun true if dashboard name is ''Personal'' or ''User Performance''
+    @return - boolean
+  -->
+<#function isPersonal>
+  <#local result = false />
+  <#if dashboardName?has_content>
+    <#if dashboardName == "Personal" || dashboardName == "User Performance">
+      <#local result = true />  
+    </#if>
+  </#if>
+  <#return result />
+</#function>
+
+<#-- 
+  verify that value is number
+  @return - boolean
+  -->
+<#function isDecimal value>
+  <#attempt>
+    <#assign num = value?number>
+    <#local result = true />
+  <#recover>
+    <#local result = false />
+  </#attempt>
+  <#return result />
+</#function>', '
+option = {
     "legend": {
         "orient": "vertical",
         "x": "left",
@@ -1662,1275 +2192,145 @@ SELECT
         }
     ]
 }
-chart.setOption(option);', 
-'{
+chart.setOption(option);
+', '{
   "PERIOD": {
     "values": [
       "Last 24 Hours",
       "Last 7 Days",
       "Last 14 Days",
       "Last 30 Days",
-      "Nightly",
-      "Weekly",
-      "Monthly",
-      "Quarterly",
+      "Last 90 Days",
+      "Last 365 Days",
+      "Today",
+      "Week",
+      "Month",
+      "Quarter",
+      "Year",
       "Total"
     ],
     "required": true
   },
-  "PERSONAL": {
-    "values": [
-      "false",
-      "true"
-    ],
-    "type": "radio",
-    "required": true
-  },
-  "PROJECT": {
+  "ENV": {
     "values": [],
-    "valuesQuery": "SELECT NAME FROM PROJECTS WHERE NAME <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
     "multiple": true
   },
   "PLATFORM": {
     "values": [],
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
-  },
+  },    
+  "LOCALE": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
+    "multiple": true
+  },  
   "BROWSER": {
     "values": [],
     "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
     "multiple": true
-  },
-  "USER": {
-    "values": [],
-    "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
-    "multiple": true
-  },
-  "ENV": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
-    "multiple": true
-  },
+  },  
   "PRIORITY": {
     "values": [],
     "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
     "multiple": true
   },
-  "FEATURE": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''feature'' ORDER BY 1;",
-    "multiple": true
-  },
-  "PARENT_JOB": {
+  "USERS": {
+    "value": "",
+    "required": false
+  },  
+  "BUILDS": {
+    "value": "",
+    "required": false
+  },  
+  "RUNS": {
+    "value": "",
+    "required": false
+  },  
+  "MILESTONE": {
     "value": "",
     "required": false
   },
-  "Separator": {
-    "value": "Below params are not applicable for Total period!",
-    "type": "title",
-    "required": false
-  },
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },
-  "JOB_NAME": {
-    "value": "",
-    "required": false
-  },
-  "PARENT_BUILD": {
+  "MILESTONE_VERSION": {
     "value": "",
     "required": false
   }
-}', '', 
-'{
-  "PERIOD": "Monthly",
-  "PERSONAL": "false",
+}', '', '{
+  "PERIOD": "Total",
   "currentUserId": 2,
-  "PROJECT": [],
-  "USER": ["anonymous"],
+  "dashboardName": "",
   "ENV": [],
-  "PRIORITY": [],
-  "FEATURE": [],
-  "PLATFORM": [],
-  "BROWSER":[],
-  "LOCALE": [],
-  "JOB_NAME": "",
-  "PARENT_JOB": "",
-  "PARENT_BUILD": "LATEST"
-}', false);
-
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTS FAILURES BY REASON', 'Summarized information about tests failures grouped by reason.', 'TABLE', 
-'<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
-
-<#global MULTIPLE_VALUES = {
-  "PROJECT": multiJoin(PROJECT, projects),
-  "OWNER_USERNAME": join(USER),
-  "ENV": join(ENV),
-  "PRIORITY": join(PRIORITY),
-  "FEATURE": join(FEATURE),
-  "LOWER(PLATFORM)": join(PLATFORM),
-  "LOWER(BROWSER)": join(BROWSER),
-  "LOCALE": join(LOCALE)
-}>
-<#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
-<#global VIEW = getView(PERIOD) />
-
-SELECT count(*) AS "COUNT",
-      ENV AS "ENV",
-      ''<a href=${JIRA_URL}'' || ''/'' || BUG || '' target="_blank">'' || BUG || ''</a>'' AS "BUG",
-      BUG_SUBJECT AS "SUBJECT",
-      ''<a href="dashboards/'' || (select ID from dashboards where title=''Failures analysis'') || ''?hashcode='' || max(MESSAGE_HASHCODE)  || ''">Failures Analysis</a>'' AS "REPORT",
-      substring(MESSAGE from 1 for 210) as "MESSAGE"
-  FROM ${VIEW}
-  ${WHERE_MULTIPLE_CLAUSE}
-  GROUP BY "ENV", "BUG", "SUBJECT", MESSAGE
-  HAVING count(*) >= ${ERROR_COUNT}
-  ORDER BY "COUNT" DESC
-
-
-<#--
-    Generates WHERE clause for multiple choosen parameters
-    @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
-    @return - generated WHERE clause
-  -->
-<#function generateMultipleWhereClause map>
- <#local result = "" />
-
- <#if BLOCKER="true">
-   <#local result = " (KNOWN_ISSUE > 0) AND (TEST_BLOCKER=TRUE) "/>
- </#if>
-
- <#list map?keys as key>
-    <#if map[key] != "" >
-      <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
-        <#-- Ignore non supported filters for Personal chart: USER -->
-        <#continue>
-      </#if>
-      <#if result?length != 0>
-       <#local result = result + " AND "/>
-      </#if>
-      <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
-    </#if>
- </#list>
-
- <#if PARENT_JOB != "">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
- </#if>
- 
- <#if PARENT_JOB != "" && PARENT_BUILD == "LATEST">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_BUILD_NUMBER = (
-            SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
-            FROM TEST_RUNS INNER JOIN
-              JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
-            WHERE JOBS.NAME=''${PARENT_JOB}'')"/>
-  <#elseif PARENT_JOB != "" && PARENT_BUILD != "">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_BUILD_NUMBER = ''" + PARENT_BUILD + "''"/>  
-  </#if>
-
- <#if result?length != 0 && PERSONAL == "true">
-   <!-- add personal filter by currentUserId with AND -->
-   <#local result = result + " AND OWNER_ID=${currentUserId} "/>
- <#elseif result?length == 0 && PERSONAL == "true">
- <!-- add personal filter by currentUserId without AND -->
-   <#local result = " OWNER_ID=${currentUserId} "/>
- </#if>
-
-
- <#if result?length != 0>
-  <#local result = " WHERE MESSAGE IS NOT NULL AND MESSAGE <> '''' AND " + result/>
- <#else>
-  <#local result = " WHERE MESSAGE IS NOT NULL AND MESSAGE <> ''''"/>
- </#if>
- <#return result>
-</#function>
-
-<#--
-    Retrieves actual view name by abstract view description
-    @value - abstract view description
-    @return - actual view name
-  -->
-<#function getView value>
- <#return value?replace(" ", "_") + "_view">
-</#function>
-
-<#--
-    Joins array values using '', '' separator
-    @array - to join
-    @return - joined array as string
-  -->
-<#function join array=[]>
-  <#return array?join('', '') />
-</#function>
-
-<#--
-    Joins array values using '', '' separator
-    @array1 - to join, has higher priority that array2
-    @array2 - alternative to join if array1 does not exist or is empty
-    @return - joined array as string
-  -->
-<#function multiJoin array1=[] array2=[]>
-  <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', 
-'{"columns": ["COUNT", "ENV", "REPORT", "MESSAGE", "BUG", "SUBJECT"]}', 
-'{
-  "PERIOD": {
-    "values": [
-      "Last 24 Hours",
-      "Last 7 Days",
-      "Last 14 Days",
-      "Last 30 Days",
-      "Nightly",
-      "Weekly",
-      "Monthly",
-      "Quarterly"
-    ],
-    "required": true
-  },
-  "PERSONAL": {
-    "values": [
-      "false",
-      "true"
-    ],
-    "type": "radio",
-    "required": true
-  },
-  "BLOCKER": {
-    "values": [
-      "false",
-      "true"
-    ],
-    "type": "radio",
-    "required": true
-  },
-  "JIRA_URL": {
-    "value": "https://mycompany.atlassian.net/browse",
-    "required": true
-  },
-  "ERROR_COUNT": {
-    "value": "0",
-    "required": true
-  },
-  "PROJECT": {
-    "values": [],
-    "valuesQuery": "SELECT NAME FROM PROJECTS WHERE NAME <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "PLATFORM": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "BROWSER": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "USER": {
-    "values": [],
-    "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
-    "multiple": true
-  },
-  "ENV": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "PRIORITY": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
-    "multiple": true
-  },
-  "FEATURE": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''feature'' ORDER BY 1;",
-    "multiple": true
-  },
-  "PARENT_JOB": {
-    "value": "",
-    "required": false
-  },
-  "Separator": {
-    "value": "Below params are not applicable for Total period!",
-    "type": "title",
-    "required": false
-  },
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },
-  "JOB_NAME": {
-    "value": "",
-    "required": false
-  },
-  "PARENT_BUILD": {
-    "value": "",
-    "required": false
-  }
-}', 
-'{"legend": ["COUNT", "ENV", "REPORT", "MESSAGE", "BUG", "SUBJECT"]}', 
-'{
-  "PERIOD": "Last 7 Days",
-  "PERSONAL": "false",
-  "ERROR_COUNT": 0,
-  "currentUserId": 1,
-  "PROJECT": [],
-  "USER": [],
-  "ENV": [],
-  "PRIORITY": [],
-  "FEATURE": [],
-  "PLATFORM": [],
-  "BROWSER":[],
-  "LOCALE": [],
-  "BLOCKER": "false",
-  "JOB_NAME": "",
-  "PARENT_JOB": "",
-  "PARENT_BUILD": "",
-  "JIRA_URL": "https://mycompany.atlassian.net/browse"}', false);
-
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST FAILURE DETAILS', 'All tests with a similar failure.', 'TABLE', 
-'<#global VIEW = getView(PERIOD) />
-
-SELECT ENV AS "ENV",
-      ''<a href=${JIRA_URL}'' || ''/'' || BUG || '' target="_blank">'' || BUG || ''</a>'' AS "BUG",
-      BUG_SUBJECT AS "SUBJECT",
-      TEST_INFO_URL AS "REPORT"
-  FROM ${VIEW}
-  WHERE MESSAGE_HASHCODE=''${hashcode}''
-  GROUP BY "ENV", "BUG", "SUBJECT", "REPORT"
-  ORDER BY "ENV"
-
-<#--
-    Retrieves actual view name by abstract view description
-    @value - abstract view description
-    @return - actual view name
-  -->
-<#function getView value>
- <#return value?replace(" ", "_") + "_view">
-</#function>', 
-'{"columns": ["ENV", "REPORT", "BUG", "SUBJECT"]}', 
-'{
-  "PERIOD": {
-    "values": [
-      "Last 24 Hours",
-      "Last 7 Days",
-      "Last 14 Days",
-      "Last 30 Days",
-      "Nightly",
-      "Weekly",
-      "Monthly",
-      "Quarterly"
-    ],
-    "required": true
-  },
-  "JIRA_URL": {
-    "value": "https://mycompany.atlassian.net/browse",
-    "required": true
-  }   
-}', '', 
-'{
-  "PERIOD": "Last 24 Hours",
-  "hashcode": "-1996341284",
-  "JIRA_URL": "https://mycompany.atlassian.net/browse"
-}', true);
-
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTCASE INFO', 'Detailed test case information.', 'TABLE', 
-'SELECT
-         TEST_CASES.TEST_CLASS || ''.'' || TEST_CASES.TEST_METHOD AS "TEST METHOD",
-         TEST_SUITES.FILE_NAME AS "TEST SUITE",
-         USERS.USERNAME AS "OWNER",
-         PROJECTS.NAME AS "PROJECT",
-         TEST_CASES.CREATED_AT::date::text AS "CREATED AT"
-         FROM TEST_CASES
-         INNER JOIN TEST_SUITES ON TEST_CASES.TEST_SUITE_ID = TEST_SUITES.ID
-         INNER JOIN USERS ON TEST_CASES.PRIMARY_OWNER_ID = USERS.ID
-         INNER JOIN PROJECTS ON TEST_CASES.PROJECT_ID = PROJECTS.ID
-     WHERE TEST_CASES.ID = ''${testCaseId}''
-', 
-'{"columns": ["OWNER", "PROJECT", "TEST METHOD", "TEST SUITE", "CREATED AT"]}', '{}', '', '{"testCaseId": "1"}', true);
-
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASE DURATION TREND', 'All kind of duration metrics per test case.', 'LINE', 
-'SELECT
-      ROUND(AVG(EXTRACT(EPOCH FROM (TESTS.FINISH_TIME - TESTS.START_TIME)))::numeric, 2) as "AVG TIME",
-      ROUND(MAX(EXTRACT(EPOCH FROM (TESTS.FINISH_TIME - TESTS.START_TIME)))::numeric, 2) as "MAX TIME",
-      ROUND(MIN(EXTRACT(EPOCH FROM (TESTS.FINISH_TIME - TESTS.START_TIME)))::numeric, 2) as "MIN TIME",
-      to_char(date_trunc(''month'', TESTS.START_TIME), ''YYYY-MM'') AS "TESTED_AT"
-FROM TESTS
-WHERE TEST_CASE_ID = ''${testCaseId}''
-  AND TESTS.FINISH_TIME IS NOT NULL
-  AND TESTS.START_TIME IS NOT NULL
-  AND TESTS.STATUS <> ''IN_PROGRESS''
-GROUP BY date_trunc(''month'', TESTS.START_TIME)
-ORDER BY "TESTED_AT"', 
-'{
-    "grid": {
-        "right": "2%",
-        "left": "2%",
-        "top": "8%",
-        "bottom": "8%"
-    },
-    "legend": {},
-    "tooltip": {
-        "trigger": "axis",
-        "extraCssText": "transform: translateZ(0);"
-    },
-    "dimensions": [
-        "TESTED_AT",
-        "AVG TIME",
-        "MAX TIME",
-        "MIN TIME"
-    ],
-    "color": [
-        "#61c8b3",
-        "#e76a77",
-        "#fddb7a"
-    ],
-    "xAxis": {
-        "type": "category",
-        "boundaryGap": false
-    },
-    "yAxis": {},
-    "series": [
-        {
-            "type": "line"
-        },
-        {
-            "type": "line"
-        },
-        {
-            "type": "line"
-        }
-    ]
-}', '{}', '', '{"testCaseId": "1"}', true);
-
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASE STABILITY', 'Aggregated stability metric for a test case.', 'PIE', 
-'SELECT 
-  unnest(array[''STABILITY'',
-                  ''FAILURE'',
-                  ''OMISSION'',
-                  ''KNOWN ISSUE'',
-                  ''INTERRUPT'']) AS "label",
-  unnest(array[ROUND(SUM(CASE WHEN TESTS.STATUS = ''PASSED'' THEN 1 ELSE 0 END) * 100 /COUNT(*)::numeric, 0),                  
-               ROUND(SUM(CASE WHEN TESTS.STATUS = ''FAILED'' AND TESTS.KNOWN_ISSUE = FALSE THEN 1 ELSE 0 END) * 100 / COUNT(*)::numeric, 0),
-               ROUND(SUM(CASE WHEN TESTS.STATUS = ''SKIPPED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)::numeric, 0),
-               ROUND(SUM(CASE WHEN TESTS.STATUS = ''FAILED'' AND TESTS.KNOWN_ISSUE = TRUE THEN 1 ELSE 0 END) * 100 / COUNT(*)::numeric, 0),
-               ROUND(SUM(CASE WHEN TESTS.STATUS = ''ABORTED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)::numeric, 0)]) AS "value"
-FROM TESTS
-         INNER JOIN
-     TEST_CASES ON TESTS.TEST_CASE_ID = TEST_CASES.ID
-WHERE TEST_CASE_ID = ''${testCaseId}''
-  AND TESTS.FINISH_TIME IS NOT NULL
-  AND TESTS.START_TIME IS NOT NULL
-  AND TESTS.STATUS <> ''IN_PROGRESS''
-', 
-'{
-    "legend": {
-        "orient": "vertical",
-        "x": "left",
-        "y": "center",
-        "itemGap": 10,
-        "textStyle": {
-            "fontSize": 10
-        },
-        "formatter": "{name}"
-    },
-    "tooltip": {
-        "trigger": "item",
-        "axisPointer": {
-            "type": "shadow"
-        },
-        "formatter": "{b0}<br>{d0}%",
-        "extraCssText": "transform: translateZ(0);"
-    },
-    "color": [
-        "#61c8b3",
-        "#e76a77",
-        "#fddb7a",
-        "#9f5487",
-        "#6dbbe7",
-        "#b5b5b5"
-    ],
-    "series": [
-        {
-            "type": "pie",
-            "selectedMode": "multi",
-            "hoverOffset": 2,
-            "clockwise": false,
-            "stillShowZeroSum": false,
-            "avoidLabelOverlap": true,
-            "itemStyle": {
-                "normal": {
-                    "label": {
-                        "show": true,
-                        "position": "outside",
-                        "formatter": "{@value} ({d0}%)"
-                    },
-                    "labelLine": {
-                        "show": true
-                    }
-                },
-                "emphasis": {
-                    "label": {
-                        "show": true
-                    }
-                }
-            },
-            "radius": [
-                "0%",
-                "70%"
-            ]
-        }
-    ]
-}', '{}', '', '{"testCaseId": "1"}', true);
-
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTS SUMMARY', 'Detailed information about passed, failed, skipped etc tests.', 'TABLE', 
-'<#global IGNORE_TOTAL_PARAMS = ["LOCALE", "JOB_NAME", "PARENT_BUILD"] >
-<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
-
-<#global MULTIPLE_VALUES = {
-  "PROJECT": multiJoin(PROJECT, projects),
-  "OWNER_USERNAME": join(USER),
-  "ENV": join(ENV),
-  "PRIORITY": join(PRIORITY),
-  "FEATURE": join(FEATURE),
-  "LOWER(PLATFORM)": join(PLATFORM),
-  "LOWER(BROWSER)": join(BROWSER),
-  "LOCALE": join(LOCALE)
-}>
-<#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
-<#global VIEW = getView(PERIOD) />
-
-SELECT
-        <#if GROUP_BY="OWNER_USERNAME" >
-          ''<a href="dashboards/'' || (select ID from dashboards where title=''Personal'') || ''?userId='' || OWNER_ID || ''">'' || OWNER_USERNAME || ''</a>'' AS "OWNER",
-        <#elseif GROUP_BY="TEST_SUITE_NAME">
-          ''<a href="test-runs/'' || TEST_RUN_ID || ''">'' || TEST_SUITE_NAME || ''</a>'' AS "SUITE",
-          ${GROUP_BY} AS "${GROUP_BY}",
-        <#elseif GROUP_BY="APP_VERSION">
-          APP_VERSION AS "BUILD",
-        </#if>
-        SUM(PASSED) AS "PASS",
-        SUM(FAILED) AS "FAIL",
-        SUM(KNOWN_ISSUE) AS "DEFECT",
-        SUM(SKIPPED) AS "SKIP",
-        SUM(ABORTED) AS "ABORT",
-        SUM(TOTAL) AS "TOTAL",
-        round (100.0 * SUM(PASSED) / (SUM(TOTAL)), 0)::integer AS "PASSED (%)",
-        round (100.0 * SUM(FAILED) / (SUM(TOTAL)), 0)::integer AS "FAILED (%)",
-        round (100.0 * SUM(KNOWN_ISSUE) / (SUM(TOTAL)), 0)::integer AS "KNOWN ISSUE (%)",
-        round (100.0 * SUM(SKIPPED) / (SUM(TOTAL)), 0)::integer AS "SKIPPED (%)",
-        round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
-    FROM ${VIEW}
-    ${WHERE_MULTIPLE_CLAUSE}
-    <#if GROUP_BY="OWNER_USERNAME" >
-      GROUP BY OWNER_ID, OWNER_USERNAME
-    <#elseif GROUP_BY="TEST_SUITE_NAME">
-      GROUP BY TEST_RUN_ID, TEST_SUITE_NAME
-    <#elseif GROUP_BY="APP_VERSION">
-      GROUP BY APP_VERSION
-    </#if>
-    ORDER BY 1
-
-
-<#--
-    Generates WHERE clause for multiple choosen parameters
-    @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
-    @return - generated WHERE clause
-  -->
-<#function generateMultipleWhereClause map>
- <#local result = "" />
- <#list map?keys as key>
-    <#if map[key] != "" >
-      <#if PERIOD == "Total" && IGNORE_TOTAL_PARAMS?seq_contains(key)>
-        <#-- Ignore non supported filters for Total View: PLATFORM, DEVICE, APP_VERSION, LOCALE, JOB_NAME-->
-        <#continue>
-      </#if>
-      <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
-        <#-- Ignore non supported filters for Personal chart: USER -->
-        <#continue>
-      </#if>
-      <#if result?length != 0>
-       <#local result = result + " AND "/>
-      </#if>
-      <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
-    </#if>
- </#list>
-
- <#if result?length != 0 && PERSONAL == "true">
-   <!-- add personal filter by currentUserId with AND -->
-   <#local result = result + " AND OWNER_ID=${currentUserId} "/>
- <#elseif result?length == 0 && PERSONAL == "true">
- <!-- add personal filter by currentUserId without AND -->
-   <#local result = " OWNER_ID=${currentUserId} "/>
- </#if>
-
- <#if PARENT_JOB != "">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
- </#if>
- 
- <#if PARENT_JOB != "" && PARENT_BUILD == "LATEST">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_BUILD_NUMBER = (
-            SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
-            FROM TEST_RUNS INNER JOIN
-              JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
-            WHERE JOBS.NAME=''${PARENT_JOB}'')"/>
-  <#elseif PARENT_JOB != "" && PARENT_BUILD != "">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_BUILD_NUMBER = ''" + PARENT_BUILD + "''"/>  
-  </#if>
-
- <#if result?length != 0>
-  <#local result = " WHERE " + result/>
- </#if>
- <#return result>
-</#function>
-
-<#--
-    Retrieves actual view name by abstract view description
-    @value - abstract view description
-    @return - actual view name
-  -->
-<#function getView value>
- <#return value?replace(" ", "_") + "_view">
-</#function>
-
-<#--
-    Joins array values using '', '' separator
-    @array - to join
-    @return - joined array as string
-  -->
-<#function join array=[]>
-  <#return array?join('', '') />
-</#function>
-
-<#--
-    Joins array values using '', '' separator
-    @array1 - to join, has higher priority that array2
-    @array2 - alternative to join if array1 does not exist or is empty
-    @return - joined array as string
-  -->
-<#function multiJoin array1=[] array2=[]>
-  <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', 
-'{"columns": ["OWNER", "SUITE", "PASS", "FAIL", "DEFECT", "SKIP", "ABORT", "TOTAL", "PASSED (%)", "FAILED (%)", "KNOWN ISSUE (%)", "SKIPPED (%)", "FAIL RATE (%)"]}', 
-'{
-  "PERIOD": {
-    "values": [
-      "Last 24 Hours",
-      "Last 7 Days",
-      "Last 14 Days",
-      "Last 30 Days",
-      "Nightly",
-      "Weekly",
-      "Monthly",
-      "Quarterly"
-    ],
-    "required": true
-  },
-  "GROUP_BY": {
-    "values": [
-      "OWNER_USERNAME",
-      "TEST_SUITE_NAME",
-      "APP_VERSION"
-    ],
-    "required": true
-  },
-  "PERSONAL": {
-    "values": [
-      "false",
-      "true"
-    ],
-    "type": "radio",
-    "required": true
-  },
-  "PROJECT": {
-    "values": [],
-    "valuesQuery": "SELECT NAME FROM PROJECTS WHERE NAME <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "PLATFORM": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "BROWSER": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "USER": {
-    "values": [],
-    "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
-    "multiple": true
-  },
-  "ENV": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "PRIORITY": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
-    "multiple": true
-  },
-  "FEATURE": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''feature'' ORDER BY 1;",
-    "multiple": true
-  },
-  "PARENT_JOB": {
-    "value": "",
-    "required": false
-  },
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },
-  "JOB_NAME": {
-    "value": "",
-    "required": false
-  },
-  "PARENT_BUILD": {
-    "value": "",
-    "required": false
-  }
-}', 
-'{"legend": ["OWNER", "SUITE", "BUILD", "PASS", "FAIL", "DEFECT", "SKIP", "ABORT", "QUEUE", "TOTAL", "PASSED (%)", "FAILED (%)", "KNOWN ISSUE (%)", "SKIPPED (%)", "QUEUED (%)", "FAIL RATE (%)"]}', 
-'{
-  "PERIOD": "Last 24 Hours",
-  "GROUP_BY": "TEST_SUITE_NAME",
-  "PERSONAL": "false",
-  "currentUserId": 1,
-  "PROJECT": [],
-  "USER": [],
-  "ENV": [],
-  "PRIORITY": [],
-  "FEATURE": [],
   "PLATFORM": [],
   "BROWSER": [],
   "LOCALE": [],
-  "JOB_NAME": "",
-  "PARENT_JOB": "",
-  "PARENT_BUILD": ""
-}', false);
-
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('APPLICATION ISSUES (BLOCKERS) DETAILS', 'Detailed information about known issues and blockers.', 'TABLE', 
-'<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
-
-<#global MULTIPLE_VALUES = {
-  "PROJECT": multiJoin(PROJECT, projects),
-  "OWNER_USERNAME": join(USER),
-  "ENV": join(ENV),
-  "PRIORITY": join(PRIORITY),
-  "FEATURE": join(FEATURE),
-  "LOWER(PLATFORM)": join(PLATFORM),
-  "LOWER(BROWSER)": join(BROWSER),
-  "LOCALE": join(LOCALE)
-}>
-<#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
-<#global VIEW = getView(PERIOD) />
-
-SELECT
-      ''<a href=${JIRA_URL}'' || ''/'' || BUG || '' target="_blank">'' || BUG || ''</a>'' AS "BUG",
-      BUG_SUBJECT AS "SUBJECT",
-      ''<a href=${JIRA_URL}'' || ''/'' || TASK || '' target="_blank">'' || TASK || ''</a>'' AS "TASK",
-      PROJECT AS "PROJECT",
-      ENV AS "ENV",
-      OWNER_USERNAME AS "OWNER",
-      PLATFORM AS "PLATFORM",
-      PLATFORM_VERSION AS "PLATFORM_VERSION",
-      BROWSER AS "BROWSER",
-      BROWSER_VERSION AS "BROWSER_VERSION",
-      APP_VERSION AS "APP_VERSION",
-      DEVICE AS "DEVICE",
-      LOCALE AS "LOCALE",
-      TEST_SUITE_NAME AS "SUITE NAME",
-      TEST_INFO_URL AS "TEST_INFO_URL",
-      MESSAGE AS "Error Message"
-    FROM ${VIEW}
-    ${WHERE_MULTIPLE_CLAUSE}
-
-
-<#--
-    Generates WHERE clause for multiple choosen parameters
-    @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
-    @return - generated WHERE clause
-  -->
-<#function generateMultipleWhereClause map>
- <#local result = "" />
-
- <#if BLOCKER="true">
-   <#local result = " (KNOWN_ISSUE > 0) AND (TEST_BLOCKER=TRUE) "/>
- <#else>
-   <#local result = " (KNOWN_ISSUE > 0)" />
- </#if>
-
- <#list map?keys as key>
-    <#if map[key] != "" >
-      <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
-        <#-- Ignore non supported filters for Personal chart: USER -->
-        <#continue>
-      </#if>
-      <#if result?length != 0>
-       <#local result = result + " AND "/>
-      </#if>
-      <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
-    </#if>
- </#list>
-
- <#if PARENT_JOB != "">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
- </#if>
- 
- <#if PARENT_JOB != "" && PARENT_BUILD == "LATEST">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_BUILD_NUMBER = (
-            SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
-            FROM TEST_RUNS INNER JOIN
-              JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
-            WHERE JOBS.NAME=''${PARENT_JOB}'')"/>
-  <#elseif PARENT_JOB != "" && PARENT_BUILD != "">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_BUILD_NUMBER = ''" + PARENT_BUILD + "''"/>  
-  </#if>
-
- <#if result?length != 0 && PERSONAL == "true">
-   <!-- add personal filter by currentUserId with AND -->
-   <#local result = result + " AND OWNER_ID=${currentUserId} "/>
- <#elseif result?length == 0 && PERSONAL == "true">
-   <!-- add personal filter by currentUserId without AND -->
-   <#local result = " OWNER_ID=${currentUserId} "/>
- </#if>
-
- <#local result = " WHERE " + result/>
- <#return result>
-</#function>
-
-<#--
-    Retrieves actual view name by abstract view description
-    @value - abstract view description
-    @return - actual view name
-  -->
-<#function getView value>
- <#return value?replace(" ", "_") + "_view">
-</#function>
-
-<#--
-    Joins array values using '', '' separator
-    @array - to join
-    @return - joined array as string
-  -->
-<#function join array=[]>
-  <#return array?join('', '') />
-</#function>
-
-<#--
-    Joins array values using '', '' separator
-    @array1 - to join, has higher priority that array2
-    @array2 - alternative to join if array1 does not exist or is empty
-    @return - joined array as string
-  -->
-<#function multiJoin array1=[] array2=[]>
-  <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', 
-'{"columns": ["BUG", "SUBJECT", "TASK", "PROJECT", "ENV", "OWNER", "PLATFORM", "PLATFORM_VERSION", "BROWSER", "BROWSER_VERSION", "APP_VERSION", "DEVICE", "LOCALE", "SUITE NAME", "TEST_INFO_URL", "Error Message"]}', 
-'{
-  "PERIOD": {
-    "values": [
-      "Last 24 Hours",
-      "Last 7 Days",
-      "Last 14 Days",
-      "Last 30 Days",
-      "Nightly",
-      "Weekly",
-      "Monthly",
-      "Quarterly"
-    ],
-    "required": true
-  },
-  "PERSONAL": {
-    "values": [
-      "false",
-      "true"
-    ],
-    "type": "radio",
-    "required": true
-  },
-  "BLOCKER": {
-    "values": [
-      "false",
-      "true"
-    ],
-    "type": "radio",
-    "required": true
-  },
-  "JIRA_URL": {
-    "value": "https://mycompany.atlassian.net/browse",
-    "required": true
-  },
-  "PROJECT": {
-    "values": [],
-    "valuesQuery": "SELECT NAME FROM PROJECTS WHERE NAME <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "PLATFORM": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "BROWSER": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "USER": {
-    "values": [],
-    "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
-    "multiple": true
-  },
-  "ENV": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "PRIORITY": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
-    "multiple": true
-  },
-  "FEATURE": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''feature'' ORDER BY 1;",
-    "multiple": true
-  },
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },
-  "JOB_NAME": {
-    "value": "",
-    "required": false
-  },
-  "PARENT_JOB": {
-    "value": "",
-    "required": false
-  },
-  "PARENT_BUILD": {
-    "value": "",
-    "required": false
-  }
-}', 
-'{"legend": ["BUG", "SUBJECT", "TASK", "PROJECT", "ENV", "OWNER", "PLATFORM", "PLATFORM_VERSION", "BROWSER", "BROWSER_VERSION", "APP_VERSION", "DEVICE", "LOCALE", "SUITE NAME", "TEST_INFO_URL", "Error Message"]}', 
-'{
-  "PERIOD": "Last 30 Days",
-  "PERSONAL": "false",
-  "currentUserId": 1,
-  "PROJECT": [],
-  "USER": [],
-  "ENV": [],
   "PRIORITY": [],
-  "FEATURE": [],
-  "PLATFORM": [],
-  "BROWSER": [],
-  "LOCALE": [],
-  "BLOCKER": "false",
-  "JOB_NAME": "",
-  "PARENT_JOB": "",
-  "PARENT_BUILD": "",
-  "JIRA_URL": "https://mycompany.atlassian.net/browse"
+  "RUNS": "",  
+  "JOBS": "",
+  "MILESTONE": "",
+  "MILESTONE_VERSION": "250",
+  "USERS": ""
 }', false);
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASES BY STABILITY', 'Shows all test cases with low stability percent rate per appropriate period (default - less than 10%).', 'TABLE', 
-'<#global IGNORE_TOTAL_PARAMS = ["LOWER(PLATFORM)", "OWNER_USERNAME", "ENV", "PRIORITY", "FEATURE", "BROWSER", "LOCALE", "JOB_NAME"] >
-
-<#global MULTIPLE_VALUES = {
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (PIE + LINE)', 
+	'Consolidated tests status data supporting 10+ extra filters.', 'OTHER','<#global WHERE_VALUES = {
+  "ENV": join(ENV),
   "LOWER(PLATFORM)": join(PLATFORM),
   "LOWER(BROWSER)": join(BROWSER),
-  "OWNER_USERNAME": join(USER),
-  "PROJECT": multiJoin(PROJECT, projects),
-  "ENV": join(ENV),
   "LOCALE": join(LOCALE),
   "PRIORITY": join(PRIORITY),
-  "FEATURE": join(FEATURE)
+  "BUILD": correct(BUILDS!""),    
+  "RUN_NAME": correct(RUNS!""),
+  "OWNER": correct(USERS!"")
 }>
 
-<#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
-<#global VIEW = getView(PERIOD) />
-
-<#--
-  1. for "Last 24 Hours" or "Nightly" calculate stability on the fly using appropriate views
-  2. for Monthly select STABILITY from TEST_CASE_HEALTH_VIEW for current month
-  3. for Total calculate avg(STABILITY) overall by TEST_CASE_HEALTH_VIEW view data
-  Note: all filters the rest
-  -->
-
-  SELECT
-    PROJECT AS "PROJECT",
-    STABILITY_URL AS "TEST METHOD",
-    ROUND(SUM(PASSED)/SUM(TOTAL)*100) AS "STABILITY"
-  FROM ${VIEW}
-  ${WHERE_MULTIPLE_CLAUSE}
-  GROUP BY "PROJECT", "TEST METHOD"
-  <#if PERIOD == "Monthly" || PERIOD = "Total">
-    HAVING AVG(STABILITY) <= ${PERCENT}
-  <#else>
-    HAVING ROUND(SUM(PASSED)/SUM(TOTAL)*100) <= ${PERCENT}
-  </#if>
-  ORDER BY "PROJECT", "TEST METHOD", "STABILITY"
-
-
-<#--
-    Generates WHERE clause for multiple choosen parameters
-    @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
-    @return - generated WHERE clause
-  -->
-<#function generateMultipleWhereClause map>
- <#local result = "" />
-
-  <#if PERIOD == "Monthly">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "TESTED_AT = date_trunc(''month'', current_date)"/>
-  </#if>
-
-  <#list map?keys as key>
-    <#if map[key] != "" >
-      <#if PERIOD == "Total" && IGNORE_TOTAL_PARAMS?seq_contains(key)>
-      <#-- Ignore non supported filters for Total View: PLATFORM, DEVICE, APP_VERSION, LOCALE, JOB_NAME-->
-        <#continue>
-      </#if>
-      
-      <#if result?length != 0>
-       <#local result = result + " AND "/>
-      </#if>
-      <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
-    </#if>
-  </#list>
-
-
-  <#if PARENT_JOB != "" && PERIOD != "Total" && PERIOD != "Monthly">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
-  </#if>  
-
- <#if result?length != 0>
-  <#local result = " WHERE " + result/>
- </#if>
- <#return result>
-</#function>
-
-<#--
-    Retrieves actual view name by abstract view description
-    @value - abstract view description
-    @return - actual view name
-  -->
-<#function getView value>
- <#return value?replace(" ", "_") + "_view">
-</#function>
-
-
-<#--
-    Joins array values using '', '' separator
-    @array - to join
-    @return - joined array as string
-  -->
-<#function join array=[]>
-  <#return array?join('', '') />
-</#function>
-
-<#--
-    Joins array values using '', '' separator
-    @array1 - to join, has higher priority that array2
-    @array2 - alternative to join if array1 does not exist or is empty
-    @return - joined array as string
-  -->
-<#function multiJoin array1=[] array2=[]>
-  <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', 
-'{"columns": ["PROJECT", "TEST METHOD", "STABILITY"]}', 
-'{
-  "PERIOD": {
-    "values": [
-      "Last 24 Hours",
-      "Last 7 Days",
-      "Last 14 Days",
-      "Last 30 Days",
-      "Nightly",
-      "Weekly",
-      "Monthly",
-      "Quarterly"
-    ],
-    "required": true
-  },
-  "PERCENT": {
-    "value": "10",
-    "required": true
-  },
-  "PROJECT": {
-    "values": [],
-    "valuesQuery": "SELECT NAME FROM PROJECTS WHERE NAME <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "PARENT_JOB": {
-    "value": "",
-    "required": false
-  },
-  "PLATFORM": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "BROWSER": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "USER": {
-    "values": [],
-    "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
-    "multiple": true
-  },
-  "ENV": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "PRIORITY": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
-    "multiple": true
-  },
-  "FEATURE": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''feature'' ORDER BY 1;",
-    "multiple": true
-  },
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },
-  "JOB_NAME": {
-    "value": "",
-    "required": false
-  }
-}', '', 
-'{
-  "PERIOD": "Last 30 Days",
-  "PROJECT": [],
-  "PERCENT": 0,
-  "USER": [],
-  "PLATFORM": [],
-  "PLATFORM_VERSION": [],
-  "BROWSER": [],
-  "BROWSER_VERSION": [],
-  "ENV": [],
-  "LOCALE": [],
-  "PARENT_JOB": "",
-  "JOB_NAME": "",
-  "PRIORITY": [],
-  "FEATURE": []
-}', false);
-
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (PIE + LINE)', 'Consolidated test status trend with the ability to specify 10+ extra filters and grouping by hours, days, month etc.', 'OTHER',
-'<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
-
-<#global MULTIPLE_VALUES = {
-  "PROJECT": multiJoin(PROJECT, projects),
-  "OWNER_USERNAME": join(USER),
-  "ENV": join(ENV),
-  "PRIORITY": join(PRIORITY),
-  "FEATURE": join(FEATURE),
-  "LOWER(PLATFORM)": join(PLATFORM),
-  "LOWER(BROWSER)": join(BROWSER),
-  "LOCALE": join(LOCALE)
-}>
-<#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
-<#global VIEW = getView(PERIOD) />
-<#global GROUP_AND_ORDER_BY = getGroupBy(PERIOD, PARENT_JOB) />
+<#global VIEW = PERIOD?replace(" ", "_") />
+<#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
+<#global GROUP_AND_ORDER_BY = getGroupBy(PERIOD, MILESTONE) />
 
 SELECT
-      ${GROUP_AND_ORDER_BY} AS "STARTED_AT",
-      sum( PASSED ) AS "PASSED",
-      sum( FAILED ) AS "FAILED",
-      sum( SKIPPED ) AS "SKIPPED",
-      sum( KNOWN_ISSUE ) AS "KNOWN ISSUE",
-      sum( ABORTED ) AS "ABORTED"
-  FROM ${VIEW}
-  ${WHERE_MULTIPLE_CLAUSE}
-  GROUP BY ${GROUP_AND_ORDER_BY}
-  ORDER BY ${GROUP_AND_ORDER_BY};
+  ${GROUP_AND_ORDER_BY} AS "STARTED_AT",
+  SUM( PASSED ) AS "PASSED",
+  SUM( FAILED ) AS "FAILED",
+  SUM( SKIPPED ) AS "SKIPPED",
+  SUM( KNOWN_ISSUE ) AS "KNOWN ISSUE",
+  SUM( ABORTED ) AS "ABORTED"
+FROM ${VIEW}
+${WHERE_CLAUSE}
+GROUP BY ${GROUP_AND_ORDER_BY}
+ORDER BY ${GROUP_AND_ORDER_BY};
 
-  <#--
-    Generates WHERE clause for multiple choosen parameters
-    @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
-    @return - generated WHERE clause
-  -->
-<#function generateMultipleWhereClause map>
- <#local result = "" />
- <#list map?keys as key>
-     <#if map[key] != "" >
-      <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
-        <#-- Ignore non supported filters for Personal chart: USER -->
-        <#continue>
-      </#if>
-      <#if result?length != 0>
-       <#local result = result + " AND "/>
-      </#if>
-      <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
-     </#if>
- </#list>
-
- <#if result?length != 0 && PERSONAL == "true">
-   <!-- add personal filter by currentUserId with AND -->
-   <#local result = result + " AND OWNER_ID=${currentUserId} "/>
- <#elseif result?length == 0 && PERSONAL == "true">
-   <!-- add personal filter by currentUserId without AND -->
-   <#local result = " OWNER_ID=${currentUserId} "/>
- </#if>
-
- <#if PARENT_JOB != "">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
+<#--
+  Generates WHERE clause 
+  @map - collected multiple choosen data (key - DB column name : value - expected DB value)
+  @return - generated WHERE clause
+-->
+<#function generateWhereClause map>
+  <#local result = "" />
+  
+  <#list map?keys as key>
+    <#if map[key]?has_content>
+      <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
     </#if>
-    <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
- </#if>
+  </#list>
+  
+  <#if isPersonal() && !USERS?has_content>
+    <!-- USERS filter has higher priority and if provided we should ignore personal board -->
+    <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
+  </#if>  
+  
+  <#if activeProjectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
+  </#if>  
+  
+  <#if MILESTONE?has_content>
+    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
+  </#if>  
 
- <#if result?length != 0>
-  <#local result = " WHERE " + result/>
- </#if>
- <#return result>
+  <#if result?length != 0>
+    <#local result = "WHERE " + result/>
+  </#if>
+  <#return result>
 </#function>
 <#--
     Retrieves actual view name by abstract view description
@@ -2939,13 +2339,14 @@ SELECT
   -->
 <#function getGroupBy Period, parentJob>
   <#local result = "" />
-  <#if parentJob != "">
-    <#local result = "UPSTREAM_JOB_BUILD_NUMBER" />
+  <#if parentJob?has_content>
+    <#local result = "MILESTONE_VERSION" />
   <#else>
     <#local result = getStartedAt(PERIOD) />
   </#if>
  <#return result>
 </#function>
+
 <#--
     Retrieves actual CREATED_BY grouping  by abstract view description
     @value - abstract view description
@@ -2955,29 +2356,22 @@ SELECT
   <#local result = "to_char(date_trunc(''day'', STARTED_AT), ''YYYY-MM-DD'')" />
   <#switch value>
     <#case "Last 24 Hours">
-      <#local result = "to_char(date_trunc(''hour'', STARTED_AT), ''MM-DD HH24:MI'')" />
-      <#break>
-    <#case "Nightly">
+    <#case "Today">
       <#local result = "to_char(date_trunc(''hour'', STARTED_AT), ''HH24:MI'')" />
       <#break>
-    <#case "Last 7 Days">
-    <#case "Last 14 Days">
-    <#case "Last 30 Days">
-    <#case "Weekly">
-    <#case "Monthly">
-      <#local result = "to_char(date_trunc(''day'', STARTED_AT), ''YYYY-MM-DD'')" />
+    <#case "Last 90 Days">      
+    <#case "Quarter">
+      <#local result = "to_char(date_trunc(''month'', STARTED_AT), ''YYYY-MM'')" />
       <#break>
+    <#case "Last 365 Days">
+    <#case "Year">
+    <#case "Total">
+      <#local result = "to_char(date_trunc(''quarter'', STARTED_AT), ''YYYY-" + ''"Q"'' + "Q'')" />
+      <#break>      
   </#switch>
   <#return result>
 </#function>
-<#--
-    Retrieves actual view name by abstract view description
-    @value - abstract view description
-    @return - actual view name
-  -->
-<#function getView value>
- <#return value?replace(" ", "_") + "_view">
-</#function>
+
 <#--
     Joins array values using '', '' separator
     @array - to join
@@ -2986,16 +2380,51 @@ SELECT
 <#function join array=[]>
   <#return array?join('', '') />
 </#function>
+
 <#--
-    Joins array values using '', '' separator
-    @array1 - to join, has higher priority that array2
-    @array2 - alternative to join if array1 does not exist or is empty
-    @return - joined array as string
+    Correct string value removing ending comma if any
+    @line - to analyze and correct
+    @return - corrected line
   -->
-<#function multiJoin array1=[] array2=[]>
-  <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>' , 
-'setTimeout(function() {
+<#function correct line>
+  <#if line?has_content>
+    <!-- trim line and remove ending comma if present -->
+    <#return line?trim?remove_ending(",") />
+  <#else>
+    <!-- return empty line if line is null or empty-->
+    <#return "" />
+  </#if>
+</#function>
+
+<#--
+    Add valid SQL clause using condition and operator
+    @operator - AND/OR/BETWEEN etc
+    @condition - field(s) condition
+    @query - existing where conditions
+    @return - concatenated where clause conditions
+  -->
+<#function addCondition operator, condition, query>
+  <#if query?length != 0>
+    <#return " " + operator + " " + condition>
+  <#else>
+    <#return condition>
+  </#if>
+</#function>
+
+<#--
+    retrun true if dashboard name is ''Personal'' or ''User Performance''
+    @return - boolean
+  -->
+<#function isPersonal>
+  <#local result = false />
+  <#if dashboardName?has_content>
+    <#if dashboardName == "Personal" || dashboardName == "User Performance">
+      <#local result = true />  
+    </#if>
+  </#if>
+  <#return result />
+</#function>' , '
+setTimeout(function() {
   const created = dataset[0].STARTED_AT.toString();
   const lastCount = dataset.length - 1;
   const lastValue = dataset[lastCount].STARTED_AT.toString();
@@ -3226,195 +2655,234 @@ let lineRow = {
     
     chart.setOption(option);
     angular.element($window).on("resize", onResize);
-}, 1000)' , 
-'{
+}, 1000)' , '{
   "PERIOD": {
     "values": [
       "Last 24 Hours",
       "Last 7 Days",
       "Last 14 Days",
       "Last 30 Days",
-      "Nightly",
-      "Weekly",
-      "Monthly",
-      "Quarterly"
+      "Last 90 Days",
+      "Last 365 Days",
+      "Today",
+      "Week",
+      "Month",
+      "Quarter",
+      "Year",
+      "Total"
     ],
     "required": true
-  },
-  "PERSONAL": {
-    "values": [
-      "false",
-      "true"
-    ],
-    "type": "radio",
-    "required": true
-  },
-  "PROJECT": {
-    "values": [],
-    "valuesQuery": "SELECT NAME FROM PROJECTS WHERE NAME <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "PLATFORM": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "BROWSER": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "USER": {
-    "values": [],
-    "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
-    "multiple": true
   },
   "ENV": {
     "values": [],
     "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "PLATFORM": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
+    "multiple": true
+  },    
+  "LOCALE": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
+    "multiple": true
+  },  
+  "BROWSER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "multiple": true
+  },  
   "PRIORITY": {
     "values": [],
     "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
     "multiple": true
   },
-  "FEATURE": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''feature'' ORDER BY 1;",
-    "multiple": true
-  },
-  "JOB_NAME": {
+  "USERS": {
     "value": "",
     "required": false
-  },
-  "PARENT_JOB": {
+  },  
+  "BUILDS": {
     "value": "",
     "required": false
-  },
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
+  },  
+  "RUNS": {
+    "value": "",
+    "required": false
+  },  
+  "MILESTONE": {
+    "value": "",
+    "required": false
   }
-}', 
-'{
-  "PERIOD": "Monthly",
-  "PERSONAL": "false",
+}', '{
+  "PERIOD": "Total",
   "currentUserId": 2,
-  "PROJECT": [],
-  "USER": ["anonymous"],
+  "dashboardName": "",
   "ENV": [],
-  "PRIORITY": [],
-  "FEATURE": [],
   "PLATFORM": [],
   "BROWSER": [],
   "LOCALE": [],
-  "JOB_NAME": "",
-  "PARENT_JOB": "Carina-Demo-Regression-Pipeline",
-  "PARENT_BUILD": ""
+  "PRIORITY": [],
+  "BUILDS": "",  
+  "RUNS": "",
+  "MILESTONE": "",
+  "USERS": ""
 }', false);
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTS FAILURES BY SUITE', 'Shows all test cases with failures count per appropriate period and possibility to view detailed information for each suite/test.', 'TABLE', 
-'<#global IGNORE_TOTAL_PARAMS = ["LOCALE", "JOB_NAME", "PARENT_BUILD"] >
-<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASE DURATION TREND', 
+	'All kind of duration metrics per test case.', 'LINE', '<#global WHERE_CLAUSE = generateWhereClause() />
 
-<#global MULTIPLE_VALUES = {
-  "PROJECT": multiJoin(PROJECT, projects),
-  "OWNER_USERNAME": join(USER),
+SELECT
+      ROUND(AVG(EXTRACT(EPOCH FROM (TESTS.FINISH_TIME - TESTS.START_TIME)))::numeric, 2) as "AVG TIME",
+      ROUND(MAX(EXTRACT(EPOCH FROM (TESTS.FINISH_TIME - TESTS.START_TIME)))::numeric, 2) as "MAX TIME",
+      ROUND(MIN(EXTRACT(EPOCH FROM (TESTS.FINISH_TIME - TESTS.START_TIME)))::numeric, 2) as "MIN TIME",
+      to_char(date_trunc(''month'', TESTS.START_TIME), ''YYYY-MM'') AS "TESTED_AT"
+FROM TESTS
+  INNER JOIN TEST_RUNS ON TESTS.TEST_RUN_ID = TEST_RUNS.ID
+${WHERE_CLAUSE}
+GROUP BY date_trunc(''month'', TESTS.START_TIME)
+ORDER BY "TESTED_AT"
+
+
+<#--
+  Generates WHERE clause 
+  @return - generated WHERE clause
+-->
+<#function generateWhereClause>
+  <#local result = "WHERE TEST_CASE_ID=${testCaseId} AND TESTS.FINISH_TIME IS NOT NULL AND TESTS.START_TIME IS NOT NULL AND TESTS.STATUS <> ''IN_PROGRESS''"/>
+
+  <#return result>
+</#function>
+
+
+
+<#--
+    Add valid SQL clause using condition and operator
+    @operator - AND/OR/BETWEEN etc
+    @condition - field(s) condition
+    @query - existing where conditions
+    @return - concatenated where clause conditions
+  -->
+<#function addCondition operator, condition, query>
+  <#if query?length != 0>
+    <#return " " + operator + " " + condition>
+  <#else>
+    <#return condition>
+  </#if>
+</#function>', '{
+    "grid": {
+        "right": "2%",
+        "left": "2%",
+        "top": "8%",
+        "bottom": "8%"
+    },
+    "legend": {},
+    "tooltip": {
+        "trigger": "axis",
+        "extraCssText": "transform: translateZ(0);"
+    },
+    "dimensions": [
+        "TESTED_AT",
+        "AVG TIME",
+        "MAX TIME",
+        "MIN TIME"
+    ],
+    "color": [
+        "#61c8b3",
+        "#e76a77",
+        "#fddb7a"
+    ],
+    "xAxis": {
+        "type": "category",
+        "boundaryGap": false
+    },
+    "yAxis": {},
+    "series": [
+        {
+            "type": "line"
+        },
+        {
+            "type": "line"
+        },
+        {
+            "type": "line"
+        }
+    ]
+}', '{}', '', '{
+  "testCaseId": "1"
+}', true);
+
+--TESTCASE INFO
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASE INFO', 
+	'Detailed test case information.', 'TABLE', 'SELECT
+  TEST_CASES.TEST_CLASS || ''.'' || TEST_CASES.TEST_METHOD AS "TEST METHOD",
+  TEST_CASES.CREATED_AT::date::text AS "CREATED AT"
+FROM TEST_CASES
+WHERE TEST_CASES.ID=${testCaseId}', '{"columns": ["TEST METHOD", "CREATED AT"]}', '{}', '{}', '{}', true);
+
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASES BY STABILITY', 
+	'Shows all test cases with low stability percent rate per appropriate period (default - less than 10%).', 'TABLE', '<#global WHERE_VALUES = {
   "ENV": join(ENV),
-  "TEST_SUITE_FILE": join(TEST_SUITE_FILE),
-  "PRIORITY": join(PRIORITY),
-  "FEATURE": join(FEATURE),
   "LOWER(PLATFORM)": join(PLATFORM),
   "LOWER(BROWSER)": join(BROWSER),
-  "LOCALE": join(LOCALE)
+  "LOCALE": join(LOCALE),
+  "PRIORITY": join(PRIORITY),
+  "BUILD": correct(BUILDS!""),    
+  "RUN_NAME": correct(RUNS!""),
+  "OWNER": correct(USERS!"")  
 }>
-<#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
-<#global VIEW = getView(PERIOD) />
 
-  SELECT 
-      TEST_SUITE_FILE AS "SUITE",
-      TEST_METHOD_NAME AS "NAME",
-      --STABILITY_URL as "NAME",
-      SUM(FAILED) AS "FAILURES COUNT",
-      SUM(TOTAL) AS "TOTAL COUNT",
-      ROUND(SUM(FAILED)*100/COUNT(*)) AS "FAILURE %"
-    FROM ${VIEW}
-    ${WHERE_MULTIPLE_CLAUSE}
-    GROUP BY TEST_SUITE_FILE, TEST_METHOD_NAME--, STABILITY_URL
-    HAVING SUM(FAILED) > 0
+<#global VIEW = PERIOD?replace(" ", "_") />
+<#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
 
-    
+  SELECT
+    <#if activeProjectId?has_content>
+      ''<a href="projects/'' || PROJECT_ID || ''/dashboards/'' || (SELECT id FROM dashboards WHERE title = ''Stability'') || ''?testCaseId=''
+        || TESTS.TEST_CASE_ID || ''">'' || TESTS.NAME || ''</a>''     AS "TEST METHOD",    
+    <#else>
+      ''<a href="dashboards/'' || (SELECT id FROM dashboards WHERE title = ''Stability'') || ''?testCaseId=''
+        || TESTS.TEST_CASE_ID || ''">'' || TESTS.NAME || ''</a>''     AS "TEST METHOD",
+    </#if>
+    ROUND(SUM(PASSED)/SUM(TOTAL)*100) AS "STABILITY"
+  FROM ${VIEW}
+    INNER JOIN TESTS on ${VIEW}.TEST_RUN_ID = TESTS.TEST_RUN_ID
+  ${WHERE_CLAUSE}
+  GROUP BY "TEST METHOD"
+  HAVING ROUND(SUM(PASSED)/SUM(TOTAL)*100) <= ${PERCENT}
+  ORDER BY "TEST METHOD", "STABILITY"
+
+
 <#--
-    Generates WHERE clause for multiple choosen parameters
-    @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
-    @return - generated WHERE clause
-  -->
-<#function generateMultipleWhereClause map>
- <#local result = "" />
- <#list map?keys as key>
-    <#if map[key] != "" >
-      <#if PERIOD == "Total" && IGNORE_TOTAL_PARAMS?seq_contains(key)>
-        <#-- Ignore non supported filters for Total View: PLATFORM, DEVICE, APP_VERSION, LOCALE, JOB_NAME-->
-        <#continue>
-      </#if>
-      <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
-        <#-- Ignore non supported filters for Personal chart: USER -->
-        <#continue>
-      </#if>
-      <#if result?length != 0>
-       <#local result = result + " AND "/>
-      </#if>
-      <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
-    </#if>
- </#list>
+  Generates WHERE clause 
+  @map - collected multiple choosen data (key - DB column name : value - expected DB value)
+  @return - generated WHERE clause
+-->
+<#function generateWhereClause map>
+  <#local result = ""/>
 
- <#if result?length != 0 && PERSONAL == "true">
-   <!-- add personal filter by currentUserId with AND -->
-   <#local result = result + " AND OWNER_ID=${currentUserId} "/>
- <#elseif result?length == 0 && PERSONAL == "true">
- <!-- add personal filter by currentUserId without AND -->
-   <#local result = " OWNER_ID=${currentUserId} "/>
- </#if>
-
-
- <#if PARENT_JOB != "">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
+  <#list map?keys as key>
+    <#if map[key]?has_content>
+      <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
     </#if>
-    <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
- </#if>
- 
- <#if PARENT_JOB != "" && PARENT_BUILD == "LATEST">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_BUILD_NUMBER = (
-            SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
-            FROM TEST_RUNS INNER JOIN
-              JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
-            WHERE JOBS.NAME=''${PARENT_JOB}'')"/>
-  <#elseif PARENT_JOB != "" && PARENT_BUILD != "">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
-    </#if>
-    <#local result = result + "UPSTREAM_JOB_BUILD_NUMBER = ''" + PARENT_BUILD + "''"/>  
+  </#list>
+  
+  <#if isPersonal() && !USERS?has_content>
+    <!-- USERS filter has higher priority and if provided we should ignore personal board -->
+    <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
+  </#if>  
+  
+  <#if activeProjectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
   </#if>
-
+  
+  <#if MILESTONE?has_content>
+    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
+  </#if>  
+  
  <#if result?length != 0>
   <#local result = " WHERE " + result/>
  </#if>
  <#return result>
-</#function>
-
-<#--
-    Retrieves actual view name by abstract view description
-    @value - abstract view description
-    @return - actual view name
-  -->
-<#function getView value>
- <#return value?replace(" ", "_") + "_view">
 </#function>
 
 <#--
@@ -3427,46 +2895,897 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
 </#function>
 
 <#--
-    Joins array values using '', '' separator
-    @array1 - to join, has higher priority that array2
-    @array2 - alternative to join if array1 does not exist or is empty
-    @return - joined array as string
+    Correct string value removing ending comma if any
+    @line - to analyze and correct
+    @return - corrected line
   -->
-<#function multiJoin array1=[] array2=[]>
-  <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', 
-'{"columns": ["SUITE", "NAME", "FAILURES COUNT", "TOTAL COUNT", "FAILURE %"]}', 
-'{
+<#function correct line>
+  <#if line?has_content>
+    <!-- trim line and remove ending comma if present -->
+    <#return line?trim?remove_ending(",") />
+  <#else>
+    <!-- return empty line if line is null or empty-->
+    <#return "" />
+  </#if>
+</#function>
+
+<#--
+    Add valid SQL clause using condition and operator
+    @operator - AND/OR/BETWEEN etc
+    @condition - field(s) condition
+    @query - existing where conditions
+    @return - concatenated where clause conditions
+  -->
+<#function addCondition operator, condition, query>
+  <#if query?length != 0>
+    <#return " " + operator + " " + condition>
+  <#else>
+    <#return condition>
+  </#if>
+</#function>
+
+<#--
+    retrun true if dashboard name is ''Personal'' or ''User Performance''
+    @return - boolean
+  -->
+<#function isPersonal>
+  <#local result = false />
+  <#if dashboardName?has_content>
+    <#if dashboardName == "Personal" || dashboardName == "User Performance">
+      <#local result = true />  
+    </#if>
+  </#if>
+  <#return result />
+</#function>', '{"columns": ["TEST METHOD", "STABILITY"]}', '{
   "PERIOD": {
     "values": [
       "Last 24 Hours",
       "Last 7 Days",
       "Last 14 Days",
       "Last 30 Days",
-      "Nightly",
-      "Weekly",
-      "Monthly",
-      "Quarterly"
+      "Last 90 Days",
+      "Last 365 Days",
+      "Today",
+      "Week",
+      "Month",
+      "Quarter",
+      "Year",
+      "Total"
     ],
     "required": true
   },
-  "PERSONAL": {
+  "PERCENT": {
+    "value": "10",
+    "required": true
+  },
+  "ENV": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
+    "multiple": true
+  },
+  "PLATFORM": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
+    "multiple": true
+  },    
+  "LOCALE": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
+    "multiple": true
+  },  
+  "BROWSER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "multiple": true
+  },  
+  "PRIORITY": {
+    "values": [],
+    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
+    "multiple": true
+  },
+  "USERS": {
+    "value": "",
+    "required": false
+  },  
+  "BUILDS": {
+    "value": "",
+    "required": false
+  },  
+  "RUNS": {
+    "value": "",
+    "required": false
+  },  
+  "MILESTONE": {
+    "value": "",
+    "required": false
+  }
+}', '', '{
+  "PERIOD": "Total",
+  "PERCENT": 70,
+  "currentUserId": 2,
+  "dashboardName": "",  
+  "ENV": [],
+  "PLATFORM": [],
+  "BROWSER": [],
+  "LOCALE": [],
+  "PRIORITY": [],
+  "BUILDS": "",  
+  "RUNS": "",
+  "MILESTONE": "",
+  "USERS": ""
+}', false);
+
+--TESTS IMPLEMENTATION PROGRESS
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASES DEVELOPMENT TREND', 
+	'A number of new automated cases per month.', 'BAR', '<#global WHERE_VALUES = {
+  "ENV": join(ENV),
+  "LOWER(PLATFORM)": join(PLATFORM),
+  "LOWER(BROWSER)": join(BROWSER),
+  "LOCALE": join(LOCALE),
+  "PRIORITY": join(PRIORITY),
+  "BUILD": correct(BUILDS!""),    
+  "RUN_NAME": correct(RUNS!""),
+  "OWNER": correct(USERS!"")
+}>
+
+<#global VIEW = PERIOD?replace(" ", "_") />
+<#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
+<#global CREATED_AT = getCreatedAt(PERIOD) />
+
+SELECT
+  ${CREATED_AT} AS "CREATED_AT",
+  COUNT(distinct(TEST_CASES.ID)) AS "AMOUNT"
+FROM ${VIEW}
+  INNER JOIN TESTS on ${VIEW}.TEST_RUN_ID = TESTS.TEST_RUN_ID
+  INNER JOIN TEST_CASES ON TESTS.TEST_CASE_ID = TEST_CASES.ID
+${WHERE_CLAUSE}
+GROUP BY 1 
+ORDER BY 1
+
+
+<#--
+  Generates WHERE clause 
+  @map - collected multiple choosen data (key - DB column name : value - expected DB value)
+  @return - generated WHERE clause
+-->
+<#function generateWhereClause map>
+  <#local result = "" />
+  
+  <#if PERIOD == "Today">
+    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= current_date", result) />
+  <#elseif PERIOD == "Last 24 Hours">
+    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''hour'', current_date - interval ''24'' hour)", result) />
+  <#elseif PERIOD == "Week">
+    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''week'', current_date)  - interval ''2'' day", result) />
+  <#elseif PERIOD == "Last 7 Days">
+    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''day'', current_date - interval ''7'' day)", result) />
+  <#elseif PERIOD == "Last 14 Days">
+    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''day'', current_date - interval ''14'' day)", result) />
+  <#elseif PERIOD == "Last 30 Days">
+    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''day'', current_date - interval ''30'' day)", result) />
+  <#elseif PERIOD == "Last 90 Days">
+    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''day'', current_date - interval ''90'' day)", result) />    
+  <#elseif PERIOD == "Month" >
+    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''week'', current_date)", result) />
+  <#elseif PERIOD == "Quater" >
+    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''month'', current_date)", result) />
+  <#elseif PERIOD == "Last 365 Days">
+    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''day'', current_date - interval ''365'' day)", result) />
+  <#elseif PERIOD == "Year">
+    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''year'', current_date)", result) />
+  </#if>
+  
+  <#list map?keys as key>
+    <#if map[key]?has_content>
+      <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
+    </#if>
+  </#list>
+  
+  <#if isPersonal() && !USERS?has_content>
+    <!-- USERS filter has higher priority and if provided we should ignore personal board -->
+    <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
+  </#if>      
+  
+  <#if activeProjectId?has_content>
+    <#local result = result + addCondition("AND", "${VIEW}.PROJECT_ID=${activeProjectId}", result) />
+  </#if>  
+  
+  <#if MILESTONE?has_content>
+    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
+    
+    <#if MILESTONE_VERSION?has_content>
+      <#if MILESTONE_VERSION?lower_case == "latest">
+        <#local result = result + addCondition("AND", "MILESTONE_VERSION = (
+                SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
+                FROM TEST_RUNS INNER JOIN
+                  JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
+                WHERE JOBS.NAME=''${MILESTONE}'')", result) />
+      <#elseif isDecimal(MILESTONE_VERSION)>
+        <#local result = result + addCondition("AND", "MILESTONE_VERSION = ''" + MILESTONE_VERSION + "''", result) />
+      </#if>
+    </#if>
+  </#if>  
+
+  <#if result?length != 0>
+    <#local result = "WHERE " + result/>
+  </#if>
+  <#return result>
+</#function>
+
+<#--
+    Retrieves actual CREATED_BY grouping  by abstract view description
+    @value - abstract view description
+    @return - actual view name
+  -->
+<#function getCreatedAt value>
+  <#local result = "to_char(date_trunc(''day'', TEST_CASES.CREATED_AT), ''MM/DD'')" />
+  <#switch value>
+    <#case "Last 24 Hours">
+    <#case "Today">
+      <#local result = "to_char(date_trunc(''hour'', TEST_CASES.CREATED_AT), ''HH24:MI'')" />
+      <#break>
+    <#case "Last 90 Days">    
+    <#case "Quarter">
+      <#local result = "to_char(date_trunc(''month'', TEST_CASES.CREATED_AT), ''YYYY-MM'')" />
+      <#break>
+    <#case "Last 365 Days">
+    <#case "Year">
+    <#case "Total">
+      <#local result = "to_char(date_trunc(''quarter'', TEST_CASES.CREATED_AT), ''YYYY-" + ''"Q"'' + "Q'')" />
+      <#break>
+  </#switch>
+  <#return result>
+</#function>
+
+<#--
+    Joins array values using '', '' separator
+    @array - to join
+    @return - joined array as string
+  -->
+<#function join array=[]>
+  <#return array?join('', '') />
+</#function>
+
+<#--
+    Correct string value removing ending comma if any
+    @line - to analyze and correct
+    @return - corrected line
+  -->
+<#function correct line>
+  <#if line?has_content>
+    <!-- trim line and remove ending comma if present -->
+    <#return line?trim?remove_ending(",") />
+  <#else>
+    <!-- return empty line if line is null or empty-->
+    <#return "" />
+  </#if>
+</#function>
+
+<#--
+    Add valid SQL clause using condition and operator
+    @operator - AND/OR/BETWEEN etc
+    @condition - field(s) condition
+    @query - existing where conditions
+    @return - concatenated where clause conditions
+  -->
+<#function addCondition operator, condition, query>
+  <#if query?length != 0>
+    <#return " " + operator + " " + condition>
+  <#else>
+    <#return condition>
+  </#if>
+</#function>
+
+<#--
+    retrun true if dashboard name is ''Personal'' or ''User Performance''
+    @return - boolean
+  -->
+<#function isPersonal>
+  <#local result = false />
+  <#if dashboardName?has_content>
+    <#if dashboardName == "Personal" || dashboardName == "User Performance">
+      <#local result = true />  
+    </#if>
+  </#if>
+  <#return result />
+</#function>
+
+<#-- 
+  verify that value is number
+  @return - boolean
+  -->
+<#function isDecimal value>
+  <#attempt>
+    <#assign num = value?number>
+    <#local result = true />
+  <#recover>
+    <#local result = false />
+  </#attempt>
+  <#return result />
+</#function>', '
+let data = [], invisibleData = [], xAxisData = [], lineData = [];
+let invisibleDataStep = 0, lineDataStep = 0;
+
+dataset.map(({CREATED_AT, AMOUNT}) => {
+  xAxisData.push(CREATED_AT);
+  data.push(AMOUNT);  //used in second bar series for building
+  invisibleData.push(invisibleDataStep);  //used in first bar series for creating step-effect
+  lineDataStep += AMOUNT;
+  lineData.push(lineDataStep); //used in line series for creating dashed-line
+  invisibleDataStep += AMOUNT; //the first element must be 0
+});
+  
+option = {
+  grid: {
+    right: "2%",
+    left: "4%",
+    top: "8%",
+    bottom: "8%"
+    },
+  tooltip : {
+    trigger: "axis",
+    axisPointer : {            
+      type : "shadow"        
+    },
+    formatter: function (params) {
+      let total = params[2]; // pick params.total
+      return total.name + "<br/>" + "Total" + " : " + total.value;
+    },
+    extraCssText: "transform: translateZ(0);"
+  },
+  color: ["#7fbae3", "#7fbae3"],
+  xAxis: {
+    type : "category",
+    splitLine: {
+      show: false
+    },
+    data : xAxisData
+  },
+  yAxis: {
+    type : "value"
+  },
+  series: [
+    {
+      type: "bar",
+      stack: "line",
+      itemStyle: {
+        normal: {
+          barBorderColor: "rgba(0,0,0,0)",
+          color: "rgba(127, 186, 227, 0.1)"
+        },
+        emphasis: {
+          barBorderColor: "rgba(0,0,0,0)",
+          color: "rgba(127, 186, 227, 0.1)"
+        }
+      },
+      data: invisibleData
+      },
+      {
+        type: "bar",
+        stack: "line",
+        label: {
+          normal: {
+            show: true,
+            distance: -15,
+            position: "top",
+            color: "black",
+             formatter: (params) => {
+              if (params.dataIndex === 0) return "";
+              return params.value;
+            }
+          }
+        },
+        data: data
+      },
+      {
+        type: "line",
+        smooth: true,
+        label: {
+          normal: {
+            show: true
+          }
+        },
+        lineStyle: {
+          color: "rgba(0,0,0,0)" // default invisible
+        },
+        data: lineData
+      }
+    ]
+};
+chart.setOption(option);', '{
+  "PERIOD": {
     "values": [
-      "false",
-      "true"
+      "Last 24 Hours",
+      "Last 7 Days",
+      "Last 14 Days",
+      "Last 30 Days",
+      "Last 90 Days",
+      "Last 365 Days",
+      "Today",
+      "Week",
+      "Month",
+      "Quarter",
+      "Year",
+      "Total"
     ],
-    "type": "radio",
     "required": true
   },
-  "TEST_SUITE_FILE": {
+  "ENV": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT(FILE_NAME) FROM TEST_SUITES WHERE FILE_NAME IS NOT NULL AND FILE_NAME <> '''' ORDER BY 1;",
-    "multiple": true,
-    "required": true
+    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
+    "multiple": true
   },
-  "PROJECT": {
+  "PLATFORM": {
     "values": [],
-    "valuesQuery": "SELECT NAME FROM PROJECTS WHERE NAME <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
+    "multiple": true
+  },    
+  "LOCALE": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
+    "multiple": true
+  },  
+  "BROWSER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "multiple": true
+  },  
+  "PRIORITY": {
+    "values": [],
+    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
+    "multiple": true
+  },
+  "USERS": {
+    "value": "",
+    "required": false
+  },  
+  "BUILDS": {
+    "value": "",
+    "required": false
+  },  
+  "RUNS": {
+    "value": "",
+    "required": false
+  },  
+  "MILESTONE": {
+    "value": "",
+    "required": false
+  },
+  "MILESTONE_VERSION": {
+    "value": "",
+    "required": false
+  }
+}', '', '{
+  "PERIOD": "Today",
+  "currentUserId": 2,
+  "activeProjectId": 1,
+  "dashboardName": "",
+  "ENV": [],
+  "PLATFORM": [],
+  "BROWSER": [],
+  "LOCALE": [],
+  "PRIORITY": [],
+  "BUILDS": "",  
+  "RUNS": "",
+  "MILESTONE": "",
+  "MILESTONE_VERSION": "250",
+  "USERS": ""  
+}', false);
+
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASE STABILITY', 
+	'Aggregated stability metric for a test case.', 'PIE', '<#global WHERE_CLAUSE = generateWhereClause() />
+
+SELECT 
+  unnest(array[''STABILITY'',
+                  ''FAILURE'',
+                  ''OMISSION'',
+                  ''KNOWN ISSUE'',
+                  ''INTERRUPT'']) AS "label",
+  unnest(array[ROUND(SUM(CASE WHEN TESTS.STATUS = ''PASSED'' THEN 1 ELSE 0 END) * 100 /COUNT(*)::numeric, 0),                  
+               ROUND(SUM(CASE WHEN TESTS.STATUS = ''FAILED'' AND TESTS.KNOWN_ISSUE = FALSE THEN 1 ELSE 0 END) * 100 / COUNT(*)::numeric, 0),
+               ROUND(SUM(CASE WHEN TESTS.STATUS = ''SKIPPED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)::numeric, 0),
+               ROUND(SUM(CASE WHEN TESTS.STATUS = ''FAILED'' AND TESTS.KNOWN_ISSUE = TRUE THEN 1 ELSE 0 END) * 100 / COUNT(*)::numeric, 0),
+               ROUND(SUM(CASE WHEN TESTS.STATUS = ''ABORTED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)::numeric, 0)]) AS "value"
+FROM TESTS
+  INNER JOIN TEST_CASES ON TESTS.TEST_CASE_ID = TEST_CASES.ID
+  INNER JOIN TEST_RUNS ON TESTS.TEST_RUN_ID = TEST_RUNS.ID
+${WHERE_CLAUSE}
+
+
+<#--
+  Generates WHERE clause 
+  @return - generated WHERE clause
+-->
+<#function generateWhereClause>
+  <#local result = "WHERE TEST_CASE_ID=${testCaseId} AND TESTS.FINISH_TIME IS NOT NULL AND TESTS.START_TIME IS NOT NULL AND TESTS.STATUS <> ''IN_PROGRESS''"/>
+
+  <#return result>
+</#function>
+
+
+
+<#--
+    Add valid SQL clause using condition and operator
+    @operator - AND/OR/BETWEEN etc
+    @condition - field(s) condition
+    @query - existing where conditions
+    @return - concatenated where clause conditions
+  -->
+<#function addCondition operator, condition, query>
+  <#if query?length != 0>
+    <#return " " + operator + " " + condition>
+  <#else>
+    <#return condition>
+  </#if>
+</#function>
+', '{
+    "legend": {
+        "orient": "vertical",
+        "x": "left",
+        "y": "center",
+        "itemGap": 10,
+        "textStyle": {
+            "fontSize": 10
+        },
+        "formatter": "{name}"
+    },
+    "tooltip": {
+        "trigger": "item",
+        "axisPointer": {
+            "type": "shadow"
+        },
+        "formatter": "{b0}<br>{d0}%",
+        "extraCssText": "transform: translateZ(0);"
+    },
+    "color": [
+        "#61c8b3",
+        "#e76a77",
+        "#fddb7a",
+        "#9f5487",
+        "#6dbbe7",
+        "#b5b5b5"
+    ],
+    "series": [
+        {
+            "type": "pie",
+            "selectedMode": "multi",
+            "hoverOffset": 2,
+            "clockwise": false,
+            "stillShowZeroSum": false,
+            "avoidLabelOverlap": true,
+            "itemStyle": {
+                "normal": {
+                    "label": {
+                        "show": true,
+                        "position": "outside",
+                        "formatter": "{@value} ({d0}%)"
+                    },
+                    "labelLine": {
+                        "show": true
+                    }
+                },
+                "emphasis": {
+                    "label": {
+                        "show": true
+                    }
+                }
+            },
+            "radius": [
+                "0%",
+                "70%"
+            ]
+        }
+    ]
+}', '{
+}', '', '{
+  "testCaseId": "1"
+}', true);
+
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES (
+	'TEST CASE STABILITY TREND', 'Test case stability trend on a monthly basis.', 'LINE', '<#global WHERE_CLAUSE = generateWhereClause() />
+
+SELECT
+    ROUND(SUM(CASE WHEN TESTS.STATUS = ''PASSED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "STABILITY",
+    ROUND(SUM(CASE WHEN TESTS.STATUS = ''FAILED'' AND TESTS.KNOWN_ISSUE = FALSE THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "FAILURE",
+    ROUND(SUM(CASE WHEN TESTS.STATUS = ''SKIPPED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "OMISSION",
+    ROUND(SUM(CASE WHEN TESTS.STATUS = ''FAILED'' AND TESTS.KNOWN_ISSUE = TRUE THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "KNOWN ISSUE",
+    ROUND(SUM(CASE WHEN TESTS.STATUS = ''ABORTED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "INTERRUPT",
+    to_char(date_trunc(''month'', TESTS.START_TIME), ''YYYY-MM'') AS "TESTED_AT"
+FROM TESTS
+  INNER JOIN TEST_RUNS ON TESTS.TEST_RUN_ID = TEST_RUNS.ID
+${WHERE_CLAUSE}
+GROUP BY date_trunc(''month'', TESTS.START_TIME)
+ORDER BY "TESTED_AT"
+
+<#--
+  Generates WHERE clause 
+  @return - generated WHERE clause
+-->
+<#function generateWhereClause>
+  <#local result = "WHERE TEST_CASE_ID=${testCaseId} AND TESTS.FINISH_TIME IS NOT NULL AND TESTS.START_TIME IS NOT NULL AND TESTS.STATUS <> ''IN_PROGRESS''"/>
+
+  <#return result>
+</#function>
+
+
+
+<#--
+    Add valid SQL clause using condition and operator
+    @operator - AND/OR/BETWEEN etc
+    @condition - field(s) condition
+    @query - existing where conditions
+    @return - concatenated where clause conditions
+  -->
+<#function addCondition operator, condition, query>
+  <#if query?length != 0>
+    <#return " " + operator + " " + condition>
+  <#else>
+    <#return condition>
+  </#if>
+</#function>', '{
+    "grid": {
+        "right": "5%",
+        "left": "5%",
+        "top": "8%",
+        "bottom": "8%"
+    },
+    "legend": {},
+    "tooltip": {
+        "trigger": "axis",
+        "extraCssText": "transform: translateZ(0);"
+    },
+    "dimensions": [
+        "TESTED_AT",
+        "STABILITY",
+        "FAILURE",
+        "OMISSION",
+        "KNOWN ISSUE",
+        "INTERRUPT"
+    ],
+    "color": [
+        "#61c8b3",
+        "#e76a77",
+        "#fddb7a",
+        "#9f5487",
+        "#6dbbe7"
+    ],
+    "xAxis": {
+        "type": "category",
+        "boundaryGap": false
+    },
+    "yAxis": {},
+    "series": [
+        {
+            "type": "line",
+            "z": 5,
+            "stack": "Stack",
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.8,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "z": 4,
+            "stack": "Stack",
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.8,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "z": 3,
+            "stack": "Stack",
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.8,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "z": 2,
+            "stack": "Stack",
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.8,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "z": 1,
+            "stack": "Stack",
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.8,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        }
+    ]
+}', '{
+}
+', '', '{
+  "testCaseId": "1"
+}', true);
+
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTS EXECUTION ROI (MAN-HOURS)', 
+	'Monthly team/user test execution ROI. 160h+ per person for UI tests indicates that ROI is great.', 'BAR', '<#global MULTIPLE_VALUES = {
+  "ENV": join(ENV),
+  "LOWER(PLATFORM)": join(PLATFORM),
+  "LOCALE": join(LOCALE),  
+  "LOWER(BROWSER)": join(BROWSER),
+  "PRIORITY": join(PRIORITY),
+  "OWNER": correct(USERS!)
+}>
+<#global WHERE_CLAUSE = generateWhereClause(MULTIPLE_VALUES) />
+
+SELECT
+  ROUND(SUM(TOTAL_SECONDS)/3600) AS "ACTUAL",
+  ROUND(SUM(TOTAL_ETA_SECONDS)/3600) AS "ETA",
+  to_char(STARTED_AT, ''YYYY-MM'') AS "STARTED_AT"
+FROM TOTAL
+${WHERE_CLAUSE}
+GROUP BY "STARTED_AT"
+ORDER BY "STARTED_AT";
+
+
+<#--
+  Generates WHERE clause 
+  @map - collected multiple choosen data (key - DB column name : value - expected DB value)
+  @return - generated WHERE clause
+-->
+<#function generateWhereClause map>
+  <#local result = "" />
+  
+  <#list map?keys as key>
+    <#if map[key]?has_content>
+      <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
+    </#if>
+  </#list>
+  
+  <#if isPersonal() && !USERS?has_content>
+    <!-- USERS filter has higher priority and if provided we should ignore personal board -->
+    <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
+  </#if>    
+  
+  <#if activeProjectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
+  </#if>
+  
+  <#if result?length != 0>
+    <#local result = "WHERE " + result/>
+  </#if>
+  <#return result>
+</#function>
+
+<#--
+    Joins array values using '', '' separator
+    @array - to join
+    @return - joined array as string
+  -->
+<#function join array=[]>
+  <#return array?join('', '') />
+</#function>
+
+<#--
+    Correct string value removing ending comma if any
+    @line - to analyze and correct
+    @return - corrected line
+  -->
+<#function correct line>
+  <#if line?has_content>
+    <!-- trim line and remove ending comma if present -->
+    <#return line?trim?remove_ending(",") />
+  <#else>
+    <!-- return empty line if line is null or empty-->
+    <#return "" />
+  </#if>
+</#function>
+
+<#--
+    Add valid SQL clause using condition and operator
+    @operator - AND/OR/BETWEEN etc
+    @condition - field(s) condition
+    @query - existing where conditions
+    @return - concatenated where clause conditions
+  -->
+<#function addCondition operator, condition, query>
+  <#if query?length != 0>
+    <#return " " + operator + " " + condition>
+  <#else>
+    <#return condition>
+  </#if>
+</#function>
+
+<#--
+    retrun true if dashboard name is ''Personal'' or ''User Performance''
+    @return - boolean
+  -->
+<#function isPersonal>
+  <#local result = false />
+  <#if dashboardName?has_content>
+    <#if dashboardName == "Personal" || dashboardName == "User Performance">
+      <#local result = true />  
+    </#if>
+  </#if>
+  <#return result />
+</#function>', '{
+    "grid": {
+        "right": "4%",
+        "left": "4%",
+        "top": "8%",
+        "bottom": "8%"
+    },
+    "legend": {
+        "top": -5
+    },
+    "tooltip": {
+        "trigger": "axis",
+        "extraCssText": "transform: translateZ(0);"
+    },
+    "dimensions": [
+        "STARTED_AT",
+        "ACTUAL",
+        "ETA"
+    ],
+    "xAxis": {
+        "type": "category"
+    },
+    "yAxis": {},
+    "series": [
+        {
+            "type": "bar"
+        },
+        {
+            "type": "line",
+            "smooth": true,
+            "lineStyle": {
+                "type": "dashed"
+            }
+        }
+    ],
+    "color": [
+        "#7fbae3",
+        "#919e8b"
+    ]
+}', '{
+  "ENV": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
     "multiple": true
   },
   "PLATFORM": {
@@ -3474,19 +3793,14 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "LOCALE": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
+    "multiple": true
+  },  
   "BROWSER": {
     "values": [],
     "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "USER": {
-    "values": [],
-    "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
-    "multiple": true
-  },
-  "ENV": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
     "multiple": true
   },
   "PRIORITY": {
@@ -3494,135 +3808,112 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
     "multiple": true
   },
-  "FEATURE": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''feature'' ORDER BY 1;",
-    "multiple": true
-  },
-  "PARENT_JOB": {
+  "USERS": {
     "value": "",
     "required": false
-  },
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },
-  "JOB_NAME": {
-    "value": "",
-    "required": false
-  },
-  "PARENT_BUILD": {
-    "value": "",
-    "required": false
-  }
-}', 
-'{
-  "PERIOD": "Monthly",
-  "PERSONAL": "false",
-  "GROUP_BY": "TEST_SUITE_NAME",
-  "TEST_SUITE_FILE":[],
+  }  
+}', '', '{
   "currentUserId": 1,
-  "PROJECT": [],
-  "USER": ["anonymous"],
+  "dashboardName": "",
   "ENV": [],
-  "PRIORITY": [],
-  "FEATURE": [],
-  "PLATFORM": [],
-  "BROWSER": [],
+  "PLATFORM": [],  
   "LOCALE": [],
-  "JOB_NAME": "",
-  "PARENT_JOB": "",
-  "PARENT_BUILD": ""
+  "BROWSER":[],  
+  "PRIORITY": [],
+  "USERS": ""
 }', false);
 
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (CALENDAR)', 'Calendar view of the pass rate per month, quarter or year.', 'OTHER', 
-'<#global IGNORE_PERSONAL_PARAMS = ["OWNER_USERNAME"] >
-
-<#global MULTIPLE_VALUES = {
-  "PROJECT": multiJoin(PROJECT, projects),
-  "OWNER_USERNAME": join(USER),
+INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTS SUMMARY', 
+	'Detailed information about passed, failed, skipped, etc tests.', 'TABLE', '<#global WHERE_VALUES = {
   "ENV": join(ENV),
-  "PRIORITY": join(PRIORITY),
-  "FEATURE": join(FEATURE),
   "LOWER(PLATFORM)": join(PLATFORM),
-  "LOWER(BROWSER)": join(BROWSER)
+  "LOWER(BROWSER)": join(BROWSER),
+  "LOCALE": join(LOCALE),
+  "PRIORITY": join(PRIORITY),
+  "BUILD": correct(BUILDS!""),    
+  "RUN_NAME": correct(RUNS!""),
+  "OWNER": correct(USERS!"")
 }>
-<#global WHERE_MULTIPLE_CLAUSE = generateMultipleWhereClause(MULTIPLE_VALUES) />
+<#global VIEW = PERIOD?replace(" ", "_") />
+<#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
 
-SELECT 
-    to_char(STARTED_AT, ''YYYY-MM-DD'') as "date",
-    ROUND(sum(passed)*100/sum(total)) AS "value",
-    ''${PASSED_VALUE}'' as "passed"
-    FROM total_view
-    ${WHERE_MULTIPLE_CLAUSE}
-  GROUP BY 1
-UNION ALL
-SELECT 
-    to_char(STARTED_AT, ''YYYY-MM-DD'') as "date",
-    ROUND(sum(passed)*100/sum(total)) AS "value",
-    ''${PASSED_VALUE}'' as "passed"
-    FROM nightly_view
-    ${WHERE_MULTIPLE_CLAUSE}
-  GROUP BY 1 
-  ORDER BY 1
+SELECT
+      <#if GROUP_BY="OWNER" >
+        <#if activeProjectId?has_content>
+          ''<a href="projects/'' || PROJECT_ID || ''/dashboards/'' || (select ID from dashboards where title=''Personal'') || ''?userId='' || OWNER_ID || ''">'' || OWNER || ''</a>'' AS "OWNER",
+        <#else>
+          ''<a href="dashboards/'' || (select ID from dashboards where title=''Personal'') || ''?userId='' || OWNER_ID || ''">'' || OWNER || ''</a>'' AS "OWNER",
+        </#if>
+      <#elseif GROUP_BY="RUN_NAME">
+        RUN_NAME AS "RUN_NAME",
+      <#elseif GROUP_BY="BUILD">
+        BUILD AS "BUILD",
+      </#if>
+        SUM(PASSED) AS "PASS",
+        SUM(FAILED) AS "FAIL",
+        SUM(KNOWN_ISSUE) AS "DEFECT",
+        SUM(SKIPPED) AS "SKIP",
+        SUM(ABORTED) AS "ABORT",
+        SUM(TOTAL) AS "TOTAL",
+        round (100.0 * SUM(PASSED) / (SUM(TOTAL)), 0)::integer AS "PASSED (%)",
+        round (100.0 * SUM(FAILED) / (SUM(TOTAL)), 0)::integer AS "FAILED (%)",
+        round (100.0 * SUM(KNOWN_ISSUE) / (SUM(TOTAL)), 0)::integer AS "KNOWN ISSUE (%)",
+        round (100.0 * SUM(SKIPPED) / (SUM(TOTAL)), 0)::integer AS "SKIPPED (%)",
+        round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
+    FROM ${VIEW}
+    ${WHERE_CLAUSE}
+    <#if GROUP_BY="OWNER" >
+      <#if activeProjectId?has_content>
+        GROUP BY PROJECT_ID, OWNER_ID, OWNER
+      <#else>
+        GROUP BY OWNER_ID, OWNER
+      </#if>
+    <#elseif GROUP_BY="RUN_NAME">
+      GROUP BY RUN_NAME
+    <#elseif GROUP_BY="BUILD">
+      GROUP BY BUILD
+    </#if>
+    ORDER BY 1
+
 
 
 <#--
-    Generates WHERE clause for multiple choosen parameters
-    @map - collected data to generate ''where'' clause (key - DB column name : value - expected DB value)
-    @return - generated WHERE clause
-  -->
-
-<#function generateMultipleWhereClause map>
+  Generates WHERE clause 
+  @map - collected multiple choosen data (key - DB column name : value - expected DB value)
+  @return - generated WHERE clause
+-->
+<#function generateWhereClause map>
   <#local result = "" />
-    <#if PERIOD?length = 4 || PERIOD = "YEAR">
-      <#if PERIOD = "YEAR">
-        <#local result = result + " to_char(STARTED_AT, ''YYYY'') " + " LIKE to_char(CURRENT_DATE, ''YYYY'')"/>
-      <#else>
-        <#local result = result + " to_char(STARTED_AT, ''YYYY'') " + " LIKE ''${PERIOD}''"/>
-      </#if>
-    <#elseif PERIOD != "MONTH" && PERIOD?substring(5, 6) == "Q" || PERIOD = "QUARTER" >
-      <#if PERIOD = "QUARTER">
-        <#local result = result + " to_char(STARTED_AT, ''YYYY-Q'') " + " LIKE to_char(CURRENT_DATE, ''YYYY-Q'')"/>
-      <#else>
-        <#local result = result + " to_char(STARTED_AT, ''YYYY'') || ''-Q'' || to_char(STARTED_AT, ''Q'') " + " LIKE ''${PERIOD}''"/>
-      </#if>
-    <#else>
-      <#if PERIOD = "MONTH">
-        <#local result = result + " to_char(STARTED_AT, ''YYYY-MM'') " + " LIKE to_char(CURRENT_DATE, ''YYYY-MM'')"/>
-      <#else>
-        <#local result = result + " to_char(STARTED_AT, ''YYYY-MM'') " + " LIKE ''${PERIOD}''"/>
-      </#if>
-    </#if>
 
   <#list map?keys as key>
-    <#if map[key] != "" >
-      <#if PERSONAL == "true" && IGNORE_PERSONAL_PARAMS?seq_contains(key)>
-        <#-- Ignore non supported filters for Personal chart: USER -->
-        <#continue>
-      </#if>
-
-      <#if result?length != 0>
-        <#local result = result + " AND "/>
-      </#if>
-      <#local result = result + key + " LIKE ANY (''{" + map[key] + "}'')"/>
+    <#if map[key]?has_content>
+      <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
     </#if>
   </#list>
-
-  <#if result?length != 0 && PERSONAL == "true">
-    <!-- add personal filter by currentUserId with AND -->
-    <#local result = result + " AND OWNER_ID=${currentUserId} "/>
-  <#elseif result?length == 0 && PERSONAL == "true">
-    <!-- add personal filter by currentUserId without AND -->
-    <#local result = " OWNER_ID=${currentUserId} "/>
+  
+  <#if isPersonal() && !USERS?has_content>
+    <!-- USERS filter has higher priority and if provided we should ignore personal board -->
+    <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
+  </#if>    
+  
+  <#if activeProjectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
   </#if>
-
-  <#if PARENT_JOB != "">
-    <#if result?length != 0>
-      <#local result = result + " AND "/>
+  
+  <#if MILESTONE?has_content>
+    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
+    
+    <#if MILESTONE_VERSION?has_content>
+      <#if MILESTONE_VERSION?lower_case == "latest">
+        <#local result = result + addCondition("AND", "MILESTONE_VERSION = (
+                SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
+                FROM TEST_RUNS INNER JOIN
+                  JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
+                WHERE JOBS.NAME=''${MILESTONE}'')", result) />
+      <#elseif isDecimal(MILESTONE_VERSION)>
+        <#local result = result + addCondition("AND", "MILESTONE_VERSION = ''" + MILESTONE_VERSION + "''", result) />
+      </#if>
     </#if>
-    <#local result = result + "UPSTREAM_JOB_NAME = ''" + PARENT_JOB + "''"/>
   </#if>
 
   <#if result?length != 0>
@@ -3641,183 +3932,145 @@ SELECT
 </#function>
 
 <#--
-    Joins array values using '', '' separator
-    @array1 - to join, has higher priority that array2
-    @array2 - alternative to join if array1 does not exist or is empty
-    @return - joined array as string
+    Correct string value removing ending comma if any
+    @line - to analyze and correct
+    @return - corrected line
   -->
-<#function multiJoin array1=[] array2=[]>
-  <#return ((array1?? && array1?size != 0) || ! array2??)?then(join(array1), join(array2)) />
-</#function>', 
-'const data = [];
-const range = () => {
-  let ranges = new Set();
+<#function correct line>
+  <#if line?has_content>
+    <!-- trim line and remove ending comma if present -->
+    <#return line?trim?remove_ending(",") />
+  <#else>
+    <!-- return empty line if line is null or empty-->
+    <#return "" />
+  </#if>
+</#function>
 
-  dataset.forEach(({date, value}) => {
-    const d = new Date(date);
-    const range =  d.getFullYear() + "-" + (d.getMonth() + 1);
-    const newDate = range + "-" +  d.getDate();
+<#--
+    Add valid SQL clause using condition and operator
+    @operator - AND/OR/BETWEEN etc
+    @condition - field(s) condition
+    @query - existing where conditions
+    @return - concatenated where clause conditions
+  -->
+<#function addCondition operator, condition, query>
+  <#if query?length != 0>
+    <#return " " + operator + " " + condition>
+  <#else>
+    <#return condition>
+  </#if>
+</#function>
 
-    ranges.add(range);
-    data.push(new Array(newDate, value));
-  });
+<#--
+    retrun true if dashboard name is ''Personal'' or ''User Performance''
+    @return - boolean
+  -->
+<#function isPersonal>
+  <#local result = false />
+  <#if dashboardName?has_content>
+    <#if dashboardName == "Personal" || dashboardName == "User Performance">
+      <#local result = true />  
+    </#if>
+  </#if>
+  <#return result />
+</#function>
 
-  let temporary = [];
-  for (let value of ranges) temporary.push(value);
-
-  return [temporary[0], data[data.length -1][0]]
-};
-
-const color = () => {
-    const red = "#e76a77";
-    const yellow = "#fddb7a";
-    const green = "#61c8b3";
-    const colorArrLenght = 20;
-    const greenValue = dataset[0].passed || 75;
-    let colors = [];
-
-    const creatorColorArr = (color, count) => {
-      for (var i = 0; i < Math.round(count); i++) colors.push(color);
-    }
-
-    let passed = colorArrLenght - (colorArrLenght*greenValue/100);
-    let aboard = (colorArrLenght - passed)/3;
-    let failed = colorArrLenght - passed - aboard
-
-    creatorColorArr(green, passed);
-    creatorColorArr(yellow, aboard);
-    creatorColorArr(red, failed);
-
-    return colors.reverse()
-};
-
-
-let option = {
-    tooltip: {
-      position: "top",
-      formatter: (p) => p.data[1] + "%",
-      "extraCssText": "transform: translateZ(0);"
-    },
-    visualMap: {
-      min: 0,
-      max: 100,
-      calculable: true,
-      orient: "vertical",
-      bottom: 20,
-      right:20,
-      inRange: {
-        color: color(),
-        symbolSize: [10, 100]
-      } 
-    },
-    calendar: {
-      left: 40,
-      right: 80,
-      top: 50,
-      bottom:20,
-      orient: "horizontal",
-      range: range(),
-      cellSize: 30,
-      dayLabel: {
-        nameMap: "en",
-        firstDay: 1, // start on Monday
-        margin: 5
-      },
-      yearLabel:{
-        position: "top"
-      },
-      itemStyle: {
-        color: ["white"],
-        borderWidth: 1,
-        borderColor: "#ccc"
-      }
-    },
-    series: [{
-      type: "heatmap",
-      coordinateSystem: "calendar",
-      calendarIndex: 0,
-      label: {
-        show: true,
-        formatter: function (params) {
-            let d = echarts.number.parseDate(params.value[0]);
-            return d.getDate();
-        },
-        color: "#000"
-      },
-      data: data
-    }]
-};
-
-chart.setOption(option);', 
-'{
+<#-- 
+  verify that value is number
+  @return - boolean
+  -->
+<#function isDecimal value>
+  <#attempt>
+    <#assign num = value?number>
+    <#local result = true />
+  <#recover>
+    <#local result = false />
+  </#attempt>
+  <#return result />
+</#function>', '{"columns": ["OWNER", "RUN_NAME", "PASS", "FAIL", "DEFECT", "SKIP", "ABORT", "TOTAL", "PASSED (%)", "FAILED (%)", "KNOWN ISSUE (%)", "SKIPPED (%)", "FAIL RATE (%)"]}', '{
   "PERIOD": {
-    "values": [],
-    "valuesQuery": "SELECT ''YEAR'' UNION ALL SELECT ''QUARTER'' UNION ALL SELECT ''MONTH'' UNION ALL SELECT DISTINCT to_char(STARTED_AT, ''YYYY'') FROM total_view UNION ALL SELECT DISTINCT to_char(STARTED_AT, ''YYYY'') || ''-Q'' || to_char(STARTED_AT, ''Q'') FROM total_view UNION ALL SELECT DISTINCT to_char(STARTED_AT, ''YYYY-MM'') FROM total_view UNION SELECT DISTINCT to_char(STARTED_AT, ''YYYY-MM'') FROM NIGHTLY_VIEW ORDER BY 1 DESC;",
-    "required": true
-  },
-  "PERSONAL": {
     "values": [
-      "false",
-      "true"
+      "Last 24 Hours",
+      "Last 7 Days",
+      "Last 14 Days",
+      "Last 30 Days",
+      "Last 90 Days",
+      "Last 365 Days",
+      "Today",
+      "Week",
+      "Month",
+      "Quarter",
+      "Year",
+      "Total"
     ],
-    "type": "radio",
     "required": true
   },
-  "PASSED_VALUE": {
-    "value": 75,
-    "required": false
-  },
-  "PROJECT": {
-    "values": [],
-    "valuesQuery": "SELECT NAME FROM PROJECTS WHERE NAME <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "USER": {
-    "values": [],
-    "valuesQuery": "SELECT USERNAME FROM USERS ORDER BY 1;",
-    "multiple": true
-  },
-  "PLATFORM": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "BROWSER": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
-    "multiple": true
+  "GROUP_BY": {
+    "values": [
+      "OWNER",
+      "RUN_NAME",
+      "BUILD"
+    ],
+    "required": true
   },
   "ENV": {
     "values": [],
     "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
     "multiple": true
   },
+  "PLATFORM": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
+    "multiple": true
+  },    
+  "LOCALE": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
+    "multiple": true
+  },  
+  "BROWSER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "multiple": true
+  },  
   "PRIORITY": {
     "values": [],
     "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
     "multiple": true
   },
-  "FEATURE": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''feature'' ORDER BY 1;",
-    "multiple": true
+  "USERS": {
+    "value": "",
+    "required": false
+  },  
+  "BUILDS": {
+    "value": "",
+    "required": false
+  },  
+  "RUNS": {
+    "value": "",
+    "required": false
+  },  
+  "MILESTONE": {
+    "value": "",
+    "required": false
   },
-  "PARENT_JOB": {
+  "MILESTONE_VERSION": {
     "value": "",
     "required": false
   }
-}', 
-'{
-  "PERIOD": "MONTH",
-  "PASSED_VALUE": "75",
-  "PERSONAL": "false",
-  "currentUserId": 1,
-  "PROJECT": [],
-  "USER": ["anonymous"],
+}', '{"legend": ["OWNER", "RUN_NAME", "PASS", "FAIL", "DEFECT", "SKIP", "ABORT", "TOTAL", "PASSED (%)", "FAILED (%)", "KNOWN ISSUE (%)", "SKIPPED (%)", "FAIL RATE (%)"]}', '{
+  "PERIOD": "Total",
+  "GROUP_BY": "OWNER",
+  "currentUserId": 2,
+  "dashboardName": "",
+  "ENV": [],
   "PLATFORM": [],
   "BROWSER": [],
-  "FEATURE": [],
-  "ENV": [],
+  "LOCALE": [],
   "PRIORITY": [],
-  "PARENT_JOB": ""
+  "BUILDS": "",  
+  "RUNS": "",
+  "MILESTONE": "",
+  "MILESTONE_VERSION": "250",
+  "USERS": ""
 }', false);
