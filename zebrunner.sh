@@ -63,7 +63,7 @@
     replace configuration/_common/rabbitmq.env "rabbitmq-user" "${ZBR_RABBITMQ_USER}"
     replace configuration/_common/rabbitmq.env "rabbitmq-password" "${ZBR_RABBITMQ_PASSWORD}"
     cp configuration/rabbitmq/001-general-definition.json.original configuration/rabbitmq/definitions/001-general-definition.json
-    sed -i "s#rabbitmq-user#${ZBR_RABBITMQ_USER}#g" configuration/rabbitmq/definitions/001-general-definition.json
+    replace configuration/rabbitmq/definitions/001-general-definition.json "rabbitmq-user" "${ZBR_RABBITMQ_USER}"
     replace configuration/rabbitmq/definitions/001-general-definition.json "rabbitmq-password" "${ZBR_RABBITMQ_PASSWORD}"
 
     cp configuration/redis/redis.conf.original configuration/redis/redis.conf
