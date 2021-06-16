@@ -669,7 +669,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   "USERS.USERNAME": correct(USERS!"")  
 }>
 <#global VIEW = PERIOD?replace(" ", "_") />
-<#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
+<#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES, PERIOD) />
 
 SELECT 
   substring(MIN(TESTS.MESSAGE) from 1 for 200) as "ERROR",
@@ -685,26 +685,61 @@ SELECT
   to_char(date_trunc(''day'', MIN(TESTS.START_TIME)), ''YYYY-MM-DD'') AS "SINCE",
   to_char(date_trunc(''day'', MAX(TESTS.START_TIME)), ''YYYY-MM-DD'') AS "REPRO"
   FROM TESTS
-    INNER JOIN TEST_RUNS ON TESTS.TEST_RUN_ID = TEST_RUNS.ID
-    INNER JOIN USERS ON TESTS.MAINTAINER_ID = USERS.ID
-    LEFT JOIN jobs upstream_jobs ON test_runs.upstream_job_id = upstream_jobs.id    
-    LEFT JOIN tests_labels priority_test_labels ON tests.id = priority_test_labels.test_id
-    AND priority_test_labels.label_id IN (SELECT id FROM labels WHERE key = ''priority'')
-    LEFT JOIN labels priority_labels ON priority_test_labels.label_id = priority_labels.id
-    AND priority_labels.key = ''priority''
+    JOIN TEST_RUNS ON TESTS.TEST_RUN_ID = TEST_RUNS.ID
   ${WHERE_CLAUSE}
   GROUP BY MESSAGE_HASH_CODE
   HAVING COUNT(*) >= ${ERROR_COUNT}
-  ORDER BY 1
+  ORDER BY 2 DESC
 
 <#--
   Generates WHERE clause 
   @map - collected multiple choosen data (key - DB column name : value - expected DB value)
   @return - generated WHERE clause
 -->
-<#function generateWhereClause map>
-  <#local result = "WHERE MESSAGE IS NOT NULL AND MESSAGE_HASH_CODE IS NOT NULL" />
+<#function generateWhereClause map, period>
+  <#local result = "WHERE MESSAGE_HASH_CODE IS NOT NULL
+                      AND TESTS.STATUS <> ''PASSED''" />
 
+  <#switch period>
+    <#case "Last 24 Hours">
+      <#local result += " AND TESTS.START_TIME >= (current_date - interval ''1 day'')" />
+      <#break>
+    <#case "Last 7 Days">
+      <#local result += " AND TESTS.START_TIME >= (current_date - interval ''7 day'')" />
+      <#break>
+    <#case "Last 14 Days">
+      <#local result += " AND TESTS.START_TIME >= (current_date - interval ''14 day'')" />
+      <#break>
+    <#case "Last 30 Days">
+      <#local result += " AND TESTS.START_TIME >= (current_date - interval ''30 day'')" />
+      <#break>
+    <#case "Last 90 Days">
+      <#local result += " AND TESTS.START_TIME >= (current_date - interval ''90 day'')" />
+      <#break>
+    <#case "Last 365 Days">
+      <#local result += " AND TESTS.START_TIME >= (current_date - interval ''365 day'')" />
+      <#break>
+    <#case "Today">
+      <#local result += " AND TESTS.START_TIME >= current_date" />
+      <#break>
+    <#case "Week">
+      <#local result += " AND TESTS.START_TIME >= date_trunc(''week'', current_date)" />
+      <#break>
+    <#case "Month">
+      <#local result += " AND TESTS.START_TIME >= date_trunc(''month'', current_date)" />
+      <#break>
+    <#case "Quarter">    
+      <#local result += " AND TESTS.START_TIME >= date_trunc(''quarter'', current_date)" />
+      <#break>
+    <#case "Year">
+      <#local result += " AND TESTS.START_TIME >= date_trunc(''year'', current_date)" />
+      <#break>
+  </#switch>
+  
+  <#if activeProjectId?has_content>
+    <#local result = result + addCondition("AND", "ACTIVE_PROJECT_ID=${activeProjectId}", result) />
+  </#if>  
+  
   <#list map?keys as key>
     <#if map[key]?has_content>
       <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
