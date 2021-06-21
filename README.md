@@ -1,7 +1,7 @@
 <p style="padding: 10px;" align="left">
   <img src="./docs/img/zebrunner_logo.png">
 </p>
-Zebrunner Reporting is a test automation management tool that accumulates and repseresents test results. It is designed to increase the transparency of automation, providing detailed reports with test logs, screenshots and video recordings of test sessions. Detailed reporting functionality reduces maintenance work for automation teams, allowing to identify application bugs and test implementation problems.
+Zebrunner Reporting is a test automation management tool that accumulates and repseresents test results. It is designed to increase the transparency of automation, providing detailed reports with test logs, screenshots and video recordings of test sessions. Detailed reporting functionality reduces maintenance work for automation teams, allowing to identify application bugs and fix them earlier in the release cycle.
 
 <p align="center">
   <img src="./docs/img/zebrunner_intro.png">
@@ -9,7 +9,7 @@ Zebrunner Reporting is a test automation management tool that accumulates and re
 
 **Zebrunner Insights** - premium reporting features for your tests. See test results in real time - Zebrunner records interactive video sessions, publishes logs and screenshots. Track your pass rate, infrastructure usage, and automation team performance in one application.
 
-**Zebrunner Engine** - cloud-based Selenium hub lets you run up to 1000 web, mobile, and API tests and reduce execution time and costs - you pay only for the period you test. We support popular platforms like Google Chrome, Firefox, Opera, Microsoft Edge, Internet Explorer, Android, iOS, and provide stability and quality of your execution.
+**Zebrunner Engine** - cloud-based Selenium hub lets you run up to 1000 web, mobile, and API tests and reduce execution time and costs. We support popular browsers like Google Chrome, Firefox, Opera, Microsoft Edge, Internet Explorer as well as Android/iOS devices, and provide stability and quality of your execution.
 
 **Zebrunner Guard** - your data and users will be safe with our enterprise-grade security and centralized administration. Due to the flexible permission management, you can limit access to certain information and keep the workflow steady.
 
