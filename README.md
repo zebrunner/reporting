@@ -21,7 +21,7 @@ Feel free to support the development with a [**donation**](https://www.paypal.co
 ## Core features
 * Real-time test results tracking via websockets
 * VNC streaming and video recording of test sessions
-* Flexibly configured widgets and dashboards based on [ECharts](https://www.echartsjs.com/en/index.html)
+* Flexibly configured widgets and dashboards
 * User management with authorization policies
 * Integration with TestRail and JIRA
 * Integration with Slack
