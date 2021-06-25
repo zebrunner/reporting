@@ -28,34 +28,30 @@ Feel free to support the development with a [**donation**](https://www.paypal.co
 * Ability to compose automation reports and send via email
 
 <table>
-  </tr>
+  <tr>
     <td>
       <b>Configurable dashboards</b>
-      <img src="./docs/img/feature_dashboards.png">
+      <img src="./docs/img/feature_dashboards.jpg">
     </td>
     <td>
       <b>Integrations with multiple services</b>
       <img src="./docs/img/feature_integrations.png">
     </td>
   </tr>
-  </tr>
+  <tr>
     <td>
       <b>Real-time test results</b>
       <img src="./docs/img/feature_testrun_results.png">
     </td>
     <td>
       <b>Live streaming and video recording</b>
-      <img src="./docs/img/feature_live_streaming.png">
+      <img src="./docs/img/feature_live_streaming.jpg">
     </td>
   </tr>
-  </tr>
-    <td>
-      <b>Comparison of test runs</b>
-      <img src="./docs/img/feature_testruns_comparison.png">
-    </td>
+  <tr>
     <td>
       <b>Test issues tracking</b>
-      <img src="./docs/img/feature_test_issues.png">
+      <img src="./docs/img/feature_test_issues.jpg">
     </td>
   </tr>
 </table>
