@@ -83,12 +83,12 @@ Zebrunner Reporting **client side** repositories:
 
 ## Installation steps
 
-1. Install [Docker Engine](https://docs.docker.com/engine/installation) and [Docker Compose](https://docs.docker.com/compose/install)
-2. Clone this repo recursively and navigate to the root folder
+1. Install [Docker Engine](https://docs.docker.com/engine/installation) and [Docker Compose](https://docs.docker.com/compose/install).
+2. Clone this repo recursively and navigate to the root folder:
   ```
   git clone --recurse-submodule https://github.com/zebrunner/reporting.git && cd reporting
   ```
-4. Run the application
+4. Run the application:
   ```
   ./zebrunner.sh start
   ```
@@ -99,9 +99,9 @@ Zebrunner Reporting **client side** repositories:
 
 ## Community and support
 * [Telegram channel](https://t.me/zebrunner)
-* [User manual](https://zebrunner.github.io/documentation)
-* [On-premise Zebrunner deployment with QPS-Infra](https://www.qps-infra.io)
-* [Zebrunner in cloud](https://zebrunner.com)
+* [User guide](https://zebrunner.github.io/documentation)
+* [On-premise deployment with Zebrunner CE](https://zebrunner.github.io/zebrunner/)
+* [Zebrunner PRO](https://zebrunner.com)
 
 ## License
 Code - [Apache Software License v2.0](http://www.apache.org/licenses/LICENSE-2.0)
