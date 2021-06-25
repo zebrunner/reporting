@@ -1,11 +1,13 @@
 <p style="padding: 10px;" align="left">
   <img src="./docs/img/zebrunner_logo.png">
 </p>
-Zebrunner Reporting is a test automation management tool that accumulates and repseresents test results. It is designed to increase the transparency of automation, providing detailed reports with test logs, screenshots and video recordings of test sessions. Detailed reporting functionality reduces maintenance work for automation teams, allowing to identify application bugs and fix them earlier in the release cycle.<br>
-Enjoy using Zebrunner Reporting in your testing process! Feel free to support the development with a [donation](https://www.paypal.com/donate?hosted_button_id=JLQ4U468TWQPS) for future improvements.
+
+Zebrunner Reporting is a test automation management tool that accumulates and repseresents test results. It is designed to increase the transparency of automation, providing detailed reports with test logs, screenshots and video recordings of test sessions. Detailed reporting functionality reduces maintenance work for automation teams, allowing to identify application bugs and fix them earlier in the release cycle.
+Enjoy using Zebrunner Reporting in your testing process!
+Feel free to support the development with a [donation](https://www.paypal.com/donate?hosted_button_id=JLQ4U468TWQPS) for future improvements.
 
 <p align="center">
-  <img src="./docs/img/zebrunner_intro.png">
+  <a href="https://zebrunner.com/"><img alt="Zebrunner" src="./docs/img/zebrunner_intro.png">
 </p>
 
 **Zebrunner Insights** - premium reporting features for your tests. See test results in real time - Zebrunner records interactive video sessions, publishes logs and screenshots. Track your pass rate, infrastructure usage, and automation team performance in one application.
