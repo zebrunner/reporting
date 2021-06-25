@@ -59,8 +59,8 @@ Feel free to support the development with a [**donation**](https://www.paypal.co
 ## Repositories structure
 
 Zebrunner Reporting **server side** consists of the following modules:
-- [`reporting-service`](https://github.com/zebrunner/reporting-service) application backend
-- [`reporting-ui`](https://github.com/zebrunner/reporting-ui) application frontend
+- [`reporting-service`](https://gitlab.com/zebrunner/ce/reporting-service) application backend
+- [`reporting-ui`](https://gitlab.com/zebrunner/ce/reporting-ui) application frontend
 
 
 Zebrunner Reporting **client side** repositories:
