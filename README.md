@@ -7,7 +7,7 @@ Enjoy using Zebrunner Reporting in your testing process!
 Feel free to support the development with a [donation](https://www.paypal.com/donate?hosted_button_id=JLQ4U468TWQPS) for future improvements.
 
 <p align="center">
-  <a href="https://zebrunner.com/"><img alt="Zebrunner" src="./docs/img/zebrunner_intro.png">
+  <a href="https://zebrunner.com/"><img alt="Zebrunner" src="./docs/img/zebrunner_intro.png"></a>
 </p>
 
 **Zebrunner Insights** - premium reporting features for your tests. See test results in real time - Zebrunner records interactive video sessions, publishes logs and screenshots. Track your pass rate, infrastructure usage, and automation team performance in one application.
