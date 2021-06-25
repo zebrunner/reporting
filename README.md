@@ -99,7 +99,7 @@ Zebrunner Reporting **client side** repositories:
 
 ## Community and support
 * [Telegram channel](https://t.me/zebrunner)
-* [User guide](https://zebrunner.github.io/documentation)
+* [User guide](https://zebrunner.com/documentation)
 * [On-premise deployment with Zebrunner CE](https://zebrunner.github.io/zebrunner/)
 * [Zebrunner PRO](https://zebrunner.com)
 
