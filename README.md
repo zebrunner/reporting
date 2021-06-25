@@ -14,8 +14,6 @@ Feel free to support the development with a [**donation**](https://www.paypal.co
 
 **Zebrunner Insights** - premium reporting features for your tests. See test results in real time - Zebrunner records interactive video sessions, publishes logs and screenshots. Track your pass rate, infrastructure usage, and automation team performance in one application.
 
-**Zebrunner Engine** - cloud-based Selenium hub lets you run up to 1000 web, mobile, and API tests and reduce execution time and costs. We support popular browsers like Google Chrome, Firefox, Opera, Microsoft Edge, Internet Explorer as well as Android/iOS devices, and provide stability and quality of your execution.
-
 **Zebrunner Guard** - your data and users will be safe with our enterprise-grade security and centralized administration. Due to the flexible permission management, you can limit access to certain information and keep the workflow steady.
 
 ## Core features
