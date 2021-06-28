@@ -1,56 +1,55 @@
 <p style="padding: 10px;" align="left">
   <img src="./docs/img/zebrunner_logo.png">
 </p>
-Zebrunner Reporting is a test automation management tool that accumulates and repseresents test results. It is designed to increase the transparency of automation, providing detailed reports with test logs, screenshots and video recordings of test sessions. Detailed reporting functionality reduces maintenance work for automation teams, allowing to identify application bugs and test implementation problems.
+
+Zebrunner Reporting is a test automation management tool that accumulates and repseresents test results. It is designed to increase the transparency of automation, providing detailed reports with test logs, screenshots and video recordings of test sessions. Detailed reporting functionality reduces maintenance work for automation teams, allowing to identify application bugs and fix them earlier in the release cycle.
+
+Enjoy using Zebrunner Reporting in your testing process!
+
+Feel free to support the development with a [**donation**](https://www.paypal.com/donate?hosted_button_id=JLQ4U468TWQPS) for future improvements.
 
 <p align="center">
-  <img src="./docs/img/zebrunner_intro.png">
+  <a href="https://zebrunner.com/"><img alt="Zebrunner" src="./docs/img/zebrunner_intro.png"></a>
 </p>
 
 **Zebrunner Insights** - premium reporting features for your tests. See test results in real time - Zebrunner records interactive video sessions, publishes logs and screenshots. Track your pass rate, infrastructure usage, and automation team performance in one application.
-
-**Zebrunner Engine** - cloud-based Selenium hub lets you run up to 1000 web, mobile, and API tests and reduce execution time and costs - you pay only for the period you test. We support popular platforms like Google Chrome, Firefox, Opera, Microsoft Edge, Internet Explorer, Android, iOS, and provide stability and quality of your execution.
 
 **Zebrunner Guard** - your data and users will be safe with our enterprise-grade security and centralized administration. Due to the flexible permission management, you can limit access to certain information and keep the workflow steady.
 
 ## Core features
 * Real-time test results tracking via websockets
 * VNC streaming and video recording of test sessions
-* Flexibly configured widgets and dashboards based on [ECharts](https://www.echartsjs.com/en/index.html)
+* Flexibly configured widgets and dashboards
 * User management with authorization policies
 * Integration with TestRail and JIRA
 * Integration with Slack
 * Ability to compose automation reports and send via email
 
 <table>
-  </tr>
+  <tr>
     <td>
       <b>Configurable dashboards</b>
-      <img src="./docs/img/feature_dashboards.png">
+      <img src="./docs/img/feature_dashboards.jpg">
     </td>
     <td>
       <b>Integrations with multiple services</b>
       <img src="./docs/img/feature_integrations.png">
     </td>
   </tr>
-  </tr>
+  <tr>
     <td>
       <b>Real-time test results</b>
       <img src="./docs/img/feature_testrun_results.png">
     </td>
     <td>
       <b>Live streaming and video recording</b>
-      <img src="./docs/img/feature_live_streaming.png">
+      <img src="./docs/img/feature_live_streaming.jpg">
     </td>
   </tr>
-  </tr>
-    <td>
-      <b>Comparison of test runs</b>
-      <img src="./docs/img/feature_testruns_comparison.png">
-    </td>
+  <tr>
     <td>
       <b>Test issues tracking</b>
-      <img src="./docs/img/feature_test_issues.png">
+      <img src="./docs/img/feature_test_issues.jpg">
     </td>
   </tr>
 </table>
@@ -58,8 +57,8 @@ Zebrunner Reporting is a test automation management tool that accumulates and re
 ## Repositories structure
 
 Zebrunner Reporting **server side** consists of the following modules:
-- [`reporting-service`](https://github.com/zebrunner/reporting-service) application backend
-- [`reporting-ui`](https://github.com/zebrunner/reporting-ui) application frontend
+- [`reporting-service`](https://gitlab.com/zebrunner/ce/reporting-service) application backend
+- [`reporting-ui`](https://gitlab.com/zebrunner/ce/reporting-ui) application frontend
 
 
 Zebrunner Reporting **client side** repositories:
@@ -82,12 +81,12 @@ Zebrunner Reporting **client side** repositories:
 
 ## Installation steps
 
-1. Install [Docker Engine](https://docs.docker.com/engine/installation) and [Docker Compose](https://docs.docker.com/compose/install)
-2. Clone this repo recursively and navigate to the root folder
+1. Install [Docker Engine](https://docs.docker.com/engine/installation) and [Docker Compose](https://docs.docker.com/compose/install).
+2. Clone this repo recursively and navigate to the root folder:
   ```
   git clone --recurse-submodule https://github.com/zebrunner/reporting.git && cd reporting
   ```
-4. Run the application
+4. Run the application:
   ```
   ./zebrunner.sh start
   ```
@@ -98,9 +97,9 @@ Zebrunner Reporting **client side** repositories:
 
 ## Community and support
 * [Telegram channel](https://t.me/zebrunner)
-* [User manual](https://zebrunner.github.io/documentation)
-* [On-premise Zebrunner deployment with QPS-Infra](https://www.qps-infra.io)
-* [Zebrunner in cloud](https://zebrunner.com)
+* [User guide](https://zebrunner.com/documentation)
+* [On-premise deployment with Zebrunner CE](https://zebrunner.github.io/zebrunner/)
+* [Zebrunner PRO](https://zebrunner.com)
 
 ## License
 Code - [Apache Software License v2.0](http://www.apache.org/licenses/LICENSE-2.0)

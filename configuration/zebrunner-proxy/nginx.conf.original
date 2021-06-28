@@ -46,14 +46,6 @@ http {
             proxy_pass http://reporting-ui-server/;
         }
 
-        location /reporting-service/ {
-            proxy_pass http://reporting-service-server/;
-
-            # two below headers to support websocket connection
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection upgrade;
-        }
-
         location /api/reporting/ {
             proxy_pass http://reporting-service-server/;
 
@@ -68,9 +60,9 @@ http {
             proxy_set_header Connection upgrade;
         }
 
-        location ~ "^/(reporting-service/|reporting/|api/reporting/)v1/test-runs/(?<test_run_id>.+)/logs" {
+        location ~ "^/api/reporting/v1/test-runs/(?<test_run_id>.+)/logs" {
             if ($request_method = GET) {
-               rewrite ^/reporting-service/(.*)$ /$1 break;
+               rewrite ^/api/reporting/(.*)$ /$1 break;
                proxy_pass http://reporting-service-server;
             }
 
@@ -78,11 +70,11 @@ http {
             proxy_pass http://artifacts-proxy-service-server;
         }
 
-        location ~ "^/(reporting-service/|reporting/|api/reporting/)v1/test-runs/(?<test_run_id>.+)/tests/(?<test_id>.+)/screenshots" {
+        location ~ "^/api/reporting/v1/test-runs/(?<test_run_id>.+)/tests/(?<test_id>.+)/screenshots" {
             client_max_body_size 10M;
 
             if ($request_method = GET) {
-               rewrite ^/reporting-service/(.*)$ /$1 break;
+               rewrite ^/api/reporting/(.*)$ /$1 break;
                proxy_pass http://reporting-service-server;
             }
 
@@ -103,7 +95,7 @@ http {
             proxy_pass http://artifacts-proxy-service-server;
         }
 
-        location ~ "^/(reporting-service/|reporting/|api/reporting/)v1/test-runs/(?<test_run_id>.+)/tests/(?<test_id>.+)/artifacts" {
+        location ~ "^/api/reporting/v1/test-runs/(?<test_run_id>.+)/tests/(?<test_id>.+)/artifacts" {
             client_max_body_size 1G;
 
             proxy_set_header x-zbr-test-run-id $test_run_id;
@@ -115,7 +107,7 @@ http {
 
         # in nginx.conf file, this mapping should placed after mapping for test artifacts (previous one)
         # otherwise, nginx will route by this mapping for both test and test run artifacts
-        location ~ "^/(reporting-service/|reporting/|api/reporting/)v1/test-runs/(?<test_run_id>.+)/artifacts" {
+        location ~ "^/api/reporting/v1/test-runs/(?<test_run_id>.+)/artifacts" {
             client_max_body_size 1G;
 
             proxy_set_header x-zbr-test-run-id $test_run_id;
