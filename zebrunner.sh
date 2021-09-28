@@ -208,7 +208,7 @@
     cp configuration/rabbitmq/variables.env configuration/rabbitmq/variables.env.bak
     cp configuration/logstash/logstash.conf configuration/logstash/logstash.conf.bak
     cp configuration/_common/rabbitmq.env configuration/_common/rabbitmq.env.bak
-    cp configuration/rabbitmq/definitions/001-general-definition.json configuration/rabbitmq/definitions/001-general-definition.json.bak
+    cp configuration/rabbitmq/definitions/001-general-definition.json configuration/rabbitmq/001-general-definition.json.bak
     cp configuration/redis/redis.conf configuration/redis/redis.conf.bak
     cp configuration/reporting-service/variables.env configuration/reporting-service/variables.env.bak
     cp configuration/reporting-ui/variables.env configuration/reporting-ui/variables.env.bak
@@ -238,7 +238,7 @@
     cp configuration/rabbitmq/variables.env.bak configuration/rabbitmq/variables.env
     cp configuration/logstash/logstash.conf.bak configuration/logstash/logstash.conf
     cp configuration/_common/rabbitmq.env.bak configuration/_common/rabbitmq.env
-    cp configuration/rabbitmq/definitions/001-general-definition.json.bak configuration/rabbitmq/definitions/001-general-definition.json
+    cp configuration/rabbitmq/001-general-definition.json.bak configuration/rabbitmq/definitions/001-general-definition.json
     cp configuration/redis/redis.conf.bak configuration/redis/redis.conf
     cp configuration/reporting-service/variables.env.bak configuration/reporting-service/variables.env
     cp configuration/reporting-ui/variables.env.bak configuration/reporting-ui/variables.env
