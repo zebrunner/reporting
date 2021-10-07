@@ -3,25 +3,27 @@ SET SCHEMA 'management';
 --APPLICATION ISSUES (BLOCKERS) COUNT
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('DEFECTS COUNT', 
 	'A number of unique application bugs discovered and submitted by automation.', 'TABLE', '<#global WHERE_VALUES = {
+  "RUN_STATUS": join(STATUS),
+  "BUG": join(DEFECT),
+  "BUILD": join(BUILD),
   "ENV": join(ENV),
   "LOWER(PLATFORM)": join(PLATFORM),
   "LOWER(BROWSER)": join(BROWSER),
   "LOCALE": join(LOCALE),
   "PRIORITY": join(PRIORITY),
-  "BUILD": correct(BUILDS!""),    
-  "RUN_NAME": correct(RUNS!""),
-  "OWNER": correct(USERS!"")
+  "RUN_NAME": join(RUN),
+  "OWNER": join(USER)
 }>
 
 <#global VIEW = PERIOD?replace(" ", "_") />
 <#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
 
-  SELECT PLATFORM AS "PLATFORM",
-    BROWSER AS "BROWSER",
-    COUNT(DISTINCT KNOWN_ISSUE) AS "COUNT"
+  SELECT OWNER AS "OWNER",
+    ''<div title="'' || string_agg(DISTINCT(BUG), '', '') || ''">'' || COUNT(DISTINCT(BUG))::TEXT || ''</div>'' AS "COUNT"
   FROM ${VIEW}
   ${WHERE_CLAUSE}
-  GROUP BY PLATFORM, BROWSER
+  GROUP BY 1
+  ORDER BY 2 DESC
 
 <#--
   Generates WHERE clause 
@@ -32,7 +34,9 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   <#local result = "WHERE KNOWN_ISSUE > 0"/>
   
   <#list map?keys as key>
-    <#if map[key]?has_content>
+    <#if map[key]?has_content && map[key]?contains("null")>
+      <#local result = result + addCondition("AND", "(${key} LIKE ANY (''{" + map[key] + "}'') OR ${key} IS NULL)", result) />
+    <#elseif map[key]?has_content>
       <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
     </#if>
   </#list>
@@ -42,26 +46,10 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
   </#if>    
 
-  <#if activeProjectId?has_content>
-    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
+  <#if projectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${projectId?c}", result) />
   </#if>
   
-  <#if MILESTONE?has_content>
-    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
-    
-    <#if MILESTONE_VERSION?has_content>
-      <#if MILESTONE_VERSION?lower_case == "latest">
-        <#local result = result + addCondition("AND", "MILESTONE_VERSION = (
-                SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
-                FROM TEST_RUNS INNER JOIN
-                  JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
-                WHERE JOBS.NAME=''${MILESTONE}'')", result) />
-      <#elseif isDecimal(MILESTONE_VERSION)>
-        <#local result = result + addCondition("AND", "MILESTONE_VERSION = ''" + MILESTONE_VERSION + "''", result) />
-      </#if>
-    </#if>
-  </#if>  
-
   <#return result>
 </#function>
 
@@ -116,353 +104,116 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     </#if>
   </#if>
   <#return result />
-</#function>
-
-<#-- 
-  verify that value is number
-  @return - boolean
-  -->
-<#function isDecimal value>
-  <#attempt>
-    <#assign num = value?number>
-    <#local result = true />
-  <#recover>
-    <#local result = false />
-  </#attempt>
-  <#return result />
-</#function>', '{"columns": ["PLATFORM", "BROWSER", "COUNT"]}', '{
+</#function>', '{"columns": ["OWNER", "COUNT"]}', '{
   "PERIOD": {
     "values": [
+      "Today",
       "Last 24 Hours",
+      "Week",
       "Last 7 Days",
       "Last 14 Days",
-      "Last 30 Days",
-      "Last 90 Days",
-      "Last 365 Days",
-      "Today",
-      "Week",
       "Month",
+      "Last 30 Days",
       "Quarter",
+      "Last 90 Days",
       "Year",
+      "Last 365 Days",
       "Total"
     ],
     "required": true
   },
-  "ENV": {
+  "STATUS": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(UPPER(STATUS)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
     "multiple": true
   },
-  "PLATFORM": {
+  "DEFECT": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' AND PLATFORM IS NOT NULL ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(VALUE) FROM ISSUE_REFERENCES INNER JOIN TEST_EXECUTIONS ON ISSUE_REFERENCES.ID=TEST_EXECUTIONS.ISSUE_REFERENCE_ID INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID=TEST_SUITE_EXECUTIONS.ID ${whereClause} ORDER BY 1 DESC;",
     "multiple": true
   },
-  "LOCALE": {
+  "USER": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },  
-  "BROWSER": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(USERS.USERNAME) FROM TEST_SUITE_EXECUTIONS INNER JOIN TEST_EXECUTIONS ON TEST_SUITE_EXECUTIONS.ID=TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID INNER JOIN USERS ON TEST_EXECUTIONS.MAINTAINER_ID=USERS.ID ${whereClause} ORDER BY 1;",
     "multiple": true
   },
   "PRIORITY": {
     "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
+    "valuesQuery": "select unnest(array[''P0'', ''P1'', ''P2'', ''P3'', ''P4'', ''P5'', ''P6'']);",
     "multiple": true
   },
-  "USERS": {
-    "value": "",
-    "required": false
-  },  
-  "BUILDS": {
-    "value": "",
-    "required": false
+  "ENV": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(UPPER(ENVIRONMENT)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
   },
-  "RUNS": {
-    "value": "",
-    "required": false
-  },  
-  "MILESTONE": {
-    "value": "",
-    "required": false
+  "PLATFORM": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(LOWER(TEST_EXECUTION_CONFIGS.PLATFORM)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
+    "multiple": true
   },
-  "MILESTONE_VERSION": {
-    "value": "",
-    "required": false
-  }
+  "BROWSER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(LOWER(BROWSER)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "LOCALE": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(LOCALE) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },  
+  "BUILD": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(BUILD) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1 DESC;",
+    "multiple": true
+  },
+  "RUN": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(NAME) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  } 
 }', '', '{
-  "PERIOD": "Total",
+  "PERIOD": "Today",
   "currentUserId": 2,
   "dashboardName": "",  
+  "STATUS": [],
+  "DEFECT": [],
+  "BUILD": [],    
   "ENV": [],
   "PLATFORM": [],
   "BROWSER": [],
   "LOCALE": [],
   "PRIORITY": [],
-  "BUILDS": "",  
-  "RUNS": "",
-  "MILESTONE": "",
-  "MILESTONE_VERSION": "l",
-  "USERS": ""
-}', false);
-
---APPLICATION ISSUES (BLOCKERS) DETAILS
-INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('DEFECTS DETAILS', 
-	'Detailed information about known issues.', 'TABLE', '<#global WHERE_VALUES = {
-  "OWNER": join(USER),
-  "ENV": join(ENV),
-  "LOCALE": join(LOCALE),
-  "PRIORITY": join(PRIORITY),
-  "LOWER(PLATFORM)": join(PLATFORM),
-  "LOWER(BROWSER)": join(BROWSER),
-  "RUN_NAME": correct(RUNS!"")
-}>
-<#global VIEW = PERIOD?replace(" ", "_") />
-<#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
-
-SELECT
-    distinct(BUG) as BUG,
-    ''<a href=${JIRA_URL}'' || ''/'' || BUG || '' target="_blank">'' || BUG || ''</a>'' AS "ISSUE",
-      ENV AS "ENV",
-      OWNER AS "OWNER",
-      PLATFORM AS "PLATFORM",
-      PLATFORM_VERSION AS "PLATFORM_VERSION",
-      BROWSER AS "BROWSER",
-      BROWSER_VERSION AS "BROWSER_VERSION",
-      BUILD AS "BUILD",
-      LOCALE AS "LOCALE",
-      <#if activeProjectId?has_content>
-        ''<a href="projects/'' || PROJECT_ID || ''/test-runs/'' || TESTS.TEST_RUN_ID || ''/tests/'' || TESTS.ID || ''">'' || TESTS.NAME || ''</a>'' AS "TEST_INFO_URL",
-      <#else>
-        ''<a href="test-runs/'' || TESTS.TEST_RUN_ID || ''/tests/'' || TESTS.ID || ''">'' || TESTS.NAME || ''</a>'' AS "TEST_INFO_URL",
-      </#if>
-      MESSAGE AS "Error Message"
-    FROM ${VIEW}
-      INNER JOIN TESTS on ${VIEW}.TEST_RUN_ID = TESTS.TEST_RUN_ID
-    ${WHERE_CLAUSE}
-
-
-<#--
-  Generates WHERE clause 
-  @map - collected multiple choosen data (key - DB column name : value - expected DB value)
-  @return - generated WHERE clause
--->
-<#function generateWhereClause map>
-  <#local result = "WHERE TESTS.KNOWN_ISSUE = TRUE AND BUG IS NOT NULL"/>
-
-  <#list map?keys as key>
-    <#if map[key]?has_content>
-      <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
-    </#if>
-  </#list>
-  
-  <#if activeProjectId?has_content>
-    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
-  </#if>  
-  
-  <#if isPersonal() && !USERS?has_content>
-    <!-- USERS filter has higher priority and if provided we should ignore personal board -->
-    <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
-  </#if>    
-  
-  <#if MILESTONE?has_content>
-    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
-    
-    <#if MILESTONE_VERSION?has_content>
-      <#if MILESTONE_VERSION?lower_case == "latest">
-        <#local result = result + addCondition("AND", "MILESTONE_VERSION = (
-                SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
-                FROM TEST_RUNS INNER JOIN
-                  JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
-                WHERE JOBS.NAME=''${MILESTONE}'')", result) />
-      <#elseif isDecimal(MILESTONE_VERSION)>
-        <#local result = result + addCondition("AND", "MILESTONE_VERSION = ''" + MILESTONE_VERSION + "''", result) />
-      </#if>
-    </#if>
-  </#if>
- 
-  <#return result>
-</#function>
-
-<#--
-    Joins array values using '', '' separator
-    @array - to join
-    @return - joined array as string
-  -->
-<#function join array=[]>
-  <#return array?join('', '') />
-</#function>
-
-<#--
-    Correct string value removing ending comma if any
-    @line - to analyze and correct
-    @return - corrected line
-  -->
-<#function correct line>
-  <#if line?has_content>
-    <!-- trim line and remove ending comma if present -->
-    <#return line?trim?remove_ending(",") />
-  <#else>
-    <!-- return empty line if line is null or empty-->
-    <#return "" />
-  </#if>
-</#function>
-
-<#--
-    Add valid SQL clause using condition and operator
-    @operator - AND/OR/BETWEEN etc
-    @condition - field(s) condition
-    @query - existing where conditions
-    @return - concatenated where clause conditions
-  -->
-<#function addCondition operator, condition, query>
-  <#if query?length != 0>
-    <#return " " + operator + " " + condition>
-  <#else>
-    <#return condition>
-  </#if>
-</#function>
-
-<#--
-    retrun true if dashboard name is ''Personal'' or ''User Performance''
-    @return - boolean
-  -->
-<#function isPersonal>
-  <#local result = false />
-  <#if dashboardName?has_content>
-    <#if dashboardName == "Personal" || dashboardName == "User Performance">
-      <#local result = true />  
-    </#if>
-  </#if>
-  <#return result />
-</#function>
-
-<#-- 
-  verify that value is number
-  @return - boolean
-  -->
-<#function isDecimal value>
-  <#attempt>
-    <#assign num = value?number>
-    <#local result = true />
-  <#recover>
-    <#local result = false />
-  </#attempt>
-  <#return result />
-</#function>', '{"columns": ["ISSUE", "ENV", "OWNER", "PLATFORM", "PLATFORM_VERSION", "BROWSER", "BROWSER_VERSION", "BUILD", "LOCALE", "TEST_INFO_URL", "Error Message"]}', '{
-  "PERIOD": {
-    "values": [
-      "Last 24 Hours",
-      "Last 7 Days",
-      "Last 14 Days",
-      "Last 30 Days",
-      "Last 90 Days",
-      "Last 365 Days",
-      "Today",
-      "Week",
-      "Month",
-      "Quarter",
-      "Year",
-      "Total"
-    ],
-    "required": true
-  },
-  "JIRA_URL": {
-    "value": "https://mycompany.atlassian.net/browse",
-    "required": true
-  },
-  "ENV": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "PLATFORM": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
-    "multiple": true
-  },    
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },  
-  "BROWSER": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
-    "multiple": true
-  },  
-  "PRIORITY": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
-    "multiple": true
-  },
-  "USERS": {
-    "value": "",
-    "required": false
-  },  
-  "BUILDS": {
-    "value": "",
-    "required": false
-  },  
-  "RUNS": {
-    "value": "",
-    "required": false
-  },  
-  "MILESTONE": {
-    "value": "",
-    "required": false
-  },
-  "MILESTONE_VERSION": {
-    "value": "",
-    "required": false
-  }
-}', '{"legend": ["ISSUE", "ENV", "OWNER", "PLATFORM", "PLATFORM_VERSION", "BROWSER", "BROWSER_VERSION", "BUILD", "LOCALE", "TEST_INFO_URL", "Error Message"]}', '{
-  "PERIOD": "Total",
-  "JIRA_URL": "https://mycompany.atlassian.net/browse",
-  "currentUserId": 2,
-  "dashboardName": "",
-  "ENV": [],
-  "PLATFORM": [],
-  "BROWSER": [],
-  "LOCALE": [],
-  "PRIORITY": [],
-  "BUILDS": "",  
-  "RUNS": "",
-  "MILESTONE": "",
-  "MILESTONE_VERSION": "250",
-  "USERS": ""
+  "RUN": [],
+  "USER": []
 }', false);
 
 --TESTS FAILURES BY SUITE
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('FAILURES BY RUN', 
 	'Show failures per run.', 'TABLE', '<#global WHERE_VALUES = {
+  "RUN_STATUS": join(STATUS),
+  "BUG": join(DEFECT),
+  "BUILD": join(BUILD),
   "ENV": join(ENV),
   "LOWER(PLATFORM)": join(PLATFORM),
   "LOWER(BROWSER)": join(BROWSER),
   "LOCALE": join(LOCALE),
   "PRIORITY": join(PRIORITY),
-  "BUILD": correct(BUILDS!""),    
-  "RUN_NAME": correct(RUNS!""),
-  "OWNER": correct(USERS!"")
+  "RUN_NAME": join(RUN),
+  "OWNER": join(USER)
 }>
 
 <#global VIEW = PERIOD?replace(" ", "_") />
 <#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
 
-  SELECT 
+  SELECT
       RUN_NAME AS "RUN",
-      TEST_METHOD AS "TESTCASE",
       SUM(FAILED) AS "FAILURES COUNT",
       SUM(TOTAL) AS "TOTAL COUNT",
-      ROUND(SUM(FAILED)*100/COUNT(*)) AS "FAILURE %"
+      ROUND(SUM(FAILED)/SUM(TOTAL)*100) AS "FAILURE %"
     FROM ${VIEW}
-      INNER JOIN TESTS on ${VIEW}.TEST_RUN_ID = TESTS.TEST_RUN_ID
-      INNER JOIN TEST_CASES ON TESTS.TEST_CASE_ID = TEST_CASES.ID
     ${WHERE_CLAUSE}
-    GROUP BY 1, 2
+    GROUP BY 1
     HAVING SUM(FAILED) > 0
     ORDER BY 1
 
@@ -476,7 +227,9 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   <#local result = "" />
   
   <#list map?keys as key>
-    <#if map[key]?has_content>
+    <#if map[key]?has_content && map[key]?contains("null")>
+      <#local result = result + addCondition("AND", "(${key} LIKE ANY (''{" + map[key] + "}'') OR ${key} IS NULL)", result) />
+    <#elseif map[key]?has_content>
       <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
     </#if>
   </#list>
@@ -486,26 +239,10 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
   </#if>    
   
-  <#if activeProjectId?has_content>
-    <#local result = result + addCondition("AND", "${VIEW}.PROJECT_ID=${activeProjectId}", result) />
+  <#if projectId?has_content>
+    <#local result = result + addCondition("AND", "${VIEW}.PROJECT_ID=${projectId?c}", result) />
   </#if>  
   
-  <#if MILESTONE?has_content>
-    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
-    
-    <#if MILESTONE_VERSION?has_content>
-      <#if MILESTONE_VERSION?lower_case == "latest">
-        <#local result = result + addCondition("AND", "MILESTONE_VERSION = (
-                SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
-                FROM TEST_RUNS INNER JOIN
-                  JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
-                WHERE JOBS.NAME=''${MILESTONE}'')", result) />
-      <#elseif isDecimal(MILESTONE_VERSION)>
-        <#local result = result + addCondition("AND", "MILESTONE_VERSION = ''" + MILESTONE_VERSION + "''", result) />
-      </#if>
-    </#if>
-  </#if>
-
   <#if result?length != 0>
     <#local result = " WHERE " + result/>
  </#if>
@@ -563,133 +300,131 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     </#if>
   </#if>
   <#return result />
-</#function>
-
-<#-- 
-  verify that value is number
-  @return - boolean
-  -->
-<#function isDecimal value>
-  <#attempt>
-    <#assign num = value?number>
-    <#local result = true />
-  <#recover>
-    <#local result = false />
-  </#attempt>
-  <#return result />
-</#function>', '{"columns": ["RUN", "TESTCASE", "FAILURES COUNT", "TOTAL COUNT", "FAILURE %"]}', '{
+</#function>', '{"columns": ["RUN", "FAILURES COUNT", "TOTAL COUNT", "FAILURE %"]}', '{
   "PERIOD": {
     "values": [
+      "Today",
       "Last 24 Hours",
+      "Week",
       "Last 7 Days",
       "Last 14 Days",
-      "Last 30 Days",
-      "Last 90 Days",
-      "Last 365 Days",
-      "Today",
-      "Week",
       "Month",
+      "Last 30 Days",
       "Quarter",
+      "Last 90 Days",
       "Year",
+      "Last 365 Days",
       "Total"
     ],
     "required": true
   },
+  "STATUS": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(UPPER(STATUS)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "DEFECT": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(VALUE) FROM ISSUE_REFERENCES INNER JOIN TEST_EXECUTIONS ON ISSUE_REFERENCES.ID=TEST_EXECUTIONS.ISSUE_REFERENCE_ID INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID=TEST_SUITE_EXECUTIONS.ID ${whereClause} ORDER BY 1 DESC;",
+    "multiple": true
+  },
+  "USER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(USERS.USERNAME) FROM TEST_SUITE_EXECUTIONS INNER JOIN TEST_EXECUTIONS ON TEST_SUITE_EXECUTIONS.ID=TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID INNER JOIN USERS ON TEST_EXECUTIONS.MAINTAINER_ID=USERS.ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "PRIORITY": {
+    "values": [],
+    "valuesQuery": "select unnest(array[''P0'', ''P1'', ''P2'', ''P3'', ''P4'', ''P5'', ''P6'']);",
+    "multiple": true
+  },
   "ENV": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(UPPER(ENVIRONMENT)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
     "multiple": true
   },
   "PLATFORM": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOWER(TEST_EXECUTION_CONFIGS.PLATFORM)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
     "multiple": true
-  },    
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },  
+  },
   "BROWSER": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOWER(BROWSER)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
     "multiple": true
-  },  
-  "PRIORITY": {
+  },
+  "LOCALE": {
     "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOCALE) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },  
+  "BUILD": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(BUILD) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1 DESC;",
     "multiple": true
   },
-  "USERS": {
-    "value": "",
-    "required": false
-  },  
-  "BUILDS": {
-    "value": "",
-    "required": false
-  },  
-  "RUNS": {
-    "value": "",
-    "required": false
-  },  
-  "MILESTONE": {
-    "value": "",
-    "required": false
-  },
-  "MILESTONE_VERSION": {
-    "value": "",
-    "required": false
-  }
+  "RUN": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(NAME) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  }  
 }', '{
-  "PERIOD": "Total",
+  "PERIOD": "Today",
   "currentUserId": 2,
   "dashboardName": "",
+  "STATUS": [],
+  "DEFECT": [],
+  "BUILD": [],    
   "ENV": [],
   "PLATFORM": [],
   "BROWSER": [],
   "LOCALE": [],
   "PRIORITY": [],
-  "BUILDS": "",  
-  "RUNS": "",
-  "MILESTONE": "",
-  "MILESTONE_VERSION": "250",
-  "USERS": ""
+  "RUN": [],
+  "USER": []
 }', false);
 
 --TESTS FAILURES BY REASON
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('FAILURES BY REASON',
 	'Summarized information about failures grouped by reason.', 'TABLE', '<#global WHERE_VALUES = {
-  "ENVIRONMENT": join(ENV),
+  "RUN_STATUS": join(STATUS),
+  "BUG": join(DEFECT),
+  "BUILD": join(BUILD),
+  "ENV": join(ENV),
   "LOWER(PLATFORM)": join(PLATFORM),
   "LOWER(BROWSER)": join(BROWSER),
   "LOCALE": join(LOCALE),
-  "PRIORITY_LABELS.VALUE": join(PRIORITY),
-  "BUILD": correct(BUILDS!""),    
-  "TEST_RUNS.NAME": correct(RUNS!""),
-  "USERS.USERNAME": correct(USERS!"")  
+  "PRIORITY": join(PRIORITY),
+  "RUN_NAME": join(RUN),
+  "OWNER": join(USER)
 }>
 <#global VIEW = PERIOD?replace(" ", "_") />
 <#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES, PERIOD) />
 
 SELECT 
-  substring(MIN(TESTS.MESSAGE) from 1 for 200) as "ERROR",
-  count(*) as "#",
-  <#if activeProjectId?has_content>
-    ''<a href="projects/'' || ${activeProjectId} || ''/dashboards/'' || 
+  (SELECT substring(MESSAGE from 1 for 200) FROM TEST_EXECUTIONS WHERE MESSAGE_HASH_CODE = MESSAGE_HASHCODE LIMIT 1) AS "REASON",
+  CASE
+  WHEN (INTEGRATION_JIRA_CONFIGS.URL IS NULL OR INTEGRATION_JIRA_CONFIGS.ENABLED=false)
+    THEN BUG
+    ELSE ''<a href="'' || INTEGRATION_JIRA_CONFIGS.URL || ''/browse/'' || BUG || ''" target="_blank">'' || BUG || ''</a>''
+  END AS "DEFECT",
+  SUM(TOTAL) as "#",
+  <#if projectId?has_content>
+    ''<a href="projects/'' || ${projectId?c} || ''/dashboards/'' || 
       (select ID from dashboards where title=''Failures analysis'') ||
-        ''?PERIOD=${VIEW}&hashcode='' || TESTS.MESSAGE_HASH_CODE || ''">View</a>'' AS "REPORT",
+        ''?PERIOD=${PERIOD}&hashcode='' || MESSAGE_HASHCODE || ''">View</a>'' AS "REPORT",
   <#else>
     ''<a href="dashboards/'' || (select ID from dashboards where title=''Failures analysis'') || 
-      ''?PERIOD=${VIEW}&hashcode='' || TESTS.MESSAGE_HASH_CODE  || ''">View</a>'' AS "REPORT",
+      ''?PERIOD=${PERIOD}&hashcode='' || MESSAGE_HASHCODE  || ''">View</a>'' AS "REPORT",
   </#if>
-  to_char(date_trunc(''day'', MIN(TESTS.START_TIME)), ''YYYY-MM-DD'') AS "SINCE",
-  to_char(date_trunc(''day'', MAX(TESTS.START_TIME)), ''YYYY-MM-DD'') AS "REPRO"
-  FROM TESTS
-    JOIN TEST_RUNS ON TESTS.TEST_RUN_ID = TEST_RUNS.ID
+  (SELECT to_char(date_trunc(''day'', MIN(START_TIME)), ''YYYY-MM-DD'') FROM TEST_EXECUTIONS WHERE MESSAGE_HASH_CODE=MESSAGE_HASHCODE) AS "SINCE",
+  to_char(date_trunc(''day'', MAX(STARTED_AT)), ''YYYY-MM-DD'') AS "REPRO"
+  FROM ${VIEW}
+    LEFT JOIN INTEGRATION_JIRA_CONFIGS ON ${VIEW}.PROJECT_ID = INTEGRATION_JIRA_CONFIGS.PROJECT_ID
   ${WHERE_CLAUSE}
-  GROUP BY MESSAGE_HASH_CODE
+  GROUP BY "REASON", "DEFECT", MESSAGE_HASHCODE
   HAVING COUNT(*) >= ${ERROR_COUNT}
-  ORDER BY 2 DESC
+  ORDER BY 3 DESC, 1, 2
 
 <#--
   Generates WHERE clause 
@@ -697,77 +432,26 @@ SELECT
   @return - generated WHERE clause
 -->
 <#function generateWhereClause map, period>
-  <#local result = "WHERE MESSAGE_HASH_CODE IS NOT NULL
-                      AND TESTS.STATUS <> ''PASSED''" />
+  <#local result = "WHERE MESSAGE_HASHCODE IS NOT NULL AND MESSAGE_HASHCODE <> 0" />
 
-  <#switch period>
-    <#case "Last 24 Hours">
-      <#local result += " AND TESTS.START_TIME >= (current_date - interval ''1 day'')" />
-      <#break>
-    <#case "Last 7 Days">
-      <#local result += " AND TESTS.START_TIME >= (current_date - interval ''7 day'')" />
-      <#break>
-    <#case "Last 14 Days">
-      <#local result += " AND TESTS.START_TIME >= (current_date - interval ''14 day'')" />
-      <#break>
-    <#case "Last 30 Days">
-      <#local result += " AND TESTS.START_TIME >= (current_date - interval ''30 day'')" />
-      <#break>
-    <#case "Last 90 Days">
-      <#local result += " AND TESTS.START_TIME >= (current_date - interval ''90 day'')" />
-      <#break>
-    <#case "Last 365 Days">
-      <#local result += " AND TESTS.START_TIME >= (current_date - interval ''365 day'')" />
-      <#break>
-    <#case "Today">
-      <#local result += " AND TESTS.START_TIME >= current_date" />
-      <#break>
-    <#case "Week">
-      <#local result += " AND TESTS.START_TIME >= date_trunc(''week'', current_date)" />
-      <#break>
-    <#case "Month">
-      <#local result += " AND TESTS.START_TIME >= date_trunc(''month'', current_date)" />
-      <#break>
-    <#case "Quarter">    
-      <#local result += " AND TESTS.START_TIME >= date_trunc(''quarter'', current_date)" />
-      <#break>
-    <#case "Year">
-      <#local result += " AND TESTS.START_TIME >= date_trunc(''year'', current_date)" />
-      <#break>
-  </#switch>
-  
-  <#if activeProjectId?has_content>
-    <#local result = result + addCondition("AND", "ACTIVE_PROJECT_ID=${activeProjectId}", result) />
-  </#if>  
+  <#if projectId?has_content>
+    <#local result = result + addCondition("AND", "${VIEW}.PROJECT_ID=${projectId?c}", result) />
+  </#if>
   
   <#list map?keys as key>
-    <#if map[key]?has_content>
+    <#if map[key]?has_content && map[key]?contains("null")>
+      <#local result = result + addCondition("AND", "(${key} LIKE ANY (''{" + map[key] + "}'') OR ${key} IS NULL)", result) />
+    <#elseif map[key]?has_content>
       <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
     </#if>
   </#list>
   
   <#if isPersonal() && !USERS?has_content>
     <!-- USERS filter has higher priority and if provided we should ignore personal board -->
-    <#local result = result + addCondition("AND", "MAINTAINER_ID=${currentUserId}", result) />
+    <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
   </#if>
-  
-  <#if MILESTONE?has_content>
-    <#local result = result + addCondition("AND", "upstream_jobs.name = ''" + MILESTONE + "''", result) />
-    
-    <#if MILESTONE_VERSION?has_content>
-      <#if MILESTONE_VERSION?lower_case == "latest">
-        <#local result = result + addCondition("AND", "test_runs.upstream_job_build_number = (
-                SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
-                FROM TEST_RUNS INNER JOIN
-                  JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
-                WHERE JOBS.NAME=''${MILESTONE}'')", result) />
-      <#elseif isDecimal(MILESTONE_VERSION)>
-        <#local result = result + addCondition("AND", "test_runs.upstream_job_build_number = ''" + MILESTONE_VERSION + "''", result) />
-      </#if>
-    </#if>
-  </#if>
-  
- <#return result>
+
+  <#return result>
 </#function>
 
 <#--
@@ -821,34 +505,20 @@ SELECT
     </#if>
   </#if>
   <#return result />
-</#function>
-
-<#-- 
-  verify that value is number
-  @return - boolean
-  -->
-<#function isDecimal value>
-  <#attempt>
-    <#assign num = value?number>
-    <#local result = true />
-  <#recover>
-    <#local result = false />
-  </#attempt>
-  <#return result />
-</#function>', '{"columns": ["ERROR","#", "REPORT", "SINCE", "REPRO"]}', '{
+</#function>', '{"columns": ["REASON", "DEFECT", "#", "REPORT", "SINCE", "REPRO"]}', '{
   "PERIOD": {
     "values": [
+      "Today",
       "Last 24 Hours",
+      "Week",
       "Last 7 Days",
       "Last 14 Days",
-      "Last 30 Days",
-      "Last 90 Days",
-      "Last 365 Days",
-      "Today",
-      "Week",
       "Month",
+      "Last 30 Days",
       "Quarter",
+      "Last 90 Days",
       "Year",
+      "Last 365 Days",
       "Total"
     ],
     "required": true
@@ -857,97 +527,145 @@ SELECT
     "value": "0",
     "required": true
   },
+  "STATUS": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(UPPER(STATUS)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "DEFECT": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(VALUE) FROM ISSUE_REFERENCES INNER JOIN TEST_EXECUTIONS ON ISSUE_REFERENCES.ID=TEST_EXECUTIONS.ISSUE_REFERENCE_ID INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID=TEST_SUITE_EXECUTIONS.ID ${whereClause} ORDER BY 1 DESC;",
+    "multiple": true
+  },
+  "USER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(USERS.USERNAME) FROM TEST_SUITE_EXECUTIONS INNER JOIN TEST_EXECUTIONS ON TEST_SUITE_EXECUTIONS.ID=TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID INNER JOIN USERS ON TEST_EXECUTIONS.MAINTAINER_ID=USERS.ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "PRIORITY": {
+    "values": [],
+    "valuesQuery": "select unnest(array[''P0'', ''P1'', ''P2'', ''P3'', ''P4'', ''P5'', ''P6'']);",
+    "multiple": true
+  },
   "ENV": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(UPPER(ENVIRONMENT)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
     "multiple": true
   },
   "PLATFORM": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOWER(TEST_EXECUTION_CONFIGS.PLATFORM)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
     "multiple": true
-  },    
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },  
+  },
   "BROWSER": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOWER(BROWSER)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
     "multiple": true
-  },  
-  "PRIORITY": {
+  },
+  "LOCALE": {
     "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOCALE) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },  
+  "BUILD": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(BUILD) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1 DESC;",
     "multiple": true
   },
-  "USERS": {
-    "value": "",
-    "required": false
-  },  
-  "BUILDS": {
-    "value": "",
-    "required": false
-  },  
-  "RUNS": {
-    "value": "",
-    "required": false
-  },  
-  "MILESTONE": {
-    "value": "",
-    "required": false
-  },
-  "MILESTONE_VERSION": {
-    "value": "",
-    "required": false
+  "RUN": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(NAME) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
   }
-}', '{"legend": ["ERROR","#", "REPORT", "SINCE", "REPRO"]}', '{
-  "PERIOD": "Month",
-  "currentUserId": 1,
-  "activeProjectId": 1,
-  "dashboardName": "",
+}', '', '{
+  "PERIOD": "Today",
   "ERROR_COUNT": 0,
+  "currentUserId": -1,
+  "dashboardName": "",
+  "STATUS": [],
+  "DEFECT": [],
+  "BUILD": [],    
   "ENV": [],
   "PLATFORM": [],
   "BROWSER": [],
   "LOCALE": [],
   "PRIORITY": [],
-  "BUILDS": "",  
-  "RUNS": "",
-  "MILESTONE": "",
-  "MILESTONE_VERSION": "",
-  "USERS": ""
+  "RUN": [],
+  "USER": []
 }', false);
 
 --TEST FAILURE DETAILS
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('FAILURES DETAILS', 
 	'Detailed information about same/similar errors.', 'TABLE', '<#global VIEW = PERIOD?replace(" ", "_") />
-<#global WHERE_CLAUSE = generateWhereClause() />
+<#global WHERE_CLAUSE = generateWhereClause(PERIOD) />
 
-SELECT DISTINCT RUN_NAME AS "RUN",
-  <#if activeProjectId?has_content>
-    ''<a href="projects/'' || PROJECT_ID || ''/test-runs/'' || TESTS.TEST_RUN_ID || ''/tests/'' || TESTS.ID || ''">'' || TESTS.NAME || ''</a>'' AS "TEST",
-  <#else>
-    ''<a href="test-runs/'' || TESTS.TEST_RUN_ID || ''/tests/'' || TESTS.ID || ''">'' || TESTS.NAME || ''</a>'' AS "TEST",
-  </#if>
-    ''<a href=${JIRA_URL}'' || ''/'' || BUG || '' target="_blank">'' || BUG || ''</a>'' AS "ISSUE"
-  FROM ${VIEW}
-    INNER JOIN TESTS on ${VIEW}.TEST_RUN_ID = TESTS.TEST_RUN_ID
-  ${WHERE_CLAUSE}
-  ORDER BY "RUN", "TEST" DESC
+SELECT 
+	TEST_SUITE_EXECUTIONS.NAME AS "RUN",
+	<#if projectId?has_content>
+	  ''<a div="'' || LPAD(TEST_EXECUTIONS.ID::text, 10, ''0'') || ''" href="projects/'' || TEST_SUITE_EXECUTIONS.PROJECT_ID || ''/test-runs/'' || TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID || ''/tests/'' || TEST_EXECUTIONS.ID || ''">'' || TEST_EXECUTIONS.NAME || ''</a>'' AS "TEST",
+	<#else>
+	  ''<a div="'' || LPAD(TEST_EXECUTIONS.ID::text, 10, ''0'') || ''" href="test-runs/'' || TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID || ''/tests/'' || TEST_EXECUTIONS.ID || ''">'' || TEST_EXECUTIONS.NAME || ''</a>'' AS "TEST",
+	 </#if>
+  CASE
+    WHEN (INTEGRATION_JIRA_CONFIGS.URL IS NULL OR INTEGRATION_JIRA_CONFIGS.ENABLED=false)
+      THEN ISSUE_REFERENCES.VALUE
+      ELSE ''<a href="'' || INTEGRATION_JIRA_CONFIGS.URL || ''/browse/'' || ISSUE_REFERENCES.VALUE || ''" target="_blank">'' || ISSUE_REFERENCES.VALUE || ''</a>''
+  END AS "DEFECT" 	
+FROM TEST_EXECUTIONS
+	INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID = TEST_SUITE_EXECUTIONS.ID
+	LEFT JOIN ISSUE_REFERENCES ON TEST_EXECUTIONS.ISSUE_REFERENCE_ID = ISSUE_REFERENCES.ID
+	LEFT JOIN INTEGRATION_JIRA_CONFIGS ON TEST_SUITE_EXECUTIONS.PROJECT_ID = INTEGRATION_JIRA_CONFIGS.PROJECT_ID
+${WHERE_CLAUSE}
+ORDER BY 1, 2 DESC
+--ORDER BY 2 DESC
 
 <#--
   Generates WHERE clause 
+  @map - collected multiple choosen data (key - DB column name : value - expected DB value)
   @return - generated WHERE clause
 -->
-<#function generateWhereClause>
-  <#local result = "WHERE MESSAGE_HASHCODE<>0 AND TESTS.MESSAGE_HASH_CODE<>0 
-                      AND TESTS.MESSAGE_HASH_CODE IN(${hashcode})
-                      AND MESSAGE_HASHCODE IN(${hashcode})"/>
+<#function generateWhereClause period>
+  <#local result = "WHERE TEST_EXECUTIONS.MESSAGE_HASH_CODE<>0 AND TEST_EXECUTIONS.MESSAGE_HASH_CODE =${hashcode}"/>
+  
+  <#switch period>
+    <#case "Last 24 Hours">
+      <#local result += " AND TEST_EXECUTIONS.START_TIME >= (current_date - interval ''1 day'')" />
+      <#break>
+    <#case "Last 7 Days">
+      <#local result += " AND TEST_EXECUTIONS.START_TIME >= (current_date - interval ''7 day'')" />
+      <#break>
+    <#case "Last 14 Days">
+      <#local result += " AND TEST_EXECUTIONS.START_TIME >= (current_date - interval ''14 day'')" />
+      <#break>
+    <#case "Last 30 Days">
+      <#local result += " AND TEST_EXECUTIONS.START_TIME >= (current_date - interval ''30 day'')" />
+      <#break>
+    <#case "Last 90 Days">
+      <#local result += " AND TEST_EXECUTIONS.START_TIME >= (current_date - interval ''90 day'')" />
+      <#break>
+    <#case "Last 365 Days">
+      <#local result += " AND TEST_EXECUTIONS.START_TIME >= (current_date - interval ''365 day'')" />
+      <#break>
+    <#case "Today">
+      <#local result += " AND TEST_EXECUTIONS.START_TIME >= current_date" />
+      <#break>
+    <#case "Week">
+      <#local result += " AND TEST_EXECUTIONS.START_TIME >= date_trunc(''week'', current_date)" />
+      <#break>
+    <#case "Month">
+      <#local result += " AND TEST_EXECUTIONS.START_TIME >= date_trunc(''month'', current_date)" />
+      <#break>
+    <#case "Quarter">    
+      <#local result += " AND TEST_EXECUTIONS.START_TIME >= date_trunc(''quarter'', current_date)" />
+      <#break>
+    <#case "Year">
+      <#local result += " AND TEST_EXECUTIONS.START_TIME >= date_trunc(''year'', current_date)" />
+      <#break>
+  </#switch>
+  
 
-  <#if activeProjectId?has_content>
-    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
+  <#if projectId?has_content>
+    <#local result = result + addCondition("AND", "TEST_SUITE_EXECUTIONS.PROJECT_ID=${projectId?c}", result) />
   </#if>
  
   <#return result>
@@ -966,32 +684,27 @@ SELECT DISTINCT RUN_NAME AS "RUN",
   <#else>
     <#return condition>
   </#if>
-</#function>', '{"columns": ["RUN", "TEST", "ISSUE"]}', '{
+</#function>', '{"columns": ["RUN", "TEST", "DEFECT"]}', '{
   "PERIOD": {
     "values": [
+      "Today",
       "Last 24 Hours",
+      "Week",
       "Last 7 Days",
       "Last 14 Days",
-      "Last 30 Days",
-      "Last 90 Days",
-      "Last 365 Days",
-      "Today",
-      "Week",
       "Month",
+      "Last 30 Days",
       "Quarter",
+      "Last 90 Days",
       "Year",
+      "Last 365 Days",
       "Total"
     ],
     "required": true
-  },
-  "JIRA_URL": {
-    "value": "https://mycompany.atlassian.net/browse",
-    "required": true
   }
 }', '', '{
-  "PERIOD": "Total",
-  "hashcode": -1,
-  "JIRA_URL": "https://mycompany.atlassian.net/browse"
+  "PERIOD": "Last 30 Days",
+  "hashcode": -1
 }', true);
 
 --TEST FAILURE COUNT
@@ -1000,7 +713,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
 <#global VIEW = PERIOD?replace(" ", "_") />
 
 SELECT SUM(TOTAL)::text AS "#",
-  substring((SELECT TESTS.MESSAGE FROM TESTS WHERE TESTS.MESSAGE_HASH_CODE=MIN(MESSAGE_HASHCODE) LIMIT 1) from 1 for 512) as "ERROR/STABILITY",
+  substring((SELECT TEST_EXECUTIONS.MESSAGE FROM TEST_EXECUTIONS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID = TEST_SUITE_EXECUTIONS.ID WHERE TEST_SUITE_EXECUTIONS.PROJECT_ID=${projectId?c} AND TEST_EXECUTIONS.MESSAGE_HASH_CODE=MIN(MESSAGE_HASHCODE) LIMIT 1) from 1 for 512) as "ERROR/STABILITY",
 	to_char(date_trunc(''day'', MIN(STARTED_AT)), ''YYYY-MM-DD'') AS "SINCE",
 	to_char(date_trunc(''day'', MAX(STARTED_AT)), ''YYYY-MM-DD'') AS "REPRO"
 FROM ${VIEW}
@@ -1014,8 +727,8 @@ FROM ${VIEW}
 <#function generateWhereClause>
   <#local result = "WHERE MESSAGE_HASHCODE<>0 AND MESSAGE_HASHCODE IN (${hashcode})"/>
 
-  <#if activeProjectId?has_content>
-    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
+  <#if projectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${projectId?c}", result) />
   </#if>
  
   <#return result>
@@ -1037,41 +750,41 @@ FROM ${VIEW}
 </#function>', '{"columns": ["#", "ERROR/STABILITY", "SINCE", "REPRO"]}', '{
   "PERIOD": {
     "values": [
+      "Today",
       "Last 24 Hours",
+      "Week",
       "Last 7 Days",
       "Last 14 Days",
-      "Last 30 Days",
-      "Last 90 Days",
-      "Last 365 Days",
-      "Today",
-      "Week",
       "Month",
+      "Last 30 Days",
       "Quarter",
+      "Last 90 Days",
       "Year",
+      "Last 365 Days",
       "Total"
     ],
     "required": true
   }
 }', '', '{
-  "PERIOD": "Month",
-  "hashcode": -1,
-  "activeProjectId": 1
+  "PERIOD": "Today",
+  "hashcode": -1
 }', true);
 
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES (
 	'PASS RATE (BAR)', 'Pass rate bar chart with an extra grouping by owner, env, locale etc.', 'BAR', '<#global WHERE_VALUES = {
+  "RUN_STATUS": join(STATUS),
+  "BUG": join(DEFECT),
+  "BUILD": join(BUILD),
   "ENV": join(ENV),
   "LOWER(PLATFORM)": join(PLATFORM),
   "LOWER(BROWSER)": join(BROWSER),
   "LOCALE": join(LOCALE),
   "PRIORITY": join(PRIORITY),
-  "BUILD": correct(BUILDS!""),    
-  "RUN_NAME": correct(RUNS!""),
-  "OWNER": correct(USERS!"")
+  "RUN_NAME": join(RUN),
+  "OWNER": join(USER)
 }>
 <#global VIEW = PERIOD?replace(" ", "_") />
 <#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
-
 
 SELECT ${GROUP_BY} AS "GROUP_FIELD",
   sum( PASSED ) AS "PASSED",
@@ -1094,7 +807,9 @@ ORDER BY 1 DESC
   <#local result = "" />
   
   <#list map?keys as key>
-    <#if map[key]?has_content>
+    <#if map[key]?has_content && map[key]?contains("null")>
+      <#local result = result + addCondition("AND", "(${key} LIKE ANY (''{" + map[key] + "}'') OR ${key} IS NULL)", result) />
+    <#elseif map[key]?has_content>
       <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
     </#if>
   </#list>
@@ -1104,24 +819,8 @@ ORDER BY 1 DESC
     <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
   </#if>  
   
-  <#if activeProjectId?has_content>
-    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
-  </#if>
-  
-  <#if MILESTONE?has_content>
-    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
-    
-    <#if MILESTONE_VERSION?has_content>
-      <#if MILESTONE_VERSION?lower_case == "latest">
-        <#local result = result + addCondition("AND", "MILESTONE_VERSION = (
-                SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
-                FROM TEST_RUNS INNER JOIN
-                  JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
-                WHERE JOBS.NAME=''${MILESTONE}'')", result) />
-      <#elseif isDecimal(MILESTONE_VERSION)>
-        <#local result = result + addCondition("AND", "MILESTONE_VERSION = ''" + MILESTONE_VERSION + "''", result) />
-      </#if>
-    </#if>
+  <#if projectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${projectId?c}", result) />
   </#if>
   
   <#if result?length != 0>
@@ -1180,20 +879,6 @@ ORDER BY 1 DESC
       <#local result = true />  
     </#if>
   </#if>
-  <#return result />
-</#function>
-
-<#-- 
-  verify that value is number
-  @return - boolean
-  -->
-<#function isDecimal value>
-  <#attempt>
-    <#assign num = value?number>
-    <#local result = true />
-  <#recover>
-    <#local result = false />
-  </#attempt>
   <#return result />
 </#function>', 'setTimeout(() => {
   const dimensions = [
@@ -1343,17 +1028,17 @@ ORDER BY 1 DESC
 }, 1000)', '{
   "PERIOD": {
     "values": [
+      "Today",
       "Last 24 Hours",
+      "Week",
       "Last 7 Days",
       "Last 14 Days",
-      "Last 30 Days",
-      "Last 90 Days",
-      "Last 365 Days",
-      "Today",
-      "Week",
       "Month",
+      "Last 30 Days",
       "Quarter",
+      "Last 90 Days",
       "Year",
+      "Last 365 Days",
       "Total"
     ],
     "required": true
@@ -1367,83 +1052,89 @@ ORDER BY 1 DESC
       "RUN_NAME",
       "PLATFORM",
       "BROWSER",
-      "PRIORITY",
-      "BUG"
+      "PRIORITY"
     ],
     "required": true
-  },  
+  },
+  "STATUS": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(UPPER(STATUS)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "DEFECT": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(VALUE) FROM ISSUE_REFERENCES INNER JOIN TEST_EXECUTIONS ON ISSUE_REFERENCES.ID=TEST_EXECUTIONS.ISSUE_REFERENCE_ID INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID=TEST_SUITE_EXECUTIONS.ID ${whereClause} ORDER BY 1 DESC;",
+    "multiple": true
+  },
+  "USER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(USERS.USERNAME) FROM TEST_SUITE_EXECUTIONS INNER JOIN TEST_EXECUTIONS ON TEST_SUITE_EXECUTIONS.ID=TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID INNER JOIN USERS ON TEST_EXECUTIONS.MAINTAINER_ID=USERS.ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "PRIORITY": {
+    "values": [],
+    "valuesQuery": "select unnest(array[''P0'', ''P1'', ''P2'', ''P3'', ''P4'', ''P5'', ''P6'']);",
+    "multiple": true
+  },
   "ENV": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(UPPER(ENVIRONMENT)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
     "multiple": true
   },
   "PLATFORM": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOWER(TEST_EXECUTION_CONFIGS.PLATFORM)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
     "multiple": true
-  },    
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },  
+  },
   "BROWSER": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOWER(BROWSER)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
     "multiple": true
-  },  
-  "PRIORITY": {
+  },
+  "LOCALE": {
     "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOCALE) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },  
+  "BUILD": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(BUILD) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1 DESC;",
     "multiple": true
   },
-  "USERS": {
-    "value": "",
-    "required": false
-  },  
-  "BUILDS": {
-    "value": "",
-    "required": false
-  },  
-  "RUNS": {
-    "value": "",
-    "required": false
-  },  
-  "MILESTONE": {
-    "value": "",
-    "required": false
-  },
-  "MILESTONE_VERSION": {
-    "value": "",
-    "required": false
-  }
+  "RUN": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(NAME) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  }  
 }', '', '{
   "PERIOD": "Today",
   "GROUP_BY": "PLATFORM",  
   "currentUserId": 2,
   "dashboardName": "",  
+  "STATUS": [],
+  "DEFECT": [],
+  "BUILD": [],    
   "ENV": [],
   "PLATFORM": [],
   "BROWSER": [],
   "LOCALE": [],
   "PRIORITY": [],
-  "BUILDS": "",  
-  "RUNS": "",
-  "MILESTONE": "",
-  "MILESTONE_VERSION": "250",
-  "USERS": ""
+  "RUN": [],
+  "USER": []
 }', false);
 
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (CALENDAR)', 
 	'Calendar view of the pass rate per month, quarter or year.', 'OTHER', '<#global WHERE_VALUES = {
+  "RUN_STATUS": join(STATUS),
+  "BUG": join(DEFECT),
+  "BUILD": join(BUILD),
   "ENV": join(ENV),
   "LOWER(PLATFORM)": join(PLATFORM),
   "LOWER(BROWSER)": join(BROWSER),
   "LOCALE": join(LOCALE),
   "PRIORITY": join(PRIORITY),
-  "BUILD": correct(BUILDS!""),    
-  "RUN_NAME": correct(RUNS!""),
-  "OWNER": correct(USERS!"")
+  "RUN_NAME": join(RUN),
+  "OWNER": join(USER)
 }>
 
 <#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
@@ -1485,7 +1176,9 @@ SELECT
   </#if>
 
   <#list map?keys as key>
-    <#if map[key]?has_content>
+    <#if map[key]?has_content && map[key]?contains("null")>
+      <#local result = result + addCondition("AND", "(${key} LIKE ANY (''{" + map[key] + "}'') OR ${key} IS NULL)", result) />
+    <#elseif map[key]?has_content>
       <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
     </#if>
   </#list>
@@ -1495,12 +1188,8 @@ SELECT
     <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
   </#if>
   
-  <#if activeProjectId?has_content>
-    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
-  </#if>  
-
-  <#if MILESTONE?has_content>
-    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
+  <#if projectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${projectId?c}", result) />
   </#if>  
 
   <#if result?length != 0>
@@ -1670,78 +1359,85 @@ chart.setOption(option);', '{
     "value": 75,
     "required": true
   },
+  "STATUS": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(UPPER(STATUS)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "DEFECT": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(VALUE) FROM ISSUE_REFERENCES INNER JOIN TEST_EXECUTIONS ON ISSUE_REFERENCES.ID=TEST_EXECUTIONS.ISSUE_REFERENCE_ID INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID=TEST_SUITE_EXECUTIONS.ID ${whereClause} ORDER BY 1 DESC;",
+    "multiple": true
+  },
+  "USER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(USERS.USERNAME) FROM TEST_SUITE_EXECUTIONS INNER JOIN TEST_EXECUTIONS ON TEST_SUITE_EXECUTIONS.ID=TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID INNER JOIN USERS ON TEST_EXECUTIONS.MAINTAINER_ID=USERS.ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "PRIORITY": {
+    "values": [],
+    "valuesQuery": "select unnest(array[''P0'', ''P1'', ''P2'', ''P3'', ''P4'', ''P5'', ''P6'']);",
+    "multiple": true
+  },
   "ENV": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(UPPER(ENVIRONMENT)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
     "multiple": true
   },
   "PLATFORM": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOWER(TEST_EXECUTION_CONFIGS.PLATFORM)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
     "multiple": true
-  },    
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },  
+  },
   "BROWSER": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOWER(BROWSER)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
     "multiple": true
-  },  
-  "PRIORITY": {
+  },
+  "LOCALE": {
     "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOCALE) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },  
+  "BUILD": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(BUILD) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1 DESC;",
     "multiple": true
   },
-  "USERS": {
-    "value": "",
-    "required": false
-  },  
-  "BUILDS": {
-    "value": "",
-    "required": false
-  },  
-  "RUNS": {
-    "value": "",
-    "required": false
-  },  
-  "MILESTONE": {
-    "value": "",
-    "required": false
-  },
-  "MILESTONE_VERSION": {
-    "value": "",
-    "required": false
-  }
+  "RUN": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(NAME) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  } 
 }', '{
   "PERIOD": "MONTH",
   "PASSED_VALUE": "75",
   "currentUserId": 2,
   "dashboardName": "",
+  "STATUS": [],
+  "DEFECT": [],
+  "BUILD": [],    
   "ENV": [],
   "PLATFORM": [],
   "BROWSER": [],
   "LOCALE": [],
   "PRIORITY": [],
-  "BUILDS": "",  
-  "RUNS": "",
-  "MILESTONE": "",
-  "MILESTONE_VERSION": "250",
-  "USERS": ""
+  "RUN": [],
+  "USER": []
 }', false);
 
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (LINE)', 
 	'Consolidated tests status data supporting 10+ extra filters.', 'LINE', '<#global WHERE_VALUES = {
+  "RUN_STATUS": join(STATUS),
+  "BUG": join(DEFECT),
+  "BUILD": join(BUILD),
   "ENV": join(ENV),
   "LOWER(PLATFORM)": join(PLATFORM),
   "LOWER(BROWSER)": join(BROWSER),
   "LOCALE": join(LOCALE),
   "PRIORITY": join(PRIORITY),
-  "BUILD": correct(BUILDS!""),    
-  "RUN_NAME": correct(RUNS!""),
-  "OWNER": correct(USERS!"")
+  "RUN_NAME": join(RUN),
+  "OWNER": join(USER)
 }>
 <#global VIEW = PERIOD?replace(" ", "_") />
 <#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
@@ -1768,7 +1464,9 @@ ORDER BY ${GROUP_AND_ORDER_BY};
   <#local result = "" />
 
   <#list map?keys as key>
-    <#if map[key]?has_content>
+    <#if map[key]?has_content && map[key]?contains("null")>
+      <#local result = result + addCondition("AND", "(${key} LIKE ANY (''{" + map[key] + "}'') OR ${key} IS NULL)", result) />
+    <#elseif map[key]?has_content>
       <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
     </#if>
   </#list>
@@ -1778,14 +1476,10 @@ ORDER BY ${GROUP_AND_ORDER_BY};
     <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
   </#if>    
   
-  <#if activeProjectId?has_content>
-    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
+  <#if projectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${projectId?c}", result) />
   </#if>
 
-  <#if MILESTONE?has_content>
-    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
-  </#if>
-  
   <#if result?length != 0>
     <#local result = "WHERE " + result/>
   </#if>
@@ -1933,87 +1627,99 @@ window.onresize = function(event) {
 chart.setOption(option);', '{
   "PERIOD": {
     "values": [
+      "Today",
       "Last 24 Hours",
+      "Week",
       "Last 7 Days",
       "Last 14 Days",
-      "Last 30 Days",
-      "Last 90 Days",
-      "Last 365 Days",
-      "Today",
-      "Week",
       "Month",
+      "Last 30 Days",
       "Quarter",
+      "Last 90 Days",
       "Year",
+      "Last 365 Days",
       "Total"
     ],
     "required": true
   },
+  "STATUS": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(UPPER(STATUS)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "DEFECT": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(VALUE) FROM ISSUE_REFERENCES INNER JOIN TEST_EXECUTIONS ON ISSUE_REFERENCES.ID=TEST_EXECUTIONS.ISSUE_REFERENCE_ID INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID=TEST_SUITE_EXECUTIONS.ID ${whereClause} ORDER BY 1 DESC;",
+    "multiple": true
+  },
+  "USER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(USERS.USERNAME) FROM TEST_SUITE_EXECUTIONS INNER JOIN TEST_EXECUTIONS ON TEST_SUITE_EXECUTIONS.ID=TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID INNER JOIN USERS ON TEST_EXECUTIONS.MAINTAINER_ID=USERS.ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "PRIORITY": {
+    "values": [],
+    "valuesQuery": "select unnest(array[''P0'', ''P1'', ''P2'', ''P3'', ''P4'', ''P5'', ''P6'']);",
+    "multiple": true
+  },
   "ENV": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(UPPER(ENVIRONMENT)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
     "multiple": true
   },
   "PLATFORM": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
-    "multiple": true
-  },    
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },  
-  "BROWSER": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
-    "multiple": true
-  },  
-  "PRIORITY": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOWER(TEST_EXECUTION_CONFIGS.PLATFORM)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
     "multiple": true
   },
-  "USERS": {
-    "value": "",
-    "required": false
+  "BROWSER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(LOWER(BROWSER)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "LOCALE": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(LOCALE) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
+    "multiple": true
   },  
-  "BUILDS": {
-    "value": "",
-    "required": false
-  },  
-  "RUNS": {
-    "value": "",
-    "required": false
-  },  
-  "MILESTONE": {
-    "value": "",
-    "required": false
-  }
+  "BUILD": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(BUILD) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1 DESC;",
+    "multiple": true
+  },
+  "RUN": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(NAME) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  }  
 }', '', '{
-  "PERIOD": "Quarter",
+  "PERIOD": "Month",
   "currentUserId": 2,
   "dashboardName": "",
+  "STATUS": [],
+  "DEFECT": [],
+  "BUILD": [],    
   "ENV": [],
   "PLATFORM": [],
   "BROWSER": [],
   "LOCALE": [],
   "PRIORITY": [],
-  "BUILDS": "",  
-  "RUNS": "",
-  "MILESTONE": "",
-  "USERS": ""
+  "RUN": [],
+  "USER": []
 }', false);
 
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (PIE)',
 	'Consolidated tests status data supporting 10+ extra filters.', 'PIE', '<#global WHERE_VALUES = {
+  "RUN_STATUS": join(STATUS),
+  "BUG": join(DEFECT),
+  "BUILD": join(BUILD),
   "ENV": join(ENV),
   "LOWER(PLATFORM)": join(PLATFORM),
   "LOWER(BROWSER)": join(BROWSER),
   "LOCALE": join(LOCALE),
   "PRIORITY": join(PRIORITY),
-  "BUILD": correct(BUILDS!""),    
-  "RUN_NAME": correct(RUNS!""),
-  "OWNER": correct(USERS!"")
+  "RUN_NAME": join(RUN),
+  "OWNER": join(USER)
 }>
 <#global VIEW = PERIOD?replace(" ", "_") />
 <#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
@@ -2066,13 +1772,15 @@ ${WHERE_CLAUSE}
   <#local result = "" />
   
   <#list map?keys as key>
-    <#if map[key]?has_content>
+    <#if map[key]?has_content && map[key]?contains("null")>
+      <#local result = result + addCondition("AND", "(${key} LIKE ANY (''{" + map[key] + "}'') OR ${key} IS NULL)", result) />
+    <#elseif map[key]?has_content>
       <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
     </#if>
-  </#list>  
+  </#list>
   
-  <#if activeProjectId?has_content>
-    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
+  <#if projectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${projectId?c}", result) />
   </#if>
 
   <#if isPersonal() && !USERS?has_content>
@@ -2080,22 +1788,6 @@ ${WHERE_CLAUSE}
     <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
   </#if>  
   
-  <#if MILESTONE?has_content>
-    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
-    
-    <#if MILESTONE_VERSION?has_content>
-      <#if MILESTONE_VERSION?lower_case == "latest">
-        <#local result = result + addCondition("AND", "MILESTONE_VERSION = (
-                SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
-                FROM TEST_RUNS INNER JOIN
-                  JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
-                WHERE JOBS.NAME=''${MILESTONE}'')", result) />
-      <#elseif isDecimal(MILESTONE_VERSION)>
-        <#local result = result + addCondition("AND", "MILESTONE_VERSION = ''" + MILESTONE_VERSION + "''", result) />
-      </#if>
-    </#if>
-  </#if>  
-
   <#if result?length != 0>
     <#local result = "WHERE " + result/>
   </#if>
@@ -2152,20 +1844,6 @@ ${WHERE_CLAUSE}
       <#local result = true />  
     </#if>
   </#if>
-  <#return result />
-</#function>
-
-<#-- 
-  verify that value is number
-  @return - boolean
-  -->
-<#function isDecimal value>
-  <#attempt>
-    <#assign num = value?number>
-    <#local result = true />
-  <#recover>
-    <#local result = false />
-  </#attempt>
   <#return result />
 </#function>', '
 option = {
@@ -2231,97 +1909,104 @@ chart.setOption(option);
 ', '{
   "PERIOD": {
     "values": [
+      "Today",
       "Last 24 Hours",
+      "Week",
       "Last 7 Days",
       "Last 14 Days",
-      "Last 30 Days",
-      "Last 90 Days",
-      "Last 365 Days",
-      "Today",
-      "Week",
       "Month",
+      "Last 30 Days",
       "Quarter",
+      "Last 90 Days",
       "Year",
+      "Last 365 Days",
       "Total"
     ],
     "required": true
   },
+  "STATUS": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(UPPER(STATUS)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "DEFECT": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(VALUE) FROM ISSUE_REFERENCES INNER JOIN TEST_EXECUTIONS ON ISSUE_REFERENCES.ID=TEST_EXECUTIONS.ISSUE_REFERENCE_ID INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID=TEST_SUITE_EXECUTIONS.ID ${whereClause} ORDER BY 1 DESC;",
+    "multiple": true
+  },
+  "USER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(USERS.USERNAME) FROM TEST_SUITE_EXECUTIONS INNER JOIN TEST_EXECUTIONS ON TEST_SUITE_EXECUTIONS.ID=TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID INNER JOIN USERS ON TEST_EXECUTIONS.MAINTAINER_ID=USERS.ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "PRIORITY": {
+    "values": [],
+    "valuesQuery": "select unnest(array[''P0'', ''P1'', ''P2'', ''P3'', ''P4'', ''P5'', ''P6'']);",
+    "multiple": true
+  },
   "ENV": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(UPPER(ENVIRONMENT)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
     "multiple": true
   },
   "PLATFORM": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOWER(TEST_EXECUTION_CONFIGS.PLATFORM)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
     "multiple": true
-  },    
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },  
+  },
   "BROWSER": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOWER(BROWSER)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
     "multiple": true
-  },  
-  "PRIORITY": {
+  },
+  "LOCALE": {
     "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOCALE) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },  
+  "BUILD": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(BUILD) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1 DESC;",
     "multiple": true
   },
-  "USERS": {
-    "value": "",
-    "required": false
-  },  
-  "BUILDS": {
-    "value": "",
-    "required": false
-  },  
-  "RUNS": {
-    "value": "",
-    "required": false
-  },  
-  "MILESTONE": {
-    "value": "",
-    "required": false
-  },
-  "MILESTONE_VERSION": {
-    "value": "",
-    "required": false
-  }
+  "RUN": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(NAME) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  }  
 }', '', '{
   "PERIOD": "Total",
   "currentUserId": 2,
   "dashboardName": "",
+  "STATUS": [],
+  "DEFECT": [],
+  "BUILD": [],    
   "ENV": [],
   "PLATFORM": [],
   "BROWSER": [],
   "LOCALE": [],
   "PRIORITY": [],
-  "RUNS": "",  
-  "JOBS": "",
-  "MILESTONE": "",
-  "MILESTONE_VERSION": "250",
-  "USERS": ""
+  "RUN": [],
+  "USER": []
 }', false);
 
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('PASS RATE (PIE + LINE)', 
 	'Consolidated tests status data supporting 10+ extra filters.', 'OTHER','<#global WHERE_VALUES = {
+  "RUN_STATUS": join(STATUS),
+  "BUG": join(DEFECT),
+  "BUILD": join(BUILD),
   "ENV": join(ENV),
   "LOWER(PLATFORM)": join(PLATFORM),
   "LOWER(BROWSER)": join(BROWSER),
   "LOCALE": join(LOCALE),
   "PRIORITY": join(PRIORITY),
-  "BUILD": correct(BUILDS!""),    
-  "RUN_NAME": correct(RUNS!""),
-  "OWNER": correct(USERS!"")
+  "RUN_NAME": join(RUN),
+  "OWNER": join(USER)
 }>
 
 <#global VIEW = PERIOD?replace(" ", "_") />
 <#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
-<#global GROUP_AND_ORDER_BY = getGroupBy(PERIOD, MILESTONE) />
+<#global GROUP_AND_ORDER_BY = getGroupBy(PERIOD) />
 
 SELECT
   ${GROUP_AND_ORDER_BY} AS "STARTED_AT",
@@ -2344,7 +2029,9 @@ ORDER BY ${GROUP_AND_ORDER_BY};
   <#local result = "" />
   
   <#list map?keys as key>
-    <#if map[key]?has_content>
+    <#if map[key]?has_content && map[key]?contains("null")>
+      <#local result = result + addCondition("AND", "(${key} LIKE ANY (''{" + map[key] + "}'') OR ${key} IS NULL)", result) />
+    <#elseif map[key]?has_content>
       <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
     </#if>
   </#list>
@@ -2354,32 +2041,20 @@ ORDER BY ${GROUP_AND_ORDER_BY};
     <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
   </#if>  
   
-  <#if activeProjectId?has_content>
-    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
+  <#if projectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${projectId?c}", result) />
   </#if>  
   
-  <#if MILESTONE?has_content>
-    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
-  </#if>  
-
   <#if result?length != 0>
     <#local result = "WHERE " + result/>
   </#if>
   <#return result>
 </#function>
-<#--
-    Retrieves actual view name by abstract view description
-    @value - abstract view description
-    @return - actual view name
-  -->
-<#function getGroupBy Period, parentJob>
-  <#local result = "" />
-  <#if parentJob?has_content>
-    <#local result = "MILESTONE_VERSION" />
-  <#else>
-    <#local result = getStartedAt(PERIOD) />
-  </#if>
- <#return result>
+
+
+<#function getGroupBy Period>
+  <#local result = getStartedAt(PERIOD) />
+  <#return result>
 </#function>
 
 <#--
@@ -2693,89 +2368,99 @@ let lineRow = {
 }, 1000)' , '{
   "PERIOD": {
     "values": [
+      "Today",
       "Last 24 Hours",
+      "Week",
       "Last 7 Days",
       "Last 14 Days",
-      "Last 30 Days",
-      "Last 90 Days",
-      "Last 365 Days",
-      "Today",
-      "Week",
       "Month",
+      "Last 30 Days",
       "Quarter",
+      "Last 90 Days",
       "Year",
+      "Last 365 Days",
       "Total"
     ],
     "required": true
   },
+  "STATUS": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(UPPER(STATUS)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "DEFECT": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(VALUE) FROM ISSUE_REFERENCES INNER JOIN TEST_EXECUTIONS ON ISSUE_REFERENCES.ID=TEST_EXECUTIONS.ISSUE_REFERENCE_ID INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID=TEST_SUITE_EXECUTIONS.ID ${whereClause} ORDER BY 1 DESC;",
+    "multiple": true
+  },
+  "USER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(USERS.USERNAME) FROM TEST_SUITE_EXECUTIONS INNER JOIN TEST_EXECUTIONS ON TEST_SUITE_EXECUTIONS.ID=TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID INNER JOIN USERS ON TEST_EXECUTIONS.MAINTAINER_ID=USERS.ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "PRIORITY": {
+    "values": [],
+    "valuesQuery": "select unnest(array[''P0'', ''P1'', ''P2'', ''P3'', ''P4'', ''P5'', ''P6'']);",
+    "multiple": true
+  },
   "ENV": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(UPPER(ENVIRONMENT)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
     "multiple": true
   },
   "PLATFORM": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
-    "multiple": true
-  },    
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },  
-  "BROWSER": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
-    "multiple": true
-  },  
-  "PRIORITY": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOWER(TEST_EXECUTION_CONFIGS.PLATFORM)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
     "multiple": true
   },
-  "USERS": {
-    "value": "",
-    "required": false
+  "BROWSER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(LOWER(BROWSER)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "LOCALE": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(LOCALE) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
+    "multiple": true
   },  
-  "BUILDS": {
-    "value": "",
-    "required": false
-  },  
-  "RUNS": {
-    "value": "",
-    "required": false
-  },  
-  "MILESTONE": {
-    "value": "",
-    "required": false
-  }
+  "BUILD": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(BUILD) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1 DESC;",
+    "multiple": true
+  },
+  "RUN": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(NAME) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  }  
 }', '{
   "PERIOD": "Total",
   "currentUserId": 2,
   "dashboardName": "",
+  "STATUS": [],
+  "DEFECT": [],
+  "BUILD": [],    
   "ENV": [],
   "PLATFORM": [],
   "BROWSER": [],
   "LOCALE": [],
   "PRIORITY": [],
-  "BUILDS": "",  
-  "RUNS": "",
-  "MILESTONE": "",
-  "USERS": ""
+  "RUN": [],
+  "USER": []
 }', false);
 
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASE DURATION TREND', 
 	'All kind of duration metrics per test case.', 'LINE', '<#global WHERE_CLAUSE = generateWhereClause() />
 
 SELECT
-      ROUND(AVG(EXTRACT(EPOCH FROM (TESTS.FINISH_TIME - TESTS.START_TIME)))::numeric, 2) as "AVG TIME",
-      ROUND(MAX(EXTRACT(EPOCH FROM (TESTS.FINISH_TIME - TESTS.START_TIME)))::numeric, 2) as "MAX TIME",
-      ROUND(MIN(EXTRACT(EPOCH FROM (TESTS.FINISH_TIME - TESTS.START_TIME)))::numeric, 2) as "MIN TIME",
-      to_char(date_trunc(''month'', TESTS.START_TIME), ''YYYY-MM'') AS "TESTED_AT"
-FROM TESTS
-  INNER JOIN TEST_RUNS ON TESTS.TEST_RUN_ID = TEST_RUNS.ID
+      ROUND(AVG(EXTRACT(EPOCH FROM (TEST_EXECUTIONS.FINISH_TIME - TEST_EXECUTIONS.START_TIME)))::numeric, 2) as "AVG TIME",
+      ROUND(MAX(EXTRACT(EPOCH FROM (TEST_EXECUTIONS.FINISH_TIME - TEST_EXECUTIONS.START_TIME)))::numeric, 2) as "MAX TIME",
+      ROUND(MIN(EXTRACT(EPOCH FROM (TEST_EXECUTIONS.FINISH_TIME - TEST_EXECUTIONS.START_TIME)))::numeric, 2) as "MIN TIME",
+      to_char(date_trunc(''month'', TEST_EXECUTIONS.START_TIME), ''YYYY-MM'') AS "TESTED_AT"
+FROM TEST_EXECUTIONS
+  INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID = TEST_SUITE_EXECUTIONS.ID
 ${WHERE_CLAUSE}
-GROUP BY date_trunc(''month'', TESTS.START_TIME)
+GROUP BY date_trunc(''month'', TEST_EXECUTIONS.START_TIME)
 ORDER BY "TESTED_AT"
 
 
@@ -2784,7 +2469,7 @@ ORDER BY "TESTED_AT"
   @return - generated WHERE clause
 -->
 <#function generateWhereClause>
-  <#local result = "WHERE TEST_CASE_ID=${testCaseId} AND TESTS.FINISH_TIME IS NOT NULL AND TESTS.START_TIME IS NOT NULL AND TESTS.STATUS <> ''IN_PROGRESS''"/>
+  <#local result = "WHERE TEST_FUNCTION_ID=${testFunctionId} AND TEST_EXECUTIONS.FINISH_TIME IS NOT NULL AND TEST_EXECUTIONS.START_TIME IS NOT NULL AND TEST_EXECUTIONS.STATUS <> ''IN_PROGRESS''"/>
 
   <#return result>
 </#function>
@@ -2843,44 +2528,44 @@ ORDER BY "TESTED_AT"
             "type": "line"
         }
     ]
-}', '{}', '', '{
-  "testCaseId": "1"
-}', true);
+}', '{}', '', '{"testFunctionId": "1"}', true);
 
 --TESTCASE INFO
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASE INFO', 
 	'Detailed test case information.', 'TABLE', 'SELECT
-  TEST_CASES.TEST_CLASS || ''.'' || TEST_CASES.TEST_METHOD AS "TEST METHOD",
-  TEST_CASES.CREATED_AT::date::text AS "CREATED AT"
-FROM TEST_CASES
-WHERE TEST_CASES.ID=${testCaseId}', '{"columns": ["TEST METHOD", "CREATED AT"]}', '{}', '{}', '{}', true);
+  TEST_FUNCTIONS.TEST_CLASS || ''.'' || TEST_FUNCTIONS.TEST_METHOD AS "TEST METHOD",
+  TEST_FUNCTIONS.CREATED_AT::date::text AS "CREATED AT"
+FROM TEST_FUNCTIONS
+WHERE TEST_FUNCTIONS.ID=${testFunctionId}', '{"columns": ["TEST METHOD", "CREATED AT"]}', '{}', '{}', '{}', true);
 
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASES BY STABILITY', 
 	'Shows all test cases with low stability percent rate per appropriate period (default - less than 10%).', 'TABLE', '<#global WHERE_VALUES = {
+  "RUN_STATUS": join(STATUS),
+  "BUG": join(DEFECT),
+  "BUILD": join(BUILD),
   "ENV": join(ENV),
   "LOWER(PLATFORM)": join(PLATFORM),
   "LOWER(BROWSER)": join(BROWSER),
   "LOCALE": join(LOCALE),
   "PRIORITY": join(PRIORITY),
-  "BUILD": correct(BUILDS!""),    
-  "RUN_NAME": correct(RUNS!""),
-  "OWNER": correct(USERS!"")  
+  "RUN_NAME": join(RUN),
+  "OWNER": join(USER)
 }>
 
 <#global VIEW = PERIOD?replace(" ", "_") />
 <#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
 
   SELECT
-    <#if activeProjectId?has_content>
-      ''<a href="projects/'' || PROJECT_ID || ''/dashboards/'' || (SELECT id FROM dashboards WHERE title = ''Stability'') || ''?testCaseId=''
-        || TESTS.TEST_CASE_ID || ''">'' || TESTS.NAME || ''</a>''     AS "TEST METHOD",    
+    <#if projectId?has_content>
+      ''<a href="projects/'' || PROJECT_ID || ''/dashboards/'' || (SELECT id FROM dashboards WHERE title = ''Stability'') || ''?testFunctionId=''
+        || TEST_EXECUTIONS.TEST_FUNCTION_ID || ''">'' || TEST_EXECUTIONS.NAME || ''</a>''     AS "TEST METHOD",    
     <#else>
-      ''<a href="dashboards/'' || (SELECT id FROM dashboards WHERE title = ''Stability'') || ''?testCaseId=''
-        || TESTS.TEST_CASE_ID || ''">'' || TESTS.NAME || ''</a>''     AS "TEST METHOD",
+      ''<a href="dashboards/'' || (SELECT id FROM dashboards WHERE title = ''Stability'') || ''?testFunctionId=''
+        || TEST_EXECUTIONS.TEST_FUNCTION_ID || ''">'' || TEST_EXECUTIONS.NAME || ''</a>''     AS "TEST METHOD",
     </#if>
     ROUND(SUM(PASSED)/SUM(TOTAL)*100) AS "STABILITY"
   FROM ${VIEW}
-    INNER JOIN TESTS on ${VIEW}.TEST_RUN_ID = TESTS.TEST_RUN_ID
+    INNER JOIN TEST_EXECUTIONS on ${VIEW}.TEST_RUN_ID = TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID
   ${WHERE_CLAUSE}
   GROUP BY "TEST METHOD"
   HAVING ROUND(SUM(PASSED)/SUM(TOTAL)*100) <= ${PERCENT}
@@ -2896,7 +2581,9 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   <#local result = ""/>
 
   <#list map?keys as key>
-    <#if map[key]?has_content>
+    <#if map[key]?has_content && map[key]?contains("null")>
+      <#local result = result + addCondition("AND", "(${key} LIKE ANY (''{" + map[key] + "}'') OR ${key} IS NULL)", result) />
+    <#elseif map[key]?has_content>
       <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
     </#if>
   </#list>
@@ -2906,14 +2593,10 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
   </#if>  
   
-  <#if activeProjectId?has_content>
-    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
+  <#if projectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${projectId?c}", result) />
   </#if>
-  
-  <#if MILESTONE?has_content>
-    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
-  </#if>  
-  
+
  <#if result?length != 0>
   <#local result = " WHERE " + result/>
  </#if>
@@ -2974,17 +2657,17 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
 </#function>', '{"columns": ["TEST METHOD", "STABILITY"]}', '{
   "PERIOD": {
     "values": [
+      "Today",
       "Last 24 Hours",
+      "Week",
       "Last 7 Days",
       "Last 14 Days",
-      "Last 30 Days",
-      "Last 90 Days",
-      "Last 365 Days",
-      "Today",
-      "Week",
       "Month",
+      "Last 30 Days",
       "Quarter",
+      "Last 90 Days",
       "Year",
+      "Last 365 Days",
       "Total"
     ],
     "required": true
@@ -2993,74 +2676,86 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
     "value": "10",
     "required": true
   },
+  "STATUS": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(UPPER(STATUS)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "DEFECT": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(VALUE) FROM ISSUE_REFERENCES INNER JOIN TEST_EXECUTIONS ON ISSUE_REFERENCES.ID=TEST_EXECUTIONS.ISSUE_REFERENCE_ID INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID=TEST_SUITE_EXECUTIONS.ID ${whereClause} ORDER BY 1 DESC;",
+    "multiple": true
+  },
+  "USER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(USERS.USERNAME) FROM TEST_SUITE_EXECUTIONS INNER JOIN TEST_EXECUTIONS ON TEST_SUITE_EXECUTIONS.ID=TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID INNER JOIN USERS ON TEST_EXECUTIONS.MAINTAINER_ID=USERS.ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "PRIORITY": {
+    "values": [],
+    "valuesQuery": "select unnest(array[''P0'', ''P1'', ''P2'', ''P3'', ''P4'', ''P5'', ''P6'']);",
+    "multiple": true
+  },
   "ENV": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(UPPER(ENVIRONMENT)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
     "multiple": true
   },
   "PLATFORM": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
-    "multiple": true
-  },    
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },  
-  "BROWSER": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
-    "multiple": true
-  },  
-  "PRIORITY": {
-    "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOWER(TEST_EXECUTION_CONFIGS.PLATFORM)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
     "multiple": true
   },
-  "USERS": {
-    "value": "",
-    "required": false
+  "BROWSER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(LOWER(BROWSER)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "LOCALE": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(LOCALE) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
+    "multiple": true
   },  
-  "BUILDS": {
-    "value": "",
-    "required": false
-  },  
-  "RUNS": {
-    "value": "",
-    "required": false
-  },  
-  "MILESTONE": {
-    "value": "",
-    "required": false
+  "BUILD": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(BUILD) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1 DESC;",
+    "multiple": true
+  },
+  "RUN": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(NAME) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
   }
 }', '', '{
-  "PERIOD": "Total",
-  "PERCENT": 70,
+  "PERIOD": "Last 30 Days",
+  "PERCENT": 10,
   "currentUserId": 2,
-  "dashboardName": "",  
+  "dashboardName": "",
+  "STATUS": [],
+  "DEFECT": [],
+  "BUILD": [],    
   "ENV": [],
   "PLATFORM": [],
   "BROWSER": [],
   "LOCALE": [],
   "PRIORITY": [],
-  "BUILDS": "",  
-  "RUNS": "",
-  "MILESTONE": "",
-  "USERS": ""
+  "RUN": [],
+  "USER": []
 }', false);
 
 --TESTS IMPLEMENTATION PROGRESS
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASES DEVELOPMENT TREND', 
 	'A number of new automated cases per month.', 'BAR', '<#global WHERE_VALUES = {
+  "RUN_STATUS": join(STATUS),
+  "BUG": join(DEFECT),
+  "BUILD": join(BUILD),
   "ENV": join(ENV),
   "LOWER(PLATFORM)": join(PLATFORM),
   "LOWER(BROWSER)": join(BROWSER),
   "LOCALE": join(LOCALE),
   "PRIORITY": join(PRIORITY),
-  "BUILD": correct(BUILDS!""),    
-  "RUN_NAME": correct(RUNS!""),
-  "OWNER": correct(USERS!"")
+  "RUN_NAME": join(RUN),
+  "OWNER": join(USER)
 }>
 
 <#global VIEW = PERIOD?replace(" ", "_") />
@@ -3069,10 +2764,10 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
 
 SELECT
   ${CREATED_AT} AS "CREATED_AT",
-  COUNT(distinct(TEST_CASES.ID)) AS "AMOUNT"
+  COUNT(distinct(TEST_FUNCTIONS.ID)) AS "AMOUNT"
 FROM ${VIEW}
-  INNER JOIN TESTS on ${VIEW}.TEST_RUN_ID = TESTS.TEST_RUN_ID
-  INNER JOIN TEST_CASES ON TESTS.TEST_CASE_ID = TEST_CASES.ID
+  INNER JOIN TEST_EXECUTIONS on ${VIEW}.TEST_RUN_ID = TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID
+  INNER JOIN TEST_FUNCTIONS ON TEST_EXECUTIONS.TEST_FUNCTION_ID = TEST_FUNCTIONS.ID
 ${WHERE_CLAUSE}
 GROUP BY 1 
 ORDER BY 1
@@ -3087,31 +2782,33 @@ ORDER BY 1
   <#local result = "" />
   
   <#if PERIOD == "Today">
-    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= current_date", result) />
+    <#local result = result + addCondition("AND", "TEST_FUNCTIONS.CREATED_AT >= current_date", result) />
   <#elseif PERIOD == "Last 24 Hours">
-    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''hour'', current_date - interval ''24'' hour)", result) />
+    <#local result = result + addCondition("AND", "TEST_FUNCTIONS.CREATED_AT >= date_trunc(''hour'', current_date - interval ''24'' hour)", result) />
   <#elseif PERIOD == "Week">
-    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''week'', current_date)  - interval ''2'' day", result) />
+    <#local result = result + addCondition("AND", "TEST_FUNCTIONS.CREATED_AT >= date_trunc(''week'', current_date)  - interval ''2'' day", result) />
   <#elseif PERIOD == "Last 7 Days">
-    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''day'', current_date - interval ''7'' day)", result) />
+    <#local result = result + addCondition("AND", "TEST_FUNCTIONS.CREATED_AT >= date_trunc(''day'', current_date - interval ''7'' day)", result) />
   <#elseif PERIOD == "Last 14 Days">
-    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''day'', current_date - interval ''14'' day)", result) />
+    <#local result = result + addCondition("AND", "TEST_FUNCTIONS.CREATED_AT >= date_trunc(''day'', current_date - interval ''14'' day)", result) />
   <#elseif PERIOD == "Last 30 Days">
-    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''day'', current_date - interval ''30'' day)", result) />
+    <#local result = result + addCondition("AND", "TEST_FUNCTIONS.CREATED_AT >= date_trunc(''day'', current_date - interval ''30'' day)", result) />
   <#elseif PERIOD == "Last 90 Days">
-    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''day'', current_date - interval ''90'' day)", result) />    
+    <#local result = result + addCondition("AND", "TEST_FUNCTIONS.CREATED_AT >= date_trunc(''day'', current_date - interval ''90'' day)", result) />    
   <#elseif PERIOD == "Month" >
-    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''week'', current_date)", result) />
+    <#local result = result + addCondition("AND", "TEST_FUNCTIONS.CREATED_AT >= date_trunc(''week'', current_date)", result) />
   <#elseif PERIOD == "Quater" >
-    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''month'', current_date)", result) />
+    <#local result = result + addCondition("AND", "TEST_FUNCTIONS.CREATED_AT >= date_trunc(''month'', current_date)", result) />
   <#elseif PERIOD == "Last 365 Days">
-    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''day'', current_date - interval ''365'' day)", result) />
+    <#local result = result + addCondition("AND", "TEST_FUNCTIONS.CREATED_AT >= date_trunc(''day'', current_date - interval ''365'' day)", result) />
   <#elseif PERIOD == "Year">
-    <#local result = result + addCondition("AND", "TEST_CASES.CREATED_AT >= date_trunc(''year'', current_date)", result) />
+    <#local result = result + addCondition("AND", "TEST_FUNCTIONS.CREATED_AT >= date_trunc(''year'', current_date)", result) />
   </#if>
   
   <#list map?keys as key>
-    <#if map[key]?has_content>
+    <#if map[key]?has_content && map[key]?contains("null")>
+      <#local result = result + addCondition("AND", "(${key} LIKE ANY (''{" + map[key] + "}'') OR ${key} IS NULL)", result) />
+    <#elseif map[key]?has_content>
       <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
     </#if>
   </#list>
@@ -3121,26 +2818,10 @@ ORDER BY 1
     <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
   </#if>      
   
-  <#if activeProjectId?has_content>
-    <#local result = result + addCondition("AND", "${VIEW}.PROJECT_ID=${activeProjectId}", result) />
+  <#if projectId?has_content>
+    <#local result = result + addCondition("AND", "${VIEW}.PROJECT_ID=${projectId?c}", result) />
   </#if>  
   
-  <#if MILESTONE?has_content>
-    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
-    
-    <#if MILESTONE_VERSION?has_content>
-      <#if MILESTONE_VERSION?lower_case == "latest">
-        <#local result = result + addCondition("AND", "MILESTONE_VERSION = (
-                SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
-                FROM TEST_RUNS INNER JOIN
-                  JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
-                WHERE JOBS.NAME=''${MILESTONE}'')", result) />
-      <#elseif isDecimal(MILESTONE_VERSION)>
-        <#local result = result + addCondition("AND", "MILESTONE_VERSION = ''" + MILESTONE_VERSION + "''", result) />
-      </#if>
-    </#if>
-  </#if>  
-
   <#if result?length != 0>
     <#local result = "WHERE " + result/>
   </#if>
@@ -3153,20 +2834,20 @@ ORDER BY 1
     @return - actual view name
   -->
 <#function getCreatedAt value>
-  <#local result = "to_char(date_trunc(''day'', TEST_CASES.CREATED_AT), ''MM/DD'')" />
+  <#local result = "to_char(date_trunc(''day'', TEST_FUNCTIONS.CREATED_AT), ''MM/DD'')" />
   <#switch value>
     <#case "Last 24 Hours">
     <#case "Today">
-      <#local result = "to_char(date_trunc(''hour'', TEST_CASES.CREATED_AT), ''HH24:MI'')" />
+      <#local result = "to_char(date_trunc(''hour'', TEST_FUNCTIONS.CREATED_AT), ''HH24:MI'')" />
       <#break>
     <#case "Last 90 Days">    
     <#case "Quarter">
-      <#local result = "to_char(date_trunc(''month'', TEST_CASES.CREATED_AT), ''YYYY-MM'')" />
+      <#local result = "to_char(date_trunc(''month'', TEST_FUNCTIONS.CREATED_AT), ''YYYY-MM'')" />
       <#break>
     <#case "Last 365 Days">
     <#case "Year">
     <#case "Total">
-      <#local result = "to_char(date_trunc(''quarter'', TEST_CASES.CREATED_AT), ''YYYY-" + ''"Q"'' + "Q'')" />
+      <#local result = "to_char(date_trunc(''quarter'', TEST_FUNCTIONS.CREATED_AT), ''YYYY-" + ''"Q"'' + "Q'')" />
       <#break>
   </#switch>
   <#return result>
@@ -3222,20 +2903,6 @@ ORDER BY 1
       <#local result = true />  
     </#if>
   </#if>
-  <#return result />
-</#function>
-
-<#-- 
-  verify that value is number
-  @return - boolean
-  -->
-<#function isDecimal value>
-  <#attempt>
-    <#assign num = value?number>
-    <#local result = true />
-  <#recover>
-    <#local result = false />
-  </#attempt>
   <#return result />
 </#function>', '
 let data = [], invisibleData = [], xAxisData = [], lineData = [];
@@ -3330,81 +2997,85 @@ option = {
 chart.setOption(option);', '{
   "PERIOD": {
     "values": [
+      "Today",
       "Last 24 Hours",
+      "Week",
       "Last 7 Days",
       "Last 14 Days",
-      "Last 30 Days",
-      "Last 90 Days",
-      "Last 365 Days",
-      "Today",
-      "Week",
       "Month",
+      "Last 30 Days",
       "Quarter",
+      "Last 90 Days",
       "Year",
+      "Last 365 Days",
       "Total"
     ],
     "required": true
   },
+  "STATUS": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(UPPER(STATUS)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "DEFECT": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(VALUE) FROM ISSUE_REFERENCES INNER JOIN TEST_EXECUTIONS ON ISSUE_REFERENCES.ID=TEST_EXECUTIONS.ISSUE_REFERENCE_ID INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID=TEST_SUITE_EXECUTIONS.ID ${whereClause} ORDER BY 1 DESC;",
+    "multiple": true
+  },
+  "USER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(USERS.USERNAME) FROM TEST_SUITE_EXECUTIONS INNER JOIN TEST_EXECUTIONS ON TEST_SUITE_EXECUTIONS.ID=TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID INNER JOIN USERS ON TEST_EXECUTIONS.MAINTAINER_ID=USERS.ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "PRIORITY": {
+    "values": [],
+    "valuesQuery": "select unnest(array[''P0'', ''P1'', ''P2'', ''P3'', ''P4'', ''P5'', ''P6'']);",
+    "multiple": true
+  },
   "ENV": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(UPPER(ENVIRONMENT)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
     "multiple": true
   },
   "PLATFORM": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
-    "multiple": true
-  },    
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
+    "valuesQuery": "SELECT DISTINCT(LOWER(TEST_EXECUTION_CONFIGS.PLATFORM)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
     "multiple": true
   },  
   "BROWSER": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOWER(BROWSER)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
     "multiple": true
-  },  
-  "PRIORITY": {
+  },
+  "LOCALE": {
     "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOCALE) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },  
+  "BUILD": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(BUILD) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1 DESC;",
     "multiple": true
   },
-  "USERS": {
-    "value": "",
-    "required": false
-  },  
-  "BUILDS": {
-    "value": "",
-    "required": false
-  },  
-  "RUNS": {
-    "value": "",
-    "required": false
-  },  
-  "MILESTONE": {
-    "value": "",
-    "required": false
-  },
-  "MILESTONE_VERSION": {
-    "value": "",
-    "required": false
-  }
+  "RUN": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(NAME) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  }  
 }', '', '{
-  "PERIOD": "Today",
+  "PERIOD": "Last 30 Days",
   "currentUserId": 2,
-  "activeProjectId": 1,
   "dashboardName": "",
+  "STATUS": [],
+  "DEFECT": [],
+  "BUILD": [],    
   "ENV": [],
   "PLATFORM": [],
   "BROWSER": [],
   "LOCALE": [],
   "PRIORITY": [],
-  "BUILDS": "",  
-  "RUNS": "",
-  "MILESTONE": "",
-  "MILESTONE_VERSION": "250",
-  "USERS": ""  
+  "RUN": [],
+  "USER": []
 }', false);
 
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASE STABILITY', 
@@ -3416,14 +3087,14 @@ SELECT
                   ''OMISSION'',
                   ''KNOWN ISSUE'',
                   ''INTERRUPT'']) AS "label",
-  unnest(array[ROUND(SUM(CASE WHEN TESTS.STATUS = ''PASSED'' THEN 1 ELSE 0 END) * 100 /COUNT(*)::numeric, 0),                  
-               ROUND(SUM(CASE WHEN TESTS.STATUS = ''FAILED'' AND TESTS.KNOWN_ISSUE = FALSE THEN 1 ELSE 0 END) * 100 / COUNT(*)::numeric, 0),
-               ROUND(SUM(CASE WHEN TESTS.STATUS = ''SKIPPED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)::numeric, 0),
-               ROUND(SUM(CASE WHEN TESTS.STATUS = ''FAILED'' AND TESTS.KNOWN_ISSUE = TRUE THEN 1 ELSE 0 END) * 100 / COUNT(*)::numeric, 0),
-               ROUND(SUM(CASE WHEN TESTS.STATUS = ''ABORTED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)::numeric, 0)]) AS "value"
-FROM TESTS
-  INNER JOIN TEST_CASES ON TESTS.TEST_CASE_ID = TEST_CASES.ID
-  INNER JOIN TEST_RUNS ON TESTS.TEST_RUN_ID = TEST_RUNS.ID
+  unnest(array[ROUND(SUM(CASE WHEN TEST_EXECUTIONS.STATUS = ''PASSED'' THEN 1 ELSE 0 END) * 100 /COUNT(*)::numeric, 0),                  
+               ROUND(SUM(CASE WHEN TEST_EXECUTIONS.STATUS = ''FAILED'' AND TEST_EXECUTIONS.KNOWN_ISSUE = FALSE THEN 1 ELSE 0 END) * 100 / COUNT(*)::numeric, 0),
+               ROUND(SUM(CASE WHEN TEST_EXECUTIONS.STATUS = ''SKIPPED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)::numeric, 0),
+               ROUND(SUM(CASE WHEN TEST_EXECUTIONS.STATUS = ''FAILED'' AND TEST_EXECUTIONS.KNOWN_ISSUE = TRUE THEN 1 ELSE 0 END) * 100 / COUNT(*)::numeric, 0),
+               ROUND(SUM(CASE WHEN TEST_EXECUTIONS.STATUS = ''ABORTED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)::numeric, 0)]) AS "value"
+FROM TEST_EXECUTIONS
+  INNER JOIN TEST_FUNCTIONS ON TEST_EXECUTIONS.TEST_FUNCTION_ID = TEST_FUNCTIONS.ID
+  INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID = TEST_SUITE_EXECUTIONS.ID
 ${WHERE_CLAUSE}
 
 
@@ -3432,7 +3103,7 @@ ${WHERE_CLAUSE}
   @return - generated WHERE clause
 -->
 <#function generateWhereClause>
-  <#local result = "WHERE TEST_CASE_ID=${testCaseId} AND TESTS.FINISH_TIME IS NOT NULL AND TESTS.START_TIME IS NOT NULL AND TESTS.STATUS <> ''IN_PROGRESS''"/>
+  <#local result = "WHERE TEST_FUNCTION_ID=${testFunctionId} AND TEST_EXECUTIONS.FINISH_TIME IS NOT NULL AND TEST_EXECUTIONS.START_TIME IS NOT NULL AND TEST_EXECUTIONS.STATUS <> ''IN_PROGRESS''"/>
 
   <#return result>
 </#function>
@@ -3512,24 +3183,22 @@ ${WHERE_CLAUSE}
         }
     ]
 }', '{
-}', '', '{
-  "testCaseId": "1"
-}', true);
+}', '', '{"testFunctionId": "1"}', true);
 
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES (
 	'TEST CASE STABILITY TREND', 'Test case stability trend on a monthly basis.', 'LINE', '<#global WHERE_CLAUSE = generateWhereClause() />
 
 SELECT
-    ROUND(SUM(CASE WHEN TESTS.STATUS = ''PASSED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "STABILITY",
-    ROUND(SUM(CASE WHEN TESTS.STATUS = ''FAILED'' AND TESTS.KNOWN_ISSUE = FALSE THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "FAILURE",
-    ROUND(SUM(CASE WHEN TESTS.STATUS = ''SKIPPED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "OMISSION",
-    ROUND(SUM(CASE WHEN TESTS.STATUS = ''FAILED'' AND TESTS.KNOWN_ISSUE = TRUE THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "KNOWN ISSUE",
-    ROUND(SUM(CASE WHEN TESTS.STATUS = ''ABORTED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "INTERRUPT",
-    to_char(date_trunc(''month'', TESTS.START_TIME), ''YYYY-MM'') AS "TESTED_AT"
-FROM TESTS
-  INNER JOIN TEST_RUNS ON TESTS.TEST_RUN_ID = TEST_RUNS.ID
+    ROUND(SUM(CASE WHEN TEST_EXECUTIONS.STATUS = ''PASSED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "STABILITY",
+    ROUND(SUM(CASE WHEN TEST_EXECUTIONS.STATUS = ''FAILED'' AND TEST_EXECUTIONS.KNOWN_ISSUE = FALSE THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "FAILURE",
+    ROUND(SUM(CASE WHEN TEST_EXECUTIONS.STATUS = ''SKIPPED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "OMISSION",
+    ROUND(SUM(CASE WHEN TEST_EXECUTIONS.STATUS = ''FAILED'' AND TEST_EXECUTIONS.KNOWN_ISSUE = TRUE THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "KNOWN ISSUE",
+    ROUND(SUM(CASE WHEN TEST_EXECUTIONS.STATUS = ''ABORTED'' THEN 1 ELSE 0 END) * 100 / COUNT(*)) as "INTERRUPT",
+    to_char(date_trunc(''month'', TEST_EXECUTIONS.START_TIME), ''YYYY-MM'') AS "TESTED_AT"
+FROM TEST_EXECUTIONS
+  INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID = TEST_SUITE_EXECUTIONS.ID
 ${WHERE_CLAUSE}
-GROUP BY date_trunc(''month'', TESTS.START_TIME)
+GROUP BY date_trunc(''month'', TEST_EXECUTIONS.START_TIME)
 ORDER BY "TESTED_AT"
 
 <#--
@@ -3537,7 +3206,7 @@ ORDER BY "TESTED_AT"
   @return - generated WHERE clause
 -->
 <#function generateWhereClause>
-  <#local result = "WHERE TEST_CASE_ID=${testCaseId} AND TESTS.FINISH_TIME IS NOT NULL AND TESTS.START_TIME IS NOT NULL AND TESTS.STATUS <> ''IN_PROGRESS''"/>
+  <#local result = "WHERE TEST_FUNCTION_ID=${testFunctionId} AND TEST_EXECUTIONS.FINISH_TIME IS NOT NULL AND TEST_EXECUTIONS.START_TIME IS NOT NULL AND TEST_EXECUTIONS.STATUS <> ''IN_PROGRESS''"/>
 
   <#return result>
 </#function>
@@ -3673,26 +3342,31 @@ ORDER BY "TESTED_AT"
     ]
 }', '{
 }
-', '', '{
-  "testCaseId": "1"
-}', true);
+', '', '{"testFunctionId": "1"}', true);
 
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTS EXECUTION ROI (MAN-HOURS)', 
 	'Monthly team/user test execution ROI. 160h+ per person for UI tests indicates that ROI is great.', 'BAR', '<#global MULTIPLE_VALUES = {
+  "RUN_STATUS": join(STATUS),
+  "BUG": join(DEFECT),
+  "BUILD": join(BUILD),
   "ENV": join(ENV),
   "LOWER(PLATFORM)": join(PLATFORM),
-  "LOCALE": join(LOCALE),  
   "LOWER(BROWSER)": join(BROWSER),
+  "LOCALE": join(LOCALE),
   "PRIORITY": join(PRIORITY),
-  "OWNER": correct(USERS!)
+  "RUN_NAME": join(RUN),
+  "OWNER": join(USER)
 }>
+<#global VIEW = PERIOD?replace(" ", "_") />
 <#global WHERE_CLAUSE = generateWhereClause(MULTIPLE_VALUES) />
+<#global GROUP_AND_ORDER_BY = getStartedAt(PERIOD) />
 
 SELECT
   ROUND(SUM(TOTAL_SECONDS)/3600) AS "ACTUAL",
   ROUND(SUM(TOTAL_ETA_SECONDS)/3600) AS "ETA",
-  to_char(STARTED_AT, ''YYYY-MM'') AS "STARTED_AT"
-FROM TOTAL
+  --to_char(STARTED_AT, ''YYYY-MM'') AS "STARTED_AT"
+  ${GROUP_AND_ORDER_BY} AS "STARTED_AT"
+FROM ${VIEW}
 ${WHERE_CLAUSE}
 GROUP BY "STARTED_AT"
 ORDER BY "STARTED_AT";
@@ -3707,7 +3381,9 @@ ORDER BY "STARTED_AT";
   <#local result = "" />
   
   <#list map?keys as key>
-    <#if map[key]?has_content>
+    <#if map[key]?has_content && map[key]?contains("null")>
+      <#local result = result + addCondition("AND", "(${key} LIKE ANY (''{" + map[key] + "}'') OR ${key} IS NULL)", result) />
+    <#elseif map[key]?has_content>
       <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
     </#if>
   </#list>
@@ -3717,13 +3393,38 @@ ORDER BY "STARTED_AT";
     <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
   </#if>    
   
-  <#if activeProjectId?has_content>
-    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
+  <#if projectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${projectId?c}", result) />
   </#if>
   
   <#if result?length != 0>
     <#local result = "WHERE " + result/>
   </#if>
+  <#return result>
+</#function>
+
+<#--
+    Retrieves actual CREATED_BY grouping  by abstract view description
+    @value - abstract view description
+    @return - actual view name
+  -->
+<#function getStartedAt value>
+  <#local result = "to_char(date_trunc(''day'', STARTED_AT), ''YYYY-MM-DD'')" />
+  <#switch value>
+    <#case "Last 24 Hours">
+    <#case "Today">
+      <#local result = "to_char(date_trunc(''hour'', STARTED_AT), ''HH24:MI'')" />
+      <#break>
+    <#case "Last 90 Days">
+    <#case "Quarter">    
+      <#local result = "to_char(date_trunc(''month'', STARTED_AT), ''YYYY-MM'')" />
+      <#break>
+    <#case "Last 365 Days">
+    <#case "Year">
+    <#case "Total">
+      <#local result = "to_char(date_trunc(''quarter'', STARTED_AT), ''YYYY-" + ''"Q"'' + "Q'')" />
+      <#break>      
+  </#switch>
   <#return result>
 </#function>
 
@@ -3818,71 +3519,116 @@ ORDER BY "STARTED_AT";
         "#919e8b"
     ]
 }', '{
-  "ENV": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "PLATFORM": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
-    "multiple": true
-  },
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
+  "PERIOD": {
+    "values": [
+      "Today",
+      "Last 24 Hours",
+      "Week",
+      "Last 7 Days",
+      "Last 14 Days",
+      "Month",
+      "Last 30 Days",
+      "Quarter",
+      "Last 90 Days",
+      "Year",
+      "Last 365 Days",
+      "Total"
+    ],
+    "required": true
   },  
-  "BROWSER": {
+  "STATUS": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(UPPER(STATUS)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "DEFECT": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(VALUE) FROM ISSUE_REFERENCES INNER JOIN TEST_EXECUTIONS ON ISSUE_REFERENCES.ID=TEST_EXECUTIONS.ISSUE_REFERENCE_ID INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID=TEST_SUITE_EXECUTIONS.ID ${whereClause} ORDER BY 1 DESC;",
+    "multiple": true
+  },
+  "USER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(USERS.USERNAME) FROM TEST_SUITE_EXECUTIONS INNER JOIN TEST_EXECUTIONS ON TEST_SUITE_EXECUTIONS.ID=TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID INNER JOIN USERS ON TEST_EXECUTIONS.MAINTAINER_ID=USERS.ID ${whereClause} ORDER BY 1;",
     "multiple": true
   },
   "PRIORITY": {
     "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
+    "valuesQuery": "select unnest(array[''P0'', ''P1'', ''P2'', ''P3'', ''P4'', ''P5'', ''P6'']);",
     "multiple": true
   },
-  "USERS": {
-    "value": "",
-    "required": false
-  }  
+  "ENV": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(UPPER(ENVIRONMENT)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "PLATFORM": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(LOWER(TEST_EXECUTION_CONFIGS.PLATFORM)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "BROWSER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(LOWER(BROWSER)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "LOCALE": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(LOCALE) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },  
+  "BUILD": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(BUILD) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1 DESC;",
+    "multiple": true
+  },
+  "RUN": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(NAME) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  } 
 }', '', '{
+  "PERIOD": "Month",
   "currentUserId": 1,
   "dashboardName": "",
+  "STATUS": [],
+  "DEFECT": [],
+  "BUILD": [],    
   "ENV": [],
-  "PLATFORM": [],  
+  "PLATFORM": [],
+  "BROWSER": [],
   "LOCALE": [],
-  "BROWSER":[],  
   "PRIORITY": [],
-  "USERS": ""
+  "RUN": [],
+  "USER": []
 }', false);
 
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TESTS SUMMARY', 
 	'Detailed information about passed, failed, skipped, etc tests.', 'TABLE', '<#global WHERE_VALUES = {
+  "RUN_STATUS": join(STATUS),
+  "BUG": join(DEFECT),
+  "BUILD": join(BUILD),
   "ENV": join(ENV),
   "LOWER(PLATFORM)": join(PLATFORM),
   "LOWER(BROWSER)": join(BROWSER),
   "LOCALE": join(LOCALE),
   "PRIORITY": join(PRIORITY),
-  "BUILD": correct(BUILDS!""),    
-  "RUN_NAME": correct(RUNS!""),
-  "OWNER": correct(USERS!"")
+  "RUN_NAME": join(RUN),
+  "OWNER": join(USER)
 }>
 <#global VIEW = PERIOD?replace(" ", "_") />
 <#global WHERE_CLAUSE = generateWhereClause(WHERE_VALUES) />
 
 SELECT
       <#if GROUP_BY="OWNER" >
-        <#if activeProjectId?has_content>
-          ''<a href="projects/'' || PROJECT_ID || ''/dashboards/'' || (select ID from dashboards where title=''Personal'') || ''?userId='' || OWNER_ID || ''">'' || OWNER || ''</a>'' AS "OWNER",
+        <#if projectId?has_content>
+          ''<a href="projects/'' || PROJECT_ID || ''/dashboards/'' || (select ID from dashboards where title=''Personal'') || ''?userId='' || OWNER_ID || ''&PERIOD=${PERIOD}">'' || OWNER || ''</a>'' AS "NAME",
         <#else>
-          ''<a href="dashboards/'' || (select ID from dashboards where title=''Personal'') || ''?userId='' || OWNER_ID || ''">'' || OWNER || ''</a>'' AS "OWNER",
+          ''<a href="dashboards/'' || (select ID from dashboards where title=''Personal'') || ''?userId='' || OWNER_ID || ''&PERIOD=${PERIOD}">'' || OWNER || ''</a>'' AS "NAME",
         </#if>
       <#elseif GROUP_BY="RUN_NAME">
-        RUN_NAME AS "RUN_NAME",
+        RUN_NAME AS "NAME",
       <#elseif GROUP_BY="BUILD">
-        BUILD AS "BUILD",
+        BUILD AS "NAME",
       </#if>
         SUM(PASSED) AS "PASS",
         SUM(FAILED) AS "FAIL",
@@ -3897,17 +3643,7 @@ SELECT
         round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
     FROM ${VIEW}
     ${WHERE_CLAUSE}
-    <#if GROUP_BY="OWNER" >
-      <#if activeProjectId?has_content>
-        GROUP BY PROJECT_ID, OWNER_ID, OWNER
-      <#else>
-        GROUP BY OWNER_ID, OWNER
-      </#if>
-    <#elseif GROUP_BY="RUN_NAME">
-      GROUP BY RUN_NAME
-    <#elseif GROUP_BY="BUILD">
-      GROUP BY BUILD
-    </#if>
+    GROUP BY 1
     ORDER BY 1
 
 
@@ -3921,7 +3657,9 @@ SELECT
   <#local result = "" />
 
   <#list map?keys as key>
-    <#if map[key]?has_content>
+    <#if map[key]?has_content && map[key]?contains("null")>
+      <#local result = result + addCondition("AND", "(${key} LIKE ANY (''{" + map[key] + "}'') OR ${key} IS NULL)", result) />
+    <#elseif map[key]?has_content>
       <#local result = result + addCondition("AND", "${key} LIKE ANY (''{" + map[key] + "}'')", result) />
     </#if>
   </#list>
@@ -3931,26 +3669,10 @@ SELECT
     <#local result = result + addCondition("AND", "OWNER_ID=${currentUserId}", result) />
   </#if>    
   
-  <#if activeProjectId?has_content>
-    <#local result = result + addCondition("AND", "PROJECT_ID=${activeProjectId}", result) />
+  <#if projectId?has_content>
+    <#local result = result + addCondition("AND", "PROJECT_ID=${projectId?c}", result) />
   </#if>
   
-  <#if MILESTONE?has_content>
-    <#local result = result + addCondition("AND", "MILESTONE = ''" + MILESTONE + "''", result) />
-    
-    <#if MILESTONE_VERSION?has_content>
-      <#if MILESTONE_VERSION?lower_case == "latest">
-        <#local result = result + addCondition("AND", "MILESTONE_VERSION = (
-                SELECT MAX(UPSTREAM_JOB_BUILD_NUMBER)
-                FROM TEST_RUNS INNER JOIN
-                  JOBS ON TEST_RUNS.UPSTREAM_JOB_ID = JOBS.ID
-                WHERE JOBS.NAME=''${MILESTONE}'')", result) />
-      <#elseif isDecimal(MILESTONE_VERSION)>
-        <#local result = result + addCondition("AND", "MILESTONE_VERSION = ''" + MILESTONE_VERSION + "''", result) />
-      </#if>
-    </#if>
-  </#if>
-
   <#if result?length != 0>
     <#local result = " WHERE " + result/>
   </#if>
@@ -4009,33 +3731,20 @@ SELECT
   </#if>
   <#return result />
 </#function>
-
-<#-- 
-  verify that value is number
-  @return - boolean
-  -->
-<#function isDecimal value>
-  <#attempt>
-    <#assign num = value?number>
-    <#local result = true />
-  <#recover>
-    <#local result = false />
-  </#attempt>
-  <#return result />
-</#function>', '{"columns": ["OWNER", "RUN_NAME", "PASS", "FAIL", "DEFECT", "SKIP", "ABORT", "TOTAL", "PASSED (%)", "FAILED (%)", "KNOWN ISSUE (%)", "SKIPPED (%)", "FAIL RATE (%)"]}', '{
+', '{"columns": ["NAME", "PASS", "FAIL", "DEFECT", "SKIP", "ABORT", "TOTAL", "PASSED (%)", "FAILED (%)", "KNOWN ISSUE (%)", "SKIPPED (%)", "FAIL RATE (%)"]}', '{
   "PERIOD": {
     "values": [
+      "Today",
       "Last 24 Hours",
+      "Week",
       "Last 7 Days",
       "Last 14 Days",
-      "Last 30 Days",
-      "Last 90 Days",
-      "Last 365 Days",
-      "Today",
-      "Week",
       "Month",
+      "Last 30 Days",
       "Quarter",
+      "Last 90 Days",
       "Year",
+      "Last 365 Days",
       "Total"
     ],
     "required": true
@@ -4048,64 +3757,70 @@ SELECT
     ],
     "required": true
   },
+  "STATUS": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(UPPER(STATUS)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "DEFECT": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(VALUE) FROM ISSUE_REFERENCES INNER JOIN TEST_EXECUTIONS ON ISSUE_REFERENCES.ID=TEST_EXECUTIONS.ISSUE_REFERENCE_ID INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID=TEST_SUITE_EXECUTIONS.ID ${whereClause} ORDER BY 1 DESC;",
+    "multiple": true
+  },
+  "USER": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(USERS.USERNAME) FROM TEST_SUITE_EXECUTIONS INNER JOIN TEST_EXECUTIONS ON TEST_SUITE_EXECUTIONS.ID=TEST_EXECUTIONS.TEST_SUITE_EXECUTION_ID INNER JOIN USERS ON TEST_EXECUTIONS.MAINTAINER_ID=USERS.ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },
+  "PRIORITY": {
+    "values": [],
+    "valuesQuery": "select unnest(array[''P0'', ''P1'', ''P2'', ''P3'', ''P4'', ''P5'', ''P6'']);",
+    "multiple": true
+  },
   "ENV": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT ENV FROM TEST_CONFIGS WHERE ENV IS NOT NULL AND ENV <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(UPPER(ENVIRONMENT)) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
     "multiple": true
   },
   "PLATFORM": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(PLATFORM) FROM TEST_CONFIGS WHERE PLATFORM <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOWER(TEST_EXECUTION_CONFIGS.PLATFORM)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
     "multiple": true
-  },    
-  "LOCALE": {
-    "values": [],
-    "valuesQuery": "SELECT DISTINCT LOCALE FROM TEST_CONFIGS WHERE LOCALE IS NOT NULL AND LOCALE <> '''';",
-    "multiple": true
-  },  
+  },
   "BROWSER": {
     "values": [],
-    "valuesQuery": "SELECT DISTINCT LOWER(BROWSER) FROM TEST_CONFIGS WHERE BROWSER <> '''' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOWER(BROWSER)) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
     "multiple": true
-  },  
-  "PRIORITY": {
+  },
+  "LOCALE": {
     "values": [],
-    "valuesQuery": "SELECT VALUE FROM LABELS WHERE KEY=''priority'' ORDER BY 1;",
+    "valuesQuery": "SELECT DISTINCT(LOCALE) FROM TEST_EXECUTION_CONFIGS INNER JOIN TEST_SUITE_EXECUTIONS ON TEST_EXECUTION_CONFIGS.ID=TEST_SUITE_EXECUTIONS.CONFIG_ID ${whereClause} ORDER BY 1;",
+    "multiple": true
+  },  
+  "BUILD": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(BUILD) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1 DESC;",
     "multiple": true
   },
-  "USERS": {
-    "value": "",
-    "required": false
-  },  
-  "BUILDS": {
-    "value": "",
-    "required": false
-  },  
-  "RUNS": {
-    "value": "",
-    "required": false
-  },  
-  "MILESTONE": {
-    "value": "",
-    "required": false
-  },
-  "MILESTONE_VERSION": {
-    "value": "",
-    "required": false
-  }
-}', '{"legend": ["OWNER", "RUN_NAME", "PASS", "FAIL", "DEFECT", "SKIP", "ABORT", "TOTAL", "PASSED (%)", "FAILED (%)", "KNOWN ISSUE (%)", "SKIPPED (%)", "FAIL RATE (%)"]}', '{
-  "PERIOD": "Total",
-  "GROUP_BY": "OWNER",
+  "RUN": {
+    "values": [],
+    "valuesQuery": "SELECT DISTINCT(NAME) FROM TEST_SUITE_EXECUTIONS ${whereClause} ORDER BY 1;",
+    "multiple": true
+  } 
+}', '{"legend": ["NAME", "PASS", "FAIL", "DEFECT", "SKIP", "ABORT", "TOTAL", "PASSED (%)", "FAILED (%)", "KNOWN ISSUE (%)", "SKIPPED (%)", "FAIL RATE (%)"]}', '{
+  "PERIOD": "Last 30 Days",
+  "GROUP_BY": "RUN_NAME",
   "currentUserId": 2,
   "dashboardName": "",
+  "STATUS": [],
+  "DEFECT": [],
+  "BUILD": [],    
   "ENV": [],
   "PLATFORM": [],
   "BROWSER": [],
   "LOCALE": [],
   "PRIORITY": [],
-  "BUILDS": "",  
-  "RUNS": "",
-  "MILESTONE": "",
-  "MILESTONE_VERSION": "250",
-  "USERS": ""
+  "RUN": [],
+  "USER": []
 }', false);
+
