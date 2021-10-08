@@ -2536,7 +2536,7 @@ INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS
   TEST_FUNCTIONS.TEST_CLASS || ''.'' || TEST_FUNCTIONS.TEST_METHOD AS "TEST METHOD",
   TEST_FUNCTIONS.CREATED_AT::date::text AS "CREATED AT"
 FROM TEST_FUNCTIONS
-WHERE TEST_FUNCTIONS.ID=${testFunctionId}', '{"columns": ["TEST METHOD", "CREATED AT"]}', '{}', '{}', '{}', true);
+WHERE TEST_FUNCTIONS.ID=${testFunctionId}', '{"columns": ["TEST METHOD", "CREATED AT"]}', '{}', '{}', '{"testFunctionId": "1"}', true);
 
 INSERT INTO WIDGET_TEMPLATES (NAME, DESCRIPTION, TYPE, SQL, CHART_CONFIG, PARAMS_CONFIG, LEGEND_CONFIG, PARAMS_CONFIG_SAMPLE, HIDDEN) VALUES ('TEST CASES BY STABILITY', 
 	'Shows all test cases with low stability percent rate per appropriate period (default - less than 10%).', 'TABLE', '<#global WHERE_VALUES = {
