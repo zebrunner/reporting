@@ -1,8 +1,25 @@
 #!/bin/bash
 
   setup() {
-    # PREREQUISITES: valid values inside ZBR_* env vars!
-    local url="${ZBR_PROTOCOL}://${ZBR_HOSTNAME}:${ZBR_PORT}"
+    if [[ $ZBR_INSTALLER -eq 1 ]]; then
+      # Zebrunner CE installer
+      url="$ZBR_PROTOCOL://$ZBR_HOSTNAME:$ZBR_PORT"
+      ZBR_REPORTING_PORT=8081
+    else
+      # load default interactive installer settings
+      source backup/settings.env.original
+
+      # load ./backup/settings.env if exist to declare ZBR* vars from previous run!
+      if [[ -f backup/settings.env ]]; then
+        source backup/settings.env
+      fi
+
+      set_reporting_settings
+      url="$ZBR_PROTOCOL://$ZBR_HOSTNAME:$ZBR_REPORTING_PORT"
+    fi
+
+    cp .env.original .env
+    replace .env "REPORTING_PORT=8081" "REPORTING_PORT=$ZBR_REPORTING_PORT"
 
     cp configuration/_common/hosts.env.original configuration/_common/hosts.env
     replace configuration/_common/hosts.env "http://localhost:8081" "${url}"
@@ -71,6 +88,9 @@
     replace configuration/reporting-service/variables.env "REDIS_PASSWORD=MdXVvJgDdz9Hnau7" "REDIS_PASSWORD=${ZBR_REDIS_PASSWORD}"
 
     minio-storage/zebrunner.sh setup
+
+    # export all ZBR* variables to save user input
+    export_settings
   }
 
   shutdown() {
@@ -81,6 +101,8 @@
 
     docker-compose --env-file .env -f docker-compose.yml down -v
 
+    rm -f .env
+    rm -f backup/settings.env
     rm -f configuration/_common/hosts.env
     rm -f configuration/_common/secrets.env
     rm -f configuration/_common/s3.env
@@ -197,6 +219,9 @@
 
     minio-storage/zebrunner.sh backup
 
+    cp .env .env.bak
+    cp backup/settings.env backup/settings.env.bak
+
     cp configuration/_common/hosts.env configuration/_common/hosts.env.bak
     cp configuration/_common/secrets.env configuration/_common/secrets.env.bak
     cp configuration/_common/s3.env configuration/_common/s3.env.bak
@@ -227,6 +252,8 @@
     stop
     minio-storage/zebrunner.sh restore
 
+    cp .env.bak .env
+    cp backup/settings.env.bak backup/settings.env
     cp configuration/_common/hosts.env.bak configuration/_common/hosts.env
     cp configuration/_common/secrets.env.bak configuration/_common/secrets.env
     cp configuration/_common/s3.env.bak configuration/_common/s3.env
@@ -311,14 +338,13 @@
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${BASEDIR}" || exit
 
+# shellcheck disable=SC1091
+source patch/utility.sh
+source patch/settings.sh
+
 case "$1" in
     setup)
-        if [[ $ZBR_INSTALLER -eq 1 ]]; then
-          setup
-        else
-          echo_warning "Setup procedure is supported only as part of Zebrunner Server (Community Edition)!"
-          echo_telegram
-        fi
+        setup
         ;;
     start)
 	start
