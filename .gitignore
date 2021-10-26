@@ -1,3 +1,5 @@
+.env
+backup/settings.env
 ### Zebrunner runtime mounts ###
 /runtime/
 

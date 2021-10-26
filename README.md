@@ -72,12 +72,12 @@ Zebrunner Reporting **client side** repositories:
 
 ## Hardware requirements
 
-|                         | Requirements                                                    	                |
-|:-----------------------:| ----------------------------------------------------------------------------------|
-| <b>Operating System</b> | Linux Ubuntu 16.04, 18.04, 20.04<br> Linux CentOS 7+<br> Amazon Linux 2           |
-| <b>       CPU      </b> | 4+ Cores                                                         	                |
-| <b>      Memory    </b> | 16Gb RAM                                                            	            |
-| <b>    Free space  </b> | SSD 64Gb+ of free space                                         	                |
+|                         | Requirements                                                            |
+|:-----------------------:| ------------------------------------------------------------------------|
+| <b>Operating System</b> | Linux Ubuntu 16.04, 18.04, 20.04<br> Linux CentOS 7+<br> Amazon Linux 2 |
+| <b>       CPU      </b> | 4+ Cores                                                                |
+| <b>      Memory    </b> | 16Gb RAM                                                                |
+| <b>    Free space  </b> | SSD 64Gb+ of free space                                                 |
 
 ## Installation steps
 
@@ -98,7 +98,7 @@ Zebrunner Reporting **client side** repositories:
 ## Community and support
 * [Telegram channel](https://t.me/zebrunner)
 * [User guide](https://zebrunner.com/documentation)
-* [On-premise deployment with Zebrunner CE](https://zebrunner.github.io/zebrunner/)
+* [On-premise deployment with Zebrunner CE](https://zebrunner.github.io/community-edition/)
 * [Zebrunner PRO](https://zebrunner.com)
 
 ## License
