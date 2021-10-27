@@ -90,7 +90,7 @@ Zebrunner Reporting **client side** repositories:
 3. Start services `./zebrunner.sh start`
 3. Open `http://hostname:port` or `https://hostname:port` for secured protocol
    > Login using **admin**/**changeit** credentials
-> Follow installation and configuration guide in [Zebrunner CE](https://zebrunner.github.io/community-edition) to reuse Jenkins image effectively for Test Automation.
+> Follow installation and configuration guide in [Zebrunner CE](https://zebrunner.github.io/community-edition) to reuse Reporting components effectively for Test Automation.
 
 ## Documentation and free support
 * [Zebrunner PRO](https://zebrunner.com)
