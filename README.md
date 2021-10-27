@@ -87,12 +87,10 @@ Zebrunner Reporting **client side** repositories:
   git clone --recurse-submodule https://github.com/zebrunner/reporting.git && cd reporting && ./zebrunner.sh setup
   ```
    > Provide required details and start services.
-3. Start services:
-  ```
-  ./zebrunner.sh start
-  ```
-4. After the startup, login with default **admin**/**changeit** credentials to [http://hostname:port](http://hostname:port)
-   > Use your host address instead of `hostname` and valid port, default 80!  
+3. Start services `./zebrunner.sh start`
+3. Open `http://hostname:port` or `https://hostname:port` for secured protocol
+   > Login using **admin**/**changeit** credentials
+> Follow installation and configuration guide in [Zebrunner CE](https://zebrunner.github.io/community-edition) to reuse Jenkins image effectively for Test Automation.
 
 ## Documentation and free support
 * [Zebrunner PRO](https://zebrunner.com)
