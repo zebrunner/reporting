@@ -82,27 +82,25 @@ Zebrunner Reporting **client side** repositories:
 ## Installation steps
 
 1. Install [Docker Engine](https://docs.docker.com/engine/installation) and [Docker Compose](https://docs.docker.com/compose/install).
-2. Clone this repo recursively and navigate to the root folder:
+2. Clone this repo recursively and launch setup process:
   ```
-  git clone --recurse-submodule https://github.com/zebrunner/reporting.git && cd reporting
+  git clone --recurse-submodule https://github.com/zebrunner/reporting.git && cd reporting && ./zebrunner.sh setup
   ```
-4. Run setup and provide host, port and optionally AWS S3 bucket and SMTP credentials:
+   > Provide required details and start services.
+3. Start services:
   ```
-  ./zebrunner.sh setup
-  ...
   ./zebrunner.sh start
   ```
-5. Login to the application with default credentials **admin**/**changeit**:
-  ```
-  $ http://hostname:port/
-  ```
-   > Replacing hostname and port by real values
+4. After the startup, login with default **admin**/**changeit** credentials to [http://hostname:port](http://hostname:port)
+   > Use your host address instead of `hostname` and valid port, default 80!  
 
-## Community and support
-* [Telegram channel](https://t.me/zebrunner)
-* [User guide](https://zebrunner.com/documentation)
-* [On-premise deployment with Zebrunner CE](https://zebrunner.github.io/community-edition/)
+## Documentation and free support
 * [Zebrunner PRO](https://zebrunner.com)
+* [Zebrunner CE](https://zebrunner.github.io/community-edition)
+* [Zebrunner Reporting](https://zebrunner.com/documentation)
+* [Carina Guide](http://zebrunner.github.io/carina)
+* [Demo Project](https://github.com/zebrunner/carina-demo)
+* [Telegram Channel](https://t.me/zebrunner)
 
 ## License
 Code - [Apache Software License v2.0](http://www.apache.org/licenses/LICENSE-2.0)
