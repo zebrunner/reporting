@@ -83,9 +83,9 @@ Zebrunner Reporting **client side** repositories:
 
 1. Install [Docker Engine](https://docs.docker.com/engine/installation) and [Docker Compose](https://docs.docker.com/compose/install).
 2. Clone this repo recursively and launch setup process:
-  ```
-  git clone --recurse-submodule https://github.com/zebrunner/reporting.git && cd reporting && ./zebrunner.sh setup
-  ```
+   ```
+   git clone --recurse-submodule https://github.com/zebrunner/reporting.git && cd reporting && ./zebrunner.sh setup
+   ```
    > Provide required details and start services.
 3. Start services `./zebrunner.sh start`
 3. Open `http://hostname:port` or `https://hostname:port` for secured protocol
