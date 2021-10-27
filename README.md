@@ -9,7 +9,7 @@ Enjoy using Zebrunner Reporting in your testing process!
 Feel free to support the development with a [**donation**](https://www.paypal.com/donate?hosted_button_id=JLQ4U468TWQPS) for future improvements.
 
 <p align="center">
-  <a href="https://zebrunner.com/"><img alt="Zebrunner" src="./docs/img/zebrunner_intro.png"></a>
+  <a href="https://zebrunner.com/"><img alt="Zebrunner" src="https://github.com/zebrunner/zebrunner/raw/master/docs/img/zebrunner_intro.png"></a>
 </p>
 
 **Zebrunner Insights** - premium reporting features for your tests. See test results in real time - Zebrunner records interactive video sessions, publishes logs and screenshots. Track your pass rate, infrastructure usage, and automation team performance in one application.
@@ -86,14 +86,17 @@ Zebrunner Reporting **client side** repositories:
   ```
   git clone --recurse-submodule https://github.com/zebrunner/reporting.git && cd reporting
   ```
-4. Run the application:
+4. Run setup and provide host, port and optionally AWS S3 bucket and SMTP credentials:
   ```
+  ./zebrunner.sh setup
+  ...
   ./zebrunner.sh start
   ```
 5. Login to the application with default credentials **admin**/**changeit**:
   ```
-  $ http://localhost:8081/
+  $ http://hostname:port/
   ```
+   > Replacing hostname and port by real values
 
 ## Community and support
 * [Telegram channel](https://t.me/zebrunner)
