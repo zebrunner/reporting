@@ -68,6 +68,7 @@ services:
       - "./configuration/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro"
     environment:
       - bootstrap.memory_lock=true
+      - LOG4J_FORMAT_MSG_NO_LOOKUPS=true
     ulimits:
       memlock:
         soft: -1
@@ -84,6 +85,8 @@ services:
       - "./configuration/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro"
       - "./configuration/logstash/mapping.json:/mapping.json:ro"
       - "./configuration/logstash/test-run-data-template.json:/test-run-data-template.json:ro"
+    environment:
+      - LOG4J_FORMAT_MSG_NO_LOOKUPS=true
     depends_on:
       - rabbitmq
       - elasticsearch
