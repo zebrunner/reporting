@@ -61,7 +61,7 @@ services:
     restart: always
 
   elasticsearch:
-    image: "docker.elastic.co/elasticsearch/elasticsearch-oss:${TAG_ELASTICSEARCH}"
+    image: "elasticsearch:${TAG_ELASTICSEARCH}"
     container_name: elasticsearch
     volumes:
       - "esdata-volume:/usr/share/elasticsearch/data"
@@ -69,6 +69,7 @@ services:
     environment:
       - bootstrap.memory_lock=true
       - LOG4J_FORMAT_MSG_NO_LOOKUPS=true
+      - ES_JAVA_OPTS=-Xmx1024m -Xms512m
     ulimits:
       memlock:
         soft: -1
@@ -79,7 +80,7 @@ services:
     restart: always
 
   logstash:
-    image: "docker.elastic.co/logstash/logstash-oss:${TAG_LOGSTASH}"
+    image: "logstash:${TAG_LOGSTASH}"
     container_name: logstash
     volumes:
       - "./configuration/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro"
