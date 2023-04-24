@@ -11,6 +11,7 @@ services:
     container_name: zebrunner-proxy
     volumes:
       - "./configuration/zebrunner-proxy/nginx.conf:/etc/nginx/nginx.conf:ro"
+      - "./configuration/zebrunner-proxy/ssl:/etc/nginx/ssl:ro"
     ports:
       - "${REPORTING_PORT}:80"     # primary HTTP port
     #  - "15672:15672" # RabbitMQ administration, optional

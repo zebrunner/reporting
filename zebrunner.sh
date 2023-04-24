@@ -45,6 +45,25 @@
     fi
 
     cp configuration/zebrunner-proxy/nginx.conf.original configuration/zebrunner-proxy/nginx.conf
+
+    if [[ "$ZBR_PROTOCOL" == "https" ]] && [[ $ZBR_INSTALLER -ne 1 ]]; then
+      # configure ssl only for independent setup!
+      replace configuration/zebrunner-proxy/nginx.conf "listen 80" "listen 80 ssl"
+
+      # uncomment default ssl settings
+      replace configuration/zebrunner-proxy/nginx.conf "#        ssl_" "        ssl_"
+
+      if [[ ! -f configuration/zebrunner-proxy/ssl/ssl.crt ]]; then
+        echo "using self-signed certificate..."
+        cp configuration/zebrunner-proxy/ssl/ssl.crt.original configuration/zebrunner-proxy/ssl/ssl.crt
+      fi
+      if [[ ! -f configuration/zebrunner-proxy/ssl/ssl.key ]]; then
+        echo "using self-signed key..."
+        cp configuration/zebrunner-proxy/ssl/ssl.key.original configuration/zebrunner-proxy/ssl/ssl.key
+      fi
+
+    fi
+
     if [[ $ZBR_MINIO_ENABLED -eq 0 ]]; then
       # use case with AWS S3
       replace configuration/zebrunner-proxy/nginx.conf "custom_secret_value" "${ZBR_STORAGE_AGENT_KEY}"
@@ -91,6 +110,12 @@
 
     # export all ZBR* variables to save user input
     export_settings
+
+    if [[ "$ZBR_PROTOCOL" == "https" ]] && [[ $ZBR_INSTALLER -ne 1 ]]; then
+      #warn about ssl only in case of independent setup
+      echo_warning "Replace self-signed ssl.crt and ssl.key in ./configuration/zebrunner-proxy/ssl/ onto valid ones!"
+    fi
+
   }
 
   shutdown() {
@@ -128,6 +153,9 @@
     rm -f configuration/redis/redis.conf
     rm -f configuration/reporting-service/variables.env
     rm -f configuration/reporting-ui/variables.env
+
+    rm -f configuration/zebrunner-proxy/ssl/ssl.crt
+    rm -f configuration/zebrunner-proxy/ssl/ssl.key
 
     minio-storage/zebrunner.sh shutdown
   }
