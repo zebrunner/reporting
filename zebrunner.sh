@@ -124,6 +124,12 @@
       exit 0 #no need to proceed as nothing was configured
     fi
 
+    if [[ ! -f .env ]]; then
+      echo_warning "Unable to erase as nothing is configured!"
+      exit 0 #no need to proceed as nothing was configured
+    fi
+
+
     if [[ -z ${SHUTDOWN_CONFIRMED} ]] || [[ ${SHUTDOWN_CONFIRMED} -ne 1 ]]; then
       # ask about confirmation if it is not confirmed in scope of CE
       echo_warning "Shutdown will erase all settings and data for \"${BASEDIR}\"!"
