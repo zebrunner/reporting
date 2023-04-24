@@ -127,6 +127,12 @@
       exit 0
     fi
 
+    if [ ! -f .env ]; then
+      # need proceed with setup steps in advance!
+      setup
+      exit -1
+    fi
+
     # create infra network only if not exist
     docker network inspect infra >/dev/null 2>&1 || docker network create infra
 
