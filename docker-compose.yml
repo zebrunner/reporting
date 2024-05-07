@@ -1,8 +1,7 @@
-version: "3.7"
 networks:
   default:
-    external:
-      name: infra
+    name: infra
+    external: true
 
 services:
 
@@ -23,7 +22,7 @@ services:
     restart: always
 
   postgres:
-    image: "qaprosoft/postgres:${TAG_POSTGRES}"
+    image: "public.ecr.aws/zebrunner/postgres:${TAG_POSTGRES}"
     container_name: postgres
     command: postgres -c 'max_connections=200'
     volumes:
