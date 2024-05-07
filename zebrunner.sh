@@ -140,7 +140,7 @@
     fi
 
 
-    docker-compose --env-file .env -f docker-compose.yml down -v
+    docker compose down -v
 
     rm -f .env
     rm -f backup/settings.env
@@ -241,7 +241,7 @@
     fi
 
     minio-storage/zebrunner.sh start
-    docker-compose --env-file .env -f docker-compose.yml up -d
+    docker compose up -d
   }
 
   stop() {
@@ -250,7 +250,7 @@
     fi
 
     minio-storage/zebrunner.sh stop
-    docker-compose --env-file .env -f docker-compose.yml stop
+    docker compose stop
   }
 
   down() {
@@ -259,7 +259,7 @@
     fi
 
     minio-storage/zebrunner.sh down
-    docker-compose --env-file .env -f docker-compose.yml down
+    docker compose down
   }
 
   backup() {
