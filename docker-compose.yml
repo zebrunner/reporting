@@ -33,7 +33,7 @@ services:
     restart: always
 
   iam-db:
-    image: "qaprosoft/postgres:${TAG_POSTGRES}"
+    image: "public.ecr.aws/zebrunner/postgres:${TAG_POSTGRES}"
     container_name: iam-db
     volumes:
       - "iam-db-volume:/var/lib/postgresql/data"
